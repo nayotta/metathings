@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package ai.metathings.service.identity;
+
+
+message Domain {
+	string id = 1;
+	string name = 2;
+	string description = 3;
+	bool enabled = 4;
+}

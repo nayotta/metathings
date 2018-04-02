@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package ai.metathings.service.identity;
+option go_package = "identity";
+
+import "google/protobuf/empty.proto";
+
+import "create_domain.proto";
+import "delete_domain.proto";
+import "patch_domain.proto";
+import "get_domain.proto";
+import "list_domain.proto";
+
+import "create_user.proto";
+import "delete_user.proto";
+import "patch_user.proto";
+import "get_user.proto";
+import "list_user.proto";
+
+service IdentityService {
+	rpc CreateDomain(CreateDomainRequest) returns (CreateDomainResponse) {}
+	rpc DeleteDomain(DeleteDomainRequest) returns (google.protobuf.Empty) {}
+	rpc PatchDomain(PatchDomainRequest) returns (PatchDomainResponse) {}
+	rpc GetDomain(GetDomainRequest) returns (GetDomainResponse) {}
+	rpc ListDomain(ListDomainRequest) returns (ListDomainResponse) {}
+
+	rpc CreateUser(CreateUserRequest) returns (CreateUserResponse) {}
+	rpc DeleteUser(DeleteUserRequest) returns (google.protobuf.Empty) {}
+	rpc PatchUser(PatchUserRequest) returns (PatchUserResponse) {}
+	rpc GetUser(GetUserRequest) returns (GetUserResponse) {}
+	rpc ListUser(ListUserRequest) returns (ListUserResponse) {}
+}

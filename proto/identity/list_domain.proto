@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package ai.metathings.service.identity;
+
+import "google/protobuf/wrappers.proto";
+
+import "github.com/mwitkow/go-proto-validators/validator.proto";
+
+import "domain.proto";
+
+message ListDomainRequest {
+	google.protobuf.StringValue name = 1;
+	google.protobuf.BoolValue enabled = 2;
+}
+
+message ListDomainResponse {
+	repeated Domain domains = 1;
+}
