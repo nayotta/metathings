@@ -23,7 +23,7 @@ type AddRoleToUserOnDomainRequest struct {
 func (m *AddRoleToUserOnDomainRequest) Reset()                    { *m = AddRoleToUserOnDomainRequest{} }
 func (m *AddRoleToUserOnDomainRequest) String() string            { return proto.CompactTextString(m) }
 func (*AddRoleToUserOnDomainRequest) ProtoMessage()               {}
-func (*AddRoleToUserOnDomainRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{0} }
+func (*AddRoleToUserOnDomainRequest) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{0} }
 
 func (m *AddRoleToUserOnDomainRequest) GetDomainId() *google_protobuf.StringValue {
 	if m != nil {
@@ -50,9 +50,9 @@ func init() {
 	proto.RegisterType((*AddRoleToUserOnDomainRequest)(nil), "ai.metathings.service.identity.AddRoleToUserOnDomainRequest")
 }
 
-func init() { proto.RegisterFile("add_role_to_user_on_domain.proto", fileDescriptor1) }
+func init() { proto.RegisterFile("add_role_to_user_on_domain.proto", fileDescriptor2) }
 
-var fileDescriptor1 = []byte{
+var fileDescriptor2 = []byte{
 	// 256 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0xd0, 0x3d, 0x6b, 0xf3, 0x30,
 	0x10, 0xc0, 0x71, 0x9c, 0x07, 0xf2, 0xb4, 0xee, 0x96, 0xc9, 0x84, 0x90, 0x9a, 0x4e, 0x5d, 0x22,

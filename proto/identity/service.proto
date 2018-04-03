@@ -5,89 +5,162 @@ option go_package = "identity";
 
 import "google/protobuf/empty.proto";
 
+// Domain
 import "create_domain.proto";
 import "delete_domain.proto";
 import "patch_domain.proto";
 import "get_domain.proto";
-import "list_domain.proto";
+import "list_domains.proto";
 
+// Project
+import "create_project.proto";
+import "delete_project.proto";
+import "patch_project.proto";
+import "get_project.proto";
+import "list_projects.proto";
+import "list_projects_for_user.proto";
+
+// User
 import "create_user.proto";
 import "delete_user.proto";
 import "patch_user.proto";
 import "get_user.proto";
-import "list_user.proto";
+import "list_users.proto";
 import "change_password.proto";
-import "list_user_in_group.proto";
+import "list_users_in_group.proto";
 
+// Group
 import "create_group.proto";
 import "delete_group.proto";
 import "patch_group.proto";
 import "get_group.proto";
-import "list_group.proto";
+import "list_groups.proto";
 import "add_user_to_group.proto";
 import "remove_user_from_group.proto";
-import "check_user_in_group.proto";
-import "list_group_for_user.proto";
+import "check_user_for_group.proto";
+import "list_groups_for_user.proto";
 
+// Role
 import "create_role.proto";
 import "delete_role.proto";
 import "patch_role.proto";
 import "get_role.proto";
-import "list_role.proto";
+import "list_roles.proto";
 import "add_role_to_group_on_domain.proto";
 import "remove_role_from_group_on_domain.proto";
-import "check_role_in_group_on_domain.proto";
-import "list_role_in_group_on_domain.proto";
+import "check_role_for_group_on_domain.proto";
+import "list_roles_for_group_on_domain.proto";
 import "add_role_to_user_on_domain.proto";
 import "remove_role_from_user_on_domain.proto";
-import "check_role_in_user_on_domain.proto";
-import "list_role_in_user_on_domain.proto";
+import "check_role_for_user_on_domain.proto";
+import "list_roles_for_user_on_domain.proto";
+import "add_role_to_group_on_project.proto";
+import "remove_role_from_group_on_project.proto";
+import "check_role_for_group_on_project.proto";
+import "list_roles_for_group_on_project.proto";
+import "add_role_to_user_on_project.proto";
+import "remove_role_from_user_on_project.proto";
+import "check_role_for_user_on_project.proto";
+import "list_roles_for_user_on_project.proto";
 
 service IdentityService {
+	// https://developer.openstack.org/api-ref/identity/v3/index.html#create-domain
 	rpc CreateDomain(CreateDomainRequest) returns (CreateDomainResponse) {}
+	// https://developer.openstack.org/api-ref/identity/v3/index.html#delete-domain
 	rpc DeleteDomain(DeleteDomainRequest) returns (google.protobuf.Empty) {}
+	// https://developer.openstack.org/api-ref/identity/v3/index.html#update-domain
 	rpc PatchDomain(PatchDomainRequest) returns (PatchDomainResponse) {}
+	// https://developer.openstack.org/api-ref/identity/v3/index.html#show-domain-details
 	rpc GetDomain(GetDomainRequest) returns (GetDomainResponse) {}
-	rpc ListDomain(ListDomainRequest) returns (ListDomainResponse) {}
+	// https://developer.openstack.org/api-ref/identity/v3/index.html#list-domains
+	rpc ListDomains(ListDomainsRequest) returns (ListDomainsResponse) {}
 
+	// https://developer.openstack.org/api-ref/identity/v3/index.html#create-project
+	rpc CreateProject(CreateProjectRequest) returns (CreateProjectResponse) {}
+	// https://developer.openstack.org/api-ref/identity/v3/index.html#delete-project
+	rpc DeleteProject(DeleteProjectRequest) returns (google.protobuf.Empty) {}
+	// https://developer.openstack.org/api-ref/identity/v3/index.html#update-project
+	rpc PatchProject(PatchProjectRequest) returns (PatchProjectResponse) {}
+	// https://developer.openstack.org/api-ref/identity/v3/index.html#show-project-details
+	rpc GetProject(GetProjectRequest) returns (GetProjectResponse) {}
+	// https://developer.openstack.org/api-ref/identity/v3/index.html#list-projects
+	rpc ListProjects(ListProjectsRequest) returns (ListProjectsResponse) {}
+	// https://developer.openstack.org/api-ref/identity/v3/index.html#list-projects-for-user
+	rpc ListProjectsForUser(ListProjectsForUserRequest) returns (ListProjectsForUserResponse) {}
+
+	// https://developer.openstack.org/api-ref/identity/v3/index.html#create-user
 	rpc CreateUser(CreateUserRequest) returns (CreateUserResponse) {}
+	// https://developer.openstack.org/api-ref/identity/v3/index.html#delete-user
 	rpc DeleteUser(DeleteUserRequest) returns (google.protobuf.Empty) {}
+	// https://developer.openstack.org/api-ref/identity/v3/index.html#update-user
 	rpc PatchUser(PatchUserRequest) returns (PatchUserResponse) {}
+	// https://developer.openstack.org/api-ref/identity/v3/index.html#show-user-details
 	rpc GetUser(GetUserRequest) returns (GetUserResponse) {}
-	rpc ListUser(ListUserRequest) returns (ListUserResponse) {}
+	// https://developer.openstack.org/api-ref/identity/v3/index.html#list-users
+	rpc ListUsers(ListUsersRequest) returns (ListUsersResponse) {}
+	// https://developer.openstack.org/api-ref/identity/v3/index.html#change-password-for-user
 	rpc ChangePassword(ChangePasswordRequest) returns (google.protobuf.Empty) {}
-	rpc ListUserInGroup(ListUserInGroupRequest) returns (ListUserInGroupResponse) {}
-	// ListProjectForUser
+	// https://developer.openstack.org/api-ref/identity/v3/index.html#list-users-in-group
+	rpc ListUsersInGroup(ListUsersInGroupRequest) returns (ListUsersInGroupResponse) {}
 
+	// https://developer.openstack.org/api-ref/identity/v3/index.html#create-group
 	rpc CreateGroup(CreateGroupRequest) returns (CreateGroupResponse) {}
+	// https://developer.openstack.org/api-ref/identity/v3/index.html#delete-group
 	rpc DeleteGroup(DeleteGroupRequest) returns (google.protobuf.Empty) {}
+	// https://developer.openstack.org/api-ref/identity/v3/index.html#update-group
 	rpc PatchGroup(PatchGroupRequest) returns (PatchGroupResponse) {}
+	// https://developer.openstack.org/api-ref/identity/v3/index.html#show-group-details
 	rpc GetGroup(GetGroupRequest) returns (GetGroupResponse) {}
-	rpc ListGroup(ListGroupRequest) returns (ListGroupResponse) {}
+	// https://developer.openstack.org/api-ref/identity/v3/index.html#list-groups
+	rpc ListGroups(ListGroupsRequest) returns (ListGroupsResponse) {}
+	// https://developer.openstack.org/api-ref/identity/v3/index.html#add-user-to-group
 	rpc AddUserToGroup(AddUserToGroupRequest) returns (google.protobuf.Empty) {}
+	// https://developer.openstack.org/api-ref/identity/v3/index.html#remove-user-from-group
 	rpc RemoveUserFromGroup(RemoveUserFromGroupRequest) returns (google.protobuf.Empty) {}
-	rpc CheckUserInGroup(CheckUserInGroupRequest) returns (google.protobuf.Empty) {}
-	rpc ListGroupForUser(ListGroupForUserRequest) returns (ListGroupForUserResponse) {}
+	// https://developer.openstack.org/api-ref/identity/v3/index.html#check-whether-user-belongs-to-group
+	rpc CheckUserForGroup(CheckUserForGroupRequest) returns (google.protobuf.Empty) {}
+	// https://developer.openstack.org/api-ref/identity/v3/index.html#list-groups-to-which-a-user-belongs
+	rpc ListGroupsForUser(ListGroupsForUserRequest) returns (ListGroupsForUserResponse) {}
 
+	// https://developer.openstack.org/api-ref/identity/v3/index.html#create-role
 	rpc CreateRole(CreateRoleRequest) returns (CreateRoleResponse) {}
+	// https://developer.openstack.org/api-ref/identity/v3/index.html#delete-role
 	rpc DeleteRole(DeleteRoleRequest) returns (google.protobuf.Empty) {}
+	// https://developer.openstack.org/api-ref/identity/v3/index.html#update-role
 	rpc PatchRole(PatchRoleRequest) returns (PatchRoleResponse) {}
 	rpc GetRole(GetRoleRequest) returns (GetRoleResponse) {}
-	rpc ListRole(ListRoleRequest) returns (ListRoleResponse) {}
+	// https://developer.openstack.org/api-ref/identity/v3/index.html#list-roles
+	rpc ListRoles(ListRolesRequest) returns (ListRolesResponse) {}
+	// https://developer.openstack.org/api-ref/identity/v3/index.html#assign-role-to-group-on-domain
 	rpc AddRoleToGroupOnDomain(AddRoleToGroupOnDomainRequest) returns (google.protobuf.Empty) {}
+	// https://developer.openstack.org/api-ref/identity/v3/index.html#unassign-role-from-group-on-domain
 	rpc RemoveRoleFromGroupOnDomain(RemoveRoleFromGroupOnDomainRequest) returns (google.protobuf.Empty) {}
-	rpc CheckRoleInGroupOnDomain(CheckRoleInGroupOnDomainRequest) returns (google.protobuf.Empty) {}
-	rpc ListRoleInGroupOnDomain(ListRoleInGroupOnDomainRequest) returns (ListRoleInGroupOnDomainResponse) {}
+	// https://developer.openstack.org/api-ref/identity/v3/index.html#check-whether-user-has-role-assignment-on-domain
+	rpc CheckRoleForGroupOnDomain(CheckRoleForGroupOnDomainRequest) returns (google.protobuf.Empty) {}
+	// https://developer.openstack.org/api-ref/identity/v3/index.html#list-role-assignments-for-group-on-domain
+	rpc ListRolesForGroupOnDomain(ListRolesForGroupOnDomainRequest) returns (ListRolesForGroupOnDomainResponse) {}
+	// https://developer.openstack.org/api-ref/identity/v3/index.html#list-role-assignments-for-group-on-domain
 	rpc AddRoleToUserOnDomain(AddRoleToUserOnDomainRequest) returns (google.protobuf.Empty) {}
+	// https://developer.openstack.org/api-ref/identity/v3/index.html#list-role-assignments-for-group-on-domain
 	rpc RemoveRoleFromUserOnDomain(RemoveRoleFromUserOnDomainRequest) returns (google.protobuf.Empty) {}
-	rpc CheckRoleInUserOnDomain(CheckRoleInUserOnDomainRequest) returns (google.protobuf.Empty) {}
-	rpc ListRoleInUserOnDomain(ListRoleInUserOnDomainRequest) returns (ListRoleInUserOnDomainResponse) {}
-	// AddRoleToGroupOnProject
-	// RemoveRoleFromGroupOnProject
-	// CheckRoleInGroupOnProject
-	// ListRoleInGroupOnProject
-	// AddRoleToUserOnProject
-	// RemoveRoleToUserOnProject
-	// CheckRoleInUserOnProject
-	// ListRoleInUserOnProject
+	// https://developer.openstack.org/api-ref/identity/v3/index.html#list-role-assignments-for-group-on-domain
+	rpc CheckRoleForUserOnDomain(CheckRoleForUserOnDomainRequest) returns (google.protobuf.Empty) {}
+	// https://developer.openstack.org/api-ref/identity/v3/index.html#list-role-assignments-for-group-on-domain
+	rpc ListRolesForUserOnDomain(ListRolesForUserOnDomainRequest) returns (ListRolesForUserOnDomainResponse) {}
+	// https://developer.openstack.org/api-ref/identity/v3/index.html#assign-role-to-group-on-project
+	rpc AddRoleToGroupOnProject(AddRoleToGroupOnProjectRequest) returns (google.protobuf.Empty) {}
+	// https://developer.openstack.org/api-ref/identity/v3/index.html#assign-role-to-group-on-project
+	rpc  RemoveRoleFromGroupOnProject(RemoveRoleFromGroupOnProjectRequest) returns (google.protobuf.Empty) {}
+	// https://developer.openstack.org/api-ref/identity/v3/index.html#check-whether-group-has-role-assignment-on-project
+	rpc CheckRoleForGroupOnProject(CheckRoleForGroupOnProjectRequest) returns (google.protobuf.Empty) {}
+	// https://developer.openstack.org/api-ref/identity/v3/index.html#list-role-assignments-for-user-on-project
+	rpc ListRolesForGroupOnProject(ListRolesForGroupOnProjectRequest) returns (ListRolesForGroupOnProjectResponse) {}
+	// https://developer.openstack.org/api-ref/identity/v3/index.html#assign-role-to-user-on-project
+	rpc AddRoleToUserOnProject(AddRoleToUserOnProjectRequest) returns (google.protobuf.Empty) {}
+	// https://developer.openstack.org/api-ref/identity/v3/index.html#unassign-role-from-user-on-project
+	rpc RemoveRoleFromUserOnProject(RemoveRoleFromUserOnProjectRequest) returns (google.protobuf.Empty) {}
+	// https://developer.openstack.org/api-ref/identity/v3/index.html#check-whether-user-has-role-assignment-on-project
+	rpc CheckRoleForUserOnProject(CheckRoleForUserOnProjectRequest) returns (google.protobuf.Empty) {}
+	// https://developer.openstack.org/api-ref/identity/v3/index.html#list-role-assignments-for-user-on-project
+	rpc ListRolesForUserOnProject(ListRolesForUserOnProjectRequest) returns (ListRolesForUserOnProjectResponse) {}
 }

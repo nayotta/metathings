@@ -23,7 +23,7 @@ type ChangePasswordRequest struct {
 func (m *ChangePasswordRequest) Reset()                    { *m = ChangePasswordRequest{} }
 func (m *ChangePasswordRequest) String() string            { return proto.CompactTextString(m) }
 func (*ChangePasswordRequest) ProtoMessage()               {}
-func (*ChangePasswordRequest) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{0} }
+func (*ChangePasswordRequest) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{0} }
 
 func (m *ChangePasswordRequest) GetUserId() *google_protobuf.StringValue {
 	if m != nil {
@@ -50,9 +50,9 @@ func init() {
 	proto.RegisterType((*ChangePasswordRequest)(nil), "ai.metathings.service.identity.ChangePasswordRequest")
 }
 
-func init() { proto.RegisterFile("change_password.proto", fileDescriptor3) }
+func init() { proto.RegisterFile("change_password.proto", fileDescriptor5) }
 
-var fileDescriptor3 = []byte{
+var fileDescriptor5 = []byte{
 	// 247 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x8f, 0x41, 0x4b, 0xc4, 0x30,
 	0x10, 0x46, 0xe9, 0x0a, 0x55, 0xe2, 0x45, 0x0b, 0x0b, 0xcb, 0x22, 0xeb, 0xe2, 0xc9, 0xcb, 0x26,

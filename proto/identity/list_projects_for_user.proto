@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package ai.metathings.service.identity;
+
+import "google/protobuf/wrappers.proto";
+
+import "github.com/mwitkow/go-proto-validators/validator.proto";
+
+import "project.proto";
+
+message ListProjectsForUserRequest {
+	google.protobuf.StringValue user_id = 1 [(validator.field) = {msg_exists: true}];
+}
+
+message ListProjectsForUserResponse {
+	repeated Project projects = 1;
+}

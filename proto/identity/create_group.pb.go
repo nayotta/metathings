@@ -23,7 +23,7 @@ type CreateGroupRequest struct {
 func (m *CreateGroupRequest) Reset()                    { *m = CreateGroupRequest{} }
 func (m *CreateGroupRequest) String() string            { return proto.CompactTextString(m) }
 func (*CreateGroupRequest) ProtoMessage()               {}
-func (*CreateGroupRequest) Descriptor() ([]byte, []int) { return fileDescriptor8, []int{0} }
+func (*CreateGroupRequest) Descriptor() ([]byte, []int) { return fileDescriptor12, []int{0} }
 
 func (m *CreateGroupRequest) GetDomainId() *google_protobuf.StringValue {
 	if m != nil {
@@ -53,7 +53,7 @@ type CreateGroupResponse struct {
 func (m *CreateGroupResponse) Reset()                    { *m = CreateGroupResponse{} }
 func (m *CreateGroupResponse) String() string            { return proto.CompactTextString(m) }
 func (*CreateGroupResponse) ProtoMessage()               {}
-func (*CreateGroupResponse) Descriptor() ([]byte, []int) { return fileDescriptor8, []int{1} }
+func (*CreateGroupResponse) Descriptor() ([]byte, []int) { return fileDescriptor12, []int{1} }
 
 func (m *CreateGroupResponse) GetGroup() *Group {
 	if m != nil {
@@ -67,9 +67,9 @@ func init() {
 	proto.RegisterType((*CreateGroupResponse)(nil), "ai.metathings.service.identity.CreateGroupResponse")
 }
 
-func init() { proto.RegisterFile("create_group.proto", fileDescriptor8) }
+func init() { proto.RegisterFile("create_group.proto", fileDescriptor12) }
 
-var fileDescriptor8 = []byte{
+var fileDescriptor12 = []byte{
 	// 276 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0xd0, 0xc1, 0x4a, 0x03, 0x31,
 	0x10, 0x06, 0x60, 0xb6, 0x6a, 0xd1, 0xf4, 0x16, 0x2f, 0xa5, 0x48, 0x2d, 0x05, 0xc1, 0x4b, 0xb3,

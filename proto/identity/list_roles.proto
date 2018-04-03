@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package ai.metathings.service.identity;
+
+import "google/protobuf/wrappers.proto";
+
+import "github.com/mwitkow/go-proto-validators/validator.proto";
+
+import "role.proto";
+
+message ListRolesRequest {
+	google.protobuf.StringValue name = 1;
+	google.protobuf.StringValue domain_id = 2;
+}
+
+message ListRolesResponse {
+	repeated Role roles = 1;
+}

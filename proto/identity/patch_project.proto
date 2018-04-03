@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package ai.metathings.service.identity;
+
+import "google/protobuf/wrappers.proto";
+
+import "github.com/mwitkow/go-proto-validators/validator.proto";
+
+import "project.proto";
+
+message PatchProjectRequest {
+	// Disable project as a domain
+	reserved "is_domain";
+	// Deprecated
+	reserved "domain_id";
+
+	google.protobuf.StringValue id = 1 [(validator.field) = {msg_exists: true}];
+	google.protobuf.BoolValue enabled = 2;
+	google.protobuf.StringValue name = 3;
+	google.protobuf.StringValue description = 4;
+	repeated google.protobuf.StringValue tags = 5;
+}
+
+message PatchProjectResponse {
+	Project project = 1;
+}

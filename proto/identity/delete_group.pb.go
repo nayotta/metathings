@@ -21,7 +21,7 @@ type DeleteGroupRequest struct {
 func (m *DeleteGroupRequest) Reset()                    { *m = DeleteGroupRequest{} }
 func (m *DeleteGroupRequest) String() string            { return proto.CompactTextString(m) }
 func (*DeleteGroupRequest) ProtoMessage()               {}
-func (*DeleteGroupRequest) Descriptor() ([]byte, []int) { return fileDescriptor12, []int{0} }
+func (*DeleteGroupRequest) Descriptor() ([]byte, []int) { return fileDescriptor17, []int{0} }
 
 func (m *DeleteGroupRequest) GetGroupId() *google_protobuf.StringValue {
 	if m != nil {
@@ -34,9 +34,9 @@ func init() {
 	proto.RegisterType((*DeleteGroupRequest)(nil), "ai.metathings.service.identity.DeleteGroupRequest")
 }
 
-func init() { proto.RegisterFile("delete_group.proto", fileDescriptor12) }
+func init() { proto.RegisterFile("delete_group.proto", fileDescriptor17) }
 
-var fileDescriptor12 = []byte{
+var fileDescriptor17 = []byte{
 	// 207 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x3c, 0xce, 0xc1, 0x4a, 0xc4, 0x30,
 	0x10, 0xc6, 0x71, 0xea, 0x61, 0x95, 0x7a, 0xcb, 0x49, 0x16, 0x59, 0x17, 0x4f, 0x5e, 0x76, 0x02,

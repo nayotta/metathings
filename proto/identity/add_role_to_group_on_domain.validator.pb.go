@@ -6,40 +6,56 @@ Package identity is a generated protocol buffer package.
 
 It is generated from these files:
 	add_role_to_group_on_domain.proto
+	add_role_to_group_on_project.proto
 	add_role_to_user_on_domain.proto
+	add_role_to_user_on_project.proto
 	add_user_to_group.proto
 	change_password.proto
-	check_role_in_group_on_domain.proto
-	check_role_in_user_on_domain.proto
-	check_user_in_group.proto
+	check_role_for_group_on_domain.proto
+	check_role_for_group_on_project.proto
+	check_role_for_user_on_domain.proto
+	check_role_for_user_on_project.proto
+	check_user_for_group.proto
 	create_domain.proto
 	create_group.proto
+	create_project.proto
 	create_role.proto
 	create_user.proto
 	delete_domain.proto
 	delete_group.proto
+	delete_project.proto
 	delete_role.proto
 	delete_user.proto
 	domain.proto
 	get_domain.proto
 	get_group.proto
+	get_project.proto
 	get_role.proto
 	get_user.proto
 	group.proto
-	list_domain.proto
-	list_group.proto
-	list_group_for_user.proto
-	list_role.proto
+	list_domains.proto
+	list_groups.proto
+	list_groups_for_user.proto
+	list_projects.proto
+	list_projects_for_user.proto
 	list_role_in_group_on_domain.proto
-	list_role_in_user_on_domain.proto
-	list_user.proto
-	list_user_in_group.proto
+	list_roles.proto
+	list_roles_for_group_on_domain.proto
+	list_roles_for_group_on_project.proto
+	list_roles_for_user_on_domain.proto
+	list_roles_for_user_on_project.proto
+	list_users.proto
+	list_users_in_group.proto
 	patch_domain.proto
 	patch_group.proto
+	patch_project.proto
 	patch_role.proto
 	patch_user.proto
+	project.proto
 	remove_role_from_group_on_domain.proto
+	remove_role_from_group_on_project.proto
 	remove_role_from_user_on_domain.proto
+	remove_role_from_user_on_project.proto
 	remove_user_from_group.proto
 	role.proto
 	service.proto
@@ -47,22 +63,29 @@ It is generated from these files:
 
 It has these top-level messages:
 	AddRoleToGroupOnDomainRequest
+	AddRoleToGroupOnProjectRequest
 	AddRoleToUserOnDomainRequest
+	AddRoleToUserOnProjectRequest
 	AddUserToGroupRequest
 	ChangePasswordRequest
-	CheckRoleInGroupOnDomainRequest
-	CheckRoleInUserOnDomainRequest
-	CheckUserInGroupRequest
+	CheckRoleForGroupOnDomainRequest
+	CheckRoleForGroupOnProjectRequest
+	CheckRoleForUserOnDomainRequest
+	CheckRoleForUserOnProjectRequest
+	CheckUserForGroupRequest
 	CreateDomainRequest
 	CreateDomainResponse
 	CreateGroupRequest
 	CreateGroupResponse
+	CreateProjectRequest
+	CreateProjectResponse
 	CreateRoleRequest
 	CreateRoleResponse
 	CreateUserRequest
 	CreateUserResponse
 	DeleteDomainRequest
 	DeleteGroupRequest
+	DeleteProjectRequest
 	DeleteRoleRequest
 	DeleteUserRequest
 	Domain
@@ -70,37 +93,54 @@ It has these top-level messages:
 	GetDomainResponse
 	GetGroupRequest
 	GetGroupResponse
+	GetProjectRequest
+	GetProjectResponse
 	GetRoleRequest
 	GetRoleResponse
 	GetUserRequest
 	GetUserResponse
 	Group
-	ListDomainRequest
-	ListDomainResponse
-	ListGroupRequest
-	ListGroupResponse
-	ListGroupForUserRequest
-	ListGroupForUserResponse
-	ListRoleRequest
-	ListRoleResponse
+	ListDomainsRequest
+	ListDomainsResponse
+	ListGroupsRequest
+	ListGroupsResponse
+	ListGroupsForUserRequest
+	ListGroupsForUserResponse
+	ListProjectsRequest
+	ListProjectsResponse
+	ListProjectsForUserRequest
+	ListProjectsForUserResponse
 	ListRoleInGroupOnDomainRequest
 	ListRoleInGroupOnDomainResponse
-	ListRoleInUserOnDomainRequest
-	ListRoleInUserOnDomainResponse
-	ListUserRequest
-	ListUserResponse
-	ListUserInGroupRequest
-	ListUserInGroupResponse
+	ListRolesRequest
+	ListRolesResponse
+	ListRolesForGroupOnDomainRequest
+	ListRolesForGroupOnDomainResponse
+	ListRolesForGroupOnProjectRequest
+	ListRolesForGroupOnProjectResponse
+	ListRolesForUserOnDomainRequest
+	ListRolesForUserOnDomainResponse
+	ListRolesForUserOnProjectRequest
+	ListRolesForUserOnProjectResponse
+	ListUsersRequest
+	ListUsersResponse
+	ListUsersInGroupRequest
+	ListUsersInGroupResponse
 	PatchDomainRequest
 	PatchDomainResponse
 	PatchGroupRequest
 	PatchGroupResponse
+	PatchProjectRequest
+	PatchProjectResponse
 	PatchRoleRequest
 	PatchRoleResponse
 	PatchUserRequest
 	PatchUserResponse
+	Project
 	RemoveRoleFromGroupOnDomainRequest
+	RemoveRoleFromGroupOnProjectRequest
 	RemoveRoleFromUserOnDomainRequest
+	RemoveRoleFromUserOnProjectRequest
 	RemoveUserFromGroupRequest
 	Role
 	User
