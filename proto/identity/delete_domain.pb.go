@@ -6,7 +6,7 @@ package identity
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import google_protobuf1 "github.com/golang/protobuf/ptypes/wrappers"
+import google_protobuf "github.com/golang/protobuf/ptypes/wrappers"
 import _ "github.com/mwitkow/go-proto-validators"
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -15,15 +15,15 @@ var _ = fmt.Errorf
 var _ = math.Inf
 
 type DeleteDomainRequest struct {
-	DomainId *google_protobuf1.StringValue `protobuf:"bytes,1,opt,name=domain_id,json=domainId" json:"domain_id,omitempty"`
+	DomainId *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=domain_id,json=domainId" json:"domain_id,omitempty"`
 }
 
 func (m *DeleteDomainRequest) Reset()                    { *m = DeleteDomainRequest{} }
 func (m *DeleteDomainRequest) String() string            { return proto.CompactTextString(m) }
 func (*DeleteDomainRequest) ProtoMessage()               {}
-func (*DeleteDomainRequest) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{0} }
+func (*DeleteDomainRequest) Descriptor() ([]byte, []int) { return fileDescriptor11, []int{0} }
 
-func (m *DeleteDomainRequest) GetDomainId() *google_protobuf1.StringValue {
+func (m *DeleteDomainRequest) GetDomainId() *google_protobuf.StringValue {
 	if m != nil {
 		return m.DomainId
 	}
@@ -34,9 +34,9 @@ func init() {
 	proto.RegisterType((*DeleteDomainRequest)(nil), "ai.metathings.service.identity.DeleteDomainRequest")
 }
 
-func init() { proto.RegisterFile("delete_domain.proto", fileDescriptor4) }
+func init() { proto.RegisterFile("delete_domain.proto", fileDescriptor11) }
 
-var fileDescriptor4 = []byte{
+var fileDescriptor11 = []byte{
 	// 209 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x3c, 0xce, 0xc1, 0x4a, 0x03, 0x31,
 	0x10, 0xc6, 0x71, 0xd6, 0x43, 0xd1, 0xf5, 0xd6, 0x5e, 0xa4, 0x48, 0x2d, 0x9e, 0xbc, 0x74, 0x02,

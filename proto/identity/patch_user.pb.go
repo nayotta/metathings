@@ -6,7 +6,7 @@ package identity
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import google_protobuf1 "github.com/golang/protobuf/ptypes/wrappers"
+import google_protobuf "github.com/golang/protobuf/ptypes/wrappers"
 import _ "github.com/mwitkow/go-proto-validators"
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -15,42 +15,42 @@ var _ = fmt.Errorf
 var _ = math.Inf
 
 type PatchUserRequest struct {
-	UserId           *google_protobuf1.StringValue `protobuf:"bytes,1,opt,name=user_id,json=userId" json:"user_id,omitempty"`
-	DefaultProjectId *google_protobuf1.StringValue `protobuf:"bytes,2,opt,name=default_project_id,json=defaultProjectId" json:"default_project_id,omitempty"`
+	UserId           *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=user_id,json=userId" json:"user_id,omitempty"`
+	DefaultProjectId *google_protobuf.StringValue `protobuf:"bytes,2,opt,name=default_project_id,json=defaultProjectId" json:"default_project_id,omitempty"`
 	// Disable change name feature
 	// google.protobuf.StringValue name = 3;
-	Password *google_protobuf1.StringValue `protobuf:"bytes,4,opt,name=password" json:"password,omitempty"`
-	Enabled  *google_protobuf1.BoolValue   `protobuf:"bytes,5,opt,name=enabled" json:"enabled,omitempty"`
-	Extra    map[string]string             `protobuf:"bytes,6,rep,name=extra" json:"extra,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	Password *google_protobuf.StringValue `protobuf:"bytes,4,opt,name=password" json:"password,omitempty"`
+	Enabled  *google_protobuf.BoolValue   `protobuf:"bytes,5,opt,name=enabled" json:"enabled,omitempty"`
+	Extra    map[string]string            `protobuf:"bytes,6,rep,name=extra" json:"extra,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 }
 
 func (m *PatchUserRequest) Reset()                    { *m = PatchUserRequest{} }
 func (m *PatchUserRequest) String() string            { return proto.CompactTextString(m) }
 func (*PatchUserRequest) ProtoMessage()               {}
-func (*PatchUserRequest) Descriptor() ([]byte, []int) { return fileDescriptor10, []int{0} }
+func (*PatchUserRequest) Descriptor() ([]byte, []int) { return fileDescriptor32, []int{0} }
 
-func (m *PatchUserRequest) GetUserId() *google_protobuf1.StringValue {
+func (m *PatchUserRequest) GetUserId() *google_protobuf.StringValue {
 	if m != nil {
 		return m.UserId
 	}
 	return nil
 }
 
-func (m *PatchUserRequest) GetDefaultProjectId() *google_protobuf1.StringValue {
+func (m *PatchUserRequest) GetDefaultProjectId() *google_protobuf.StringValue {
 	if m != nil {
 		return m.DefaultProjectId
 	}
 	return nil
 }
 
-func (m *PatchUserRequest) GetPassword() *google_protobuf1.StringValue {
+func (m *PatchUserRequest) GetPassword() *google_protobuf.StringValue {
 	if m != nil {
 		return m.Password
 	}
 	return nil
 }
 
-func (m *PatchUserRequest) GetEnabled() *google_protobuf1.BoolValue {
+func (m *PatchUserRequest) GetEnabled() *google_protobuf.BoolValue {
 	if m != nil {
 		return m.Enabled
 	}
@@ -71,7 +71,7 @@ type PatchUserResponse struct {
 func (m *PatchUserResponse) Reset()                    { *m = PatchUserResponse{} }
 func (m *PatchUserResponse) String() string            { return proto.CompactTextString(m) }
 func (*PatchUserResponse) ProtoMessage()               {}
-func (*PatchUserResponse) Descriptor() ([]byte, []int) { return fileDescriptor10, []int{1} }
+func (*PatchUserResponse) Descriptor() ([]byte, []int) { return fileDescriptor32, []int{1} }
 
 func (m *PatchUserResponse) GetUser() *User {
 	if m != nil {
@@ -85,9 +85,9 @@ func init() {
 	proto.RegisterType((*PatchUserResponse)(nil), "ai.metathings.service.identity.PatchUserResponse")
 }
 
-func init() { proto.RegisterFile("patch_user.proto", fileDescriptor10) }
+func init() { proto.RegisterFile("patch_user.proto", fileDescriptor32) }
 
-var fileDescriptor10 = []byte{
+var fileDescriptor32 = []byte{
 	// 393 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x91, 0x41, 0x8b, 0xd4, 0x30,
 	0x1c, 0xc5, 0xe9, 0xb4, 0xd3, 0xdd, 0xc9, 0x5e, 0x6a, 0xf0, 0x50, 0x8a, 0xac, 0xc3, 0xe2, 0x61,

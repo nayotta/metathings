@@ -6,7 +6,7 @@ package identity
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import google_protobuf1 "github.com/golang/protobuf/ptypes/wrappers"
+import google_protobuf "github.com/golang/protobuf/ptypes/wrappers"
 import _ "github.com/mwitkow/go-proto-validators"
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -15,31 +15,31 @@ var _ = fmt.Errorf
 var _ = math.Inf
 
 type CreateDomainRequest struct {
-	Name        *google_protobuf1.StringValue `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
-	Description *google_protobuf1.StringValue `protobuf:"bytes,2,opt,name=description" json:"description,omitempty"`
-	Enabled     *google_protobuf1.BoolValue   `protobuf:"bytes,3,opt,name=enabled" json:"enabled,omitempty"`
+	Name        *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
+	Description *google_protobuf.StringValue `protobuf:"bytes,2,opt,name=description" json:"description,omitempty"`
+	Enabled     *google_protobuf.BoolValue   `protobuf:"bytes,3,opt,name=enabled" json:"enabled,omitempty"`
 }
 
 func (m *CreateDomainRequest) Reset()                    { *m = CreateDomainRequest{} }
 func (m *CreateDomainRequest) String() string            { return proto.CompactTextString(m) }
 func (*CreateDomainRequest) ProtoMessage()               {}
-func (*CreateDomainRequest) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{0} }
+func (*CreateDomainRequest) Descriptor() ([]byte, []int) { return fileDescriptor7, []int{0} }
 
-func (m *CreateDomainRequest) GetName() *google_protobuf1.StringValue {
+func (m *CreateDomainRequest) GetName() *google_protobuf.StringValue {
 	if m != nil {
 		return m.Name
 	}
 	return nil
 }
 
-func (m *CreateDomainRequest) GetDescription() *google_protobuf1.StringValue {
+func (m *CreateDomainRequest) GetDescription() *google_protobuf.StringValue {
 	if m != nil {
 		return m.Description
 	}
 	return nil
 }
 
-func (m *CreateDomainRequest) GetEnabled() *google_protobuf1.BoolValue {
+func (m *CreateDomainRequest) GetEnabled() *google_protobuf.BoolValue {
 	if m != nil {
 		return m.Enabled
 	}
@@ -53,7 +53,7 @@ type CreateDomainResponse struct {
 func (m *CreateDomainResponse) Reset()                    { *m = CreateDomainResponse{} }
 func (m *CreateDomainResponse) String() string            { return proto.CompactTextString(m) }
 func (*CreateDomainResponse) ProtoMessage()               {}
-func (*CreateDomainResponse) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{1} }
+func (*CreateDomainResponse) Descriptor() ([]byte, []int) { return fileDescriptor7, []int{1} }
 
 func (m *CreateDomainResponse) GetDomain() *Domain {
 	if m != nil {
@@ -67,9 +67,9 @@ func init() {
 	proto.RegisterType((*CreateDomainResponse)(nil), "ai.metathings.service.identity.CreateDomainResponse")
 }
 
-func init() { proto.RegisterFile("create_domain.proto", fileDescriptor3) }
+func init() { proto.RegisterFile("create_domain.proto", fileDescriptor7) }
 
-var fileDescriptor3 = []byte{
+var fileDescriptor7 = []byte{
 	// 279 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0xd0, 0x41, 0x4b, 0xc3, 0x30,
 	0x14, 0x07, 0x70, 0x3a, 0xa5, 0x42, 0xe6, 0xa9, 0xf3, 0x50, 0x8a, 0xcc, 0xb1, 0x83, 0x78, 0x59,

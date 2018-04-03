@@ -6,7 +6,7 @@ package identity
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import google_protobuf1 "github.com/golang/protobuf/ptypes/wrappers"
+import google_protobuf "github.com/golang/protobuf/ptypes/wrappers"
 import _ "github.com/mwitkow/go-proto-validators"
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -15,31 +15,31 @@ var _ = fmt.Errorf
 var _ = math.Inf
 
 type ListUserRequest struct {
-	DomainId *google_protobuf1.StringValue `protobuf:"bytes,1,opt,name=domain_id,json=domainId" json:"domain_id,omitempty"`
-	Enabled  *google_protobuf1.BoolValue   `protobuf:"bytes,2,opt,name=enabled" json:"enabled,omitempty"`
-	Name     *google_protobuf1.StringValue `protobuf:"bytes,4,opt,name=name" json:"name,omitempty"`
+	DomainId *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=domain_id,json=domainId" json:"domain_id,omitempty"`
+	Enabled  *google_protobuf.BoolValue   `protobuf:"bytes,2,opt,name=enabled" json:"enabled,omitempty"`
+	Name     *google_protobuf.StringValue `protobuf:"bytes,4,opt,name=name" json:"name,omitempty"`
 }
 
 func (m *ListUserRequest) Reset()                    { *m = ListUserRequest{} }
 func (m *ListUserRequest) String() string            { return proto.CompactTextString(m) }
 func (*ListUserRequest) ProtoMessage()               {}
-func (*ListUserRequest) Descriptor() ([]byte, []int) { return fileDescriptor12, []int{0} }
+func (*ListUserRequest) Descriptor() ([]byte, []int) { return fileDescriptor27, []int{0} }
 
-func (m *ListUserRequest) GetDomainId() *google_protobuf1.StringValue {
+func (m *ListUserRequest) GetDomainId() *google_protobuf.StringValue {
 	if m != nil {
 		return m.DomainId
 	}
 	return nil
 }
 
-func (m *ListUserRequest) GetEnabled() *google_protobuf1.BoolValue {
+func (m *ListUserRequest) GetEnabled() *google_protobuf.BoolValue {
 	if m != nil {
 		return m.Enabled
 	}
 	return nil
 }
 
-func (m *ListUserRequest) GetName() *google_protobuf1.StringValue {
+func (m *ListUserRequest) GetName() *google_protobuf.StringValue {
 	if m != nil {
 		return m.Name
 	}
@@ -53,7 +53,7 @@ type ListUserResponse struct {
 func (m *ListUserResponse) Reset()                    { *m = ListUserResponse{} }
 func (m *ListUserResponse) String() string            { return proto.CompactTextString(m) }
 func (*ListUserResponse) ProtoMessage()               {}
-func (*ListUserResponse) Descriptor() ([]byte, []int) { return fileDescriptor12, []int{1} }
+func (*ListUserResponse) Descriptor() ([]byte, []int) { return fileDescriptor27, []int{1} }
 
 func (m *ListUserResponse) GetUsers() []*User {
 	if m != nil {
@@ -67,9 +67,9 @@ func init() {
 	proto.RegisterType((*ListUserResponse)(nil), "ai.metathings.service.identity.ListUserResponse")
 }
 
-func init() { proto.RegisterFile("list_user.proto", fileDescriptor12) }
+func init() { proto.RegisterFile("list_user.proto", fileDescriptor27) }
 
-var fileDescriptor12 = []byte{
+var fileDescriptor27 = []byte{
 	// 331 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x91, 0xc1, 0x6b, 0xe2, 0x40,
 	0x14, 0xc6, 0x51, 0x63, 0x8c, 0xe3, 0xc1, 0x90, 0xbd, 0x04, 0x59, 0x44, 0x64, 0x0f, 0x5e, 0x9c,

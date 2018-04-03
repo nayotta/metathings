@@ -16,6 +16,32 @@ import "delete_user.proto";
 import "patch_user.proto";
 import "get_user.proto";
 import "list_user.proto";
+import "change_password.proto";
+import "list_user_in_group.proto";
+
+import "create_group.proto";
+import "delete_group.proto";
+import "patch_group.proto";
+import "get_group.proto";
+import "list_group.proto";
+import "add_user_to_group.proto";
+import "remove_user_from_group.proto";
+import "check_user_in_group.proto";
+import "list_group_for_user.proto";
+
+import "create_role.proto";
+import "delete_role.proto";
+import "patch_role.proto";
+import "get_role.proto";
+import "list_role.proto";
+import "add_role_to_group_on_domain.proto";
+import "remove_role_from_group_on_domain.proto";
+import "check_role_in_group_on_domain.proto";
+import "list_role_in_group_on_domain.proto";
+import "add_role_to_user_on_domain.proto";
+import "remove_role_from_user_on_domain.proto";
+import "check_role_in_user_on_domain.proto";
+import "list_role_in_user_on_domain.proto";
 
 service IdentityService {
 	rpc CreateDomain(CreateDomainRequest) returns (CreateDomainResponse) {}
@@ -29,4 +55,39 @@ service IdentityService {
 	rpc PatchUser(PatchUserRequest) returns (PatchUserResponse) {}
 	rpc GetUser(GetUserRequest) returns (GetUserResponse) {}
 	rpc ListUser(ListUserRequest) returns (ListUserResponse) {}
+	rpc ChangePassword(ChangePasswordRequest) returns (google.protobuf.Empty) {}
+	rpc ListUserInGroup(ListUserInGroupRequest) returns (ListUserInGroupResponse) {}
+	// ListProjectForUser
+
+	rpc CreateGroup(CreateGroupRequest) returns (CreateGroupResponse) {}
+	rpc DeleteGroup(DeleteGroupRequest) returns (google.protobuf.Empty) {}
+	rpc PatchGroup(PatchGroupRequest) returns (PatchGroupResponse) {}
+	rpc GetGroup(GetGroupRequest) returns (GetGroupResponse) {}
+	rpc ListGroup(ListGroupRequest) returns (ListGroupResponse) {}
+	rpc AddUserToGroup(AddUserToGroupRequest) returns (google.protobuf.Empty) {}
+	rpc RemoveUserFromGroup(RemoveUserFromGroupRequest) returns (google.protobuf.Empty) {}
+	rpc CheckUserInGroup(CheckUserInGroupRequest) returns (google.protobuf.Empty) {}
+	rpc ListGroupForUser(ListGroupForUserRequest) returns (ListGroupForUserResponse) {}
+
+	rpc CreateRole(CreateRoleRequest) returns (CreateRoleResponse) {}
+	rpc DeleteRole(DeleteRoleRequest) returns (google.protobuf.Empty) {}
+	rpc PatchRole(PatchRoleRequest) returns (PatchRoleResponse) {}
+	rpc GetRole(GetRoleRequest) returns (GetRoleResponse) {}
+	rpc ListRole(ListRoleRequest) returns (ListRoleResponse) {}
+	rpc AddRoleToGroupOnDomain(AddRoleToGroupOnDomainRequest) returns (google.protobuf.Empty) {}
+	rpc RemoveRoleFromGroupOnDomain(RemoveRoleFromGroupOnDomainRequest) returns (google.protobuf.Empty) {}
+	rpc CheckRoleInGroupOnDomain(CheckRoleInGroupOnDomainRequest) returns (google.protobuf.Empty) {}
+	rpc ListRoleInGroupOnDomain(ListRoleInGroupOnDomainRequest) returns (ListRoleInGroupOnDomainResponse) {}
+	rpc AddRoleToUserOnDomain(AddRoleToUserOnDomainRequest) returns (google.protobuf.Empty) {}
+	rpc RemoveRoleFromUserOnDomain(RemoveRoleFromUserOnDomainRequest) returns (google.protobuf.Empty) {}
+	rpc CheckRoleInUserOnDomain(CheckRoleInUserOnDomainRequest) returns (google.protobuf.Empty) {}
+	rpc ListRoleInUserOnDomain(ListRoleInUserOnDomainRequest) returns (ListRoleInUserOnDomainResponse) {}
+	// AddRoleToGroupOnProject
+	// RemoveRoleFromGroupOnProject
+	// CheckRoleInGroupOnProject
+	// ListRoleInGroupOnProject
+	// AddRoleToUserOnProject
+	// RemoveRoleToUserOnProject
+	// CheckRoleInUserOnProject
+	// ListRoleInUserOnProject
 }

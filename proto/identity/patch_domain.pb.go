@@ -6,7 +6,7 @@ package identity
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import google_protobuf1 "github.com/golang/protobuf/ptypes/wrappers"
+import google_protobuf "github.com/golang/protobuf/ptypes/wrappers"
 import _ "github.com/mwitkow/go-proto-validators"
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -15,39 +15,39 @@ var _ = fmt.Errorf
 var _ = math.Inf
 
 type PatchDomainRequest struct {
-	DomainId    *google_protobuf1.StringValue `protobuf:"bytes,1,opt,name=domain_id,json=domainId" json:"domain_id,omitempty"`
-	Name        *google_protobuf1.StringValue `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
-	Description *google_protobuf1.StringValue `protobuf:"bytes,3,opt,name=description" json:"description,omitempty"`
-	Enabled     *google_protobuf1.BoolValue   `protobuf:"bytes,4,opt,name=enabled" json:"enabled,omitempty"`
+	DomainId    *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=domain_id,json=domainId" json:"domain_id,omitempty"`
+	Name        *google_protobuf.StringValue `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
+	Description *google_protobuf.StringValue `protobuf:"bytes,3,opt,name=description" json:"description,omitempty"`
+	Enabled     *google_protobuf.BoolValue   `protobuf:"bytes,4,opt,name=enabled" json:"enabled,omitempty"`
 }
 
 func (m *PatchDomainRequest) Reset()                    { *m = PatchDomainRequest{} }
 func (m *PatchDomainRequest) String() string            { return proto.CompactTextString(m) }
 func (*PatchDomainRequest) ProtoMessage()               {}
-func (*PatchDomainRequest) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{0} }
+func (*PatchDomainRequest) Descriptor() ([]byte, []int) { return fileDescriptor29, []int{0} }
 
-func (m *PatchDomainRequest) GetDomainId() *google_protobuf1.StringValue {
+func (m *PatchDomainRequest) GetDomainId() *google_protobuf.StringValue {
 	if m != nil {
 		return m.DomainId
 	}
 	return nil
 }
 
-func (m *PatchDomainRequest) GetName() *google_protobuf1.StringValue {
+func (m *PatchDomainRequest) GetName() *google_protobuf.StringValue {
 	if m != nil {
 		return m.Name
 	}
 	return nil
 }
 
-func (m *PatchDomainRequest) GetDescription() *google_protobuf1.StringValue {
+func (m *PatchDomainRequest) GetDescription() *google_protobuf.StringValue {
 	if m != nil {
 		return m.Description
 	}
 	return nil
 }
 
-func (m *PatchDomainRequest) GetEnabled() *google_protobuf1.BoolValue {
+func (m *PatchDomainRequest) GetEnabled() *google_protobuf.BoolValue {
 	if m != nil {
 		return m.Enabled
 	}
@@ -61,7 +61,7 @@ type PatchDomainResponse struct {
 func (m *PatchDomainResponse) Reset()                    { *m = PatchDomainResponse{} }
 func (m *PatchDomainResponse) String() string            { return proto.CompactTextString(m) }
 func (*PatchDomainResponse) ProtoMessage()               {}
-func (*PatchDomainResponse) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{1} }
+func (*PatchDomainResponse) Descriptor() ([]byte, []int) { return fileDescriptor29, []int{1} }
 
 func (m *PatchDomainResponse) GetDomain() *Domain {
 	if m != nil {
@@ -75,9 +75,9 @@ func init() {
 	proto.RegisterType((*PatchDomainResponse)(nil), "ai.metathings.service.identity.PatchDomainResponse")
 }
 
-func init() { proto.RegisterFile("patch_domain.proto", fileDescriptor5) }
+func init() { proto.RegisterFile("patch_domain.proto", fileDescriptor29) }
 
-var fileDescriptor5 = []byte{
+var fileDescriptor29 = []byte{
 	// 295 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0xd1, 0xc1, 0x4b, 0xfb, 0x30,
 	0x14, 0x07, 0x70, 0xba, 0xdf, 0xd8, 0x4f, 0x33, 0x4f, 0xf1, 0x52, 0x86, 0xcc, 0xb1, 0x83, 0x78,

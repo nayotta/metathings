@@ -6,7 +6,7 @@ package identity
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import google_protobuf1 "github.com/golang/protobuf/ptypes/wrappers"
+import google_protobuf "github.com/golang/protobuf/ptypes/wrappers"
 import _ "github.com/mwitkow/go-proto-validators"
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -15,23 +15,23 @@ var _ = fmt.Errorf
 var _ = math.Inf
 
 type ListDomainRequest struct {
-	Name    *google_protobuf1.StringValue `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
-	Enabled *google_protobuf1.BoolValue   `protobuf:"bytes,2,opt,name=enabled" json:"enabled,omitempty"`
+	Name    *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
+	Enabled *google_protobuf.BoolValue   `protobuf:"bytes,2,opt,name=enabled" json:"enabled,omitempty"`
 }
 
 func (m *ListDomainRequest) Reset()                    { *m = ListDomainRequest{} }
 func (m *ListDomainRequest) String() string            { return proto.CompactTextString(m) }
 func (*ListDomainRequest) ProtoMessage()               {}
-func (*ListDomainRequest) Descriptor() ([]byte, []int) { return fileDescriptor7, []int{0} }
+func (*ListDomainRequest) Descriptor() ([]byte, []int) { return fileDescriptor21, []int{0} }
 
-func (m *ListDomainRequest) GetName() *google_protobuf1.StringValue {
+func (m *ListDomainRequest) GetName() *google_protobuf.StringValue {
 	if m != nil {
 		return m.Name
 	}
 	return nil
 }
 
-func (m *ListDomainRequest) GetEnabled() *google_protobuf1.BoolValue {
+func (m *ListDomainRequest) GetEnabled() *google_protobuf.BoolValue {
 	if m != nil {
 		return m.Enabled
 	}
@@ -45,7 +45,7 @@ type ListDomainResponse struct {
 func (m *ListDomainResponse) Reset()                    { *m = ListDomainResponse{} }
 func (m *ListDomainResponse) String() string            { return proto.CompactTextString(m) }
 func (*ListDomainResponse) ProtoMessage()               {}
-func (*ListDomainResponse) Descriptor() ([]byte, []int) { return fileDescriptor7, []int{1} }
+func (*ListDomainResponse) Descriptor() ([]byte, []int) { return fileDescriptor21, []int{1} }
 
 func (m *ListDomainResponse) GetDomains() []*Domain {
 	if m != nil {
@@ -59,9 +59,9 @@ func init() {
 	proto.RegisterType((*ListDomainResponse)(nil), "ai.metathings.service.identity.ListDomainResponse")
 }
 
-func init() { proto.RegisterFile("list_domain.proto", fileDescriptor7) }
+func init() { proto.RegisterFile("list_domain.proto", fileDescriptor21) }
 
-var fileDescriptor7 = []byte{
+var fileDescriptor21 = []byte{
 	// 252 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x7c, 0x90, 0x41, 0x4b, 0xc3, 0x40,
 	0x10, 0x85, 0xa9, 0x8a, 0x85, 0xad, 0x97, 0xe6, 0x14, 0x82, 0x94, 0xd2, 0x83, 0xf4, 0xd2, 0x8d,

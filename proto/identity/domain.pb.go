@@ -22,7 +22,7 @@ type Domain struct {
 func (m *Domain) Reset()                    { *m = Domain{} }
 func (m *Domain) String() string            { return proto.CompactTextString(m) }
 func (*Domain) ProtoMessage()               {}
-func (*Domain) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{0} }
+func (*Domain) Descriptor() ([]byte, []int) { return fileDescriptor15, []int{0} }
 
 func (m *Domain) GetId() string {
 	if m != nil {
@@ -56,9 +56,9 @@ func init() {
 	proto.RegisterType((*Domain)(nil), "ai.metathings.service.identity.Domain")
 }
 
-func init() { proto.RegisterFile("domain.proto", fileDescriptor1) }
+func init() { proto.RegisterFile("domain.proto", fileDescriptor15) }
 
-var fileDescriptor1 = []byte{
+var fileDescriptor15 = []byte{
 	// 151 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x4c, 0x8e, 0x31, 0x0a, 0xc2, 0x40,
 	0x10, 0x45, 0x49, 0x0c, 0x51, 0x47, 0xb1, 0x98, 0x6a, 0x2b, 0x09, 0x56, 0xa9, 0xb6, 0xf1, 0x0a,

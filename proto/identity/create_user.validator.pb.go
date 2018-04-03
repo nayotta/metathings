@@ -16,6 +16,9 @@ var _ = fmt.Errorf
 var _ = math.Inf
 
 func (this *CreateUserRequest) Validate() error {
+	if nil == this.DomainId {
+		return go_proto_validators.FieldError("DomainId", fmt.Errorf("message must exist"))
+	}
 	if this.DomainId != nil {
 		if err := go_proto_validators.CallValidatorIfExists(this.DomainId); err != nil {
 			return go_proto_validators.FieldError("DomainId", err)

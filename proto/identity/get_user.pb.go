@@ -6,7 +6,7 @@ package identity
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import google_protobuf1 "github.com/golang/protobuf/ptypes/wrappers"
+import google_protobuf "github.com/golang/protobuf/ptypes/wrappers"
 import _ "github.com/mwitkow/go-proto-validators"
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -15,15 +15,15 @@ var _ = fmt.Errorf
 var _ = math.Inf
 
 type GetUserRequest struct {
-	UserId *google_protobuf1.StringValue `protobuf:"bytes,1,opt,name=user_id,json=userId" json:"user_id,omitempty"`
+	UserId *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=user_id,json=userId" json:"user_id,omitempty"`
 }
 
 func (m *GetUserRequest) Reset()                    { *m = GetUserRequest{} }
 func (m *GetUserRequest) String() string            { return proto.CompactTextString(m) }
 func (*GetUserRequest) ProtoMessage()               {}
-func (*GetUserRequest) Descriptor() ([]byte, []int) { return fileDescriptor11, []int{0} }
+func (*GetUserRequest) Descriptor() ([]byte, []int) { return fileDescriptor19, []int{0} }
 
-func (m *GetUserRequest) GetUserId() *google_protobuf1.StringValue {
+func (m *GetUserRequest) GetUserId() *google_protobuf.StringValue {
 	if m != nil {
 		return m.UserId
 	}
@@ -37,7 +37,7 @@ type GetUserResponse struct {
 func (m *GetUserResponse) Reset()                    { *m = GetUserResponse{} }
 func (m *GetUserResponse) String() string            { return proto.CompactTextString(m) }
 func (*GetUserResponse) ProtoMessage()               {}
-func (*GetUserResponse) Descriptor() ([]byte, []int) { return fileDescriptor11, []int{1} }
+func (*GetUserResponse) Descriptor() ([]byte, []int) { return fileDescriptor19, []int{1} }
 
 func (m *GetUserResponse) GetUser() *User {
 	if m != nil {
@@ -51,9 +51,9 @@ func init() {
 	proto.RegisterType((*GetUserResponse)(nil), "ai.metathings.service.identity.GetUserResponse")
 }
 
-func init() { proto.RegisterFile("get_user.proto", fileDescriptor11) }
+func init() { proto.RegisterFile("get_user.proto", fileDescriptor19) }
 
-var fileDescriptor11 = []byte{
+var fileDescriptor19 = []byte{
 	// 239 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x7c, 0x8f, 0x41, 0x4b, 0xf3, 0x40,
 	0x10, 0x86, 0xc9, 0xc7, 0x47, 0x84, 0x15, 0x2a, 0xe4, 0x24, 0x45, 0x6a, 0x29, 0x1e, 0xbc, 0x74,

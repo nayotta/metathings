@@ -6,7 +6,7 @@ package identity
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import google_protobuf1 "github.com/golang/protobuf/ptypes/wrappers"
+import google_protobuf "github.com/golang/protobuf/ptypes/wrappers"
 import _ "github.com/mwitkow/go-proto-validators"
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -15,15 +15,15 @@ var _ = fmt.Errorf
 var _ = math.Inf
 
 type DeleteUserRequest struct {
-	UserId *google_protobuf1.StringValue `protobuf:"bytes,1,opt,name=user_id,json=userId" json:"user_id,omitempty"`
+	UserId *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=user_id,json=userId" json:"user_id,omitempty"`
 }
 
 func (m *DeleteUserRequest) Reset()                    { *m = DeleteUserRequest{} }
 func (m *DeleteUserRequest) String() string            { return proto.CompactTextString(m) }
 func (*DeleteUserRequest) ProtoMessage()               {}
-func (*DeleteUserRequest) Descriptor() ([]byte, []int) { return fileDescriptor9, []int{0} }
+func (*DeleteUserRequest) Descriptor() ([]byte, []int) { return fileDescriptor14, []int{0} }
 
-func (m *DeleteUserRequest) GetUserId() *google_protobuf1.StringValue {
+func (m *DeleteUserRequest) GetUserId() *google_protobuf.StringValue {
 	if m != nil {
 		return m.UserId
 	}
@@ -34,9 +34,9 @@ func init() {
 	proto.RegisterType((*DeleteUserRequest)(nil), "ai.metathings.service.identity.DeleteUserRequest")
 }
 
-func init() { proto.RegisterFile("delete_user.proto", fileDescriptor9) }
+func init() { proto.RegisterFile("delete_user.proto", fileDescriptor14) }
 
-var fileDescriptor9 = []byte{
+var fileDescriptor14 = []byte{
 	// 208 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x3c, 0x8e, 0x31, 0x4b, 0xc4, 0x40,
 	0x10, 0x46, 0x89, 0x45, 0x84, 0x58, 0xdd, 0x55, 0x72, 0xc8, 0x79, 0x58, 0xd9, 0xdc, 0x2c, 0x28,
