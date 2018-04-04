@@ -11,11 +11,11 @@ It is generated from these files:
 	add_role_to_user_on_project.proto
 	add_user_to_group.proto
 	change_password.proto
-	check_role_for_group_on_domain.proto
-	check_role_for_group_on_project.proto
-	check_role_for_user_on_domain.proto
-	check_role_for_user_on_project.proto
-	check_user_for_group.proto
+	check_role_in_group_on_domain.proto
+	check_role_in_group_on_project.proto
+	check_role_in_user_on_domain.proto
+	check_role_in_user_on_project.proto
+	check_user_in_group.proto
 	create_domain.proto
 	create_group.proto
 	create_project.proto
@@ -68,11 +68,11 @@ It has these top-level messages:
 	AddRoleToUserOnProjectRequest
 	AddUserToGroupRequest
 	ChangePasswordRequest
-	CheckRoleForGroupOnDomainRequest
-	CheckRoleForGroupOnProjectRequest
-	CheckRoleForUserOnDomainRequest
-	CheckRoleForUserOnProjectRequest
-	CheckUserForGroupRequest
+	CheckRoleInGroupOnDomainRequest
+	CheckRoleInGroupOnProjectRequest
+	CheckRoleInUserOnDomainRequest
+	CheckRoleInUserOnProjectRequest
+	CheckUserInGroupRequest
 	CreateDomainRequest
 	CreateDomainResponse
 	CreateGroupRequest

@@ -37,7 +37,7 @@ import "get_group.proto";
 import "list_groups.proto";
 import "add_user_to_group.proto";
 import "remove_user_from_group.proto";
-import "check_user_for_group.proto";
+import "check_user_in_group.proto";
 import "list_groups_for_user.proto";
 
 // Role
@@ -48,19 +48,19 @@ import "get_role.proto";
 import "list_roles.proto";
 import "add_role_to_group_on_domain.proto";
 import "remove_role_from_group_on_domain.proto";
-import "check_role_for_group_on_domain.proto";
+import "check_role_in_group_on_domain.proto";
 import "list_roles_for_group_on_domain.proto";
 import "add_role_to_user_on_domain.proto";
 import "remove_role_from_user_on_domain.proto";
-import "check_role_for_user_on_domain.proto";
+import "check_role_in_user_on_domain.proto";
 import "list_roles_for_user_on_domain.proto";
 import "add_role_to_group_on_project.proto";
 import "remove_role_from_group_on_project.proto";
-import "check_role_for_group_on_project.proto";
+import "check_role_in_group_on_project.proto";
 import "list_roles_for_group_on_project.proto";
 import "add_role_to_user_on_project.proto";
 import "remove_role_from_user_on_project.proto";
-import "check_role_for_user_on_project.proto";
+import "check_role_in_user_on_project.proto";
 import "list_roles_for_user_on_project.proto";
 
 service IdentityService {
@@ -118,7 +118,7 @@ service IdentityService {
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#remove-user-from-group
 	rpc RemoveUserFromGroup(RemoveUserFromGroupRequest) returns (google.protobuf.Empty) {}
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#check-whether-user-belongs-to-group
-	rpc CheckUserForGroup(CheckUserForGroupRequest) returns (google.protobuf.Empty) {}
+	rpc CheckUserInGroup(CheckUserInGroupRequest) returns (google.protobuf.Empty) {}
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#list-groups-to-which-a-user-belongs
 	rpc ListGroupsForUser(ListGroupsForUserRequest) returns (ListGroupsForUserResponse) {}
 
@@ -136,7 +136,7 @@ service IdentityService {
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#unassign-role-from-group-on-domain
 	rpc RemoveRoleFromGroupOnDomain(RemoveRoleFromGroupOnDomainRequest) returns (google.protobuf.Empty) {}
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#check-whether-user-has-role-assignment-on-domain
-	rpc CheckRoleForGroupOnDomain(CheckRoleForGroupOnDomainRequest) returns (google.protobuf.Empty) {}
+	rpc CheckRoleInGroupOnDomain(CheckRoleInGroupOnDomainRequest) returns (google.protobuf.Empty) {}
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#list-role-assignments-for-group-on-domain
 	rpc ListRolesForGroupOnDomain(ListRolesForGroupOnDomainRequest) returns (ListRolesForGroupOnDomainResponse) {}
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#list-role-assignments-for-group-on-domain
@@ -144,7 +144,7 @@ service IdentityService {
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#list-role-assignments-for-group-on-domain
 	rpc RemoveRoleFromUserOnDomain(RemoveRoleFromUserOnDomainRequest) returns (google.protobuf.Empty) {}
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#list-role-assignments-for-group-on-domain
-	rpc CheckRoleForUserOnDomain(CheckRoleForUserOnDomainRequest) returns (google.protobuf.Empty) {}
+	rpc CheckRoleInUserOnDomain(CheckRoleInUserOnDomainRequest) returns (google.protobuf.Empty) {}
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#list-role-assignments-for-group-on-domain
 	rpc ListRolesForUserOnDomain(ListRolesForUserOnDomainRequest) returns (ListRolesForUserOnDomainResponse) {}
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#assign-role-to-group-on-project
@@ -152,7 +152,7 @@ service IdentityService {
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#assign-role-to-group-on-project
 	rpc  RemoveRoleFromGroupOnProject(RemoveRoleFromGroupOnProjectRequest) returns (google.protobuf.Empty) {}
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#check-whether-group-has-role-assignment-on-project
-	rpc CheckRoleForGroupOnProject(CheckRoleForGroupOnProjectRequest) returns (google.protobuf.Empty) {}
+	rpc CheckRoleInGroupOnProject(CheckRoleInGroupOnProjectRequest) returns (google.protobuf.Empty) {}
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#list-role-assignments-for-user-on-project
 	rpc ListRolesForGroupOnProject(ListRolesForGroupOnProjectRequest) returns (ListRolesForGroupOnProjectResponse) {}
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#assign-role-to-user-on-project
@@ -160,7 +160,7 @@ service IdentityService {
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#unassign-role-from-user-on-project
 	rpc RemoveRoleFromUserOnProject(RemoveRoleFromUserOnProjectRequest) returns (google.protobuf.Empty) {}
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#check-whether-user-has-role-assignment-on-project
-	rpc CheckRoleForUserOnProject(CheckRoleForUserOnProjectRequest) returns (google.protobuf.Empty) {}
+	rpc CheckRoleInUserOnProject(CheckRoleInUserOnProjectRequest) returns (google.protobuf.Empty) {}
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#list-role-assignments-for-user-on-project
 	rpc ListRolesForUserOnProject(ListRolesForUserOnProjectRequest) returns (ListRolesForUserOnProjectResponse) {}
 }
