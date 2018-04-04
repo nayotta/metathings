@@ -21,7 +21,7 @@ type DeleteDomainRequest struct {
 func (m *DeleteDomainRequest) Reset()                    { *m = DeleteDomainRequest{} }
 func (m *DeleteDomainRequest) String() string            { return proto.CompactTextString(m) }
 func (*DeleteDomainRequest) ProtoMessage()               {}
-func (*DeleteDomainRequest) Descriptor() ([]byte, []int) { return fileDescriptor16, []int{0} }
+func (*DeleteDomainRequest) Descriptor() ([]byte, []int) { return fileDescriptor17, []int{0} }
 
 func (m *DeleteDomainRequest) GetDomainId() *google_protobuf.StringValue {
 	if m != nil {
@@ -34,9 +34,9 @@ func init() {
 	proto.RegisterType((*DeleteDomainRequest)(nil), "ai.metathings.service.identity.DeleteDomainRequest")
 }
 
-func init() { proto.RegisterFile("delete_domain.proto", fileDescriptor16) }
+func init() { proto.RegisterFile("delete_domain.proto", fileDescriptor17) }
 
-var fileDescriptor16 = []byte{
+var fileDescriptor17 = []byte{
 	// 209 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x3c, 0xce, 0xc1, 0x4a, 0x03, 0x31,
 	0x10, 0xc6, 0x71, 0xd6, 0x43, 0xd1, 0xf5, 0xd6, 0x5e, 0xa4, 0x48, 0x2d, 0x9e, 0xbc, 0x74, 0x02,

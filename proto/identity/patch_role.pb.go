@@ -22,7 +22,7 @@ type PatchRoleRequest struct {
 func (m *PatchRoleRequest) Reset()                    { *m = PatchRoleRequest{} }
 func (m *PatchRoleRequest) String() string            { return proto.CompactTextString(m) }
 func (*PatchRoleRequest) ProtoMessage()               {}
-func (*PatchRoleRequest) Descriptor() ([]byte, []int) { return fileDescriptor44, []int{0} }
+func (*PatchRoleRequest) Descriptor() ([]byte, []int) { return fileDescriptor49, []int{0} }
 
 func (m *PatchRoleRequest) GetRoleId() *google_protobuf.StringValue {
 	if m != nil {
@@ -45,7 +45,7 @@ type PatchRoleResponse struct {
 func (m *PatchRoleResponse) Reset()                    { *m = PatchRoleResponse{} }
 func (m *PatchRoleResponse) String() string            { return proto.CompactTextString(m) }
 func (*PatchRoleResponse) ProtoMessage()               {}
-func (*PatchRoleResponse) Descriptor() ([]byte, []int) { return fileDescriptor44, []int{1} }
+func (*PatchRoleResponse) Descriptor() ([]byte, []int) { return fileDescriptor49, []int{1} }
 
 func (m *PatchRoleResponse) GetRole() *Role {
 	if m != nil {
@@ -59,9 +59,9 @@ func init() {
 	proto.RegisterType((*PatchRoleResponse)(nil), "ai.metathings.service.identity.PatchRoleResponse")
 }
 
-func init() { proto.RegisterFile("patch_role.proto", fileDescriptor44) }
+func init() { proto.RegisterFile("patch_role.proto", fileDescriptor49) }
 
-var fileDescriptor44 = []byte{
+var fileDescriptor49 = []byte{
 	// 255 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x90, 0x4d, 0x4b, 0xc3, 0x40,
 	0x10, 0x40, 0x49, 0x29, 0x11, 0xd6, 0x4b, 0xcd, 0xa9, 0x14, 0xa9, 0xa5, 0x78, 0xf0, 0xd2, 0x89,

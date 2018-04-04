@@ -19,17 +19,20 @@ It is generated from these files:
 	create_domain.proto
 	create_group.proto
 	create_project.proto
+	create_region.proto
 	create_role.proto
 	create_user.proto
 	delete_domain.proto
 	delete_group.proto
 	delete_project.proto
+	delete_region.proto
 	delete_role.proto
 	delete_user.proto
 	domain.proto
 	get_domain.proto
 	get_group.proto
 	get_project.proto
+	get_region.proto
 	get_role.proto
 	get_user.proto
 	group.proto
@@ -38,6 +41,7 @@ It is generated from these files:
 	list_groups_for_user.proto
 	list_projects.proto
 	list_projects_for_user.proto
+	list_regions.proto
 	list_role_in_group_on_domain.proto
 	list_roles.proto
 	list_roles_for_group_on_domain.proto
@@ -49,9 +53,11 @@ It is generated from these files:
 	patch_domain.proto
 	patch_group.proto
 	patch_project.proto
+	patch_region.proto
 	patch_role.proto
 	patch_user.proto
 	project.proto
+	region.proto
 	remove_role_from_group_on_domain.proto
 	remove_role_from_group_on_project.proto
 	remove_role_from_user_on_domain.proto
@@ -79,6 +85,8 @@ It has these top-level messages:
 	CreateGroupResponse
 	CreateProjectRequest
 	CreateProjectResponse
+	CreateRegionRequest
+	CreateRegionResponse
 	CreateRoleRequest
 	CreateRoleResponse
 	CreateUserRequest
@@ -86,6 +94,7 @@ It has these top-level messages:
 	DeleteDomainRequest
 	DeleteGroupRequest
 	DeleteProjectRequest
+	DeleteRegionRequest
 	DeleteRoleRequest
 	DeleteUserRequest
 	Domain
@@ -95,6 +104,8 @@ It has these top-level messages:
 	GetGroupResponse
 	GetProjectRequest
 	GetProjectResponse
+	GetRegionRequest
+	GetRegionResponse
 	GetRoleRequest
 	GetRoleResponse
 	GetUserRequest
@@ -110,6 +121,8 @@ It has these top-level messages:
 	ListProjectsResponse
 	ListProjectsForUserRequest
 	ListProjectsForUserResponse
+	ListRegionsRequest
+	ListRegionsResponse
 	ListRoleInGroupOnDomainRequest
 	ListRoleInGroupOnDomainResponse
 	ListRolesRequest
@@ -132,11 +145,14 @@ It has these top-level messages:
 	PatchGroupResponse
 	PatchProjectRequest
 	PatchProjectResponse
+	PatchRegionRequest
+	PatchRegionResponse
 	PatchRoleRequest
 	PatchRoleResponse
 	PatchUserRequest
 	PatchUserResponse
 	Project
+	Region
 	RemoveRoleFromGroupOnDomainRequest
 	RemoveRoleFromGroupOnProjectRequest
 	RemoveRoleFromUserOnDomainRequest

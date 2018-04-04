@@ -26,7 +26,7 @@ type Project struct {
 func (m *Project) Reset()                    { *m = Project{} }
 func (m *Project) String() string            { return proto.CompactTextString(m) }
 func (*Project) ProtoMessage()               {}
-func (*Project) Descriptor() ([]byte, []int) { return fileDescriptor46, []int{0} }
+func (*Project) Descriptor() ([]byte, []int) { return fileDescriptor51, []int{0} }
 
 func (m *Project) GetId() string {
 	if m != nil {
@@ -88,9 +88,9 @@ func init() {
 	proto.RegisterType((*Project)(nil), "ai.metathings.service.identity.Project")
 }
 
-func init() { proto.RegisterFile("project.proto", fileDescriptor46) }
+func init() { proto.RegisterFile("project.proto", fileDescriptor51) }
 
-var fileDescriptor46 = []byte{
+var fileDescriptor51 = []byte{
 	// 207 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x4c, 0x8f, 0x41, 0x4a, 0x04, 0x31,
 	0x10, 0x45, 0x49, 0xcf, 0x38, 0x9d, 0x89, 0xe8, 0x22, 0xab, 0x02, 0x41, 0x82, 0xab, 0x59, 0x65,

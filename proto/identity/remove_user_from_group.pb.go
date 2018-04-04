@@ -22,7 +22,7 @@ type RemoveUserFromGroupRequest struct {
 func (m *RemoveUserFromGroupRequest) Reset()                    { *m = RemoveUserFromGroupRequest{} }
 func (m *RemoveUserFromGroupRequest) String() string            { return proto.CompactTextString(m) }
 func (*RemoveUserFromGroupRequest) ProtoMessage()               {}
-func (*RemoveUserFromGroupRequest) Descriptor() ([]byte, []int) { return fileDescriptor51, []int{0} }
+func (*RemoveUserFromGroupRequest) Descriptor() ([]byte, []int) { return fileDescriptor57, []int{0} }
 
 func (m *RemoveUserFromGroupRequest) GetUserId() *google_protobuf.StringValue {
 	if m != nil {
@@ -42,9 +42,9 @@ func init() {
 	proto.RegisterType((*RemoveUserFromGroupRequest)(nil), "ai.metathings.service.identity.RemoveUserFromGroupRequest")
 }
 
-func init() { proto.RegisterFile("remove_user_from_group.proto", fileDescriptor51) }
+func init() { proto.RegisterFile("remove_user_from_group.proto", fileDescriptor57) }
 
-var fileDescriptor51 = []byte{
+var fileDescriptor57 = []byte{
 	// 239 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0xcf, 0xb1, 0x4a, 0xc4, 0x40,
 	0x10, 0xc6, 0x71, 0x72, 0x45, 0x4e, 0x62, 0x97, 0x4a, 0xc2, 0x71, 0x1e, 0x56, 0x36, 0xb7, 0x01,

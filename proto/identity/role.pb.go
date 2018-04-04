@@ -21,7 +21,7 @@ type Role struct {
 func (m *Role) Reset()                    { *m = Role{} }
 func (m *Role) String() string            { return proto.CompactTextString(m) }
 func (*Role) ProtoMessage()               {}
-func (*Role) Descriptor() ([]byte, []int) { return fileDescriptor52, []int{0} }
+func (*Role) Descriptor() ([]byte, []int) { return fileDescriptor58, []int{0} }
 
 func (m *Role) GetId() string {
 	if m != nil {
@@ -48,9 +48,9 @@ func init() {
 	proto.RegisterType((*Role)(nil), "ai.metathings.service.identity.Role")
 }
 
-func init() { proto.RegisterFile("role.proto", fileDescriptor52) }
+func init() { proto.RegisterFile("role.proto", fileDescriptor58) }
 
-var fileDescriptor52 = []byte{
+var fileDescriptor58 = []byte{
 	// 133 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xe2, 0x2a, 0xca, 0xcf, 0x49,
 	0xd5, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x92, 0x4b, 0xcc, 0xd4, 0xcb, 0x4d, 0x2d, 0x49, 0x2c,

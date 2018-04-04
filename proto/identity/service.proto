@@ -5,6 +5,13 @@ option go_package = "identity";
 
 import "google/protobuf/empty.proto";
 
+// Region
+import "create_region.proto";
+import "delete_region.proto";
+import "patch_region.proto";
+import "get_region.proto";
+import "list_regions.proto";
+
 // Domain
 import "create_domain.proto";
 import "delete_domain.proto";
@@ -64,6 +71,16 @@ import "check_role_in_user_on_project.proto";
 import "list_roles_for_user_on_project.proto";
 
 service IdentityService {
+	// https://developer.openstack.org/api-ref/identity/v3/#create-region
+	rpc CreateRegion(CreateRegionRequest) returns (CreateRegionResponse) {}
+	// https://developer.openstack.org/api-ref/identity/v3/#delete-region
+	rpc DeleteRegion(DeleteRegionRequest) returns (google.protobuf.Empty) {}
+	// https://developer.openstack.org/api-ref/identity/v3/#update-region
+	rpc PatchRegion(PatchRegionRequest) returns (PatchRegionResponse) {}
+	// https://developer.openstack.org/api-ref/identity/v3/#show-region-details
+	rpc GetRegion(GetRegionRequest) returns (GetRegionResponse) {}
+	// https://developer.openstack.org/api-ref/identity/v3/#list-regions
+	rpc ListRegions(ListRegionsRequest) returns (ListRegionsResponse) {}
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#create-domain
 	rpc CreateDomain(CreateDomainRequest) returns (CreateDomainResponse) {}
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#delete-domain

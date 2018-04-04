@@ -21,7 +21,7 @@ type GetUserRequest struct {
 func (m *GetUserRequest) Reset()                    { *m = GetUserRequest{} }
 func (m *GetUserRequest) String() string            { return proto.CompactTextString(m) }
 func (*GetUserRequest) ProtoMessage()               {}
-func (*GetUserRequest) Descriptor() ([]byte, []int) { return fileDescriptor26, []int{0} }
+func (*GetUserRequest) Descriptor() ([]byte, []int) { return fileDescriptor29, []int{0} }
 
 func (m *GetUserRequest) GetUserId() *google_protobuf.StringValue {
 	if m != nil {
@@ -37,7 +37,7 @@ type GetUserResponse struct {
 func (m *GetUserResponse) Reset()                    { *m = GetUserResponse{} }
 func (m *GetUserResponse) String() string            { return proto.CompactTextString(m) }
 func (*GetUserResponse) ProtoMessage()               {}
-func (*GetUserResponse) Descriptor() ([]byte, []int) { return fileDescriptor26, []int{1} }
+func (*GetUserResponse) Descriptor() ([]byte, []int) { return fileDescriptor29, []int{1} }
 
 func (m *GetUserResponse) GetUser() *User {
 	if m != nil {
@@ -51,9 +51,9 @@ func init() {
 	proto.RegisterType((*GetUserResponse)(nil), "ai.metathings.service.identity.GetUserResponse")
 }
 
-func init() { proto.RegisterFile("get_user.proto", fileDescriptor26) }
+func init() { proto.RegisterFile("get_user.proto", fileDescriptor29) }
 
-var fileDescriptor26 = []byte{
+var fileDescriptor29 = []byte{
 	// 239 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x7c, 0x8f, 0x41, 0x4b, 0xf3, 0x40,
 	0x10, 0x86, 0xc9, 0xc7, 0x47, 0x84, 0x15, 0x2a, 0xe4, 0x24, 0x45, 0x6a, 0x29, 0x1e, 0xbc, 0x74,
