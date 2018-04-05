@@ -205,6 +205,8 @@ service IdentityService {
 	// application credential authorization
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#authenticating-with-an-application-credential
 	rpc IssueToken(IssueTokenRequest) returns (IssueTokenResponse) {}
+	// https://developer.openstack.org/api-ref/identity/v3/index.html#revoke-token
+	rpc RevokeToken(google.protobuf.Empty) returns (google.protobuf.Empty) {}
 
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#create-application-credential
 	rpc CreateApplicationCredential(CreateApplicationCredentialRequest) returns (CreateApplicationCredentialResponse) {}
