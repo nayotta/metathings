@@ -8,6 +8,7 @@ import (
 	"google.golang.org/grpc"
 
 	service "github.com/bigdatagz/metathings/identity/service"
+	pb "github.com/bigdatagz/metathings/proto/identity"
 )
 
 var (
@@ -19,7 +20,9 @@ var (
 		Use:   "metathings-identity-service",
 		Short: "MetaThings Identity Service Daemon",
 		Run: func(cmd *cobra.Command, args []string) {
-
+			if err := runGRPC(); err != nil {
+				log.Fatalf("[E] failed to runGRPC: %v\n", err)
+			}
 		},
 	}
 )

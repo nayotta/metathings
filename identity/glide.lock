@@ -1,9 +1,10 @@
 hash: 3441bf6ff6d443d7e65fcdfc4f1d1b67e506cee012ed3b4901bbe2aab9890aa9
-updated: 2018-04-05T17:42:54.032941+08:00
+updated: 2018-04-05T18:47:50.605904+08:00
 imports:
 - name: github.com/bigdatagz/metathings
-  version: 5aeaf7166ccdd6e3936aae973a1494aec2c750e2
+  version: 4eddb414385571f8ff39c72fdd7d2bbc13878b61
   subpackages:
+  - identity/service
   - proto/identity
 - name: github.com/gogo/protobuf
   version: 1ef32a8b9fc3f8ec940126907cedb5998f6318e4
@@ -20,8 +21,14 @@ imports:
   - ptypes/empty
   - ptypes/timestamp
   - ptypes/wrappers
+- name: github.com/inconshreveable/mousetrap
+  version: 76626ae9c91c4f2a10f34cad8ce83ea42c93bb75
 - name: github.com/mwitkow/go-proto-validators
   version: 0950a79900071e9f3f5979b78078c599376422fd
+- name: github.com/spf13/cobra
+  version: 7b2c5ac9fc04fc5efafb60700713d4fa609b777b
+- name: github.com/spf13/pflag
+  version: ad68c28ee799163e627e77fcc6e8ecaa866e3535
 - name: golang.org/x/net
   version: 6078986fec03a1dcc236c34816c71b0e05018fda
   subpackages:
