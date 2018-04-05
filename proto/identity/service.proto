@@ -154,6 +154,7 @@ service IdentityService {
 	rpc DeleteRole(DeleteRoleRequest) returns (google.protobuf.Empty) {}
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#update-role
 	rpc PatchRole(PatchRoleRequest) returns (PatchRoleResponse) {}
+	// https://developer.openstack.org/api-ref/identity/v3/index.html#show-role-details
 	rpc GetRole(GetRoleRequest) returns (GetRoleResponse) {}
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#list-roles
 	rpc ListRoles(ListRolesRequest) returns (ListRolesResponse) {}

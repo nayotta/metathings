@@ -99,6 +99,7 @@ type IdentityServiceClient interface {
 	DeleteRole(ctx context.Context, in *DeleteRoleRequest, opts ...grpc.CallOption) (*google_protobuf3.Empty, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#update-role
 	PatchRole(ctx context.Context, in *PatchRoleRequest, opts ...grpc.CallOption) (*PatchRoleResponse, error)
+	// https://developer.openstack.org/api-ref/identity/v3/index.html#show-role-details
 	GetRole(ctx context.Context, in *GetRoleRequest, opts ...grpc.CallOption) (*GetRoleResponse, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#list-roles
 	ListRoles(ctx context.Context, in *ListRolesRequest, opts ...grpc.CallOption) (*ListRolesResponse, error)
@@ -773,6 +774,7 @@ type IdentityServiceServer interface {
 	DeleteRole(context.Context, *DeleteRoleRequest) (*google_protobuf3.Empty, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#update-role
 	PatchRole(context.Context, *PatchRoleRequest) (*PatchRoleResponse, error)
+	// https://developer.openstack.org/api-ref/identity/v3/index.html#show-role-details
 	GetRole(context.Context, *GetRoleRequest) (*GetRoleResponse, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#list-roles
 	ListRoles(context.Context, *ListRolesRequest) (*ListRolesResponse, error)
