@@ -36,6 +36,7 @@ It is generated from these files:
 	get_role.proto
 	get_user.proto
 	group.proto
+	issue_token.proto
 	list_domains.proto
 	list_groups.proto
 	list_groups_for_user.proto
@@ -65,6 +66,7 @@ It is generated from these files:
 	remove_user_from_group.proto
 	role.proto
 	service.proto
+	token.proto
 	user.proto
 
 It has these top-level messages:
@@ -111,6 +113,12 @@ It has these top-level messages:
 	GetUserRequest
 	GetUserResponse
 	Group
+	TokenScope
+	PasswordPayload
+	TokenPayload
+	ApplicationCredentialPayload
+	IssueTokenRequest
+	IssueTokenResponse
 	ListDomainsRequest
 	ListDomainsResponse
 	ListGroupsRequest
@@ -159,6 +167,7 @@ It has these top-level messages:
 	RemoveRoleFromUserOnProjectRequest
 	RemoveUserFromGroupRequest
 	Role
+	Token
 	User
 */
 package identity

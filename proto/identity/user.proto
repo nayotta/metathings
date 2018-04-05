@@ -3,6 +3,8 @@ syntax = "proto3";
 package ai.metathings.service.identity;
 
 message User {
+	reserved "password_expires_at";
+
 	string id = 1;
 	string name = 2;
 	string default_project_id = 3;

@@ -24,7 +24,7 @@ type PatchDomainRequest struct {
 func (m *PatchDomainRequest) Reset()                    { *m = PatchDomainRequest{} }
 func (m *PatchDomainRequest) String() string            { return proto.CompactTextString(m) }
 func (*PatchDomainRequest) ProtoMessage()               {}
-func (*PatchDomainRequest) Descriptor() ([]byte, []int) { return fileDescriptor45, []int{0} }
+func (*PatchDomainRequest) Descriptor() ([]byte, []int) { return fileDescriptor46, []int{0} }
 
 func (m *PatchDomainRequest) GetDomainId() *google_protobuf.StringValue {
 	if m != nil {
@@ -61,7 +61,7 @@ type PatchDomainResponse struct {
 func (m *PatchDomainResponse) Reset()                    { *m = PatchDomainResponse{} }
 func (m *PatchDomainResponse) String() string            { return proto.CompactTextString(m) }
 func (*PatchDomainResponse) ProtoMessage()               {}
-func (*PatchDomainResponse) Descriptor() ([]byte, []int) { return fileDescriptor45, []int{1} }
+func (*PatchDomainResponse) Descriptor() ([]byte, []int) { return fileDescriptor46, []int{1} }
 
 func (m *PatchDomainResponse) GetDomain() *Domain {
 	if m != nil {
@@ -75,9 +75,9 @@ func init() {
 	proto.RegisterType((*PatchDomainResponse)(nil), "ai.metathings.service.identity.PatchDomainResponse")
 }
 
-func init() { proto.RegisterFile("patch_domain.proto", fileDescriptor45) }
+func init() { proto.RegisterFile("patch_domain.proto", fileDescriptor46) }
 
-var fileDescriptor45 = []byte{
+var fileDescriptor46 = []byte{
 	// 295 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0xd1, 0xc1, 0x4b, 0xfb, 0x30,
 	0x14, 0x07, 0x70, 0xba, 0xdf, 0xd8, 0x4f, 0x33, 0x4f, 0xf1, 0x52, 0x86, 0xcc, 0xb1, 0x83, 0x78,

@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package ai.metathings.service.identity;
+
+message Token {
+	reserved "catalog";
+	reserved "audit_ids";
+
+	message _Domain {
+		string id = 1;
+		string name = 2;
+	}
+
+
+	message _Project {
+		string id = 1;
+		string name = 2;
+		_Domain domain = 3;
+	}
+
+	message _User {
+		reserved "password_expires_at";
+
+		string id = 1;
+		string name = 2;
+		_Domain domain = 3;
+
+	}
+
+	message _Role {
+		string id = 1;
+		string name = 2;
+	}
+
+	repeated string methods = 1;
+	string exipres_at = 2;
+	string issued_at = 3;
+	bool is_domain = 4;
+	_User user = 5;
+	_Role role = 6;
+	_Project project = 7;
+}

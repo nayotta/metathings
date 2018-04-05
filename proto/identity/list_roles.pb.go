@@ -22,7 +22,7 @@ type ListRolesRequest struct {
 func (m *ListRolesRequest) Reset()                    { *m = ListRolesRequest{} }
 func (m *ListRolesRequest) String() string            { return proto.CompactTextString(m) }
 func (*ListRolesRequest) ProtoMessage()               {}
-func (*ListRolesRequest) Descriptor() ([]byte, []int) { return fileDescriptor38, []int{0} }
+func (*ListRolesRequest) Descriptor() ([]byte, []int) { return fileDescriptor39, []int{0} }
 
 func (m *ListRolesRequest) GetName() *google_protobuf.StringValue {
 	if m != nil {
@@ -45,7 +45,7 @@ type ListRolesResponse struct {
 func (m *ListRolesResponse) Reset()                    { *m = ListRolesResponse{} }
 func (m *ListRolesResponse) String() string            { return proto.CompactTextString(m) }
 func (*ListRolesResponse) ProtoMessage()               {}
-func (*ListRolesResponse) Descriptor() ([]byte, []int) { return fileDescriptor38, []int{1} }
+func (*ListRolesResponse) Descriptor() ([]byte, []int) { return fileDescriptor39, []int{1} }
 
 func (m *ListRolesResponse) GetRoles() []*Role {
 	if m != nil {
@@ -59,9 +59,9 @@ func init() {
 	proto.RegisterType((*ListRolesResponse)(nil), "ai.metathings.service.identity.ListRolesResponse")
 }
 
-func init() { proto.RegisterFile("list_roles.proto", fileDescriptor38) }
+func init() { proto.RegisterFile("list_roles.proto", fileDescriptor39) }
 
-var fileDescriptor38 = []byte{
+var fileDescriptor39 = []byte{
 	// 251 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x90, 0x4f, 0x4b, 0xc3, 0x40,
 	0x10, 0xc5, 0x89, 0xff, 0xd0, 0xed, 0xa5, 0xe6, 0x14, 0x8a, 0x94, 0x52, 0x3c, 0xf4, 0xd2, 0x89,

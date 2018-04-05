@@ -70,6 +70,9 @@ import "remove_role_from_user_on_project.proto";
 import "check_role_in_user_on_project.proto";
 import "list_roles_for_user_on_project.proto";
 
+// Auth
+import "issue_token.proto";
+
 service IdentityService {
 	// https://developer.openstack.org/api-ref/identity/v3/#create-region
 	rpc CreateRegion(CreateRegionRequest) returns (CreateRegionResponse) {}
@@ -180,4 +183,20 @@ service IdentityService {
 	rpc CheckRoleInUserOnProject(CheckRoleInUserOnProjectRequest) returns (google.protobuf.Empty) {}
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#list-role-assignments-for-user-on-project
 	rpc ListRolesForUserOnProject(ListRolesForUserOnProjectRequest) returns (ListRolesForUserOnProjectResponse) {}
+
+	// password authentication with unsnscoped authorization
+	// https://developer.openstack.org/api-ref/identity/v3/index.html#password-authentication-with-unscoped-authorization
+	// password authentication with scoped authorization
+	// https://developer.openstack.org/api-ref/identity/v3/index.html#password-authentication-with-scoped-authorization
+	// password authentication with unscoped authorization
+	// https://developer.openstack.org/api-ref/identity/v3/index.html#password-authentication-with-explicit-unscoped-authorization
+	// token authentication with unscoped authorization
+	// https://developer.openstack.org/api-ref/identity/v3/index.html#token-authentication-with-unscoped-authorization
+	// token authentication with scoped authorization
+	// https://developer.openstack.org/api-ref/identity/v3/index.html#token-authentication-with-scoped-authorization
+	// token authentication with explicit unscoped authorization
+	// https://developer.openstack.org/api-ref/identity/v3/index.html#token-authentication-with-explicit-unscoped-authorization
+	// application credential authorization
+	// https://developer.openstack.org/api-ref/identity/v3/index.html#authenticating-with-an-application-credential
+	rpc IssueToken(IssueTokenRequest) returns (IssueTokenResponse) {}
 }

@@ -1,0 +1,56 @@
+syntax = "proto3";
+
+package ai.metathings.service.identity;
+
+import "google/protobuf/wrappers.proto";
+
+import "github.com/mwitkow/go-proto-validators/validator.proto";
+
+import "token.proto";
+
+enum AUTH_METHOD {
+	UNKNOWN = 0;
+	PASSWORD = 1;
+	TOKEN = 2;
+	APPLICATION_CREDENTIAL = 3;
+}
+
+message TokenScope {
+	google.protobuf.StringValue domain_id = 1;
+	google.protobuf.StringValue domain_name = 2;
+	google.protobuf.StringValue project_id = 3;
+	google.protobuf.StringValue project_name = 4;
+}
+
+message PasswordPayload {
+	google.protobuf.StringValue id = 1;
+	google.protobuf.StringValue username = 2;
+	google.protobuf.StringValue password = 3;
+	google.protobuf.StringValue domain_id = 4;
+	google.protobuf.StringValue domain_name = 5;
+	TokenScope scope = 6;
+}
+
+message TokenPayload {
+	google.protobuf.StringValue token_id = 1 [(validator.field) = {msg_exists: true}];
+	TokenScope scope = 2;
+}
+
+message ApplicationCredentialPayload {
+	google.protobuf.StringValue id = 1;
+	google.protobuf.StringValue name = 2;
+	google.protobuf.StringValue secret = 3;
+}
+
+message IssueTokenRequest {
+	AUTH_METHOD method = 1 [(validator.field) = {msg_exists: true}];
+	oneof payload {
+		PasswordPayload password = 2;
+		TokenPayload token = 3;
+		ApplicationCredentialPayload application_credential = 4;
+	}
+}
+
+message IssueTokenResponse {
+	Token token = 1;
+}
