@@ -23,7 +23,7 @@ type CreateDomainRequest struct {
 func (m *CreateDomainRequest) Reset()                    { *m = CreateDomainRequest{} }
 func (m *CreateDomainRequest) String() string            { return proto.CompactTextString(m) }
 func (*CreateDomainRequest) ProtoMessage()               {}
-func (*CreateDomainRequest) Descriptor() ([]byte, []int) { return fileDescriptor11, []int{0} }
+func (*CreateDomainRequest) Descriptor() ([]byte, []int) { return fileDescriptor13, []int{0} }
 
 func (m *CreateDomainRequest) GetName() *google_protobuf.StringValue {
 	if m != nil {
@@ -53,7 +53,7 @@ type CreateDomainResponse struct {
 func (m *CreateDomainResponse) Reset()                    { *m = CreateDomainResponse{} }
 func (m *CreateDomainResponse) String() string            { return proto.CompactTextString(m) }
 func (*CreateDomainResponse) ProtoMessage()               {}
-func (*CreateDomainResponse) Descriptor() ([]byte, []int) { return fileDescriptor11, []int{1} }
+func (*CreateDomainResponse) Descriptor() ([]byte, []int) { return fileDescriptor13, []int{1} }
 
 func (m *CreateDomainResponse) GetDomain() *Domain {
 	if m != nil {
@@ -67,9 +67,9 @@ func init() {
 	proto.RegisterType((*CreateDomainResponse)(nil), "ai.metathings.service.identity.CreateDomainResponse")
 }
 
-func init() { proto.RegisterFile("create_domain.proto", fileDescriptor11) }
+func init() { proto.RegisterFile("create_domain.proto", fileDescriptor13) }
 
-var fileDescriptor11 = []byte{
+var fileDescriptor13 = []byte{
 	// 279 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0xd0, 0x41, 0x4b, 0xc3, 0x30,
 	0x14, 0x07, 0x70, 0x3a, 0xa5, 0x42, 0xe6, 0xa9, 0xf3, 0x50, 0x8a, 0xcc, 0xb1, 0x83, 0x78, 0x59,

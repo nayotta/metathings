@@ -24,7 +24,7 @@ func (m *RemoveRoleFromUserOnDomainRequest) Reset()         { *m = RemoveRoleFro
 func (m *RemoveRoleFromUserOnDomainRequest) String() string { return proto.CompactTextString(m) }
 func (*RemoveRoleFromUserOnDomainRequest) ProtoMessage()    {}
 func (*RemoveRoleFromUserOnDomainRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor56, []int{0}
+	return fileDescriptor61, []int{0}
 }
 
 func (m *RemoveRoleFromUserOnDomainRequest) GetDomainId() *google_protobuf.StringValue {
@@ -52,9 +52,9 @@ func init() {
 	proto.RegisterType((*RemoveRoleFromUserOnDomainRequest)(nil), "ai.metathings.service.identity.RemoveRoleFromUserOnDomainRequest")
 }
 
-func init() { proto.RegisterFile("remove_role_from_user_on_domain.proto", fileDescriptor56) }
+func init() { proto.RegisterFile("remove_role_from_user_on_domain.proto", fileDescriptor61) }
 
-var fileDescriptor56 = []byte{
+var fileDescriptor61 = []byte{
 	// 261 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0xd0, 0x41, 0x4b, 0xc3, 0x30,
 	0x14, 0xc0, 0x71, 0x3a, 0x61, 0x6a, 0xbd, 0xf5, 0x54, 0x86, 0xcc, 0x29, 0x08, 0x5e, 0x96, 0x82,

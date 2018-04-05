@@ -21,7 +21,7 @@ type ListRegionsRequest struct {
 func (m *ListRegionsRequest) Reset()                    { *m = ListRegionsRequest{} }
 func (m *ListRegionsRequest) String() string            { return proto.CompactTextString(m) }
 func (*ListRegionsRequest) ProtoMessage()               {}
-func (*ListRegionsRequest) Descriptor() ([]byte, []int) { return fileDescriptor37, []int{0} }
+func (*ListRegionsRequest) Descriptor() ([]byte, []int) { return fileDescriptor42, []int{0} }
 
 func (m *ListRegionsRequest) GetParentRegionId() *google_protobuf.StringValue {
 	if m != nil {
@@ -37,7 +37,7 @@ type ListRegionsResponse struct {
 func (m *ListRegionsResponse) Reset()                    { *m = ListRegionsResponse{} }
 func (m *ListRegionsResponse) String() string            { return proto.CompactTextString(m) }
 func (*ListRegionsResponse) ProtoMessage()               {}
-func (*ListRegionsResponse) Descriptor() ([]byte, []int) { return fileDescriptor37, []int{1} }
+func (*ListRegionsResponse) Descriptor() ([]byte, []int) { return fileDescriptor42, []int{1} }
 
 func (m *ListRegionsResponse) GetRegions() []*Region {
 	if m != nil {
@@ -51,9 +51,9 @@ func init() {
 	proto.RegisterType((*ListRegionsResponse)(nil), "ai.metathings.service.identity.ListRegionsResponse")
 }
 
-func init() { proto.RegisterFile("list_regions.proto", fileDescriptor37) }
+func init() { proto.RegisterFile("list_regions.proto", fileDescriptor42) }
 
-var fileDescriptor37 = []byte{
+var fileDescriptor42 = []byte{
 	// 244 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x7c, 0x90, 0x41, 0x4b, 0x33, 0x31,
 	0x10, 0x86, 0x59, 0x3e, 0xf8, 0x84, 0x54, 0x44, 0xe2, 0xa5, 0x14, 0x29, 0xa5, 0x07, 0xe9, 0xa5,

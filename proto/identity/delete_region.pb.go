@@ -21,7 +21,7 @@ type DeleteRegionRequest struct {
 func (m *DeleteRegionRequest) Reset()                    { *m = DeleteRegionRequest{} }
 func (m *DeleteRegionRequest) String() string            { return proto.CompactTextString(m) }
 func (*DeleteRegionRequest) ProtoMessage()               {}
-func (*DeleteRegionRequest) Descriptor() ([]byte, []int) { return fileDescriptor20, []int{0} }
+func (*DeleteRegionRequest) Descriptor() ([]byte, []int) { return fileDescriptor23, []int{0} }
 
 func (m *DeleteRegionRequest) GetRegionId() *google_protobuf.StringValue {
 	if m != nil {
@@ -34,9 +34,9 @@ func init() {
 	proto.RegisterType((*DeleteRegionRequest)(nil), "ai.metathings.service.identity.DeleteRegionRequest")
 }
 
-func init() { proto.RegisterFile("delete_region.proto", fileDescriptor20) }
+func init() { proto.RegisterFile("delete_region.proto", fileDescriptor23) }
 
-var fileDescriptor20 = []byte{
+var fileDescriptor23 = []byte{
 	// 208 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x3c, 0xce, 0xc1, 0x4a, 0xc4, 0x30,
 	0x10, 0xc6, 0x71, 0xea, 0x61, 0xd1, 0x7a, 0xdb, 0xbd, 0xc8, 0x22, 0xeb, 0xe2, 0xc9, 0x4b, 0x27,

@@ -24,7 +24,7 @@ type User struct {
 func (m *User) Reset()                    { *m = User{} }
 func (m *User) String() string            { return proto.CompactTextString(m) }
 func (*User) ProtoMessage()               {}
-func (*User) Descriptor() ([]byte, []int) { return fileDescriptor62, []int{0} }
+func (*User) Descriptor() ([]byte, []int) { return fileDescriptor67, []int{0} }
 
 func (m *User) GetId() string {
 	if m != nil {
@@ -72,9 +72,9 @@ func init() {
 	proto.RegisterType((*User)(nil), "ai.metathings.service.identity.User")
 }
 
-func init() { proto.RegisterFile("user.proto", fileDescriptor62) }
+func init() { proto.RegisterFile("user.proto", fileDescriptor67) }
 
-var fileDescriptor62 = []byte{
+var fileDescriptor67 = []byte{
 	// 256 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x7c, 0x50, 0xcd, 0x4a, 0xc3, 0x40,
 	0x10, 0x26, 0x69, 0x52, 0xdb, 0x11, 0xa4, 0x8c, 0x1e, 0x16, 0x05, 0x09, 0x9e, 0x72, 0x90, 0x15,

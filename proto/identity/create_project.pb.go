@@ -26,7 +26,7 @@ type CreateProjectRequest struct {
 func (m *CreateProjectRequest) Reset()                    { *m = CreateProjectRequest{} }
 func (m *CreateProjectRequest) String() string            { return proto.CompactTextString(m) }
 func (*CreateProjectRequest) ProtoMessage()               {}
-func (*CreateProjectRequest) Descriptor() ([]byte, []int) { return fileDescriptor13, []int{0} }
+func (*CreateProjectRequest) Descriptor() ([]byte, []int) { return fileDescriptor15, []int{0} }
 
 func (m *CreateProjectRequest) GetDomainId() *google_protobuf.StringValue {
 	if m != nil {
@@ -77,7 +77,7 @@ type CreateProjectResponse struct {
 func (m *CreateProjectResponse) Reset()                    { *m = CreateProjectResponse{} }
 func (m *CreateProjectResponse) String() string            { return proto.CompactTextString(m) }
 func (*CreateProjectResponse) ProtoMessage()               {}
-func (*CreateProjectResponse) Descriptor() ([]byte, []int) { return fileDescriptor13, []int{1} }
+func (*CreateProjectResponse) Descriptor() ([]byte, []int) { return fileDescriptor15, []int{1} }
 
 func (m *CreateProjectResponse) GetProject() *Project {
 	if m != nil {
@@ -91,9 +91,9 @@ func init() {
 	proto.RegisterType((*CreateProjectResponse)(nil), "ai.metathings.service.identity.CreateProjectResponse")
 }
 
-func init() { proto.RegisterFile("create_project.proto", fileDescriptor13) }
+func init() { proto.RegisterFile("create_project.proto", fileDescriptor15) }
 
-var fileDescriptor13 = []byte{
+var fileDescriptor15 = []byte{
 	// 338 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0xd2, 0x4f, 0x4b, 0xfb, 0x30,
 	0x18, 0x07, 0x70, 0xf6, 0xe7, 0xb7, 0xfd, 0x96, 0xe1, 0xa5, 0x4c, 0x28, 0x43, 0xe6, 0xd8, 0x45,

@@ -22,7 +22,7 @@ type ListRoleInGroupOnDomainRequest struct {
 func (m *ListRoleInGroupOnDomainRequest) Reset()                    { *m = ListRoleInGroupOnDomainRequest{} }
 func (m *ListRoleInGroupOnDomainRequest) String() string            { return proto.CompactTextString(m) }
 func (*ListRoleInGroupOnDomainRequest) ProtoMessage()               {}
-func (*ListRoleInGroupOnDomainRequest) Descriptor() ([]byte, []int) { return fileDescriptor38, []int{0} }
+func (*ListRoleInGroupOnDomainRequest) Descriptor() ([]byte, []int) { return fileDescriptor43, []int{0} }
 
 func (m *ListRoleInGroupOnDomainRequest) GetDomainId() *google_protobuf.StringValue {
 	if m != nil {
@@ -46,7 +46,7 @@ func (m *ListRoleInGroupOnDomainResponse) Reset()         { *m = ListRoleInGroup
 func (m *ListRoleInGroupOnDomainResponse) String() string { return proto.CompactTextString(m) }
 func (*ListRoleInGroupOnDomainResponse) ProtoMessage()    {}
 func (*ListRoleInGroupOnDomainResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor38, []int{1}
+	return fileDescriptor43, []int{1}
 }
 
 func (m *ListRoleInGroupOnDomainResponse) GetRoles() []*Role {
@@ -61,9 +61,9 @@ func init() {
 	proto.RegisterType((*ListRoleInGroupOnDomainResponse)(nil), "ai.metathings.service.identity.ListRoleInGroupOnDomainResponse")
 }
 
-func init() { proto.RegisterFile("list_role_in_group_on_domain.proto", fileDescriptor38) }
+func init() { proto.RegisterFile("list_role_in_group_on_domain.proto", fileDescriptor43) }
 
-var fileDescriptor38 = []byte{
+var fileDescriptor43 = []byte{
 	// 289 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x90, 0xc1, 0x4a, 0x33, 0x31,
 	0x14, 0x85, 0x99, 0xfe, 0xfc, 0xb5, 0xa6, 0xbb, 0x59, 0x95, 0x22, 0x6d, 0x29, 0x2e, 0xba, 0x69,

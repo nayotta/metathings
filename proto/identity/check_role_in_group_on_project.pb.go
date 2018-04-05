@@ -24,7 +24,7 @@ func (m *CheckRoleInGroupOnProjectRequest) Reset()         { *m = CheckRoleInGro
 func (m *CheckRoleInGroupOnProjectRequest) String() string { return proto.CompactTextString(m) }
 func (*CheckRoleInGroupOnProjectRequest) ProtoMessage()    {}
 func (*CheckRoleInGroupOnProjectRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor7, []int{0}
+	return fileDescriptor8, []int{0}
 }
 
 func (m *CheckRoleInGroupOnProjectRequest) GetProjectId() *google_protobuf.StringValue {
@@ -52,9 +52,9 @@ func init() {
 	proto.RegisterType((*CheckRoleInGroupOnProjectRequest)(nil), "ai.metathings.service.identity.CheckRoleInGroupOnProjectRequest")
 }
 
-func init() { proto.RegisterFile("check_role_in_group_on_project.proto", fileDescriptor7) }
+func init() { proto.RegisterFile("check_role_in_group_on_project.proto", fileDescriptor8) }
 
-var fileDescriptor7 = []byte{
+var fileDescriptor8 = []byte{
 	// 266 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x90, 0xc1, 0x4a, 0xc3, 0x40,
 	0x10, 0x86, 0x49, 0x85, 0x56, 0xd7, 0x5b, 0x4e, 0xa5, 0x48, 0x2d, 0xe2, 0xc1, 0x4b, 0x37, 0xa0,

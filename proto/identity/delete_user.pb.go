@@ -21,7 +21,7 @@ type DeleteUserRequest struct {
 func (m *DeleteUserRequest) Reset()                    { *m = DeleteUserRequest{} }
 func (m *DeleteUserRequest) String() string            { return proto.CompactTextString(m) }
 func (*DeleteUserRequest) ProtoMessage()               {}
-func (*DeleteUserRequest) Descriptor() ([]byte, []int) { return fileDescriptor22, []int{0} }
+func (*DeleteUserRequest) Descriptor() ([]byte, []int) { return fileDescriptor25, []int{0} }
 
 func (m *DeleteUserRequest) GetUserId() *google_protobuf.StringValue {
 	if m != nil {
@@ -34,9 +34,9 @@ func init() {
 	proto.RegisterType((*DeleteUserRequest)(nil), "ai.metathings.service.identity.DeleteUserRequest")
 }
 
-func init() { proto.RegisterFile("delete_user.proto", fileDescriptor22) }
+func init() { proto.RegisterFile("delete_user.proto", fileDescriptor25) }
 
-var fileDescriptor22 = []byte{
+var fileDescriptor25 = []byte{
 	// 208 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x3c, 0x8e, 0x31, 0x4b, 0xc4, 0x40,
 	0x10, 0x46, 0x89, 0x45, 0x84, 0x58, 0xdd, 0x55, 0x72, 0xc8, 0x79, 0x58, 0xd9, 0xdc, 0x2c, 0x28,

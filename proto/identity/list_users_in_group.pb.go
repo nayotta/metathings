@@ -21,7 +21,7 @@ type ListUsersInGroupRequest struct {
 func (m *ListUsersInGroupRequest) Reset()                    { *m = ListUsersInGroupRequest{} }
 func (m *ListUsersInGroupRequest) String() string            { return proto.CompactTextString(m) }
 func (*ListUsersInGroupRequest) ProtoMessage()               {}
-func (*ListUsersInGroupRequest) Descriptor() ([]byte, []int) { return fileDescriptor45, []int{0} }
+func (*ListUsersInGroupRequest) Descriptor() ([]byte, []int) { return fileDescriptor50, []int{0} }
 
 func (m *ListUsersInGroupRequest) GetGroupId() *google_protobuf.StringValue {
 	if m != nil {
@@ -37,7 +37,7 @@ type ListUsersInGroupResponse struct {
 func (m *ListUsersInGroupResponse) Reset()                    { *m = ListUsersInGroupResponse{} }
 func (m *ListUsersInGroupResponse) String() string            { return proto.CompactTextString(m) }
 func (*ListUsersInGroupResponse) ProtoMessage()               {}
-func (*ListUsersInGroupResponse) Descriptor() ([]byte, []int) { return fileDescriptor45, []int{1} }
+func (*ListUsersInGroupResponse) Descriptor() ([]byte, []int) { return fileDescriptor50, []int{1} }
 
 func (m *ListUsersInGroupResponse) GetUsers() []*User {
 	if m != nil {
@@ -51,9 +51,9 @@ func init() {
 	proto.RegisterType((*ListUsersInGroupResponse)(nil), "ai.metathings.service.identity.ListUsersInGroupResponse")
 }
 
-func init() { proto.RegisterFile("list_users_in_group.proto", fileDescriptor45) }
+func init() { proto.RegisterFile("list_users_in_group.proto", fileDescriptor50) }
 
-var fileDescriptor45 = []byte{
+var fileDescriptor50 = []byte{
 	// 260 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x7c, 0x90, 0xb1, 0x4b, 0xc3, 0x40,
 	0x14, 0xc6, 0x89, 0x62, 0x95, 0xeb, 0xd6, 0xc5, 0x58, 0xa4, 0x86, 0xe2, 0xd0, 0xa5, 0x17, 0xa8,

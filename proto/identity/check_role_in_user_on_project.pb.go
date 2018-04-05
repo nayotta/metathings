@@ -20,10 +20,12 @@ type CheckRoleInUserOnProjectRequest struct {
 	RoleId    *google_protobuf.StringValue `protobuf:"bytes,3,opt,name=role_id,json=roleId" json:"role_id,omitempty"`
 }
 
-func (m *CheckRoleInUserOnProjectRequest) Reset()                    { *m = CheckRoleInUserOnProjectRequest{} }
-func (m *CheckRoleInUserOnProjectRequest) String() string            { return proto.CompactTextString(m) }
-func (*CheckRoleInUserOnProjectRequest) ProtoMessage()               {}
-func (*CheckRoleInUserOnProjectRequest) Descriptor() ([]byte, []int) { return fileDescriptor9, []int{0} }
+func (m *CheckRoleInUserOnProjectRequest) Reset()         { *m = CheckRoleInUserOnProjectRequest{} }
+func (m *CheckRoleInUserOnProjectRequest) String() string { return proto.CompactTextString(m) }
+func (*CheckRoleInUserOnProjectRequest) ProtoMessage()    {}
+func (*CheckRoleInUserOnProjectRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor10, []int{0}
+}
 
 func (m *CheckRoleInUserOnProjectRequest) GetProjectId() *google_protobuf.StringValue {
 	if m != nil {
@@ -50,9 +52,9 @@ func init() {
 	proto.RegisterType((*CheckRoleInUserOnProjectRequest)(nil), "ai.metathings.service.identity.CheckRoleInUserOnProjectRequest")
 }
 
-func init() { proto.RegisterFile("check_role_in_user_on_project.proto", fileDescriptor9) }
+func init() { proto.RegisterFile("check_role_in_user_on_project.proto", fileDescriptor10) }
 
-var fileDescriptor9 = []byte{
+var fileDescriptor10 = []byte{
 	// 259 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0xd0, 0x41, 0x4b, 0xc3, 0x30,
 	0x14, 0xc0, 0x71, 0x3a, 0x61, 0x62, 0xbd, 0xf5, 0x54, 0x86, 0x6c, 0x43, 0x2f, 0x5e, 0x96, 0x82,

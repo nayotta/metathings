@@ -23,7 +23,7 @@ type CheckRoleInUserOnDomainRequest struct {
 func (m *CheckRoleInUserOnDomainRequest) Reset()                    { *m = CheckRoleInUserOnDomainRequest{} }
 func (m *CheckRoleInUserOnDomainRequest) String() string            { return proto.CompactTextString(m) }
 func (*CheckRoleInUserOnDomainRequest) ProtoMessage()               {}
-func (*CheckRoleInUserOnDomainRequest) Descriptor() ([]byte, []int) { return fileDescriptor8, []int{0} }
+func (*CheckRoleInUserOnDomainRequest) Descriptor() ([]byte, []int) { return fileDescriptor9, []int{0} }
 
 func (m *CheckRoleInUserOnDomainRequest) GetDomainId() *google_protobuf.StringValue {
 	if m != nil {
@@ -50,9 +50,9 @@ func init() {
 	proto.RegisterType((*CheckRoleInUserOnDomainRequest)(nil), "ai.metathings.service.identity.CheckRoleInUserOnDomainRequest")
 }
 
-func init() { proto.RegisterFile("check_role_in_user_on_domain.proto", fileDescriptor8) }
+func init() { proto.RegisterFile("check_role_in_user_on_domain.proto", fileDescriptor9) }
 
-var fileDescriptor8 = []byte{
+var fileDescriptor9 = []byte{
 	// 258 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0xd0, 0x4d, 0x4b, 0xf4, 0x30,
 	0x10, 0xc0, 0x71, 0xba, 0x0f, 0xf4, 0xd1, 0x7a, 0xeb, 0xa9, 0x2c, 0x52, 0x97, 0x3d, 0x79, 0xd9,

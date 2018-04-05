@@ -21,7 +21,7 @@ type DeleteProjectRequest struct {
 func (m *DeleteProjectRequest) Reset()                    { *m = DeleteProjectRequest{} }
 func (m *DeleteProjectRequest) String() string            { return proto.CompactTextString(m) }
 func (*DeleteProjectRequest) ProtoMessage()               {}
-func (*DeleteProjectRequest) Descriptor() ([]byte, []int) { return fileDescriptor19, []int{0} }
+func (*DeleteProjectRequest) Descriptor() ([]byte, []int) { return fileDescriptor22, []int{0} }
 
 func (m *DeleteProjectRequest) GetProjectId() *google_protobuf.StringValue {
 	if m != nil {
@@ -34,9 +34,9 @@ func init() {
 	proto.RegisterType((*DeleteProjectRequest)(nil), "ai.metathings.service.identity.DeleteProjectRequest")
 }
 
-func init() { proto.RegisterFile("delete_project.proto", fileDescriptor19) }
+func init() { proto.RegisterFile("delete_project.proto", fileDescriptor22) }
 
-var fileDescriptor19 = []byte{
+var fileDescriptor22 = []byte{
 	// 212 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x3c, 0xce, 0xc1, 0x4a, 0x03, 0x31,
 	0x10, 0xc6, 0x71, 0xd6, 0x43, 0xc1, 0x78, 0x2b, 0x3d, 0x48, 0x91, 0x5a, 0x3c, 0x79, 0xe9, 0x04,

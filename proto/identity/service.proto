@@ -73,6 +73,12 @@ import "list_roles_for_user_on_project.proto";
 // Auth
 import "issue_token.proto";
 
+// Application Credential
+import "create_application_credential.proto";
+import "delete_application_credential.proto";
+import "get_application_credential.proto";
+import "list_application_credentials.proto";
+
 service IdentityService {
 	// https://developer.openstack.org/api-ref/identity/v3/#create-region
 	rpc CreateRegion(CreateRegionRequest) returns (CreateRegionResponse) {}
@@ -199,4 +205,13 @@ service IdentityService {
 	// application credential authorization
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#authenticating-with-an-application-credential
 	rpc IssueToken(IssueTokenRequest) returns (IssueTokenResponse) {}
+
+	// https://developer.openstack.org/api-ref/identity/v3/index.html#create-application-credential
+	rpc CreateApplicationCredential(CreateApplicationCredentialRequest) returns (CreateApplicationCredentialResponse) {}
+	// https://developer.openstack.org/api-ref/identity/v3/index.html#delete-application-credential
+	rpc DeleteApplicationCredential(DeleteApplicationCredentialRequest) returns (google.protobuf.Empty) {}
+	// https://developer.openstack.org/api-ref/identity/v3/index.html#show-application-credential-details
+	rpc GetApplicationCredential(GetApplicationCredentialRequest) returns (GetApplicationCredentialResponse) {}
+	// https://developer.openstack.org/api-ref/identity/v3/index.html#list-application-credentials
+	rpc ListApplicationCredentials(ListApplicationCredentialsRequest) returns (ListApplicationCredentialsResponse) {}
 }

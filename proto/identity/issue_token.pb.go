@@ -39,7 +39,7 @@ var AUTH_METHOD_value = map[string]int32{
 func (x AUTH_METHOD) String() string {
 	return proto.EnumName(AUTH_METHOD_name, int32(x))
 }
-func (AUTH_METHOD) EnumDescriptor() ([]byte, []int) { return fileDescriptor31, []int{0} }
+func (AUTH_METHOD) EnumDescriptor() ([]byte, []int) { return fileDescriptor35, []int{0} }
 
 type TokenScope struct {
 	DomainId    *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=domain_id,json=domainId" json:"domain_id,omitempty"`
@@ -51,7 +51,7 @@ type TokenScope struct {
 func (m *TokenScope) Reset()                    { *m = TokenScope{} }
 func (m *TokenScope) String() string            { return proto.CompactTextString(m) }
 func (*TokenScope) ProtoMessage()               {}
-func (*TokenScope) Descriptor() ([]byte, []int) { return fileDescriptor31, []int{0} }
+func (*TokenScope) Descriptor() ([]byte, []int) { return fileDescriptor35, []int{0} }
 
 func (m *TokenScope) GetDomainId() *google_protobuf.StringValue {
 	if m != nil {
@@ -93,7 +93,7 @@ type PasswordPayload struct {
 func (m *PasswordPayload) Reset()                    { *m = PasswordPayload{} }
 func (m *PasswordPayload) String() string            { return proto.CompactTextString(m) }
 func (*PasswordPayload) ProtoMessage()               {}
-func (*PasswordPayload) Descriptor() ([]byte, []int) { return fileDescriptor31, []int{1} }
+func (*PasswordPayload) Descriptor() ([]byte, []int) { return fileDescriptor35, []int{1} }
 
 func (m *PasswordPayload) GetId() *google_protobuf.StringValue {
 	if m != nil {
@@ -145,7 +145,7 @@ type TokenPayload struct {
 func (m *TokenPayload) Reset()                    { *m = TokenPayload{} }
 func (m *TokenPayload) String() string            { return proto.CompactTextString(m) }
 func (*TokenPayload) ProtoMessage()               {}
-func (*TokenPayload) Descriptor() ([]byte, []int) { return fileDescriptor31, []int{2} }
+func (*TokenPayload) Descriptor() ([]byte, []int) { return fileDescriptor35, []int{2} }
 
 func (m *TokenPayload) GetTokenId() *google_protobuf.StringValue {
 	if m != nil {
@@ -170,7 +170,7 @@ type ApplicationCredentialPayload struct {
 func (m *ApplicationCredentialPayload) Reset()                    { *m = ApplicationCredentialPayload{} }
 func (m *ApplicationCredentialPayload) String() string            { return proto.CompactTextString(m) }
 func (*ApplicationCredentialPayload) ProtoMessage()               {}
-func (*ApplicationCredentialPayload) Descriptor() ([]byte, []int) { return fileDescriptor31, []int{3} }
+func (*ApplicationCredentialPayload) Descriptor() ([]byte, []int) { return fileDescriptor35, []int{3} }
 
 func (m *ApplicationCredentialPayload) GetId() *google_protobuf.StringValue {
 	if m != nil {
@@ -205,7 +205,7 @@ type IssueTokenRequest struct {
 func (m *IssueTokenRequest) Reset()                    { *m = IssueTokenRequest{} }
 func (m *IssueTokenRequest) String() string            { return proto.CompactTextString(m) }
 func (*IssueTokenRequest) ProtoMessage()               {}
-func (*IssueTokenRequest) Descriptor() ([]byte, []int) { return fileDescriptor31, []int{4} }
+func (*IssueTokenRequest) Descriptor() ([]byte, []int) { return fileDescriptor35, []int{4} }
 
 type isIssueTokenRequest_Payload interface {
 	isIssueTokenRequest_Payload()
@@ -360,7 +360,7 @@ type IssueTokenResponse struct {
 func (m *IssueTokenResponse) Reset()                    { *m = IssueTokenResponse{} }
 func (m *IssueTokenResponse) String() string            { return proto.CompactTextString(m) }
 func (*IssueTokenResponse) ProtoMessage()               {}
-func (*IssueTokenResponse) Descriptor() ([]byte, []int) { return fileDescriptor31, []int{5} }
+func (*IssueTokenResponse) Descriptor() ([]byte, []int) { return fileDescriptor35, []int{5} }
 
 func (m *IssueTokenResponse) GetToken() *Token {
 	if m != nil {
@@ -379,9 +379,9 @@ func init() {
 	proto.RegisterEnum("ai.metathings.service.identity.AUTH_METHOD", AUTH_METHOD_name, AUTH_METHOD_value)
 }
 
-func init() { proto.RegisterFile("issue_token.proto", fileDescriptor31) }
+func init() { proto.RegisterFile("issue_token.proto", fileDescriptor35) }
 
-var fileDescriptor31 = []byte{
+var fileDescriptor35 = []byte{
 	// 613 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xa4, 0x54, 0x51, 0x4f, 0xd4, 0x4c,
 	0x14, 0x65, 0x0b, 0xbb, 0xec, 0xde, 0x92, 0xef, 0x5b, 0x26, 0x91, 0x10, 0x42, 0x90, 0x6c, 0x62,

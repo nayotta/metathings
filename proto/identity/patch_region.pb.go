@@ -23,7 +23,7 @@ type PatchRegionRequest struct {
 func (m *PatchRegionRequest) Reset()                    { *m = PatchRegionRequest{} }
 func (m *PatchRegionRequest) String() string            { return proto.CompactTextString(m) }
 func (*PatchRegionRequest) ProtoMessage()               {}
-func (*PatchRegionRequest) Descriptor() ([]byte, []int) { return fileDescriptor49, []int{0} }
+func (*PatchRegionRequest) Descriptor() ([]byte, []int) { return fileDescriptor54, []int{0} }
 
 func (m *PatchRegionRequest) GetRegionId() *google_protobuf.StringValue {
 	if m != nil {
@@ -53,7 +53,7 @@ type PatchRegionResponse struct {
 func (m *PatchRegionResponse) Reset()                    { *m = PatchRegionResponse{} }
 func (m *PatchRegionResponse) String() string            { return proto.CompactTextString(m) }
 func (*PatchRegionResponse) ProtoMessage()               {}
-func (*PatchRegionResponse) Descriptor() ([]byte, []int) { return fileDescriptor49, []int{1} }
+func (*PatchRegionResponse) Descriptor() ([]byte, []int) { return fileDescriptor54, []int{1} }
 
 func (m *PatchRegionResponse) GetRegion() *Region {
 	if m != nil {
@@ -67,9 +67,9 @@ func init() {
 	proto.RegisterType((*PatchRegionResponse)(nil), "ai.metathings.service.identity.PatchRegionResponse")
 }
 
-func init() { proto.RegisterFile("patch_region.proto", fileDescriptor49) }
+func init() { proto.RegisterFile("patch_region.proto", fileDescriptor54) }
 
-var fileDescriptor49 = []byte{
+var fileDescriptor54 = []byte{
 	// 281 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x91, 0xc1, 0x4b, 0xfb, 0x30,
 	0x14, 0xc7, 0xe9, 0x7e, 0x50, 0x7e, 0x66, 0x22, 0x12, 0x2f, 0x63, 0xc8, 0x1c, 0x3b, 0x88, 0x97,

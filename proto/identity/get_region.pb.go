@@ -21,7 +21,7 @@ type GetRegionRequest struct {
 func (m *GetRegionRequest) Reset()                    { *m = GetRegionRequest{} }
 func (m *GetRegionRequest) String() string            { return proto.CompactTextString(m) }
 func (*GetRegionRequest) ProtoMessage()               {}
-func (*GetRegionRequest) Descriptor() ([]byte, []int) { return fileDescriptor27, []int{0} }
+func (*GetRegionRequest) Descriptor() ([]byte, []int) { return fileDescriptor31, []int{0} }
 
 func (m *GetRegionRequest) GetRegionId() *google_protobuf.StringValue {
 	if m != nil {
@@ -37,7 +37,7 @@ type GetRegionResponse struct {
 func (m *GetRegionResponse) Reset()                    { *m = GetRegionResponse{} }
 func (m *GetRegionResponse) String() string            { return proto.CompactTextString(m) }
 func (*GetRegionResponse) ProtoMessage()               {}
-func (*GetRegionResponse) Descriptor() ([]byte, []int) { return fileDescriptor27, []int{1} }
+func (*GetRegionResponse) Descriptor() ([]byte, []int) { return fileDescriptor31, []int{1} }
 
 func (m *GetRegionResponse) GetRegion() *Region {
 	if m != nil {
@@ -51,9 +51,9 @@ func init() {
 	proto.RegisterType((*GetRegionResponse)(nil), "ai.metathings.service.identity.GetRegionResponse")
 }
 
-func init() { proto.RegisterFile("get_region.proto", fileDescriptor27) }
+func init() { proto.RegisterFile("get_region.proto", fileDescriptor31) }
 
-var fileDescriptor27 = []byte{
+var fileDescriptor31 = []byte{
 	// 239 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x7c, 0x90, 0xc1, 0x4a, 0xc3, 0x40,
 	0x10, 0x86, 0x89, 0x87, 0xa0, 0xab, 0x87, 0x9a, 0x93, 0x14, 0xa9, 0xa5, 0x07, 0xf1, 0xd2, 0x59,

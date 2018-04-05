@@ -24,7 +24,7 @@ type ListProjectsRequest struct {
 func (m *ListProjectsRequest) Reset()                    { *m = ListProjectsRequest{} }
 func (m *ListProjectsRequest) String() string            { return proto.CompactTextString(m) }
 func (*ListProjectsRequest) ProtoMessage()               {}
-func (*ListProjectsRequest) Descriptor() ([]byte, []int) { return fileDescriptor35, []int{0} }
+func (*ListProjectsRequest) Descriptor() ([]byte, []int) { return fileDescriptor40, []int{0} }
 
 func (m *ListProjectsRequest) GetDomainId() *google_protobuf.StringValue {
 	if m != nil {
@@ -61,7 +61,7 @@ type ListProjectsResponse struct {
 func (m *ListProjectsResponse) Reset()                    { *m = ListProjectsResponse{} }
 func (m *ListProjectsResponse) String() string            { return proto.CompactTextString(m) }
 func (*ListProjectsResponse) ProtoMessage()               {}
-func (*ListProjectsResponse) Descriptor() ([]byte, []int) { return fileDescriptor35, []int{1} }
+func (*ListProjectsResponse) Descriptor() ([]byte, []int) { return fileDescriptor40, []int{1} }
 
 func (m *ListProjectsResponse) GetProjects() []*Project {
 	if m != nil {
@@ -75,9 +75,9 @@ func init() {
 	proto.RegisterType((*ListProjectsResponse)(nil), "ai.metathings.service.identity.ListProjectsResponse")
 }
 
-func init() { proto.RegisterFile("list_projects.proto", fileDescriptor35) }
+func init() { proto.RegisterFile("list_projects.proto", fileDescriptor40) }
 
-var fileDescriptor35 = []byte{
+var fileDescriptor40 = []byte{
 	// 298 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x91, 0xc1, 0x4b, 0xfb, 0x30,
 	0x14, 0x80, 0xe9, 0x6f, 0xe3, 0xe7, 0x96, 0xe1, 0xa5, 0xf3, 0x50, 0x86, 0x8c, 0xb1, 0x8b, 0xbb,

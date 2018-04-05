@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package ai.metathings.service.identity;
 
+import "google/protobuf/timestamp.proto";
+
 message Token {
 	reserved "catalog";
 	reserved "audit_ids";
@@ -33,8 +35,8 @@ message Token {
 	}
 
 	repeated string methods = 1;
-	string exipres_at = 2;
-	string issued_at = 3;
+	google.protobuf.Timestamp exipres_at = 2;
+	google.protobuf.Timestamp issued_at = 3;
 	bool is_domain = 4;
 	_User user = 5;
 	_Role role = 6;

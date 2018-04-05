@@ -22,7 +22,7 @@ type CheckUserInGroupRequest struct {
 func (m *CheckUserInGroupRequest) Reset()                    { *m = CheckUserInGroupRequest{} }
 func (m *CheckUserInGroupRequest) String() string            { return proto.CompactTextString(m) }
 func (*CheckUserInGroupRequest) ProtoMessage()               {}
-func (*CheckUserInGroupRequest) Descriptor() ([]byte, []int) { return fileDescriptor10, []int{0} }
+func (*CheckUserInGroupRequest) Descriptor() ([]byte, []int) { return fileDescriptor11, []int{0} }
 
 func (m *CheckUserInGroupRequest) GetUserId() *google_protobuf.StringValue {
 	if m != nil {
@@ -42,9 +42,9 @@ func init() {
 	proto.RegisterType((*CheckUserInGroupRequest)(nil), "ai.metathings.service.identity.CheckUserInGroupRequest")
 }
 
-func init() { proto.RegisterFile("check_user_in_group.proto", fileDescriptor10) }
+func init() { proto.RegisterFile("check_user_in_group.proto", fileDescriptor11) }
 
-var fileDescriptor10 = []byte{
+var fileDescriptor11 = []byte{
 	// 237 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0xcf, 0xb1, 0x4a, 0xc4, 0x40,
 	0x10, 0xc6, 0x71, 0x72, 0x45, 0x4e, 0x62, 0x97, 0x46, 0x3d, 0xe4, 0x3c, 0xac, 0x6c, 0x6e, 0x03,

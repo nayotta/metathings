@@ -22,7 +22,7 @@ type Group struct {
 func (m *Group) Reset()                    { *m = Group{} }
 func (m *Group) String() string            { return proto.CompactTextString(m) }
 func (*Group) ProtoMessage()               {}
-func (*Group) Descriptor() ([]byte, []int) { return fileDescriptor30, []int{0} }
+func (*Group) Descriptor() ([]byte, []int) { return fileDescriptor34, []int{0} }
 
 func (m *Group) GetId() string {
 	if m != nil {
@@ -56,9 +56,9 @@ func init() {
 	proto.RegisterType((*Group)(nil), "ai.metathings.service.identity.Group")
 }
 
-func init() { proto.RegisterFile("group.proto", fileDescriptor30) }
+func init() { proto.RegisterFile("group.proto", fileDescriptor34) }
 
-var fileDescriptor30 = []byte{
+var fileDescriptor34 = []byte{
 	// 153 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x4c, 0xce, 0xbf, 0x0a, 0xc2, 0x40,
 	0x0c, 0xc7, 0x71, 0x5a, 0xab, 0xd8, 0x14, 0x1c, 0x32, 0x1d, 0x08, 0x52, 0x9c, 0x9c, 0x6e, 0xf1,

@@ -21,7 +21,7 @@ type Region struct {
 func (m *Region) Reset()                    { *m = Region{} }
 func (m *Region) String() string            { return proto.CompactTextString(m) }
 func (*Region) ProtoMessage()               {}
-func (*Region) Descriptor() ([]byte, []int) { return fileDescriptor53, []int{0} }
+func (*Region) Descriptor() ([]byte, []int) { return fileDescriptor58, []int{0} }
 
 func (m *Region) GetId() string {
 	if m != nil {
@@ -48,9 +48,9 @@ func init() {
 	proto.RegisterType((*Region)(nil), "ai.metathings.service.identity.Region")
 }
 
-func init() { proto.RegisterFile("region.proto", fileDescriptor53) }
+func init() { proto.RegisterFile("region.proto", fileDescriptor58) }
 
-var fileDescriptor53 = []byte{
+var fileDescriptor58 = []byte{
 	// 145 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x4c, 0x8e, 0x31, 0x0b, 0xc2, 0x30,
 	0x14, 0x84, 0x69, 0x85, 0x82, 0x51, 0x8a, 0x64, 0xca, 0x24, 0xc5, 0xa9, 0x53, 0x16, 0x7f, 0x85,

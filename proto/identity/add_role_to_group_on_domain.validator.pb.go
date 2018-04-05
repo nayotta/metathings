@@ -10,18 +10,21 @@ It is generated from these files:
 	add_role_to_user_on_domain.proto
 	add_role_to_user_on_project.proto
 	add_user_to_group.proto
+	application_credential.proto
 	change_password.proto
 	check_role_in_group_on_domain.proto
 	check_role_in_group_on_project.proto
 	check_role_in_user_on_domain.proto
 	check_role_in_user_on_project.proto
 	check_user_in_group.proto
+	create_application_credential.proto
 	create_domain.proto
 	create_group.proto
 	create_project.proto
 	create_region.proto
 	create_role.proto
 	create_user.proto
+	delete_application_credential.proto
 	delete_domain.proto
 	delete_group.proto
 	delete_project.proto
@@ -29,6 +32,7 @@ It is generated from these files:
 	delete_role.proto
 	delete_user.proto
 	domain.proto
+	get_application_credential.proto
 	get_domain.proto
 	get_group.proto
 	get_project.proto
@@ -37,6 +41,7 @@ It is generated from these files:
 	get_user.proto
 	group.proto
 	issue_token.proto
+	list_application_credentials.proto
 	list_domains.proto
 	list_groups.proto
 	list_groups_for_user.proto
@@ -75,12 +80,15 @@ It has these top-level messages:
 	AddRoleToUserOnDomainRequest
 	AddRoleToUserOnProjectRequest
 	AddUserToGroupRequest
+	ApplicationCredential
 	ChangePasswordRequest
 	CheckRoleInGroupOnDomainRequest
 	CheckRoleInGroupOnProjectRequest
 	CheckRoleInUserOnDomainRequest
 	CheckRoleInUserOnProjectRequest
 	CheckUserInGroupRequest
+	CreateApplicationCredentialRequest
+	CreateApplicationCredentialResponse
 	CreateDomainRequest
 	CreateDomainResponse
 	CreateGroupRequest
@@ -93,6 +101,7 @@ It has these top-level messages:
 	CreateRoleResponse
 	CreateUserRequest
 	CreateUserResponse
+	DeleteApplicationCredentialRequest
 	DeleteDomainRequest
 	DeleteGroupRequest
 	DeleteProjectRequest
@@ -100,6 +109,8 @@ It has these top-level messages:
 	DeleteRoleRequest
 	DeleteUserRequest
 	Domain
+	GetApplicationCredentialRequest
+	GetApplicationCredentialResponse
 	GetDomainRequest
 	GetDomainResponse
 	GetGroupRequest
@@ -119,6 +130,8 @@ It has these top-level messages:
 	ApplicationCredentialPayload
 	IssueTokenRequest
 	IssueTokenResponse
+	ListApplicationCredentialsRequest
+	ListApplicationCredentialsResponse
 	ListDomainsRequest
 	ListDomainsResponse
 	ListGroupsRequest
