@@ -38,24 +38,26 @@ type _domain struct {
 }
 
 type issueTokenResponseBody struct {
-	Project struct {
-		Domain _domain `json:"domain"`
-		Id     string  `json:"id"`
-		Name   string  `json:"name"`
-	} `json:"project"`
-	User struct {
-		Domain _domain `json:"domain"`
-		Id     string  `json:"id"`
-		Name   string  `json:"name"`
-	} `json:"user"`
-	Methods []string `json:"methods"`
-	Roles   []struct {
-		Id   string `json:"id"`
-		Name string `json:"name"`
-	} `json:"roles"`
-	IsDomain  bool   `json:"is_domain"`
-	ExipresAt string `json:"exipres_at"`
-	IssuedAt  string `json:"issued_at"`
+	Token struct {
+		Project struct {
+			Domain _domain `json:"domain"`
+			Id     string  `json:"id"`
+			Name   string  `json:"name"`
+		} `json:"project"`
+		User struct {
+			Domain _domain `json:"domain"`
+			Id     string  `json:"id"`
+			Name   string  `json:"name"`
+		} `json:"user"`
+		Methods []string `json:"methods"`
+		Roles   []struct {
+			Id   string `json:"id"`
+			Name string `json:"name"`
+		} `json:"roles"`
+		IsDomain  bool   `json:"is_domain"`
+		ExipresAt string `json:"exipres_at"`
+		IssuedAt  string `json:"issued_at"`
+	} `json:"token"`
 }
 
 func EncodeIssueTokenRequest(ctx context.Context, req *pb.IssueTokenRequest) (interface{}, error) {
@@ -98,41 +100,42 @@ func EncodeIssueTokenRequest(ctx context.Context, req *pb.IssueTokenRequest) (in
 	return &body, nil
 }
 
-func DecodeIssueTokenResponse(res gorequest.Response, body string) (*pb.IssueTokenResponse, error) {
+func DecodeIssueTokenResponse(_ gorequest.Response, body string) (*pb.IssueTokenResponse, error) {
 	b := issueTokenResponseBody{}
 	err := json.Unmarshal([]byte(body), &b)
 	if err != nil {
 		return nil, err
 	}
-	issueTokenRes := &pb.IssueTokenResponse{}
+	t := b.Token
+	res := &pb.IssueTokenResponse{}
 	token := &pb.Token{
-		Methods:  b.Methods,
-		IsDomain: b.IsDomain,
+		Methods:  t.Methods,
+		IsDomain: t.IsDomain,
 		User: &pb.Token__User{
-			Id:   b.User.Id,
-			Name: b.User.Name,
+			Id:   t.User.Id,
+			Name: t.User.Name,
 			Domain: &pb.Token__Domain{
-				Id:   b.User.Domain.Id,
-				Name: b.User.Domain.Name,
+				Id:   t.User.Domain.Id,
+				Name: t.User.Domain.Name,
 			},
 		},
 		Roles: []*pb.Token__Role{},
 		Project: &pb.Token__Project{
-			Id:   b.Project.Id,
-			Name: b.Project.Name,
+			Id:   t.Project.Id,
+			Name: t.Project.Name,
 			Domain: &pb.Token__Domain{
-				Id:   b.Project.Domain.Id,
-				Name: b.Project.Domain.Name,
+				Id:   t.Project.Domain.Id,
+				Name: t.Project.Domain.Name,
 			},
 		},
 	}
-	for _, r := range b.Roles {
+	for _, r := range t.Roles {
 		token.Roles = append(token.Roles, &pb.Token__Role{
 			Id:   r.Id,
 			Name: r.Name,
 		})
 	}
-	issueTokenRes.Token = token
+	res.Token = token
 
-	return issueTokenRes, nil
+	return res, nil
 }

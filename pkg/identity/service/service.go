@@ -329,12 +329,12 @@ func (srv *metathingsIdentityService) IssueToken(ctx context.Context, req *pb.Is
 			return nil, grpc.Errorf(codes.Internal, "internal error")
 		}
 	}
-	base_url, err := url.Parse(srv.opts.keystoneAdminBaseURL)
+	url, err := url.Parse(srv.opts.keystoneAdminBaseURL)
 	if err != nil {
 		return nil, grpc.Errorf(codes.Internal, "bad keystone admin base url")
 	}
-	url := path.Join(base_url.Path, "/v3/auth/tokens?nocatalog=1")
-	http_res, http_body, errs := gorequest.New().Post(url).Send(&body).End()
+	url.Path = path.Join(url.Path, "/v3/auth/tokens")
+	http_res, http_body, errs := gorequest.New().Post(url.String()).Send(&body).End()
 	if errs != nil {
 		return nil, grpc.Errorf(codes.Internal, fmt.Sprintf("%v", errs))
 	}

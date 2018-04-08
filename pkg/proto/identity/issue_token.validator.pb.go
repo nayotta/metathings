@@ -21,19 +21,9 @@ func (this *TokenScope) Validate() error {
 			return go_proto_validators.FieldError("DomainId", err)
 		}
 	}
-	if this.DomainName != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.DomainName); err != nil {
-			return go_proto_validators.FieldError("DomainName", err)
-		}
-	}
 	if this.ProjectId != nil {
 		if err := go_proto_validators.CallValidatorIfExists(this.ProjectId); err != nil {
 			return go_proto_validators.FieldError("ProjectId", err)
-		}
-	}
-	if this.ProjectName != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.ProjectName); err != nil {
-			return go_proto_validators.FieldError("ProjectName", err)
 		}
 	}
 	return nil
