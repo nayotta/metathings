@@ -39,6 +39,6 @@ message Token {
 	google.protobuf.Timestamp issued_at = 3;
 	bool is_domain = 4;
 	_User user = 5;
-	_Role role = 6;
+	repeated _Role roles = 6;
 	_Project project = 7;
 }

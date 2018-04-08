@@ -30,9 +30,11 @@ func (this *Token) Validate() error {
 			return go_proto_validators.FieldError("User", err)
 		}
 	}
-	if this.Role != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Role); err != nil {
-			return go_proto_validators.FieldError("Role", err)
+	for _, item := range this.Roles {
+		if item != nil {
+			if err := go_proto_validators.CallValidatorIfExists(item); err != nil {
+				return go_proto_validators.FieldError("Roles", err)
+			}
 		}
 	}
 	if this.Project != nil {
