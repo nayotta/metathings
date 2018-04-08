@@ -2,11 +2,14 @@ package metathings_identity_service
 
 import (
 	"context"
+	"fmt"
 
 	google_protobuf3 "github.com/golang/protobuf/ptypes/empty"
+	"github.com/parnurzeal/gorequest"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 
+	"github.com/bigdatagz/metathings/identity/service/encode_decode"
 	pb "github.com/bigdatagz/metathings/proto/identity"
 )
 
@@ -314,8 +317,20 @@ func (srv *metathingsIdentityService) ListRolesForUserOnProject(context.Context,
 // https://developer.openstack.org/api-ref/identity/v3/index.html#token-authentication-with-explicit-unscoped-authorization
 // application credential authorization
 // https://developer.openstack.org/api-ref/identity/v3/index.html#authenticating-with-an-application-credential
-func (srv *metathingsIdentityService) IssueToken(context.Context, *pb.IssueTokenRequest) (*pb.IssueTokenResponse, error) {
-	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
+func (srv *metathingsIdentityService) IssueToken(ctx context.Context, req *pb.IssueTokenRequest) (*pb.IssueTokenResponse, error) {
+	body, err := encode_decode.EncodeIssueTokenRequest(ctx, req)
+	if err != nil {
+		switch err {
+		case encode_decode.Unimplemented:
+			return nil, grpc.Errorf(codes.Unauthenticated, "unimplement")
+		default:
+			return nil, grpc.Errorf(codes.Internal, "internal error")
+		}
+	}
+	_, rbody, _ := gorequest.New().Post("http://fls-vps:35357/v3/auth/tokens").Send(&body).End()
+	fmt.Println(rbody)
+
+	return nil, nil
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#revoke-token

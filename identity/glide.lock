@@ -1,8 +1,8 @@
-hash: 3441bf6ff6d443d7e65fcdfc4f1d1b67e506cee012ed3b4901bbe2aab9890aa9
-updated: 2018-04-05T18:56:57.571318+08:00
+hash: 527199efb343cf06e5da27778dc043535dbbb34957e9ddd225621edcdc0a1769
+updated: 2018-04-08T10:57:20.145827+08:00
 imports:
 - name: github.com/bigdatagz/metathings
-  version: 2ace77223c93fc780a16544c051730a708701811
+  version: e3bb5736b72ce9e66420b8fd5362b1d6bfc9552e
   subpackages:
   - identity/service
   - proto/identity
