@@ -10,7 +10,30 @@ import (
 	pb "github.com/bigdatagz/metathings/proto/identity"
 )
 
-type metathingsIdentityService struct{}
+type options struct {
+	keystoneAdminAddr  string
+	keystonePublicAddr string
+}
+
+var defaultServiceOptions = options{}
+
+type ServiceOptions func(*options)
+
+func SetKeystoneAdminAddress(addr string) func(*options) {
+	return func(o *options) {
+		o.keystoneAdminAddr = addr
+	}
+}
+
+func SetKeystonePublicAddress(addr string) func(*options) {
+	return func(o *options) {
+		o.keystonePublicAddr = addr
+	}
+}
+
+type metathingsIdentityService struct {
+	opts options
+}
 
 // https://developer.openstack.org/api-ref/identity/v3/#create-region
 func (srv *metathingsIdentityService) CreateRegion(context.Context, *pb.CreateRegionRequest) (*pb.CreateRegionResponse, error) {
@@ -320,6 +343,13 @@ func (srv *metathingsIdentityService) ListApplicationCredentials(context.Context
 	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
 }
 
-func NewIdentityService() *metathingsIdentityService {
-	return &metathingsIdentityService{}
+func NewIdentityService(opt ...ServiceOptions) *metathingsIdentityService {
+	opts := defaultServiceOptions
+	for _, o := range opt {
+		o(&opts)
+	}
+
+	return &metathingsIdentityService{
+		opts: opts,
+	}
 }

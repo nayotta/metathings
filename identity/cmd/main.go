@@ -12,7 +12,9 @@ import (
 )
 
 var (
-	bind string
+	bind         string
+	ksAdminAddr  string
+	ksPublicAddr string
 )
 
 var (
@@ -33,14 +35,21 @@ func runGRPC() error {
 		log.Fatalf("[E] failed to listen: %v\n", err)
 	}
 
-	srv := grpc.NewServer()
-	pb.RegisterIdentityServiceServer(srv, service.NewIdentityService())
+	s := grpc.NewServer()
+	srv := service.NewIdentityService(
+		service.SetKeystoneAdminAddress(ksAdminAddr),
+		service.SetKeystonePublicAddress(ksPublicAddr),
+	)
+
+	pb.RegisterIdentityServiceServer(s, srv)
 	log.Printf("[!] Listen on %v\n", bind)
-	return srv.Serve(lis)
+	return s.Serve(lis)
 }
 
 func main() {
 	rootCmd.PersistentFlags().StringVarP(&bind, "bind", "b", "127.0.0.1:5000", "Metathings Identity Service binding address")
+	rootCmd.PersistentFlags().StringVar(&ksAdminAddr, "keystone-admin-addr", "", "Backend Keystone Admin Address")
+	rootCmd.PersistentFlags().StringVar(&ksPublicAddr, "keystone-public-addr", "", "Backend Keystone Public Address")
 
 	rootCmd.Execute()
 }
