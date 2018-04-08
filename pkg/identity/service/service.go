@@ -11,8 +11,8 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 
-	codec "github.com/bigdatagz/metathings/identity/service/encode_decode"
-	pb "github.com/bigdatagz/metathings/proto/identity"
+	codec "github.com/bigdatagz/metathings/pkg/identity/service/encode_decode"
+	pb "github.com/bigdatagz/metathings/pkg/proto/identity"
 )
 
 type options struct {
@@ -24,7 +24,7 @@ var defaultServiceOptions = options{}
 
 type ServiceOptions func(*options)
 
-func SetKeystoneBaseURL(url string) func(*options) {
+func SetKeystoneAdminBaseURL(url string) func(*options) {
 	return func(o *options) {
 		o.keystoneAdminBaseURL = url
 	}

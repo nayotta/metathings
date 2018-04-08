@@ -7,8 +7,8 @@ import (
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
 
-	service "github.com/bigdatagz/metathings/identity/service"
-	pb "github.com/bigdatagz/metathings/proto/identity"
+	service "github.com/bigdatagz/metathings/pkg/identity/service"
+	pb "github.com/bigdatagz/metathings/pkg/proto/identity"
 )
 
 var (

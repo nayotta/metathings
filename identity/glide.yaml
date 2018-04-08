@@ -1,5 +1,0 @@
-package: .
-excludeDirs:
-- vendor
-import:
-- package: github.com/bigdatagz/metathings

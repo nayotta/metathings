@@ -3,9 +3,9 @@ package encode_decode
 import (
 	"context"
 	"encoding/json"
-	"net/http"
 
-	pb "github.com/bigdatagz/metathings/proto/identity"
+	pb "github.com/bigdatagz/metathings/pkg/proto/identity"
+	"github.com/parnurzeal/gorequest"
 )
 
 type issueTokenScopedViaPasswordRequestBody struct {
@@ -98,7 +98,7 @@ func EncodeIssueTokenRequest(ctx context.Context, req *pb.IssueTokenRequest) (in
 	return &body, nil
 }
 
-func DecodeIssueTokenResponse(res http.Response, body string) (*pb.IssueTokenResponse, error) {
+func DecodeIssueTokenResponse(res gorequest.Response, body string) (*pb.IssueTokenResponse, error) {
 	b := issueTokenResponseBody{}
 	err := json.Unmarshal([]byte(body), &b)
 	if err != nil {

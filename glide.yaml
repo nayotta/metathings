@@ -1,0 +1,21 @@
+package: github.com/bigdatagz/metathings
+import:
+- package: github.com/golang/protobuf
+  version: ~1.0.0
+  subpackages:
+  - proto
+  - ptypes/empty
+  - ptypes/timestamp
+  - ptypes/wrappers
+- package: github.com/mwitkow/go-proto-validators
+- package: github.com/parnurzeal/gorequest
+  version: ~0.2.15
+- package: github.com/spf13/cobra
+  version: ~0.0.2
+- package: golang.org/x/net
+  subpackages:
+  - context
+- package: google.golang.org/grpc
+  version: ~1.11.2
+  subpackages:
+  - codes

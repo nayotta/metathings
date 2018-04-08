@@ -1,10 +1,6 @@
-hash: 0240dd9c2ba741c331a05b64d1cd3f1d9e0a489f2ef704bdbd125b987ec9e2b8
-updated: 2018-04-08T15:08:36.493677+08:00
+hash: 4f93d5c3998bbcaf280eed3852284b47289f9c087a474be33541edc7f2281201
+updated: 2018-04-08T17:23:47.407281+08:00
 imports:
-- name: github.com/bigdatagz/metathings
-  version: 9fe174854d1e136155d2da0aa1b36dea5aaa6725
-  subpackages:
-  - proto/identity
 - name: github.com/gogo/protobuf
   version: 1ef32a8b9fc3f8ec940126907cedb5998f6318e4
   subpackages:
@@ -27,15 +23,15 @@ imports:
 - name: github.com/mwitkow/go-proto-validators
   version: 0950a79900071e9f3f5979b78078c599376422fd
 - name: github.com/parnurzeal/gorequest
-  version: 8e3aed27fe49f7fdc765dad067845f600fc984e8
+  version: a578a48e8d6ca8b01a3b18314c43c6716bb5f5a3
 - name: github.com/pkg/errors
   version: 816c9085562cd7ee03e7f8188a1cfd942858cded
 - name: github.com/spf13/cobra
-  version: 7b2c5ac9fc04fc5efafb60700713d4fa609b777b
+  version: a1f051bc3eba734da4772d60e2d677f47cf93ef4
 - name: github.com/spf13/pflag
-  version: ad68c28ee799163e627e77fcc6e8ecaa866e3535
+  version: 1ce0cc6db4029d97571db82f85092fccedb572ce
 - name: golang.org/x/net
-  version: 6078986fec03a1dcc236c34816c71b0e05018fda
+  version: 61147c48b25b599e5b561d2e9c4f3e1ef489ca41
   subpackages:
   - context
   - http2
@@ -46,18 +42,18 @@ imports:
   - publicsuffix
   - trace
 - name: golang.org/x/text
-  version: ece95c760240037f89ebcbdd7155ac8cb52e38fa
+  version: 2cb43934f0eece38629746959acc633cba083fe4
   subpackages:
   - secure/bidirule
   - transform
   - unicode/bidi
   - unicode/norm
 - name: google.golang.org/genproto
-  version: ab0870e398d5dd054b868c0db1481ab029b9a9f2
+  version: ce84044298496ef4b54b4a0a0909ba593cc60e30
   subpackages:
   - googleapis/rpc/status
 - name: google.golang.org/grpc
-  version: afc05b9e1d36f289ea16ba294894486a3e458246
+  version: d89cded64628466c4ab532d1f0ba5c220459ebe8
   subpackages:
   - balancer
   - balancer/base
