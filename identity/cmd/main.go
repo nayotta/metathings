@@ -12,9 +12,9 @@ import (
 )
 
 var (
-	bind         string
-	ksAdminAddr  string
-	ksPublicAddr string
+	bind            string
+	ksAdminBaseURL  string
+	ksPublicBaseURL string
 )
 
 var (
@@ -37,8 +37,8 @@ func runGRPC() error {
 
 	s := grpc.NewServer()
 	srv := service.NewIdentityService(
-		service.SetKeystoneAdminAddress(ksAdminAddr),
-		service.SetKeystonePublicAddress(ksPublicAddr),
+		service.SetKeystoneAdminBaseURL(ksAdminBaseURL),
+		service.SetKeystonePublicBaseURL(ksPublicBaseURL),
 	)
 
 	pb.RegisterIdentityServiceServer(s, srv)
@@ -48,8 +48,8 @@ func runGRPC() error {
 
 func main() {
 	rootCmd.PersistentFlags().StringVarP(&bind, "bind", "b", "127.0.0.1:5000", "Metathings Identity Service binding address")
-	rootCmd.PersistentFlags().StringVar(&ksAdminAddr, "keystone-admin-addr", "", "Backend Keystone Admin Address")
-	rootCmd.PersistentFlags().StringVar(&ksPublicAddr, "keystone-public-addr", "", "Backend Keystone Public Address")
+	rootCmd.PersistentFlags().StringVar(&ksAdminBaseURL, "keystone-admin-url", "http://localhost:35357", "Backend Keystone Admin Base URL")
+	rootCmd.PersistentFlags().StringVar(&ksPublicBaseURL, "keystone-public-url", "http://localhost:5000", "Backend Keystone Public Base URL")
 
 	rootCmd.Execute()
 }

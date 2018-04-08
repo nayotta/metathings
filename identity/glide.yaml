@@ -1,4 +1,5 @@
 package: .
-import: []
 excludeDirs:
 - vendor
+import:
+- package: github.com/bigdatagz/metathings

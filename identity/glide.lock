@@ -1,10 +1,9 @@
-hash: 527199efb343cf06e5da27778dc043535dbbb34957e9ddd225621edcdc0a1769
-updated: 2018-04-08T10:57:20.145827+08:00
+hash: 0240dd9c2ba741c331a05b64d1cd3f1d9e0a489f2ef704bdbd125b987ec9e2b8
+updated: 2018-04-08T15:08:36.493677+08:00
 imports:
 - name: github.com/bigdatagz/metathings
-  version: e3bb5736b72ce9e66420b8fd5362b1d6bfc9552e
+  version: 9fe174854d1e136155d2da0aa1b36dea5aaa6725
   subpackages:
-  - identity/service
   - proto/identity
 - name: github.com/gogo/protobuf
   version: 1ef32a8b9fc3f8ec940126907cedb5998f6318e4
@@ -23,8 +22,14 @@ imports:
   - ptypes/wrappers
 - name: github.com/inconshreveable/mousetrap
   version: 76626ae9c91c4f2a10f34cad8ce83ea42c93bb75
+- name: github.com/moul/http2curl
+  version: 9ac6cf4d929b2fa8fd2d2e6dec5bb0feb4f4911d
 - name: github.com/mwitkow/go-proto-validators
   version: 0950a79900071e9f3f5979b78078c599376422fd
+- name: github.com/parnurzeal/gorequest
+  version: 8e3aed27fe49f7fdc765dad067845f600fc984e8
+- name: github.com/pkg/errors
+  version: 816c9085562cd7ee03e7f8188a1cfd942858cded
 - name: github.com/spf13/cobra
   version: 7b2c5ac9fc04fc5efafb60700713d4fa609b777b
 - name: github.com/spf13/pflag
@@ -38,6 +43,7 @@ imports:
   - idna
   - internal/timeseries
   - lex/httplex
+  - publicsuffix
   - trace
 - name: golang.org/x/text
   version: ece95c760240037f89ebcbdd7155ac8cb52e38fa

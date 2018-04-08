@@ -3,34 +3,36 @@ package metathings_identity_service
 import (
 	"context"
 	"fmt"
+	"net/url"
+	"path"
 
 	google_protobuf3 "github.com/golang/protobuf/ptypes/empty"
 	"github.com/parnurzeal/gorequest"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 
-	"github.com/bigdatagz/metathings/identity/service/encode_decode"
+	codec "github.com/bigdatagz/metathings/identity/service/encode_decode"
 	pb "github.com/bigdatagz/metathings/proto/identity"
 )
 
 type options struct {
-	keystoneAdminAddr  string
-	keystonePublicAddr string
+	keystoneAdminBaseURL  string
+	keystonePublicBaseURL string
 }
 
 var defaultServiceOptions = options{}
 
 type ServiceOptions func(*options)
 
-func SetKeystoneAdminAddress(addr string) func(*options) {
+func SetKeystoneBaseURL(url string) func(*options) {
 	return func(o *options) {
-		o.keystoneAdminAddr = addr
+		o.keystoneAdminBaseURL = url
 	}
 }
 
-func SetKeystonePublicAddress(addr string) func(*options) {
+func SetKeystonePublicBaseURL(url string) func(*options) {
 	return func(o *options) {
-		o.keystonePublicAddr = addr
+		o.keystonePublicBaseURL = url
 	}
 }
 
@@ -318,19 +320,25 @@ func (srv *metathingsIdentityService) ListRolesForUserOnProject(context.Context,
 // application credential authorization
 // https://developer.openstack.org/api-ref/identity/v3/index.html#authenticating-with-an-application-credential
 func (srv *metathingsIdentityService) IssueToken(ctx context.Context, req *pb.IssueTokenRequest) (*pb.IssueTokenResponse, error) {
-	body, err := encode_decode.EncodeIssueTokenRequest(ctx, req)
+	body, err := codec.EncodeIssueTokenRequest(ctx, req)
 	if err != nil {
 		switch err {
-		case encode_decode.Unimplemented:
+		case codec.Unimplemented:
 			return nil, grpc.Errorf(codes.Unauthenticated, "unimplement")
 		default:
 			return nil, grpc.Errorf(codes.Internal, "internal error")
 		}
 	}
-	_, rbody, _ := gorequest.New().Post("http://fls-vps:35357/v3/auth/tokens").Send(&body).End()
-	fmt.Println(rbody)
-
-	return nil, nil
+	base_url, err := url.Parse(srv.opts.keystoneAdminBaseURL)
+	if err != nil {
+		return nil, grpc.Errorf(codes.Internal, "bad keystone admin base url")
+	}
+	url := path.Join(base_url.Path, "/v3/auth/tokens?nocatalog=1")
+	http_res, http_body, errs := gorequest.New().Post(url).Send(&body).End()
+	if errs != nil {
+		return nil, grpc.Errorf(codes.Internal, fmt.Sprintf("%v", errs))
+	}
+	return codec.DecodeIssueTokenResponse(http_res, http_body)
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#revoke-token
