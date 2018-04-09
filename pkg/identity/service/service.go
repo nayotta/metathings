@@ -8,36 +8,52 @@ import (
 
 	google_protobuf3 "github.com/golang/protobuf/ptypes/empty"
 	"github.com/parnurzeal/gorequest"
+	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/metadata"
 
 	codec "github.com/bigdatagz/metathings/pkg/identity/service/encode_decode"
 	pb "github.com/bigdatagz/metathings/pkg/proto/identity"
 )
 
 type options struct {
-	keystoneAdminBaseURL  string
-	keystonePublicBaseURL string
+	keystoneBaseURL string
 }
 
 var defaultServiceOptions = options{}
 
 type ServiceOptions func(*options)
 
-func SetKeystoneAdminBaseURL(url string) func(*options) {
+func SetKeystoneBaseURL(url string) func(*options) {
 	return func(o *options) {
-		o.keystoneAdminBaseURL = url
-	}
-}
-
-func SetKeystonePublicBaseURL(url string) func(*options) {
-	return func(o *options) {
-		o.keystonePublicBaseURL = url
+		o.keystoneBaseURL = url
 	}
 }
 
 type metathingsIdentityService struct {
-	opts options
+	logger *log.Logger
+	h      *helper
+	opts   options
+}
+
+type helper struct {
+	srv *metathingsIdentityService
+}
+
+func (h *helper) JoinURL(p string) string {
+	url_str := h.srv.opts.keystoneBaseURL
+	url, err := url.Parse(url_str)
+	if err != nil {
+		h.srv.logger.Errorf("bad keystone base url: %v, error: %v\n", url_str, err)
+		return ""
+	}
+	url.Path = path.Join(url.Path, p)
+	return url.String()
+}
+
+func (h *helper) SendHeader(ctx context.Context, pairs ...string) error {
+	return grpc.SendHeader(ctx, metadata.Pairs(pairs...))
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/#create-region
@@ -326,18 +342,20 @@ func (srv *metathingsIdentityService) IssueToken(ctx context.Context, req *pb.Is
 		case codec.Unimplemented:
 			return nil, grpc.Errorf(codes.Unauthenticated, "unimplement")
 		default:
-			return nil, grpc.Errorf(codes.Internal, "internal error")
+			return nil, grpc.Errorf(codes.Internal, fmt.Sprintf("%v", err))
 		}
 	}
-	url, err := url.Parse(srv.opts.keystoneAdminBaseURL)
-	if err != nil {
-		return nil, grpc.Errorf(codes.Internal, "bad keystone admin base url")
-	}
-	url.Path = path.Join(url.Path, "/v3/auth/tokens")
-	http_res, http_body, errs := gorequest.New().Post(url.String()).Send(&body).End()
+	url := srv.h.JoinURL("/v3/auth/tokens")
+	http_res, http_body, errs := gorequest.New().Post(url).Send(&body).End()
 	if errs != nil {
 		return nil, grpc.Errorf(codes.Internal, fmt.Sprintf("%v", errs))
 	}
+
+	err = srv.h.SendHeader(ctx, "metathings-metadata-key", "value")
+	if err != nil {
+		srv.logger.Warningf("failed to send headers: %v\n", err)
+	}
+
 	return codec.DecodeIssueTokenResponse(http_res, http_body)
 }
 
@@ -372,7 +390,11 @@ func NewIdentityService(opt ...ServiceOptions) *metathingsIdentityService {
 		o(&opts)
 	}
 
-	return &metathingsIdentityService{
-		opts: opts,
+	srv := &metathingsIdentityService{
+		opts:   opts,
+		logger: log.New(),
 	}
+	srv.h = &helper{srv}
+
+	return srv
 }

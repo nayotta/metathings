@@ -1,9 +1,9 @@
 package main
 
 import (
-	"log"
 	"net"
 
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
 
@@ -12,9 +12,8 @@ import (
 )
 
 var (
-	bind            string
-	ksAdminBaseURL  string
-	ksPublicBaseURL string
+	bind      string
+	ksBaseURL string
 )
 
 var (
@@ -37,19 +36,17 @@ func runGRPC() error {
 
 	s := grpc.NewServer()
 	srv := service.NewIdentityService(
-		service.SetKeystoneAdminBaseURL(ksAdminBaseURL),
-		service.SetKeystonePublicBaseURL(ksPublicBaseURL),
+		service.SetKeystoneBaseURL(ksBaseURL),
 	)
 
 	pb.RegisterIdentityServiceServer(s, srv)
-	log.Printf("[!] Listen on %v\n", bind)
+	log.Printf("Listen on %v\n", bind)
 	return s.Serve(lis)
 }
 
 func main() {
 	rootCmd.PersistentFlags().StringVarP(&bind, "bind", "b", "127.0.0.1:5000", "Metathings Identity Service binding address")
-	rootCmd.PersistentFlags().StringVar(&ksAdminBaseURL, "keystone-admin-url", "http://localhost:35357", "Backend Keystone Admin Base URL")
-	rootCmd.PersistentFlags().StringVar(&ksPublicBaseURL, "keystone-public-url", "http://localhost:5000", "Backend Keystone Public Base URL")
+	rootCmd.PersistentFlags().StringVar(&ksBaseURL, "keystone-base-url", "http://localhost:35357", "Backend Keystone Base URL")
 
 	rootCmd.Execute()
 }

@@ -1,5 +1,5 @@
 hash: 4f93d5c3998bbcaf280eed3852284b47289f9c087a474be33541edc7f2281201
-updated: 2018-04-08T17:23:47.407281+08:00
+updated: 2018-04-09T12:53:51.580866+08:00
 imports:
 - name: github.com/gogo/protobuf
   version: 1ef32a8b9fc3f8ec940126907cedb5998f6318e4
@@ -26,10 +26,16 @@ imports:
   version: a578a48e8d6ca8b01a3b18314c43c6716bb5f5a3
 - name: github.com/pkg/errors
   version: 816c9085562cd7ee03e7f8188a1cfd942858cded
+- name: github.com/sirupsen/logrus
+  version: 778f2e774c725116edbc3d039dc0dfc1cc62aae8
 - name: github.com/spf13/cobra
   version: a1f051bc3eba734da4772d60e2d677f47cf93ef4
 - name: github.com/spf13/pflag
   version: 1ce0cc6db4029d97571db82f85092fccedb572ce
+- name: golang.org/x/crypto
+  version: b2aa35443fbc700ab74c586ae79b81c171851023
+  subpackages:
+  - ssh/terminal
 - name: golang.org/x/net
   version: 61147c48b25b599e5b561d2e9c4f3e1ef489ca41
   subpackages:
@@ -41,6 +47,11 @@ imports:
   - lex/httplex
   - publicsuffix
   - trace
+- name: golang.org/x/sys
+  version: 3b87a42e500a6dc65dae1a55d0b641295971163e
+  subpackages:
+  - unix
+  - windows
 - name: golang.org/x/text
   version: 2cb43934f0eece38629746959acc633cba083fe4
   subpackages:
