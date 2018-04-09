@@ -1,4 +1,4 @@
-package main
+package cmd
 
 import (
 	"net"
@@ -20,7 +20,7 @@ var (
 var (
 	identitydCmd = &cobra.Command{
 		Use:   "identityd",
-		Short: "MetaThings Identity Service Daemon",
+		Short: "Identity Service Daemon",
 		Run: func(cmd *cobra.Command, args []string) {
 			if err := runIdentityd(); err != nil {
 				log.Fatalf("[E] failed to runGRPC: %v\n", err)
