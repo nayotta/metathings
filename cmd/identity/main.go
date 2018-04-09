@@ -40,7 +40,7 @@ func runGRPC() error {
 	)
 
 	pb.RegisterIdentityServiceServer(s, srv)
-	log.Printf("Listen on %v\n", bind)
+	log.Printf("metathings identity service listen on %v", bind)
 	return s.Serve(lis)
 }
 

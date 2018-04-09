@@ -16,11 +16,8 @@ enum AUTH_METHOD {
 }
 
 message TokenScope {
-	// NOT support name in scope
-	reserved 2, 4;
-	reserved "domain_name", "project_name";
 	google.protobuf.StringValue domain_id = 1;
-	google.protobuf.StringValue project_id = 3;
+	google.protobuf.StringValue project_id = 2;
 }
 
 message PasswordPayload {
@@ -41,6 +38,9 @@ message ApplicationCredentialPayload {
 	google.protobuf.StringValue id = 1;
 	google.protobuf.StringValue name = 2;
 	google.protobuf.StringValue secret = 3;
+	google.protobuf.StringValue user_id = 4;
+	google.protobuf.StringValue username = 5;
+	google.protobuf.StringValue domain_id = 6;
 }
 
 message IssueTokenRequest {

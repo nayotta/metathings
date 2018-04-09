@@ -43,13 +43,13 @@ type helper struct {
 
 func (h *helper) JoinURL(p string) string {
 	url_str := h.srv.opts.keystoneBaseURL
-	url, err := url.Parse(url_str)
+	u, err := url.Parse(url_str)
 	if err != nil {
 		h.srv.logger.Errorf("bad keystone base url: %v, error: %v\n", url_str, err)
 		return ""
 	}
-	url.Path = path.Join(url.Path, p)
-	return url.String()
+	u.Path = path.Join(u.Path, p)
+	return u.String()
 }
 
 func (h *helper) SendHeader(ctx context.Context, pairs ...string) error {
@@ -346,17 +346,21 @@ func (srv *metathingsIdentityService) IssueToken(ctx context.Context, req *pb.Is
 		}
 	}
 	url := srv.h.JoinURL("/v3/auth/tokens")
-	http_res, http_body, errs := gorequest.New().Post(url).Send(&body).End()
+	http_res, http_body, errs := gorequest.New().Post(url).Query("nocatalog=1").Send(&body).End()
 	if errs != nil {
 		return nil, grpc.Errorf(codes.Internal, fmt.Sprintf("%v", errs))
 	}
-
-	err = srv.h.SendHeader(ctx, "metathings-metadata-key", "value")
+	token_str := http_res.Header.Get("X-Subject-Token")
+	err = srv.h.SendHeader(ctx, "X-Subject-Token", token_str)
 	if err != nil {
 		srv.logger.Warningf("failed to send headers: %v\n", err)
 	}
-
-	return codec.DecodeIssueTokenResponse(http_res, http_body)
+	res, err := codec.DecodeIssueTokenResponse(http_res, http_body)
+	srv.logger.WithFields(log.Fields{
+		"user_id": res.Token.User.Id,
+		"user":    res.Token.User.Name,
+	}).Infof("issue token")
+	return res, err
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#revoke-token

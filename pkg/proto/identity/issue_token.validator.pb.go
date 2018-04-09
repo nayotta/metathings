@@ -93,6 +93,21 @@ func (this *ApplicationCredentialPayload) Validate() error {
 			return go_proto_validators.FieldError("Secret", err)
 		}
 	}
+	if this.UserId != nil {
+		if err := go_proto_validators.CallValidatorIfExists(this.UserId); err != nil {
+			return go_proto_validators.FieldError("UserId", err)
+		}
+	}
+	if this.Username != nil {
+		if err := go_proto_validators.CallValidatorIfExists(this.Username); err != nil {
+			return go_proto_validators.FieldError("Username", err)
+		}
+	}
+	if this.DomainId != nil {
+		if err := go_proto_validators.CallValidatorIfExists(this.DomainId); err != nil {
+			return go_proto_validators.FieldError("DomainId", err)
+		}
+	}
 	return nil
 }
 func (this *IssueTokenRequest) Validate() error {
