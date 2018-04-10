@@ -19,3 +19,5 @@ import:
   version: ~1.11.2
   subpackages:
   - codes
+- package: github.com/spf13/viper
+  version: ^1.0.2

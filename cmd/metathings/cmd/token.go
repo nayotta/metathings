@@ -5,13 +5,14 @@ import (
 	"errors"
 	"fmt"
 
+	gpb "github.com/golang/protobuf/ptypes/wrappers"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
 
 	pb "github.com/bigdatagz/metathings/pkg/proto/identity"
-	gpb "github.com/golang/protobuf/ptypes/wrappers"
 )
 
 var (
@@ -23,11 +24,9 @@ var (
 		domain_name string
 		project_id  string
 
-		token string
-
-		app_cred_id   string
-		app_cred_name string
-		secret        string
+		application_credential_id   string
+		application_credential_name string
+		secret                      string
 
 		env bool
 	}
@@ -51,50 +50,49 @@ var (
 )
 
 func parseIssueTokenRequest() (*pb.IssueTokenRequest, error) {
-	opts := token_issue_opts
 	req := &pb.IssueTokenRequest{}
-	if opts.password != "" {
+	if V("password") != "" {
 		req.Method = pb.AUTH_METHOD_PASSWORD
 		payload := &pb.PasswordPayload{}
 
-		payload.Password = &gpb.StringValue{opts.password}
-		if opts.user_id != "" {
-			payload.Id = &gpb.StringValue{opts.user_id}
-		} else if opts.username != "" {
-			payload.Username = &gpb.StringValue{opts.username}
-			if opts.domain_id != "" {
-				payload.DomainId = &gpb.StringValue{opts.domain_id}
-			} else if opts.domain_name != "" {
-				payload.DomainName = &gpb.StringValue{opts.domain_name}
+		payload.Password = &gpb.StringValue{V("password")}
+		if V("user_id") != "" {
+			payload.Id = &gpb.StringValue{V("user_id")}
+		} else if V("username") != "" {
+			payload.Username = &gpb.StringValue{V("username")}
+			if V("domain_id") != "" {
+				payload.DomainId = &gpb.StringValue{V("domain_id")}
+			} else if V("domain_name") != "" {
+				payload.DomainName = &gpb.StringValue{V("domain_name")}
 			} else {
 				return nil, errors.New("required domain id or name when issue token by username")
 			}
 		}
-		if opts.project_id != "" {
+		if V("project_id") != "" {
 			payload.Scope = &pb.TokenScope{
-				ProjectId: &gpb.StringValue{opts.project_id},
+				ProjectId: &gpb.StringValue{V("project_id")},
 			}
 		}
 
 		req.Payload = &pb.IssueTokenRequest_Password{payload}
-	} else if opts.token != "" {
+	} else if V("token") != "" {
 		req.Method = pb.AUTH_METHOD_TOKEN
 		payload := &pb.TokenPayload{}
 
-		payload.TokenId = &gpb.StringValue{opts.token}
+		payload.TokenId = &gpb.StringValue{V("token")}
 
 		req.Payload = &pb.IssueTokenRequest_Token{payload}
-	} else if opts.secret != "" {
+	} else if V("secret") != "" {
 		req.Method = pb.AUTH_METHOD_APPLICATION_CREDENTIAL
 		payload := &pb.ApplicationCredentialPayload{}
 
-		payload.Secret = &gpb.StringValue{opts.secret}
-		if opts.app_cred_id != "" {
-			payload.Id = &gpb.StringValue{opts.app_cred_id}
-		} else if opts.app_cred_name != "" {
-			payload.Name = &gpb.StringValue{opts.app_cred_name}
-			if opts.domain_id != "" {
-				payload.DomainId = &gpb.StringValue{opts.domain_id}
+		payload.Secret = &gpb.StringValue{V("secret")}
+		if V("application_credential_id") != "" {
+			payload.Id = &gpb.StringValue{V("application_credential_id")}
+		} else if V("application_credential_name") != "" {
+			payload.Name = &gpb.StringValue{V("application_credential_name")}
+			if V("domain_id") != "" {
+				payload.DomainId = &gpb.StringValue{V("domain_id")}
 			} else {
 				return nil, errors.New("required domain id when issue token by application credential")
 			}
@@ -148,16 +146,23 @@ func issueToken() error {
 
 func init() {
 	tokenIssueCmd.Flags().StringVar(&token_issue_opts.user_id, "mt-user-id", "", "User ID")
+	viper.BindPFlag("MT_USER_ID", tokenIssueCmd.Flags().Lookup("mt-user-id"))
 	tokenIssueCmd.Flags().StringVar(&token_issue_opts.username, "mt-username", "", "User Name")
+	viper.BindPFlag("MT_USERNAME", tokenIssueCmd.Flags().Lookup("mt-username"))
 	tokenIssueCmd.Flags().StringVar(&token_issue_opts.password, "mt-password", "", "User Password")
+	viper.BindPFlag("MT_PASSWORD", tokenIssueCmd.Flags().Lookup("mt-password"))
 	tokenIssueCmd.Flags().StringVar(&token_issue_opts.domain_id, "mt-domain-id", "", "User Domain ID")
+	viper.BindPFlag("MT_DOMAIN_ID", tokenIssueCmd.Flags().Lookup("mt-domain-id"))
 	tokenIssueCmd.Flags().StringVar(&token_issue_opts.domain_name, "mt-domain-name", "", "User Domain Name")
+	viper.BindPFlag("MT_DOMAIN_NAME", tokenIssueCmd.Flags().Lookup("mt-domain-name"))
 	tokenIssueCmd.Flags().StringVar(&token_issue_opts.project_id, "mt-project-id", "", "User Project ID")
-	tokenIssueCmd.Flags().StringVar(&token_issue_opts.token, "mt-token", "", "User Token")
-	tokenIssueCmd.Flags().StringVar(&token_issue_opts.app_cred_id, "mt-application-credential-id", "", "Application Credential ID")
-	tokenIssueCmd.Flags().StringVar(&token_issue_opts.app_cred_name, "mt-application-credential-name", "", "Application Credential Name")
+	viper.BindPFlag("MT_PROJECT_ID", tokenIssueCmd.Flags().Lookup("mt-project-id"))
+	tokenIssueCmd.Flags().StringVar(&token_issue_opts.application_credential_id, "mt-application-credential-id", "", "Application Credential ID")
+	viper.BindPFlag("MT_APPLICATION_CREDENTIAL_ID", tokenIssueCmd.Flags().Lookup("mt-application-credential-id"))
+	tokenIssueCmd.Flags().StringVar(&token_issue_opts.application_credential_name, "mt-application-credential-name", "", "Application Credential Name")
+	viper.BindPFlag("MT_APPLICATION_CREDENTIAL_NAME", tokenIssueCmd.Flags().Lookup("mt-application-credential-name"))
 	tokenIssueCmd.Flags().StringVar(&token_issue_opts.secret, "mt-secret", "", "Application Credential Secret")
-
+	viper.BindPFlag("MT_SECRET", tokenIssueCmd.Flags().Lookup("mt-secret"))
 	tokenIssueCmd.Flags().BoolVar(&token_issue_opts.env, "env", false, "Output as shell script for setup shell environment")
 
 	tokenCmd.AddCommand(tokenIssueCmd)

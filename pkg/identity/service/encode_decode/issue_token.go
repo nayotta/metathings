@@ -4,8 +4,9 @@ import (
 	"context"
 	"encoding/json"
 
-	pb "github.com/bigdatagz/metathings/pkg/proto/identity"
 	"github.com/parnurzeal/gorequest"
+
+	pb "github.com/bigdatagz/metathings/pkg/proto/identity"
 )
 
 type _domain struct {

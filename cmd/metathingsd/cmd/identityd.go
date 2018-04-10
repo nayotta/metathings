@@ -3,11 +3,12 @@ package cmd
 import (
 	"net"
 
-	service "github.com/bigdatagz/metathings/pkg/identity/service"
-	pb "github.com/bigdatagz/metathings/pkg/proto/identity"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
+
+	service "github.com/bigdatagz/metathings/pkg/identity/service"
+	pb "github.com/bigdatagz/metathings/pkg/proto/identity"
 )
 
 var (
