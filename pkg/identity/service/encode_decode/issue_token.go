@@ -9,8 +9,8 @@ import (
 )
 
 type _domain struct {
-	Id   string `json:"id"`
-	Name string `json:"name"`
+	Id   string `json:"id,omitempty"`
+	Name string `json:"name,omitempty"`
 }
 
 type _user struct {
@@ -59,14 +59,14 @@ type _scope struct {
 type issueTokenViaPasswordRequestBody struct {
 	Auth struct {
 		Identity pwdIdentity `json:"identity"`
-		Scope    *_scope     `json:"scope"`
+		Scope    *_scope     `json:"scope,omitempty"`
 	} `json:"auth"`
 }
 
 type issueTokenViaTokenRequestBody struct {
 	Auth struct {
 		Identity tokenIdentity `json:"identity"`
-		Scope    *_scope       `json:"scope"`
+		Scope    *_scope       `json:"scope,omitempty"`
 	} `json:"auth"`
 }
 
@@ -140,6 +140,7 @@ func encodeIssueTokenViaPasswordRequest(ctx context.Context, req *pb.IssueTokenR
 			idt.Password.User.Domain.Name = domain_name.Value
 		}
 	}
+
 	if password != nil {
 		idt.Password.User.Password = password.Value
 	}
@@ -147,12 +148,14 @@ func encodeIssueTokenViaPasswordRequest(ctx context.Context, req *pb.IssueTokenR
 	if scope != nil {
 		project_id := scope.GetProjectId()
 
-		body.Auth.Identity = idt
 		if project_id != nil {
 			body.Auth.Scope = &_scope{}
 			body.Auth.Scope.Project.Id = project_id.Value
 		}
 	}
+
+	body.Auth.Identity = idt
+
 	return &body, nil
 
 }
@@ -173,12 +176,14 @@ func encodeIssueTokenViaTokenRequest(ctx context.Context, req *pb.IssueTokenRequ
 	if scope != nil {
 		project_id := scope.GetProjectId()
 
-		body.Auth.Identity = idt
 		if project_id != nil {
 			body.Auth.Scope = &_scope{}
 			body.Auth.Scope.Project.Id = project_id.Value
 		}
 	}
+
+	body.Auth.Identity = idt
+
 	return &body, nil
 }
 
