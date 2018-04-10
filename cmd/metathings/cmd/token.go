@@ -42,6 +42,7 @@ var (
 		Use:   "issue",
 		Short: "Issue Token",
 		Run: func(cmd *cobra.Command, args []string) {
+			initialize()
 			if err := issueToken(); err != nil {
 				log.Fatalf("failed to issue token: %v", err)
 			}
@@ -146,23 +147,23 @@ func issueToken() error {
 
 func init() {
 	tokenIssueCmd.Flags().StringVar(&token_issue_opts.user_id, "mt-user-id", "", "User ID")
-	viper.BindPFlag("MT_USER_ID", tokenIssueCmd.Flags().Lookup("mt-user-id"))
+	viper.BindPFlag(A("USER_ID"), tokenIssueCmd.Flags().Lookup("mt-user-id"))
 	tokenIssueCmd.Flags().StringVar(&token_issue_opts.username, "mt-username", "", "User Name")
-	viper.BindPFlag("MT_USERNAME", tokenIssueCmd.Flags().Lookup("mt-username"))
+	viper.BindPFlag(A("USERNAME"), tokenIssueCmd.Flags().Lookup("mt-username"))
 	tokenIssueCmd.Flags().StringVar(&token_issue_opts.password, "mt-password", "", "User Password")
-	viper.BindPFlag("MT_PASSWORD", tokenIssueCmd.Flags().Lookup("mt-password"))
+	viper.BindPFlag(A("PASSWORD"), tokenIssueCmd.Flags().Lookup("mt-password"))
 	tokenIssueCmd.Flags().StringVar(&token_issue_opts.domain_id, "mt-domain-id", "", "User Domain ID")
-	viper.BindPFlag("MT_DOMAIN_ID", tokenIssueCmd.Flags().Lookup("mt-domain-id"))
+	viper.BindPFlag(A("DOMAIN_ID"), tokenIssueCmd.Flags().Lookup("mt-domain-id"))
 	tokenIssueCmd.Flags().StringVar(&token_issue_opts.domain_name, "mt-domain-name", "", "User Domain Name")
-	viper.BindPFlag("MT_DOMAIN_NAME", tokenIssueCmd.Flags().Lookup("mt-domain-name"))
+	viper.BindPFlag(A("DOMAIN_NAME"), tokenIssueCmd.Flags().Lookup("mt-domain-name"))
 	tokenIssueCmd.Flags().StringVar(&token_issue_opts.project_id, "mt-project-id", "", "User Project ID")
-	viper.BindPFlag("MT_PROJECT_ID", tokenIssueCmd.Flags().Lookup("mt-project-id"))
+	viper.BindPFlag(A("PROJECT_ID"), tokenIssueCmd.Flags().Lookup("mt-project-id"))
 	tokenIssueCmd.Flags().StringVar(&token_issue_opts.application_credential_id, "mt-application-credential-id", "", "Application Credential ID")
-	viper.BindPFlag("MT_APPLICATION_CREDENTIAL_ID", tokenIssueCmd.Flags().Lookup("mt-application-credential-id"))
+	viper.BindPFlag(A("APPLICATION_CREDENTIAL_ID"), tokenIssueCmd.Flags().Lookup("mt-application-credential-id"))
 	tokenIssueCmd.Flags().StringVar(&token_issue_opts.application_credential_name, "mt-application-credential-name", "", "Application Credential Name")
-	viper.BindPFlag("MT_APPLICATION_CREDENTIAL_NAME", tokenIssueCmd.Flags().Lookup("mt-application-credential-name"))
+	viper.BindPFlag(A("APPLICATION_CREDENTIAL_NAME"), tokenIssueCmd.Flags().Lookup("mt-application-credential-name"))
 	tokenIssueCmd.Flags().StringVar(&token_issue_opts.secret, "mt-secret", "", "Application Credential Secret")
-	viper.BindPFlag("MT_SECRET", tokenIssueCmd.Flags().Lookup("mt-secret"))
+	viper.BindPFlag(A("SECRET"), tokenIssueCmd.Flags().Lookup("mt-secret"))
 	tokenIssueCmd.Flags().BoolVar(&token_issue_opts.env, "env", false, "Output as shell script for setup shell environment")
 
 	tokenCmd.AddCommand(tokenIssueCmd)

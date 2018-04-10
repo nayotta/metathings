@@ -12,6 +12,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
+	"google.golang.org/grpc/status"
 
 	codec "github.com/bigdatagz/metathings/pkg/identity/service/encode_decode"
 	pb "github.com/bigdatagz/metathings/pkg/proto/identity"
@@ -19,15 +20,24 @@ import (
 
 type options struct {
 	keystoneBaseURL string
+	logLevel        string
 }
 
-var defaultServiceOptions = options{}
+var defaultServiceOptions = options{
+	logLevel: "info",
+}
 
 type ServiceOptions func(*options)
 
 func SetKeystoneBaseURL(url string) func(*options) {
 	return func(o *options) {
 		o.keystoneBaseURL = url
+	}
+}
+
+func SetLogLevel(lvl string) func(*options) {
+	return func(o *options) {
+		o.logLevel = lvl
 	}
 }
 
@@ -340,16 +350,22 @@ func (srv *metathingsIdentityService) IssueToken(ctx context.Context, req *pb.Is
 	if err != nil {
 		switch err {
 		case codec.Unimplemented:
-			return nil, grpc.Errorf(codes.Unauthenticated, "unimplement")
+			return nil, status.Errorf(codes.Unauthenticated, "unimplement")
 		default:
-			return nil, grpc.Errorf(codes.Internal, fmt.Sprintf("%v", err))
+			return nil, status.Errorf(codes.Internal, fmt.Sprintf("%v", err))
 		}
 	}
 	url := srv.h.JoinURL("/v3/auth/tokens")
 	http_res, http_body, errs := gorequest.New().Post(url).Query("nocatalog=1").Send(&body).End()
 	if errs != nil {
-		return nil, grpc.Errorf(codes.Internal, fmt.Sprintf("%v", errs))
+		srv.logger.Errorf("keystone issue token error: %v", errs)
+		return nil, status.Errorf(codes.Internal, fmt.Sprintf("%v", errs))
 	}
+
+	if http_res.StatusCode != 201 {
+		return nil, status.Errorf(codes.Unauthenticated, fmt.Sprintf("%v", http_body))
+	}
+
 	token_str := http_res.Header.Get("X-Subject-Token")
 	err = srv.h.SendHeader(ctx, "X-Subject-Token", token_str)
 	if err != nil {
@@ -394,9 +410,15 @@ func NewIdentityService(opt ...ServiceOptions) *metathingsIdentityService {
 		o(&opts)
 	}
 
+	logger := log.New()
+	lvl, err := log.ParseLevel(opts.logLevel)
+	if err != nil {
+		log.Fatalf("bad log level %v: %v", opts.logLevel, err)
+	}
+	logger.SetLevel(lvl)
 	srv := &metathingsIdentityService{
 		opts:   opts,
-		logger: log.New(),
+		logger: logger,
 	}
 	srv.h = &helper{srv}
 

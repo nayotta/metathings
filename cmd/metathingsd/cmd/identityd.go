@@ -23,6 +23,7 @@ var (
 		Use:   "identityd",
 		Short: "Identity Service Daemon",
 		Run: func(cmd *cobra.Command, args []string) {
+			initialize()
 			if err := runIdentityd(); err != nil {
 				log.Fatalf("[E] failed to runGRPC: %v\n", err)
 			}
@@ -39,6 +40,7 @@ func runIdentityd() error {
 	s := grpc.NewServer()
 	srv := service.NewIdentityService(
 		service.SetKeystoneBaseURL(identityd_opts.ksBaseURL),
+		service.SetLogLevel(V("log_level")),
 	)
 
 	pb.RegisterIdentityServiceServer(s, srv)
