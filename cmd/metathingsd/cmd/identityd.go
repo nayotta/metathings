@@ -25,7 +25,7 @@ var (
 		Run: func(cmd *cobra.Command, args []string) {
 			initialize()
 			if err := runIdentityd(); err != nil {
-				log.Fatalf("[E] failed to runGRPC: %v\n", err)
+				log.Fatalf("failed to run identityd: %v", err)
 			}
 		},
 	}
@@ -34,7 +34,7 @@ var (
 func runIdentityd() error {
 	lis, err := net.Listen("tcp", identityd_opts.bind)
 	if err != nil {
-		log.Fatalf("[E] failed to listen: %v\n", err)
+		return err
 	}
 
 	s := grpc.NewServer()

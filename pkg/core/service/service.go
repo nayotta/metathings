@@ -8,6 +8,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 
+	"github.com/bigdatagz/metathings/pkg/common/log"
 	pb "github.com/bigdatagz/metathings/pkg/proto/core"
 )
 
@@ -28,7 +29,7 @@ func SetLogLevel(lvl string) ServiceOptions {
 }
 
 type metathingsCoreService struct {
-	logger *log.Logger
+	logger log.FieldLogger
 	opts   options
 }
 
@@ -61,4 +62,22 @@ func (srv *metathingsCoreService) ListCoresForUser(context.Context, *pb.ListCore
 
 func (srv *metathingsCoreService) SendUnaryCall(context.Context, *pb.SendUnaryCallRequest) (*pb.SendUnaryCallResponse, error) {
 	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
+}
+
+func NewCoreService(opt ...ServiceOptions) *metathingsCoreService {
+	opts := defaultServiceOptions
+	for _, o := range opt {
+		o(&opts)
+	}
+
+	logger, err := log_helper.NewLogger("cored", opts.logLevel)
+	if err != nil {
+		log.Fatalf("failed to new logger: %v", err)
+	}
+
+	srv := &metathingsCoreService{
+		opts:   opts,
+		logger: logger,
+	}
+	return srv
 }

@@ -14,6 +14,7 @@ import (
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 
+	"github.com/bigdatagz/metathings/pkg/common/log"
 	codec "github.com/bigdatagz/metathings/pkg/identity/service/encode_decode"
 	pb "github.com/bigdatagz/metathings/pkg/proto/identity"
 )
@@ -42,7 +43,7 @@ func SetLogLevel(lvl string) ServiceOptions {
 }
 
 type metathingsIdentityService struct {
-	logger *log.Logger
+	logger log.FieldLogger
 	h      *helper
 	opts   options
 }
@@ -410,12 +411,10 @@ func NewIdentityService(opt ...ServiceOptions) *metathingsIdentityService {
 		o(&opts)
 	}
 
-	logger := log.New()
-	lvl, err := log.ParseLevel(opts.logLevel)
+	logger, err := log_helper.NewLogger("identityd", opts.logLevel)
 	if err != nil {
-		log.Fatalf("bad log level %v: %v", opts.logLevel, err)
+		log.Fatalf("failed to new logger: %v", err)
 	}
-	logger.SetLevel(lvl)
 	srv := &metathingsIdentityService{
 		opts:   opts,
 		logger: logger,
