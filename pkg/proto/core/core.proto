@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package ai.metathings.service.core;
+
+enum CoreState {
+	CORE_STATE_UNKNOWN = 0;
+	CORE_STATE_ONLINE = 1;
+	CORE_STATE_OFFLINE = 2;
+}
+
+message Core {
+	string id = 1;
+	string project_id = 2;
+	string owner_id = 3;
+	CoreState state = 4;
+}

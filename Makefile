@@ -13,6 +13,9 @@ identity_proto:
 echo_proto:
 	$(MAKE) -C pkg/proto/echo all
 
+core_proto:
+	$(MAKE) -C pkg/proto/core all
+
 metathings_bin:
 	$(MAKE) -C cmd/metathings all
 

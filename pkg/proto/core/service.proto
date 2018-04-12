@@ -6,7 +6,25 @@ option go_package = "core";
 import "google/protobuf/empty.proto";
 
 import "create_core.proto";
+import "delete_core.proto";
+import "get_core.proto";
+import "list_cores.proto";
+
+import "heartbeat.proto";
+import "pipeline.proto";
+
+import "list_cores_for_user.proto";
+import "send_unary_call.proto";
 
 service CoreService {
 	rpc CreateCore(CreateCoreRequest) returns (CreateCoreResponse) {}
+	rpc DeleteCore(DeleteCoreRequest) returns (google.protobuf.Empty) {}
+	rpc GetCore(GetCoreRequest) returns (GetCoreResponse) {}
+	rpc ListCores(ListCoresRequest) returns (ListCoresResponse) {}
+
+	rpc Heartbeat(HeartbeatRequest) returns (google.protobuf.Empty) {}
+	rpc Pipeline(stream PipelineOutStream) returns (stream PipelineInStream) {}
+
+	rpc ListCoresForUser(ListCoresForUserRequest) returns (ListCoresForUserResponse) {}
+	rpc SendUnaryCall(SendUnaryCallRequest) returns (SendUnaryCallResponse) {}
 }

@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package ai.metathings.service.core;
+
+import "google/protobuf/wrappers.proto";
+
+import "github.com/mwitkow/go-proto-validators/validator.proto";
+
+import "unary_call.proto";
+
+enum PipelineMessageType {
+	PIPELINE_MESSAGE_TYPE_UNKNOWN = 0;
+	PIPELINE_MESSAGE_TYPE_SYSTEM = 1;
+	PIPELINE_MESSAGE_TYPE_USER = 2;
+}
+
+message PipelineOutStream {
+	string session_id = 1;
+}
+
+message PipelineInStream {
+	google.protobuf.StringValue session_id = 1 [(validator.field) = {msg_exists: true}];
+	PipelineMessageType message_type = 2 [(validator.field) = {msg_exists: true}];
+	oneof payload {
+		UnaryCallPayload unary_call = 3;
+	};
+}

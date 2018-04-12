@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package ai.metathings.service.core;
+
+// import "google/protobuf/wrappers.proto";
+
+import "github.com/mwitkow/go-proto-validators/validator.proto";
+
+import "core.proto";
+
+message ListCoresRequest {}
+
+message ListCoresResponse {
+	repeated Core cores = 1;
+}

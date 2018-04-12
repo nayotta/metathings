@@ -29,13 +29,13 @@ var defaultServiceOptions = options{
 
 type ServiceOptions func(*options)
 
-func SetKeystoneBaseURL(url string) func(*options) {
+func SetKeystoneBaseURL(url string) ServiceOptions {
 	return func(o *options) {
 		o.keystoneBaseURL = url
 	}
 }
 
-func SetLogLevel(lvl string) func(*options) {
+func SetLogLevel(lvl string) ServiceOptions {
 	return func(o *options) {
 		o.logLevel = lvl
 	}

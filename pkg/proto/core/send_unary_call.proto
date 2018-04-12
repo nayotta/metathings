@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package ai.metathings.service.core;
+
+import "github.com/mwitkow/go-proto-validators/validator.proto";
+
+import "unary_call.proto";
+
+message SendUnaryCallRequest {
+	UnaryCallPayload payload = 1 [(validator.field) = {msg_exists: true}];
+}
+
+message SendUnaryCallResponse {
+	UnaryCallPayload payload = 1;
+}
