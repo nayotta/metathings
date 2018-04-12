@@ -1,14 +1,20 @@
-GO=$(shell which go)
 RM=$(shell which rm)
-METATHINGS_SRC=$(shell ls cmd/metathings/*.go)
-METATHINGSD_SRC=$(shell ls cmd/metathingsd/*.go)
 CLEAN_PATHS=./bin
 
-build:
-	$(GO) build -o bin/metathings $(METATHINGS_SRC)
-	$(GO) build -o bin/metathingsd $(METATHINGSD_SRC)
+
+all: identity_proto echo_proto metathings_bin metathingsd_bin
 
 clean:
 	$(RM) -rf $(CLEAN_PATHS)
 
-all: build
+identity_proto:
+	$(MAKE) -C pkg/proto/identity all
+
+echo_proto:
+	$(MAKE) -C pkg/proto/echo all
+
+metathings_bin:
+	$(MAKE) -C cmd/metathings all
+
+metathingsd_bin:
+	$(MAKE) -C cmd/metathingsd all

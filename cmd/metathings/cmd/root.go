@@ -45,8 +45,6 @@ func init() {
 	RootCmd.PersistentFlags().StringVar(&root_opts.log_level, "log-level", "info", "Logging Level[debug, info, warn, error]")
 	viper.BindPFlag(A("LOG_LEVEL"), RootCmd.PersistentFlags().Lookup("log-level"))
 	RootCmd.PersistentFlags().StringVar(&root_opts.addr, "addr", "127.0.0.1:5000", "Metathings Service Address")
-
-	RootCmd.AddCommand(tokenCmd)
 }
 
 func initialize() {

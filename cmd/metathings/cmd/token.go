@@ -167,4 +167,5 @@ func init() {
 	tokenIssueCmd.Flags().BoolVar(&token_issue_opts.env, "env", false, "Output as shell script for setup shell environment")
 
 	tokenCmd.AddCommand(tokenIssueCmd)
+	RootCmd.AddCommand(tokenCmd)
 }

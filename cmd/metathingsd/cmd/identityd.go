@@ -44,11 +44,13 @@ func runIdentityd() error {
 	)
 
 	pb.RegisterIdentityServiceServer(s, srv)
-	log.Printf("metathings identity service listen on %v", identityd_opts.bind)
+	log.Infof("metathings identity service listen on %v", identityd_opts.bind)
 	return s.Serve(lis)
 }
 
 func init() {
 	identitydCmd.Flags().StringVarP(&identityd_opts.bind, "bind", "b", "127.0.0.1:5000", "Metathings Identity Service binding address")
 	identitydCmd.Flags().StringVar(&identityd_opts.ksBaseURL, "keystone-base-url", "http://localhost:35357", "Backend Keystone Base URL")
+
+	RootCmd.AddCommand(identitydCmd)
 }

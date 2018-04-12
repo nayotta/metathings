@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package ai.metathings.service.echo;
+option go_package = "echo";
+
+import "echo.proto";
+
+service EchoService {
+	rpc Echo(EchoRequest) returns (EchoResponse) {}
+}

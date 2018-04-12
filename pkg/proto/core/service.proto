@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package ai.metathings.service.core;
+option go_package = "core";
+
+import "google/protobuf/empty.proto";
+
+import "create_core.proto";
+
+service CoreService {
+	rpc CreateCore(CreateCoreRequest) returns (CreateCoreResponse) {}
+}
