@@ -39,10 +39,10 @@ var (
 	}
 
 	tokenIssueCmd = &cobra.Command{
-		Use:   "issue",
-		Short: "Issue Token",
+		Use:    "issue",
+		Short:  "Issue Token",
+		PreRun: globalPreRunHook,
 		Run: func(cmd *cobra.Command, args []string) {
-			initialize()
 			if err := issueToken(); err != nil {
 				log.Fatalf("failed to issue token: %v", err)
 			}

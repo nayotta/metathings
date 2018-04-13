@@ -3,6 +3,7 @@ package cmd
 import (
 	"net"
 
+	"github.com/grpc-ecosystem/go-grpc-middleware/auth"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
@@ -19,10 +20,10 @@ var (
 
 var (
 	coredCmd = &cobra.Command{
-		Use:   "cored",
-		Short: "Cored Service Daemon",
+		Use:    "cored",
+		Short:  "Cored Service Daemon",
+		PreRun: globalPreRunHook,
 		Run: func(cmd *cobra.Command, args []string) {
-			initialize()
 			if err := runCored(); err != nil {
 				log.Fatalf("failed to run cored: %v", err)
 			}
@@ -36,11 +37,15 @@ func runCored() error {
 		return err
 	}
 
-	s := grpc.NewServer()
+	s := grpc.NewServer(
+		grpc.UnaryInterceptor(grpc_auth.UnaryServerInterceptor(nil)),
+		grpc.StreamInterceptor(grpc_auth.StreamServerInterceptor(nil)),
+	)
 	srv := service.NewCoreService(
 		service.SetLogLevel(V("log_level")),
 	)
 	pb.RegisterCoreServiceServer(s, srv)
+
 	log.Infof("metathings core service listen on %v", cored_opts.bind)
 	return s.Serve(lis)
 }

@@ -7,6 +7,7 @@ import "google/protobuf/empty.proto";
 
 import "create_core.proto";
 import "delete_core.proto";
+import "patch_core.proto";
 import "get_core.proto";
 import "list_cores.proto";
 
@@ -19,6 +20,7 @@ import "send_unary_call.proto";
 service CoreService {
 	rpc CreateCore(CreateCoreRequest) returns (CreateCoreResponse) {}
 	rpc DeleteCore(DeleteCoreRequest) returns (google.protobuf.Empty) {}
+	rpc PatchCore(PatchCoreRequest) returns (PatchCoreResponse) {}
 	rpc GetCore(GetCoreRequest) returns (GetCoreResponse) {}
 	rpc ListCores(ListCoresRequest) returns (ListCoresResponse) {}
 

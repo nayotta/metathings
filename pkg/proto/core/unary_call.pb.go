@@ -23,7 +23,7 @@ type UnaryCallPayload struct {
 func (m *UnaryCallPayload) Reset()                    { *m = UnaryCallPayload{} }
 func (m *UnaryCallPayload) String() string            { return proto.CompactTextString(m) }
 func (*UnaryCallPayload) ProtoMessage()               {}
-func (*UnaryCallPayload) Descriptor() ([]byte, []int) { return fileDescriptor10, []int{0} }
+func (*UnaryCallPayload) Descriptor() ([]byte, []int) { return fileDescriptor11, []int{0} }
 
 func (m *UnaryCallPayload) GetServiceName() *google_protobuf.StringValue {
 	if m != nil {
@@ -50,9 +50,9 @@ func init() {
 	proto.RegisterType((*UnaryCallPayload)(nil), "ai.metathings.service.core.UnaryCallPayload")
 }
 
-func init() { proto.RegisterFile("unary_call.proto", fileDescriptor10) }
+func init() { proto.RegisterFile("unary_call.proto", fileDescriptor11) }
 
-var fileDescriptor10 = []byte{
+var fileDescriptor11 = []byte{
 	// 210 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0xce, 0x3f, 0x4b, 0xc5, 0x30,
 	0x14, 0x05, 0x70, 0xaa, 0xa0, 0x90, 0x3a, 0x94, 0xe2, 0x50, 0x8b, 0x88, 0x38, 0x39, 0xdd, 0x82,

@@ -20,10 +20,10 @@ var (
 
 var (
 	identitydCmd = &cobra.Command{
-		Use:   "identityd",
-		Short: "Identity Service Daemon",
+		Use:    "identityd",
+		Short:  "Identity Service Daemon",
+		PreRun: globalPreRunHook,
 		Run: func(cmd *cobra.Command, args []string) {
-			initialize()
 			if err := runIdentityd(); err != nil {
 				log.Fatalf("failed to run identityd: %v", err)
 			}

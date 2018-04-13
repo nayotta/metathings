@@ -2,12 +2,15 @@ syntax = "proto3";
 
 package ai.metathings.service.core;
 
+import "google/protobuf/wrappers.proto";
+
 import "github.com/mwitkow/go-proto-validators/validator.proto";
 
 import "unary_call.proto";
 
 message SendUnaryCallRequest {
-	UnaryCallPayload payload = 1 [(validator.field) = {msg_exists: true}];
+	google.protobuf.StringValue core_id = 1;
+	UnaryCallPayload payload = 2 [(validator.field) = {msg_exists: true}];
 }
 
 message SendUnaryCallResponse {

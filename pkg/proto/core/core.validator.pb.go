@@ -12,6 +12,7 @@ It is generated from these files:
 	heartbeat.proto
 	list_cores.proto
 	list_cores_for_user.proto
+	patch_core.proto
 	pipeline.proto
 	send_unary_call.proto
 	service.proto
@@ -29,6 +30,8 @@ It has these top-level messages:
 	ListCoresResponse
 	ListCoresForUserRequest
 	ListCoresForUserResponse
+	PatchCoreRequest
+	PatchCoreResponse
 	PipelineOutStream
 	PipelineInStream
 	SendUnaryCallRequest

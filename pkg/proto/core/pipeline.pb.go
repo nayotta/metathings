@@ -36,7 +36,7 @@ var PipelineMessageType_value = map[string]int32{
 func (x PipelineMessageType) String() string {
 	return proto.EnumName(PipelineMessageType_name, int32(x))
 }
-func (PipelineMessageType) EnumDescriptor() ([]byte, []int) { return fileDescriptor7, []int{0} }
+func (PipelineMessageType) EnumDescriptor() ([]byte, []int) { return fileDescriptor8, []int{0} }
 
 type PipelineOutStream struct {
 	SessionId string `protobuf:"bytes,1,opt,name=session_id,json=sessionId" json:"session_id,omitempty"`
@@ -45,7 +45,7 @@ type PipelineOutStream struct {
 func (m *PipelineOutStream) Reset()                    { *m = PipelineOutStream{} }
 func (m *PipelineOutStream) String() string            { return proto.CompactTextString(m) }
 func (*PipelineOutStream) ProtoMessage()               {}
-func (*PipelineOutStream) Descriptor() ([]byte, []int) { return fileDescriptor7, []int{0} }
+func (*PipelineOutStream) Descriptor() ([]byte, []int) { return fileDescriptor8, []int{0} }
 
 func (m *PipelineOutStream) GetSessionId() string {
 	if m != nil {
@@ -65,7 +65,7 @@ type PipelineInStream struct {
 func (m *PipelineInStream) Reset()                    { *m = PipelineInStream{} }
 func (m *PipelineInStream) String() string            { return proto.CompactTextString(m) }
 func (*PipelineInStream) ProtoMessage()               {}
-func (*PipelineInStream) Descriptor() ([]byte, []int) { return fileDescriptor7, []int{1} }
+func (*PipelineInStream) Descriptor() ([]byte, []int) { return fileDescriptor8, []int{1} }
 
 type isPipelineInStream_Payload interface {
 	isPipelineInStream_Payload()
@@ -166,9 +166,9 @@ func init() {
 	proto.RegisterEnum("ai.metathings.service.core.PipelineMessageType", PipelineMessageType_name, PipelineMessageType_value)
 }
 
-func init() { proto.RegisterFile("pipeline.proto", fileDescriptor7) }
+func init() { proto.RegisterFile("pipeline.proto", fileDescriptor8) }
 
-var fileDescriptor7 = []byte{
+var fileDescriptor8 = []byte{
 	// 374 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x7c, 0x90, 0xdf, 0xab, 0xd3, 0x30,
 	0x1c, 0xc5, 0x6f, 0x2b, 0x5c, 0x69, 0xae, 0x5c, 0x6a, 0x7d, 0x19, 0x65, 0x9b, 0x75, 0x4f, 0x43,

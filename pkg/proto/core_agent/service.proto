@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package ai.metathings.service.core_agent;
+option go_package = "core_agent";
+
+import "google/protobuf/empty.proto";
+
+import "create_entity.proto";
+import "delete_entity.proto";
+import "patch_entity.proto";
+import "get_entity.proto";
+import "list_entities.proto";
+
+service CoreAgentService {
+	rpc CreateEntity(CreateEntityRequest) returns (CreateEntityResponse) {}
+	rpc DeleteEntity(DeleteEntityRequest) returns (google.protobuf.Empty) {}
+	rpc PatchEntity(PatchEntityRequest) returns (PatchEntityResponse) {}
+	rpc GetEntity(GetEntityRequest) returns (GetEntityResponse) {}
+	rpc ListEntities(ListEntitiesRequest) returns (ListEntitiesResponse) {}
+}

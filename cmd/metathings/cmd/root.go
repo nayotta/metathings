@@ -54,3 +54,7 @@ func initialize() {
 	}
 	log.SetLevel(lvl)
 }
+
+func globalPreRunHook(cmd *cobra.Command, args []string) {
+	initialize()
+}

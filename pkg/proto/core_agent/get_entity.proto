@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package ai.metathings.service.core_agent;
+
+import "google/protobuf/wrappers.proto";
+
+import "github.com/mwitkow/go-proto-validators/validator.proto";
+
+import "entity.proto";
+
+message GetEntityRequest {
+	google.protobuf.StringValue id = 1;
+}
+
+message GetEntityResponse {
+	Entity entity = 1;
+}

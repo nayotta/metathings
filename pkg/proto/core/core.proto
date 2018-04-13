@@ -10,7 +10,8 @@ enum CoreState {
 
 message Core {
 	string id = 1;
-	string project_id = 2;
-	string owner_id = 3;
-	CoreState state = 4;
+	string name = 2;
+	string project_id = 3;
+	string owner_id = 4;
+	CoreState state = 5;
 }
