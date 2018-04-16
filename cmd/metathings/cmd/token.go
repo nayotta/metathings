@@ -128,7 +128,8 @@ func issueToken() error {
 		return err
 	}
 
-	token_str := header["x-subject-token"][0]
+	token_str := header["authorization"][0]
+	token_str = token_str[3 : len(token_str)-1]
 	if token_issue_opts.env {
 		fmt.Printf(`export MT_TOKEN=%v
 # Run this command to configure your shell

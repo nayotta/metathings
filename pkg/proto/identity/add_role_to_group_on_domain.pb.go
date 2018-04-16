@@ -73,6 +73,7 @@ It is generated from these files:
 	service.proto
 	token.proto
 	user.proto
+	validate_token.proto
 
 It has these top-level messages:
 	AddRoleToGroupOnDomainRequest
@@ -182,6 +183,7 @@ It has these top-level messages:
 	Role
 	Token
 	User
+	ValidateTokenResponse
 */
 package identity
 

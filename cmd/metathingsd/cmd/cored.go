@@ -14,7 +14,8 @@ import (
 
 var (
 	cored_opts struct {
-		bind string
+		bind           string
+		identityd_addr string
 	}
 )
 
@@ -46,12 +47,16 @@ func runCored() error {
 	)
 	pb.RegisterCoreServiceServer(s, srv)
 
-	log.Infof("metathings core service listen on %v", cored_opts.bind)
+	log.WithFields(log.Fields{
+		"bind": cored_opts.bind,
+	}).Infof("metathings core service listening")
 	return s.Serve(lis)
 }
 
 func init() {
-	coredCmd.Flags().StringVarP(&cored_opts.bind, "bind", "b", "127.0.0.1:5001", "Metathings Core Service binding address")
+	coredCmd.Flags().StringVarP(&cored_opts.bind, "bind", "b", "127.0.0.1:5001", "MetaThings Core Service binding address")
+	coredCmd.Flags().StringVar(&cored_opts.identityd_addr, "identityd-addr", "", "MetaThings Identity Service address")
+	coredCmd.MarkFlagRequired("identityd-addr")
 
 	RootCmd.AddCommand(coredCmd)
 }

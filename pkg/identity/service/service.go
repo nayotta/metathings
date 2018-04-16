@@ -7,6 +7,7 @@ import (
 	"path"
 
 	empty "github.com/golang/protobuf/ptypes/empty"
+	"github.com/grpc-ecosystem/go-grpc-middleware/auth"
 	"github.com/parnurzeal/gorequest"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
@@ -14,6 +15,7 @@ import (
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 
+	grpc_helper "github.com/bigdatagz/metathings/pkg/common/grpc"
 	"github.com/bigdatagz/metathings/pkg/common/log"
 	codec "github.com/bigdatagz/metathings/pkg/identity/service/encode_decode"
 	pb "github.com/bigdatagz/metathings/pkg/proto/identity"
@@ -65,6 +67,97 @@ func (h *helper) JoinURL(p string) string {
 
 func (h *helper) SendHeader(ctx context.Context, pairs ...string) error {
 	return grpc.SendHeader(ctx, metadata.Pairs(pairs...))
+}
+
+func (srv *metathingsIdentityService) ignoreAuthMethods() []string {
+	methods := []string{
+		"IssueToken",
+		"CheckToken",
+		"ValidateToken",
+	}
+	return methods
+}
+
+func (srv *metathingsIdentityService) getTokenFromContext(ctx context.Context) (string, error) {
+	token, err := grpc_auth.AuthFromMD(ctx, "mt")
+	if err != nil {
+		srv.logger.
+			WithField("error", err).
+			Errorf("failed to get token from context")
+		return "", err
+	}
+	return token, err
+}
+
+func (srv *metathingsIdentityService) validateTokenViaHTTP(token string) (gorequest.Response, string, error) {
+	url := srv.h.JoinURL("/v3/auth/tokens")
+
+	http_res, http_body, errs := gorequest.
+		New().
+		Set("X-Auth-Token", token).
+		Set("X-Subject-Token", token).
+		Get(url).
+		Query("nocatalog=1").End()
+
+	if len(errs) > 0 {
+		return nil, "", errs[0]
+	}
+
+	if http_res.StatusCode != 201 {
+		return nil, "", status.Errorf(codes.Unauthenticated, fmt.Sprintf("%v", http_body))
+	}
+
+	return http_res, http_body, nil
+}
+
+func (srv *metathingsIdentityService) AuthFuncOverride(ctx context.Context, fullMethodName string) (context.Context, error) {
+	methDesc, _ := grpc_helper.ParseMethodDescription(fullMethodName)
+	for _, m := range srv.ignoreAuthMethods() {
+		if m == methDesc.Method {
+			return ctx, nil
+		}
+	}
+
+	token, err := srv.getTokenFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	http_res, http_body, err := srv.validateTokenViaHTTP(token)
+	if err != nil {
+		srv.logger.
+			WithField("error", err).
+			Errorf("failed to validate token via http")
+		return nil, err
+	}
+
+	if http_res.StatusCode != 200 {
+		srv.logger.
+			WithField("status_code", http_res.StatusCode).
+			Errorf("unauthenticated")
+		return nil, Unauthenticated
+	}
+
+	cred, err := codec.DecodeValidateTokenResponse(http_res, http_body)
+	if err != nil {
+		srv.logger.
+			WithField("error", err).
+			Errorf("failed to decode validate token response")
+		return nil, err
+	}
+
+	ctx = context.WithValue(ctx, "token", token)
+	ctx = context.WithValue(ctx, "credential", cred.Token)
+
+	srv.logger.WithFields(log.Fields{
+		"package":    methDesc.Package,
+		"service":    methDesc.Service,
+		"method":     methDesc.Method,
+		"token":      token,
+		"credential": cred.Token,
+	}).Debugf("validate token")
+
+	return ctx, nil
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/#create-region
@@ -351,38 +444,116 @@ func (srv *metathingsIdentityService) IssueToken(ctx context.Context, req *pb.Is
 	if err != nil {
 		switch err {
 		case codec.Unimplemented:
-			return nil, status.Errorf(codes.Unauthenticated, "unimplement")
+			return nil, status.Errorf(codes.Unimplemented, "unimplement")
 		default:
-			return nil, status.Errorf(codes.Internal, fmt.Sprintf("%v", err))
+			return nil, status.Errorf(codes.Internal, err.Error())
 		}
 	}
 	url := srv.h.JoinURL("/v3/auth/tokens")
-	http_res, http_body, errs := gorequest.New().Post(url).Query("nocatalog=1").Send(&body).End()
-	if errs != nil {
-		srv.logger.Errorf("keystone issue token error: %v", errs)
-		return nil, status.Errorf(codes.Internal, fmt.Sprintf("%v", errs))
+	http_res, http_body, errs := gorequest.
+		New().
+		Post(url).
+		Query("nocatalog=1").
+		Send(&body).End()
+	if len(errs) > 0 {
+		srv.logger.
+			WithField("error", errs[0]).
+			Errorf("failed to keystone issue token")
+		return nil, status.Errorf(codes.Internal, errs[0].Error())
 	}
 
 	if http_res.StatusCode != 201 {
-		return nil, status.Errorf(codes.Unauthenticated, fmt.Sprintf("%v", http_body))
+		srv.logger.
+			WithField("status_code", http_res.StatusCode).
+			Errorf("unexpected status code")
+		return nil, status.Errorf(codes.Unauthenticated, http_body)
 	}
 
 	token_str := http_res.Header.Get("X-Subject-Token")
-	err = srv.h.SendHeader(ctx, "X-Subject-Token", token_str)
+	err = srv.h.SendHeader(ctx, "Authorization", fmt.Sprintf("mt %v", token_str))
 	if err != nil {
-		srv.logger.Warningf("failed to send headers: %v\n", err)
+		srv.logger.
+			WithField("error", err).
+			Warningf("failed to send headers")
 	}
+
 	res, err := codec.DecodeIssueTokenResponse(http_res, http_body)
+	if err != nil {
+		srv.logger.
+			WithFields(log.Fields{}).
+			Errorf("failed to decode issue token response")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
 	srv.logger.WithFields(log.Fields{
 		"user_id": res.Token.User.Id,
 		"user":    res.Token.User.Name,
 	}).Infof("issue token")
-	return res, err
+	return res, nil
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#revoke-token
 func (srv *metathingsIdentityService) RevokeToken(context.Context, *empty.Empty) (*empty.Empty, error) {
 	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
+}
+
+// https://developer.openstack.org/api-ref/identity/v3/index.html#check-token
+func (srv *metathingsIdentityService) CheckToken(ctx context.Context, _ *empty.Empty) (*empty.Empty, error) {
+	token, err := srv.getTokenFromContext(ctx)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, err.Error())
+	}
+
+	url := srv.h.JoinURL("/v3/auth/tokens")
+	http_res, _, errs := gorequest.
+		New().
+		Set("X-Auth-Token", token).
+		Set("X-Subject-Token", token).
+		Head(url).End()
+	if len(errs) > 0 {
+		return nil, status.Errorf(codes.Internal, errs[0].Error())
+	}
+
+	if http_res.StatusCode != 200 {
+		return nil, status.Errorf(codes.Unauthenticated, Unauthenticated.Error())
+	}
+
+	return &empty.Empty{}, nil
+}
+
+// https://developer.openstack.org/api-ref/identity/v3/index.html#validate-and-show-information-for-token
+func (srv *metathingsIdentityService) ValidateToken(ctx context.Context, _ *empty.Empty) (*pb.ValidateTokenResponse, error) {
+	token, err := srv.getTokenFromContext(ctx)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, err.Error())
+	}
+
+	url := srv.h.JoinURL("/v3/auth/tokens")
+	http_res, http_body, errs := gorequest.
+		New().
+		Set("X-Auth-Token", token).
+		Set("X-Subject-Token", token).
+		Get(url).End()
+	if len(errs) > 0 {
+		return nil, status.Errorf(codes.Internal, errs[0].Error())
+	}
+
+	if http_res.StatusCode != 200 {
+		return nil, status.Errorf(codes.Unauthenticated, Unauthenticated.Error())
+	}
+
+	res, err := codec.DecodeValidateTokenResponse(http_res, http_body)
+	if err != nil {
+		srv.logger.
+			WithFields(log.Fields{
+				"error": err,
+				"body":  http_body,
+			}).
+			Errorf("failed to decode validate token response")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
+	return res, nil
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#create-application-credential

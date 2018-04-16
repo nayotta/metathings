@@ -3,6 +3,7 @@ package cmd
 import (
 	"context"
 	"fmt"
+	"net"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -11,6 +12,7 @@ import (
 
 	service "github.com/bigdatagz/metathings/pkg/core_agent/service"
 	core_pb "github.com/bigdatagz/metathings/pkg/proto/core"
+	pb "github.com/bigdatagz/metathings/pkg/proto/core_agent"
 )
 
 var (
@@ -26,10 +28,9 @@ var (
 		Short:  "Core Agent Service Daemon",
 		PreRun: globalPreRunHook,
 		Run: func(cmd *cobra.Command, args []string) {
-			token := V("token")
 			if core_agentd_opts.core_id == "" {
 				ctx := context.Background()
-				md := metadata.Pairs("authorization", fmt.Sprintf("mt %v", token))
+				md := metadata.Pairs("authorization", fmt.Sprintf("mt %v", V("token")))
 				ctx = metadata.NewOutgoingContext(ctx, md)
 
 				opts := []grpc.DialOption{grpc.WithInsecure()}
@@ -47,17 +48,33 @@ var (
 				core_agentd_opts.core_id = res.Core.Id
 			}
 
-			opts := []service.ServiceOptions{
-				service.SetLogLevel(V("log-level")),
-				service.SetToken(V("token")),
-				service.SetCoreId(core_agentd_opts.core_id),
+			if err := runCoreAgentd(); err != nil {
+				log.Fatalf("%v", err)
 			}
-
-			_ = service.NewCoreAgentService(opts...)
-			log.Debugf("metathings core agentd")
 		},
 	}
 )
+
+func runCoreAgentd() error {
+	lis, err := net.Listen("tcp", core_agentd_opts.bind)
+	if err != nil {
+		return err
+	}
+
+	s := grpc.NewServer()
+	srv := service.NewCoreAgentService(
+		service.SetToken(V("token")),
+		service.SetLogLevel(V("log_level")),
+		service.SetCoreId(core_agentd_opts.core_id),
+	)
+
+	pb.RegisterCoreAgentServiceServer(s, srv)
+	log.WithFields(log.Fields{
+		"bind":    core_agentd_opts.bind,
+		"core_id": core_agentd_opts.core_id,
+	}).Infof("metathings core agent service listening")
+	return s.Serve(lis)
+}
 
 func init() {
 	coreAgentdCmd.Flags().StringVar(&core_agentd_opts.bind, "bind", "127.0.0.1:5002", "Core Agentd Service binding address")

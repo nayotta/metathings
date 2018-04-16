@@ -8,6 +8,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 
 	"github.com/bigdatagz/metathings/pkg/common"
 	log_helper "github.com/bigdatagz/metathings/pkg/common/log"
@@ -15,7 +16,8 @@ import (
 )
 
 type options struct {
-	logLevel string
+	logLevel       string
+	identityd_addr string
 }
 
 var defaultServiceOptions = options{
@@ -27,6 +29,12 @@ type ServiceOptions func(*options)
 func SetLogLevel(lvl string) ServiceOptions {
 	return func(o *options) {
 		o.logLevel = lvl
+	}
+}
+
+func SetIdentitydAddr(addr string) ServiceOptions {
+	return func(o *options) {
+		o.identityd_addr = addr
 	}
 }
 
@@ -45,6 +53,7 @@ func (srv *metathingsCoreService) AuthFuncOverride(ctx context.Context, fullMeth
 		"method": fullMethodName,
 		"token":  token,
 	}).Debugf("authenticate...")
+
 	return ctx, nil
 }
 
@@ -73,7 +82,7 @@ func coreState2PbCoreState(s string) pb.CoreState {
 func (srv *metathingsCoreService) CreateCore(ctx context.Context, req *pb.CreateCoreRequest) (*pb.CreateCoreResponse, error) {
 	err := req.Validate()
 	if err != nil {
-		return nil, grpc.Errorf(codes.InvalidArgument, err.Error())
+		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 
 	core_id := common.NewId()
@@ -96,7 +105,7 @@ func (srv *metathingsCoreService) CreateCore(ctx context.Context, req *pb.Create
 
 	cc, err := srv.storage.CreateCore(&c)
 	if err != nil {
-		return nil, grpc.Errorf(codes.Internal, err.Error())
+		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
 	srv.logger.WithFields(log.Fields{
@@ -153,7 +162,7 @@ func (srv *metathingsCoreService) SendUnaryCall(ctx context.Context, req *pb.Sen
 		"method":       req.Payload.MethodName,
 		"request-type": req.Payload.Payload.TypeUrl,
 	}).Infof("receive unary call request")
-	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
+	return nil, status.Errorf(codes.Unimplemented, "unimplement")
 }
 
 func NewCoreService(opt ...ServiceOptions) *metathingsCoreService {

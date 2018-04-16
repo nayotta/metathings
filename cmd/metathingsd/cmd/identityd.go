@@ -3,6 +3,7 @@ package cmd
 import (
 	"net"
 
+	"github.com/grpc-ecosystem/go-grpc-middleware/auth"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
@@ -37,20 +38,26 @@ func runIdentityd() error {
 		return err
 	}
 
-	s := grpc.NewServer()
+	s := grpc.NewServer(
+		grpc.UnaryInterceptor(grpc_auth.UnaryServerInterceptor(nil)),
+		grpc.StreamInterceptor(grpc_auth.StreamServerInterceptor(nil)),
+	)
 	srv := service.NewIdentityService(
 		service.SetKeystoneBaseURL(identityd_opts.ksBaseURL),
 		service.SetLogLevel(V("log_level")),
 	)
 
 	pb.RegisterIdentityServiceServer(s, srv)
-	log.Infof("metathings identity service listen on %v", identityd_opts.bind)
+	log.WithFields(log.Fields{
+		"bind": identityd_opts.bind,
+	}).Infof("metathings identity service listening")
 	return s.Serve(lis)
 }
 
 func init() {
 	identitydCmd.Flags().StringVarP(&identityd_opts.bind, "bind", "b", "127.0.0.1:5000", "Metathings Identity Service binding address")
 	identitydCmd.Flags().StringVar(&identityd_opts.ksBaseURL, "keystone-base-url", "http://localhost:35357", "Backend Keystone Base URL")
+	identitydCmd.MarkFlagRequired("keystone-base-url")
 
 	RootCmd.AddCommand(identitydCmd)
 }
