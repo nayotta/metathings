@@ -19,8 +19,10 @@ var (
 
 var (
 	root_opts struct {
-		verbose   bool
-		log_level string
+		verbose                       bool
+		log_level                     string
+		application_credential_id     string
+		application_credential_secret string
 	}
 )
 
@@ -40,6 +42,13 @@ func init() {
 	RootCmd.PersistentFlags().BoolVar(&root_opts.verbose, "verbose", false, "Verbose mode")
 	RootCmd.PersistentFlags().StringVar(&root_opts.log_level, "log-level", "info", "Logging Level[debug, info, warn, error]")
 	viper.BindPFlag(A("LOG_LEVEL"), RootCmd.PersistentFlags().Lookup("log-level"))
+
+	RootCmd.PersistentFlags().StringVar(&root_opts.application_credential_id, "mt-application-credential-id", "", "MetaThings Cored Application Credential ID")
+	viper.BindPFlag(A("APPLICATION_CREDENTIAL_ID"), RootCmd.PersistentFlags().Lookup("mt-application-credential-id"))
+
+	RootCmd.PersistentFlags().StringVar(&root_opts.application_credential_secret, "mt-application-credential-secret", "", "MetaThings Cored Application Credential Secret")
+	viper.BindPFlag(A("APPLICATION_CREDENTIAL_SECRET"), RootCmd.PersistentFlags().Lookup("mt-application-credential-secret"))
+
 }
 
 func initialize() {

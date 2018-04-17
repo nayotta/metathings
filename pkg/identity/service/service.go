@@ -7,7 +7,6 @@ import (
 	"path"
 
 	empty "github.com/golang/protobuf/ptypes/empty"
-	"github.com/grpc-ecosystem/go-grpc-middleware/auth"
 	"github.com/parnurzeal/gorequest"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
@@ -45,6 +44,8 @@ func SetLogLevel(lvl string) ServiceOptions {
 }
 
 type metathingsIdentityService struct {
+	grpc_helper.AuthorizationTokenParser
+
 	logger log.FieldLogger
 	h      *helper
 	opts   options
@@ -78,18 +79,7 @@ func (srv *metathingsIdentityService) ignoreAuthMethods() []string {
 	return methods
 }
 
-func (srv *metathingsIdentityService) getTokenFromContext(ctx context.Context) (string, error) {
-	token, err := grpc_auth.AuthFromMD(ctx, "mt")
-	if err != nil {
-		srv.logger.
-			WithField("error", err).
-			Errorf("failed to get token from context")
-		return "", err
-	}
-	return token, err
-}
-
-func (srv *metathingsIdentityService) validateTokenViaHTTP(token string) (gorequest.Response, string, error) {
+func (srv *metathingsIdentityService) validateTokenViaHTTP(token, subject_token string) (gorequest.Response, string, error) {
 	url := srv.h.JoinURL("/v3/auth/tokens")
 
 	http_res, http_body, errs := gorequest.
@@ -118,12 +108,17 @@ func (srv *metathingsIdentityService) AuthFuncOverride(ctx context.Context, full
 		}
 	}
 
-	token, err := srv.getTokenFromContext(ctx)
+	token, err := srv.GetTokenFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	http_res, http_body, err := srv.validateTokenViaHTTP(token)
+	subject_token, err := srv.GetSubjectTokenFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	http_res, http_body, err := srv.validateTokenViaHTTP(token, subject_token)
 	if err != nil {
 		srv.logger.
 			WithField("error", err).
@@ -470,7 +465,8 @@ func (srv *metathingsIdentityService) IssueToken(ctx context.Context, req *pb.Is
 	}
 
 	token_str := http_res.Header.Get("X-Subject-Token")
-	err = srv.h.SendHeader(ctx, "Authorization", fmt.Sprintf("mt %v", token_str))
+	srv.logger.WithField("token", token_str).Debugf("got token from keystone")
+	err = srv.h.SendHeader(ctx, "authorization", fmt.Sprintf("mt %v", token_str))
 	if err != nil {
 		srv.logger.
 			WithField("error", err).
@@ -499,7 +495,7 @@ func (srv *metathingsIdentityService) RevokeToken(context.Context, *empty.Empty)
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#check-token
 func (srv *metathingsIdentityService) CheckToken(ctx context.Context, _ *empty.Empty) (*empty.Empty, error) {
-	token, err := srv.getTokenFromContext(ctx)
+	token, err := srv.GetTokenFromContext(ctx)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
@@ -523,10 +519,12 @@ func (srv *metathingsIdentityService) CheckToken(ctx context.Context, _ *empty.E
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#validate-and-show-information-for-token
 func (srv *metathingsIdentityService) ValidateToken(ctx context.Context, _ *empty.Empty) (*pb.ValidateTokenResponse, error) {
-	token, err := srv.getTokenFromContext(ctx)
+	token, err := srv.GetTokenFromContext(ctx)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
+
+	srv.logger.WithField("token", token).Debugf("validating token")
 
 	url := srv.h.JoinURL("/v3/auth/tokens")
 	http_res, http_body, errs := gorequest.
@@ -535,10 +533,16 @@ func (srv *metathingsIdentityService) ValidateToken(ctx context.Context, _ *empt
 		Set("X-Subject-Token", token).
 		Get(url).End()
 	if len(errs) > 0 {
+		srv.logger.
+			WithField("error", errs[0]).
+			Errorf("failed to validate token via http")
 		return nil, status.Errorf(codes.Internal, errs[0].Error())
 	}
 
 	if http_res.StatusCode != 200 {
+		srv.logger.
+			WithField("status_code", http_res.StatusCode).
+			Errorf("unexpected status code")
 		return nil, status.Errorf(codes.Unauthenticated, Unauthenticated.Error())
 	}
 

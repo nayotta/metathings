@@ -45,10 +45,17 @@ type appCredIdentity struct {
 	} `json:"application_credential"`
 }
 
+type _scopeProject struct {
+	Id string `json:"id"`
+}
+
+type _scopeDomain struct {
+	Id string `json:"id"`
+}
+
 type _scope struct {
-	Project struct {
-		Id string `json:"id"`
-	} `json:"project"`
+	Project *_scopeProject `json:"project,omitempty"`
+	Domain  *_scopeDomain  `json:"domain,omitempty"`
 }
 
 type issueTokenViaPasswordRequestBody struct {
@@ -116,11 +123,17 @@ func encodeIssueTokenViaPasswordRequest(ctx context.Context, req *pb.IssueTokenR
 	}
 
 	if scope != nil {
+		domain_id := scope.GetDomainId()
 		project_id := scope.GetProjectId()
 
-		if project_id != nil {
+		if domain_id != nil || project_id != nil {
 			body.Auth.Scope = &_scope{}
-			body.Auth.Scope.Project.Id = project_id.Value
+		}
+
+		if domain_id != nil {
+			body.Auth.Scope.Domain = &_scopeDomain{domain_id.Value}
+		} else if project_id != nil {
+			body.Auth.Scope.Project = &_scopeProject{project_id.Value}
 		}
 	}
 

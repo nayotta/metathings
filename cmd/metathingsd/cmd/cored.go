@@ -42,9 +42,19 @@ func runCored() error {
 		grpc.UnaryInterceptor(grpc_auth.UnaryServerInterceptor(nil)),
 		grpc.StreamInterceptor(grpc_auth.StreamServerInterceptor(nil)),
 	)
-	srv := service.NewCoreService(
+	srv, err := service.NewCoreService(
+		service.SetIdentitydAddr(cored_opts.identityd_addr),
 		service.SetLogLevel(V("log_level")),
+		service.SetApplicationCredential(
+			V("application_credential_id"),
+			V("application_credential_secret"),
+		),
 	)
+	if err != nil {
+		log.WithField("error", err).Errorf("failed to new core service")
+		return err
+	}
+
 	pb.RegisterCoreServiceServer(s, srv)
 
 	log.WithFields(log.Fields{

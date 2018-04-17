@@ -4,24 +4,85 @@ import (
 	"context"
 
 	empty "github.com/golang/protobuf/ptypes/empty"
-	"github.com/grpc-ecosystem/go-grpc-middleware/auth"
+	gpb "github.com/golang/protobuf/ptypes/wrappers"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 
 	"github.com/bigdatagz/metathings/pkg/common"
+	grpc_helper "github.com/bigdatagz/metathings/pkg/common/grpc"
 	log_helper "github.com/bigdatagz/metathings/pkg/common/log"
 	pb "github.com/bigdatagz/metathings/pkg/proto/core"
+	identityd_pb "github.com/bigdatagz/metathings/pkg/proto/identity"
 )
 
 type options struct {
-	logLevel       string
-	identityd_addr string
+	logLevel                      string
+	identityd_addr                string
+	application_credential_id     string
+	application_credential_secret string
 }
 
 var defaultServiceOptions = options{
 	logLevel: "info",
+}
+
+type ApplicationCredentialManager struct {
+	identityd_addr                string
+	application_credential_id     string
+	application_credential_secret string
+	application_credential_token  string
+}
+
+func (mgr *ApplicationCredentialManager) GetToken() string {
+	return "mt " + mgr.application_credential_token
+}
+
+func NewApplicationCredentialManager(identityd_addr, application_credential_id, application_credential_secret string) (*ApplicationCredentialManager, error) {
+	log.WithFields(log.Fields{
+		"application_credential_id":     application_credential_id,
+		"application_credential_secret": application_credential_secret[0:12] + "...",
+	}).Debugf("login via application credential")
+
+	var header metadata.MD
+	opts := []grpc.DialOption{grpc.WithInsecure()}
+	ctx := context.Background()
+
+	req := &identityd_pb.IssueTokenRequest{}
+	req.Method = identityd_pb.AUTH_METHOD_APPLICATION_CREDENTIAL
+	req.Payload = &identityd_pb.IssueTokenRequest_ApplicationCredential{
+		&identityd_pb.ApplicationCredentialPayload{
+			Id:     &gpb.StringValue{application_credential_id},
+			Secret: &gpb.StringValue{application_credential_secret},
+		},
+	}
+
+	conn, err := grpc.Dial(identityd_addr, opts...)
+	if err != nil {
+		return nil, err
+	}
+	defer conn.Close()
+
+	cli := identityd_pb.NewIdentityServiceClient(conn)
+
+	_, err = cli.IssueToken(ctx, req, grpc.Header(&header))
+	if err != nil {
+		return nil, err
+	}
+
+	application_credential_token := header["authorization"][0]
+	application_credential_token = application_credential_token[3:len(application_credential_token)]
+
+	mgr := &ApplicationCredentialManager{
+		identityd_addr,
+		application_credential_id,
+		application_credential_secret,
+		application_credential_token,
+	}
+
+	return mgr, nil
 }
 
 type ServiceOptions func(*options)
@@ -38,21 +99,68 @@ func SetIdentitydAddr(addr string) ServiceOptions {
 	}
 }
 
-type metathingsCoreService struct {
-	logger  log.FieldLogger
-	opts    options
-	storage Storage
+func SetApplicationCredential(id, secret string) ServiceOptions {
+	return func(o *options) {
+		o.application_credential_id = id
+		o.application_credential_secret = secret
+	}
 }
 
-func (srv *metathingsCoreService) AuthFuncOverride(ctx context.Context, fullMethodName string) (context.Context, error) {
-	token, err := grpc_auth.AuthFromMD(ctx, "mt")
+type metathingsCoreService struct {
+	grpc_helper.AuthorizationTokenParser
+
+	appCredMgr *ApplicationCredentialManager
+	logger     log.FieldLogger
+	opts       options
+	storage    Storage
+}
+
+func (srv *metathingsCoreService) validateTokenViaIdentityd(token string) (*identityd_pb.Token, error) {
+	ctx := context.Background()
+	md := metadata.Pairs(
+		"authorization-subject", "mt "+token,
+		"authorization", srv.appCredMgr.GetToken(),
+	)
+	ctx = metadata.NewOutgoingContext(ctx, md)
+
+	opts := []grpc.DialOption{grpc.WithInsecure()}
+	conn, err := grpc.Dial(srv.opts.identityd_addr, opts...)
 	if err != nil {
 		return nil, err
 	}
+	defer conn.Close()
+
+	cli := identityd_pb.NewIdentityServiceClient(conn)
+	res, err := cli.ValidateToken(ctx, &empty.Empty{})
+	if err != nil {
+		return nil, err
+	}
+
+	return res.Token, nil
+}
+
+func (srv *metathingsCoreService) AuthFuncOverride(ctx context.Context, fullMethodName string) (context.Context, error) {
+	token_str, err := srv.GetTokenFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	token, err := srv.validateTokenViaIdentityd(token_str)
+	if err != nil {
+		srv.logger.
+			WithField("error", err).
+			Errorf("failed to validate token via metathings identity service")
+		return nil, err
+	}
+
+	ctx = context.WithValue(ctx, "token", token_str)
+	ctx = context.WithValue(ctx, "credential", token)
+
 	srv.logger.WithFields(log.Fields{
-		"method": fullMethodName,
-		"token":  token,
-	}).Debugf("authenticate...")
+		"method":   fullMethodName,
+		"user_id":  token.User.Id,
+		"username": token.User.Name,
+	}).Debugf("validate token via metathings identity service")
 
 	return ctx, nil
 }
@@ -165,7 +273,7 @@ func (srv *metathingsCoreService) SendUnaryCall(ctx context.Context, req *pb.Sen
 	return nil, status.Errorf(codes.Unimplemented, "unimplement")
 }
 
-func NewCoreService(opt ...ServiceOptions) *metathingsCoreService {
+func NewCoreService(opt ...ServiceOptions) (*metathingsCoreService, error) {
 	opts := defaultServiceOptions
 	for _, o := range opt {
 		o(&opts)
@@ -173,18 +281,31 @@ func NewCoreService(opt ...ServiceOptions) *metathingsCoreService {
 
 	logger, err := log_helper.NewLogger("cored", opts.logLevel)
 	if err != nil {
-		log.Fatalf("failed to new logger: %v", err)
+		log.Errorf("failed to new logger: %v", err)
+		return nil, err
 	}
 
 	storage, err := NewStorage()
 	if err != nil {
-		log.Fatalf("failed to connect storage: %v", err)
+		log.Errorf("failed to connect storage: %v", err)
+		return nil, err
+	}
+
+	appCredMgr, err := NewApplicationCredentialManager(
+		opts.identityd_addr,
+		opts.application_credential_id,
+		opts.application_credential_secret,
+	)
+	if err != nil {
+		log.Errorf("failed to new application credential manager")
+		return nil, err
 	}
 
 	srv := &metathingsCoreService{
-		opts:    opts,
-		logger:  logger,
-		storage: storage,
+		appCredMgr: appCredMgr,
+		opts:       opts,
+		logger:     logger,
+		storage:    storage,
 	}
-	return srv
+	return srv, nil
 }

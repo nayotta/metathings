@@ -1,8 +1,13 @@
 package grpc_helper
 
 import (
+	"context"
 	"errors"
 	"strings"
+
+	"github.com/grpc-ecosystem/go-grpc-middleware/util/metautils"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 var (
@@ -31,4 +36,38 @@ func ParseMethodDescription(fullMethodName string) (*MethodDescription, error) {
 		Service: serv,
 		Method:  meth,
 	}, nil
+}
+
+// github.com/grpc-ecosystem/go-grpc-middleware/auth/metadata.go:AuthFromMD
+func AuthFromMD(ctx context.Context, expectedScheme string, headerAuthorize ...string) (string, error) {
+	var authorize string
+	if len(headerAuthorize) == 0 {
+		authorize = headerAuthorize[0]
+	} else {
+		authorize = "authorization"
+	}
+
+	val := metautils.ExtractIncoming(ctx).Get(authorize)
+	if val == "" {
+		return "", status.Errorf(codes.Unauthenticated, "Request unauthenticated with "+expectedScheme)
+	}
+
+	splits := strings.SplitN(val, " ", 2)
+	if len(splits) < 2 {
+		return "", status.Errorf(codes.Unauthenticated, "Bad authorization string")
+	}
+	if strings.ToLower(splits[0]) != strings.ToLower(expectedScheme) {
+		return "", status.Errorf(codes.Unauthenticated, "Request unauthenticated with "+expectedScheme)
+	}
+	return splits[1], nil
+}
+
+type AuthorizationTokenParser struct{}
+
+func (p AuthorizationTokenParser) GetTokenFromContext(ctx context.Context) (string, error) {
+	return AuthFromMD(ctx, "mt", "authorization")
+}
+
+func (p AuthorizationTokenParser) GetSubjectTokenFromContext(ctx context.Context) (string, error) {
+	return AuthFromMD(ctx, "mt", "authorization-subject")
 }

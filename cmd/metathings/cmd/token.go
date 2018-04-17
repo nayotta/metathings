@@ -17,12 +17,13 @@ import (
 
 var (
 	token_issue_opts struct {
-		user_id     string
-		username    string
-		password    string
-		domain_id   string
-		domain_name string
-		project_id  string
+		user_id          string
+		username         string
+		password         string
+		user_domain_id   string
+		user_domain_name string
+		domain_id        string
+		project_id       string
 
 		application_credential_id   string
 		application_credential_name string
@@ -61,18 +62,22 @@ func parseIssueTokenRequest() (*pb.IssueTokenRequest, error) {
 			payload.Id = &gpb.StringValue{V("user_id")}
 		} else if V("username") != "" {
 			payload.Username = &gpb.StringValue{V("username")}
-			if V("domain_id") != "" {
-				payload.DomainId = &gpb.StringValue{V("domain_id")}
-			} else if V("domain_name") != "" {
-				payload.DomainName = &gpb.StringValue{V("domain_name")}
+			if V("user_domain_id") != "" {
+				payload.DomainId = &gpb.StringValue{V("user_domain_id")}
+			} else if V("user_domain_name") != "" {
+				payload.DomainName = &gpb.StringValue{V("user_domain_name")}
 			} else {
 				return nil, errors.New("required domain id or name when issue token by username")
 			}
 		}
-		if V("project_id") != "" {
-			payload.Scope = &pb.TokenScope{
-				ProjectId: &gpb.StringValue{V("project_id")},
-			}
+		if V("domain_id") != "" || V("project_id") != "" {
+			payload.Scope = &pb.TokenScope{}
+		}
+
+		if V("domain_id") != "" {
+			payload.Scope.DomainId = &gpb.StringValue{V("domain_id")}
+		} else if V("project_id") != "" {
+			payload.Scope.ProjectId = &gpb.StringValue{V("project_id")}
 		}
 
 		req.Payload = &pb.IssueTokenRequest_Password{payload}
@@ -104,7 +109,6 @@ func parseIssueTokenRequest() (*pb.IssueTokenRequest, error) {
 		return nil, errors.New("required password or token or secret")
 	}
 	return req, nil
-
 }
 
 func issueToken() error {
@@ -129,7 +133,7 @@ func issueToken() error {
 	}
 
 	token_str := header["authorization"][0]
-	token_str = token_str[3 : len(token_str)-1]
+	token_str = token_str[3:len(token_str)]
 	if token_issue_opts.env {
 		fmt.Printf(`export MT_TOKEN=%v
 # Run this command to configure your shell
@@ -153,11 +157,13 @@ func init() {
 	viper.BindPFlag(A("USERNAME"), tokenIssueCmd.Flags().Lookup("mt-username"))
 	tokenIssueCmd.Flags().StringVar(&token_issue_opts.password, "mt-password", "", "User Password")
 	viper.BindPFlag(A("PASSWORD"), tokenIssueCmd.Flags().Lookup("mt-password"))
-	tokenIssueCmd.Flags().StringVar(&token_issue_opts.domain_id, "mt-domain-id", "", "User Domain ID")
+	tokenIssueCmd.Flags().StringVar(&token_issue_opts.user_domain_id, "mt-user-domain-id", "", "User Domain ID")
+	viper.BindPFlag(A("USER_DOMAIN_ID"), tokenIssueCmd.Flags().Lookup("mt-user-domain-id"))
+	tokenIssueCmd.Flags().StringVar(&token_issue_opts.user_domain_name, "mt-user-domain-name", "", "User Domain Name")
+	viper.BindPFlag(A("USER_DOMAIN_NAME"), tokenIssueCmd.Flags().Lookup("mt-user-domain-name"))
+	tokenIssueCmd.Flags().StringVar(&token_issue_opts.domain_id, "mt-domain-id", "", "Scope Domain ID")
 	viper.BindPFlag(A("DOMAIN_ID"), tokenIssueCmd.Flags().Lookup("mt-domain-id"))
-	tokenIssueCmd.Flags().StringVar(&token_issue_opts.domain_name, "mt-domain-name", "", "User Domain Name")
-	viper.BindPFlag(A("DOMAIN_NAME"), tokenIssueCmd.Flags().Lookup("mt-domain-name"))
-	tokenIssueCmd.Flags().StringVar(&token_issue_opts.project_id, "mt-project-id", "", "User Project ID")
+	tokenIssueCmd.Flags().StringVar(&token_issue_opts.project_id, "mt-project-id", "", "Scope Project ID")
 	viper.BindPFlag(A("PROJECT_ID"), tokenIssueCmd.Flags().Lookup("mt-project-id"))
 	tokenIssueCmd.Flags().StringVar(&token_issue_opts.application_credential_id, "mt-application-credential-id", "", "Application Credential ID")
 	viper.BindPFlag(A("APPLICATION_CREDENTIAL_ID"), tokenIssueCmd.Flags().Lookup("mt-application-credential-id"))
