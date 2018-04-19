@@ -20,7 +20,7 @@ type _logOptions struct {
 }
 
 type _rootOptions struct {
-	Mode                  string
+	Stage                 string
 	Service               string
 	Config                string
 	Verbose               bool
@@ -68,12 +68,12 @@ func initialize() {
 	log.WithField("log.level", root_opts.Log.Level).Debugf("set log level")
 }
 
-func getModeFromEnv() string {
-	mode := viper.GetString("mode")
-	if mode == "" {
-		mode = "dev"
+func getStageFromEnv() string {
+	stage := viper.GetString("stage")
+	if stage == "" {
+		stage = "dev"
 	}
-	return mode
+	return stage
 }
 
 func initConfig() {
@@ -91,7 +91,7 @@ func init() {
 	cobra.OnInitialize(initConfig)
 	viper.AutomaticEnv()
 	viper.SetEnvPrefix(METATHINGSD_PREFIX)
-	viper.BindEnv("mode")
+	viper.BindEnv("stage")
 
 	RootCmd.PersistentFlags().StringVarP(&root_opts.Config, "config", "c", "", "Config file")
 

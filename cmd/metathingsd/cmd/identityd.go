@@ -36,15 +36,15 @@ var (
 				return
 			}
 
-			mode := getModeFromEnv()
-			err := viper.Sub(mode).Unmarshal(&identityd_opts)
+			stage := getStageFromEnv()
+			err := viper.Sub(stage).Unmarshal(&identityd_opts)
 			if err != nil {
 				log.WithError(err).Fatalf("failed to unmarshal config")
 			}
 			root_opts = &identityd_opts._rootOptions
 
 			identityd_opts.Service = "identityd"
-			identityd_opts.Mode = mode
+			identityd_opts.Stage = stage
 		}),
 		Run: func(cmd *cobra.Command, args []string) {
 			if err := runIdentityd(); err != nil {

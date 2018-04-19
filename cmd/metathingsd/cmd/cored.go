@@ -32,15 +32,15 @@ var (
 				return
 			}
 
-			mode := getModeFromEnv()
-			err := viper.Sub(mode).Unmarshal(cored_opts)
+			stage := getStageFromEnv()
+			err := viper.Sub(stage).Unmarshal(cored_opts)
 			if err != nil {
 				log.WithError(err).Fatalf("failed to unmarshal config")
 			}
 			root_opts = &cored_opts._rootOptions
 
 			cored_opts.Service = "cored"
-			cored_opts.Mode = mode
+			cored_opts.Stage = stage
 		}),
 		Run: func(cmd *cobra.Command, args []string) {
 			if err := runCored(); err != nil {
