@@ -1,6 +1,24 @@
 version: '2'
 services:
 
+  metathings:
+    build:
+      context: .
+      dockerfile: dockerfile/Dockerfile.frontd
+    image: bigdatagz/frontd
+    volumes:
+      - ./etc/envoy.front.yaml:/etc/envoy.front.yaml
+    networks:
+      metathingsmesh:
+        aliases:
+          - metathings
+    expose:
+      - "80"
+      - "8001"
+    ports:
+      - "80:80"
+      - "8001:8001"
+
   identityd:
     build:
       context: .

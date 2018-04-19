@@ -1,0 +1,5 @@
+FROM envoyproxy/envoy-alpine:latest
+
+RUN mkdir /var/log/envoy
+COPY ./script/frontd_start.sh /usr/local/sbin/frontd_start.sh
+CMD /usr/local/sbin/frontd_start.sh
