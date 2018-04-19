@@ -1,5 +1,5 @@
 FROM bigdatagz/metathingsd
 
-COPY ./etc/metathings.identityd.yaml /etc/metathings/metathings.identityd.yaml
-COPY ./script/idnentityd_start.sh /usr/local/sbin/identityd_start.sh
+COPY ./etc/identityd.yaml /etc/metathings/identityd.yaml
+COPY ./script/identityd_start.sh /usr/local/sbin/identityd_start.sh
 CMD /usr/local/sbin/identityd_start.sh

@@ -2,4 +2,4 @@
 
 set -e
 
-/usr/local/bin/metathingsd -c /etc/metathings/metathings.identityd.yaml
+/usr/local/bin/metathingsd identityd -c /etc/metathings/identityd.yaml

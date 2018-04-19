@@ -1,0 +1,5 @@
+FROM bigdatagz/metathingsd
+
+COPY ./etc/cored.yaml /etc/metathings/cored.yaml
+COPY ./script/cored_start.sh /usr/local/sbin/cored_start.sh
+CMD /usr/local/sbin/cored_start.sh

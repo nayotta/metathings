@@ -1,0 +1,37 @@
+version: '2'
+services:
+
+  identityd:
+    build:
+      context: .
+      dockerfile: dockerfile/Dockerfile.identityd
+    image: bigdatagz/identityd
+    volumes:
+      - ./etc/identityd.yaml:/etc/metathings/identityd.yaml
+    networks:
+      metathingsmesh:
+        aliases:
+          - identityd
+    ports:
+      - "5000:5000"
+    expose:
+      - "5000"
+
+  cored:
+    build:
+      context: .
+      dockerfile: dockerfile/Dockerfile.cored
+    image: bigdatagz/cored
+    volumes:
+      - ./etc/cored.yaml:/etc/metathings/cored.yaml
+    networks:
+      metathingsmesh:
+        aliases:
+          - cored
+    ports:
+      - "5001:5001"
+    expose:
+      - "5001"
+
+networks:
+  metathingsmesh: {}

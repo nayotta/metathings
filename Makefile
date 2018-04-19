@@ -29,3 +29,8 @@ metathings_bin:
 
 metathingsd_bin:
 	$(MAKE) -C cmd/metathingsd all
+
+build_docker_images:
+	./script/docker_build_metathingsd.sh
+	./script/docker_build_identityd.sh
+	./script/docker_build_cored.sh
