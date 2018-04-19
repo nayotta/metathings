@@ -19,10 +19,12 @@ var (
 
 var (
 	root_opts struct {
-		verbose   bool
-		addr      string
-		token     string
-		log_level string
+		verbose                       bool
+		addr                          string
+		token                         string
+		log_level                     string
+		application_credential_id     string
+		application_credential_secret string
 	}
 )
 
@@ -40,11 +42,21 @@ func init() {
 	viper.AutomaticEnv()
 
 	RootCmd.PersistentFlags().BoolVar(&root_opts.verbose, "verbose", false, "Verbose mode")
+
 	RootCmd.PersistentFlags().StringVar(&root_opts.token, "mt-token", "", "MetaThings Token")
 	viper.BindPFlag(A("TOKEN"), RootCmd.PersistentFlags().Lookup("mt-token"))
+
 	RootCmd.PersistentFlags().StringVar(&root_opts.log_level, "log-level", "info", "Logging Level[debug, info, warn, error]")
 	viper.BindPFlag(A("LOG_LEVEL"), RootCmd.PersistentFlags().Lookup("log-level"))
+
 	RootCmd.PersistentFlags().StringVar(&root_opts.addr, "addr", "", "Metathings Service Address")
+	viper.BindPFlag(A("ADDR"), RootCmd.PersistentFlags().Lookup("addr"))
+
+	RootCmd.PersistentFlags().StringVar(&root_opts.application_credential_id, "mt-application-credential-id", "", "MetaThings Application Credential ID")
+	viper.BindPFlag(A("APPLICATION_CREDENTIAL_ID"), RootCmd.PersistentFlags().Lookup("mt-application-credential-id"))
+
+	RootCmd.PersistentFlags().StringVar(&root_opts.application_credential_secret, "mt-application-credential-secret", "", "MetaThings Application Credential Secret")
+	viper.BindPFlag(A("APPLICATION_CREDENTIAL_SECRET"), RootCmd.PersistentFlags().Lookup("mt-application-credential-secret"))
 }
 
 func initialize() {

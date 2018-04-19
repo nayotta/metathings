@@ -2,22 +2,29 @@ package meatathings_core_agent_service
 
 import (
 	"context"
+	"os"
+	"path"
 
 	"github.com/golang/protobuf/ptypes/empty"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/metadata"
 
+	app_cred_mgr "github.com/bigdatagz/metathings/pkg/common/application_credential_manager"
 	log_helper "github.com/bigdatagz/metathings/pkg/common/log"
+	cored_pb "github.com/bigdatagz/metathings/pkg/proto/core"
 	pb "github.com/bigdatagz/metathings/pkg/proto/core_agent"
 )
 
 type options struct {
-	token    string
-	logLevel string
+	metathings_addr string
+	logLevel        string
 
-	cored_addr string
-	core_id    string
+	core_agent_home               string
+	core_id                       string
+	application_credential_id     string
+	application_credential_secret string
 }
 
 var defaultServiceOptions = options{
@@ -26,15 +33,15 @@ var defaultServiceOptions = options{
 
 type ServiceOptions func(*options)
 
-func SetLogLevel(lvl string) ServiceOptions {
+func SetMetathingsAddr(addr string) ServiceOptions {
 	return func(o *options) {
-		o.logLevel = lvl
+		o.metathings_addr = addr
 	}
 }
 
-func SetToken(tkn string) ServiceOptions {
+func SetLogLevel(lvl string) ServiceOptions {
 	return func(o *options) {
-		o.token = tkn
+		o.logLevel = lvl
 	}
 }
 
@@ -44,9 +51,17 @@ func SetCoreId(id string) ServiceOptions {
 	}
 }
 
+func SetApplicationCredential(id, secret string) ServiceOptions {
+	return func(o *options) {
+		o.application_credential_id = id
+		o.application_credential_secret = secret
+	}
+}
+
 type coreAgentService struct {
-	logger log.FieldLogger
-	opts   options
+	appCredMgr *app_cred_mgr.ApplicationCredentialManager
+	logger     log.FieldLogger
+	opts       options
 }
 
 func (srv *coreAgentService) CreateEntity(context.Context, *pb.CreateEntityRequest) (*pb.CreateEntityResponse, error) {
@@ -69,7 +84,59 @@ func (srv *coreAgentService) ListEntities(context.Context, *pb.ListEntitiesReque
 	return nil, grpc.Errorf(codes.Unimplemented, "unimplemented")
 }
 
-func NewCoreAgentService(opt ...ServiceOptions) *coreAgentService {
+func getCoreIdFromFile(path string) (string, error) {
+	f, err := os.Open(path)
+	if err != nil {
+		return "", err
+	}
+	defer f.Close()
+
+	data := make([]byte, 64)
+	_, err = f.Read(data)
+	if err != nil {
+		return "", err
+	}
+
+	return string(data), nil
+}
+
+func getCoreIdFromService(opts options, token string) (string, error) {
+	ctx := context.Background()
+	md := metadata.Pairs("authorization", "mt "+token)
+	ctx = metadata.NewOutgoingContext(ctx, md)
+	grpc_opts := []grpc.DialOption{grpc.WithInsecure()}
+	conn, err := grpc.Dial(opts.metathings_addr, grpc_opts...)
+	if err != nil {
+		return "", err
+	}
+	defer conn.Close()
+
+	cli := cored_pb.NewCoreServiceClient(conn)
+	req := &cored_pb.CreateCoreRequest{}
+	res, err := cli.CreateCore(ctx, req)
+	if err != nil {
+		return "", err
+	}
+
+	return res.Core.Id, nil
+}
+
+func saveCoreIdToPath(id, path string) error {
+	f, err := os.Create(path)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	_, err = f.Write([]byte(id))
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func NewCoreAgentService(opt ...ServiceOptions) (*coreAgentService, error) {
 	opts := defaultServiceOptions
 	for _, o := range opt {
 		o(&opts)
@@ -77,12 +144,44 @@ func NewCoreAgentService(opt ...ServiceOptions) *coreAgentService {
 
 	logger, err := log_helper.NewLogger("core-agent", opts.logLevel)
 	if err != nil {
-		log.Fatalf("failed to new logger: %v", err)
+		log.WithField("error", err).Errorf("failed to new logger")
+		return nil, err
+	}
+
+	log.WithFields(log.Fields{
+		"addr": opts.metathings_addr,
+		"application_credential_id":     opts.application_credential_id,
+		"application_credential_secret": opts.application_credential_secret,
+	}).Debugf("application credential managaer options")
+
+	appCredMgr, err := app_cred_mgr.NewApplicationCredentialManager(
+		opts.metathings_addr,
+		opts.application_credential_id,
+		opts.application_credential_secret,
+	)
+	if err != nil {
+		log.WithField("error", err).Errorf("failed to new application credential manager")
+		return nil, err
+	}
+
+	if opts.core_id == "" {
+		core_id_path := path.Join(opts.core_agent_home, "core-id")
+		core_id, err := getCoreIdFromFile(core_id_path)
+		if err != nil {
+			core_id, err = getCoreIdFromService(opts, appCredMgr.GetToken())
+			if err != nil {
+				return nil, err
+			}
+			saveCoreIdToPath(core_id, core_id_path)
+		}
+		opts.core_id = core_id
+
 	}
 
 	srv := &coreAgentService{
-		logger: logger,
-		opts:   opts,
+		appCredMgr: appCredMgr,
+		logger:     logger,
+		opts:       opts,
 	}
-	return srv
+	return srv, nil
 }

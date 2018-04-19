@@ -25,7 +25,7 @@ var (
 		domain_id        string
 		project_id       string
 
-		application_credential_id   string
+		// application_credential_id   string
 		application_credential_name string
 		secret                      string
 
@@ -165,8 +165,8 @@ func init() {
 	viper.BindPFlag(A("DOMAIN_ID"), tokenIssueCmd.Flags().Lookup("mt-domain-id"))
 	tokenIssueCmd.Flags().StringVar(&token_issue_opts.project_id, "mt-project-id", "", "Scope Project ID")
 	viper.BindPFlag(A("PROJECT_ID"), tokenIssueCmd.Flags().Lookup("mt-project-id"))
-	tokenIssueCmd.Flags().StringVar(&token_issue_opts.application_credential_id, "mt-application-credential-id", "", "Application Credential ID")
-	viper.BindPFlag(A("APPLICATION_CREDENTIAL_ID"), tokenIssueCmd.Flags().Lookup("mt-application-credential-id"))
+	// tokenIssueCmd.Flags().StringVar(&token_issue_opts.application_credential_id, "mt-application-credential-id", "", "Application Credential ID")
+	// viper.BindPFlag(A("APPLICATION_CREDENTIAL_ID"), tokenIssueCmd.Flags().Lookup("mt-application-credential-id"))
 	tokenIssueCmd.Flags().StringVar(&token_issue_opts.application_credential_name, "mt-application-credential-name", "", "Application Credential Name")
 	viper.BindPFlag(A("APPLICATION_CREDENTIAL_NAME"), tokenIssueCmd.Flags().Lookup("mt-application-credential-name"))
 	tokenIssueCmd.Flags().StringVar(&token_issue_opts.secret, "mt-secret", "", "Application Credential Secret")

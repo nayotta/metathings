@@ -4,7 +4,6 @@ import (
 	"context"
 
 	empty "github.com/golang/protobuf/ptypes/empty"
-	gpb "github.com/golang/protobuf/ptypes/wrappers"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -12,6 +11,7 @@ import (
 	"google.golang.org/grpc/status"
 
 	"github.com/bigdatagz/metathings/pkg/common"
+	app_cred_mgr "github.com/bigdatagz/metathings/pkg/common/application_credential_manager"
 	grpc_helper "github.com/bigdatagz/metathings/pkg/common/grpc"
 	log_helper "github.com/bigdatagz/metathings/pkg/common/log"
 	pb "github.com/bigdatagz/metathings/pkg/proto/core"
@@ -27,62 +27,6 @@ type options struct {
 
 var defaultServiceOptions = options{
 	logLevel: "info",
-}
-
-type ApplicationCredentialManager struct {
-	identityd_addr                string
-	application_credential_id     string
-	application_credential_secret string
-	application_credential_token  string
-}
-
-func (mgr *ApplicationCredentialManager) GetToken() string {
-	return "mt " + mgr.application_credential_token
-}
-
-func NewApplicationCredentialManager(identityd_addr, application_credential_id, application_credential_secret string) (*ApplicationCredentialManager, error) {
-	log.WithFields(log.Fields{
-		"application_credential_id":     application_credential_id,
-		"application_credential_secret": application_credential_secret[0:12] + "...",
-	}).Debugf("login via application credential")
-
-	var header metadata.MD
-	opts := []grpc.DialOption{grpc.WithInsecure()}
-	ctx := context.Background()
-
-	req := &identityd_pb.IssueTokenRequest{}
-	req.Method = identityd_pb.AUTH_METHOD_APPLICATION_CREDENTIAL
-	req.Payload = &identityd_pb.IssueTokenRequest_ApplicationCredential{
-		&identityd_pb.ApplicationCredentialPayload{
-			Id:     &gpb.StringValue{application_credential_id},
-			Secret: &gpb.StringValue{application_credential_secret},
-		},
-	}
-
-	conn, err := grpc.Dial(identityd_addr, opts...)
-	if err != nil {
-		return nil, err
-	}
-	defer conn.Close()
-
-	cli := identityd_pb.NewIdentityServiceClient(conn)
-
-	_, err = cli.IssueToken(ctx, req, grpc.Header(&header))
-	if err != nil {
-		return nil, err
-	}
-
-	application_credential_token := header["authorization"][0]
-	application_credential_token = application_credential_token[3:len(application_credential_token)]
-
-	mgr := &ApplicationCredentialManager{
-		identityd_addr,
-		application_credential_id,
-		application_credential_secret,
-		application_credential_token,
-	}
-
-	return mgr, nil
 }
 
 type ServiceOptions func(*options)
@@ -109,7 +53,7 @@ func SetApplicationCredential(id, secret string) ServiceOptions {
 type metathingsCoreService struct {
 	grpc_helper.AuthorizationTokenParser
 
-	appCredMgr *ApplicationCredentialManager
+	appCredMgr *app_cred_mgr.ApplicationCredentialManager
 	logger     log.FieldLogger
 	opts       options
 	storage    Storage
@@ -291,7 +235,7 @@ func NewCoreService(opt ...ServiceOptions) (*metathingsCoreService, error) {
 		return nil, err
 	}
 
-	appCredMgr, err := NewApplicationCredentialManager(
+	appCredMgr, err := app_cred_mgr.NewApplicationCredentialManager(
 		opts.identityd_addr,
 		opts.application_credential_id,
 		opts.application_credential_secret,
