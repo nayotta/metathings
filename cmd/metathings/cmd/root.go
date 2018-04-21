@@ -1,31 +1,46 @@
 package cmd
 
 import (
+	"strings"
+
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-
-	"github.com/bigdatagz/metathings/pkg/common/cmd/helper"
 )
 
 const (
-	METATHINGS_PREFIX = "MT_"
+	METATHINGS_PREFIX = "mt"
 )
 
-var (
-	V helper.GetArgument
-	A helper.WithPrefix
-)
+type _metathingsServiceOptions struct {
+	Address string
+}
+
+type _serviceConfigOptions struct {
+	Metathings _metathingsServiceOptions
+}
+
+type _applicationCredentialOptions struct {
+	Id     string
+	Secret string
+}
+
+type _logOptions struct {
+	Level string
+}
+
+type _rootOptions struct {
+	Config                string
+	Stage                 string
+	Verbose               bool
+	Token                 string
+	Log                   _logOptions
+	ApplicationCredential _applicationCredentialOptions `mapstructure:"application_credential"`
+	ServiceConfig         _serviceConfigOptions         `mapstructure:"service_config"`
+}
 
 var (
-	root_opts struct {
-		verbose                       bool
-		addr                          string
-		token                         string
-		log_level                     string
-		application_credential_id     string
-		application_credential_secret string
-	}
+	root_opts *_rootOptions
 )
 
 var (
@@ -35,38 +50,79 @@ var (
 	}
 )
 
+type PreRunHook func()
+
+func preRunHooks(hooks ...PreRunHook) func(*cobra.Command, []string) {
+	return func(*cobra.Command, []string) {
+		for _, hook := range hooks {
+			hook()
+		}
+	}
+}
+
+func defaultPreRunHooks(hook PreRunHook, defaults ...PreRunHook) func(*cobra.Command, []string) {
+	if len(defaults) == 0 {
+		defaults = []PreRunHook{initialize}
+	}
+	if hook != nil {
+		defaults = append([]PreRunHook{hook}, defaults...)
+	}
+	return preRunHooks(defaults...)
+}
+
 func init() {
-	h := helper.NewArgumentHelper(METATHINGS_PREFIX)
-	V = h.GetString
-	A = h.PrefixWith
+	root_opts = &_rootOptions{}
+
+	cobra.OnInitialize(initConfig)
 	viper.AutomaticEnv()
+	viper.SetEnvPrefix(METATHINGS_PREFIX)
+	viper.SetEnvKeyReplacer(strings.NewReplacer("-", "_"))
+	viper.BindEnv("stage")
 
-	RootCmd.PersistentFlags().BoolVar(&root_opts.verbose, "verbose", false, "Verbose mode")
+	RootCmd.PersistentFlags().BoolVar(&root_opts.Verbose, "verbose", false, "Verbose mode")
 
-	RootCmd.PersistentFlags().StringVar(&root_opts.token, "mt-token", "", "MetaThings Token")
-	viper.BindPFlag(A("TOKEN"), RootCmd.PersistentFlags().Lookup("mt-token"))
+	RootCmd.PersistentFlags().StringVar(&root_opts.Log.Level, "log-level", "info", "Logging Level[debug, info, warn, error]")
 
-	RootCmd.PersistentFlags().StringVar(&root_opts.log_level, "log-level", "info", "Logging Level[debug, info, warn, error]")
-	viper.BindPFlag(A("LOG_LEVEL"), RootCmd.PersistentFlags().Lookup("log-level"))
+	RootCmd.PersistentFlags().StringVar(&root_opts.ServiceConfig.Metathings.Address, "addr", "", "Metathings Service Address")
 
-	RootCmd.PersistentFlags().StringVar(&root_opts.addr, "addr", "", "Metathings Service Address")
-	viper.BindPFlag(A("ADDR"), RootCmd.PersistentFlags().Lookup("addr"))
+	RootCmd.PersistentFlags().StringVar(&root_opts.Token, "token", "", "MetaThings Token")
+	viper.BindPFlag("token", RootCmd.PersistentFlags().Lookup("token"))
 
-	RootCmd.PersistentFlags().StringVar(&root_opts.application_credential_id, "mt-application-credential-id", "", "MetaThings Application Credential ID")
-	viper.BindPFlag(A("APPLICATION_CREDENTIAL_ID"), RootCmd.PersistentFlags().Lookup("mt-application-credential-id"))
+	RootCmd.PersistentFlags().StringVar(&root_opts.ApplicationCredential.Id, "application-credential-id", "", "MetaThings Application Credential ID")
+	viper.BindPFlag("application-credential-id", RootCmd.PersistentFlags().Lookup("application-credential-id"))
 
-	RootCmd.PersistentFlags().StringVar(&root_opts.application_credential_secret, "mt-application-credential-secret", "", "MetaThings Application Credential Secret")
-	viper.BindPFlag(A("APPLICATION_CREDENTIAL_SECRET"), RootCmd.PersistentFlags().Lookup("mt-application-credential-secret"))
+	RootCmd.PersistentFlags().StringVar(&root_opts.ApplicationCredential.Secret, "application-credential-secret", "", "MetaThings Application Credential Secret")
+	viper.BindPFlag("application-credential-secret", RootCmd.PersistentFlags().Lookup("application-credential-secret"))
 }
 
 func initialize() {
-	lvl, err := log.ParseLevel(V("log_level"))
+	lvl, err := log.ParseLevel(root_opts.Log.Level)
 	if err != nil {
-		log.Fatalf("bad log level %v: %v", V("log_level"), err)
+		log.WithField("log.level", root_opts.Log.Level).Fatalf("bad log level")
 	}
 	log.SetLevel(lvl)
+
+	token := viper.GetString("token")
+	if token != "" {
+		root_opts.Token = token
+	}
+
+	appCredId := viper.GetString("application-credential-id")
+	if appCredId != "" {
+		root_opts.ApplicationCredential.Id = appCredId
+	}
+
+	appCredSecret := viper.GetString("application-credential-secret")
+	if appCredSecret != "" {
+		root_opts.ApplicationCredential.Secret = appCredSecret
+	}
 }
 
-func globalPreRunHook(cmd *cobra.Command, args []string) {
-	initialize()
+func initConfig() {
+	if root_opts.Config != "" {
+		viper.SetConfigFile(root_opts.Config)
+		if err := viper.ReadInConfig(); err != nil {
+			log.WithError(err).Fatalf("failed to read config")
+		}
+	}
 }

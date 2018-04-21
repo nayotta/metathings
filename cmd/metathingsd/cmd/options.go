@@ -7,3 +7,12 @@ type _serviceConfigOptions struct {
 type _identitydServiceOptions struct {
 	Address string
 }
+
+type _applicationCredentialOptions struct {
+	Id     string
+	Secret string
+}
+
+type _logOptions struct {
+	Level string
+}

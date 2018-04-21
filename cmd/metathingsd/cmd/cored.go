@@ -6,9 +6,9 @@ import (
 	"github.com/grpc-ecosystem/go-grpc-middleware/auth"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 	"google.golang.org/grpc"
 
+	cmd_helper "github.com/bigdatagz/metathings/pkg/common/cmd"
 	service "github.com/bigdatagz/metathings/pkg/core/service"
 	pb "github.com/bigdatagz/metathings/pkg/proto/core"
 )
@@ -27,20 +27,15 @@ var (
 	coredCmd = &cobra.Command{
 		Use:   "cored",
 		Short: "Cored Service Daemon",
-		PreRun: defaultPreRunHooks(func() {
+		PreRun: cmd_helper.DefaultPreRunHooks(func() {
 			if root_opts.Config == "" {
 				return
 			}
 
-			stage := getStageFromEnv()
-			err := viper.Sub(stage).Unmarshal(cored_opts)
-			if err != nil {
-				log.WithError(err).Fatalf("failed to unmarshal config")
-			}
+			cmd_helper.UnmarshalConfig(cored_opts)
 			root_opts = &cored_opts._rootOptions
-
 			cored_opts.Service = "cored"
-			cored_opts.Stage = stage
+			cored_opts.Stage = cmd_helper.GetStageFromEnv()
 		}),
 		Run: func(cmd *cobra.Command, args []string) {
 			if err := runCored(); err != nil {

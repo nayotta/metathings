@@ -9,17 +9,18 @@ services:
     volumes:
       - ./etc/envoy.front.yaml:/etc/envoy.front.yaml
     networks:
-      metathingsmesh:
-        aliases:
-          - metathings
+      metathingsmesh: {}
     expose:
       - "80"
       - "8001"
     ports:
       - "80:80"
       - "8001:8001"
+    restart: on-failure
 
   identityd:
+    environment:
+      - MTD_STAGE=debug
     build:
       context: .
       dockerfile: dockerfile/Dockerfile.identityd
@@ -27,15 +28,16 @@ services:
     volumes:
       - ./etc/identityd.yaml:/etc/metathings/identityd.yaml
     networks:
-      metathingsmesh:
-        aliases:
-          - identityd
+      metathingsmesh: {}
     ports:
       - "5000:5000"
     expose:
       - "5000"
+    restart: on-failure
 
   cored:
+    environment:
+      - MTD_STAGE=debug
     build:
       context: .
       dockerfile: dockerfile/Dockerfile.cored
@@ -43,13 +45,12 @@ services:
     volumes:
       - ./etc/cored.yaml:/etc/metathings/cored.yaml
     networks:
-      metathingsmesh:
-        aliases:
-          - cored
+      metathingsmesh: {}
     ports:
       - "5001:5001"
     expose:
       - "5001"
+    restart: on-failure
 
 networks:
   metathingsmesh: {}
