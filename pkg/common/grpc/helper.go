@@ -41,7 +41,7 @@ func ParseMethodDescription(fullMethodName string) (*MethodDescription, error) {
 // github.com/grpc-ecosystem/go-grpc-middleware/auth/metadata.go:AuthFromMD
 func AuthFromMD(ctx context.Context, expectedScheme string, headerAuthorize ...string) (string, error) {
 	var authorize string
-	if len(headerAuthorize) == 0 {
+	if len(headerAuthorize) > 0 {
 		authorize = headerAuthorize[0]
 	} else {
 		authorize = "authorization"

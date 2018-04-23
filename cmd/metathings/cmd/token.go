@@ -96,13 +96,13 @@ func parseIssueTokenRequest() (*pb.IssueTokenRequest, error) {
 		payload.TokenId = &gpb.StringValue{token_issue_opts.Token}
 
 		req.Payload = &pb.IssueTokenRequest_Token{payload}
-	} else if token_issue_opts.ApplicationCredential.Secret != "" {
+	} else if root_opts.ApplicationCredential.Secret != "" {
 		req.Method = pb.AUTH_METHOD_APPLICATION_CREDENTIAL
 		payload := &pb.ApplicationCredentialPayload{}
 
-		payload.Secret = &gpb.StringValue{token_issue_opts.ApplicationCredential.Secret}
-		if token_issue_opts.ApplicationCredential.Id != "" {
-			payload.Id = &gpb.StringValue{token_issue_opts.ApplicationCredential.Secret}
+		payload.Secret = &gpb.StringValue{root_opts.ApplicationCredential.Secret}
+		if root_opts.ApplicationCredential.Id != "" {
+			payload.Id = &gpb.StringValue{root_opts.ApplicationCredential.Id}
 		} else if token_issue_opts.ApplicationCredentialName != "" {
 			payload.Name = &gpb.StringValue{token_issue_opts.ApplicationCredentialName}
 			if token_issue_opts.DomainId != "" {

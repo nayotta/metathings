@@ -102,7 +102,7 @@ func getCoreIdFromFile(path string) (string, error) {
 
 func getCoreIdFromService(opts options, token string) (string, error) {
 	ctx := context.Background()
-	md := metadata.Pairs("authorization", "mt "+token)
+	md := metadata.Pairs("authorization", token)
 	ctx = metadata.NewOutgoingContext(ctx, md)
 	grpc_opts := []grpc.DialOption{grpc.WithInsecure()}
 	conn, err := grpc.Dial(opts.metathings_addr, grpc_opts...)
@@ -147,12 +147,6 @@ func NewCoreAgentService(opt ...ServiceOptions) (*coreAgentService, error) {
 		log.WithField("error", err).Errorf("failed to new logger")
 		return nil, err
 	}
-
-	log.WithFields(log.Fields{
-		"addr": opts.metathings_addr,
-		"application_credential_id":     opts.application_credential_id,
-		"application_credential_secret": opts.application_credential_secret,
-	}).Debugf("application credential managaer options")
 
 	appCredMgr, err := app_cred_mgr.NewApplicationCredentialManager(
 		opts.metathings_addr,

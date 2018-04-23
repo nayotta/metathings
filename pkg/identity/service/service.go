@@ -83,10 +83,9 @@ func (srv *metathingsIdentityService) validateTokenViaHTTP(token, subject_token 
 	url := srv.h.JoinURL("/v3/auth/tokens")
 
 	http_res, http_body, errs := gorequest.
-		New().
+		New().Get(url).
 		Set("X-Auth-Token", token).
 		Set("X-Subject-Token", token).
-		Get(url).
 		Query("nocatalog=1").End()
 
 	if len(errs) > 0 {
@@ -446,8 +445,7 @@ func (srv *metathingsIdentityService) IssueToken(ctx context.Context, req *pb.Is
 	}
 	url := srv.h.JoinURL("/v3/auth/tokens")
 	http_res, http_body, errs := gorequest.
-		New().
-		Post(url).
+		New().Post(url).
 		Query("nocatalog=1").
 		Send(&body).End()
 	if len(errs) > 0 {
@@ -502,10 +500,10 @@ func (srv *metathingsIdentityService) CheckToken(ctx context.Context, _ *empty.E
 
 	url := srv.h.JoinURL("/v3/auth/tokens")
 	http_res, _, errs := gorequest.
-		New().
+		New().Head(url).
 		Set("X-Auth-Token", token).
 		Set("X-Subject-Token", token).
-		Head(url).End()
+		End()
 	if len(errs) > 0 {
 		return nil, status.Errorf(codes.Internal, errs[0].Error())
 	}
@@ -523,15 +521,21 @@ func (srv *metathingsIdentityService) ValidateToken(ctx context.Context, _ *empt
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
+	sub_token, err := srv.GetSubjectTokenFromContext(ctx)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, err.Error())
+	}
 
-	srv.logger.WithField("token", token).Debugf("validating token")
+	srv.logger.
+		WithFields(log.Fields{"token": token, "sub_token": sub_token}).
+		Debugf("validating token")
 
 	url := srv.h.JoinURL("/v3/auth/tokens")
 	http_res, http_body, errs := gorequest.
-		New().
+		New().Get(url).
 		Set("X-Auth-Token", token).
-		Set("X-Subject-Token", token).
-		Get(url).End()
+		Set("X-Subject-Token", sub_token).
+		End()
 	if len(errs) > 0 {
 		srv.logger.
 			WithField("error", errs[0]).
@@ -542,6 +546,7 @@ func (srv *metathingsIdentityService) ValidateToken(ctx context.Context, _ *empt
 	if http_res.StatusCode != 200 {
 		srv.logger.
 			WithField("status_code", http_res.StatusCode).
+			WithField("http_body", http_body).
 			Errorf("unexpected status code")
 		return nil, status.Errorf(codes.Unauthenticated, Unauthenticated.Error())
 	}
