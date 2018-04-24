@@ -13,26 +13,39 @@ type _domain struct {
 	Name string `json:"name,omitempty"`
 }
 
+type _application_credential struct {
+	Id         string `json:"id"`
+	Name       string `json:"name"`
+	Restricted bool   `json:"restricted"`
+}
+
+type _project struct {
+	Domain _domain `json:"domain"`
+	Id     string  `json:"id"`
+	Name   string  `json:"name"`
+}
+
+type _user struct {
+	Domain _domain `json:"domain"`
+	Id     string  `json:"id"`
+	Name   string  `json:"name"`
+}
+
+type _role struct {
+	Id   string `json:"id"`
+	Name string `json:"name"`
+}
+
 type tokenResponseBody struct {
 	Token struct {
-		Project struct {
-			Domain _domain `json:"domain"`
-			Id     string  `json:"id"`
-			Name   string  `json:"name"`
-		} `json:"project"`
-		User struct {
-			Domain _domain `json:"domain"`
-			Id     string  `json:"id"`
-			Name   string  `json:"name"`
-		} `json:"user"`
-		Methods []string `json:"methods"`
-		Roles   []struct {
-			Id   string `json:"id"`
-			Name string `json:"name"`
-		} `json:"roles"`
-		IsDomain  bool   `json:"is_domain"`
-		ExipresAt string `json:"exipres_at"`
-		IssuedAt  string `json:"issued_at"`
+		ApplicationCredential *_application_credential `json:"application_credential,omitempty"`
+		Project               *_project                `json:"project,omitempty"`
+		User                  *_user                   `json:"user,omitempty"`
+		Methods               []string                 `json:"methods"`
+		Roles                 []*_role                 `json:"roles,omitempty"`
+		IsDomain              bool                     `json:"is_domain"`
+		ExipresAt             string                   `json:"exipres_at"`
+		IssuedAt              string                   `json:"issued_at"`
 
 		ApplicationCredentialRestricted bool `json:"application_credential_restricted"`
 	} `json:"token"`
@@ -72,6 +85,13 @@ func decodeToken(_ gorequest.Response, body string) (*pb.Token, error) {
 			Id:   r.Id,
 			Name: r.Name,
 		})
+	}
+	if t.ApplicationCredential != nil {
+		token.ApplicationCredential = &pb.Token__ApplicationCredential{
+			Id:         t.ApplicationCredential.Id,
+			Name:       t.ApplicationCredential.Name,
+			Restricted: t.ApplicationCredential.Restricted,
+		}
 	}
 
 	return token, nil

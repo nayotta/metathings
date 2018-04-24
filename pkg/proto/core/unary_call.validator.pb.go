@@ -15,7 +15,7 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
-func (this *UnaryCallPayload) Validate() error {
+func (this *UnaryCallRequestPayload) Validate() error {
 	if this.ServiceName != nil {
 		if err := go_proto_validators.CallValidatorIfExists(this.ServiceName); err != nil {
 			return go_proto_validators.FieldError("ServiceName", err)
@@ -26,6 +26,14 @@ func (this *UnaryCallPayload) Validate() error {
 			return go_proto_validators.FieldError("MethodName", err)
 		}
 	}
+	if this.Payload != nil {
+		if err := go_proto_validators.CallValidatorIfExists(this.Payload); err != nil {
+			return go_proto_validators.FieldError("Payload", err)
+		}
+	}
+	return nil
+}
+func (this *UnaryCallResponsePayload) Validate() error {
 	if this.Payload != nil {
 		if err := go_proto_validators.CallValidatorIfExists(this.Payload); err != nil {
 			return go_proto_validators.FieldError("Payload", err)

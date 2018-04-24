@@ -12,8 +12,10 @@ import (
 
 	"github.com/bigdatagz/metathings/pkg/common"
 	app_cred_mgr "github.com/bigdatagz/metathings/pkg/common/application_credential_manager"
+	context_helper "github.com/bigdatagz/metathings/pkg/common/context"
 	grpc_helper "github.com/bigdatagz/metathings/pkg/common/grpc"
 	log_helper "github.com/bigdatagz/metathings/pkg/common/log"
+	stm_mgr "github.com/bigdatagz/metathings/pkg/common/stream_manager"
 	pb "github.com/bigdatagz/metathings/pkg/proto/core"
 	identityd_pb "github.com/bigdatagz/metathings/pkg/proto/identity"
 )
@@ -53,17 +55,18 @@ func SetApplicationCredential(id, secret string) ServiceOptions {
 type metathingsCoreService struct {
 	grpc_helper.AuthorizationTokenParser
 
-	appCredMgr *app_cred_mgr.ApplicationCredentialManager
-	logger     log.FieldLogger
-	opts       options
-	storage    Storage
+	app_cred_mgr app_cred_mgr.ApplicationCredentialManager
+	stm_mgr      stm_mgr.StreamManager
+	logger       log.FieldLogger
+	opts         options
+	storage      Storage
 }
 
 func (srv *metathingsCoreService) validateTokenViaIdentityd(token string) (*identityd_pb.Token, error) {
 	ctx := context.Background()
 	md := metadata.Pairs(
 		"authorization-subject", "mt "+token,
-		"authorization", srv.appCredMgr.GetToken(),
+		"authorization", srv.app_cred_mgr.GetToken(),
 	)
 	ctx = metadata.NewOutgoingContext(ctx, md)
 
@@ -159,7 +162,6 @@ func (srv *metathingsCoreService) CreateCore(ctx context.Context, req *pb.Create
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
-
 	srv.logger.WithFields(log.Fields{
 		"id":         cc.Id,
 		"name":       cc.Name,
@@ -167,6 +169,18 @@ func (srv *metathingsCoreService) CreateCore(ctx context.Context, req *pb.Create
 		"owner_id":   cc.OwnerId,
 		"state":      cc.State,
 	}).Infof("create core")
+
+	cred := context_helper.Credential(ctx)
+	err = srv.storage.AssignCoreToApplicationCredential(cc, &ApplicationCredential{cred.ApplicationCredential.Id})
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to assign core to application credential")
+		srv.storage.DeleteCore(cc)
+		return nil, err
+	}
+	srv.logger.WithFields(log.Fields{
+		"core_id":     cc.Id,
+		"app_cred_id": cred.ApplicationCredential.Id,
+	}).Debugf("assign core to application credential")
 
 	res := &pb.CreateCoreResponse{
 		Core: &pb.Core{
@@ -200,8 +214,35 @@ func (srv *metathingsCoreService) ListCores(context.Context, *pb.ListCoresReques
 func (srv *metathingsCoreService) Heartbeat(context.Context, *pb.HeartbeatRequest) (*empty.Empty, error) {
 	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
 }
-func (srv *metathingsCoreService) Pipeline(pb.CoreService_PipelineServer) error {
-	return grpc.Errorf(codes.Unimplemented, "unimplement")
+
+func (srv *metathingsCoreService) Stream(stream pb.CoreService_StreamServer) error {
+	ctx := stream.Context()
+	cred := context_helper.Credential(ctx)
+	if cred == nil || cred.ApplicationCredential == nil {
+		srv.logger.Errorf("token dont created by application credential")
+		return status.Errorf(codes.Internal, "token dont created by application credential")
+	}
+
+	app_cred := &ApplicationCredential{cred.ApplicationCredential.Id}
+	core, err := srv.storage.GetAssignedCoreFromApplicationCredential(app_cred)
+	if err != nil {
+		srv.logger.WithError(err).Errorf("not core assigend to application credential, should not be here, may be hacked.")
+		return status.Errorf(codes.Internal, "not core assigned to application credential")
+	}
+
+	close_chan, err := srv.stm_mgr.Register(core.Id, stream)
+	if err != nil {
+		srv.logger.
+			WithField("core_id", core.Id).
+			WithError(err).
+			Errorf("failed to register stream")
+	}
+	srv.logger.WithField("core_id", core.Id).Infof("register stream")
+
+	<-close_chan
+	srv.logger.WithField("core_id", core.Id).Infof("stream closed")
+
+	return nil
 }
 
 func (srv *metathingsCoreService) ListCoresForUser(context.Context, *pb.ListCoresForUserRequest) (*pb.ListCoresForUserResponse, error) {
@@ -209,12 +250,7 @@ func (srv *metathingsCoreService) ListCoresForUser(context.Context, *pb.ListCore
 }
 
 func (srv *metathingsCoreService) SendUnaryCall(ctx context.Context, req *pb.SendUnaryCallRequest) (*pb.SendUnaryCallResponse, error) {
-	srv.logger.WithFields(log.Fields{
-		"service":      req.Payload.ServiceName,
-		"method":       req.Payload.MethodName,
-		"request-type": req.Payload.Payload.TypeUrl,
-	}).Infof("receive unary call request")
-	return nil, status.Errorf(codes.Unimplemented, "unimplement")
+	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
 }
 
 func NewCoreService(opt ...ServiceOptions) (*metathingsCoreService, error) {
@@ -225,31 +261,38 @@ func NewCoreService(opt ...ServiceOptions) (*metathingsCoreService, error) {
 
 	logger, err := log_helper.NewLogger("cored", opts.logLevel)
 	if err != nil {
-		log.Errorf("failed to new logger: %v", err)
+		log.WithError(err).Errorf("failed to new logger")
 		return nil, err
 	}
 
 	storage, err := NewStorage()
 	if err != nil {
-		log.Errorf("failed to connect storage: %v", err)
+		log.WithError(err).Errorf("failed to connect storage")
 		return nil, err
 	}
 
-	appCredMgr, err := app_cred_mgr.NewApplicationCredentialManager(
+	app_cred_mgr, err := app_cred_mgr.NewApplicationCredentialManager(
 		opts.identityd_addr,
 		opts.application_credential_id,
 		opts.application_credential_secret,
 	)
 	if err != nil {
-		log.Errorf("failed to new application credential manager")
+		log.WithError(err).Errorf("failed to new application credential manager")
+		return nil, err
+	}
+
+	stm_mgr, err := stm_mgr.NewStreamManager(logger)
+	if err != nil {
+		log.WithError(err).Errorf("failed to new stream manager")
 		return nil, err
 	}
 
 	srv := &metathingsCoreService{
-		appCredMgr: appCredMgr,
-		opts:       opts,
-		logger:     logger,
-		storage:    storage,
+		app_cred_mgr: app_cred_mgr,
+		stm_mgr:      stm_mgr,
+		opts:         opts,
+		logger:       logger,
+		storage:      storage,
 	}
 	return srv, nil
 }

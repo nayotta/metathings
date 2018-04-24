@@ -8,7 +8,7 @@ import (
 	pb "github.com/bigdatagz/metathings/pkg/proto/identity"
 )
 
-type _user struct {
+type _user1 struct {
 	Id       string   `json:"id,omitempty"`
 	Name     string   `json:"name,omitempty"`
 	Password string   `json:"password,omitempty"`
@@ -18,7 +18,7 @@ type _user struct {
 type pwdIdentity struct {
 	Methods  []string `json:"methods"`
 	Password struct {
-		User _user `json:"user"`
+		User _user1 `json:"user"`
 	} `json:"password"`
 }
 

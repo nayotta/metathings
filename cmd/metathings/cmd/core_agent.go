@@ -58,6 +58,7 @@ func runCoreAgentd() error {
 	srv, err := service.NewCoreAgentService(
 		service.SetMetathingsAddr(root_opts.ServiceConfig.Metathings.Address),
 		service.SetLogLevel(root_opts.Log.Level),
+		service.SetCoreAgentHome(core_agentd_opts.AgentdConfig.Home),
 		service.SetCoreId(core_agentd_opts.AgentdConfig.Id),
 		service.SetApplicationCredential(
 			root_opts.ApplicationCredential.Id,
@@ -69,18 +70,25 @@ func runCoreAgentd() error {
 	}
 
 	pb.RegisterCoreAgentServiceServer(s, srv)
-	log.WithFields(log.Fields{
-		"bind":    core_agentd_opts.Listen,
-		"core_id": core_agentd_opts.AgentdConfig.Id,
-	}).Infof("metathings core agent service listening")
-	return s.Serve(lis)
+
+	errs := make(chan error)
+	go func() {
+		errs <- srv.ServeOnStream()
+	}()
+	go func() {
+		log.WithFields(log.Fields{
+			"bind": core_agentd_opts.Listen,
+		}).Infof("metathings core agent service listening")
+		errs <- s.Serve(lis)
+	}()
+	return <-errs
 }
 
 func init() {
 	core_agentd_opts = &_coreAgentdOptions{}
 
 	coreAgentdCmd.Flags().StringVar(&core_agentd_opts.Listen, "bind", "127.0.0.1:5002", "Core Agentd Service binding address")
-	coreAgentdCmd.Flags().StringVar(&core_agentd_opts.AgentdConfig.Home, "core-agent-home", "~/.metathings/core_agent/", "Core Agent Home Path")
+	coreAgentdCmd.Flags().StringVar(&core_agentd_opts.AgentdConfig.Home, "core-agent-home", "~/.metathings/core-agent/", "Core Agent Home Path")
 	coreAgentdCmd.Flags().StringVar(&core_agentd_opts.AgentdConfig.Id, "core-id", "", "Core(Agent) ID")
 	coreCmd.AddCommand(coreAgentdCmd)
 }

@@ -42,6 +42,11 @@ func (this *Token) Validate() error {
 			return go_proto_validators.FieldError("Project", err)
 		}
 	}
+	if this.ApplicationCredential != nil {
+		if err := go_proto_validators.CallValidatorIfExists(this.ApplicationCredential); err != nil {
+			return go_proto_validators.FieldError("ApplicationCredential", err)
+		}
+	}
 	return nil
 }
 func (this *Token__Domain) Validate() error {
@@ -64,5 +69,8 @@ func (this *Token__User) Validate() error {
 	return nil
 }
 func (this *Token__Role) Validate() error {
+	return nil
+}
+func (this *Token__ApplicationCredential) Validate() error {
 	return nil
 }

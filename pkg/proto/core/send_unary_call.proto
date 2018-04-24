@@ -10,9 +10,9 @@ import "unary_call.proto";
 
 message SendUnaryCallRequest {
 	google.protobuf.StringValue core_id = 1;
-	UnaryCallPayload payload = 2 [(validator.field) = {msg_exists: true}];
+	UnaryCallRequestPayload payload = 2 [(validator.field) = {msg_exists: true}];
 }
 
 message SendUnaryCallResponse {
-	UnaryCallPayload payload = 1;
+	UnaryCallResponsePayload payload = 1;
 }

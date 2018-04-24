@@ -13,9 +13,9 @@ It is generated from these files:
 	list_cores.proto
 	list_cores_for_user.proto
 	patch_core.proto
-	pipeline.proto
 	send_unary_call.proto
 	service.proto
+	stream.proto
 	unary_call.proto
 
 It has these top-level messages:
@@ -32,11 +32,13 @@ It has these top-level messages:
 	ListCoresForUserResponse
 	PatchCoreRequest
 	PatchCoreResponse
-	PipelineOutStream
-	PipelineInStream
 	SendUnaryCallRequest
 	SendUnaryCallResponse
-	UnaryCallPayload
+	StreamErrorResponsePayload
+	StreamResponse
+	StreamRequest
+	UnaryCallRequestPayload
+	UnaryCallResponsePayload
 */
 package core
 

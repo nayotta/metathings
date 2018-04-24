@@ -11,18 +11,22 @@ import (
 	identityd_pb "github.com/bigdatagz/metathings/pkg/proto/identity"
 )
 
-type ApplicationCredentialManager struct {
+type ApplicationCredentialManager interface {
+	GetToken() string
+}
+
+type applicationCredentialManager struct {
 	identityd_addr                string
 	application_credential_id     string
 	application_credential_secret string
 	application_credential_token  string
 }
 
-func (mgr *ApplicationCredentialManager) GetToken() string {
+func (mgr *applicationCredentialManager) GetToken() string {
 	return "mt " + mgr.application_credential_token
 }
 
-func NewApplicationCredentialManager(identityd_addr, application_credential_id, application_credential_secret string) (*ApplicationCredentialManager, error) {
+func NewApplicationCredentialManager(identityd_addr, application_credential_id, application_credential_secret string) (ApplicationCredentialManager, error) {
 	log.WithFields(log.Fields{
 		"identiyd_address":              identityd_addr,
 		"application_credential_id":     application_credential_id,
@@ -58,7 +62,7 @@ func NewApplicationCredentialManager(identityd_addr, application_credential_id, 
 	application_credential_token := header["authorization"][0]
 	application_credential_token = application_credential_token[3:len(application_credential_token)]
 
-	mgr := &ApplicationCredentialManager{
+	mgr := &applicationCredentialManager{
 		identityd_addr,
 		application_credential_id,
 		application_credential_secret,

@@ -12,7 +12,7 @@ import "get_core.proto";
 import "list_cores.proto";
 
 import "heartbeat.proto";
-import "pipeline.proto";
+import "stream.proto";
 
 import "list_cores_for_user.proto";
 import "send_unary_call.proto";
@@ -25,7 +25,9 @@ service CoreService {
 	rpc ListCores(ListCoresRequest) returns (ListCoresResponse) {}
 
 	rpc Heartbeat(HeartbeatRequest) returns (google.protobuf.Empty) {}
-	rpc Pipeline(stream PipelineOutStream) returns (stream PipelineInStream) {}
+	// NOTE: input is response body form core agentd,
+	//       output is request body to core agentd.
+	rpc Stream(stream StreamResponse) returns (stream StreamRequest) {}
 
 	rpc ListCoresForUser(ListCoresForUserRequest) returns (ListCoresForUserResponse) {}
 	rpc SendUnaryCall(SendUnaryCallRequest) returns (SendUnaryCallResponse) {}
