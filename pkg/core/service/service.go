@@ -16,6 +16,7 @@ import (
 	grpc_helper "github.com/bigdatagz/metathings/pkg/common/grpc"
 	log_helper "github.com/bigdatagz/metathings/pkg/common/log"
 	stm_mgr "github.com/bigdatagz/metathings/pkg/common/stream_manager"
+	storage "github.com/bigdatagz/metathings/pkg/core/storage"
 	pb "github.com/bigdatagz/metathings/pkg/proto/core"
 	identityd_pb "github.com/bigdatagz/metathings/pkg/proto/identity"
 )
@@ -59,7 +60,7 @@ type metathingsCoreService struct {
 	stm_mgr      stm_mgr.StreamManager
 	logger       log.FieldLogger
 	opts         options
-	storage      Storage
+	storage      storage.Storage
 }
 
 func (srv *metathingsCoreService) validateTokenViaIdentityd(token string) (*identityd_pb.Token, error) {
@@ -140,6 +141,8 @@ func (srv *metathingsCoreService) CreateCore(ctx context.Context, req *pb.Create
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 
+	cred := context_helper.Credential(ctx)
+
 	core_id := common.NewId()
 
 	var name_str string
@@ -149,16 +152,17 @@ func (srv *metathingsCoreService) CreateCore(ctx context.Context, req *pb.Create
 	} else {
 		name_str = core_id
 	}
+	state := "offline"
 
-	c := Core{
-		Id:        core_id,
-		Name:      name_str,
-		ProjectId: "",
-		OwnerId:   "",
-		State:     "offline",
+	c := storage.Core{
+		Id:        &core_id,
+		Name:      &name_str,
+		ProjectId: &cred.Project.Id,
+		OwnerId:   &cred.User.Id,
+		State:     &state,
 	}
 
-	cc, err := srv.storage.CreateCore(&c)
+	cc, err := srv.storage.CreateCore(c)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
@@ -170,11 +174,10 @@ func (srv *metathingsCoreService) CreateCore(ctx context.Context, req *pb.Create
 		"state":      cc.State,
 	}).Infof("create core")
 
-	cred := context_helper.Credential(ctx)
-	err = srv.storage.AssignCoreToApplicationCredential(cc, &ApplicationCredential{cred.ApplicationCredential.Id})
+	err = srv.storage.AssignCoreToApplicationCredential(*cc.Id, cred.ApplicationCredential.Id)
 	if err != nil {
 		srv.logger.WithError(err).Errorf("failed to assign core to application credential")
-		srv.storage.DeleteCore(cc)
+		srv.storage.DeleteCore(*cc.Id)
 		return nil, err
 	}
 	srv.logger.WithFields(log.Fields{
@@ -184,11 +187,11 @@ func (srv *metathingsCoreService) CreateCore(ctx context.Context, req *pb.Create
 
 	res := &pb.CreateCoreResponse{
 		Core: &pb.Core{
-			Id:        cc.Id,
-			Name:      cc.Name,
-			ProjectId: cc.ProjectId,
-			OwnerId:   cc.OwnerId,
-			State:     coreState2PbCoreState(cc.State),
+			Id:        *cc.Id,
+			Name:      *cc.Name,
+			ProjectId: *cc.ProjectId,
+			OwnerId:   *cc.OwnerId,
+			State:     coreState2PbCoreState(*cc.State),
 		},
 	}
 
@@ -223,14 +226,13 @@ func (srv *metathingsCoreService) Stream(stream pb.CoreService_StreamServer) err
 		return status.Errorf(codes.Internal, "token dont created by application credential")
 	}
 
-	app_cred := &ApplicationCredential{cred.ApplicationCredential.Id}
-	core, err := srv.storage.GetAssignedCoreFromApplicationCredential(app_cred)
+	core, err := srv.storage.GetAssignedCoreFromApplicationCredential(cred.ApplicationCredential.Id)
 	if err != nil {
 		srv.logger.WithError(err).Errorf("not core assigend to application credential, should not be here, may be hacked.")
 		return status.Errorf(codes.Internal, "not core assigned to application credential")
 	}
 
-	close_chan, err := srv.stm_mgr.Register(core.Id, stream)
+	close_chan, err := srv.stm_mgr.Register(*core.Id, stream)
 	if err != nil {
 		srv.logger.
 			WithField("core_id", core.Id).
@@ -273,7 +275,7 @@ func NewCoreService(opt ...ServiceOptions) (*metathingsCoreService, error) {
 		return nil, err
 	}
 
-	storage, err := NewStorage()
+	storage, err := storage.NewStorage(":memory:", logger)
 	if err != nil {
 		log.WithError(err).Errorf("failed to connect storage")
 		return nil, err

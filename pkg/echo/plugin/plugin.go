@@ -19,7 +19,6 @@ var config struct {
 type echoServicePlugin struct{}
 
 func (p *echoServicePlugin) Run() error {
-
 	lis, err := net.Listen("tcp", config.Bind)
 	if err != nil {
 		return err

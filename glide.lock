@@ -1,5 +1,5 @@
 hash: f40d346641d91dbd9c0c1d7f2431678d4446c0e4163d824f1b6a20bd7cd3a9b7
-updated: 2018-04-16T14:39:24.634004+08:00
+updated: 2018-04-25T16:34:55.468376+08:00
 imports:
 - name: github.com/fsnotify/fsnotify
   version: c2828203cd70a50dcccfb2761f8b1f8ceef9a8e9
@@ -37,8 +37,14 @@ imports:
   - json/token
 - name: github.com/inconshreveable/mousetrap
   version: 76626ae9c91c4f2a10f34cad8ce83ea42c93bb75
+- name: github.com/jmoiron/sqlx
+  version: 2aeb6a910c2b94f2d5eb53d9895d80e27264ec41
+  subpackages:
+  - reflectx
 - name: github.com/magiconair/properties
   version: 2c9e9502788518c97fe44e8955cd069417ee89df
+- name: github.com/mattn/go-sqlite3
+  version: a72efd674f654961a11ac41aae72c0e43963fe6c
 - name: github.com/mitchellh/mapstructure
   version: 00c29f56e2386353d58c599509e8dc3801b0d716
 - name: github.com/moul/http2curl
