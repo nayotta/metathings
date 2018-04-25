@@ -15,9 +15,6 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
-func (this *StreamErrorResponsePayload) Validate() error {
-	return nil
-}
 func (this *StreamResponse) Validate() error {
 	if oneOfNester, ok := this.GetPayload().(*StreamResponse_Err); ok {
 		if oneOfNester.Err != nil {

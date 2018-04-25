@@ -15,7 +15,7 @@ import "heartbeat.proto";
 import "stream.proto";
 
 import "list_cores_for_user.proto";
-import "send_unary_call.proto";
+import "unary_call.proto";
 
 service CoreService {
 	rpc CreateCore(CreateCoreRequest) returns (CreateCoreResponse) {}
@@ -30,5 +30,5 @@ service CoreService {
 	rpc Stream(stream StreamResponse) returns (stream StreamRequest) {}
 
 	rpc ListCoresForUser(ListCoresForUserRequest) returns (ListCoresForUserResponse) {}
-	rpc SendUnaryCall(SendUnaryCallRequest) returns (SendUnaryCallResponse) {}
+	rpc UnaryCall(UnaryCallRequest) returns (UnaryCallResponse) {}
 }

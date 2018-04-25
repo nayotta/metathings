@@ -21,7 +21,7 @@ var (
 
 type StreamManager interface {
 	Register(core_id string, stream cored_pb.CoreService_StreamServer) (chan interface{}, error)
-	Unary(core_id string, req *cored_pb.UnaryCallRequestPayload) (*cored_pb.UnaryCallResponsePayload, error)
+	UnaryCall(core_id string, req *cored_pb.UnaryCallRequestPayload) (*cored_pb.UnaryCallResponsePayload, error)
 }
 
 type streamManager struct {
@@ -76,7 +76,7 @@ func (mgr *streamManager) Register(core_id string, stream cored_pb.CoreService_S
 	return close, nil
 }
 
-func (mgr *streamManager) Unary(core_id string, req *cored_pb.UnaryCallRequestPayload) (*cored_pb.UnaryCallResponsePayload, error) {
+func (mgr *streamManager) UnaryCall(core_id string, req *cored_pb.UnaryCallRequestPayload) (*cored_pb.UnaryCallResponsePayload, error) {
 	var stream cored_pb.CoreService_StreamServer
 	var ok bool
 

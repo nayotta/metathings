@@ -3,16 +3,16 @@ syntax = "proto3";
 package ai.metathings.service.core;
 
 import "google/protobuf/wrappers.proto";
-import "google/protobuf/any.proto";
 
-message UnaryCallRequestPayload {
-	google.protobuf.StringValue service_name = 1;
-	google.protobuf.StringValue method_name = 2;
-	google.protobuf.Any payload = 3;
+import "github.com/mwitkow/go-proto-validators/validator.proto";
+
+import "payload.proto";
+
+message UnaryCallRequest {
+	google.protobuf.StringValue core_id = 1;
+	UnaryCallRequestPayload payload = 2 [(validator.field) = {msg_exists: true}];
 }
 
-message UnaryCallResponsePayload {
-	string service_name = 1;
-	string method_name = 2;
-	google.protobuf.Any payload = 3;
+message UnaryCallResponse {
+	UnaryCallResponsePayload payload = 1;
 }

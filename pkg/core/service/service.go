@@ -249,8 +249,16 @@ func (srv *metathingsCoreService) ListCoresForUser(context.Context, *pb.ListCore
 	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
 }
 
-func (srv *metathingsCoreService) SendUnaryCall(ctx context.Context, req *pb.SendUnaryCallRequest) (*pb.SendUnaryCallResponse, error) {
-	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
+func (srv *metathingsCoreService) UnaryCall(ctx context.Context, req *pb.UnaryCallRequest) (*pb.UnaryCallResponse, error) {
+	res, err := srv.stm_mgr.UnaryCall(req.CoreId.Value, req.Payload)
+	if err != nil {
+		srv.logger.
+			WithField("core_id", req.CoreId.Value).
+			WithError(err).
+			Errorf("failed to unary call")
+		return nil, err
+	}
+	return &pb.UnaryCallResponse{res}, nil
 }
 
 func NewCoreService(opt ...ServiceOptions) (*metathingsCoreService, error) {

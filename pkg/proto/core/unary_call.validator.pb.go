@@ -3,28 +3,26 @@
 
 package core
 
+import fmt "fmt"
 import go_proto_validators "github.com/mwitkow/go-proto-validators"
 import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
 import math "math"
 import _ "github.com/golang/protobuf/ptypes/wrappers"
-import _ "github.com/golang/protobuf/ptypes/any"
+import _ "github.com/mwitkow/go-proto-validators"
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
-func (this *UnaryCallRequestPayload) Validate() error {
-	if this.ServiceName != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.ServiceName); err != nil {
-			return go_proto_validators.FieldError("ServiceName", err)
+func (this *UnaryCallRequest) Validate() error {
+	if this.CoreId != nil {
+		if err := go_proto_validators.CallValidatorIfExists(this.CoreId); err != nil {
+			return go_proto_validators.FieldError("CoreId", err)
 		}
 	}
-	if this.MethodName != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.MethodName); err != nil {
-			return go_proto_validators.FieldError("MethodName", err)
-		}
+	if nil == this.Payload {
+		return go_proto_validators.FieldError("Payload", fmt.Errorf("message must exist"))
 	}
 	if this.Payload != nil {
 		if err := go_proto_validators.CallValidatorIfExists(this.Payload); err != nil {
@@ -33,7 +31,7 @@ func (this *UnaryCallRequestPayload) Validate() error {
 	}
 	return nil
 }
-func (this *UnaryCallResponsePayload) Validate() error {
+func (this *UnaryCallResponse) Validate() error {
 	if this.Payload != nil {
 		if err := go_proto_validators.CallValidatorIfExists(this.Payload); err != nil {
 			return go_proto_validators.FieldError("Payload", err)

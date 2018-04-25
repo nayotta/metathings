@@ -13,7 +13,7 @@ It is generated from these files:
 	list_cores.proto
 	list_cores_for_user.proto
 	patch_core.proto
-	send_unary_call.proto
+	payload.proto
 	service.proto
 	stream.proto
 	unary_call.proto
@@ -32,13 +32,13 @@ It has these top-level messages:
 	ListCoresForUserResponse
 	PatchCoreRequest
 	PatchCoreResponse
-	SendUnaryCallRequest
-	SendUnaryCallResponse
 	StreamErrorResponsePayload
-	StreamResponse
-	StreamRequest
 	UnaryCallRequestPayload
 	UnaryCallResponsePayload
+	StreamResponse
+	StreamRequest
+	UnaryCallRequest
+	UnaryCallResponse
 */
 package core
 
