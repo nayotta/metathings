@@ -100,6 +100,11 @@ func (mgr *streamManager) Unary(core_id string, req *cored_pb.UnaryCallRequestPa
 		return nil, err
 	}
 
+	defer func() {
+		close(ch)
+		delete(mgr.sessions, sess_id)
+		mgr.logger.WithField("session_id", sess_id).Debugf("close session receive channel")
+	}()
 	select {
 	case stm_res := <-ch:
 		res := stm_res.Payload.(*cored_pb.StreamResponse_UnaryCall).UnaryCall

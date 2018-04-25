@@ -7,12 +7,14 @@ import (
 	"os/user"
 	"path"
 	"path/filepath"
+	"time"
 
 	"github.com/golang/protobuf/ptypes"
 	"github.com/golang/protobuf/ptypes/empty"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/keepalive"
 	"google.golang.org/grpc/metadata"
 
 	app_cred_mgr "github.com/bigdatagz/metathings/pkg/common/application_credential_manager"
@@ -111,7 +113,14 @@ func (srv *coreAgentService) ServeOnStream() error {
 	token := srv.app_cred_mgr.GetToken()
 	ctx := context_helper.WithToken(context.Background(), token)
 
-	grpc_opts := []grpc.DialOption{grpc.WithInsecure()}
+	grpc_opts := []grpc.DialOption{
+		grpc.WithInsecure(),
+		grpc.WithKeepaliveParams(keepalive.ClientParameters{
+			Time:                2 * time.Second,
+			Timeout:             20 * time.Second,
+			PermitWithoutStream: true,
+		}),
+	}
 	conn, err := grpc.Dial(srv.opts.metathings_addr, grpc_opts...)
 	if err != nil {
 		srv.logger.WithError(err).Errorf("failed to dial to metathings service")
