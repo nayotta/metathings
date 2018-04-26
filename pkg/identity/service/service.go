@@ -585,7 +585,7 @@ func (srv *metathingsIdentityService) ListApplicationCredentials(context.Context
 	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
 }
 
-func NewIdentityService(opt ...ServiceOptions) *metathingsIdentityService {
+func NewIdentityService(opt ...ServiceOptions) (*metathingsIdentityService, error) {
 	opts := defaultServiceOptions
 	for _, o := range opt {
 		o(&opts)
@@ -593,13 +593,15 @@ func NewIdentityService(opt ...ServiceOptions) *metathingsIdentityService {
 
 	logger, err := log_helper.NewLogger("identityd", opts.logLevel)
 	if err != nil {
-		log.Fatalf("failed to new logger: %v", err)
+		log.WithError(err).Errorf("failed to new logger")
+		return nil, err
 	}
+
 	srv := &metathingsIdentityService{
 		opts:   opts,
 		logger: logger,
 	}
 	srv.h = &helper{srv}
 
-	return srv
+	return srv, nil
 }

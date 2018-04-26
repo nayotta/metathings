@@ -15,12 +15,8 @@ const (
 )
 
 type _rootOptions struct {
-	Config                string
-	Stage                 string
-	Service               string
-	Verbose               bool
-	Log                   _logOptions
-	ApplicationCredential _applicationCredentialOptions `mapstructure:"application_credential"`
+	cmd_helper.RootOptions `mapstructure:",squash"`
+	Service                string
 }
 
 var (
@@ -34,15 +30,6 @@ var (
 	}
 )
 
-func initialize() {
-	lvl, err := log.ParseLevel(root_opts.Log.Level)
-	if err != nil {
-		log.Fatalf("bad log level %v: %v", root_opts.Log.Level, err)
-	}
-	log.SetLevel(lvl)
-	log.WithField("log.level", root_opts.Log.Level).Debugf("set log level")
-}
-
 func initConfig() {
 	if root_opts.Config != "" {
 		viper.SetConfigFile(root_opts.Config)
@@ -54,7 +41,6 @@ func initConfig() {
 
 func init() {
 	root_opts = &_rootOptions{}
-	cmd_helper.SetDefaultHooks(initialize)
 
 	cobra.OnInitialize(initConfig)
 	viper.AutomaticEnv()

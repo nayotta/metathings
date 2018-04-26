@@ -6,6 +6,8 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+
+	cmd_helper "github.com/bigdatagz/metathings/pkg/common/cmd"
 )
 
 const (
@@ -20,23 +22,10 @@ type _serviceConfigOptions struct {
 	Metathings _metathingsServiceOptions
 }
 
-type _applicationCredentialOptions struct {
-	Id     string
-	Secret string
-}
-
-type _logOptions struct {
-	Level string
-}
-
 type _rootOptions struct {
-	Config                string
-	Stage                 string
-	Verbose               bool
-	Token                 string
-	Log                   _logOptions
-	ApplicationCredential _applicationCredentialOptions `mapstructure:"application_credential"`
-	ServiceConfig         _serviceConfigOptions         `mapstructure:"service_config"`
+	cmd_helper.RootOptions  `mapstructure:",squash"`
+	cmd_helper.TokenOptions `mapstructure:",squash"`
+	ServiceConfig           _serviceConfigOptions `mapstructure:"service_config"`
 }
 
 var (
@@ -79,6 +68,8 @@ func init() {
 	viper.SetEnvKeyReplacer(strings.NewReplacer("-", "_"))
 	viper.BindEnv("stage")
 
+	RootCmd.PersistentFlags().StringVarP(&root_opts.Config, "config", "c", "", "Config file")
+
 	RootCmd.PersistentFlags().BoolVar(&root_opts.Verbose, "verbose", false, "Verbose mode")
 
 	RootCmd.PersistentFlags().StringVar(&root_opts.Log.Level, "log-level", "info", "Logging Level[debug, info, warn, error]")
@@ -96,12 +87,6 @@ func init() {
 }
 
 func initialize() {
-	lvl, err := log.ParseLevel(root_opts.Log.Level)
-	if err != nil {
-		log.WithField("log.level", root_opts.Log.Level).Fatalf("bad log level")
-	}
-	log.SetLevel(lvl)
-
 	token := viper.GetString("token")
 	if token != "" {
 		root_opts.Token = token
@@ -118,11 +103,18 @@ func initialize() {
 	}
 }
 
+var _GLOBAL_INITIALED = false
+
 func initConfig() {
+	if _GLOBAL_INITIALED {
+		return
+	}
+
 	if root_opts.Config != "" {
 		viper.SetConfigFile(root_opts.Config)
 		if err := viper.ReadInConfig(); err != nil {
 			log.WithError(err).Fatalf("failed to read config")
 		}
 	}
+	_GLOBAL_INITIALED = true
 }

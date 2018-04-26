@@ -37,14 +37,14 @@ var (
 			core_run_opts.Stage = cmd_helper.GetStageFromEnv()
 		}),
 		Run: func(cmd *cobra.Command, args []string) {
-			if err := runCore(); err != nil {
+			if err := runCore(args); err != nil {
 				log.WithError(err).Fatalf("failed to run service in core runtime")
 			}
 		},
 	}
 )
 
-func runCore() error {
+func runCore(args []string) error {
 	lib, err := plugin.Open(core_run_opts.Plugin.Path)
 	if err != nil {
 		log.Fatalf("failed to open core service plugin %v: %v", core_run_opts.Plugin.Path, err)
@@ -55,7 +55,7 @@ func runCore() error {
 		log.Fatalf("failed to lookup NewPlugin method: %v", err)
 	}
 
-	opt := mt_plugin.Option{Config: core_run_opts.Plugin.Config}
+	opt := mt_plugin.Option{Args: args}
 	p := NewPlugin.(func() mt_plugin.CorePlugin)()
 	if err = p.Init(opt); err != nil {
 		return err

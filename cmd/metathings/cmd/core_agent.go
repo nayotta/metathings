@@ -18,9 +18,9 @@ type _agentdConfigOptions struct {
 }
 
 type _coreAgentdOptions struct {
-	_rootOptions
+	_rootOptions `mapstructure:",squash"`
 	Listen       string
-	AgentdConfig _agentdConfigOptions
+	AgentdConfig _agentdConfigOptions `mapstructure:"agentd_config"`
 }
 
 var (
@@ -35,7 +35,6 @@ var (
 			if root_opts.Config == "" {
 				return
 			}
-
 			cmd_helper.UnmarshalConfig(core_agentd_opts)
 			root_opts = &core_agentd_opts._rootOptions
 			core_agentd_opts.Stage = cmd_helper.GetStageFromEnv()

@@ -41,7 +41,7 @@ func (s *storageImpl) CreateCore(core Core) (Core, error) {
 
 	s.db.Get(&c, "SELECT * FROM core WHERE id=$1", core.Id)
 
-	s.logger.WithField("core_id", core.Id).Info("create core")
+	s.logger.WithField("core_id", *core.Id).Infof("create core")
 	return c, nil
 }
 
@@ -178,7 +178,7 @@ func newStorageImpl(dbpath string, logger log.FieldLogger) (*storageImpl, error)
 	}
 	db.MustExec(schemas)
 	return &storageImpl{
-		logger: logger,
+		logger: logger.WithField("#module", "storage"),
 		db:     db,
 	}, nil
 }

@@ -11,7 +11,7 @@ import (
 )
 
 type metathingsEchoService struct {
-	logger *log.Logger
+	logger log.FieldLogger
 }
 
 func (srv *metathingsEchoService) Echo(ctx context.Context, req *pb.EchoRequest) (*pb.EchoResponse, error) {
@@ -25,8 +25,8 @@ func (srv *metathingsEchoService) Echo(ctx context.Context, req *pb.EchoRequest)
 	return nil, grpc.Errorf(codes.InvalidArgument, "empty body")
 }
 
-func NewEchoService() *metathingsEchoService {
+func NewEchoService(logger log.FieldLogger) *metathingsEchoService {
 	return &metathingsEchoService{
-		logger: log.New(),
+		logger: logger,
 	}
 }

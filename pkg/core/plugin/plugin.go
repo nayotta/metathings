@@ -1,7 +1,9 @@
 package metathings_core_plugin
 
+const METATHINGS_PLUGIN_PREFIX = "mtp"
+
 type Option struct {
-	Config string
+	Args []string
 }
 
 type CorePlugin interface {

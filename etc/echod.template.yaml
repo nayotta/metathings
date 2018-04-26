@@ -1,0 +1,11 @@
+dev:
+  listen: 127.0.0.1:13401
+  verbose: false
+  log:
+    level: info
+  application_credential:
+    id: <application-credential-id>
+    secret: <application-credential-secret>
+  service_config:
+    core_agentd:
+      address: <core-agentd-address>

@@ -167,11 +167,11 @@ func (srv *metathingsCoreService) CreateCore(ctx context.Context, req *pb.Create
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 	srv.logger.WithFields(log.Fields{
-		"id":         cc.Id,
-		"name":       cc.Name,
-		"project_id": cc.ProjectId,
-		"owner_id":   cc.OwnerId,
-		"state":      cc.State,
+		"id":         *cc.Id,
+		"name":       *cc.Name,
+		"project_id": *cc.ProjectId,
+		"owner_id":   *cc.OwnerId,
+		"state":      *cc.State,
 	}).Infof("create core")
 
 	err = srv.storage.AssignCoreToApplicationCredential(*cc.Id, cred.ApplicationCredential.Id)
@@ -181,9 +181,9 @@ func (srv *metathingsCoreService) CreateCore(ctx context.Context, req *pb.Create
 		return nil, err
 	}
 	srv.logger.WithFields(log.Fields{
-		"core_id":     cc.Id,
+		"core_id":     *cc.Id,
 		"app_cred_id": cred.ApplicationCredential.Id,
-	}).Debugf("assign core to application credential")
+	}).Infof("assign core to application credential")
 
 	res := &pb.CreateCoreResponse{
 		Core: &pb.Core{

@@ -17,7 +17,7 @@ func PreRunHooks(hooks ...PreRunHookFun) func(*cobra.Command, []string) {
 }
 
 func DefaultPreRunHooks(hook PreRunHookFun, defaults ...PreRunHookFun) func(*cobra.Command, []string) {
-	if len(defaults) == 0 {
+	if len(defaults) == 0 && len(defaultHooks) > 0 {
 		defaults = make([]PreRunHookFun, len(defaultHooks))
 		copy(defaultHooks, defaults)
 	}

@@ -36,14 +36,17 @@ var (
 				return
 			}
 
-			cmd_helper.UnmarshalConfig(identityd_opts)
+			err := cmd_helper.UnmarshalConfig(identityd_opts)
+			if err != nil {
+				log.WithError(err).Fatalf("failed to unmarshal config")
+			}
 			root_opts = &identityd_opts._rootOptions
 			identityd_opts.Service = "identityd"
 			identityd_opts.Stage = cmd_helper.GetStageFromEnv()
 		}),
 		Run: func(cmd *cobra.Command, args []string) {
 			if err := runIdentityd(); err != nil {
-				log.Fatalf("failed to run identityd: %v", err)
+				log.WithError(err).Fatalf("failed to run identityd")
 			}
 		},
 	}
@@ -59,10 +62,13 @@ func runIdentityd() error {
 		grpc.UnaryInterceptor(grpc_auth.UnaryServerInterceptor(nil)),
 		grpc.StreamInterceptor(grpc_auth.StreamServerInterceptor(nil)),
 	)
-	srv := service.NewIdentityService(
+	srv, err := service.NewIdentityService(
 		service.SetKeystoneBaseURL(identityd_opts.Keystone.Url),
 		service.SetLogLevel(identityd_opts.Log.Level),
 	)
+	if err != nil {
+		return err
+	}
 
 	pb.RegisterIdentityServiceServer(s, srv)
 	log.WithFields(log.Fields{
