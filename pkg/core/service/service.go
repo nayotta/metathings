@@ -214,6 +214,30 @@ func (srv *metathingsCoreService) ListCores(context.Context, *pb.ListCoresReques
 	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
 }
 
+func (srv *metathingsCoreService) CreateEntity(context.Context, *pb.CreateEntityRequest) (*pb.CreateEntityResponse, error) {
+	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
+}
+
+func (srv *metathingsCoreService) DeleteEntity(context.Context, *pb.DeleteEntityRequest) (*empty.Empty, error) {
+	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
+}
+
+func (srv *metathingsCoreService) PatchEntity(context.Context, *pb.PatchEntityRequest) (*pb.PatchEntityResponse, error) {
+	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
+}
+
+func (srv *metathingsCoreService) GetEntity(context.Context, *pb.GetEntityRequest) (*pb.GetEntityResponse, error) {
+	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
+}
+
+func (srv *metathingsCoreService) ListEntities(context.Context, *pb.ListEntitiesRequest) (*pb.ListEntitiesResponse, error) {
+	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
+}
+
+func (srv *metathingsCoreService) ListEntitiesForCore(context.Context, *pb.ListEntitiesForCoreRequest) (*pb.ListEntitiesForCoreResponse, error) {
+	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
+}
+
 func (srv *metathingsCoreService) Heartbeat(context.Context, *pb.HeartbeatRequest) (*empty.Empty, error) {
 	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
 }

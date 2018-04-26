@@ -11,6 +11,13 @@ import "patch_core.proto";
 import "get_core.proto";
 import "list_cores.proto";
 
+import "create_entity.proto";
+import "delete_entity.proto";
+import "patch_entity.proto";
+import "get_entity.proto";
+import "list_entities.proto";
+import "list_entities_for_core.proto";
+
 import "heartbeat.proto";
 import "stream.proto";
 
@@ -23,6 +30,13 @@ service CoreService {
 	rpc PatchCore(PatchCoreRequest) returns (PatchCoreResponse) {}
 	rpc GetCore(GetCoreRequest) returns (GetCoreResponse) {}
 	rpc ListCores(ListCoresRequest) returns (ListCoresResponse) {}
+
+	rpc CreateEntity(CreateEntityRequest) returns (CreateEntityResponse) {}
+	rpc DeleteEntity(DeleteEntityRequest) returns (google.protobuf.Empty) {}
+	rpc PatchEntity(PatchEntityRequest) returns (PatchEntityResponse) {}
+	rpc GetEntity(GetEntityRequest) returns (GetEntityResponse) {}
+	rpc ListEntities(ListEntitiesRequest) returns (ListEntitiesResponse) {}
+	rpc ListEntitiesForCore(ListEntitiesForCoreRequest) returns (ListEntitiesForCoreResponse) {}
 
 	rpc Heartbeat(HeartbeatRequest) returns (google.protobuf.Empty) {}
 	// NOTE: input is response body form core agentd,

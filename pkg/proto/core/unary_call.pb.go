@@ -22,7 +22,7 @@ type UnaryCallRequest struct {
 func (m *UnaryCallRequest) Reset()                    { *m = UnaryCallRequest{} }
 func (m *UnaryCallRequest) String() string            { return proto.CompactTextString(m) }
 func (*UnaryCallRequest) ProtoMessage()               {}
-func (*UnaryCallRequest) Descriptor() ([]byte, []int) { return fileDescriptor11, []int{0} }
+func (*UnaryCallRequest) Descriptor() ([]byte, []int) { return fileDescriptor18, []int{0} }
 
 func (m *UnaryCallRequest) GetCoreId() *google_protobuf.StringValue {
 	if m != nil {
@@ -45,7 +45,7 @@ type UnaryCallResponse struct {
 func (m *UnaryCallResponse) Reset()                    { *m = UnaryCallResponse{} }
 func (m *UnaryCallResponse) String() string            { return proto.CompactTextString(m) }
 func (*UnaryCallResponse) ProtoMessage()               {}
-func (*UnaryCallResponse) Descriptor() ([]byte, []int) { return fileDescriptor11, []int{1} }
+func (*UnaryCallResponse) Descriptor() ([]byte, []int) { return fileDescriptor18, []int{1} }
 
 func (m *UnaryCallResponse) GetPayload() *UnaryCallResponsePayload {
 	if m != nil {
@@ -59,9 +59,9 @@ func init() {
 	proto.RegisterType((*UnaryCallResponse)(nil), "ai.metathings.service.core.UnaryCallResponse")
 }
 
-func init() { proto.RegisterFile("unary_call.proto", fileDescriptor11) }
+func init() { proto.RegisterFile("unary_call.proto", fileDescriptor18) }
 
-var fileDescriptor11 = []byte{
+var fileDescriptor18 = []byte{
 	// 266 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x8f, 0xcf, 0x4a, 0xc3, 0x40,
 	0x10, 0xc6, 0x49, 0x0f, 0x29, 0x44, 0x84, 0x9a, 0x53, 0x09, 0xa2, 0xa5, 0x27, 0x2f, 0x9d, 0x80,

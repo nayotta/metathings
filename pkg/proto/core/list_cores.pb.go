@@ -24,7 +24,7 @@ type ListCoresRequest struct {
 func (m *ListCoresRequest) Reset()                    { *m = ListCoresRequest{} }
 func (m *ListCoresRequest) String() string            { return proto.CompactTextString(m) }
 func (*ListCoresRequest) ProtoMessage()               {}
-func (*ListCoresRequest) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{0} }
+func (*ListCoresRequest) Descriptor() ([]byte, []int) { return fileDescriptor9, []int{0} }
 
 func (m *ListCoresRequest) GetName() *google_protobuf.StringValue {
 	if m != nil {
@@ -61,7 +61,7 @@ type ListCoresResponse struct {
 func (m *ListCoresResponse) Reset()                    { *m = ListCoresResponse{} }
 func (m *ListCoresResponse) String() string            { return proto.CompactTextString(m) }
 func (*ListCoresResponse) ProtoMessage()               {}
-func (*ListCoresResponse) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{1} }
+func (*ListCoresResponse) Descriptor() ([]byte, []int) { return fileDescriptor9, []int{1} }
 
 func (m *ListCoresResponse) GetCores() []*Core {
 	if m != nil {
@@ -75,9 +75,9 @@ func init() {
 	proto.RegisterType((*ListCoresResponse)(nil), "ai.metathings.service.core.ListCoresResponse")
 }
 
-func init() { proto.RegisterFile("list_cores.proto", fileDescriptor5) }
+func init() { proto.RegisterFile("list_cores.proto", fileDescriptor9) }
 
-var fileDescriptor5 = []byte{
+var fileDescriptor9 = []byte{
 	// 287 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x91, 0xcf, 0x4b, 0xc3, 0x30,
 	0x14, 0xc7, 0xa9, 0xdb, 0xfc, 0x91, 0x81, 0xcc, 0x9c, 0xca, 0x10, 0x29, 0x03, 0x61, 0x97, 0xa5,

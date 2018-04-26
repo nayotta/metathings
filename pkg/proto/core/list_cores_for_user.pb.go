@@ -19,7 +19,7 @@ type ListCoresForUserRequest struct {
 func (m *ListCoresForUserRequest) Reset()                    { *m = ListCoresForUserRequest{} }
 func (m *ListCoresForUserRequest) String() string            { return proto.CompactTextString(m) }
 func (*ListCoresForUserRequest) ProtoMessage()               {}
-func (*ListCoresForUserRequest) Descriptor() ([]byte, []int) { return fileDescriptor6, []int{0} }
+func (*ListCoresForUserRequest) Descriptor() ([]byte, []int) { return fileDescriptor10, []int{0} }
 
 type ListCoresForUserResponse struct {
 	Cores []*Core `protobuf:"bytes,1,rep,name=cores" json:"cores,omitempty"`
@@ -28,7 +28,7 @@ type ListCoresForUserResponse struct {
 func (m *ListCoresForUserResponse) Reset()                    { *m = ListCoresForUserResponse{} }
 func (m *ListCoresForUserResponse) String() string            { return proto.CompactTextString(m) }
 func (*ListCoresForUserResponse) ProtoMessage()               {}
-func (*ListCoresForUserResponse) Descriptor() ([]byte, []int) { return fileDescriptor6, []int{1} }
+func (*ListCoresForUserResponse) Descriptor() ([]byte, []int) { return fileDescriptor10, []int{1} }
 
 func (m *ListCoresForUserResponse) GetCores() []*Core {
 	if m != nil {
@@ -42,9 +42,9 @@ func init() {
 	proto.RegisterType((*ListCoresForUserResponse)(nil), "ai.metathings.service.core.ListCoresForUserResponse")
 }
 
-func init() { proto.RegisterFile("list_cores_for_user.proto", fileDescriptor6) }
+func init() { proto.RegisterFile("list_cores_for_user.proto", fileDescriptor10) }
 
-var fileDescriptor6 = []byte{
+var fileDescriptor10 = []byte{
 	// 186 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x74, 0x8e, 0xbf, 0x6b, 0x83, 0x50,
 	0x10, 0xc7, 0x29, 0xa5, 0x1d, 0x5e, 0x37, 0x97, 0xaa, 0x93, 0x38, 0x75, 0xf1, 0x09, 0x2d, 0xf8,

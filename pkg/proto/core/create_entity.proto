@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package ai.metathings.service.core;
+
+import "google/protobuf/wrappers.proto";
+
+import "github.com/mwitkow/go-proto-validators/validator.proto";
+
+import "entity.proto";
+
+message CreateEntityRequest {
+	google.protobuf.StringValue core_id = 1;
+	google.protobuf.StringValue name = 2;
+	google.protobuf.StringValue service_name = 3 [(validator.field) = {msg_exists: true}];
+	google.protobuf.StringValue plugin = 4 [(validator.field) = {msg_exists: true}];
+}
+
+message CreateEntityResponse {
+	Entity entity = 1;
+}

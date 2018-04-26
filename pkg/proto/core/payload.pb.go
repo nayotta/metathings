@@ -23,7 +23,7 @@ type StreamErrorResponsePayload struct {
 func (m *StreamErrorResponsePayload) Reset()                    { *m = StreamErrorResponsePayload{} }
 func (m *StreamErrorResponsePayload) String() string            { return proto.CompactTextString(m) }
 func (*StreamErrorResponsePayload) ProtoMessage()               {}
-func (*StreamErrorResponsePayload) Descriptor() ([]byte, []int) { return fileDescriptor8, []int{0} }
+func (*StreamErrorResponsePayload) Descriptor() ([]byte, []int) { return fileDescriptor15, []int{0} }
 
 func (m *StreamErrorResponsePayload) GetServiceName() string {
 	if m != nil {
@@ -55,7 +55,7 @@ type UnaryCallRequestPayload struct {
 func (m *UnaryCallRequestPayload) Reset()                    { *m = UnaryCallRequestPayload{} }
 func (m *UnaryCallRequestPayload) String() string            { return proto.CompactTextString(m) }
 func (*UnaryCallRequestPayload) ProtoMessage()               {}
-func (*UnaryCallRequestPayload) Descriptor() ([]byte, []int) { return fileDescriptor8, []int{1} }
+func (*UnaryCallRequestPayload) Descriptor() ([]byte, []int) { return fileDescriptor15, []int{1} }
 
 func (m *UnaryCallRequestPayload) GetServiceName() *google_protobuf.StringValue {
 	if m != nil {
@@ -87,7 +87,7 @@ type UnaryCallResponsePayload struct {
 func (m *UnaryCallResponsePayload) Reset()                    { *m = UnaryCallResponsePayload{} }
 func (m *UnaryCallResponsePayload) String() string            { return proto.CompactTextString(m) }
 func (*UnaryCallResponsePayload) ProtoMessage()               {}
-func (*UnaryCallResponsePayload) Descriptor() ([]byte, []int) { return fileDescriptor8, []int{2} }
+func (*UnaryCallResponsePayload) Descriptor() ([]byte, []int) { return fileDescriptor15, []int{2} }
 
 func (m *UnaryCallResponsePayload) GetServiceName() string {
 	if m != nil {
@@ -116,9 +116,9 @@ func init() {
 	proto.RegisterType((*UnaryCallResponsePayload)(nil), "ai.metathings.service.core.UnaryCallResponsePayload")
 }
 
-func init() { proto.RegisterFile("payload.proto", fileDescriptor8) }
+func init() { proto.RegisterFile("payload.proto", fileDescriptor15) }
 
-var fileDescriptor8 = []byte{
+var fileDescriptor15 = []byte{
 	// 272 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x50, 0x4d, 0x4b, 0xc3, 0x40,
 	0x10, 0x25, 0x0a, 0x16, 0x37, 0x7a, 0x09, 0x82, 0x31, 0x88, 0x1f, 0x39, 0x79, 0xda, 0x42, 0x3d,

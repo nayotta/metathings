@@ -83,6 +83,8 @@ func (p *echoServicePlugin) Run() error {
 }
 
 func (p *echoServicePlugin) Init(opt plugin.Option) error {
+	rootCmd.SetArgs(opt.Args)
+
 	v = viper.New()
 	root_opts = &_rootOptions{}
 	v.AutomaticEnv()

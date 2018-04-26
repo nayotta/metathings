@@ -21,7 +21,7 @@ type DeleteCoreRequest struct {
 func (m *DeleteCoreRequest) Reset()                    { *m = DeleteCoreRequest{} }
 func (m *DeleteCoreRequest) String() string            { return proto.CompactTextString(m) }
 func (*DeleteCoreRequest) ProtoMessage()               {}
-func (*DeleteCoreRequest) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{0} }
+func (*DeleteCoreRequest) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{0} }
 
 func (m *DeleteCoreRequest) GetId() *google_protobuf.StringValue {
 	if m != nil {
@@ -34,9 +34,9 @@ func init() {
 	proto.RegisterType((*DeleteCoreRequest)(nil), "ai.metathings.service.core.DeleteCoreRequest")
 }
 
-func init() { proto.RegisterFile("delete_core.proto", fileDescriptor2) }
+func init() { proto.RegisterFile("delete_core.proto", fileDescriptor3) }
 
-var fileDescriptor2 = []byte{
+var fileDescriptor3 = []byte{
 	// 198 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x3c, 0x8e, 0xb1, 0x4a, 0xc4, 0x40,
 	0x10, 0x86, 0x49, 0x8a, 0x2b, 0x62, 0x75, 0x57, 0x49, 0x10, 0x3d, 0xac, 0x6c, 0x32, 0x0b, 0x2a,

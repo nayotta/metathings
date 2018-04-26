@@ -10,8 +10,7 @@ import (
 )
 
 type _pluginOptions struct {
-	Config string
-	Path   string
+	Path string
 }
 
 type _coreRunOptions struct {
@@ -67,9 +66,7 @@ func runCore(args []string) error {
 func init() {
 	core_run_opts = &_coreRunOptions{}
 
-	coreRunCmd.Flags().StringVar(&core_run_opts.Plugin.Path, "plugin-path", "", "Core plugin path")
-
-	coreRunCmd.Flags().StringVar(&core_run_opts.Plugin.Config, "plugin-config", "", "Core plugin config path")
+	coreRunCmd.Flags().StringVarP(&core_run_opts.Plugin.Path, "plugin", "p", "", "Core plugin path")
 
 	coreCmd.AddCommand(coreRunCmd)
 }

@@ -3,6 +3,7 @@ package metathings_core_storage
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/jmoiron/sqlx"
 	_ "github.com/mattn/go-sqlite3"
@@ -11,10 +12,25 @@ import (
 
 var schemas = `
 CREATE TABLE core (
+    created_at datetime,
+    updated_at datetime,
+
     id varchar(255),
     name varchar(255),
     project_id varchar(255),
     owner_id varchar(255),
+    state varchar(255)
+);
+
+CREATE TABLE entity (
+    created_at datetime,
+    updated_at datetime,
+
+    id varchar(255),
+    core_id varchar(255),
+    name varchar(255),
+    service_name varchar(255),
+    endpoint varchar(255),
     state varchar(255)
 );
 
@@ -66,22 +82,24 @@ func (s *storageImpl) PatchCore(core_id string, core Core) (Core, error) {
 
 	if core.Name != nil {
 		values = append(values, fmt.Sprintf("name=$%v", i))
-		arguments = append(arguments, core.Name)
+		arguments = append(arguments, *core.Name)
 		i += 1
 	}
 
 	if core.State != nil {
 		values = append(values, fmt.Sprintf("state=$%v", i))
-		arguments = append(arguments, core.State)
+		arguments = append(arguments, *core.State)
 		i += 1
 	}
 
 	if len(values) > 0 {
 		values = append(values, fmt.Sprintf("updated_at=%v", i))
-		arguments = append(arguments, core.UpdatedAt)
+		arguments = append(arguments, time.Now())
 		i += 1
 
 		val := strings.Join(values, ", ")
+		arguments = append(arguments, core_id)
+
 		_, err := s.db.Exec("UPDATE core SET "+val+fmt.Sprintf(" WHERE id=$%v", i),
 			arguments...)
 		if err != nil {
@@ -91,16 +109,16 @@ func (s *storageImpl) PatchCore(core_id string, core Core) (Core, error) {
 			return c, err
 		}
 		s.db.Get(&c, "SELECT * FROM core WHERE id=$1", core_id)
+		s.logger.WithField("core_id", core_id).Infof("update core")
 		return c, nil
 	}
-
-	s.logger.WithField("core_id", core_id).Infof("update core")
+	s.logger.WithField("core_id", core_id).Debugf("nothing changed when update core")
 	return c, NothingChanged
 }
 
 func (s *storageImpl) GetCore(core_id string) (Core, error) {
 	c := Core{}
-	err := s.db.Get(c, "SELECT * FROM core WHERE id=$1", core_id)
+	err := s.db.Get(&c, "SELECT * FROM core WHERE id=$1", core_id)
 	if err != nil {
 		s.logger.WithError(err).
 			WithField("core_id", core_id).
@@ -112,12 +130,11 @@ func (s *storageImpl) GetCore(core_id string) (Core, error) {
 	return c, nil
 }
 
-func (s *storageImpl) ListCores(core Core) ([]Core, error) {
+func (s *storageImpl) ListCores(_ Core) ([]Core, error) {
 	cores := []Core{}
 	err := s.db.Select(&cores, "SELECT * FROM core")
 	if err != nil {
 		s.logger.WithError(err).
-			WithField("core", core).
 			Errorf("failed to list cores")
 		return cores, err
 	}
@@ -126,7 +143,7 @@ func (s *storageImpl) ListCores(core Core) ([]Core, error) {
 	return cores, nil
 }
 
-func (s *storageImpl) ListCoresForUser(owner_id string) ([]Core, error) {
+func (s *storageImpl) ListCoresForUser(owner_id string, _ Core) ([]Core, error) {
 	cores := []Core{}
 	err := s.db.Select(&cores, "SELECT * FROM core WHERE owner_id=$1", owner_id)
 	if err != nil {
@@ -168,6 +185,108 @@ WHERE r.app_cred_id = $1`, app_cred_id)
 		return c, err
 	}
 	return c, nil
+}
+
+func (s *storageImpl) CreateEntity(entity Entity) (Entity, error) {
+	e := Entity{}
+
+	e.InitializedAtNow()
+	_, err := s.db.NamedExec("INSERT INTO entity (id, core_id, name, service_name, endpoint, state) VALUES (:id, :core_id, :name, :service_name, :endpoint, :state)", &entity)
+	if err != nil {
+		s.logger.WithError(err).Errorf("failed to create entity")
+	}
+
+	s.db.Get(&e, "SELECT * FROM entity WHERE id=$1", entity.Id)
+	s.logger.WithField("entity_id", *e.Id).Infof("create entity")
+	return e, nil
+}
+
+func (s *storageImpl) DeleteEntity(entity_id string) error {
+	_, err := s.db.Exec("DELETE FROM core WHERE id=$1", entity_id)
+	if err != nil {
+		s.logger.WithError(err).
+			WithField("entity_id", entity_id).
+			Errorf("failed to delete entity")
+		return err
+	}
+	s.logger.WithField("entity_id", entity_id).Infof("delete entity")
+	return nil
+}
+
+func (s *storageImpl) PatchEntity(entity_id string, entity Entity) (Entity, error) {
+	values := []string{}
+	arguments := []interface{}{}
+	i := 1
+	e := Entity{}
+
+	if entity.State != nil {
+		values = append(values, fmt.Sprintf("state=$%v", i))
+		arguments = append(arguments, *entity.State)
+		i += 1
+	}
+
+	if len(values) > 0 {
+		values = append(values, fmt.Sprintf("updated_at=%v", i))
+		arguments = append(arguments, time.Now())
+		i += 1
+
+		val := strings.Join(values, ", ")
+		arguments = append(arguments, entity_id)
+
+		_, err := s.db.Exec("UPDATE entity SET "+val+fmt.Sprintf(" WHERE id=$%v", i),
+			arguments...)
+		if err != nil {
+			s.logger.WithError(err).
+				WithField("entity_id", entity_id).
+				Errorf("failed to patch entity")
+			return e, err
+		}
+		s.db.Get(&e, "SELECT * FROM entity WHERE id=$1", entity_id)
+		s.logger.WithField("entity_id", entity_id).Infof("update entity")
+		return e, nil
+
+	}
+
+	s.logger.WithField("entity_id", entity_id).Debugf("nothing changed when update entity")
+	return Entity{}, NothingChanged
+}
+
+func (s *storageImpl) GetEntity(entity_id string) (Entity, error) {
+	e := Entity{}
+	err := s.db.Get(&e, "SELECT * FROM entity WHERE id=$1", entity_id)
+	if err != nil {
+		s.logger.WithError(err).
+			WithField("entity_id", entity_id).
+			Errorf("failed to get entity")
+		return e, err
+	}
+
+	s.logger.WithField("entity_id", entity_id).Debugf("get entity")
+	return e, nil
+}
+
+func (s *storageImpl) ListEntities(_ Entity) ([]Entity, error) {
+	entities := []Entity{}
+	err := s.db.Select(&entities, "SELECT * FROM entity")
+	if err != nil {
+		s.logger.WithError(err).
+			Errorf("failed to list entities")
+		return entities, err
+	}
+	s.logger.Debugf("list entities")
+	return entities, nil
+}
+
+func (s *storageImpl) ListEntitiesForCore(core_id string, _ Entity) ([]Entity, error) {
+	entities := []Entity{}
+	err := s.db.Select(&entities, "SELECT * FROM entity WHERE core_id=$1", core_id)
+	if err != nil {
+		s.logger.WithError(err).
+			Errorf("failed to list entities for core")
+		return entities, err
+	}
+	s.logger.Debugf("list entities for core")
+	return entities, nil
 }
 
 func newStorageImpl(dbpath string, logger log.FieldLogger) (*storageImpl, error) {

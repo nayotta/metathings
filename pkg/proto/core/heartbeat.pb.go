@@ -21,7 +21,7 @@ type HeartbeatRequest struct {
 func (m *HeartbeatRequest) Reset()                    { *m = HeartbeatRequest{} }
 func (m *HeartbeatRequest) String() string            { return proto.CompactTextString(m) }
 func (*HeartbeatRequest) ProtoMessage()               {}
-func (*HeartbeatRequest) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{0} }
+func (*HeartbeatRequest) Descriptor() ([]byte, []int) { return fileDescriptor8, []int{0} }
 
 func (m *HeartbeatRequest) GetId() *google_protobuf.StringValue {
 	if m != nil {
@@ -34,9 +34,9 @@ func init() {
 	proto.RegisterType((*HeartbeatRequest)(nil), "ai.metathings.service.core.HeartbeatRequest")
 }
 
-func init() { proto.RegisterFile("heartbeat.proto", fileDescriptor4) }
+func init() { proto.RegisterFile("heartbeat.proto", fileDescriptor8) }
 
-var fileDescriptor4 = []byte{
+var fileDescriptor8 = []byte{
 	// 193 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x3c, 0x8e, 0xb1, 0x4a, 0xc4, 0x40,
 	0x10, 0x86, 0x49, 0x8a, 0x2b, 0x62, 0xa1, 0x5c, 0x25, 0x41, 0xf4, 0xb0, 0xb2, 0xb9, 0x59, 0x50,

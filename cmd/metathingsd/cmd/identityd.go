@@ -36,10 +36,7 @@ var (
 				return
 			}
 
-			err := cmd_helper.UnmarshalConfig(identityd_opts)
-			if err != nil {
-				log.WithError(err).Fatalf("failed to unmarshal config")
-			}
+			cmd_helper.UnmarshalConfig(identityd_opts)
 			root_opts = &identityd_opts._rootOptions
 			identityd_opts.Service = "identityd"
 			identityd_opts.Stage = cmd_helper.GetStageFromEnv()

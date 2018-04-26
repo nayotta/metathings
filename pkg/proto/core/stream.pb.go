@@ -36,7 +36,7 @@ var StreamMessageType_value = map[string]int32{
 func (x StreamMessageType) String() string {
 	return proto.EnumName(StreamMessageType_name, int32(x))
 }
-func (StreamMessageType) EnumDescriptor() ([]byte, []int) { return fileDescriptor10, []int{0} }
+func (StreamMessageType) EnumDescriptor() ([]byte, []int) { return fileDescriptor17, []int{0} }
 
 type StreamResponse struct {
 	SessionId   string            `protobuf:"bytes,1,opt,name=session_id,json=sessionId" json:"session_id,omitempty"`
@@ -50,7 +50,7 @@ type StreamResponse struct {
 func (m *StreamResponse) Reset()                    { *m = StreamResponse{} }
 func (m *StreamResponse) String() string            { return proto.CompactTextString(m) }
 func (*StreamResponse) ProtoMessage()               {}
-func (*StreamResponse) Descriptor() ([]byte, []int) { return fileDescriptor10, []int{0} }
+func (*StreamResponse) Descriptor() ([]byte, []int) { return fileDescriptor17, []int{0} }
 
 type isStreamResponse_Payload interface {
 	isStreamResponse_Payload()
@@ -186,7 +186,7 @@ type StreamRequest struct {
 func (m *StreamRequest) Reset()                    { *m = StreamRequest{} }
 func (m *StreamRequest) String() string            { return proto.CompactTextString(m) }
 func (*StreamRequest) ProtoMessage()               {}
-func (*StreamRequest) Descriptor() ([]byte, []int) { return fileDescriptor10, []int{1} }
+func (*StreamRequest) Descriptor() ([]byte, []int) { return fileDescriptor17, []int{1} }
 
 type isStreamRequest_Payload interface {
 	isStreamRequest_Payload()
@@ -287,9 +287,9 @@ func init() {
 	proto.RegisterEnum("ai.metathings.service.core.StreamMessageType", StreamMessageType_name, StreamMessageType_value)
 }
 
-func init() { proto.RegisterFile("stream.proto", fileDescriptor10) }
+func init() { proto.RegisterFile("stream.proto", fileDescriptor17) }
 
-var fileDescriptor10 = []byte{
+var fileDescriptor17 = []byte{
 	// 423 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x91, 0xdf, 0x6e, 0xd3, 0x30,
 	0x14, 0x87, 0x97, 0x0c, 0x0d, 0xc5, 0xdd, 0xa6, 0xe2, 0xab, 0x28, 0x8c, 0x2d, 0xda, 0x55, 0x85,

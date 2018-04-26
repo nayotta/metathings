@@ -3,8 +3,8 @@ package sql_helper
 import "time"
 
 type Metadata struct {
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	CreatedAt time.Time `db:"created_at"`
+	UpdatedAt time.Time `db:"updated_at"`
 }
 
 func (md Metadata) CreatedAtNow() {

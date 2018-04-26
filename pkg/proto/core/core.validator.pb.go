@@ -7,12 +7,19 @@ Package core is a generated protocol buffer package.
 It is generated from these files:
 	core.proto
 	create_core.proto
+	create_entity.proto
 	delete_core.proto
+	delete_entity.proto
+	entity.proto
 	get_core.proto
+	get_entity.proto
 	heartbeat.proto
 	list_cores.proto
 	list_cores_for_user.proto
+	list_entities.proto
+	list_entities_for_core.proto
 	patch_core.proto
+	patch_entity.proto
 	payload.proto
 	service.proto
 	stream.proto
@@ -22,16 +29,28 @@ It has these top-level messages:
 	Core
 	CreateCoreRequest
 	CreateCoreResponse
+	CreateEntityRequest
+	CreateEntityResponse
 	DeleteCoreRequest
+	DeleteEntityRequest
+	Entity
 	GetCoreRequest
 	GetCoreResponse
+	GetEntityRequest
+	GetEntityResponse
 	HeartbeatRequest
 	ListCoresRequest
 	ListCoresResponse
 	ListCoresForUserRequest
 	ListCoresForUserResponse
+	ListEntitiesRequest
+	ListEntitiesResponse
+	ListEntitiesForCoreRequest
+	ListEntitiesForCoreResponse
 	PatchCoreRequest
 	PatchCoreResponse
+	PatchEntityRequest
+	PatchEntityResponse
 	StreamErrorResponsePayload
 	UnaryCallRequestPayload
 	UnaryCallResponsePayload
