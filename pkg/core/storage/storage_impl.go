@@ -11,30 +11,30 @@ import (
 )
 
 var schemas = `
-CREATE TABLE core (
-    created_at datetime,
-    updated_at datetime,
-
+CREATE TABLE IF NOT EXISTS core (
     id varchar(255),
     name varchar(255),
     project_id varchar(255),
     owner_id varchar(255),
-    state varchar(255)
+    state varchar(255),
+
+    created_at datetime,
+    updated_at datetime
 );
 
-CREATE TABLE entity (
-    created_at datetime,
-    updated_at datetime,
-
+CREATE TABLE IF NOT EXISTS entity (
     id varchar(255),
     core_id varchar(255),
     name varchar(255),
     service_name varchar(255),
     endpoint varchar(255),
-    state varchar(255)
+    state varchar(255),
+
+    created_at datetime,
+    updated_at datetime
 );
 
-CREATE TABLE core_app_cred_relationship (
+CREATE TABLE IF NOT EXISTS core_app_cred_relationship (
     core_id varchar(255),
     app_cred_id varchar(255)
 );
@@ -49,13 +49,15 @@ func (s *storageImpl) CreateCore(core Core) (Core, error) {
 	c := Core{}
 
 	core.InitializedAtNow()
-	_, err := s.db.NamedExec("INSERT INTO core (id, name, project_id, owner_id, state) VALUES (:id, :name, :project_id, :owner_id, :state)", &core)
+	_, err := s.db.NamedExec(`
+INSERT INTO core (id, name, project_id, owner_id, state, created_at, updated_at)
+VALUES (:id, :name, :project_id, :owner_id, :state, :created_at, :updated_at)`, &core)
 	if err != nil {
 		s.logger.WithError(err).Errorf("failed to create core")
 		return c, err
 	}
 
-	s.db.Get(&c, "SELECT * FROM core WHERE id=$1", core.Id)
+	s.db.Get(&c, "SELECT * FROM core WHERE id=$1", *core.Id)
 
 	s.logger.WithField("core_id", *core.Id).Infof("create core")
 	return c, nil
@@ -113,7 +115,7 @@ func (s *storageImpl) PatchCore(core_id string, core Core) (Core, error) {
 		return c, nil
 	}
 	s.logger.WithField("core_id", core_id).Debugf("nothing changed when update core")
-	return c, NothingChanged
+	return c, ErrNothingChanged
 }
 
 func (s *storageImpl) GetCore(core_id string) (Core, error) {
@@ -191,12 +193,14 @@ func (s *storageImpl) CreateEntity(entity Entity) (Entity, error) {
 	e := Entity{}
 
 	e.InitializedAtNow()
-	_, err := s.db.NamedExec("INSERT INTO entity (id, core_id, name, service_name, endpoint, state) VALUES (:id, :core_id, :name, :service_name, :endpoint, :state)", &entity)
+	_, err := s.db.NamedExec(`
+INSERT INTO entity (id, core_id, name, service_name, endpoint, state, created_at, updated_at)
+VALUES (:id, :core_id, :name, :service_name, :endpoint, :state, :created_at, :updated_at)`, &entity)
 	if err != nil {
 		s.logger.WithError(err).Errorf("failed to create entity")
 	}
 
-	s.db.Get(&e, "SELECT * FROM entity WHERE id=$1", entity.Id)
+	s.db.Get(&e, "SELECT * FROM entity WHERE id=$1", *entity.Id)
 	s.logger.WithField("entity_id", *e.Id).Infof("create entity")
 	return e, nil
 }
@@ -248,7 +252,7 @@ func (s *storageImpl) PatchEntity(entity_id string, entity Entity) (Entity, erro
 	}
 
 	s.logger.WithField("entity_id", entity_id).Debugf("nothing changed when update entity")
-	return Entity{}, NothingChanged
+	return Entity{}, ErrNothingChanged
 }
 
 func (s *storageImpl) GetEntity(entity_id string) (Entity, error) {
@@ -289,10 +293,17 @@ func (s *storageImpl) ListEntitiesForCore(core_id string, _ Entity) ([]Entity, e
 	return entities, nil
 }
 
-func newStorageImpl(dbpath string, logger log.FieldLogger) (*storageImpl, error) {
-	db, err := sqlx.Connect("sqlite3", dbpath)
+func newStorageImpl(driver, uri string, logger log.FieldLogger) (*storageImpl, error) {
+	if driver != "sqlite3" {
+		logger.WithField("driver", driver).Errorf("unknown driver")
+		return nil, ErrUnknownStorageDriver
+	}
+	db, err := sqlx.Connect(driver, uri)
 	if err != nil {
-		logger.WithError(err).Errorf("failed to connect database")
+		logger.WithFields(log.Fields{
+			"driver": driver,
+			"uri":    uri,
+		}).WithError(err).Errorf("failed to connect database")
 		return nil, err
 	}
 	db.MustExec(schemas)

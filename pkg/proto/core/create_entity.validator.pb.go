@@ -34,12 +34,12 @@ func (this *CreateEntityRequest) Validate() error {
 			return go_proto_validators.FieldError("ServiceName", err)
 		}
 	}
-	if nil == this.Plugin {
-		return go_proto_validators.FieldError("Plugin", fmt.Errorf("message must exist"))
+	if nil == this.Endpoint {
+		return go_proto_validators.FieldError("Endpoint", fmt.Errorf("message must exist"))
 	}
-	if this.Plugin != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Plugin); err != nil {
-			return go_proto_validators.FieldError("Plugin", err)
+	if this.Endpoint != nil {
+		if err := go_proto_validators.CallValidatorIfExists(this.Endpoint); err != nil {
+			return go_proto_validators.FieldError("Endpoint", err)
 		}
 	}
 	return nil

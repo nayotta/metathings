@@ -7,3 +7,8 @@ type _serviceConfigOptions struct {
 type _identitydServiceOptions struct {
 	Address string
 }
+
+type _storageOptions struct {
+	Driver string
+	Uri    string
+}

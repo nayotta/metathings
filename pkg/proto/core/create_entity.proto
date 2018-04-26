@@ -12,7 +12,7 @@ message CreateEntityRequest {
 	google.protobuf.StringValue core_id = 1;
 	google.protobuf.StringValue name = 2;
 	google.protobuf.StringValue service_name = 3 [(validator.field) = {msg_exists: true}];
-	google.protobuf.StringValue plugin = 4 [(validator.field) = {msg_exists: true}];
+	google.protobuf.StringValue endpoint = 4 [(validator.field) = {msg_exists: true}];
 }
 
 message CreateEntityResponse {

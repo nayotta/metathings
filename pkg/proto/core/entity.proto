@@ -13,6 +13,6 @@ message Entity {
 	string core_id = 2;
 	string name = 3;
 	string service_name = 4;
-	string plugin = 5;
+	string endpoint = 5;
 	EntityState state = 6;
 }

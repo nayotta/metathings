@@ -26,6 +26,8 @@ type options struct {
 	identityd_addr                string
 	application_credential_id     string
 	application_credential_secret string
+	storage_driver                string
+	storage_uri                   string
 }
 
 var defaultServiceOptions = options{
@@ -50,6 +52,13 @@ func SetApplicationCredential(id, secret string) ServiceOptions {
 	return func(o *options) {
 		o.application_credential_id = id
 		o.application_credential_secret = secret
+	}
+}
+
+func SetStorage(driver, uri string) ServiceOptions {
+	return func(o *options) {
+		o.storage_driver = driver
+		o.storage_uri = uri
 	}
 }
 
@@ -135,6 +144,28 @@ func coreState2PbCoreState(s string) pb.CoreState {
 	return pb.CoreState_CORE_STATE_UNKNOWN
 }
 
+func pbEntityState2EntityState(s pb.EntityState) string {
+	if t, ok := map[pb.EntityState]string{
+		pb.EntityState_ENTITY_STATE_UNKNOWN: "unknown",
+		pb.EntityState_ENTITY_STATE_ONLINE:  "online",
+		pb.EntityState_ENTITY_STATE_OFFLINE: "offline",
+	}[s]; ok {
+		return t
+	}
+	return "unknown"
+}
+
+func entityState2PbEntityState(s string) pb.EntityState {
+	if t, ok := map[string]pb.EntityState{
+		"unknown": pb.EntityState_ENTITY_STATE_UNKNOWN,
+		"online":  pb.EntityState_ENTITY_STATE_ONLINE,
+		"offline": pb.EntityState_ENTITY_STATE_OFFLINE,
+	}[s]; ok {
+		return t
+	}
+	return pb.EntityState_ENTITY_STATE_UNKNOWN
+}
+
 func (srv *metathingsCoreService) CreateCore(ctx context.Context, req *pb.CreateCoreRequest) (*pb.CreateCoreResponse, error) {
 	err := req.Validate()
 	if err != nil {
@@ -198,7 +229,7 @@ func (srv *metathingsCoreService) CreateCore(ctx context.Context, req *pb.Create
 	return res, nil
 }
 
-func (srv *metathingsCoreService) DeleteCore(context.Context, *pb.DeleteCoreRequest) (*empty.Empty, error) {
+func (srv *metathingsCoreService) DeleteCore(ctx context.Context, req *pb.DeleteCoreRequest) (*empty.Empty, error) {
 	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
 }
 
@@ -214,8 +245,63 @@ func (srv *metathingsCoreService) ListCores(context.Context, *pb.ListCoresReques
 	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
 }
 
-func (srv *metathingsCoreService) CreateEntity(context.Context, *pb.CreateEntityRequest) (*pb.CreateEntityResponse, error) {
-	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
+func (srv *metathingsCoreService) CreateEntity(ctx context.Context, req *pb.CreateEntityRequest) (*pb.CreateEntityResponse, error) {
+	err := req.Validate()
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to validate request data")
+		return nil, status.Errorf(codes.InvalidArgument, err.Error())
+	}
+
+	cred := context_helper.Credential(ctx)
+	core, err := srv.storage.GetAssignedCoreFromApplicationCredential(cred.ApplicationCredential.Id)
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to get assgined core from application credential")
+		return nil, status.Errorf(codes.InvalidArgument, err.Error())
+	}
+
+	entity_id := common.NewId()
+
+	var name_str string
+	name := req.GetName()
+	if name != nil {
+		name_str = name.Value
+	} else {
+		name_str = req.GetServiceName().Value
+	}
+	state := "offline"
+
+	e := storage.Entity{
+		Id:          &entity_id,
+		Name:        &name_str,
+		ServiceName: &req.ServiceName.Value,
+		Endpoint:    &req.Endpoint.Value,
+		CoreId:      core.Id,
+		State:       &state,
+	}
+
+	ce, err := srv.storage.CreateEntity(e)
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to create entity")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
+	srv.logger.WithFields(log.Fields{
+		"entity_id": *ce.Id,
+		"core_id":   *ce.CoreId,
+	}).Infof("create entity")
+
+	res := &pb.CreateEntityResponse{
+		Entity: &pb.Entity{
+			Id:          *ce.Id,
+			CoreId:      *ce.CoreId,
+			Name:        *ce.Name,
+			ServiceName: *ce.ServiceName,
+			Endpoint:    *ce.Endpoint,
+			State:       entityState2PbEntityState(*ce.State),
+		},
+	}
+
+	return res, nil
 }
 
 func (srv *metathingsCoreService) DeleteEntity(context.Context, *pb.DeleteEntityRequest) (*empty.Empty, error) {
@@ -299,7 +385,7 @@ func NewCoreService(opt ...ServiceOptions) (*metathingsCoreService, error) {
 		return nil, err
 	}
 
-	storage, err := storage.NewStorage(":memory:", logger)
+	storage, err := storage.NewStorage(opts.storage_driver, opts.storage_uri, logger)
 	if err != nil {
 		log.WithError(err).Errorf("failed to connect storage")
 		return nil, err

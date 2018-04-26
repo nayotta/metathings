@@ -43,6 +43,6 @@ type Storage interface {
 	ListEntitiesForCore(core_id string, entity Entity) ([]Entity, error)
 }
 
-func NewStorage(dbpath string, logger log.FieldLogger) (Storage, error) {
-	return newStorageImpl(dbpath, logger)
+func NewStorage(driver, uri string, logger log.FieldLogger) (Storage, error) {
+	return newStorageImpl(driver, uri, logger)
 }

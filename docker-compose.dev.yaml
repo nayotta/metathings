@@ -44,6 +44,7 @@ services:
       dockerfile: dockerfile/Dockerfile.cored.dev
     image: bigdatagz/metathings-cored-development
     volumes:
+      - ./data/storage:/var/metathings/storage
       - .:/go/src/github.com/bigdatagz/metathings
       - ./etc/cored.yaml:/etc/metathings/cored.yaml
     networks:

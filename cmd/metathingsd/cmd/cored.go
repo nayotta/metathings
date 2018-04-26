@@ -16,6 +16,7 @@ import (
 type _coredOptions struct {
 	_rootOptions  `mapstructure:",squash"`
 	Listen        string
+	Storage       _storageOptions
 	ServiceConfig _serviceConfigOptions `mapstructure:"service_config"`
 }
 
@@ -56,6 +57,7 @@ func runCored() error {
 		grpc.StreamInterceptor(grpc_auth.StreamServerInterceptor(nil)),
 	)
 	srv, err := service.NewCoreService(
+		service.SetStorage(cored_opts.Storage.Driver, cored_opts.Storage.Uri),
 		service.SetIdentitydAddr(cored_opts.ServiceConfig.Identityd.Address),
 		service.SetLogLevel(cored_opts.Log.Level),
 		service.SetApplicationCredential(
@@ -81,6 +83,8 @@ func init() {
 
 	coredCmd.Flags().StringVarP(&cored_opts.Listen, "listen", "l", "127.0.0.1:5001", "MetaThings Core Service listening address")
 	coredCmd.Flags().StringVar(&cored_opts.ServiceConfig.Identityd.Address, "identityd-addr", "", "MetaThings Identity Service address")
+	coredCmd.Flags().StringVar(&cored_opts.Storage.Driver, "storage-driver", "sqlite3", "Storage Driver [sqlite3]")
+	coredCmd.Flags().StringVar(&cored_opts.Storage.Uri, "storage-uri", "", "Storage URI")
 
 	RootCmd.AddCommand(coredCmd)
 }

@@ -16,3 +16,6 @@
 
 # Vender folder
 *vendor/
+
+# Data folder
+data/

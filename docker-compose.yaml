@@ -44,6 +44,7 @@ services:
     image: bigdatagz/cored
     volumes:
       - ./etc/cored.yaml:/etc/metathings/cored.yaml
+      - ./data/storage:/var/metathings/storage
     networks:
       metathingsmesh: {}
     ports:
