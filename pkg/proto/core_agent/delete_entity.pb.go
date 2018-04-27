@@ -21,7 +21,7 @@ type DeleteEntityRequest struct {
 func (m *DeleteEntityRequest) Reset()                    { *m = DeleteEntityRequest{} }
 func (m *DeleteEntityRequest) String() string            { return proto.CompactTextString(m) }
 func (*DeleteEntityRequest) ProtoMessage()               {}
-func (*DeleteEntityRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{0} }
+func (*DeleteEntityRequest) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{0} }
 
 func (m *DeleteEntityRequest) GetId() *google_protobuf.StringValue {
 	if m != nil {
@@ -34,9 +34,9 @@ func init() {
 	proto.RegisterType((*DeleteEntityRequest)(nil), "ai.metathings.service.core_agent.DeleteEntityRequest")
 }
 
-func init() { proto.RegisterFile("delete_entity.proto", fileDescriptor1) }
+func init() { proto.RegisterFile("delete_entity.proto", fileDescriptor2) }
 
-var fileDescriptor1 = []byte{
+var fileDescriptor2 = []byte{
 	// 204 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x3c, 0x8e, 0xb1, 0x4a, 0xc6, 0x30,
 	0x10, 0x80, 0x69, 0x87, 0x7f, 0xa8, 0xdb, 0xff, 0x2f, 0x52, 0x44, 0x8b, 0x93, 0x4b, 0x2f, 0xa0,

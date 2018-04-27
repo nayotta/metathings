@@ -2,16 +2,12 @@ syntax = "proto3";
 
 package ai.metathings.service.core;
 
-enum CoreState {
-	CORE_STATE_UNKNOWN = 0;
-	CORE_STATE_ONLINE = 1;
-	CORE_STATE_OFFLINE = 2;
-}
+import "github.com/bigdatagz/metathings/pkg/proto/common/state/core_state.proto";
 
 message Core {
 	string id = 1;
 	string name = 2;
 	string project_id = 3;
 	string owner_id = 4;
-	CoreState state = 5;
+	ai.metathings.state.CoreState state = 5;
 }

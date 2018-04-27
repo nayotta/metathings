@@ -11,6 +11,7 @@ import (
 
 	"github.com/golang/protobuf/ptypes"
 	"github.com/golang/protobuf/ptypes/empty"
+	gpb "github.com/golang/protobuf/ptypes/wrappers"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -18,6 +19,7 @@ import (
 	"google.golang.org/grpc/metadata"
 
 	app_cred_mgr "github.com/bigdatagz/metathings/pkg/common/application_credential_manager"
+	client_helper "github.com/bigdatagz/metathings/pkg/common/client"
 	context_helper "github.com/bigdatagz/metathings/pkg/common/context"
 	log_helper "github.com/bigdatagz/metathings/pkg/common/log"
 	core_pb "github.com/bigdatagz/metathings/pkg/proto/core"
@@ -84,13 +86,45 @@ func SetApplicationCredential(id, secret string) ServiceOptions {
 
 type coreAgentService struct {
 	app_cred_mgr app_cred_mgr.ApplicationCredentialManager
+	cli_fty      *client_helper.ClientFactory
 
 	logger log.FieldLogger
 	opts   options
 }
 
-func (srv *coreAgentService) CreateEntity(context.Context, *pb.CreateEntityRequest) (*pb.CreateEntityResponse, error) {
-	return nil, grpc.Errorf(codes.Unimplemented, "unimplemented")
+func (srv *coreAgentService) CreateEntity(ctx context.Context, req *pb.CreateEntityRequest) (*pb.CreateEntityResponse, error) {
+	opts := []grpc.DialOption{grpc.WithInsecure()}
+	ctx = context_helper.WithToken(ctx, srv.app_cred_mgr.GetToken())
+	conn, err := grpc.Dial(srv.opts.metathings_addr, opts...)
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to dial to metathings service")
+		return nil, grpc.Errorf(codes.Internal, err.Error())
+	}
+	defer conn.Close()
+
+	r := &core_pb.CreateEntityRequest{
+		CoreId:      &gpb.StringValue{srv.opts.core_id},
+		Name:        req.Name,
+		ServiceName: req.ServiceName,
+		Endpoint:    req.Endpoint,
+	}
+
+	cli := core_pb.NewCoreServiceClient(conn)
+
+	res, err := cli.CreateEntity(ctx, r)
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to create entity")
+		return nil, grpc.Errorf(codes.Internal, err.Error())
+	}
+	return &pb.CreateEntityResponse{
+		Entity: &pb.Entity{
+			Id:          res.Entity.Id,
+			Name:        res.Entity.Name,
+			ServiceName: res.Entity.ServiceName,
+			Endpoint:    res.Entity.Endpoint,
+			State:       res.Entity.State,
+		},
+	}, nil
 }
 
 func (srv *coreAgentService) DeleteEntity(context.Context, *pb.DeleteEntityRequest) (*empty.Empty, error) {
@@ -106,6 +140,14 @@ func (srv *coreAgentService) GetEntity(context.Context, *pb.GetEntityRequest) (*
 }
 
 func (srv *coreAgentService) ListEntities(context.Context, *pb.ListEntitiesRequest) (*pb.ListEntitiesResponse, error) {
+	return nil, grpc.Errorf(codes.Unimplemented, "unimplemented")
+}
+
+func (srv *coreAgentService) CreateOrGetEntity(context.Context, *pb.CreateOrGetEntityRequest) (*pb.CreateOrGetEntityResponse, error) {
+	return nil, grpc.Errorf(codes.Unimplemented, "unimplemented")
+}
+
+func (srv *coreAgentService) Heartbeat(context.Context, *pb.HeartbeatRequest) (*empty.Empty, error) {
 	return nil, grpc.Errorf(codes.Unimplemented, "unimplemented")
 }
 
@@ -274,8 +316,24 @@ func NewCoreAgentService(opt ...ServiceOptions) (srv *coreAgentService, err erro
 		opts.core_id = core_id
 	}
 
+	cli_fty, err := client_helper.NewClientFactory(
+		client_helper.ServiceConfigs{
+			client_helper.DEFAULT_CONFIG: client_helper.ServiceConfig{
+				Address: opts.metathings_addr,
+			},
+		},
+		func() []grpc.DialOption {
+			return []grpc.DialOption{grpc.WithInsecure()}
+		},
+	)
+	if err != nil {
+		log.WithError(err).Errorf("failed to new client factory")
+		return nil, err
+	}
+
 	srv = &coreAgentService{
 		app_cred_mgr: app_cred_mgr,
+		cli_fty:      cli_fty,
 		logger:       logger,
 		opts:         opts,
 	}

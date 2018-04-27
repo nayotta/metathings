@@ -2,16 +2,12 @@ syntax = "proto3";
 
 package ai.metathings.service.core_agent;
 
-enum EntityState {
-	ENTITY_STATE_UNKNOWN = 0;
-	ENTITY_STATE_ONLINE = 1;
-	ENTITY_STATE_OFFLINE = 2;
-}
+import "github.com/bigdatagz/metathings/pkg/proto/common/state/entity_state.proto";
 
 message Entity {
 	string id = 1;
 	string name = 2;
 	string service_name = 3;
 	string endpoint = 4;
-	EntityState state = 5;
+	ai.metathings.state.EntityState state = 5;
 }

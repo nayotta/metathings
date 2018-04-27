@@ -8,12 +8,12 @@ import "github.com/mwitkow/go-proto-validators/validator.proto";
 
 import "entity.proto";
 
-message CreateEntityRequest {
+message CreateOrGetEntityRequest {
 	google.protobuf.StringValue name = 1;
 	google.protobuf.StringValue service_name = 2 [(validator.field) = {msg_exists: true}];
 	google.protobuf.StringValue endpoint = 3 [(validator.field) = {msg_exists: true}];
 }
 
-message CreateEntityResponse {
+message CreateOrGetEntityResponse {
 	Entity entity = 1;
 }

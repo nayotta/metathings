@@ -6,11 +6,12 @@ import "google/protobuf/wrappers.proto";
 
 import "github.com/mwitkow/go-proto-validators/validator.proto";
 
+import "github.com/bigdatagz/metathings/pkg/proto/common/state/entity_state.proto";
 import "entity.proto";
 
 message PatchEntityRequest {
 	google.protobuf.StringValue id = 1 [(validator.field) = {msg_exists: true}];
-	EntityState state = 2;
+	ai.metathings.state.EntityState state = 2;
 }
 
 message PatchEntityResponse {

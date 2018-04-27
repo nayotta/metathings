@@ -2,7 +2,9 @@ RM=$(shell which rm)
 CLEAN_PATHS=./bin
 
 
-all: identity_proto \
+all: \
+	state_proto \
+	identity_proto \
 	core_proto \
 	core_agent_proto \
 	echo_proto \
@@ -11,6 +13,9 @@ all: identity_proto \
 
 clean:
 	$(RM) -rf $(CLEAN_PATHS)
+
+state_proto:
+	$(MAKE) -C pkg/proto/common/state all
 
 identity_proto:
 	$(MAKE) -C pkg/proto/identity all

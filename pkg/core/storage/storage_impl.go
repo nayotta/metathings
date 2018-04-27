@@ -295,7 +295,7 @@ func (s *storageImpl) ListEntitiesForCore(core_id string, _ Entity) ([]Entity, e
 
 func newStorageImpl(driver, uri string, logger log.FieldLogger) (*storageImpl, error) {
 	if driver != "sqlite3" {
-		logger.WithField("driver", driver).Errorf("unknown driver")
+		logger.WithField("driver", driver).Errorf("only support sqlite3 now")
 		return nil, ErrUnknownStorageDriver
 	}
 	db, err := sqlx.Connect(driver, uri)

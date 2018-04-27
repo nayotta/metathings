@@ -22,7 +22,7 @@ type PatchEntityRequest struct {
 func (m *PatchEntityRequest) Reset()                    { *m = PatchEntityRequest{} }
 func (m *PatchEntityRequest) String() string            { return proto.CompactTextString(m) }
 func (*PatchEntityRequest) ProtoMessage()               {}
-func (*PatchEntityRequest) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{0} }
+func (*PatchEntityRequest) Descriptor() ([]byte, []int) { return fileDescriptor7, []int{0} }
 
 func (m *PatchEntityRequest) GetId() *google_protobuf.StringValue {
 	if m != nil {
@@ -45,7 +45,7 @@ type PatchEntityResponse struct {
 func (m *PatchEntityResponse) Reset()                    { *m = PatchEntityResponse{} }
 func (m *PatchEntityResponse) String() string            { return proto.CompactTextString(m) }
 func (*PatchEntityResponse) ProtoMessage()               {}
-func (*PatchEntityResponse) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{1} }
+func (*PatchEntityResponse) Descriptor() ([]byte, []int) { return fileDescriptor7, []int{1} }
 
 func (m *PatchEntityResponse) GetEntity() *Entity {
 	if m != nil {
@@ -59,9 +59,9 @@ func init() {
 	proto.RegisterType((*PatchEntityResponse)(nil), "ai.metathings.service.core_agent.PatchEntityResponse")
 }
 
-func init() { proto.RegisterFile("patch_entity.proto", fileDescriptor5) }
+func init() { proto.RegisterFile("patch_entity.proto", fileDescriptor7) }
 
-var fileDescriptor5 = []byte{
+var fileDescriptor7 = []byte{
 	// 266 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0xd0, 0x41, 0x4b, 0xc3, 0x30,
 	0x14, 0x07, 0x70, 0x5a, 0xc7, 0x18, 0xd1, 0x83, 0xc4, 0xcb, 0x18, 0xa2, 0x65, 0xa7, 0x5d, 0x96,

@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+package ai.metathings.state;
+
+enum CoreState {
+	CORE_STATE_UNKNOWN = 0;
+	CORE_STATE_ONLINE = 1;
+	CORE_STATE_OFFLINE = 2;
+}

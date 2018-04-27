@@ -15,6 +15,7 @@ import (
 	context_helper "github.com/bigdatagz/metathings/pkg/common/context"
 	grpc_helper "github.com/bigdatagz/metathings/pkg/common/grpc"
 	log_helper "github.com/bigdatagz/metathings/pkg/common/log"
+	state_helper "github.com/bigdatagz/metathings/pkg/common/state"
 	stm_mgr "github.com/bigdatagz/metathings/pkg/common/stream_manager"
 	storage "github.com/bigdatagz/metathings/pkg/core/storage"
 	pb "github.com/bigdatagz/metathings/pkg/proto/core"
@@ -65,11 +66,13 @@ func SetStorage(driver, uri string) ServiceOptions {
 type metathingsCoreService struct {
 	grpc_helper.AuthorizationTokenParser
 
-	app_cred_mgr app_cred_mgr.ApplicationCredentialManager
-	stm_mgr      stm_mgr.StreamManager
-	logger       log.FieldLogger
-	opts         options
-	storage      storage.Storage
+	core_st_psr   state_helper.CoreStateParser
+	entity_st_psr state_helper.EntityStateParser
+	app_cred_mgr  app_cred_mgr.ApplicationCredentialManager
+	stm_mgr       stm_mgr.StreamManager
+	logger        log.FieldLogger
+	opts          options
+	storage       storage.Storage
 }
 
 func (srv *metathingsCoreService) validateTokenViaIdentityd(token string) (*identityd_pb.Token, error) {
@@ -120,50 +123,6 @@ func (srv *metathingsCoreService) AuthFuncOverride(ctx context.Context, fullMeth
 	}).Debugf("validate token via metathings identity service")
 
 	return ctx, nil
-}
-
-func pbCoreState2CoreState(s pb.CoreState) string {
-	if t, ok := map[pb.CoreState]string{
-		pb.CoreState_CORE_STATE_UNKNOWN: "unknown",
-		pb.CoreState_CORE_STATE_ONLINE:  "online",
-		pb.CoreState_CORE_STATE_OFFLINE: "offline",
-	}[s]; ok {
-		return t
-	}
-	return "unknown"
-}
-
-func coreState2PbCoreState(s string) pb.CoreState {
-	if t, ok := map[string]pb.CoreState{
-		"unknown": pb.CoreState_CORE_STATE_UNKNOWN,
-		"online":  pb.CoreState_CORE_STATE_ONLINE,
-		"offline": pb.CoreState_CORE_STATE_OFFLINE,
-	}[s]; ok {
-		return t
-	}
-	return pb.CoreState_CORE_STATE_UNKNOWN
-}
-
-func pbEntityState2EntityState(s pb.EntityState) string {
-	if t, ok := map[pb.EntityState]string{
-		pb.EntityState_ENTITY_STATE_UNKNOWN: "unknown",
-		pb.EntityState_ENTITY_STATE_ONLINE:  "online",
-		pb.EntityState_ENTITY_STATE_OFFLINE: "offline",
-	}[s]; ok {
-		return t
-	}
-	return "unknown"
-}
-
-func entityState2PbEntityState(s string) pb.EntityState {
-	if t, ok := map[string]pb.EntityState{
-		"unknown": pb.EntityState_ENTITY_STATE_UNKNOWN,
-		"online":  pb.EntityState_ENTITY_STATE_ONLINE,
-		"offline": pb.EntityState_ENTITY_STATE_OFFLINE,
-	}[s]; ok {
-		return t
-	}
-	return pb.EntityState_ENTITY_STATE_UNKNOWN
 }
 
 func (srv *metathingsCoreService) CreateCore(ctx context.Context, req *pb.CreateCoreRequest) (*pb.CreateCoreResponse, error) {
@@ -222,7 +181,7 @@ func (srv *metathingsCoreService) CreateCore(ctx context.Context, req *pb.Create
 			Name:      *cc.Name,
 			ProjectId: *cc.ProjectId,
 			OwnerId:   *cc.OwnerId,
-			State:     coreState2PbCoreState(*cc.State),
+			State:     srv.core_st_psr.ToValue(*cc.State),
 		},
 	}
 
@@ -297,7 +256,7 @@ func (srv *metathingsCoreService) CreateEntity(ctx context.Context, req *pb.Crea
 			Name:        *ce.Name,
 			ServiceName: *ce.ServiceName,
 			Endpoint:    *ce.Endpoint,
-			State:       entityState2PbEntityState(*ce.State),
+			State:       srv.entity_st_psr.ToValue(*ce.State),
 		},
 	}
 
@@ -408,11 +367,13 @@ func NewCoreService(opt ...ServiceOptions) (*metathingsCoreService, error) {
 	}
 
 	srv := &metathingsCoreService{
-		app_cred_mgr: app_cred_mgr,
-		stm_mgr:      stm_mgr,
-		opts:         opts,
-		logger:       logger,
-		storage:      storage,
+		core_st_psr:   state_helper.NewCoreStateParser(),
+		entity_st_psr: state_helper.NewEntityStateParser(),
+		app_cred_mgr:  app_cred_mgr,
+		stm_mgr:       stm_mgr,
+		opts:          opts,
+		logger:        logger,
+		storage:       storage,
 	}
 	return srv, nil
 }
