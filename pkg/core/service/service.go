@@ -12,6 +12,7 @@ import (
 
 	"github.com/bigdatagz/metathings/pkg/common"
 	app_cred_mgr "github.com/bigdatagz/metathings/pkg/common/application_credential_manager"
+	client_helper "github.com/bigdatagz/metathings/pkg/common/client"
 	context_helper "github.com/bigdatagz/metathings/pkg/common/context"
 	grpc_helper "github.com/bigdatagz/metathings/pkg/common/grpc"
 	log_helper "github.com/bigdatagz/metathings/pkg/common/log"
@@ -67,6 +68,7 @@ func SetStorage(driver, uri string) ServiceOptions {
 type metathingsCoreService struct {
 	grpc_helper.AuthorizationTokenParser
 
+	cli_fty       *client_helper.ClientFactory
 	core_st_psr   state_helper.CoreStateParser
 	entity_st_psr state_helper.EntityStateParser
 	app_cred_mgr  app_cred_mgr.ApplicationCredentialManager
@@ -84,14 +86,13 @@ func (srv *metathingsCoreService) validateTokenViaIdentityd(token string) (*iden
 	)
 	ctx = metadata.NewOutgoingContext(ctx, md)
 
-	opts := []grpc.DialOption{grpc.WithInsecure()}
-	conn, err := grpc.Dial(srv.opts.identityd_addr, opts...)
+	cli, closeFn, err := srv.cli_fty.NewIdentityServiceClient()
 	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to new core service client")
 		return nil, err
 	}
-	defer conn.Close()
+	defer closeFn()
 
-	cli := identityd_pb.NewIdentityServiceClient(conn)
 	res, err := cli.ValidateToken(ctx, &empty.Empty{})
 	if err != nil {
 		return nil, err
@@ -480,7 +481,23 @@ func NewCoreService(opt ...ServiceOptions) (*metathingsCoreService, error) {
 		return nil, err
 	}
 
+	cli_fty, err := client_helper.NewClientFactory(
+		client_helper.ServiceConfigs{
+			client_helper.DEFAULT_CONFIG: client_helper.ServiceConfig{
+				Address: opts.identityd_addr,
+			},
+		},
+		func() []grpc.DialOption {
+			return []grpc.DialOption{grpc.WithInsecure()}
+		},
+	)
+	if err != nil {
+		log.WithError(err).Errorf("failed to new client factory")
+		return nil, err
+	}
+
 	srv := &metathingsCoreService{
+		cli_fty:       cli_fty,
 		core_st_psr:   state_helper.NewCoreStateParser(),
 		entity_st_psr: state_helper.NewEntityStateParser(),
 		app_cred_mgr:  app_cred_mgr,
