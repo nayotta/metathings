@@ -17,11 +17,14 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/keepalive"
 	"google.golang.org/grpc/metadata"
+	"google.golang.org/grpc/status"
 
 	app_cred_mgr "github.com/bigdatagz/metathings/pkg/common/application_credential_manager"
 	client_helper "github.com/bigdatagz/metathings/pkg/common/client"
 	context_helper "github.com/bigdatagz/metathings/pkg/common/context"
 	log_helper "github.com/bigdatagz/metathings/pkg/common/log"
+	state_helper "github.com/bigdatagz/metathings/pkg/common/state"
+	state_pb "github.com/bigdatagz/metathings/pkg/proto/common/state"
 	core_pb "github.com/bigdatagz/metathings/pkg/proto/core"
 	cored_pb "github.com/bigdatagz/metathings/pkg/proto/core"
 	pb "github.com/bigdatagz/metathings/pkg/proto/core_agent"
@@ -85,22 +88,32 @@ func SetApplicationCredential(id, secret string) ServiceOptions {
 }
 
 type coreAgentService struct {
-	app_cred_mgr app_cred_mgr.ApplicationCredentialManager
-	cli_fty      *client_helper.ClientFactory
+	app_cred_mgr  app_cred_mgr.ApplicationCredentialManager
+	cli_fty       *client_helper.ClientFactory
+	entity_st_psr state_helper.EntityStateParser
 
 	logger log.FieldLogger
 	opts   options
 }
 
-func (srv *coreAgentService) CreateEntity(ctx context.Context, req *pb.CreateEntityRequest) (*pb.CreateEntityResponse, error) {
-	opts := []grpc.DialOption{grpc.WithInsecure()}
-	ctx = context_helper.WithToken(ctx, srv.app_cred_mgr.GetToken())
-	conn, err := grpc.Dial(srv.opts.metathings_addr, opts...)
-	if err != nil {
-		srv.logger.WithError(err).Errorf("failed to dial to metathings service")
-		return nil, grpc.Errorf(codes.Internal, err.Error())
+func (srv *coreAgentService) copyEntity(e *core_pb.Entity) *pb.Entity {
+	return &pb.Entity{
+		Id:          e.Id,
+		Name:        e.Name,
+		ServiceName: e.ServiceName,
+		Endpoint:    e.Endpoint,
+		State:       e.State,
 	}
-	defer conn.Close()
+}
+
+func (srv *coreAgentService) CreateEntity(ctx context.Context, req *pb.CreateEntityRequest) (*pb.CreateEntityResponse, error) {
+	ctx = context_helper.WithToken(ctx, srv.app_cred_mgr.GetToken())
+	cli, closeFn, err := srv.cli_fty.NewCoreServiceClient()
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to new core service client")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+	defer closeFn()
 
 	r := &core_pb.CreateEntityRequest{
 		CoreId:      &gpb.StringValue{srv.opts.core_id},
@@ -109,46 +122,192 @@ func (srv *coreAgentService) CreateEntity(ctx context.Context, req *pb.CreateEnt
 		Endpoint:    req.Endpoint,
 	}
 
-	cli := core_pb.NewCoreServiceClient(conn)
-
 	res, err := cli.CreateEntity(ctx, r)
 	if err != nil {
 		srv.logger.WithError(err).Errorf("failed to create entity")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+	srv.logger.WithFields(log.Fields{
+		"id":           res.Entity.Id,
+		"name":         res.Entity.Name,
+		"service_name": res.Entity.ServiceName,
+	}).Infof("create entity")
+
+	return &pb.CreateEntityResponse{srv.copyEntity(res.Entity)}, nil
+}
+
+func (srv *coreAgentService) DeleteEntity(ctx context.Context, req *pb.DeleteEntityRequest) (*empty.Empty, error) {
+	ctx = context_helper.WithToken(ctx, srv.app_cred_mgr.GetToken())
+	cli, closeFn, err := srv.cli_fty.NewCoreServiceClient()
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to new core service client")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+	defer closeFn()
+
+	r := &core_pb.DeleteEntityRequest{req.Id}
+	_, err = cli.DeleteEntity(ctx, r)
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to delete entity")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+	srv.logger.WithField("id", req.Id).Infof("delete entity")
+
+	return &empty.Empty{}, nil
+}
+
+func (srv *coreAgentService) PatchEntity(ctx context.Context, req *pb.PatchEntityRequest) (*pb.PatchEntityResponse, error) {
+	ctx = context_helper.WithToken(ctx, srv.app_cred_mgr.GetToken())
+	cli, closeFn, err := srv.cli_fty.NewCoreServiceClient()
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to new core service client")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+	defer closeFn()
+
+	fields := log.Fields{"id": req.Id.Value}
+	r := &core_pb.PatchEntityRequest{Id: req.Id}
+	if req.Name != nil {
+		r.Name = req.Name
+		fields["name"] = req.Name.Value
+	}
+	if req.State != state_pb.EntityState_ENTITY_STATE_UNKNOWN {
+		r.State = req.State
+		fields["state"] = srv.entity_st_psr.ToString(req.State)
+	}
+
+	res, err := cli.PatchEntity(ctx, r)
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to patch entity")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+	srv.logger.WithFields(fields).Infof("patch entity")
+
+	return &pb.PatchEntityResponse{srv.copyEntity(res.Entity)}, nil
+}
+
+func (srv *coreAgentService) GetEntity(ctx context.Context, req *pb.GetEntityRequest) (*pb.GetEntityResponse, error) {
+	ctx = context_helper.WithToken(ctx, srv.app_cred_mgr.GetToken())
+	cli, closeFn, err := srv.cli_fty.NewCoreServiceClient()
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to new core service client")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+	defer closeFn()
+
+	r := &core_pb.GetEntityRequest{req.Id}
+
+	res, err := cli.GetEntity(ctx, r)
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to get entity")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+	srv.logger.WithField("id", req.Id.Value).Debugf("get entity")
+
+	return &pb.GetEntityResponse{srv.copyEntity(res.Entity)}, nil
+}
+
+func (srv *coreAgentService) ListEntities(ctx context.Context, req *pb.ListEntitiesRequest) (*pb.ListEntitiesResponse, error) {
+	ctx = context_helper.WithToken(ctx, srv.app_cred_mgr.GetToken())
+	cli, closeFn, err := srv.cli_fty.NewCoreServiceClient()
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to new core service client")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+	defer closeFn()
+
+	r := &core_pb.ListEntitiesForCoreRequest{
+		CoreId: &gpb.StringValue{srv.opts.core_id},
+	}
+
+	res, err := cli.ListEntitiesForCore(ctx, r)
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to list entities for core")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
+	var entities []*pb.Entity
+	for _, e := range res.Entities {
+		entities = append(entities, srv.copyEntity(e))
+	}
+	srv.logger.Debugf("list entity")
+
+	return &pb.ListEntitiesResponse{entities}, nil
+}
+
+func (srv *coreAgentService) CreateOrGetEntity(ctx context.Context, req *pb.CreateOrGetEntityRequest) (*pb.CreateOrGetEntityResponse, error) {
+	ctx = context_helper.WithToken(ctx, srv.app_cred_mgr.GetToken())
+	cli, closeFn, err := srv.cli_fty.NewCoreServiceClient()
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to new core service client")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+	defer closeFn()
+
+	r := &core_pb.ListEntitiesForCoreRequest{
+		CoreId: &gpb.StringValue{srv.opts.core_id},
+	}
+
+	res, err := cli.ListEntitiesForCore(ctx, r)
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to list entities for core")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
+	for _, e := range res.Entities {
+		if e.Name == req.Name.Value {
+			return &pb.CreateOrGetEntityResponse{srv.copyEntity(e)}, nil
+		}
+	}
+
+	r1 := &core_pb.CreateEntityRequest{
+		CoreId:      &gpb.StringValue{srv.opts.core_id},
+		Name:        req.Name,
+		ServiceName: req.ServiceName,
+		Endpoint:    req.Endpoint,
+	}
+
+	res1, err := cli.CreateEntity(ctx, r1)
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to create entity")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
+	return &pb.CreateOrGetEntityResponse{srv.copyEntity(res1.Entity)}, nil
+}
+
+func (srv *coreAgentService) Heartbeat(ctx context.Context, req *pb.HeartbeatRequest) (*empty.Empty, error) {
+	ctx = context_helper.WithToken(ctx, srv.app_cred_mgr.GetToken())
+	cli, closeFn, err := srv.cli_fty.NewCoreServiceClient()
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to new core service client")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+	defer closeFn()
+
+	r := &core_pb.GetEntityRequest{req.EntityId}
+	res, err := cli.GetEntity(ctx, r)
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to get entity")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
+	if res.Entity.State == state_pb.EntityState_ENTITY_STATE_ONLINE {
+		return &empty.Empty{}, nil
+	}
+
+	r1 := &core_pb.PatchEntityRequest{
+		Id:    req.EntityId,
+		State: state_pb.EntityState_ENTITY_STATE_ONLINE,
+	}
+
+	_, err = cli.PatchEntity(ctx, r1)
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to patch entity")
 		return nil, grpc.Errorf(codes.Internal, err.Error())
 	}
-	return &pb.CreateEntityResponse{
-		Entity: &pb.Entity{
-			Id:          res.Entity.Id,
-			Name:        res.Entity.Name,
-			ServiceName: res.Entity.ServiceName,
-			Endpoint:    res.Entity.Endpoint,
-			State:       res.Entity.State,
-		},
-	}, nil
-}
 
-func (srv *coreAgentService) DeleteEntity(context.Context, *pb.DeleteEntityRequest) (*empty.Empty, error) {
-	return nil, grpc.Errorf(codes.Unimplemented, "unimplemented")
-}
-
-func (srv *coreAgentService) PatchEntity(context.Context, *pb.PatchEntityRequest) (*pb.PatchEntityResponse, error) {
-	return nil, grpc.Errorf(codes.Unimplemented, "unimplemented")
-}
-
-func (srv *coreAgentService) GetEntity(context.Context, *pb.GetEntityRequest) (*pb.GetEntityResponse, error) {
-	return nil, grpc.Errorf(codes.Unimplemented, "unimplemented")
-}
-
-func (srv *coreAgentService) ListEntities(context.Context, *pb.ListEntitiesRequest) (*pb.ListEntitiesResponse, error) {
-	return nil, grpc.Errorf(codes.Unimplemented, "unimplemented")
-}
-
-func (srv *coreAgentService) CreateOrGetEntity(context.Context, *pb.CreateOrGetEntityRequest) (*pb.CreateOrGetEntityResponse, error) {
-	return nil, grpc.Errorf(codes.Unimplemented, "unimplemented")
-}
-
-func (srv *coreAgentService) Heartbeat(context.Context, *pb.HeartbeatRequest) (*empty.Empty, error) {
-	return nil, grpc.Errorf(codes.Unimplemented, "unimplemented")
+	return &empty.Empty{}, nil
 }
 
 func (srv *coreAgentService) ServeOnStream() error {
@@ -332,10 +491,11 @@ func NewCoreAgentService(opt ...ServiceOptions) (srv *coreAgentService, err erro
 	}
 
 	srv = &coreAgentService{
-		app_cred_mgr: app_cred_mgr,
-		cli_fty:      cli_fty,
-		logger:       logger,
-		opts:         opts,
+		entity_st_psr: state_helper.NewEntityStateParser(),
+		app_cred_mgr:  app_cred_mgr,
+		cli_fty:       cli_fty,
+		logger:        logger,
+		opts:          opts,
 	}
 	return srv, nil
 }

@@ -25,6 +25,11 @@ func (this *PatchEntityRequest) Validate() error {
 			return go_proto_validators.FieldError("Id", err)
 		}
 	}
+	if this.Name != nil {
+		if err := go_proto_validators.CallValidatorIfExists(this.Name); err != nil {
+			return go_proto_validators.FieldError("Name", err)
+		}
+	}
 	return nil
 }
 func (this *PatchEntityResponse) Validate() error {
