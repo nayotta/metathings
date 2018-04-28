@@ -6,6 +6,4 @@ import "google/protobuf/wrappers.proto";
 
 import "github.com/mwitkow/go-proto-validators/validator.proto";
 
-message HeartbeatRequest {
-	google.protobuf.StringValue id = 1 [(validator.field) = {msg_exists: true}];
-}
+message HeartbeatRequest {}

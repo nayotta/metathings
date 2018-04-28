@@ -18,6 +18,7 @@ import (
 	state_helper "github.com/bigdatagz/metathings/pkg/common/state"
 	stm_mgr "github.com/bigdatagz/metathings/pkg/common/stream_manager"
 	storage "github.com/bigdatagz/metathings/pkg/core/storage"
+	state_pb "github.com/bigdatagz/metathings/pkg/proto/common/state"
 	pb "github.com/bigdatagz/metathings/pkg/proto/core"
 	identityd_pb "github.com/bigdatagz/metathings/pkg/proto/identity"
 )
@@ -204,6 +205,17 @@ func (srv *metathingsCoreService) ListCores(context.Context, *pb.ListCoresReques
 	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
 }
 
+func (srv *metathingsCoreService) copyEntity(e storage.Entity) *pb.Entity {
+	return &pb.Entity{
+		Id:          *e.Id,
+		CoreId:      *e.CoreId,
+		Name:        *e.Name,
+		ServiceName: *e.ServiceName,
+		Endpoint:    *e.Endpoint,
+		State:       srv.entity_st_psr.ToValue(*e.State),
+	}
+}
+
 func (srv *metathingsCoreService) CreateEntity(ctx context.Context, req *pb.CreateEntityRequest) (*pb.CreateEntityResponse, error) {
 	err := req.Validate()
 	if err != nil {
@@ -263,28 +275,130 @@ func (srv *metathingsCoreService) CreateEntity(ctx context.Context, req *pb.Crea
 	return res, nil
 }
 
-func (srv *metathingsCoreService) DeleteEntity(context.Context, *pb.DeleteEntityRequest) (*empty.Empty, error) {
-	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
+func (srv *metathingsCoreService) DeleteEntity(ctx context.Context, req *pb.DeleteEntityRequest) (*empty.Empty, error) {
+	err := req.Validate()
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to validate request data")
+		return nil, status.Errorf(codes.InvalidArgument, err.Error())
+	}
+
+	err = srv.storage.DeleteEntity(req.Id.Value)
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to delete entity")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+	srv.logger.WithField("id", req.Id.Value).Infof("delete entity")
+
+	return &empty.Empty{}, nil
 }
 
-func (srv *metathingsCoreService) PatchEntity(context.Context, *pb.PatchEntityRequest) (*pb.PatchEntityResponse, error) {
-	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
+func (srv *metathingsCoreService) PatchEntity(ctx context.Context, req *pb.PatchEntityRequest) (*pb.PatchEntityResponse, error) {
+	err := req.Validate()
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to validate request data")
+		return nil, status.Errorf(codes.InvalidArgument, err.Error())
+	}
+
+	fields := log.Fields{"id": req.Id.Value}
+	entity := storage.Entity{}
+	if req.State != state_pb.EntityState_ENTITY_STATE_UNKNOWN {
+		state_str := srv.entity_st_psr.ToString(req.State)
+		entity.State = &state_str
+		fields["state"] = state_str
+	}
+
+	entity, err = srv.storage.PatchEntity(req.Id.Value, entity)
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to patch entity")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+	srv.logger.WithFields(fields).Infof("patch entity")
+
+	return &pb.PatchEntityResponse{srv.copyEntity(entity)}, nil
 }
 
-func (srv *metathingsCoreService) GetEntity(context.Context, *pb.GetEntityRequest) (*pb.GetEntityResponse, error) {
-	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
+func (srv *metathingsCoreService) GetEntity(ctx context.Context, req *pb.GetEntityRequest) (*pb.GetEntityResponse, error) {
+	err := req.Validate()
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to validate request data")
+		return nil, status.Errorf(codes.InvalidArgument, err.Error())
+	}
+
+	entity, err := srv.storage.GetEntity(req.Id.Value)
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to get entity")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+	srv.logger.WithField("id", req.Id.Value).Debugf("get entity")
+
+	return &pb.GetEntityResponse{srv.copyEntity(entity)}, nil
 }
 
-func (srv *metathingsCoreService) ListEntities(context.Context, *pb.ListEntitiesRequest) (*pb.ListEntitiesResponse, error) {
-	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
+func (srv *metathingsCoreService) ListEntities(ctx context.Context, req *pb.ListEntitiesRequest) (*pb.ListEntitiesResponse, error) {
+	err := req.Validate()
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to validate request data")
+		return nil, status.Errorf(codes.InvalidArgument, err.Error())
+	}
+
+	entities, err := srv.storage.ListEntities(storage.Entity{})
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to list entities")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+	es := []*pb.Entity{}
+	for _, e := range entities {
+		es = append(es, srv.copyEntity(e))
+	}
+
+	return &pb.ListEntitiesResponse{es}, nil
 }
 
-func (srv *metathingsCoreService) ListEntitiesForCore(context.Context, *pb.ListEntitiesForCoreRequest) (*pb.ListEntitiesForCoreResponse, error) {
-	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
+func (srv *metathingsCoreService) ListEntitiesForCore(ctx context.Context, req *pb.ListEntitiesForCoreRequest) (*pb.ListEntitiesForCoreResponse, error) {
+	err := req.Validate()
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to validate request data")
+		return nil, status.Errorf(codes.InvalidArgument, err.Error())
+	}
+
+	entites, err := srv.storage.ListEntitiesForCore(req.CoreId.Value, storage.Entity{})
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to list entities for core")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
+	es := []*pb.Entity{}
+	for _, e := range entites {
+		es = append(es, srv.copyEntity(e))
+	}
+
+	return &pb.ListEntitiesForCoreResponse{es}, nil
 }
 
-func (srv *metathingsCoreService) Heartbeat(context.Context, *pb.HeartbeatRequest) (*empty.Empty, error) {
-	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
+func (srv *metathingsCoreService) Heartbeat(ctx context.Context, req *pb.HeartbeatRequest) (*empty.Empty, error) {
+	err := req.Validate()
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to validate request data")
+		return nil, status.Errorf(codes.InvalidArgument, err.Error())
+	}
+
+	cred := context_helper.Credential(ctx)
+	core, err := srv.storage.GetAssignedCoreFromApplicationCredential(cred.ApplicationCredential.Id)
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to get assigned core from application credential")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
+	if *core.State != "online" {
+		state_str := "online"
+		_, err = srv.storage.PatchCore(*core.Id, storage.Core{State: &state_str})
+		if err != nil {
+			srv.logger.WithError(err).Errorf("failed to patch core")
+			return nil, status.Errorf(codes.Internal, err.Error())
+		}
+	}
+
+	return &empty.Empty{}, nil
 }
 
 func (srv *metathingsCoreService) Stream(stream pb.CoreService_StreamServer) error {

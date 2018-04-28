@@ -167,10 +167,6 @@ func (srv *coreAgentService) PatchEntity(ctx context.Context, req *pb.PatchEntit
 
 	fields := log.Fields{"id": req.Id.Value}
 	r := &core_pb.PatchEntityRequest{Id: req.Id}
-	if req.Name != nil {
-		r.Name = req.Name
-		fields["name"] = req.Name.Value
-	}
 	if req.State != state_pb.EntityState_ENTITY_STATE_UNKNOWN {
 		r.State = req.State
 		fields["state"] = srv.entity_st_psr.ToString(req.State)

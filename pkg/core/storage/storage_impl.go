@@ -64,9 +64,17 @@ VALUES (:id, :name, :project_id, :owner_id, :state, :created_at, :updated_at)`, 
 }
 
 func (s *storageImpl) DeleteCore(core_id string) error {
-	_, err := s.db.Exec("DELETE FROM core WHERE id=$1", core_id)
+	tx, err := s.db.Begin()
 	if err != nil {
-		s.logger.WithError(err).
+		s.logger.WithError(err).Errorf("failed to begin tx")
+		return err
+	}
+	tx.Exec("DELETE FROM entity WHERE core_id=$1", core_id)
+	tx.Exec("DELETE FROM core WHERE id=$1", core_id)
+	err = tx.Commit()
+	if err != nil {
+		s.logger.
+			WithError(err).
 			WithField("core_id", core_id).
 			Errorf("failed to delete core")
 		return err
