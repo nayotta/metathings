@@ -48,12 +48,6 @@ var (
 )
 
 func runCoreAgentd() error {
-	lis, err := net.Listen("tcp", core_agentd_opts.Listen)
-	if err != nil {
-		return err
-	}
-
-	s := grpc.NewServer()
 	srv, err := service.NewCoreAgentService(
 		service.SetMetathingsAddr(root_opts.ServiceConfig.Metathings.Address),
 		service.SetLogLevel(root_opts.Log.Level),
@@ -68,16 +62,20 @@ func runCoreAgentd() error {
 		return err
 	}
 
-	pb.RegisterCoreAgentServiceServer(s, srv)
-
 	errs := make(chan error)
 	go func() {
 		errs <- srv.ServeOnStream()
 	}()
 	go func() {
-		log.WithFields(log.Fields{
-			"bind": core_agentd_opts.Listen,
-		}).Infof("metathings core agent service listening")
+		lis, err := net.Listen("tcp", core_agentd_opts.Listen)
+		if err != nil {
+			errs <- err
+			return
+		}
+		s := grpc.NewServer()
+		pb.RegisterCoreAgentServiceServer(s, srv)
+
+		log.WithField("listen", core_agentd_opts.Listen).Infof("metathings core agent service listening")
 		errs <- s.Serve(lis)
 	}()
 	return <-errs

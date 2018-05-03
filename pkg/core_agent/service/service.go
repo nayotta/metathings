@@ -4,9 +4,7 @@ import (
 	"context"
 	"io"
 	"os"
-	"os/user"
 	"path"
-	"path/filepath"
 	"time"
 
 	"github.com/golang/protobuf/ptypes"
@@ -19,6 +17,7 @@ import (
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 
+	helper "github.com/bigdatagz/metathings/pkg/common"
 	app_cred_mgr "github.com/bigdatagz/metathings/pkg/common/application_credential_manager"
 	client_helper "github.com/bigdatagz/metathings/pkg/common/client"
 	context_helper "github.com/bigdatagz/metathings/pkg/common/context"
@@ -61,16 +60,7 @@ func SetLogLevel(lvl string) ServiceOptions {
 
 func SetCoreAgentHome(path string) ServiceOptions {
 	return func(o *options) {
-		var usr *user.User
-		var err error
-
-		if usr, err = user.Current(); err != nil {
-			return
-		}
-		if path[:2] == "~/" {
-			path = filepath.Join(usr.HomeDir, path[2:])
-		}
-		o.core_agent_home = path
+		o.core_agent_home = helper.ExpendHomePath(path)
 	}
 }
 
@@ -390,12 +380,12 @@ func getCoreIdFromFile(path string) (string, error) {
 	defer f.Close()
 
 	data := make([]byte, 64)
-	_, err = f.Read(data)
+	n, err := f.Read(data)
 	if err != nil {
 		return "", err
 	}
 
-	return string(data), nil
+	return string(data[:n]), nil
 }
 
 func getCoreIdFromService(opts options, token string) (string, error) {
@@ -435,7 +425,6 @@ func saveCoreIdToPath(id, path string) error {
 }
 
 func NewCoreAgentService(opt ...ServiceOptions) (srv *coreAgentService, err error) {
-
 	opts := defaultServiceOptions
 	for _, o := range opt {
 		o(&opts)
@@ -458,9 +447,9 @@ func NewCoreAgentService(opt ...ServiceOptions) (srv *coreAgentService, err erro
 	}
 
 	if opts.core_id == "" {
-		var core_id string
 		core_id_path := path.Join(opts.core_agent_home, "core-id")
-		if core_id, err := getCoreIdFromFile(core_id_path); err != nil {
+		core_id, err := getCoreIdFromFile(core_id_path)
+		if err != nil {
 			if core_id, err = getCoreIdFromService(opts, app_cred_mgr.GetToken()); err != nil {
 				return nil, err
 			}

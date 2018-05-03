@@ -72,9 +72,7 @@ func runCored() error {
 
 	pb.RegisterCoreServiceServer(s, srv)
 
-	log.WithFields(log.Fields{
-		"listen": cored_opts.Listen,
-	}).Infof("metathings core service listening")
+	log.WithField("listen", cored_opts.Listen).Infof("metathings core service listening")
 	return s.Serve(lis)
 }
 

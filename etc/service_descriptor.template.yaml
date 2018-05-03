@@ -1,0 +1,14 @@
+version: "1"
+services:
+- name: <service_name>
+  plugins:
+    service:
+      path: <service_plugin_path>
+    dispatcher:
+      path: <dispatcher_plugin_path>
+- name: <service1_name>
+  plugins:
+    service:
+      path: <service_plugin_path>
+    dispatcher:
+      path: <dispatcher_plugin_path>

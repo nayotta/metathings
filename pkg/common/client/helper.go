@@ -4,6 +4,7 @@ import (
 	"google.golang.org/grpc"
 
 	cored_pb "github.com/bigdatagz/metathings/pkg/proto/core"
+	agentd_pb "github.com/bigdatagz/metathings/pkg/proto/core_agent"
 	identityd_pb "github.com/bigdatagz/metathings/pkg/proto/identity"
 )
 
@@ -11,6 +12,7 @@ const (
 	DEFAULT_CONFIG = iota
 	IDENTITYD_CONFIG
 	CORED_CONFIG
+	AGENTD_CONFIG
 )
 
 type CloseFn func()
@@ -70,6 +72,19 @@ func (f *ClientFactory) NewIdentityServiceClient(opts ...grpc.DialOption) (ident
 	return identityd_pb.NewIdentityServiceClient(conn), closeFn, nil
 }
 
+func (f *ClientFactory) NewCoreAgentServiceClient(opts ...grpc.DialOption) (agentd_pb.CoreAgentServiceClient, CloseFn, error) {
+	conn, err := f.NewConnection(AGENTD_CONFIG, opts...)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	closeFn := func() {
+		conn.Close()
+	}
+
+	return agentd_pb.NewCoreAgentServiceClient(conn), closeFn, nil
+}
+
 func NewClientFactory(configs ServiceConfigs, optFn DialOptionFn) (*ClientFactory, error) {
 	if _, ok := configs[DEFAULT_CONFIG]; !ok {
 		return nil, ErrMissingDefaultConfig
@@ -79,4 +94,10 @@ func NewClientFactory(configs ServiceConfigs, optFn DialOptionFn) (*ClientFactor
 		configs:             configs,
 		defaultDialOptionFn: optFn,
 	}, nil
+}
+
+func NewDefaultServiceConfigs(addr string) ServiceConfigs {
+	return ServiceConfigs{
+		DEFAULT_CONFIG: ServiceConfig{addr},
+	}
 }

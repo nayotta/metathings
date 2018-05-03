@@ -1,21 +1,18 @@
 package cmd
 
 import (
-	"plugin"
-
-	cmd_helper "github.com/bigdatagz/metathings/pkg/common/cmd"
-	mt_plugin "github.com/bigdatagz/metathings/pkg/core/plugin"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
+
+	helper "github.com/bigdatagz/metathings/pkg/common"
+	cmd_helper "github.com/bigdatagz/metathings/pkg/common/cmd"
+	mt_plugin "github.com/bigdatagz/metathings/pkg/core/plugin"
 )
 
-type _pluginOptions struct {
-	Path string
-}
-
 type _coreRunOptions struct {
-	_rootOptions `mapstructure:",squash"`
-	Plugin       _pluginOptions
+	_rootOptions                   `mapstructure:",squash"`
+	mt_plugin.PluginCommandOptions `mapstructure:",squash"`
+	ServiceDescriptorPath          string `mapstructure:"service_descriptor"`
 }
 
 var (
@@ -31,7 +28,18 @@ var (
 				return
 			}
 
-			cmd_helper.UnmarshalConfig(core_run_opts)
+			var opt _coreRunOptions
+			cmd_helper.UnmarshalConfig(&opt)
+
+			if opt.ServiceDescriptorPath == "" {
+				opt.ServiceDescriptorPath = core_run_opts.ServiceDescriptorPath
+			}
+
+			if opt.Config == "" {
+				opt.Config = root_opts.Config
+			}
+
+			core_run_opts = &opt
 			root_opts = &core_run_opts._rootOptions
 			core_run_opts.Stage = cmd_helper.GetStageFromEnv()
 		}),
@@ -44,29 +52,30 @@ var (
 )
 
 func runCore(args []string) error {
-	lib, err := plugin.Open(core_run_opts.Plugin.Path)
+	path := helper.ExpendHomePath(core_run_opts.ServiceDescriptorPath)
+	sd, err := mt_plugin.LoadServiceDescriptor(path)
 	if err != nil {
-		log.Fatalf("failed to open core service plugin %v: %v", core_run_opts.Plugin.Path, err)
-	}
-
-	NewPlugin, err := lib.Lookup("NewPlugin")
-	if err != nil {
-		log.Fatalf("failed to lookup NewPlugin method: %v", err)
-	}
-
-	opt := mt_plugin.Option{Args: args}
-	p := NewPlugin.(func() mt_plugin.CorePlugin)()
-	if err = p.Init(opt); err != nil {
 		return err
 	}
 
-	return p.Run()
+	plugin, err := sd.GetServicePlugin(core_run_opts.ServiceName)
+	if err != nil {
+		return err
+	}
+
+	args = append(args, "--config", root_opts.Config)
+	err = plugin.Init(mt_plugin.Option{Args: args})
+	if err != nil {
+		return err
+	}
+
+	return plugin.Run()
 }
 
 func init() {
 	core_run_opts = &_coreRunOptions{}
 
-	coreRunCmd.Flags().StringVarP(&core_run_opts.Plugin.Path, "plugin", "p", "", "Core plugin path")
+	coreRunCmd.Flags().StringVarP(&core_run_opts.ServiceDescriptorPath, "service-descriptor-path", "p", "~/.metathings/service_descriptor.yaml", "Core Service Descriptor File Path")
 
 	coreCmd.AddCommand(coreRunCmd)
 }

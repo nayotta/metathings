@@ -18,7 +18,7 @@ type Core struct {
 type Entity struct {
 	sql_helper.Metadata
 	Id          *string
-	CoreId      *string
+	CoreId      *string `db:"core_id"`
 	Name        *string
 	ServiceName *string `db:"service_name"`
 	Endpoint    *string
