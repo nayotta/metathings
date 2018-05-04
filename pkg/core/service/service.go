@@ -459,6 +459,15 @@ func NewCoreService(opt ...ServiceOptions) (*metathingsCoreService, error) {
 		return nil, err
 	}
 
+	cli_fty, err := client_helper.NewClientFactory(
+		client_helper.NewDefaultServiceConfigs(opts.identityd_addr),
+		client_helper.WithInsecureOptionFunc(),
+	)
+	if err != nil {
+		log.WithError(err).Errorf("failed to new client factory")
+		return nil, err
+	}
+
 	storage, err := storage.NewStorage(opts.storage_driver, opts.storage_uri, logger)
 	if err != nil {
 		log.WithError(err).Errorf("failed to connect storage")
@@ -466,7 +475,7 @@ func NewCoreService(opt ...ServiceOptions) (*metathingsCoreService, error) {
 	}
 
 	app_cred_mgr, err := app_cred_mgr.NewApplicationCredentialManager(
-		opts.identityd_addr,
+		cli_fty,
 		opts.application_credential_id,
 		opts.application_credential_secret,
 	)
@@ -478,21 +487,6 @@ func NewCoreService(opt ...ServiceOptions) (*metathingsCoreService, error) {
 	stm_mgr, err := stm_mgr.NewStreamManager(logger)
 	if err != nil {
 		log.WithError(err).Errorf("failed to new stream manager")
-		return nil, err
-	}
-
-	cli_fty, err := client_helper.NewClientFactory(
-		client_helper.ServiceConfigs{
-			client_helper.DEFAULT_CONFIG: client_helper.ServiceConfig{
-				Address: opts.identityd_addr,
-			},
-		},
-		func() []grpc.DialOption {
-			return []grpc.DialOption{grpc.WithInsecure()}
-		},
-	)
-	if err != nil {
-		log.WithError(err).Errorf("failed to new client factory")
 		return nil, err
 	}
 

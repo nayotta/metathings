@@ -22,7 +22,15 @@ type options struct {
 	agentdAddr      string
 	metathingsdAddr string
 	endpoint        string
+
+	heartbeat_interval int64
 }
+
+var (
+	default_options = options{
+		heartbeat_interval: 30,
+	}
+)
 
 type ServiceOptions func(*options)
 
@@ -104,7 +112,7 @@ func (srv *metathingsEchoService) ConnectToAgent() error {
 				errs <- err
 				return
 			}
-			<-time.After(30 * time.Second)
+			<-time.After(time.Duration(srv.opts.heartbeat_interval) * time.Second)
 		}
 	}()
 
@@ -112,7 +120,7 @@ func (srv *metathingsEchoService) ConnectToAgent() error {
 }
 
 func NewEchoService(opt ...ServiceOptions) (*metathingsEchoService, error) {
-	opts := options{}
+	opts := default_options
 	for _, o := range opt {
 		o(&opts)
 	}

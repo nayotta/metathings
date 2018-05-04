@@ -520,8 +520,17 @@ func NewCoreAgentService(opt ...ServiceOptions) (srv *coreAgentService, err erro
 		return nil, err
 	}
 
+	cli_fty, err := client_helper.NewClientFactory(
+		client_helper.NewDefaultServiceConfigs(opts.metathings_addr),
+		client_helper.WithInsecureOptionFunc(),
+	)
+	if err != nil {
+		log.WithError(err).Errorf("failed to new client factory")
+		return nil, err
+	}
+
 	app_cred_mgr, err := app_cred_mgr.NewApplicationCredentialManager(
-		opts.metathings_addr,
+		cli_fty,
 		opts.application_credential_id,
 		opts.application_credential_secret,
 	)
@@ -542,21 +551,6 @@ func NewCoreAgentService(opt ...ServiceOptions) (srv *coreAgentService, err erro
 			}
 		}
 		opts.core_id = core_id
-	}
-
-	cli_fty, err := client_helper.NewClientFactory(
-		client_helper.ServiceConfigs{
-			client_helper.DEFAULT_CONFIG: client_helper.ServiceConfig{
-				Address: opts.metathings_addr,
-			},
-		},
-		func() []grpc.DialOption {
-			return []grpc.DialOption{grpc.WithInsecure()}
-		},
-	)
-	if err != nil {
-		log.WithError(err).Errorf("failed to new client factory")
-		return nil, err
 	}
 
 	serv_desc, err := mt_plugin.LoadServiceDescriptor(opts.service_descriptor_path)
