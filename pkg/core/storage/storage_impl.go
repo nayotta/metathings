@@ -103,15 +103,19 @@ func (s *storageImpl) PatchCore(core_id string, core Core) (Core, error) {
 	}
 
 	if len(values) > 0 {
-		values = append(values, fmt.Sprintf("updated_at=%v", i))
+		values = append(values, fmt.Sprintf("updated_at=$%v", i))
 		arguments = append(arguments, time.Now())
 		i += 1
 
 		val := strings.Join(values, ", ")
 		arguments = append(arguments, core_id)
 
-		_, err := s.db.Exec("UPDATE core SET "+val+fmt.Sprintf(" WHERE id=$%v", i),
-			arguments...)
+		sql_str := "UPDATE core SET " + val + fmt.Sprintf(" WHERE id=$%v", i)
+		s.logger.WithFields(log.Fields{
+			"sql":  sql_str,
+			"args": arguments,
+		}).Debugf("execute sql")
+		_, err := s.db.Exec(sql_str, arguments...)
 		if err != nil {
 			s.logger.WithError(err).
 				WithField("core_id", core_id).
@@ -238,15 +242,19 @@ func (s *storageImpl) PatchEntity(entity_id string, entity Entity) (Entity, erro
 	}
 
 	if len(values) > 0 {
-		values = append(values, fmt.Sprintf("updated_at=%v", i))
+		values = append(values, fmt.Sprintf("updated_at=$%v", i))
 		arguments = append(arguments, time.Now())
 		i += 1
 
 		val := strings.Join(values, ", ")
 		arguments = append(arguments, entity_id)
 
-		_, err := s.db.Exec("UPDATE entity SET "+val+fmt.Sprintf(" WHERE id=$%v", i),
-			arguments...)
+		sql_str := "UPDATE entity SET " + val + fmt.Sprintf(" WHERE id=$%v", i)
+		s.logger.WithFields(log.Fields{
+			"sql":  sql_str,
+			"args": arguments,
+		}).Debugf("execute sql")
+		_, err := s.db.Exec(sql_str, arguments...)
 		if err != nil {
 			s.logger.WithError(err).
 				WithField("entity_id", entity_id).

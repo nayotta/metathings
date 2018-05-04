@@ -135,6 +135,7 @@ func NewEchoService(opt ...ServiceOptions) (*metathingsEchoService, error) {
 	}
 
 	return &metathingsEchoService{
+		opts:    opts,
 		logger:  logger,
 		cli_fty: cli_fty,
 	}, nil

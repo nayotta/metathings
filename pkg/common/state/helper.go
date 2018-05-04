@@ -13,11 +13,11 @@ func (p StateParser) ToString(x int32) string {
 	if !ok {
 		return "unknown"
 	}
-	return strings.ToLower(strings.Trim(s, p.prefix))
+	return strings.TrimPrefix(strings.ToLower(s), p.prefix+"_")
 }
 
 func (p StateParser) ToValue(x string) int32 {
-	i, ok := p.values[strings.ToUpper(strings.Join([]string{p.prefix, x}, "_"))]
+	i, ok := p.values[strings.ToUpper(p.prefix+"_"+x)]
 	if !ok {
 		return 0
 	}
@@ -26,7 +26,7 @@ func (p StateParser) ToValue(x string) int32 {
 
 func NewStateParser(prefix string, names map[int32]string, values map[string]int32) StateParser {
 	return StateParser{
-		prefix: prefix,
+		prefix: strings.ToLower(prefix),
 		names:  names,
 		values: values,
 	}

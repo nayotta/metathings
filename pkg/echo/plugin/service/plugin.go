@@ -31,7 +31,6 @@ type _serviceConfigOptions struct {
 type _rootOptions struct {
 	cmd_helper.RootOptions `mapstructure:",squash"`
 	ServiceConfig          _serviceConfigOptions `mapstructure:"service_config"`
-	Service                string
 	Listen                 string
 	Name                   string
 }
@@ -67,7 +66,7 @@ var (
 
 func runEchod() error {
 	port := strings.SplitAfter(root_opts.Listen, ":")[1]
-	ep := strings.Join([]string{"metathings.local", port}, ":")
+	ep := "localhost" + ":" + port
 
 	srv, err := service.NewEchoService(
 		service.SetName(root_opts.Name),
@@ -114,8 +113,9 @@ func (p *echoServicePlugin) Run() error {
 	return rootCmd.Execute()
 }
 
-func (p *echoServicePlugin) Init(opt mtp.Option) error {
-	rootCmd.SetArgs(opt.Args)
+func (p *echoServicePlugin) Init(opts mtp.PluginOptions) error {
+	args := opts.GetStrings("args")
+	rootCmd.SetArgs(args)
 
 	v = viper.New()
 	root_opts = &_rootOptions{}

@@ -5,22 +5,46 @@ import (
 	"errors"
 	"plugin"
 
+	"github.com/golang/protobuf/ptypes/any"
 	"github.com/spf13/viper"
 )
 
 const METATHINGS_PLUGIN_PREFIX = "mtp"
 
-type Option struct {
-	Args []string
+type PluginOptions map[string]interface{}
+
+func (o *PluginOptions) Get(k string) interface{} {
+	v, ok := (*o)[k]
+	if !ok {
+		return nil
+	}
+	return v
+}
+
+func (o *PluginOptions) GetString(k string) string {
+	v := o.Get(k)
+	if v == nil {
+		return ""
+	}
+	return v.(string)
+}
+
+func (o *PluginOptions) GetStrings(k string) []string {
+	v := o.Get(k)
+	if v == nil {
+		return nil
+	}
+	return v.([]string)
 }
 
 type ServicePlugin interface {
-	Init(opt Option) error
+	Init(opts PluginOptions) error
 	Run() error
 }
 
 type DispatcherPlugin interface {
-	Dispatch(context.Context, interface{}) (interface{}, error)
+	Init(opts PluginOptions) error
+	UnaryCall(method string, ctx context.Context, req *any.Any) (*any.Any, error)
 }
 
 type PluginCommandOptions struct {
@@ -154,5 +178,7 @@ func (sd *ServiceDescriptor) GetDispatcherPlugin(name string) (DispatcherPlugin,
 }
 
 var (
-	ErrNotFound = errors.New("plugin not found")
+	ErrNotFound           = errors.New("plugin not found")
+	ErrUnknownClient      = errors.New("unknown client")
+	ErrUnknownRequestType = errors.New("unknown request type")
 )

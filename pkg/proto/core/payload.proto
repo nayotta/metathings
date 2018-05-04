@@ -6,19 +6,22 @@ import "google/protobuf/wrappers.proto";
 import "google/protobuf/any.proto";
 
 message StreamErrorResponsePayload {
-	string service_name = 1;
-	string method_name = 2;
-	string context = 3;
+	string name = 1;
+	string service_name = 2;
+	string method_name = 3;
+	string context = 4;
 }
 
 message UnaryCallRequestPayload {
-	google.protobuf.StringValue service_name = 1;
-	google.protobuf.StringValue method_name = 2;
-	google.protobuf.Any payload = 3;
+	google.protobuf.StringValue name = 1;
+	google.protobuf.StringValue service_name = 2;
+	google.protobuf.StringValue method_name = 3;
+	google.protobuf.Any payload = 4;
 }
 
 message UnaryCallResponsePayload {
-	string service_name = 1;
-	string method_name = 2;
-	google.protobuf.Any payload = 3;
+	string name = 1;
+	string service_name = 2;
+	string method_name = 3;
+	google.protobuf.Any payload = 4;
 }

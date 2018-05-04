@@ -5,6 +5,7 @@ import (
 
 	cored_pb "github.com/bigdatagz/metathings/pkg/proto/core"
 	agentd_pb "github.com/bigdatagz/metathings/pkg/proto/core_agent"
+	echod_pb "github.com/bigdatagz/metathings/pkg/proto/echo"
 	identityd_pb "github.com/bigdatagz/metathings/pkg/proto/identity"
 )
 
@@ -13,6 +14,7 @@ const (
 	IDENTITYD_CONFIG
 	CORED_CONFIG
 	AGENTD_CONFIG
+	ECHOD_CONFIG
 )
 
 type CloseFn func()
@@ -85,6 +87,19 @@ func (f *ClientFactory) NewCoreAgentServiceClient(opts ...grpc.DialOption) (agen
 	return agentd_pb.NewCoreAgentServiceClient(conn), closeFn, nil
 }
 
+func (f *ClientFactory) NewEchoServiceClient(opts ...grpc.DialOption) (echod_pb.EchoServiceClient, CloseFn, error) {
+	conn, err := f.NewConnection(ECHOD_CONFIG, opts...)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	closeFn := func() {
+		conn.Close()
+	}
+
+	return echod_pb.NewEchoServiceClient(conn), closeFn, nil
+}
+
 func NewClientFactory(configs ServiceConfigs, optFn DialOptionFn) (*ClientFactory, error) {
 	if _, ok := configs[DEFAULT_CONFIG]; !ok {
 		return nil, ErrMissingDefaultConfig
@@ -99,5 +114,11 @@ func NewClientFactory(configs ServiceConfigs, optFn DialOptionFn) (*ClientFactor
 func NewDefaultServiceConfigs(addr string) ServiceConfigs {
 	return ServiceConfigs{
 		DEFAULT_CONFIG: ServiceConfig{addr},
+	}
+}
+
+func WithInsecureOptionFunc() DialOptionFn {
+	return func() []grpc.DialOption {
+		return []grpc.DialOption{grpc.WithInsecure()}
 	}
 }

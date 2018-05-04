@@ -63,8 +63,9 @@ func runCore(args []string) error {
 		return err
 	}
 
+	// pass config to service plugin.
 	args = append(args, "--config", root_opts.Config)
-	err = plugin.Init(mt_plugin.Option{Args: args})
+	err = plugin.Init(mt_plugin.PluginOptions{"args": args})
 	if err != nil {
 		return err
 	}

@@ -9,6 +9,7 @@ dev:
   agentd_config:
     id: <core-id>   # if not empty, ignore id file in agent home.
     home: <agent-home-path>
+  service_descriptor: <service-descriptor-path>
   service_config:
     metathings:
       address: <metathings-service-address>

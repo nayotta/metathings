@@ -19,6 +19,11 @@ func (this *StreamErrorResponsePayload) Validate() error {
 	return nil
 }
 func (this *UnaryCallRequestPayload) Validate() error {
+	if this.Name != nil {
+		if err := go_proto_validators.CallValidatorIfExists(this.Name); err != nil {
+			return go_proto_validators.FieldError("Name", err)
+		}
+	}
 	if this.ServiceName != nil {
 		if err := go_proto_validators.CallValidatorIfExists(this.ServiceName); err != nil {
 			return go_proto_validators.FieldError("ServiceName", err)

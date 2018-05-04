@@ -5,6 +5,7 @@ import (
 	"io"
 	"os"
 	"path"
+	"sync"
 	"time"
 
 	"github.com/golang/protobuf/ptypes"
@@ -23,11 +24,11 @@ import (
 	context_helper "github.com/bigdatagz/metathings/pkg/common/context"
 	log_helper "github.com/bigdatagz/metathings/pkg/common/log"
 	state_helper "github.com/bigdatagz/metathings/pkg/common/state"
+	mt_plugin "github.com/bigdatagz/metathings/pkg/core/plugin"
 	state_pb "github.com/bigdatagz/metathings/pkg/proto/common/state"
 	core_pb "github.com/bigdatagz/metathings/pkg/proto/core"
 	cored_pb "github.com/bigdatagz/metathings/pkg/proto/core"
 	pb "github.com/bigdatagz/metathings/pkg/proto/core_agent"
-	echo_pb "github.com/bigdatagz/metathings/pkg/proto/echo"
 )
 
 type options struct {
@@ -38,6 +39,7 @@ type options struct {
 	core_id                       string
 	application_credential_id     string
 	application_credential_secret string
+	service_descriptor_path       string
 }
 
 var defaultServiceOptions = options{
@@ -77,10 +79,21 @@ func SetApplicationCredential(id, secret string) ServiceOptions {
 	}
 }
 
+func SetServiceDescriptorPath(path string) ServiceOptions {
+	return func(o *options) {
+		path = helper.ExpendHomePath(path)
+		o.service_descriptor_path = path
+	}
+}
+
 type coreAgentService struct {
 	app_cred_mgr  app_cred_mgr.ApplicationCredentialManager
 	cli_fty       *client_helper.ClientFactory
 	entity_st_psr state_helper.EntityStateParser
+	serv_desc     *mt_plugin.ServiceDescriptor
+
+	mtx_dp_op   *sync.Mutex
+	dispatchers map[string]mt_plugin.DispatcherPlugin
 
 	logger log.FieldLogger
 	opts   options
@@ -221,6 +234,48 @@ func (srv *coreAgentService) ListEntities(ctx context.Context, req *pb.ListEntit
 	return &pb.ListEntitiesResponse{entities}, nil
 }
 
+func (srv *coreAgentService) loadDispatcherPlugin(e *pb.Entity) {
+	srv.mtx_dp_op.Lock()
+	defer srv.mtx_dp_op.Unlock()
+
+	_, ok := srv.dispatchers[e.Name]
+	if ok {
+		return
+	}
+
+	dp, err := srv.serv_desc.GetDispatcherPlugin(e.ServiceName)
+	if err != nil {
+		srv.logger.WithError(err).
+			WithFields(log.Fields{
+				"name":         e.Name,
+				"service_name": e.ServiceName,
+				"id":           e.Id,
+			}).
+			Errorf("failed to load dispatcher plugin")
+		return
+	}
+
+	err = dp.Init(mt_plugin.PluginOptions{
+		"endpoint": e.Endpoint,
+	})
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to init plugin")
+		return
+	}
+
+	srv.dispatchers[e.Name] = dp
+	srv.logger.WithFields(log.Fields{
+		"name":         e.Name,
+		"service_name": e.ServiceName,
+		"id":           e.Id,
+	}).Debugf("load dispatcher plugin")
+}
+
+func (srv *coreAgentService) getDispatcherPlugin(name string, service_name string) (mt_plugin.DispatcherPlugin, bool) {
+	dp, ok := srv.dispatchers[name]
+	return dp, ok
+}
+
 func (srv *coreAgentService) CreateOrGetEntity(ctx context.Context, req *pb.CreateOrGetEntityRequest) (*pb.CreateOrGetEntityResponse, error) {
 	ctx = context_helper.WithToken(ctx, srv.app_cred_mgr.GetToken())
 	cli, closeFn, err := srv.cli_fty.NewCoreServiceClient()
@@ -242,7 +297,9 @@ func (srv *coreAgentService) CreateOrGetEntity(ctx context.Context, req *pb.Crea
 
 	for _, e := range res.Entities {
 		if e.Name == req.Name.Value {
-			return &pb.CreateOrGetEntityResponse{srv.copyEntity(e)}, nil
+			e1 := srv.copyEntity(e)
+			defer srv.loadDispatcherPlugin(e1)
+			return &pb.CreateOrGetEntityResponse{e1}, nil
 		}
 	}
 
@@ -259,7 +316,9 @@ func (srv *coreAgentService) CreateOrGetEntity(ctx context.Context, req *pb.Crea
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
-	return &pb.CreateOrGetEntityResponse{srv.copyEntity(res1.Entity)}, nil
+	e1 := srv.copyEntity(res1.Entity)
+	defer srv.loadDispatcherPlugin(e1)
+	return &pb.CreateOrGetEntityResponse{e1}, nil
 }
 
 func (srv *coreAgentService) Heartbeat(ctx context.Context, req *pb.HeartbeatRequest) (*empty.Empty, error) {
@@ -352,24 +411,49 @@ func (srv *coreAgentService) serveOnStream(stream core_pb.CoreService_StreamClie
 }
 
 func (srv *coreAgentService) dispatch(ctx context.Context, req *core_pb.StreamRequest) (*core_pb.StreamResponse, error) {
-	echo_res := echo_pb.EchoResponse{"hello, world"}
-	any_res, err := ptypes.MarshalAny(&echo_res)
+	if req.MessageType != core_pb.StreamMessageType_STREAM_MESSAGE_TYPE_USER {
+		return nil, ErrUnsupportMessageType
+	}
+
+	payload, ok := req.Payload.(*core_pb.StreamRequest_UnaryCall)
+	if !ok {
+		return nil, ErrUnsupportPayloadType
+	}
+
+	name := payload.UnaryCall.Name.Value
+	service_name := payload.UnaryCall.ServiceName.Value
+	method_name := payload.UnaryCall.MethodName.Value
+	req_payload := payload.UnaryCall.Payload
+
+	dp, ok := srv.getDispatcherPlugin(name, service_name)
+	if !ok {
+		return nil, ErrPluginNotFound
+	}
+
+	res, err := dp.UnaryCall(method_name, ctx, req_payload)
 	if err != nil {
-		srv.logger.WithError(err).Errorf("failed to marshal response to Any type")
 		return nil, err
 	}
-	res := &core_pb.StreamResponse{
+
+	res_payload, err := ptypes.MarshalAny(res)
+	if err != nil {
+		return nil, err
+	}
+
+	res1 := &core_pb.StreamResponse{
 		SessionId:   req.SessionId.Value,
 		MessageType: req.MessageType,
 		Payload: &core_pb.StreamResponse_UnaryCall{
-			UnaryCall: &core_pb.UnaryCallResponsePayload{
-				ServiceName: "echo",
-				MethodName:  "echo",
-				Payload:     any_res,
+			&core_pb.UnaryCallResponsePayload{
+				Name:        name,
+				ServiceName: service_name,
+				MethodName:  method_name,
+				Payload:     res_payload,
 			},
 		},
 	}
-	return res, nil
+
+	return res1, nil
 }
 
 func getCoreIdFromFile(path string) (string, error) {
@@ -475,12 +559,22 @@ func NewCoreAgentService(opt ...ServiceOptions) (srv *coreAgentService, err erro
 		return nil, err
 	}
 
+	serv_desc, err := mt_plugin.LoadServiceDescriptor(opts.service_descriptor_path)
+	if err != nil {
+		log.WithError(err).Errorf("failed to load service descriptor")
+		return nil, err
+	}
+
 	srv = &coreAgentService{
 		entity_st_psr: state_helper.NewEntityStateParser(),
 		app_cred_mgr:  app_cred_mgr,
+		serv_desc:     serv_desc,
 		cli_fty:       cli_fty,
 		logger:        logger,
 		opts:          opts,
+
+		mtx_dp_op:   new(sync.Mutex),
+		dispatchers: make(map[string]mt_plugin.DispatcherPlugin),
 	}
 	return srv, nil
 }

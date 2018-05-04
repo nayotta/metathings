@@ -1,5 +1,5 @@
 RM=$(shell which rm)
-CLEAN_PATHS=./bin
+CLEAN_PATHS=./bin ./lib
 
 
 all: \
@@ -8,6 +8,7 @@ all: \
 	core_proto \
 	core_agent_proto \
 	echo_proto \
+	echo_plugins \
 	metathings_bin \
 	metathingsd_bin
 
@@ -34,6 +35,9 @@ metathings_bin:
 
 metathingsd_bin:
 	$(MAKE) -C cmd/metathingsd all
+
+echo_plugins:
+	$(MAKE) -C pkg/echo/plugin all
 
 build_docker_images:
 	./script/metathings_build.sh
