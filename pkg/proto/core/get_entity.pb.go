@@ -6,7 +6,7 @@ package core
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import google_protobuf "github.com/golang/protobuf/ptypes/wrappers"
+import wrappers "github.com/golang/protobuf/ptypes/wrappers"
 import _ "github.com/mwitkow/go-proto-validators"
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -14,16 +14,44 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+
 type GetEntityRequest struct {
-	Id *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
+	Id                   *wrappers.StringValue `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *GetEntityRequest) Reset()                    { *m = GetEntityRequest{} }
-func (m *GetEntityRequest) String() string            { return proto.CompactTextString(m) }
-func (*GetEntityRequest) ProtoMessage()               {}
-func (*GetEntityRequest) Descriptor() ([]byte, []int) { return fileDescriptor7, []int{0} }
+func (m *GetEntityRequest) Reset()         { *m = GetEntityRequest{} }
+func (m *GetEntityRequest) String() string { return proto.CompactTextString(m) }
+func (*GetEntityRequest) ProtoMessage()    {}
+func (*GetEntityRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_get_entity_8cba45390b1fa08e, []int{0}
+}
+func (m *GetEntityRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GetEntityRequest.Unmarshal(m, b)
+}
+func (m *GetEntityRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GetEntityRequest.Marshal(b, m, deterministic)
+}
+func (dst *GetEntityRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetEntityRequest.Merge(dst, src)
+}
+func (m *GetEntityRequest) XXX_Size() int {
+	return xxx_messageInfo_GetEntityRequest.Size(m)
+}
+func (m *GetEntityRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_GetEntityRequest.DiscardUnknown(m)
+}
 
-func (m *GetEntityRequest) GetId() *google_protobuf.StringValue {
+var xxx_messageInfo_GetEntityRequest proto.InternalMessageInfo
+
+func (m *GetEntityRequest) GetId() *wrappers.StringValue {
 	if m != nil {
 		return m.Id
 	}
@@ -31,13 +59,35 @@ func (m *GetEntityRequest) GetId() *google_protobuf.StringValue {
 }
 
 type GetEntityResponse struct {
-	Entity *Entity `protobuf:"bytes,1,opt,name=entity" json:"entity,omitempty"`
+	Entity               *Entity  `protobuf:"bytes,1,opt,name=entity" json:"entity,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *GetEntityResponse) Reset()                    { *m = GetEntityResponse{} }
-func (m *GetEntityResponse) String() string            { return proto.CompactTextString(m) }
-func (*GetEntityResponse) ProtoMessage()               {}
-func (*GetEntityResponse) Descriptor() ([]byte, []int) { return fileDescriptor7, []int{1} }
+func (m *GetEntityResponse) Reset()         { *m = GetEntityResponse{} }
+func (m *GetEntityResponse) String() string { return proto.CompactTextString(m) }
+func (*GetEntityResponse) ProtoMessage()    {}
+func (*GetEntityResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_get_entity_8cba45390b1fa08e, []int{1}
+}
+func (m *GetEntityResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GetEntityResponse.Unmarshal(m, b)
+}
+func (m *GetEntityResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GetEntityResponse.Marshal(b, m, deterministic)
+}
+func (dst *GetEntityResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetEntityResponse.Merge(dst, src)
+}
+func (m *GetEntityResponse) XXX_Size() int {
+	return xxx_messageInfo_GetEntityResponse.Size(m)
+}
+func (m *GetEntityResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_GetEntityResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GetEntityResponse proto.InternalMessageInfo
 
 func (m *GetEntityResponse) GetEntity() *Entity {
 	if m != nil {
@@ -51,9 +101,9 @@ func init() {
 	proto.RegisterType((*GetEntityResponse)(nil), "ai.metathings.service.core.GetEntityResponse")
 }
 
-func init() { proto.RegisterFile("get_entity.proto", fileDescriptor7) }
+func init() { proto.RegisterFile("get_entity.proto", fileDescriptor_get_entity_8cba45390b1fa08e) }
 
-var fileDescriptor7 = []byte{
+var fileDescriptor_get_entity_8cba45390b1fa08e = []byte{
 	// 231 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x74, 0x8f, 0xb1, 0x4a, 0xc4, 0x40,
 	0x10, 0x86, 0x49, 0x8a, 0x14, 0xab, 0xc5, 0x99, 0x4a, 0x82, 0xe8, 0x91, 0xca, 0xe6, 0x66, 0x41,

@@ -6,7 +6,7 @@ package identity
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import google_protobuf "github.com/golang/protobuf/ptypes/wrappers"
+import wrappers "github.com/golang/protobuf/ptypes/wrappers"
 import _ "github.com/mwitkow/go-proto-validators"
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -14,16 +14,44 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+
 type DeleteUserRequest struct {
-	UserId *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=user_id,json=userId" json:"user_id,omitempty"`
+	UserId               *wrappers.StringValue `protobuf:"bytes,1,opt,name=user_id,json=userId" json:"user_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *DeleteUserRequest) Reset()                    { *m = DeleteUserRequest{} }
-func (m *DeleteUserRequest) String() string            { return proto.CompactTextString(m) }
-func (*DeleteUserRequest) ProtoMessage()               {}
-func (*DeleteUserRequest) Descriptor() ([]byte, []int) { return fileDescriptor25, []int{0} }
+func (m *DeleteUserRequest) Reset()         { *m = DeleteUserRequest{} }
+func (m *DeleteUserRequest) String() string { return proto.CompactTextString(m) }
+func (*DeleteUserRequest) ProtoMessage()    {}
+func (*DeleteUserRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_delete_user_92277a178cbac0fc, []int{0}
+}
+func (m *DeleteUserRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DeleteUserRequest.Unmarshal(m, b)
+}
+func (m *DeleteUserRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DeleteUserRequest.Marshal(b, m, deterministic)
+}
+func (dst *DeleteUserRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DeleteUserRequest.Merge(dst, src)
+}
+func (m *DeleteUserRequest) XXX_Size() int {
+	return xxx_messageInfo_DeleteUserRequest.Size(m)
+}
+func (m *DeleteUserRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_DeleteUserRequest.DiscardUnknown(m)
+}
 
-func (m *DeleteUserRequest) GetUserId() *google_protobuf.StringValue {
+var xxx_messageInfo_DeleteUserRequest proto.InternalMessageInfo
+
+func (m *DeleteUserRequest) GetUserId() *wrappers.StringValue {
 	if m != nil {
 		return m.UserId
 	}
@@ -34,9 +62,9 @@ func init() {
 	proto.RegisterType((*DeleteUserRequest)(nil), "ai.metathings.service.identity.DeleteUserRequest")
 }
 
-func init() { proto.RegisterFile("delete_user.proto", fileDescriptor25) }
+func init() { proto.RegisterFile("delete_user.proto", fileDescriptor_delete_user_92277a178cbac0fc) }
 
-var fileDescriptor25 = []byte{
+var fileDescriptor_delete_user_92277a178cbac0fc = []byte{
 	// 208 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x3c, 0x8e, 0x31, 0x4b, 0xc4, 0x40,
 	0x10, 0x46, 0x89, 0x45, 0x84, 0x58, 0xdd, 0x55, 0x72, 0xc8, 0x79, 0x58, 0xd9, 0xdc, 0x2c, 0x28,

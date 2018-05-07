@@ -6,7 +6,7 @@ package core_agent
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import google_protobuf "github.com/golang/protobuf/ptypes/wrappers"
+import wrappers "github.com/golang/protobuf/ptypes/wrappers"
 import _ "github.com/mwitkow/go-proto-validators"
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -14,16 +14,44 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+
 type HeartbeatRequest struct {
-	EntityId *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=entity_id,json=entityId" json:"entity_id,omitempty"`
+	EntityId             *wrappers.StringValue `protobuf:"bytes,1,opt,name=entity_id,json=entityId" json:"entity_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *HeartbeatRequest) Reset()                    { *m = HeartbeatRequest{} }
-func (m *HeartbeatRequest) String() string            { return proto.CompactTextString(m) }
-func (*HeartbeatRequest) ProtoMessage()               {}
-func (*HeartbeatRequest) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{0} }
+func (m *HeartbeatRequest) Reset()         { *m = HeartbeatRequest{} }
+func (m *HeartbeatRequest) String() string { return proto.CompactTextString(m) }
+func (*HeartbeatRequest) ProtoMessage()    {}
+func (*HeartbeatRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_heartbeat_0ee45b707885fb35, []int{0}
+}
+func (m *HeartbeatRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_HeartbeatRequest.Unmarshal(m, b)
+}
+func (m *HeartbeatRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_HeartbeatRequest.Marshal(b, m, deterministic)
+}
+func (dst *HeartbeatRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_HeartbeatRequest.Merge(dst, src)
+}
+func (m *HeartbeatRequest) XXX_Size() int {
+	return xxx_messageInfo_HeartbeatRequest.Size(m)
+}
+func (m *HeartbeatRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_HeartbeatRequest.DiscardUnknown(m)
+}
 
-func (m *HeartbeatRequest) GetEntityId() *google_protobuf.StringValue {
+var xxx_messageInfo_HeartbeatRequest proto.InternalMessageInfo
+
+func (m *HeartbeatRequest) GetEntityId() *wrappers.StringValue {
 	if m != nil {
 		return m.EntityId
 	}
@@ -34,9 +62,9 @@ func init() {
 	proto.RegisterType((*HeartbeatRequest)(nil), "ai.metathings.service.core_agent.HeartbeatRequest")
 }
 
-func init() { proto.RegisterFile("heartbeat.proto", fileDescriptor5) }
+func init() { proto.RegisterFile("heartbeat.proto", fileDescriptor_heartbeat_0ee45b707885fb35) }
 
-var fileDescriptor5 = []byte{
+var fileDescriptor_heartbeat_0ee45b707885fb35 = []byte{
 	// 206 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x3c, 0x8e, 0xc1, 0x4a, 0xc4, 0x40,
 	0x0c, 0x40, 0xa9, 0x87, 0x45, 0xeb, 0x41, 0xd9, 0x93, 0x2c, 0xa2, 0xc5, 0x93, 0x97, 0xcd, 0x80,

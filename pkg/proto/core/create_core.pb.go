@@ -6,7 +6,7 @@ package core
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import google_protobuf "github.com/golang/protobuf/ptypes/wrappers"
+import wrappers "github.com/golang/protobuf/ptypes/wrappers"
 import _ "github.com/mwitkow/go-proto-validators"
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -14,16 +14,44 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+
 type CreateCoreRequest struct {
-	Name *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *CreateCoreRequest) Reset()                    { *m = CreateCoreRequest{} }
-func (m *CreateCoreRequest) String() string            { return proto.CompactTextString(m) }
-func (*CreateCoreRequest) ProtoMessage()               {}
-func (*CreateCoreRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{0} }
+func (m *CreateCoreRequest) Reset()         { *m = CreateCoreRequest{} }
+func (m *CreateCoreRequest) String() string { return proto.CompactTextString(m) }
+func (*CreateCoreRequest) ProtoMessage()    {}
+func (*CreateCoreRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_create_core_ed22e6b7e381e604, []int{0}
+}
+func (m *CreateCoreRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_CreateCoreRequest.Unmarshal(m, b)
+}
+func (m *CreateCoreRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_CreateCoreRequest.Marshal(b, m, deterministic)
+}
+func (dst *CreateCoreRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CreateCoreRequest.Merge(dst, src)
+}
+func (m *CreateCoreRequest) XXX_Size() int {
+	return xxx_messageInfo_CreateCoreRequest.Size(m)
+}
+func (m *CreateCoreRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_CreateCoreRequest.DiscardUnknown(m)
+}
 
-func (m *CreateCoreRequest) GetName() *google_protobuf.StringValue {
+var xxx_messageInfo_CreateCoreRequest proto.InternalMessageInfo
+
+func (m *CreateCoreRequest) GetName() *wrappers.StringValue {
 	if m != nil {
 		return m.Name
 	}
@@ -31,13 +59,35 @@ func (m *CreateCoreRequest) GetName() *google_protobuf.StringValue {
 }
 
 type CreateCoreResponse struct {
-	Core *Core `protobuf:"bytes,1,opt,name=core" json:"core,omitempty"`
+	Core                 *Core    `protobuf:"bytes,1,opt,name=core" json:"core,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *CreateCoreResponse) Reset()                    { *m = CreateCoreResponse{} }
-func (m *CreateCoreResponse) String() string            { return proto.CompactTextString(m) }
-func (*CreateCoreResponse) ProtoMessage()               {}
-func (*CreateCoreResponse) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{1} }
+func (m *CreateCoreResponse) Reset()         { *m = CreateCoreResponse{} }
+func (m *CreateCoreResponse) String() string { return proto.CompactTextString(m) }
+func (*CreateCoreResponse) ProtoMessage()    {}
+func (*CreateCoreResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_create_core_ed22e6b7e381e604, []int{1}
+}
+func (m *CreateCoreResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_CreateCoreResponse.Unmarshal(m, b)
+}
+func (m *CreateCoreResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_CreateCoreResponse.Marshal(b, m, deterministic)
+}
+func (dst *CreateCoreResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CreateCoreResponse.Merge(dst, src)
+}
+func (m *CreateCoreResponse) XXX_Size() int {
+	return xxx_messageInfo_CreateCoreResponse.Size(m)
+}
+func (m *CreateCoreResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_CreateCoreResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_CreateCoreResponse proto.InternalMessageInfo
 
 func (m *CreateCoreResponse) GetCore() *Core {
 	if m != nil {
@@ -51,9 +101,9 @@ func init() {
 	proto.RegisterType((*CreateCoreResponse)(nil), "ai.metathings.service.core.CreateCoreResponse")
 }
 
-func init() { proto.RegisterFile("create_core.proto", fileDescriptor1) }
+func init() { proto.RegisterFile("create_core.proto", fileDescriptor_create_core_ed22e6b7e381e604) }
 
-var fileDescriptor1 = []byte{
+var fileDescriptor_create_core_ed22e6b7e381e604 = []byte{
 	// 219 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x74, 0x8f, 0x4f, 0x4b, 0x03, 0x31,
 	0x10, 0xc5, 0x29, 0x14, 0x0f, 0xf1, 0xd4, 0x3d, 0xc9, 0x22, 0x52, 0x7a, 0xf2, 0xd2, 0x89, 0xa8,

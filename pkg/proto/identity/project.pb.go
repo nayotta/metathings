@@ -12,21 +12,49 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+
 type Project struct {
-	Id          string   `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	DomainId    string   `protobuf:"bytes,2,opt,name=domain_id,json=domainId" json:"domain_id,omitempty"`
-	ParentId    string   `protobuf:"bytes,3,opt,name=parent_id,json=parentId" json:"parent_id,omitempty"`
-	IsDomain    bool     `protobuf:"varint,4,opt,name=is_domain,json=isDomain" json:"is_domain,omitempty"`
-	Enabled     bool     `protobuf:"varint,5,opt,name=enabled" json:"enabled,omitempty"`
-	Name        string   `protobuf:"bytes,6,opt,name=name" json:"name,omitempty"`
-	Description string   `protobuf:"bytes,7,opt,name=description" json:"description,omitempty"`
-	Tags        []string `protobuf:"bytes,8,rep,name=tags" json:"tags,omitempty"`
+	Id                   string   `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
+	DomainId             string   `protobuf:"bytes,2,opt,name=domain_id,json=domainId" json:"domain_id,omitempty"`
+	ParentId             string   `protobuf:"bytes,3,opt,name=parent_id,json=parentId" json:"parent_id,omitempty"`
+	IsDomain             bool     `protobuf:"varint,4,opt,name=is_domain,json=isDomain" json:"is_domain,omitempty"`
+	Enabled              bool     `protobuf:"varint,5,opt,name=enabled" json:"enabled,omitempty"`
+	Name                 string   `protobuf:"bytes,6,opt,name=name" json:"name,omitempty"`
+	Description          string   `protobuf:"bytes,7,opt,name=description" json:"description,omitempty"`
+	Tags                 []string `protobuf:"bytes,8,rep,name=tags" json:"tags,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *Project) Reset()                    { *m = Project{} }
-func (m *Project) String() string            { return proto.CompactTextString(m) }
-func (*Project) ProtoMessage()               {}
-func (*Project) Descriptor() ([]byte, []int) { return fileDescriptor57, []int{0} }
+func (m *Project) Reset()         { *m = Project{} }
+func (m *Project) String() string { return proto.CompactTextString(m) }
+func (*Project) ProtoMessage()    {}
+func (*Project) Descriptor() ([]byte, []int) {
+	return fileDescriptor_project_2990fcd28b876bc6, []int{0}
+}
+func (m *Project) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Project.Unmarshal(m, b)
+}
+func (m *Project) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Project.Marshal(b, m, deterministic)
+}
+func (dst *Project) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Project.Merge(dst, src)
+}
+func (m *Project) XXX_Size() int {
+	return xxx_messageInfo_Project.Size(m)
+}
+func (m *Project) XXX_DiscardUnknown() {
+	xxx_messageInfo_Project.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Project proto.InternalMessageInfo
 
 func (m *Project) GetId() string {
 	if m != nil {
@@ -88,9 +116,9 @@ func init() {
 	proto.RegisterType((*Project)(nil), "ai.metathings.service.identity.Project")
 }
 
-func init() { proto.RegisterFile("project.proto", fileDescriptor57) }
+func init() { proto.RegisterFile("project.proto", fileDescriptor_project_2990fcd28b876bc6) }
 
-var fileDescriptor57 = []byte{
+var fileDescriptor_project_2990fcd28b876bc6 = []byte{
 	// 207 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x4c, 0x8f, 0x41, 0x4a, 0x04, 0x31,
 	0x10, 0x45, 0x49, 0xcf, 0x38, 0x9d, 0x89, 0xe8, 0x22, 0xab, 0x02, 0x41, 0x82, 0xab, 0x59, 0x65,

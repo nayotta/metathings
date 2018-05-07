@@ -6,7 +6,7 @@ package identity
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import google_protobuf "github.com/golang/protobuf/ptypes/wrappers"
+import wrappers "github.com/golang/protobuf/ptypes/wrappers"
 import _ "github.com/mwitkow/go-proto-validators"
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -14,16 +14,44 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+
 type DeleteProjectRequest struct {
-	ProjectId *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=project_id,json=projectId" json:"project_id,omitempty"`
+	ProjectId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=project_id,json=projectId" json:"project_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *DeleteProjectRequest) Reset()                    { *m = DeleteProjectRequest{} }
-func (m *DeleteProjectRequest) String() string            { return proto.CompactTextString(m) }
-func (*DeleteProjectRequest) ProtoMessage()               {}
-func (*DeleteProjectRequest) Descriptor() ([]byte, []int) { return fileDescriptor22, []int{0} }
+func (m *DeleteProjectRequest) Reset()         { *m = DeleteProjectRequest{} }
+func (m *DeleteProjectRequest) String() string { return proto.CompactTextString(m) }
+func (*DeleteProjectRequest) ProtoMessage()    {}
+func (*DeleteProjectRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_delete_project_1a00d305fbe4c8be, []int{0}
+}
+func (m *DeleteProjectRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DeleteProjectRequest.Unmarshal(m, b)
+}
+func (m *DeleteProjectRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DeleteProjectRequest.Marshal(b, m, deterministic)
+}
+func (dst *DeleteProjectRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DeleteProjectRequest.Merge(dst, src)
+}
+func (m *DeleteProjectRequest) XXX_Size() int {
+	return xxx_messageInfo_DeleteProjectRequest.Size(m)
+}
+func (m *DeleteProjectRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_DeleteProjectRequest.DiscardUnknown(m)
+}
 
-func (m *DeleteProjectRequest) GetProjectId() *google_protobuf.StringValue {
+var xxx_messageInfo_DeleteProjectRequest proto.InternalMessageInfo
+
+func (m *DeleteProjectRequest) GetProjectId() *wrappers.StringValue {
 	if m != nil {
 		return m.ProjectId
 	}
@@ -34,9 +62,11 @@ func init() {
 	proto.RegisterType((*DeleteProjectRequest)(nil), "ai.metathings.service.identity.DeleteProjectRequest")
 }
 
-func init() { proto.RegisterFile("delete_project.proto", fileDescriptor22) }
+func init() {
+	proto.RegisterFile("delete_project.proto", fileDescriptor_delete_project_1a00d305fbe4c8be)
+}
 
-var fileDescriptor22 = []byte{
+var fileDescriptor_delete_project_1a00d305fbe4c8be = []byte{
 	// 212 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x3c, 0xce, 0xc1, 0x4a, 0x03, 0x31,
 	0x10, 0xc6, 0x71, 0xd6, 0x43, 0xc1, 0x78, 0x2b, 0x3d, 0x48, 0x91, 0x5a, 0x3c, 0x79, 0xe9, 0x04,

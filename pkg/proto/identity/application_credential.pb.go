@@ -6,28 +6,56 @@ package identity
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import google_protobuf2 "github.com/golang/protobuf/ptypes/timestamp"
+import timestamp "github.com/golang/protobuf/ptypes/timestamp"
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+
 type ApplicationCredential struct {
-	Id           string                       `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	Name         string                       `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
-	Description  string                       `protobuf:"bytes,3,opt,name=description" json:"description,omitempty"`
-	Secret       string                       `protobuf:"bytes,4,opt,name=secret" json:"secret,omitempty"`
-	Unrestricted bool                         `protobuf:"varint,5,opt,name=unrestricted" json:"unrestricted,omitempty"`
-	ProjectId    string                       `protobuf:"bytes,6,opt,name=project_id,json=projectId" json:"project_id,omitempty"`
-	Role         *ApplicationCredential__Role `protobuf:"bytes,7,opt,name=role" json:"role,omitempty"`
-	ExpiresAt    *google_protobuf2.Timestamp  `protobuf:"bytes,8,opt,name=expires_at,json=expiresAt" json:"expires_at,omitempty"`
+	Id                   string                       `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
+	Name                 string                       `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
+	Description          string                       `protobuf:"bytes,3,opt,name=description" json:"description,omitempty"`
+	Secret               string                       `protobuf:"bytes,4,opt,name=secret" json:"secret,omitempty"`
+	Unrestricted         bool                         `protobuf:"varint,5,opt,name=unrestricted" json:"unrestricted,omitempty"`
+	ProjectId            string                       `protobuf:"bytes,6,opt,name=project_id,json=projectId" json:"project_id,omitempty"`
+	Role                 *ApplicationCredential__Role `protobuf:"bytes,7,opt,name=role" json:"role,omitempty"`
+	ExpiresAt            *timestamp.Timestamp         `protobuf:"bytes,8,opt,name=expires_at,json=expiresAt" json:"expires_at,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}                     `json:"-"`
+	XXX_unrecognized     []byte                       `json:"-"`
+	XXX_sizecache        int32                        `json:"-"`
 }
 
-func (m *ApplicationCredential) Reset()                    { *m = ApplicationCredential{} }
-func (m *ApplicationCredential) String() string            { return proto.CompactTextString(m) }
-func (*ApplicationCredential) ProtoMessage()               {}
-func (*ApplicationCredential) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{0} }
+func (m *ApplicationCredential) Reset()         { *m = ApplicationCredential{} }
+func (m *ApplicationCredential) String() string { return proto.CompactTextString(m) }
+func (*ApplicationCredential) ProtoMessage()    {}
+func (*ApplicationCredential) Descriptor() ([]byte, []int) {
+	return fileDescriptor_application_credential_53f1a1e4a308c9f8, []int{0}
+}
+func (m *ApplicationCredential) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ApplicationCredential.Unmarshal(m, b)
+}
+func (m *ApplicationCredential) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ApplicationCredential.Marshal(b, m, deterministic)
+}
+func (dst *ApplicationCredential) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ApplicationCredential.Merge(dst, src)
+}
+func (m *ApplicationCredential) XXX_Size() int {
+	return xxx_messageInfo_ApplicationCredential.Size(m)
+}
+func (m *ApplicationCredential) XXX_DiscardUnknown() {
+	xxx_messageInfo_ApplicationCredential.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ApplicationCredential proto.InternalMessageInfo
 
 func (m *ApplicationCredential) GetId() string {
 	if m != nil {
@@ -78,7 +106,7 @@ func (m *ApplicationCredential) GetRole() *ApplicationCredential__Role {
 	return nil
 }
 
-func (m *ApplicationCredential) GetExpiresAt() *google_protobuf2.Timestamp {
+func (m *ApplicationCredential) GetExpiresAt() *timestamp.Timestamp {
 	if m != nil {
 		return m.ExpiresAt
 	}
@@ -86,15 +114,37 @@ func (m *ApplicationCredential) GetExpiresAt() *google_protobuf2.Timestamp {
 }
 
 type ApplicationCredential__Role struct {
-	Id       string `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	Name     string `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
-	DomainId string `protobuf:"bytes,3,opt,name=domain_id,json=domainId" json:"domain_id,omitempty"`
+	Id                   string   `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
+	Name                 string   `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
+	DomainId             string   `protobuf:"bytes,3,opt,name=domain_id,json=domainId" json:"domain_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *ApplicationCredential__Role) Reset()                    { *m = ApplicationCredential__Role{} }
-func (m *ApplicationCredential__Role) String() string            { return proto.CompactTextString(m) }
-func (*ApplicationCredential__Role) ProtoMessage()               {}
-func (*ApplicationCredential__Role) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{0, 0} }
+func (m *ApplicationCredential__Role) Reset()         { *m = ApplicationCredential__Role{} }
+func (m *ApplicationCredential__Role) String() string { return proto.CompactTextString(m) }
+func (*ApplicationCredential__Role) ProtoMessage()    {}
+func (*ApplicationCredential__Role) Descriptor() ([]byte, []int) {
+	return fileDescriptor_application_credential_53f1a1e4a308c9f8, []int{0, 0}
+}
+func (m *ApplicationCredential__Role) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ApplicationCredential__Role.Unmarshal(m, b)
+}
+func (m *ApplicationCredential__Role) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ApplicationCredential__Role.Marshal(b, m, deterministic)
+}
+func (dst *ApplicationCredential__Role) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ApplicationCredential__Role.Merge(dst, src)
+}
+func (m *ApplicationCredential__Role) XXX_Size() int {
+	return xxx_messageInfo_ApplicationCredential__Role.Size(m)
+}
+func (m *ApplicationCredential__Role) XXX_DiscardUnknown() {
+	xxx_messageInfo_ApplicationCredential__Role.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ApplicationCredential__Role proto.InternalMessageInfo
 
 func (m *ApplicationCredential__Role) GetId() string {
 	if m != nil {
@@ -122,9 +172,11 @@ func init() {
 	proto.RegisterType((*ApplicationCredential__Role)(nil), "ai.metathings.service.identity.ApplicationCredential._Role")
 }
 
-func init() { proto.RegisterFile("application_credential.proto", fileDescriptor5) }
+func init() {
+	proto.RegisterFile("application_credential.proto", fileDescriptor_application_credential_53f1a1e4a308c9f8)
+}
 
-var fileDescriptor5 = []byte{
+var fileDescriptor_application_credential_53f1a1e4a308c9f8 = []byte{
 	// 308 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x90, 0x4b, 0x6b, 0x23, 0x31,
 	0x10, 0x84, 0x19, 0xbf, 0xd6, 0xd3, 0x5e, 0xf6, 0x20, 0xd8, 0x45, 0x78, 0xf3, 0x18, 0x7c, 0xf2,

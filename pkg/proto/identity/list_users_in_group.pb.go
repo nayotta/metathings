@@ -6,7 +6,7 @@ package identity
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import google_protobuf "github.com/golang/protobuf/ptypes/wrappers"
+import wrappers "github.com/golang/protobuf/ptypes/wrappers"
 import _ "github.com/mwitkow/go-proto-validators"
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -14,16 +14,44 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+
 type ListUsersInGroupRequest struct {
-	GroupId *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=group_id,json=groupId" json:"group_id,omitempty"`
+	GroupId              *wrappers.StringValue `protobuf:"bytes,1,opt,name=group_id,json=groupId" json:"group_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *ListUsersInGroupRequest) Reset()                    { *m = ListUsersInGroupRequest{} }
-func (m *ListUsersInGroupRequest) String() string            { return proto.CompactTextString(m) }
-func (*ListUsersInGroupRequest) ProtoMessage()               {}
-func (*ListUsersInGroupRequest) Descriptor() ([]byte, []int) { return fileDescriptor50, []int{0} }
+func (m *ListUsersInGroupRequest) Reset()         { *m = ListUsersInGroupRequest{} }
+func (m *ListUsersInGroupRequest) String() string { return proto.CompactTextString(m) }
+func (*ListUsersInGroupRequest) ProtoMessage()    {}
+func (*ListUsersInGroupRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_list_users_in_group_513a6c4de42ac3b4, []int{0}
+}
+func (m *ListUsersInGroupRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ListUsersInGroupRequest.Unmarshal(m, b)
+}
+func (m *ListUsersInGroupRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ListUsersInGroupRequest.Marshal(b, m, deterministic)
+}
+func (dst *ListUsersInGroupRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ListUsersInGroupRequest.Merge(dst, src)
+}
+func (m *ListUsersInGroupRequest) XXX_Size() int {
+	return xxx_messageInfo_ListUsersInGroupRequest.Size(m)
+}
+func (m *ListUsersInGroupRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_ListUsersInGroupRequest.DiscardUnknown(m)
+}
 
-func (m *ListUsersInGroupRequest) GetGroupId() *google_protobuf.StringValue {
+var xxx_messageInfo_ListUsersInGroupRequest proto.InternalMessageInfo
+
+func (m *ListUsersInGroupRequest) GetGroupId() *wrappers.StringValue {
 	if m != nil {
 		return m.GroupId
 	}
@@ -31,13 +59,35 @@ func (m *ListUsersInGroupRequest) GetGroupId() *google_protobuf.StringValue {
 }
 
 type ListUsersInGroupResponse struct {
-	Users []*User `protobuf:"bytes,1,rep,name=users" json:"users,omitempty"`
+	Users                []*User  `protobuf:"bytes,1,rep,name=users" json:"users,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *ListUsersInGroupResponse) Reset()                    { *m = ListUsersInGroupResponse{} }
-func (m *ListUsersInGroupResponse) String() string            { return proto.CompactTextString(m) }
-func (*ListUsersInGroupResponse) ProtoMessage()               {}
-func (*ListUsersInGroupResponse) Descriptor() ([]byte, []int) { return fileDescriptor50, []int{1} }
+func (m *ListUsersInGroupResponse) Reset()         { *m = ListUsersInGroupResponse{} }
+func (m *ListUsersInGroupResponse) String() string { return proto.CompactTextString(m) }
+func (*ListUsersInGroupResponse) ProtoMessage()    {}
+func (*ListUsersInGroupResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_list_users_in_group_513a6c4de42ac3b4, []int{1}
+}
+func (m *ListUsersInGroupResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ListUsersInGroupResponse.Unmarshal(m, b)
+}
+func (m *ListUsersInGroupResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ListUsersInGroupResponse.Marshal(b, m, deterministic)
+}
+func (dst *ListUsersInGroupResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ListUsersInGroupResponse.Merge(dst, src)
+}
+func (m *ListUsersInGroupResponse) XXX_Size() int {
+	return xxx_messageInfo_ListUsersInGroupResponse.Size(m)
+}
+func (m *ListUsersInGroupResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_ListUsersInGroupResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ListUsersInGroupResponse proto.InternalMessageInfo
 
 func (m *ListUsersInGroupResponse) GetUsers() []*User {
 	if m != nil {
@@ -51,9 +101,11 @@ func init() {
 	proto.RegisterType((*ListUsersInGroupResponse)(nil), "ai.metathings.service.identity.ListUsersInGroupResponse")
 }
 
-func init() { proto.RegisterFile("list_users_in_group.proto", fileDescriptor50) }
+func init() {
+	proto.RegisterFile("list_users_in_group.proto", fileDescriptor_list_users_in_group_513a6c4de42ac3b4)
+}
 
-var fileDescriptor50 = []byte{
+var fileDescriptor_list_users_in_group_513a6c4de42ac3b4 = []byte{
 	// 260 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x7c, 0x90, 0xb1, 0x4b, 0xc3, 0x40,
 	0x14, 0xc6, 0x89, 0x62, 0x95, 0xeb, 0xd6, 0xc5, 0x58, 0xa4, 0x86, 0xe2, 0xd0, 0xa5, 0x17, 0xa8,

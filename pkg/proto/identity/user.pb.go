@@ -12,19 +12,47 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+
 type User struct {
-	Id               string            `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	Name             string            `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
-	DefaultProjectId string            `protobuf:"bytes,3,opt,name=default_project_id,json=defaultProjectId" json:"default_project_id,omitempty"`
-	DomainId         string            `protobuf:"bytes,4,opt,name=domain_id,json=domainId" json:"domain_id,omitempty"`
-	Enabled          bool              `protobuf:"varint,5,opt,name=enabled" json:"enabled,omitempty"`
-	Extra            map[string]string `protobuf:"bytes,6,rep,name=extra" json:"extra,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	Id                   string            `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
+	Name                 string            `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
+	DefaultProjectId     string            `protobuf:"bytes,3,opt,name=default_project_id,json=defaultProjectId" json:"default_project_id,omitempty"`
+	DomainId             string            `protobuf:"bytes,4,opt,name=domain_id,json=domainId" json:"domain_id,omitempty"`
+	Enabled              bool              `protobuf:"varint,5,opt,name=enabled" json:"enabled,omitempty"`
+	Extra                map[string]string `protobuf:"bytes,6,rep,name=extra" json:"extra,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
+	XXX_unrecognized     []byte            `json:"-"`
+	XXX_sizecache        int32             `json:"-"`
 }
 
-func (m *User) Reset()                    { *m = User{} }
-func (m *User) String() string            { return proto.CompactTextString(m) }
-func (*User) ProtoMessage()               {}
-func (*User) Descriptor() ([]byte, []int) { return fileDescriptor67, []int{0} }
+func (m *User) Reset()         { *m = User{} }
+func (m *User) String() string { return proto.CompactTextString(m) }
+func (*User) ProtoMessage()    {}
+func (*User) Descriptor() ([]byte, []int) {
+	return fileDescriptor_user_51a43fbd448ed6aa, []int{0}
+}
+func (m *User) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_User.Unmarshal(m, b)
+}
+func (m *User) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_User.Marshal(b, m, deterministic)
+}
+func (dst *User) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_User.Merge(dst, src)
+}
+func (m *User) XXX_Size() int {
+	return xxx_messageInfo_User.Size(m)
+}
+func (m *User) XXX_DiscardUnknown() {
+	xxx_messageInfo_User.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_User proto.InternalMessageInfo
 
 func (m *User) GetId() string {
 	if m != nil {
@@ -70,11 +98,12 @@ func (m *User) GetExtra() map[string]string {
 
 func init() {
 	proto.RegisterType((*User)(nil), "ai.metathings.service.identity.User")
+	proto.RegisterMapType((map[string]string)(nil), "ai.metathings.service.identity.User.ExtraEntry")
 }
 
-func init() { proto.RegisterFile("user.proto", fileDescriptor67) }
+func init() { proto.RegisterFile("user.proto", fileDescriptor_user_51a43fbd448ed6aa) }
 
-var fileDescriptor67 = []byte{
+var fileDescriptor_user_51a43fbd448ed6aa = []byte{
 	// 256 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x7c, 0x50, 0xcd, 0x4a, 0xc3, 0x40,
 	0x10, 0x26, 0x69, 0x52, 0xdb, 0x11, 0xa4, 0x8c, 0x1e, 0x16, 0x05, 0x09, 0x9e, 0x72, 0x90, 0x15,

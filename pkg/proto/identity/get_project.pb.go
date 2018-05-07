@@ -6,7 +6,7 @@ package identity
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import google_protobuf "github.com/golang/protobuf/ptypes/wrappers"
+import wrappers "github.com/golang/protobuf/ptypes/wrappers"
 import _ "github.com/mwitkow/go-proto-validators"
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -14,16 +14,44 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+
 type GetProjectRequest struct {
-	ProjectId *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=project_id,json=projectId" json:"project_id,omitempty"`
+	ProjectId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=project_id,json=projectId" json:"project_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *GetProjectRequest) Reset()                    { *m = GetProjectRequest{} }
-func (m *GetProjectRequest) String() string            { return proto.CompactTextString(m) }
-func (*GetProjectRequest) ProtoMessage()               {}
-func (*GetProjectRequest) Descriptor() ([]byte, []int) { return fileDescriptor30, []int{0} }
+func (m *GetProjectRequest) Reset()         { *m = GetProjectRequest{} }
+func (m *GetProjectRequest) String() string { return proto.CompactTextString(m) }
+func (*GetProjectRequest) ProtoMessage()    {}
+func (*GetProjectRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_get_project_0861279976f551c6, []int{0}
+}
+func (m *GetProjectRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GetProjectRequest.Unmarshal(m, b)
+}
+func (m *GetProjectRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GetProjectRequest.Marshal(b, m, deterministic)
+}
+func (dst *GetProjectRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetProjectRequest.Merge(dst, src)
+}
+func (m *GetProjectRequest) XXX_Size() int {
+	return xxx_messageInfo_GetProjectRequest.Size(m)
+}
+func (m *GetProjectRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_GetProjectRequest.DiscardUnknown(m)
+}
 
-func (m *GetProjectRequest) GetProjectId() *google_protobuf.StringValue {
+var xxx_messageInfo_GetProjectRequest proto.InternalMessageInfo
+
+func (m *GetProjectRequest) GetProjectId() *wrappers.StringValue {
 	if m != nil {
 		return m.ProjectId
 	}
@@ -31,13 +59,35 @@ func (m *GetProjectRequest) GetProjectId() *google_protobuf.StringValue {
 }
 
 type GetProjectResponse struct {
-	Project *Project `protobuf:"bytes,1,opt,name=project" json:"project,omitempty"`
+	Project              *Project `protobuf:"bytes,1,opt,name=project" json:"project,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *GetProjectResponse) Reset()                    { *m = GetProjectResponse{} }
-func (m *GetProjectResponse) String() string            { return proto.CompactTextString(m) }
-func (*GetProjectResponse) ProtoMessage()               {}
-func (*GetProjectResponse) Descriptor() ([]byte, []int) { return fileDescriptor30, []int{1} }
+func (m *GetProjectResponse) Reset()         { *m = GetProjectResponse{} }
+func (m *GetProjectResponse) String() string { return proto.CompactTextString(m) }
+func (*GetProjectResponse) ProtoMessage()    {}
+func (*GetProjectResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_get_project_0861279976f551c6, []int{1}
+}
+func (m *GetProjectResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GetProjectResponse.Unmarshal(m, b)
+}
+func (m *GetProjectResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GetProjectResponse.Marshal(b, m, deterministic)
+}
+func (dst *GetProjectResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetProjectResponse.Merge(dst, src)
+}
+func (m *GetProjectResponse) XXX_Size() int {
+	return xxx_messageInfo_GetProjectResponse.Size(m)
+}
+func (m *GetProjectResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_GetProjectResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GetProjectResponse proto.InternalMessageInfo
 
 func (m *GetProjectResponse) GetProject() *Project {
 	if m != nil {
@@ -51,9 +101,9 @@ func init() {
 	proto.RegisterType((*GetProjectResponse)(nil), "ai.metathings.service.identity.GetProjectResponse")
 }
 
-func init() { proto.RegisterFile("get_project.proto", fileDescriptor30) }
+func init() { proto.RegisterFile("get_project.proto", fileDescriptor_get_project_0861279976f551c6) }
 
-var fileDescriptor30 = []byte{
+var fileDescriptor_get_project_0861279976f551c6 = []byte{
 	// 240 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x7c, 0x90, 0xb1, 0x4a, 0xc4, 0x40,
 	0x10, 0x86, 0x89, 0xc5, 0x89, 0x2b, 0x16, 0x97, 0x4a, 0x0e, 0x39, 0x8f, 0x6b, 0xb4, 0xb9, 0x59,

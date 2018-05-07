@@ -6,7 +6,7 @@ package identity
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import google_protobuf "github.com/golang/protobuf/ptypes/wrappers"
+import wrappers "github.com/golang/protobuf/ptypes/wrappers"
 import _ "github.com/mwitkow/go-proto-validators"
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -14,16 +14,44 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+
 type ListProjectsForUserRequest struct {
-	UserId *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=user_id,json=userId" json:"user_id,omitempty"`
+	UserId               *wrappers.StringValue `protobuf:"bytes,1,opt,name=user_id,json=userId" json:"user_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *ListProjectsForUserRequest) Reset()                    { *m = ListProjectsForUserRequest{} }
-func (m *ListProjectsForUserRequest) String() string            { return proto.CompactTextString(m) }
-func (*ListProjectsForUserRequest) ProtoMessage()               {}
-func (*ListProjectsForUserRequest) Descriptor() ([]byte, []int) { return fileDescriptor41, []int{0} }
+func (m *ListProjectsForUserRequest) Reset()         { *m = ListProjectsForUserRequest{} }
+func (m *ListProjectsForUserRequest) String() string { return proto.CompactTextString(m) }
+func (*ListProjectsForUserRequest) ProtoMessage()    {}
+func (*ListProjectsForUserRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_list_projects_for_user_6f8c5cd63d325df9, []int{0}
+}
+func (m *ListProjectsForUserRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ListProjectsForUserRequest.Unmarshal(m, b)
+}
+func (m *ListProjectsForUserRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ListProjectsForUserRequest.Marshal(b, m, deterministic)
+}
+func (dst *ListProjectsForUserRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ListProjectsForUserRequest.Merge(dst, src)
+}
+func (m *ListProjectsForUserRequest) XXX_Size() int {
+	return xxx_messageInfo_ListProjectsForUserRequest.Size(m)
+}
+func (m *ListProjectsForUserRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_ListProjectsForUserRequest.DiscardUnknown(m)
+}
 
-func (m *ListProjectsForUserRequest) GetUserId() *google_protobuf.StringValue {
+var xxx_messageInfo_ListProjectsForUserRequest proto.InternalMessageInfo
+
+func (m *ListProjectsForUserRequest) GetUserId() *wrappers.StringValue {
 	if m != nil {
 		return m.UserId
 	}
@@ -31,13 +59,35 @@ func (m *ListProjectsForUserRequest) GetUserId() *google_protobuf.StringValue {
 }
 
 type ListProjectsForUserResponse struct {
-	Projects []*Project `protobuf:"bytes,1,rep,name=projects" json:"projects,omitempty"`
+	Projects             []*Project `protobuf:"bytes,1,rep,name=projects" json:"projects,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}   `json:"-"`
+	XXX_unrecognized     []byte     `json:"-"`
+	XXX_sizecache        int32      `json:"-"`
 }
 
-func (m *ListProjectsForUserResponse) Reset()                    { *m = ListProjectsForUserResponse{} }
-func (m *ListProjectsForUserResponse) String() string            { return proto.CompactTextString(m) }
-func (*ListProjectsForUserResponse) ProtoMessage()               {}
-func (*ListProjectsForUserResponse) Descriptor() ([]byte, []int) { return fileDescriptor41, []int{1} }
+func (m *ListProjectsForUserResponse) Reset()         { *m = ListProjectsForUserResponse{} }
+func (m *ListProjectsForUserResponse) String() string { return proto.CompactTextString(m) }
+func (*ListProjectsForUserResponse) ProtoMessage()    {}
+func (*ListProjectsForUserResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_list_projects_for_user_6f8c5cd63d325df9, []int{1}
+}
+func (m *ListProjectsForUserResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ListProjectsForUserResponse.Unmarshal(m, b)
+}
+func (m *ListProjectsForUserResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ListProjectsForUserResponse.Marshal(b, m, deterministic)
+}
+func (dst *ListProjectsForUserResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ListProjectsForUserResponse.Merge(dst, src)
+}
+func (m *ListProjectsForUserResponse) XXX_Size() int {
+	return xxx_messageInfo_ListProjectsForUserResponse.Size(m)
+}
+func (m *ListProjectsForUserResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_ListProjectsForUserResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ListProjectsForUserResponse proto.InternalMessageInfo
 
 func (m *ListProjectsForUserResponse) GetProjects() []*Project {
 	if m != nil {
@@ -51,9 +101,11 @@ func init() {
 	proto.RegisterType((*ListProjectsForUserResponse)(nil), "ai.metathings.service.identity.ListProjectsForUserResponse")
 }
 
-func init() { proto.RegisterFile("list_projects_for_user.proto", fileDescriptor41) }
+func init() {
+	proto.RegisterFile("list_projects_for_user.proto", fileDescriptor_list_projects_for_user_6f8c5cd63d325df9)
+}
 
-var fileDescriptor41 = []byte{
+var fileDescriptor_list_projects_for_user_6f8c5cd63d325df9 = []byte{
 	// 262 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x7c, 0x90, 0x31, 0x4b, 0xc3, 0x60,
 	0x10, 0x86, 0x89, 0x42, 0x95, 0x14, 0x97, 0x4e, 0xa5, 0x96, 0x1a, 0xba, 0xd8, 0xa5, 0x5f, 0xa0,

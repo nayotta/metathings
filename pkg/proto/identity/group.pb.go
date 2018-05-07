@@ -12,17 +12,45 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+
 type Group struct {
-	Id          string `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	Name        string `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
-	DomainId    string `protobuf:"bytes,3,opt,name=domain_id,json=domainId" json:"domain_id,omitempty"`
-	Description string `protobuf:"bytes,4,opt,name=description" json:"description,omitempty"`
+	Id                   string   `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
+	Name                 string   `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
+	DomainId             string   `protobuf:"bytes,3,opt,name=domain_id,json=domainId" json:"domain_id,omitempty"`
+	Description          string   `protobuf:"bytes,4,opt,name=description" json:"description,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *Group) Reset()                    { *m = Group{} }
-func (m *Group) String() string            { return proto.CompactTextString(m) }
-func (*Group) ProtoMessage()               {}
-func (*Group) Descriptor() ([]byte, []int) { return fileDescriptor34, []int{0} }
+func (m *Group) Reset()         { *m = Group{} }
+func (m *Group) String() string { return proto.CompactTextString(m) }
+func (*Group) ProtoMessage()    {}
+func (*Group) Descriptor() ([]byte, []int) {
+	return fileDescriptor_group_a36ba21bc46601ad, []int{0}
+}
+func (m *Group) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Group.Unmarshal(m, b)
+}
+func (m *Group) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Group.Marshal(b, m, deterministic)
+}
+func (dst *Group) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Group.Merge(dst, src)
+}
+func (m *Group) XXX_Size() int {
+	return xxx_messageInfo_Group.Size(m)
+}
+func (m *Group) XXX_DiscardUnknown() {
+	xxx_messageInfo_Group.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Group proto.InternalMessageInfo
 
 func (m *Group) GetId() string {
 	if m != nil {
@@ -56,9 +84,9 @@ func init() {
 	proto.RegisterType((*Group)(nil), "ai.metathings.service.identity.Group")
 }
 
-func init() { proto.RegisterFile("group.proto", fileDescriptor34) }
+func init() { proto.RegisterFile("group.proto", fileDescriptor_group_a36ba21bc46601ad) }
 
-var fileDescriptor34 = []byte{
+var fileDescriptor_group_a36ba21bc46601ad = []byte{
 	// 153 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x4c, 0xce, 0xbf, 0x0a, 0xc2, 0x40,
 	0x0c, 0xc7, 0x71, 0x5a, 0xab, 0xd8, 0x14, 0x1c, 0x32, 0x1d, 0x08, 0x52, 0x9c, 0x9c, 0x6e, 0xf1,

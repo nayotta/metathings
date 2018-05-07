@@ -6,7 +6,7 @@ package identity
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import google_protobuf "github.com/golang/protobuf/ptypes/wrappers"
+import wrappers "github.com/golang/protobuf/ptypes/wrappers"
 import _ "github.com/mwitkow/go-proto-validators"
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -14,56 +14,84 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+
 type CreateProjectRequest struct {
-	DomainId    *google_protobuf.StringValue   `protobuf:"bytes,1,opt,name=domain_id,json=domainId" json:"domain_id,omitempty"`
-	ParentId    *google_protobuf.StringValue   `protobuf:"bytes,2,opt,name=parent_id,json=parentId" json:"parent_id,omitempty"`
-	Enabled     *google_protobuf.BoolValue     `protobuf:"bytes,3,opt,name=enabled" json:"enabled,omitempty"`
-	Name        *google_protobuf.StringValue   `protobuf:"bytes,4,opt,name=name" json:"name,omitempty"`
-	Description *google_protobuf.StringValue   `protobuf:"bytes,5,opt,name=description" json:"description,omitempty"`
-	Tags        []*google_protobuf.StringValue `protobuf:"bytes,6,rep,name=tags" json:"tags,omitempty"`
+	DomainId             *wrappers.StringValue   `protobuf:"bytes,1,opt,name=domain_id,json=domainId" json:"domain_id,omitempty"`
+	ParentId             *wrappers.StringValue   `protobuf:"bytes,2,opt,name=parent_id,json=parentId" json:"parent_id,omitempty"`
+	Enabled              *wrappers.BoolValue     `protobuf:"bytes,3,opt,name=enabled" json:"enabled,omitempty"`
+	Name                 *wrappers.StringValue   `protobuf:"bytes,4,opt,name=name" json:"name,omitempty"`
+	Description          *wrappers.StringValue   `protobuf:"bytes,5,opt,name=description" json:"description,omitempty"`
+	Tags                 []*wrappers.StringValue `protobuf:"bytes,6,rep,name=tags" json:"tags,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}                `json:"-"`
+	XXX_unrecognized     []byte                  `json:"-"`
+	XXX_sizecache        int32                   `json:"-"`
 }
 
-func (m *CreateProjectRequest) Reset()                    { *m = CreateProjectRequest{} }
-func (m *CreateProjectRequest) String() string            { return proto.CompactTextString(m) }
-func (*CreateProjectRequest) ProtoMessage()               {}
-func (*CreateProjectRequest) Descriptor() ([]byte, []int) { return fileDescriptor15, []int{0} }
+func (m *CreateProjectRequest) Reset()         { *m = CreateProjectRequest{} }
+func (m *CreateProjectRequest) String() string { return proto.CompactTextString(m) }
+func (*CreateProjectRequest) ProtoMessage()    {}
+func (*CreateProjectRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_create_project_c501a6bacf7a2273, []int{0}
+}
+func (m *CreateProjectRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_CreateProjectRequest.Unmarshal(m, b)
+}
+func (m *CreateProjectRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_CreateProjectRequest.Marshal(b, m, deterministic)
+}
+func (dst *CreateProjectRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CreateProjectRequest.Merge(dst, src)
+}
+func (m *CreateProjectRequest) XXX_Size() int {
+	return xxx_messageInfo_CreateProjectRequest.Size(m)
+}
+func (m *CreateProjectRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_CreateProjectRequest.DiscardUnknown(m)
+}
 
-func (m *CreateProjectRequest) GetDomainId() *google_protobuf.StringValue {
+var xxx_messageInfo_CreateProjectRequest proto.InternalMessageInfo
+
+func (m *CreateProjectRequest) GetDomainId() *wrappers.StringValue {
 	if m != nil {
 		return m.DomainId
 	}
 	return nil
 }
 
-func (m *CreateProjectRequest) GetParentId() *google_protobuf.StringValue {
+func (m *CreateProjectRequest) GetParentId() *wrappers.StringValue {
 	if m != nil {
 		return m.ParentId
 	}
 	return nil
 }
 
-func (m *CreateProjectRequest) GetEnabled() *google_protobuf.BoolValue {
+func (m *CreateProjectRequest) GetEnabled() *wrappers.BoolValue {
 	if m != nil {
 		return m.Enabled
 	}
 	return nil
 }
 
-func (m *CreateProjectRequest) GetName() *google_protobuf.StringValue {
+func (m *CreateProjectRequest) GetName() *wrappers.StringValue {
 	if m != nil {
 		return m.Name
 	}
 	return nil
 }
 
-func (m *CreateProjectRequest) GetDescription() *google_protobuf.StringValue {
+func (m *CreateProjectRequest) GetDescription() *wrappers.StringValue {
 	if m != nil {
 		return m.Description
 	}
 	return nil
 }
 
-func (m *CreateProjectRequest) GetTags() []*google_protobuf.StringValue {
+func (m *CreateProjectRequest) GetTags() []*wrappers.StringValue {
 	if m != nil {
 		return m.Tags
 	}
@@ -71,13 +99,35 @@ func (m *CreateProjectRequest) GetTags() []*google_protobuf.StringValue {
 }
 
 type CreateProjectResponse struct {
-	Project *Project `protobuf:"bytes,1,opt,name=project" json:"project,omitempty"`
+	Project              *Project `protobuf:"bytes,1,opt,name=project" json:"project,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *CreateProjectResponse) Reset()                    { *m = CreateProjectResponse{} }
-func (m *CreateProjectResponse) String() string            { return proto.CompactTextString(m) }
-func (*CreateProjectResponse) ProtoMessage()               {}
-func (*CreateProjectResponse) Descriptor() ([]byte, []int) { return fileDescriptor15, []int{1} }
+func (m *CreateProjectResponse) Reset()         { *m = CreateProjectResponse{} }
+func (m *CreateProjectResponse) String() string { return proto.CompactTextString(m) }
+func (*CreateProjectResponse) ProtoMessage()    {}
+func (*CreateProjectResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_create_project_c501a6bacf7a2273, []int{1}
+}
+func (m *CreateProjectResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_CreateProjectResponse.Unmarshal(m, b)
+}
+func (m *CreateProjectResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_CreateProjectResponse.Marshal(b, m, deterministic)
+}
+func (dst *CreateProjectResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CreateProjectResponse.Merge(dst, src)
+}
+func (m *CreateProjectResponse) XXX_Size() int {
+	return xxx_messageInfo_CreateProjectResponse.Size(m)
+}
+func (m *CreateProjectResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_CreateProjectResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_CreateProjectResponse proto.InternalMessageInfo
 
 func (m *CreateProjectResponse) GetProject() *Project {
 	if m != nil {
@@ -91,9 +141,11 @@ func init() {
 	proto.RegisterType((*CreateProjectResponse)(nil), "ai.metathings.service.identity.CreateProjectResponse")
 }
 
-func init() { proto.RegisterFile("create_project.proto", fileDescriptor15) }
+func init() {
+	proto.RegisterFile("create_project.proto", fileDescriptor_create_project_c501a6bacf7a2273)
+}
 
-var fileDescriptor15 = []byte{
+var fileDescriptor_create_project_c501a6bacf7a2273 = []byte{
 	// 338 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0xd2, 0x4f, 0x4b, 0xfb, 0x30,
 	0x18, 0x07, 0x70, 0xf6, 0xe7, 0xb7, 0xfd, 0x96, 0xe1, 0xa5, 0x4c, 0x28, 0x43, 0xe6, 0xd8, 0x45,

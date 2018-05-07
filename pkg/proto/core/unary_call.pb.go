@@ -6,7 +6,7 @@ package core
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import google_protobuf "github.com/golang/protobuf/ptypes/wrappers"
+import wrappers "github.com/golang/protobuf/ptypes/wrappers"
 import _ "github.com/mwitkow/go-proto-validators"
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -14,17 +14,45 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+
 type UnaryCallRequest struct {
-	CoreId  *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=core_id,json=coreId" json:"core_id,omitempty"`
-	Payload *UnaryCallRequestPayload     `protobuf:"bytes,2,opt,name=payload" json:"payload,omitempty"`
+	CoreId               *wrappers.StringValue    `protobuf:"bytes,1,opt,name=core_id,json=coreId" json:"core_id,omitempty"`
+	Payload              *UnaryCallRequestPayload `protobuf:"bytes,2,opt,name=payload" json:"payload,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}                 `json:"-"`
+	XXX_unrecognized     []byte                   `json:"-"`
+	XXX_sizecache        int32                    `json:"-"`
 }
 
-func (m *UnaryCallRequest) Reset()                    { *m = UnaryCallRequest{} }
-func (m *UnaryCallRequest) String() string            { return proto.CompactTextString(m) }
-func (*UnaryCallRequest) ProtoMessage()               {}
-func (*UnaryCallRequest) Descriptor() ([]byte, []int) { return fileDescriptor18, []int{0} }
+func (m *UnaryCallRequest) Reset()         { *m = UnaryCallRequest{} }
+func (m *UnaryCallRequest) String() string { return proto.CompactTextString(m) }
+func (*UnaryCallRequest) ProtoMessage()    {}
+func (*UnaryCallRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_unary_call_d506c3fff64a98b3, []int{0}
+}
+func (m *UnaryCallRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_UnaryCallRequest.Unmarshal(m, b)
+}
+func (m *UnaryCallRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_UnaryCallRequest.Marshal(b, m, deterministic)
+}
+func (dst *UnaryCallRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_UnaryCallRequest.Merge(dst, src)
+}
+func (m *UnaryCallRequest) XXX_Size() int {
+	return xxx_messageInfo_UnaryCallRequest.Size(m)
+}
+func (m *UnaryCallRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_UnaryCallRequest.DiscardUnknown(m)
+}
 
-func (m *UnaryCallRequest) GetCoreId() *google_protobuf.StringValue {
+var xxx_messageInfo_UnaryCallRequest proto.InternalMessageInfo
+
+func (m *UnaryCallRequest) GetCoreId() *wrappers.StringValue {
 	if m != nil {
 		return m.CoreId
 	}
@@ -39,13 +67,35 @@ func (m *UnaryCallRequest) GetPayload() *UnaryCallRequestPayload {
 }
 
 type UnaryCallResponse struct {
-	Payload *UnaryCallResponsePayload `protobuf:"bytes,1,opt,name=payload" json:"payload,omitempty"`
+	Payload              *UnaryCallResponsePayload `protobuf:"bytes,1,opt,name=payload" json:"payload,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}                  `json:"-"`
+	XXX_unrecognized     []byte                    `json:"-"`
+	XXX_sizecache        int32                     `json:"-"`
 }
 
-func (m *UnaryCallResponse) Reset()                    { *m = UnaryCallResponse{} }
-func (m *UnaryCallResponse) String() string            { return proto.CompactTextString(m) }
-func (*UnaryCallResponse) ProtoMessage()               {}
-func (*UnaryCallResponse) Descriptor() ([]byte, []int) { return fileDescriptor18, []int{1} }
+func (m *UnaryCallResponse) Reset()         { *m = UnaryCallResponse{} }
+func (m *UnaryCallResponse) String() string { return proto.CompactTextString(m) }
+func (*UnaryCallResponse) ProtoMessage()    {}
+func (*UnaryCallResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_unary_call_d506c3fff64a98b3, []int{1}
+}
+func (m *UnaryCallResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_UnaryCallResponse.Unmarshal(m, b)
+}
+func (m *UnaryCallResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_UnaryCallResponse.Marshal(b, m, deterministic)
+}
+func (dst *UnaryCallResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_UnaryCallResponse.Merge(dst, src)
+}
+func (m *UnaryCallResponse) XXX_Size() int {
+	return xxx_messageInfo_UnaryCallResponse.Size(m)
+}
+func (m *UnaryCallResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_UnaryCallResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_UnaryCallResponse proto.InternalMessageInfo
 
 func (m *UnaryCallResponse) GetPayload() *UnaryCallResponsePayload {
 	if m != nil {
@@ -59,9 +109,9 @@ func init() {
 	proto.RegisterType((*UnaryCallResponse)(nil), "ai.metathings.service.core.UnaryCallResponse")
 }
 
-func init() { proto.RegisterFile("unary_call.proto", fileDescriptor18) }
+func init() { proto.RegisterFile("unary_call.proto", fileDescriptor_unary_call_d506c3fff64a98b3) }
 
-var fileDescriptor18 = []byte{
+var fileDescriptor_unary_call_d506c3fff64a98b3 = []byte{
 	// 266 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x8f, 0xcf, 0x4a, 0xc3, 0x40,
 	0x10, 0xc6, 0x49, 0x0f, 0x29, 0x44, 0x84, 0x9a, 0x53, 0x09, 0xa2, 0xa5, 0x27, 0x2f, 0x9d, 0x80,

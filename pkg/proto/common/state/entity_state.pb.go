@@ -12,6 +12,12 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+
 type EntityState int32
 
 const (
@@ -34,15 +40,17 @@ var EntityState_value = map[string]int32{
 func (x EntityState) String() string {
 	return proto.EnumName(EntityState_name, int32(x))
 }
-func (EntityState) EnumDescriptor() ([]byte, []int) { return fileDescriptor1, []int{0} }
+func (EntityState) EnumDescriptor() ([]byte, []int) {
+	return fileDescriptor_entity_state_723ef21b8c133777, []int{0}
+}
 
 func init() {
 	proto.RegisterEnum("ai.metathings.state.EntityState", EntityState_name, EntityState_value)
 }
 
-func init() { proto.RegisterFile("entity_state.proto", fileDescriptor1) }
+func init() { proto.RegisterFile("entity_state.proto", fileDescriptor_entity_state_723ef21b8c133777) }
 
-var fileDescriptor1 = []byte{
+var fileDescriptor_entity_state_723ef21b8c133777 = []byte{
 	// 128 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x12, 0x4a, 0xcd, 0x2b, 0xc9,
 	0x2c, 0xa9, 0x8c, 0x2f, 0x2e, 0x49, 0x2c, 0x49, 0xd5, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x12,

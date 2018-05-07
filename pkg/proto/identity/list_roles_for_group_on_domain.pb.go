@@ -6,7 +6,7 @@ package identity
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import google_protobuf "github.com/golang/protobuf/ptypes/wrappers"
+import wrappers "github.com/golang/protobuf/ptypes/wrappers"
 import _ "github.com/mwitkow/go-proto-validators"
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -14,26 +14,52 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+
 type ListRolesForGroupOnDomainRequest struct {
-	DomainId *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=domain_id,json=domainId" json:"domain_id,omitempty"`
-	GroupId  *google_protobuf.StringValue `protobuf:"bytes,2,opt,name=group_id,json=groupId" json:"group_id,omitempty"`
+	DomainId             *wrappers.StringValue `protobuf:"bytes,1,opt,name=domain_id,json=domainId" json:"domain_id,omitempty"`
+	GroupId              *wrappers.StringValue `protobuf:"bytes,2,opt,name=group_id,json=groupId" json:"group_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
 func (m *ListRolesForGroupOnDomainRequest) Reset()         { *m = ListRolesForGroupOnDomainRequest{} }
 func (m *ListRolesForGroupOnDomainRequest) String() string { return proto.CompactTextString(m) }
 func (*ListRolesForGroupOnDomainRequest) ProtoMessage()    {}
 func (*ListRolesForGroupOnDomainRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor45, []int{0}
+	return fileDescriptor_list_roles_for_group_on_domain_ecdbadc981babc31, []int{0}
+}
+func (m *ListRolesForGroupOnDomainRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ListRolesForGroupOnDomainRequest.Unmarshal(m, b)
+}
+func (m *ListRolesForGroupOnDomainRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ListRolesForGroupOnDomainRequest.Marshal(b, m, deterministic)
+}
+func (dst *ListRolesForGroupOnDomainRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ListRolesForGroupOnDomainRequest.Merge(dst, src)
+}
+func (m *ListRolesForGroupOnDomainRequest) XXX_Size() int {
+	return xxx_messageInfo_ListRolesForGroupOnDomainRequest.Size(m)
+}
+func (m *ListRolesForGroupOnDomainRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_ListRolesForGroupOnDomainRequest.DiscardUnknown(m)
 }
 
-func (m *ListRolesForGroupOnDomainRequest) GetDomainId() *google_protobuf.StringValue {
+var xxx_messageInfo_ListRolesForGroupOnDomainRequest proto.InternalMessageInfo
+
+func (m *ListRolesForGroupOnDomainRequest) GetDomainId() *wrappers.StringValue {
 	if m != nil {
 		return m.DomainId
 	}
 	return nil
 }
 
-func (m *ListRolesForGroupOnDomainRequest) GetGroupId() *google_protobuf.StringValue {
+func (m *ListRolesForGroupOnDomainRequest) GetGroupId() *wrappers.StringValue {
 	if m != nil {
 		return m.GroupId
 	}
@@ -41,15 +67,35 @@ func (m *ListRolesForGroupOnDomainRequest) GetGroupId() *google_protobuf.StringV
 }
 
 type ListRolesForGroupOnDomainResponse struct {
-	Roles []*Role `protobuf:"bytes,1,rep,name=roles" json:"roles,omitempty"`
+	Roles                []*Role  `protobuf:"bytes,1,rep,name=roles" json:"roles,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
 func (m *ListRolesForGroupOnDomainResponse) Reset()         { *m = ListRolesForGroupOnDomainResponse{} }
 func (m *ListRolesForGroupOnDomainResponse) String() string { return proto.CompactTextString(m) }
 func (*ListRolesForGroupOnDomainResponse) ProtoMessage()    {}
 func (*ListRolesForGroupOnDomainResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor45, []int{1}
+	return fileDescriptor_list_roles_for_group_on_domain_ecdbadc981babc31, []int{1}
 }
+func (m *ListRolesForGroupOnDomainResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ListRolesForGroupOnDomainResponse.Unmarshal(m, b)
+}
+func (m *ListRolesForGroupOnDomainResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ListRolesForGroupOnDomainResponse.Marshal(b, m, deterministic)
+}
+func (dst *ListRolesForGroupOnDomainResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ListRolesForGroupOnDomainResponse.Merge(dst, src)
+}
+func (m *ListRolesForGroupOnDomainResponse) XXX_Size() int {
+	return xxx_messageInfo_ListRolesForGroupOnDomainResponse.Size(m)
+}
+func (m *ListRolesForGroupOnDomainResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_ListRolesForGroupOnDomainResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ListRolesForGroupOnDomainResponse proto.InternalMessageInfo
 
 func (m *ListRolesForGroupOnDomainResponse) GetRoles() []*Role {
 	if m != nil {
@@ -63,9 +109,11 @@ func init() {
 	proto.RegisterType((*ListRolesForGroupOnDomainResponse)(nil), "ai.metathings.service.identity.ListRolesForGroupOnDomainResponse")
 }
 
-func init() { proto.RegisterFile("list_roles_for_group_on_domain.proto", fileDescriptor45) }
+func init() {
+	proto.RegisterFile("list_roles_for_group_on_domain.proto", fileDescriptor_list_roles_for_group_on_domain_ecdbadc981babc31)
+}
 
-var fileDescriptor45 = []byte{
+var fileDescriptor_list_roles_for_group_on_domain_ecdbadc981babc31 = []byte{
 	// 289 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0xd0, 0xc1, 0x4a, 0x33, 0x31,
 	0x10, 0xc0, 0x71, 0xb6, 0x1f, 0x5f, 0xad, 0xe9, 0x6d, 0x4f, 0xa5, 0x48, 0x5d, 0x4b, 0x0f, 0xbd,

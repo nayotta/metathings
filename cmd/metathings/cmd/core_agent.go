@@ -74,6 +74,7 @@ func runCoreAgentd() error {
 
 	errs := make(chan error)
 	go func() {
+		log.Infof("serve on stram")
 		errs <- srv.ServeOnStream()
 	}()
 	go func() {

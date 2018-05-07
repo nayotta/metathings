@@ -6,7 +6,7 @@ package identity
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import google_protobuf "github.com/golang/protobuf/ptypes/wrappers"
+import wrappers "github.com/golang/protobuf/ptypes/wrappers"
 import _ "github.com/mwitkow/go-proto-validators"
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -14,16 +14,44 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+
 type GetDomainRequest struct {
-	DomainId *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=domain_id,json=domainId" json:"domain_id,omitempty"`
+	DomainId             *wrappers.StringValue `protobuf:"bytes,1,opt,name=domain_id,json=domainId" json:"domain_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *GetDomainRequest) Reset()                    { *m = GetDomainRequest{} }
-func (m *GetDomainRequest) String() string            { return proto.CompactTextString(m) }
-func (*GetDomainRequest) ProtoMessage()               {}
-func (*GetDomainRequest) Descriptor() ([]byte, []int) { return fileDescriptor28, []int{0} }
+func (m *GetDomainRequest) Reset()         { *m = GetDomainRequest{} }
+func (m *GetDomainRequest) String() string { return proto.CompactTextString(m) }
+func (*GetDomainRequest) ProtoMessage()    {}
+func (*GetDomainRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_get_domain_5e1031b1a2883d81, []int{0}
+}
+func (m *GetDomainRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GetDomainRequest.Unmarshal(m, b)
+}
+func (m *GetDomainRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GetDomainRequest.Marshal(b, m, deterministic)
+}
+func (dst *GetDomainRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetDomainRequest.Merge(dst, src)
+}
+func (m *GetDomainRequest) XXX_Size() int {
+	return xxx_messageInfo_GetDomainRequest.Size(m)
+}
+func (m *GetDomainRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_GetDomainRequest.DiscardUnknown(m)
+}
 
-func (m *GetDomainRequest) GetDomainId() *google_protobuf.StringValue {
+var xxx_messageInfo_GetDomainRequest proto.InternalMessageInfo
+
+func (m *GetDomainRequest) GetDomainId() *wrappers.StringValue {
 	if m != nil {
 		return m.DomainId
 	}
@@ -31,13 +59,35 @@ func (m *GetDomainRequest) GetDomainId() *google_protobuf.StringValue {
 }
 
 type GetDomainResponse struct {
-	Domain *Domain `protobuf:"bytes,1,opt,name=domain" json:"domain,omitempty"`
+	Domain               *Domain  `protobuf:"bytes,1,opt,name=domain" json:"domain,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *GetDomainResponse) Reset()                    { *m = GetDomainResponse{} }
-func (m *GetDomainResponse) String() string            { return proto.CompactTextString(m) }
-func (*GetDomainResponse) ProtoMessage()               {}
-func (*GetDomainResponse) Descriptor() ([]byte, []int) { return fileDescriptor28, []int{1} }
+func (m *GetDomainResponse) Reset()         { *m = GetDomainResponse{} }
+func (m *GetDomainResponse) String() string { return proto.CompactTextString(m) }
+func (*GetDomainResponse) ProtoMessage()    {}
+func (*GetDomainResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_get_domain_5e1031b1a2883d81, []int{1}
+}
+func (m *GetDomainResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GetDomainResponse.Unmarshal(m, b)
+}
+func (m *GetDomainResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GetDomainResponse.Marshal(b, m, deterministic)
+}
+func (dst *GetDomainResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetDomainResponse.Merge(dst, src)
+}
+func (m *GetDomainResponse) XXX_Size() int {
+	return xxx_messageInfo_GetDomainResponse.Size(m)
+}
+func (m *GetDomainResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_GetDomainResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GetDomainResponse proto.InternalMessageInfo
 
 func (m *GetDomainResponse) GetDomain() *Domain {
 	if m != nil {
@@ -51,9 +101,9 @@ func init() {
 	proto.RegisterType((*GetDomainResponse)(nil), "ai.metathings.service.identity.GetDomainResponse")
 }
 
-func init() { proto.RegisterFile("get_domain.proto", fileDescriptor28) }
+func init() { proto.RegisterFile("get_domain.proto", fileDescriptor_get_domain_5e1031b1a2883d81) }
 
-var fileDescriptor28 = []byte{
+var fileDescriptor_get_domain_5e1031b1a2883d81 = []byte{
 	// 239 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x7c, 0x90, 0xc1, 0x4a, 0xc3, 0x40,
 	0x10, 0x86, 0x89, 0x87, 0xa0, 0xab, 0x87, 0x9a, 0x93, 0x14, 0xa9, 0xa5, 0x07, 0xf1, 0xd2, 0x59,

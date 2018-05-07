@@ -6,7 +6,7 @@ package core
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import google_protobuf3 "github.com/golang/protobuf/ptypes/empty"
+import empty "github.com/golang/protobuf/ptypes/empty"
 
 import (
 	context "golang.org/x/net/context"
@@ -17,6 +17,12 @@ import (
 var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
+
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ context.Context
@@ -30,17 +36,17 @@ const _ = grpc.SupportPackageIsVersion4
 
 type CoreServiceClient interface {
 	CreateCore(ctx context.Context, in *CreateCoreRequest, opts ...grpc.CallOption) (*CreateCoreResponse, error)
-	DeleteCore(ctx context.Context, in *DeleteCoreRequest, opts ...grpc.CallOption) (*google_protobuf3.Empty, error)
+	DeleteCore(ctx context.Context, in *DeleteCoreRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 	PatchCore(ctx context.Context, in *PatchCoreRequest, opts ...grpc.CallOption) (*PatchCoreResponse, error)
 	GetCore(ctx context.Context, in *GetCoreRequest, opts ...grpc.CallOption) (*GetCoreResponse, error)
 	ListCores(ctx context.Context, in *ListCoresRequest, opts ...grpc.CallOption) (*ListCoresResponse, error)
 	CreateEntity(ctx context.Context, in *CreateEntityRequest, opts ...grpc.CallOption) (*CreateEntityResponse, error)
-	DeleteEntity(ctx context.Context, in *DeleteEntityRequest, opts ...grpc.CallOption) (*google_protobuf3.Empty, error)
+	DeleteEntity(ctx context.Context, in *DeleteEntityRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 	PatchEntity(ctx context.Context, in *PatchEntityRequest, opts ...grpc.CallOption) (*PatchEntityResponse, error)
 	GetEntity(ctx context.Context, in *GetEntityRequest, opts ...grpc.CallOption) (*GetEntityResponse, error)
 	ListEntities(ctx context.Context, in *ListEntitiesRequest, opts ...grpc.CallOption) (*ListEntitiesResponse, error)
 	ListEntitiesForCore(ctx context.Context, in *ListEntitiesForCoreRequest, opts ...grpc.CallOption) (*ListEntitiesForCoreResponse, error)
-	Heartbeat(ctx context.Context, in *HeartbeatRequest, opts ...grpc.CallOption) (*google_protobuf3.Empty, error)
+	Heartbeat(ctx context.Context, in *HeartbeatRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 	// NOTE: input is response body form core agentd,
 	//       output is request body to core agentd.
 	Stream(ctx context.Context, opts ...grpc.CallOption) (CoreService_StreamClient, error)
@@ -65,8 +71,8 @@ func (c *coreServiceClient) CreateCore(ctx context.Context, in *CreateCoreReques
 	return out, nil
 }
 
-func (c *coreServiceClient) DeleteCore(ctx context.Context, in *DeleteCoreRequest, opts ...grpc.CallOption) (*google_protobuf3.Empty, error) {
-	out := new(google_protobuf3.Empty)
+func (c *coreServiceClient) DeleteCore(ctx context.Context, in *DeleteCoreRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
 	err := grpc.Invoke(ctx, "/ai.metathings.service.core.CoreService/DeleteCore", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
@@ -110,8 +116,8 @@ func (c *coreServiceClient) CreateEntity(ctx context.Context, in *CreateEntityRe
 	return out, nil
 }
 
-func (c *coreServiceClient) DeleteEntity(ctx context.Context, in *DeleteEntityRequest, opts ...grpc.CallOption) (*google_protobuf3.Empty, error) {
-	out := new(google_protobuf3.Empty)
+func (c *coreServiceClient) DeleteEntity(ctx context.Context, in *DeleteEntityRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
 	err := grpc.Invoke(ctx, "/ai.metathings.service.core.CoreService/DeleteEntity", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
@@ -155,8 +161,8 @@ func (c *coreServiceClient) ListEntitiesForCore(ctx context.Context, in *ListEnt
 	return out, nil
 }
 
-func (c *coreServiceClient) Heartbeat(ctx context.Context, in *HeartbeatRequest, opts ...grpc.CallOption) (*google_protobuf3.Empty, error) {
-	out := new(google_protobuf3.Empty)
+func (c *coreServiceClient) Heartbeat(ctx context.Context, in *HeartbeatRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
 	err := grpc.Invoke(ctx, "/ai.metathings.service.core.CoreService/Heartbeat", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
@@ -217,17 +223,17 @@ func (c *coreServiceClient) UnaryCall(ctx context.Context, in *UnaryCallRequest,
 
 type CoreServiceServer interface {
 	CreateCore(context.Context, *CreateCoreRequest) (*CreateCoreResponse, error)
-	DeleteCore(context.Context, *DeleteCoreRequest) (*google_protobuf3.Empty, error)
+	DeleteCore(context.Context, *DeleteCoreRequest) (*empty.Empty, error)
 	PatchCore(context.Context, *PatchCoreRequest) (*PatchCoreResponse, error)
 	GetCore(context.Context, *GetCoreRequest) (*GetCoreResponse, error)
 	ListCores(context.Context, *ListCoresRequest) (*ListCoresResponse, error)
 	CreateEntity(context.Context, *CreateEntityRequest) (*CreateEntityResponse, error)
-	DeleteEntity(context.Context, *DeleteEntityRequest) (*google_protobuf3.Empty, error)
+	DeleteEntity(context.Context, *DeleteEntityRequest) (*empty.Empty, error)
 	PatchEntity(context.Context, *PatchEntityRequest) (*PatchEntityResponse, error)
 	GetEntity(context.Context, *GetEntityRequest) (*GetEntityResponse, error)
 	ListEntities(context.Context, *ListEntitiesRequest) (*ListEntitiesResponse, error)
 	ListEntitiesForCore(context.Context, *ListEntitiesForCoreRequest) (*ListEntitiesForCoreResponse, error)
-	Heartbeat(context.Context, *HeartbeatRequest) (*google_protobuf3.Empty, error)
+	Heartbeat(context.Context, *HeartbeatRequest) (*empty.Empty, error)
 	// NOTE: input is response body form core agentd,
 	//       output is request body to core agentd.
 	Stream(CoreService_StreamServer) error
@@ -589,9 +595,9 @@ var _CoreService_serviceDesc = grpc.ServiceDesc{
 	Metadata: "service.proto",
 }
 
-func init() { proto.RegisterFile("service.proto", fileDescriptor16) }
+func init() { proto.RegisterFile("service.proto", fileDescriptor_service_d7f29a35718d0785) }
 
-var fileDescriptor16 = []byte{
+var fileDescriptor_service_d7f29a35718d0785 = []byte{
 	// 521 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x95, 0x4b, 0x6f, 0x13, 0x31,
 	0x10, 0xc7, 0x13, 0x09, 0x05, 0x65, 0x1a, 0x20, 0x38, 0x12, 0x12, 0x0b, 0xa7, 0x9c, 0x78, 0x34,

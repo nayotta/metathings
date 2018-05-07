@@ -6,7 +6,7 @@ package identity
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import google_protobuf "github.com/golang/protobuf/ptypes/wrappers"
+import wrappers "github.com/golang/protobuf/ptypes/wrappers"
 import _ "github.com/mwitkow/go-proto-validators"
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -14,34 +14,60 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+
 type CheckRoleInUserOnProjectRequest struct {
-	ProjectId *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=project_id,json=projectId" json:"project_id,omitempty"`
-	UserId    *google_protobuf.StringValue `protobuf:"bytes,2,opt,name=user_id,json=userId" json:"user_id,omitempty"`
-	RoleId    *google_protobuf.StringValue `protobuf:"bytes,3,opt,name=role_id,json=roleId" json:"role_id,omitempty"`
+	ProjectId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=project_id,json=projectId" json:"project_id,omitempty"`
+	UserId               *wrappers.StringValue `protobuf:"bytes,2,opt,name=user_id,json=userId" json:"user_id,omitempty"`
+	RoleId               *wrappers.StringValue `protobuf:"bytes,3,opt,name=role_id,json=roleId" json:"role_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
 func (m *CheckRoleInUserOnProjectRequest) Reset()         { *m = CheckRoleInUserOnProjectRequest{} }
 func (m *CheckRoleInUserOnProjectRequest) String() string { return proto.CompactTextString(m) }
 func (*CheckRoleInUserOnProjectRequest) ProtoMessage()    {}
 func (*CheckRoleInUserOnProjectRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor10, []int{0}
+	return fileDescriptor_check_role_in_user_on_project_bff98d7f30932b74, []int{0}
+}
+func (m *CheckRoleInUserOnProjectRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_CheckRoleInUserOnProjectRequest.Unmarshal(m, b)
+}
+func (m *CheckRoleInUserOnProjectRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_CheckRoleInUserOnProjectRequest.Marshal(b, m, deterministic)
+}
+func (dst *CheckRoleInUserOnProjectRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CheckRoleInUserOnProjectRequest.Merge(dst, src)
+}
+func (m *CheckRoleInUserOnProjectRequest) XXX_Size() int {
+	return xxx_messageInfo_CheckRoleInUserOnProjectRequest.Size(m)
+}
+func (m *CheckRoleInUserOnProjectRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_CheckRoleInUserOnProjectRequest.DiscardUnknown(m)
 }
 
-func (m *CheckRoleInUserOnProjectRequest) GetProjectId() *google_protobuf.StringValue {
+var xxx_messageInfo_CheckRoleInUserOnProjectRequest proto.InternalMessageInfo
+
+func (m *CheckRoleInUserOnProjectRequest) GetProjectId() *wrappers.StringValue {
 	if m != nil {
 		return m.ProjectId
 	}
 	return nil
 }
 
-func (m *CheckRoleInUserOnProjectRequest) GetUserId() *google_protobuf.StringValue {
+func (m *CheckRoleInUserOnProjectRequest) GetUserId() *wrappers.StringValue {
 	if m != nil {
 		return m.UserId
 	}
 	return nil
 }
 
-func (m *CheckRoleInUserOnProjectRequest) GetRoleId() *google_protobuf.StringValue {
+func (m *CheckRoleInUserOnProjectRequest) GetRoleId() *wrappers.StringValue {
 	if m != nil {
 		return m.RoleId
 	}
@@ -52,9 +78,11 @@ func init() {
 	proto.RegisterType((*CheckRoleInUserOnProjectRequest)(nil), "ai.metathings.service.identity.CheckRoleInUserOnProjectRequest")
 }
 
-func init() { proto.RegisterFile("check_role_in_user_on_project.proto", fileDescriptor10) }
+func init() {
+	proto.RegisterFile("check_role_in_user_on_project.proto", fileDescriptor_check_role_in_user_on_project_bff98d7f30932b74)
+}
 
-var fileDescriptor10 = []byte{
+var fileDescriptor_check_role_in_user_on_project_bff98d7f30932b74 = []byte{
 	// 259 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0xd0, 0x41, 0x4b, 0xc3, 0x30,
 	0x14, 0xc0, 0x71, 0x3a, 0x61, 0x62, 0xbd, 0xf5, 0x54, 0x86, 0x6c, 0x43, 0x2f, 0x5e, 0x96, 0x82,

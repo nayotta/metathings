@@ -6,7 +6,7 @@ package identity
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import google_protobuf "github.com/golang/protobuf/ptypes/wrappers"
+import wrappers "github.com/golang/protobuf/ptypes/wrappers"
 import _ "github.com/mwitkow/go-proto-validators"
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -14,32 +14,60 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+
 type AddRoleToGroupOnProjectRequest struct {
-	ProjectId *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=project_id,json=projectId" json:"project_id,omitempty"`
-	GroupId   *google_protobuf.StringValue `protobuf:"bytes,2,opt,name=group_id,json=groupId" json:"group_id,omitempty"`
-	RoleId    *google_protobuf.StringValue `protobuf:"bytes,3,opt,name=role_id,json=roleId" json:"role_id,omitempty"`
+	ProjectId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=project_id,json=projectId" json:"project_id,omitempty"`
+	GroupId              *wrappers.StringValue `protobuf:"bytes,2,opt,name=group_id,json=groupId" json:"group_id,omitempty"`
+	RoleId               *wrappers.StringValue `protobuf:"bytes,3,opt,name=role_id,json=roleId" json:"role_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *AddRoleToGroupOnProjectRequest) Reset()                    { *m = AddRoleToGroupOnProjectRequest{} }
-func (m *AddRoleToGroupOnProjectRequest) String() string            { return proto.CompactTextString(m) }
-func (*AddRoleToGroupOnProjectRequest) ProtoMessage()               {}
-func (*AddRoleToGroupOnProjectRequest) Descriptor() ([]byte, []int) { return fileDescriptor1, []int{0} }
+func (m *AddRoleToGroupOnProjectRequest) Reset()         { *m = AddRoleToGroupOnProjectRequest{} }
+func (m *AddRoleToGroupOnProjectRequest) String() string { return proto.CompactTextString(m) }
+func (*AddRoleToGroupOnProjectRequest) ProtoMessage()    {}
+func (*AddRoleToGroupOnProjectRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_add_role_to_group_on_project_c1bc060d57e83656, []int{0}
+}
+func (m *AddRoleToGroupOnProjectRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_AddRoleToGroupOnProjectRequest.Unmarshal(m, b)
+}
+func (m *AddRoleToGroupOnProjectRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_AddRoleToGroupOnProjectRequest.Marshal(b, m, deterministic)
+}
+func (dst *AddRoleToGroupOnProjectRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_AddRoleToGroupOnProjectRequest.Merge(dst, src)
+}
+func (m *AddRoleToGroupOnProjectRequest) XXX_Size() int {
+	return xxx_messageInfo_AddRoleToGroupOnProjectRequest.Size(m)
+}
+func (m *AddRoleToGroupOnProjectRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_AddRoleToGroupOnProjectRequest.DiscardUnknown(m)
+}
 
-func (m *AddRoleToGroupOnProjectRequest) GetProjectId() *google_protobuf.StringValue {
+var xxx_messageInfo_AddRoleToGroupOnProjectRequest proto.InternalMessageInfo
+
+func (m *AddRoleToGroupOnProjectRequest) GetProjectId() *wrappers.StringValue {
 	if m != nil {
 		return m.ProjectId
 	}
 	return nil
 }
 
-func (m *AddRoleToGroupOnProjectRequest) GetGroupId() *google_protobuf.StringValue {
+func (m *AddRoleToGroupOnProjectRequest) GetGroupId() *wrappers.StringValue {
 	if m != nil {
 		return m.GroupId
 	}
 	return nil
 }
 
-func (m *AddRoleToGroupOnProjectRequest) GetRoleId() *google_protobuf.StringValue {
+func (m *AddRoleToGroupOnProjectRequest) GetRoleId() *wrappers.StringValue {
 	if m != nil {
 		return m.RoleId
 	}
@@ -50,9 +78,11 @@ func init() {
 	proto.RegisterType((*AddRoleToGroupOnProjectRequest)(nil), "ai.metathings.service.identity.AddRoleToGroupOnProjectRequest")
 }
 
-func init() { proto.RegisterFile("add_role_to_group_on_project.proto", fileDescriptor1) }
+func init() {
+	proto.RegisterFile("add_role_to_group_on_project.proto", fileDescriptor_add_role_to_group_on_project_c1bc060d57e83656)
+}
 
-var fileDescriptor1 = []byte{
+var fileDescriptor_add_role_to_group_on_project_c1bc060d57e83656 = []byte{
 	// 262 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x90, 0xc1, 0x4a, 0xc3, 0x40,
 	0x10, 0x86, 0x49, 0x85, 0x56, 0xd7, 0x5b, 0x4e, 0xa1, 0x48, 0x2c, 0x3d, 0x79, 0xe9, 0x06, 0x14,

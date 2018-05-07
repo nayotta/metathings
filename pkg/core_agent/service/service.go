@@ -15,7 +15,6 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/keepalive"
-	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 
 	helper "github.com/bigdatagz/metathings/pkg/common"
@@ -119,7 +118,7 @@ func (srv *coreAgentService) CreateEntity(ctx context.Context, req *pb.CreateEnt
 	defer closeFn()
 
 	r := &core_pb.CreateEntityRequest{
-		CoreId:      &gpb.StringValue{srv.opts.core_id},
+		CoreId:      &gpb.StringValue{Value: srv.opts.core_id},
 		Name:        req.Name,
 		ServiceName: req.ServiceName,
 		Endpoint:    req.Endpoint,
@@ -136,7 +135,7 @@ func (srv *coreAgentService) CreateEntity(ctx context.Context, req *pb.CreateEnt
 		"service_name": res.Entity.ServiceName,
 	}).Infof("create entity")
 
-	return &pb.CreateEntityResponse{srv.copyEntity(res.Entity)}, nil
+	return &pb.CreateEntityResponse{Entity: srv.copyEntity(res.Entity)}, nil
 }
 
 func (srv *coreAgentService) DeleteEntity(ctx context.Context, req *pb.DeleteEntityRequest) (*empty.Empty, error) {
@@ -148,7 +147,7 @@ func (srv *coreAgentService) DeleteEntity(ctx context.Context, req *pb.DeleteEnt
 	}
 	defer closeFn()
 
-	r := &core_pb.DeleteEntityRequest{req.Id}
+	r := &core_pb.DeleteEntityRequest{Id: req.Id}
 	_, err = cli.DeleteEntity(ctx, r)
 	if err != nil {
 		srv.logger.WithError(err).Errorf("failed to delete entity")
@@ -182,7 +181,7 @@ func (srv *coreAgentService) PatchEntity(ctx context.Context, req *pb.PatchEntit
 	}
 	srv.logger.WithFields(fields).Infof("patch entity")
 
-	return &pb.PatchEntityResponse{srv.copyEntity(res.Entity)}, nil
+	return &pb.PatchEntityResponse{Entity: srv.copyEntity(res.Entity)}, nil
 }
 
 func (srv *coreAgentService) GetEntity(ctx context.Context, req *pb.GetEntityRequest) (*pb.GetEntityResponse, error) {
@@ -194,7 +193,7 @@ func (srv *coreAgentService) GetEntity(ctx context.Context, req *pb.GetEntityReq
 	}
 	defer closeFn()
 
-	r := &core_pb.GetEntityRequest{req.Id}
+	r := &core_pb.GetEntityRequest{Id: req.Id}
 
 	res, err := cli.GetEntity(ctx, r)
 	if err != nil {
@@ -203,7 +202,7 @@ func (srv *coreAgentService) GetEntity(ctx context.Context, req *pb.GetEntityReq
 	}
 	srv.logger.WithField("id", req.Id.Value).Debugf("get entity")
 
-	return &pb.GetEntityResponse{srv.copyEntity(res.Entity)}, nil
+	return &pb.GetEntityResponse{Entity: srv.copyEntity(res.Entity)}, nil
 }
 
 func (srv *coreAgentService) ListEntities(ctx context.Context, req *pb.ListEntitiesRequest) (*pb.ListEntitiesResponse, error) {
@@ -216,7 +215,7 @@ func (srv *coreAgentService) ListEntities(ctx context.Context, req *pb.ListEntit
 	defer closeFn()
 
 	r := &core_pb.ListEntitiesForCoreRequest{
-		CoreId: &gpb.StringValue{srv.opts.core_id},
+		CoreId: &gpb.StringValue{Value: srv.opts.core_id},
 	}
 
 	res, err := cli.ListEntitiesForCore(ctx, r)
@@ -231,7 +230,7 @@ func (srv *coreAgentService) ListEntities(ctx context.Context, req *pb.ListEntit
 	}
 	srv.logger.Debugf("list entity")
 
-	return &pb.ListEntitiesResponse{entities}, nil
+	return &pb.ListEntitiesResponse{Entities: entities}, nil
 }
 
 func (srv *coreAgentService) loadDispatcherPlugin(e *pb.Entity) {
@@ -286,7 +285,7 @@ func (srv *coreAgentService) CreateOrGetEntity(ctx context.Context, req *pb.Crea
 	defer closeFn()
 
 	r := &core_pb.ListEntitiesForCoreRequest{
-		CoreId: &gpb.StringValue{srv.opts.core_id},
+		CoreId: &gpb.StringValue{Value: srv.opts.core_id},
 	}
 
 	res, err := cli.ListEntitiesForCore(ctx, r)
@@ -299,12 +298,12 @@ func (srv *coreAgentService) CreateOrGetEntity(ctx context.Context, req *pb.Crea
 		if e.Name == req.Name.Value {
 			e1 := srv.copyEntity(e)
 			defer srv.loadDispatcherPlugin(e1)
-			return &pb.CreateOrGetEntityResponse{e1}, nil
+			return &pb.CreateOrGetEntityResponse{Entity: e1}, nil
 		}
 	}
 
 	r1 := &core_pb.CreateEntityRequest{
-		CoreId:      &gpb.StringValue{srv.opts.core_id},
+		CoreId:      &gpb.StringValue{Value: srv.opts.core_id},
 		Name:        req.Name,
 		ServiceName: req.ServiceName,
 		Endpoint:    req.Endpoint,
@@ -318,7 +317,7 @@ func (srv *coreAgentService) CreateOrGetEntity(ctx context.Context, req *pb.Crea
 
 	e1 := srv.copyEntity(res1.Entity)
 	defer srv.loadDispatcherPlugin(e1)
-	return &pb.CreateOrGetEntityResponse{e1}, nil
+	return &pb.CreateOrGetEntityResponse{Entity: e1}, nil
 }
 
 func (srv *coreAgentService) Heartbeat(ctx context.Context, req *pb.HeartbeatRequest) (*empty.Empty, error) {
@@ -330,27 +329,30 @@ func (srv *coreAgentService) Heartbeat(ctx context.Context, req *pb.HeartbeatReq
 	}
 	defer closeFn()
 
-	r := &core_pb.GetEntityRequest{req.EntityId}
+	r := &core_pb.GetEntityRequest{Id: req.EntityId}
 	res, err := cli.GetEntity(ctx, r)
 	if err != nil {
 		srv.logger.WithError(err).Errorf("failed to get entity")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
-	if res.Entity.State == state_pb.EntityState_ENTITY_STATE_ONLINE {
-		return &empty.Empty{}, nil
-	}
+	if res.Entity.State != state_pb.EntityState_ENTITY_STATE_ONLINE {
+		r1 := &core_pb.PatchEntityRequest{
+			Id:    req.EntityId,
+			State: state_pb.EntityState_ENTITY_STATE_ONLINE,
+		}
 
-	r1 := &core_pb.PatchEntityRequest{
-		Id:    req.EntityId,
-		State: state_pb.EntityState_ENTITY_STATE_ONLINE,
+		_, err = cli.PatchEntity(ctx, r1)
+		if err != nil {
+			srv.logger.WithError(err).Errorf("failed to patch entity")
+			return nil, grpc.Errorf(codes.Internal, err.Error())
+		}
 	}
-
-	_, err = cli.PatchEntity(ctx, r1)
-	if err != nil {
-		srv.logger.WithError(err).Errorf("failed to patch entity")
-		return nil, grpc.Errorf(codes.Internal, err.Error())
-	}
+	srv.logger.WithFields(log.Fields{
+		"id":      res.Entity.Id,
+		"service": res.Entity.ServiceName,
+		"name":    res.Entity.Name,
+	}).Debugf("entity heartbeat")
 
 	return &empty.Empty{}, nil
 }
@@ -381,6 +383,7 @@ func (srv *coreAgentService) ServeOnStream() error {
 		srv.logger.WithError(err).Errorf("failed to stream to core service")
 		return err
 	}
+	srv.logger.Debugf("connect to core service on streaming")
 
 	return srv.serveOnStream(stream)
 }
@@ -472,18 +475,15 @@ func getCoreIdFromFile(path string) (string, error) {
 	return string(data[:n]), nil
 }
 
-func getCoreIdFromService(opts options, token string) (string, error) {
+func getCoreIdFromService(cli_fty *client_helper.ClientFactory, token string) (string, error) {
 	ctx := context.Background()
-	md := metadata.Pairs("authorization", token)
-	ctx = metadata.NewOutgoingContext(ctx, md)
-	grpc_opts := []grpc.DialOption{grpc.WithInsecure()}
-	conn, err := grpc.Dial(opts.metathings_addr, grpc_opts...)
+	ctx = context_helper.WithToken(ctx, token)
+	cli, fn, err := cli_fty.NewCoreServiceClient()
 	if err != nil {
 		return "", err
 	}
-	defer conn.Close()
+	defer fn()
 
-	cli := cored_pb.NewCoreServiceClient(conn)
 	req := &cored_pb.CreateCoreRequest{}
 	res, err := cli.CreateCore(ctx, req)
 	if err != nil {
@@ -543,7 +543,7 @@ func NewCoreAgentService(opt ...ServiceOptions) (srv *coreAgentService, err erro
 		core_id_path := path.Join(opts.core_agent_home, "core-id")
 		core_id, err := getCoreIdFromFile(core_id_path)
 		if err != nil {
-			if core_id, err = getCoreIdFromService(opts, app_cred_mgr.GetToken()); err != nil {
+			if core_id, err = getCoreIdFromService(cli_fty, app_cred_mgr.GetToken()); err != nil {
 				return nil, err
 			}
 			if err = saveCoreIdToPath(core_id, core_id_path); err != nil {

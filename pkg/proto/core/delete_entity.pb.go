@@ -6,7 +6,7 @@ package core
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import google_protobuf "github.com/golang/protobuf/ptypes/wrappers"
+import wrappers "github.com/golang/protobuf/ptypes/wrappers"
 import _ "github.com/mwitkow/go-proto-validators"
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -14,16 +14,44 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+
 type DeleteEntityRequest struct {
-	Id *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
+	Id                   *wrappers.StringValue `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *DeleteEntityRequest) Reset()                    { *m = DeleteEntityRequest{} }
-func (m *DeleteEntityRequest) String() string            { return proto.CompactTextString(m) }
-func (*DeleteEntityRequest) ProtoMessage()               {}
-func (*DeleteEntityRequest) Descriptor() ([]byte, []int) { return fileDescriptor4, []int{0} }
+func (m *DeleteEntityRequest) Reset()         { *m = DeleteEntityRequest{} }
+func (m *DeleteEntityRequest) String() string { return proto.CompactTextString(m) }
+func (*DeleteEntityRequest) ProtoMessage()    {}
+func (*DeleteEntityRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_delete_entity_168ccc9a32ee925a, []int{0}
+}
+func (m *DeleteEntityRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DeleteEntityRequest.Unmarshal(m, b)
+}
+func (m *DeleteEntityRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DeleteEntityRequest.Marshal(b, m, deterministic)
+}
+func (dst *DeleteEntityRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DeleteEntityRequest.Merge(dst, src)
+}
+func (m *DeleteEntityRequest) XXX_Size() int {
+	return xxx_messageInfo_DeleteEntityRequest.Size(m)
+}
+func (m *DeleteEntityRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_DeleteEntityRequest.DiscardUnknown(m)
+}
 
-func (m *DeleteEntityRequest) GetId() *google_protobuf.StringValue {
+var xxx_messageInfo_DeleteEntityRequest proto.InternalMessageInfo
+
+func (m *DeleteEntityRequest) GetId() *wrappers.StringValue {
 	if m != nil {
 		return m.Id
 	}
@@ -34,9 +62,9 @@ func init() {
 	proto.RegisterType((*DeleteEntityRequest)(nil), "ai.metathings.service.core.DeleteEntityRequest")
 }
 
-func init() { proto.RegisterFile("delete_entity.proto", fileDescriptor4) }
+func init() { proto.RegisterFile("delete_entity.proto", fileDescriptor_delete_entity_168ccc9a32ee925a) }
 
-var fileDescriptor4 = []byte{
+var fileDescriptor_delete_entity_168ccc9a32ee925a = []byte{
 	// 199 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x3c, 0x8e, 0xc1, 0x4a, 0x87, 0x40,
 	0x10, 0x87, 0xd1, 0x83, 0x07, 0xbb, 0xe9, 0x25, 0x24, 0x4a, 0x3a, 0x75, 0x71, 0x16, 0x2a, 0x7a,

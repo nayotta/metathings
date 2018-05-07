@@ -6,7 +6,7 @@ package identity
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import google_protobuf "github.com/golang/protobuf/ptypes/wrappers"
+import wrappers "github.com/golang/protobuf/ptypes/wrappers"
 import _ "github.com/mwitkow/go-proto-validators"
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -14,26 +14,52 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+
 type ListRolesForGroupOnProjectRequest struct {
-	ProjectId *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=project_id,json=projectId" json:"project_id,omitempty"`
-	GroupId   *google_protobuf.StringValue `protobuf:"bytes,2,opt,name=group_id,json=groupId" json:"group_id,omitempty"`
+	ProjectId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=project_id,json=projectId" json:"project_id,omitempty"`
+	GroupId              *wrappers.StringValue `protobuf:"bytes,2,opt,name=group_id,json=groupId" json:"group_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
 func (m *ListRolesForGroupOnProjectRequest) Reset()         { *m = ListRolesForGroupOnProjectRequest{} }
 func (m *ListRolesForGroupOnProjectRequest) String() string { return proto.CompactTextString(m) }
 func (*ListRolesForGroupOnProjectRequest) ProtoMessage()    {}
 func (*ListRolesForGroupOnProjectRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor46, []int{0}
+	return fileDescriptor_list_roles_for_group_on_project_7aa4cbe28741d62a, []int{0}
+}
+func (m *ListRolesForGroupOnProjectRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ListRolesForGroupOnProjectRequest.Unmarshal(m, b)
+}
+func (m *ListRolesForGroupOnProjectRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ListRolesForGroupOnProjectRequest.Marshal(b, m, deterministic)
+}
+func (dst *ListRolesForGroupOnProjectRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ListRolesForGroupOnProjectRequest.Merge(dst, src)
+}
+func (m *ListRolesForGroupOnProjectRequest) XXX_Size() int {
+	return xxx_messageInfo_ListRolesForGroupOnProjectRequest.Size(m)
+}
+func (m *ListRolesForGroupOnProjectRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_ListRolesForGroupOnProjectRequest.DiscardUnknown(m)
 }
 
-func (m *ListRolesForGroupOnProjectRequest) GetProjectId() *google_protobuf.StringValue {
+var xxx_messageInfo_ListRolesForGroupOnProjectRequest proto.InternalMessageInfo
+
+func (m *ListRolesForGroupOnProjectRequest) GetProjectId() *wrappers.StringValue {
 	if m != nil {
 		return m.ProjectId
 	}
 	return nil
 }
 
-func (m *ListRolesForGroupOnProjectRequest) GetGroupId() *google_protobuf.StringValue {
+func (m *ListRolesForGroupOnProjectRequest) GetGroupId() *wrappers.StringValue {
 	if m != nil {
 		return m.GroupId
 	}
@@ -41,15 +67,35 @@ func (m *ListRolesForGroupOnProjectRequest) GetGroupId() *google_protobuf.String
 }
 
 type ListRolesForGroupOnProjectResponse struct {
-	Roles []*Role `protobuf:"bytes,1,rep,name=roles" json:"roles,omitempty"`
+	Roles                []*Role  `protobuf:"bytes,1,rep,name=roles" json:"roles,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
 func (m *ListRolesForGroupOnProjectResponse) Reset()         { *m = ListRolesForGroupOnProjectResponse{} }
 func (m *ListRolesForGroupOnProjectResponse) String() string { return proto.CompactTextString(m) }
 func (*ListRolesForGroupOnProjectResponse) ProtoMessage()    {}
 func (*ListRolesForGroupOnProjectResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor46, []int{1}
+	return fileDescriptor_list_roles_for_group_on_project_7aa4cbe28741d62a, []int{1}
 }
+func (m *ListRolesForGroupOnProjectResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ListRolesForGroupOnProjectResponse.Unmarshal(m, b)
+}
+func (m *ListRolesForGroupOnProjectResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ListRolesForGroupOnProjectResponse.Marshal(b, m, deterministic)
+}
+func (dst *ListRolesForGroupOnProjectResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ListRolesForGroupOnProjectResponse.Merge(dst, src)
+}
+func (m *ListRolesForGroupOnProjectResponse) XXX_Size() int {
+	return xxx_messageInfo_ListRolesForGroupOnProjectResponse.Size(m)
+}
+func (m *ListRolesForGroupOnProjectResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_ListRolesForGroupOnProjectResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ListRolesForGroupOnProjectResponse proto.InternalMessageInfo
 
 func (m *ListRolesForGroupOnProjectResponse) GetRoles() []*Role {
 	if m != nil {
@@ -63,9 +109,11 @@ func init() {
 	proto.RegisterType((*ListRolesForGroupOnProjectResponse)(nil), "ai.metathings.service.identity.ListRolesForGroupOnProjectResponse")
 }
 
-func init() { proto.RegisterFile("list_roles_for_group_on_project.proto", fileDescriptor46) }
+func init() {
+	proto.RegisterFile("list_roles_for_group_on_project.proto", fileDescriptor_list_roles_for_group_on_project_7aa4cbe28741d62a)
+}
 
-var fileDescriptor46 = []byte{
+var fileDescriptor_list_roles_for_group_on_project_7aa4cbe28741d62a = []byte{
 	// 291 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0xd0, 0xc1, 0x4a, 0x33, 0x31,
 	0x10, 0xc0, 0x71, 0xb6, 0x1f, 0x5f, 0xd5, 0xf4, 0xb6, 0xa7, 0x52, 0xa4, 0xd6, 0xa2, 0xd0, 0x4b,

@@ -6,47 +6,97 @@ package core
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import google_protobuf "github.com/golang/protobuf/ptypes/wrappers"
+import state "github.com/bigdatagz/metathings/pkg/proto/common/state"
+import wrappers "github.com/golang/protobuf/ptypes/wrappers"
 import _ "github.com/mwitkow/go-proto-validators"
-import ai_metathings_state1 "github.com/bigdatagz/metathings/pkg/proto/common/state"
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+
 type PatchEntityRequest struct {
-	Id    *google_protobuf.StringValue     `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	State ai_metathings_state1.EntityState `protobuf:"varint,2,opt,name=state,enum=ai.metathings.state.EntityState" json:"state,omitempty"`
+	Id                   *wrappers.StringValue `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
+	State                state.EntityState     `protobuf:"varint,2,opt,name=state,enum=ai.metathings.state.EntityState" json:"state,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *PatchEntityRequest) Reset()                    { *m = PatchEntityRequest{} }
-func (m *PatchEntityRequest) String() string            { return proto.CompactTextString(m) }
-func (*PatchEntityRequest) ProtoMessage()               {}
-func (*PatchEntityRequest) Descriptor() ([]byte, []int) { return fileDescriptor14, []int{0} }
+func (m *PatchEntityRequest) Reset()         { *m = PatchEntityRequest{} }
+func (m *PatchEntityRequest) String() string { return proto.CompactTextString(m) }
+func (*PatchEntityRequest) ProtoMessage()    {}
+func (*PatchEntityRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_patch_entity_8305c605705334c6, []int{0}
+}
+func (m *PatchEntityRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_PatchEntityRequest.Unmarshal(m, b)
+}
+func (m *PatchEntityRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_PatchEntityRequest.Marshal(b, m, deterministic)
+}
+func (dst *PatchEntityRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PatchEntityRequest.Merge(dst, src)
+}
+func (m *PatchEntityRequest) XXX_Size() int {
+	return xxx_messageInfo_PatchEntityRequest.Size(m)
+}
+func (m *PatchEntityRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_PatchEntityRequest.DiscardUnknown(m)
+}
 
-func (m *PatchEntityRequest) GetId() *google_protobuf.StringValue {
+var xxx_messageInfo_PatchEntityRequest proto.InternalMessageInfo
+
+func (m *PatchEntityRequest) GetId() *wrappers.StringValue {
 	if m != nil {
 		return m.Id
 	}
 	return nil
 }
 
-func (m *PatchEntityRequest) GetState() ai_metathings_state1.EntityState {
+func (m *PatchEntityRequest) GetState() state.EntityState {
 	if m != nil {
 		return m.State
 	}
-	return ai_metathings_state1.EntityState_ENTITY_STATE_UNKNOWN
+	return state.EntityState_ENTITY_STATE_UNKNOWN
 }
 
 type PatchEntityResponse struct {
-	Entity *Entity `protobuf:"bytes,1,opt,name=entity" json:"entity,omitempty"`
+	Entity               *Entity  `protobuf:"bytes,1,opt,name=entity" json:"entity,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *PatchEntityResponse) Reset()                    { *m = PatchEntityResponse{} }
-func (m *PatchEntityResponse) String() string            { return proto.CompactTextString(m) }
-func (*PatchEntityResponse) ProtoMessage()               {}
-func (*PatchEntityResponse) Descriptor() ([]byte, []int) { return fileDescriptor14, []int{1} }
+func (m *PatchEntityResponse) Reset()         { *m = PatchEntityResponse{} }
+func (m *PatchEntityResponse) String() string { return proto.CompactTextString(m) }
+func (*PatchEntityResponse) ProtoMessage()    {}
+func (*PatchEntityResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_patch_entity_8305c605705334c6, []int{1}
+}
+func (m *PatchEntityResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_PatchEntityResponse.Unmarshal(m, b)
+}
+func (m *PatchEntityResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_PatchEntityResponse.Marshal(b, m, deterministic)
+}
+func (dst *PatchEntityResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PatchEntityResponse.Merge(dst, src)
+}
+func (m *PatchEntityResponse) XXX_Size() int {
+	return xxx_messageInfo_PatchEntityResponse.Size(m)
+}
+func (m *PatchEntityResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_PatchEntityResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_PatchEntityResponse proto.InternalMessageInfo
 
 func (m *PatchEntityResponse) GetEntity() *Entity {
 	if m != nil {
@@ -60,9 +110,9 @@ func init() {
 	proto.RegisterType((*PatchEntityResponse)(nil), "ai.metathings.service.core.PatchEntityResponse")
 }
 
-func init() { proto.RegisterFile("patch_entity.proto", fileDescriptor14) }
+func init() { proto.RegisterFile("patch_entity.proto", fileDescriptor_patch_entity_8305c605705334c6) }
 
-var fileDescriptor14 = []byte{
+var fileDescriptor_patch_entity_8305c605705334c6 = []byte{
 	// 295 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x74, 0x90, 0x31, 0x4f, 0xfb, 0x30,
 	0x10, 0xc5, 0x95, 0x48, 0xff, 0x0e, 0xfe, 0x23, 0x06, 0xb3, 0x54, 0x15, 0x82, 0xa8, 0x53, 0x97,

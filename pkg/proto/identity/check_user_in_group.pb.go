@@ -6,7 +6,7 @@ package identity
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import google_protobuf "github.com/golang/protobuf/ptypes/wrappers"
+import wrappers "github.com/golang/protobuf/ptypes/wrappers"
 import _ "github.com/mwitkow/go-proto-validators"
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -14,24 +14,52 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+
 type CheckUserInGroupRequest struct {
-	UserId  *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=user_id,json=userId" json:"user_id,omitempty"`
-	GroupId *google_protobuf.StringValue `protobuf:"bytes,2,opt,name=group_id,json=groupId" json:"group_id,omitempty"`
+	UserId               *wrappers.StringValue `protobuf:"bytes,1,opt,name=user_id,json=userId" json:"user_id,omitempty"`
+	GroupId              *wrappers.StringValue `protobuf:"bytes,2,opt,name=group_id,json=groupId" json:"group_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *CheckUserInGroupRequest) Reset()                    { *m = CheckUserInGroupRequest{} }
-func (m *CheckUserInGroupRequest) String() string            { return proto.CompactTextString(m) }
-func (*CheckUserInGroupRequest) ProtoMessage()               {}
-func (*CheckUserInGroupRequest) Descriptor() ([]byte, []int) { return fileDescriptor11, []int{0} }
+func (m *CheckUserInGroupRequest) Reset()         { *m = CheckUserInGroupRequest{} }
+func (m *CheckUserInGroupRequest) String() string { return proto.CompactTextString(m) }
+func (*CheckUserInGroupRequest) ProtoMessage()    {}
+func (*CheckUserInGroupRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_check_user_in_group_455fa72abae0c219, []int{0}
+}
+func (m *CheckUserInGroupRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_CheckUserInGroupRequest.Unmarshal(m, b)
+}
+func (m *CheckUserInGroupRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_CheckUserInGroupRequest.Marshal(b, m, deterministic)
+}
+func (dst *CheckUserInGroupRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CheckUserInGroupRequest.Merge(dst, src)
+}
+func (m *CheckUserInGroupRequest) XXX_Size() int {
+	return xxx_messageInfo_CheckUserInGroupRequest.Size(m)
+}
+func (m *CheckUserInGroupRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_CheckUserInGroupRequest.DiscardUnknown(m)
+}
 
-func (m *CheckUserInGroupRequest) GetUserId() *google_protobuf.StringValue {
+var xxx_messageInfo_CheckUserInGroupRequest proto.InternalMessageInfo
+
+func (m *CheckUserInGroupRequest) GetUserId() *wrappers.StringValue {
 	if m != nil {
 		return m.UserId
 	}
 	return nil
 }
 
-func (m *CheckUserInGroupRequest) GetGroupId() *google_protobuf.StringValue {
+func (m *CheckUserInGroupRequest) GetGroupId() *wrappers.StringValue {
 	if m != nil {
 		return m.GroupId
 	}
@@ -42,9 +70,11 @@ func init() {
 	proto.RegisterType((*CheckUserInGroupRequest)(nil), "ai.metathings.service.identity.CheckUserInGroupRequest")
 }
 
-func init() { proto.RegisterFile("check_user_in_group.proto", fileDescriptor11) }
+func init() {
+	proto.RegisterFile("check_user_in_group.proto", fileDescriptor_check_user_in_group_455fa72abae0c219)
+}
 
-var fileDescriptor11 = []byte{
+var fileDescriptor_check_user_in_group_455fa72abae0c219 = []byte{
 	// 237 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0xcf, 0xb1, 0x4a, 0xc4, 0x40,
 	0x10, 0xc6, 0x71, 0x72, 0x45, 0x4e, 0x62, 0x97, 0x46, 0x3d, 0xe4, 0x3c, 0xac, 0x6c, 0x6e, 0x03,

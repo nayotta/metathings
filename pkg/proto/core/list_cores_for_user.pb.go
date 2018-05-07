@@ -13,22 +13,72 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+
 type ListCoresForUserRequest struct {
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *ListCoresForUserRequest) Reset()                    { *m = ListCoresForUserRequest{} }
-func (m *ListCoresForUserRequest) String() string            { return proto.CompactTextString(m) }
-func (*ListCoresForUserRequest) ProtoMessage()               {}
-func (*ListCoresForUserRequest) Descriptor() ([]byte, []int) { return fileDescriptor10, []int{0} }
+func (m *ListCoresForUserRequest) Reset()         { *m = ListCoresForUserRequest{} }
+func (m *ListCoresForUserRequest) String() string { return proto.CompactTextString(m) }
+func (*ListCoresForUserRequest) ProtoMessage()    {}
+func (*ListCoresForUserRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_list_cores_for_user_518bbfd5f35c0a44, []int{0}
+}
+func (m *ListCoresForUserRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ListCoresForUserRequest.Unmarshal(m, b)
+}
+func (m *ListCoresForUserRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ListCoresForUserRequest.Marshal(b, m, deterministic)
+}
+func (dst *ListCoresForUserRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ListCoresForUserRequest.Merge(dst, src)
+}
+func (m *ListCoresForUserRequest) XXX_Size() int {
+	return xxx_messageInfo_ListCoresForUserRequest.Size(m)
+}
+func (m *ListCoresForUserRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_ListCoresForUserRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ListCoresForUserRequest proto.InternalMessageInfo
 
 type ListCoresForUserResponse struct {
-	Cores []*Core `protobuf:"bytes,1,rep,name=cores" json:"cores,omitempty"`
+	Cores                []*Core  `protobuf:"bytes,1,rep,name=cores" json:"cores,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *ListCoresForUserResponse) Reset()                    { *m = ListCoresForUserResponse{} }
-func (m *ListCoresForUserResponse) String() string            { return proto.CompactTextString(m) }
-func (*ListCoresForUserResponse) ProtoMessage()               {}
-func (*ListCoresForUserResponse) Descriptor() ([]byte, []int) { return fileDescriptor10, []int{1} }
+func (m *ListCoresForUserResponse) Reset()         { *m = ListCoresForUserResponse{} }
+func (m *ListCoresForUserResponse) String() string { return proto.CompactTextString(m) }
+func (*ListCoresForUserResponse) ProtoMessage()    {}
+func (*ListCoresForUserResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_list_cores_for_user_518bbfd5f35c0a44, []int{1}
+}
+func (m *ListCoresForUserResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ListCoresForUserResponse.Unmarshal(m, b)
+}
+func (m *ListCoresForUserResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ListCoresForUserResponse.Marshal(b, m, deterministic)
+}
+func (dst *ListCoresForUserResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ListCoresForUserResponse.Merge(dst, src)
+}
+func (m *ListCoresForUserResponse) XXX_Size() int {
+	return xxx_messageInfo_ListCoresForUserResponse.Size(m)
+}
+func (m *ListCoresForUserResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_ListCoresForUserResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ListCoresForUserResponse proto.InternalMessageInfo
 
 func (m *ListCoresForUserResponse) GetCores() []*Core {
 	if m != nil {
@@ -42,9 +92,11 @@ func init() {
 	proto.RegisterType((*ListCoresForUserResponse)(nil), "ai.metathings.service.core.ListCoresForUserResponse")
 }
 
-func init() { proto.RegisterFile("list_cores_for_user.proto", fileDescriptor10) }
+func init() {
+	proto.RegisterFile("list_cores_for_user.proto", fileDescriptor_list_cores_for_user_518bbfd5f35c0a44)
+}
 
-var fileDescriptor10 = []byte{
+var fileDescriptor_list_cores_for_user_518bbfd5f35c0a44 = []byte{
 	// 186 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x74, 0x8e, 0xbf, 0x6b, 0x83, 0x50,
 	0x10, 0xc7, 0x29, 0xa5, 0x1d, 0x5e, 0x37, 0x97, 0xaa, 0x93, 0x38, 0x75, 0xf1, 0x09, 0x2d, 0xf8,

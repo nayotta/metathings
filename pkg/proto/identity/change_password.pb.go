@@ -6,7 +6,7 @@ package identity
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import google_protobuf "github.com/golang/protobuf/ptypes/wrappers"
+import wrappers "github.com/golang/protobuf/ptypes/wrappers"
 import _ "github.com/mwitkow/go-proto-validators"
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -14,32 +14,60 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+
 type ChangePasswordRequest struct {
-	UserId           *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=user_id,json=userId" json:"user_id,omitempty"`
-	OriginalPassword *google_protobuf.StringValue `protobuf:"bytes,2,opt,name=original_password,json=originalPassword" json:"original_password,omitempty"`
-	Password         *google_protobuf.StringValue `protobuf:"bytes,3,opt,name=password" json:"password,omitempty"`
+	UserId               *wrappers.StringValue `protobuf:"bytes,1,opt,name=user_id,json=userId" json:"user_id,omitempty"`
+	OriginalPassword     *wrappers.StringValue `protobuf:"bytes,2,opt,name=original_password,json=originalPassword" json:"original_password,omitempty"`
+	Password             *wrappers.StringValue `protobuf:"bytes,3,opt,name=password" json:"password,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *ChangePasswordRequest) Reset()                    { *m = ChangePasswordRequest{} }
-func (m *ChangePasswordRequest) String() string            { return proto.CompactTextString(m) }
-func (*ChangePasswordRequest) ProtoMessage()               {}
-func (*ChangePasswordRequest) Descriptor() ([]byte, []int) { return fileDescriptor6, []int{0} }
+func (m *ChangePasswordRequest) Reset()         { *m = ChangePasswordRequest{} }
+func (m *ChangePasswordRequest) String() string { return proto.CompactTextString(m) }
+func (*ChangePasswordRequest) ProtoMessage()    {}
+func (*ChangePasswordRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_change_password_8f4bfb273d8fae22, []int{0}
+}
+func (m *ChangePasswordRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ChangePasswordRequest.Unmarshal(m, b)
+}
+func (m *ChangePasswordRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ChangePasswordRequest.Marshal(b, m, deterministic)
+}
+func (dst *ChangePasswordRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ChangePasswordRequest.Merge(dst, src)
+}
+func (m *ChangePasswordRequest) XXX_Size() int {
+	return xxx_messageInfo_ChangePasswordRequest.Size(m)
+}
+func (m *ChangePasswordRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_ChangePasswordRequest.DiscardUnknown(m)
+}
 
-func (m *ChangePasswordRequest) GetUserId() *google_protobuf.StringValue {
+var xxx_messageInfo_ChangePasswordRequest proto.InternalMessageInfo
+
+func (m *ChangePasswordRequest) GetUserId() *wrappers.StringValue {
 	if m != nil {
 		return m.UserId
 	}
 	return nil
 }
 
-func (m *ChangePasswordRequest) GetOriginalPassword() *google_protobuf.StringValue {
+func (m *ChangePasswordRequest) GetOriginalPassword() *wrappers.StringValue {
 	if m != nil {
 		return m.OriginalPassword
 	}
 	return nil
 }
 
-func (m *ChangePasswordRequest) GetPassword() *google_protobuf.StringValue {
+func (m *ChangePasswordRequest) GetPassword() *wrappers.StringValue {
 	if m != nil {
 		return m.Password
 	}
@@ -50,9 +78,11 @@ func init() {
 	proto.RegisterType((*ChangePasswordRequest)(nil), "ai.metathings.service.identity.ChangePasswordRequest")
 }
 
-func init() { proto.RegisterFile("change_password.proto", fileDescriptor6) }
+func init() {
+	proto.RegisterFile("change_password.proto", fileDescriptor_change_password_8f4bfb273d8fae22)
+}
 
-var fileDescriptor6 = []byte{
+var fileDescriptor_change_password_8f4bfb273d8fae22 = []byte{
 	// 247 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x8f, 0x41, 0x4b, 0xc4, 0x30,
 	0x10, 0x46, 0xe9, 0x0a, 0x55, 0xe2, 0x45, 0x0b, 0x0b, 0xcb, 0x22, 0xeb, 0xe2, 0xc9, 0xcb, 0x26,

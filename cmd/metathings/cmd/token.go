@@ -65,15 +65,15 @@ func parseIssueTokenRequest() (*pb.IssueTokenRequest, error) {
 		req.Method = pb.AUTH_METHOD_PASSWORD
 		payload := &pb.PasswordPayload{}
 
-		payload.Password = &gpb.StringValue{token_issue_opts.Password}
+		payload.Password = &gpb.StringValue{Value: token_issue_opts.Password}
 		if token_issue_opts.UserId != "" {
-			payload.Id = &gpb.StringValue{token_issue_opts.UserId}
+			payload.Id = &gpb.StringValue{Value: token_issue_opts.UserId}
 		} else if token_issue_opts.Username != "" {
-			payload.Username = &gpb.StringValue{token_issue_opts.Username}
+			payload.Username = &gpb.StringValue{Value: token_issue_opts.Username}
 			if token_issue_opts.UserDomainId != "" {
-				payload.DomainId = &gpb.StringValue{token_issue_opts.UserDomainId}
+				payload.DomainId = &gpb.StringValue{Value: token_issue_opts.UserDomainId}
 			} else if token_issue_opts.UserDomainName != "" {
-				payload.DomainName = &gpb.StringValue{token_issue_opts.UserDomainName}
+				payload.DomainName = &gpb.StringValue{Value: token_issue_opts.UserDomainName}
 			} else {
 				return nil, errors.New("required domain id or name when issue token by username")
 			}
@@ -83,9 +83,9 @@ func parseIssueTokenRequest() (*pb.IssueTokenRequest, error) {
 		}
 
 		if token_issue_opts.DomainId != "" {
-			payload.Scope.DomainId = &gpb.StringValue{token_issue_opts.DomainId}
+			payload.Scope.DomainId = &gpb.StringValue{Value: token_issue_opts.DomainId}
 		} else if token_issue_opts.ProjectId != "" {
-			payload.Scope.ProjectId = &gpb.StringValue{token_issue_opts.ProjectId}
+			payload.Scope.ProjectId = &gpb.StringValue{Value: token_issue_opts.ProjectId}
 		}
 
 		req.Payload = &pb.IssueTokenRequest_Password{payload}
@@ -93,20 +93,20 @@ func parseIssueTokenRequest() (*pb.IssueTokenRequest, error) {
 		req.Method = pb.AUTH_METHOD_TOKEN
 		payload := &pb.TokenPayload{}
 
-		payload.TokenId = &gpb.StringValue{token_issue_opts.Token}
+		payload.TokenId = &gpb.StringValue{Value: token_issue_opts.Token}
 
 		req.Payload = &pb.IssueTokenRequest_Token{payload}
 	} else if root_opts.ApplicationCredential.Secret != "" {
 		req.Method = pb.AUTH_METHOD_APPLICATION_CREDENTIAL
 		payload := &pb.ApplicationCredentialPayload{}
 
-		payload.Secret = &gpb.StringValue{root_opts.ApplicationCredential.Secret}
+		payload.Secret = &gpb.StringValue{Value: root_opts.ApplicationCredential.Secret}
 		if root_opts.ApplicationCredential.Id != "" {
-			payload.Id = &gpb.StringValue{root_opts.ApplicationCredential.Id}
+			payload.Id = &gpb.StringValue{Value: root_opts.ApplicationCredential.Id}
 		} else if token_issue_opts.ApplicationCredentialName != "" {
-			payload.Name = &gpb.StringValue{token_issue_opts.ApplicationCredentialName}
+			payload.Name = &gpb.StringValue{Value: token_issue_opts.ApplicationCredentialName}
 			if token_issue_opts.DomainId != "" {
-				payload.DomainId = &gpb.StringValue{token_issue_opts.DomainId}
+				payload.DomainId = &gpb.StringValue{Value: token_issue_opts.DomainId}
 			} else {
 				return nil, errors.New("required domain id when issue token by application credential")
 			}

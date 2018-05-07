@@ -6,7 +6,7 @@ package identity
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import google_protobuf "github.com/golang/protobuf/ptypes/wrappers"
+import wrappers "github.com/golang/protobuf/ptypes/wrappers"
 import _ "github.com/mwitkow/go-proto-validators"
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -14,34 +14,60 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+
 type RemoveRoleFromUserOnProjectRequest struct {
-	ProjectId *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=project_id,json=projectId" json:"project_id,omitempty"`
-	UserId    *google_protobuf.StringValue `protobuf:"bytes,2,opt,name=user_id,json=userId" json:"user_id,omitempty"`
-	RoleId    *google_protobuf.StringValue `protobuf:"bytes,3,opt,name=role_id,json=roleId" json:"role_id,omitempty"`
+	ProjectId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=project_id,json=projectId" json:"project_id,omitempty"`
+	UserId               *wrappers.StringValue `protobuf:"bytes,2,opt,name=user_id,json=userId" json:"user_id,omitempty"`
+	RoleId               *wrappers.StringValue `protobuf:"bytes,3,opt,name=role_id,json=roleId" json:"role_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
 func (m *RemoveRoleFromUserOnProjectRequest) Reset()         { *m = RemoveRoleFromUserOnProjectRequest{} }
 func (m *RemoveRoleFromUserOnProjectRequest) String() string { return proto.CompactTextString(m) }
 func (*RemoveRoleFromUserOnProjectRequest) ProtoMessage()    {}
 func (*RemoveRoleFromUserOnProjectRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor62, []int{0}
+	return fileDescriptor_remove_role_from_user_on_project_1bc8a3b5d3efd74b, []int{0}
+}
+func (m *RemoveRoleFromUserOnProjectRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_RemoveRoleFromUserOnProjectRequest.Unmarshal(m, b)
+}
+func (m *RemoveRoleFromUserOnProjectRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_RemoveRoleFromUserOnProjectRequest.Marshal(b, m, deterministic)
+}
+func (dst *RemoveRoleFromUserOnProjectRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_RemoveRoleFromUserOnProjectRequest.Merge(dst, src)
+}
+func (m *RemoveRoleFromUserOnProjectRequest) XXX_Size() int {
+	return xxx_messageInfo_RemoveRoleFromUserOnProjectRequest.Size(m)
+}
+func (m *RemoveRoleFromUserOnProjectRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_RemoveRoleFromUserOnProjectRequest.DiscardUnknown(m)
 }
 
-func (m *RemoveRoleFromUserOnProjectRequest) GetProjectId() *google_protobuf.StringValue {
+var xxx_messageInfo_RemoveRoleFromUserOnProjectRequest proto.InternalMessageInfo
+
+func (m *RemoveRoleFromUserOnProjectRequest) GetProjectId() *wrappers.StringValue {
 	if m != nil {
 		return m.ProjectId
 	}
 	return nil
 }
 
-func (m *RemoveRoleFromUserOnProjectRequest) GetUserId() *google_protobuf.StringValue {
+func (m *RemoveRoleFromUserOnProjectRequest) GetUserId() *wrappers.StringValue {
 	if m != nil {
 		return m.UserId
 	}
 	return nil
 }
 
-func (m *RemoveRoleFromUserOnProjectRequest) GetRoleId() *google_protobuf.StringValue {
+func (m *RemoveRoleFromUserOnProjectRequest) GetRoleId() *wrappers.StringValue {
 	if m != nil {
 		return m.RoleId
 	}
@@ -52,9 +78,11 @@ func init() {
 	proto.RegisterType((*RemoveRoleFromUserOnProjectRequest)(nil), "ai.metathings.service.identity.RemoveRoleFromUserOnProjectRequest")
 }
 
-func init() { proto.RegisterFile("remove_role_from_user_on_project.proto", fileDescriptor62) }
+func init() {
+	proto.RegisterFile("remove_role_from_user_on_project.proto", fileDescriptor_remove_role_from_user_on_project_1bc8a3b5d3efd74b)
+}
 
-var fileDescriptor62 = []byte{
+var fileDescriptor_remove_role_from_user_on_project_1bc8a3b5d3efd74b = []byte{
 	// 263 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0xd0, 0x41, 0x4b, 0xc3, 0x30,
 	0x14, 0xc0, 0x71, 0x3a, 0x61, 0x62, 0xbd, 0xed, 0x34, 0x86, 0xcc, 0xb1, 0x83, 0x78, 0x59, 0x0a,

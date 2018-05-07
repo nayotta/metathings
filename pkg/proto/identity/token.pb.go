@@ -6,28 +6,56 @@ package identity
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import google_protobuf2 "github.com/golang/protobuf/ptypes/timestamp"
+import timestamp "github.com/golang/protobuf/ptypes/timestamp"
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+
 type Token struct {
 	Methods               []string                      `protobuf:"bytes,1,rep,name=methods" json:"methods,omitempty"`
-	ExipresAt             *google_protobuf2.Timestamp   `protobuf:"bytes,2,opt,name=exipres_at,json=exipresAt" json:"exipres_at,omitempty"`
-	IssuedAt              *google_protobuf2.Timestamp   `protobuf:"bytes,3,opt,name=issued_at,json=issuedAt" json:"issued_at,omitempty"`
+	ExipresAt             *timestamp.Timestamp          `protobuf:"bytes,2,opt,name=exipres_at,json=exipresAt" json:"exipres_at,omitempty"`
+	IssuedAt              *timestamp.Timestamp          `protobuf:"bytes,3,opt,name=issued_at,json=issuedAt" json:"issued_at,omitempty"`
 	IsDomain              bool                          `protobuf:"varint,4,opt,name=is_domain,json=isDomain" json:"is_domain,omitempty"`
 	User                  *Token__User                  `protobuf:"bytes,5,opt,name=user" json:"user,omitempty"`
 	Roles                 []*Token__Role                `protobuf:"bytes,6,rep,name=roles" json:"roles,omitempty"`
 	Project               *Token__Project               `protobuf:"bytes,7,opt,name=project" json:"project,omitempty"`
 	ApplicationCredential *Token__ApplicationCredential `protobuf:"bytes,8,opt,name=application_credential,json=applicationCredential" json:"application_credential,omitempty"`
+	XXX_NoUnkeyedLiteral  struct{}                      `json:"-"`
+	XXX_unrecognized      []byte                        `json:"-"`
+	XXX_sizecache         int32                         `json:"-"`
 }
 
-func (m *Token) Reset()                    { *m = Token{} }
-func (m *Token) String() string            { return proto.CompactTextString(m) }
-func (*Token) ProtoMessage()               {}
-func (*Token) Descriptor() ([]byte, []int) { return fileDescriptor66, []int{0} }
+func (m *Token) Reset()         { *m = Token{} }
+func (m *Token) String() string { return proto.CompactTextString(m) }
+func (*Token) ProtoMessage()    {}
+func (*Token) Descriptor() ([]byte, []int) {
+	return fileDescriptor_token_eac893d68c44a9c7, []int{0}
+}
+func (m *Token) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Token.Unmarshal(m, b)
+}
+func (m *Token) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Token.Marshal(b, m, deterministic)
+}
+func (dst *Token) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Token.Merge(dst, src)
+}
+func (m *Token) XXX_Size() int {
+	return xxx_messageInfo_Token.Size(m)
+}
+func (m *Token) XXX_DiscardUnknown() {
+	xxx_messageInfo_Token.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Token proto.InternalMessageInfo
 
 func (m *Token) GetMethods() []string {
 	if m != nil {
@@ -36,14 +64,14 @@ func (m *Token) GetMethods() []string {
 	return nil
 }
 
-func (m *Token) GetExipresAt() *google_protobuf2.Timestamp {
+func (m *Token) GetExipresAt() *timestamp.Timestamp {
 	if m != nil {
 		return m.ExipresAt
 	}
 	return nil
 }
 
-func (m *Token) GetIssuedAt() *google_protobuf2.Timestamp {
+func (m *Token) GetIssuedAt() *timestamp.Timestamp {
 	if m != nil {
 		return m.IssuedAt
 	}
@@ -86,14 +114,36 @@ func (m *Token) GetApplicationCredential() *Token__ApplicationCredential {
 }
 
 type Token__Domain struct {
-	Id   string `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	Name string `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
+	Id                   string   `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
+	Name                 string   `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *Token__Domain) Reset()                    { *m = Token__Domain{} }
-func (m *Token__Domain) String() string            { return proto.CompactTextString(m) }
-func (*Token__Domain) ProtoMessage()               {}
-func (*Token__Domain) Descriptor() ([]byte, []int) { return fileDescriptor66, []int{0, 0} }
+func (m *Token__Domain) Reset()         { *m = Token__Domain{} }
+func (m *Token__Domain) String() string { return proto.CompactTextString(m) }
+func (*Token__Domain) ProtoMessage()    {}
+func (*Token__Domain) Descriptor() ([]byte, []int) {
+	return fileDescriptor_token_eac893d68c44a9c7, []int{0, 0}
+}
+func (m *Token__Domain) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Token__Domain.Unmarshal(m, b)
+}
+func (m *Token__Domain) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Token__Domain.Marshal(b, m, deterministic)
+}
+func (dst *Token__Domain) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Token__Domain.Merge(dst, src)
+}
+func (m *Token__Domain) XXX_Size() int {
+	return xxx_messageInfo_Token__Domain.Size(m)
+}
+func (m *Token__Domain) XXX_DiscardUnknown() {
+	xxx_messageInfo_Token__Domain.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Token__Domain proto.InternalMessageInfo
 
 func (m *Token__Domain) GetId() string {
 	if m != nil {
@@ -110,15 +160,37 @@ func (m *Token__Domain) GetName() string {
 }
 
 type Token__Project struct {
-	Id     string         `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	Name   string         `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
-	Domain *Token__Domain `protobuf:"bytes,3,opt,name=domain" json:"domain,omitempty"`
+	Id                   string         `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
+	Name                 string         `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
+	Domain               *Token__Domain `protobuf:"bytes,3,opt,name=domain" json:"domain,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}       `json:"-"`
+	XXX_unrecognized     []byte         `json:"-"`
+	XXX_sizecache        int32          `json:"-"`
 }
 
-func (m *Token__Project) Reset()                    { *m = Token__Project{} }
-func (m *Token__Project) String() string            { return proto.CompactTextString(m) }
-func (*Token__Project) ProtoMessage()               {}
-func (*Token__Project) Descriptor() ([]byte, []int) { return fileDescriptor66, []int{0, 1} }
+func (m *Token__Project) Reset()         { *m = Token__Project{} }
+func (m *Token__Project) String() string { return proto.CompactTextString(m) }
+func (*Token__Project) ProtoMessage()    {}
+func (*Token__Project) Descriptor() ([]byte, []int) {
+	return fileDescriptor_token_eac893d68c44a9c7, []int{0, 1}
+}
+func (m *Token__Project) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Token__Project.Unmarshal(m, b)
+}
+func (m *Token__Project) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Token__Project.Marshal(b, m, deterministic)
+}
+func (dst *Token__Project) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Token__Project.Merge(dst, src)
+}
+func (m *Token__Project) XXX_Size() int {
+	return xxx_messageInfo_Token__Project.Size(m)
+}
+func (m *Token__Project) XXX_DiscardUnknown() {
+	xxx_messageInfo_Token__Project.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Token__Project proto.InternalMessageInfo
 
 func (m *Token__Project) GetId() string {
 	if m != nil {
@@ -142,15 +214,37 @@ func (m *Token__Project) GetDomain() *Token__Domain {
 }
 
 type Token__User struct {
-	Id     string         `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	Name   string         `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
-	Domain *Token__Domain `protobuf:"bytes,3,opt,name=domain" json:"domain,omitempty"`
+	Id                   string         `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
+	Name                 string         `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
+	Domain               *Token__Domain `protobuf:"bytes,3,opt,name=domain" json:"domain,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}       `json:"-"`
+	XXX_unrecognized     []byte         `json:"-"`
+	XXX_sizecache        int32          `json:"-"`
 }
 
-func (m *Token__User) Reset()                    { *m = Token__User{} }
-func (m *Token__User) String() string            { return proto.CompactTextString(m) }
-func (*Token__User) ProtoMessage()               {}
-func (*Token__User) Descriptor() ([]byte, []int) { return fileDescriptor66, []int{0, 2} }
+func (m *Token__User) Reset()         { *m = Token__User{} }
+func (m *Token__User) String() string { return proto.CompactTextString(m) }
+func (*Token__User) ProtoMessage()    {}
+func (*Token__User) Descriptor() ([]byte, []int) {
+	return fileDescriptor_token_eac893d68c44a9c7, []int{0, 2}
+}
+func (m *Token__User) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Token__User.Unmarshal(m, b)
+}
+func (m *Token__User) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Token__User.Marshal(b, m, deterministic)
+}
+func (dst *Token__User) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Token__User.Merge(dst, src)
+}
+func (m *Token__User) XXX_Size() int {
+	return xxx_messageInfo_Token__User.Size(m)
+}
+func (m *Token__User) XXX_DiscardUnknown() {
+	xxx_messageInfo_Token__User.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Token__User proto.InternalMessageInfo
 
 func (m *Token__User) GetId() string {
 	if m != nil {
@@ -174,14 +268,36 @@ func (m *Token__User) GetDomain() *Token__Domain {
 }
 
 type Token__Role struct {
-	Id   string `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	Name string `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
+	Id                   string   `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
+	Name                 string   `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *Token__Role) Reset()                    { *m = Token__Role{} }
-func (m *Token__Role) String() string            { return proto.CompactTextString(m) }
-func (*Token__Role) ProtoMessage()               {}
-func (*Token__Role) Descriptor() ([]byte, []int) { return fileDescriptor66, []int{0, 3} }
+func (m *Token__Role) Reset()         { *m = Token__Role{} }
+func (m *Token__Role) String() string { return proto.CompactTextString(m) }
+func (*Token__Role) ProtoMessage()    {}
+func (*Token__Role) Descriptor() ([]byte, []int) {
+	return fileDescriptor_token_eac893d68c44a9c7, []int{0, 3}
+}
+func (m *Token__Role) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Token__Role.Unmarshal(m, b)
+}
+func (m *Token__Role) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Token__Role.Marshal(b, m, deterministic)
+}
+func (dst *Token__Role) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Token__Role.Merge(dst, src)
+}
+func (m *Token__Role) XXX_Size() int {
+	return xxx_messageInfo_Token__Role.Size(m)
+}
+func (m *Token__Role) XXX_DiscardUnknown() {
+	xxx_messageInfo_Token__Role.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Token__Role proto.InternalMessageInfo
 
 func (m *Token__Role) GetId() string {
 	if m != nil {
@@ -198,17 +314,37 @@ func (m *Token__Role) GetName() string {
 }
 
 type Token__ApplicationCredential struct {
-	Id         string `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	Name       string `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
-	Restricted bool   `protobuf:"varint,3,opt,name=restricted" json:"restricted,omitempty"`
+	Id                   string   `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
+	Name                 string   `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
+	Restricted           bool     `protobuf:"varint,3,opt,name=restricted" json:"restricted,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
 func (m *Token__ApplicationCredential) Reset()         { *m = Token__ApplicationCredential{} }
 func (m *Token__ApplicationCredential) String() string { return proto.CompactTextString(m) }
 func (*Token__ApplicationCredential) ProtoMessage()    {}
 func (*Token__ApplicationCredential) Descriptor() ([]byte, []int) {
-	return fileDescriptor66, []int{0, 4}
+	return fileDescriptor_token_eac893d68c44a9c7, []int{0, 4}
 }
+func (m *Token__ApplicationCredential) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Token__ApplicationCredential.Unmarshal(m, b)
+}
+func (m *Token__ApplicationCredential) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Token__ApplicationCredential.Marshal(b, m, deterministic)
+}
+func (dst *Token__ApplicationCredential) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Token__ApplicationCredential.Merge(dst, src)
+}
+func (m *Token__ApplicationCredential) XXX_Size() int {
+	return xxx_messageInfo_Token__ApplicationCredential.Size(m)
+}
+func (m *Token__ApplicationCredential) XXX_DiscardUnknown() {
+	xxx_messageInfo_Token__ApplicationCredential.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Token__ApplicationCredential proto.InternalMessageInfo
 
 func (m *Token__ApplicationCredential) GetId() string {
 	if m != nil {
@@ -240,9 +376,9 @@ func init() {
 	proto.RegisterType((*Token__ApplicationCredential)(nil), "ai.metathings.service.identity.Token._ApplicationCredential")
 }
 
-func init() { proto.RegisterFile("token.proto", fileDescriptor66) }
+func init() { proto.RegisterFile("token.proto", fileDescriptor_token_eac893d68c44a9c7) }
 
-var fileDescriptor66 = []byte{
+var fileDescriptor_token_eac893d68c44a9c7 = []byte{
 	// 428 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xbc, 0x93, 0xc1, 0x8a, 0xd4, 0x40,
 	0x10, 0x86, 0xc9, 0xcc, 0x64, 0x92, 0xd4, 0x82, 0x87, 0x16, 0x97, 0x10, 0x61, 0x0d, 0x9e, 0x06,

@@ -6,25 +6,53 @@ package core_agent
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import ai_metathings_state "github.com/bigdatagz/metathings/pkg/proto/common/state"
+import state "github.com/bigdatagz/metathings/pkg/proto/common/state"
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+
 type Entity struct {
-	Id          string                          `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	Name        string                          `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
-	ServiceName string                          `protobuf:"bytes,3,opt,name=service_name,json=serviceName" json:"service_name,omitempty"`
-	Endpoint    string                          `protobuf:"bytes,4,opt,name=endpoint" json:"endpoint,omitempty"`
-	State       ai_metathings_state.EntityState `protobuf:"varint,5,opt,name=state,enum=ai.metathings.state.EntityState" json:"state,omitempty"`
+	Id                   string            `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
+	Name                 string            `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
+	ServiceName          string            `protobuf:"bytes,3,opt,name=service_name,json=serviceName" json:"service_name,omitempty"`
+	Endpoint             string            `protobuf:"bytes,4,opt,name=endpoint" json:"endpoint,omitempty"`
+	State                state.EntityState `protobuf:"varint,5,opt,name=state,enum=ai.metathings.state.EntityState" json:"state,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
+	XXX_unrecognized     []byte            `json:"-"`
+	XXX_sizecache        int32             `json:"-"`
 }
 
-func (m *Entity) Reset()                    { *m = Entity{} }
-func (m *Entity) String() string            { return proto.CompactTextString(m) }
-func (*Entity) ProtoMessage()               {}
-func (*Entity) Descriptor() ([]byte, []int) { return fileDescriptor3, []int{0} }
+func (m *Entity) Reset()         { *m = Entity{} }
+func (m *Entity) String() string { return proto.CompactTextString(m) }
+func (*Entity) ProtoMessage()    {}
+func (*Entity) Descriptor() ([]byte, []int) {
+	return fileDescriptor_entity_f38b65bad1307023, []int{0}
+}
+func (m *Entity) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Entity.Unmarshal(m, b)
+}
+func (m *Entity) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Entity.Marshal(b, m, deterministic)
+}
+func (dst *Entity) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Entity.Merge(dst, src)
+}
+func (m *Entity) XXX_Size() int {
+	return xxx_messageInfo_Entity.Size(m)
+}
+func (m *Entity) XXX_DiscardUnknown() {
+	xxx_messageInfo_Entity.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Entity proto.InternalMessageInfo
 
 func (m *Entity) GetId() string {
 	if m != nil {
@@ -54,20 +82,20 @@ func (m *Entity) GetEndpoint() string {
 	return ""
 }
 
-func (m *Entity) GetState() ai_metathings_state.EntityState {
+func (m *Entity) GetState() state.EntityState {
 	if m != nil {
 		return m.State
 	}
-	return ai_metathings_state.EntityState_ENTITY_STATE_UNKNOWN
+	return state.EntityState_ENTITY_STATE_UNKNOWN
 }
 
 func init() {
 	proto.RegisterType((*Entity)(nil), "ai.metathings.service.core_agent.Entity")
 }
 
-func init() { proto.RegisterFile("entity.proto", fileDescriptor3) }
+func init() { proto.RegisterFile("entity.proto", fileDescriptor_entity_f38b65bad1307023) }
 
-var fileDescriptor3 = []byte{
+var fileDescriptor_entity_f38b65bad1307023 = []byte{
 	// 223 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x5c, 0x8f, 0xc1, 0x4a, 0x03, 0x31,
 	0x10, 0x86, 0xc9, 0xda, 0x16, 0x8d, 0xa5, 0x87, 0x9c, 0x42, 0x4f, 0xd1, 0x53, 0x4f, 0x09, 0x28,

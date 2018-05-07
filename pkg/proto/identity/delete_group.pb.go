@@ -6,7 +6,7 @@ package identity
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import google_protobuf "github.com/golang/protobuf/ptypes/wrappers"
+import wrappers "github.com/golang/protobuf/ptypes/wrappers"
 import _ "github.com/mwitkow/go-proto-validators"
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -14,16 +14,44 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+
 type DeleteGroupRequest struct {
-	GroupId *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=group_id,json=groupId" json:"group_id,omitempty"`
+	GroupId              *wrappers.StringValue `protobuf:"bytes,1,opt,name=group_id,json=groupId" json:"group_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *DeleteGroupRequest) Reset()                    { *m = DeleteGroupRequest{} }
-func (m *DeleteGroupRequest) String() string            { return proto.CompactTextString(m) }
-func (*DeleteGroupRequest) ProtoMessage()               {}
-func (*DeleteGroupRequest) Descriptor() ([]byte, []int) { return fileDescriptor21, []int{0} }
+func (m *DeleteGroupRequest) Reset()         { *m = DeleteGroupRequest{} }
+func (m *DeleteGroupRequest) String() string { return proto.CompactTextString(m) }
+func (*DeleteGroupRequest) ProtoMessage()    {}
+func (*DeleteGroupRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_delete_group_f20a183c88fed5c3, []int{0}
+}
+func (m *DeleteGroupRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DeleteGroupRequest.Unmarshal(m, b)
+}
+func (m *DeleteGroupRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DeleteGroupRequest.Marshal(b, m, deterministic)
+}
+func (dst *DeleteGroupRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DeleteGroupRequest.Merge(dst, src)
+}
+func (m *DeleteGroupRequest) XXX_Size() int {
+	return xxx_messageInfo_DeleteGroupRequest.Size(m)
+}
+func (m *DeleteGroupRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_DeleteGroupRequest.DiscardUnknown(m)
+}
 
-func (m *DeleteGroupRequest) GetGroupId() *google_protobuf.StringValue {
+var xxx_messageInfo_DeleteGroupRequest proto.InternalMessageInfo
+
+func (m *DeleteGroupRequest) GetGroupId() *wrappers.StringValue {
 	if m != nil {
 		return m.GroupId
 	}
@@ -34,9 +62,9 @@ func init() {
 	proto.RegisterType((*DeleteGroupRequest)(nil), "ai.metathings.service.identity.DeleteGroupRequest")
 }
 
-func init() { proto.RegisterFile("delete_group.proto", fileDescriptor21) }
+func init() { proto.RegisterFile("delete_group.proto", fileDescriptor_delete_group_f20a183c88fed5c3) }
 
-var fileDescriptor21 = []byte{
+var fileDescriptor_delete_group_f20a183c88fed5c3 = []byte{
 	// 207 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x3c, 0xce, 0xc1, 0x4a, 0xc4, 0x30,
 	0x10, 0xc6, 0x71, 0xea, 0x61, 0x95, 0x7a, 0xcb, 0x49, 0x16, 0x59, 0x17, 0x4f, 0x5e, 0x76, 0x02,

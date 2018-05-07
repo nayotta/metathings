@@ -6,7 +6,7 @@ package identity
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import google_protobuf "github.com/golang/protobuf/ptypes/wrappers"
+import wrappers "github.com/golang/protobuf/ptypes/wrappers"
 import _ "github.com/mwitkow/go-proto-validators"
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -14,24 +14,52 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+
 type RemoveUserFromGroupRequest struct {
-	UserId  *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=user_id,json=userId" json:"user_id,omitempty"`
-	GroupId *google_protobuf.StringValue `protobuf:"bytes,2,opt,name=group_id,json=groupId" json:"group_id,omitempty"`
+	UserId               *wrappers.StringValue `protobuf:"bytes,1,opt,name=user_id,json=userId" json:"user_id,omitempty"`
+	GroupId              *wrappers.StringValue `protobuf:"bytes,2,opt,name=group_id,json=groupId" json:"group_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *RemoveUserFromGroupRequest) Reset()                    { *m = RemoveUserFromGroupRequest{} }
-func (m *RemoveUserFromGroupRequest) String() string            { return proto.CompactTextString(m) }
-func (*RemoveUserFromGroupRequest) ProtoMessage()               {}
-func (*RemoveUserFromGroupRequest) Descriptor() ([]byte, []int) { return fileDescriptor63, []int{0} }
+func (m *RemoveUserFromGroupRequest) Reset()         { *m = RemoveUserFromGroupRequest{} }
+func (m *RemoveUserFromGroupRequest) String() string { return proto.CompactTextString(m) }
+func (*RemoveUserFromGroupRequest) ProtoMessage()    {}
+func (*RemoveUserFromGroupRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_remove_user_from_group_13da83558b09c502, []int{0}
+}
+func (m *RemoveUserFromGroupRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_RemoveUserFromGroupRequest.Unmarshal(m, b)
+}
+func (m *RemoveUserFromGroupRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_RemoveUserFromGroupRequest.Marshal(b, m, deterministic)
+}
+func (dst *RemoveUserFromGroupRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_RemoveUserFromGroupRequest.Merge(dst, src)
+}
+func (m *RemoveUserFromGroupRequest) XXX_Size() int {
+	return xxx_messageInfo_RemoveUserFromGroupRequest.Size(m)
+}
+func (m *RemoveUserFromGroupRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_RemoveUserFromGroupRequest.DiscardUnknown(m)
+}
 
-func (m *RemoveUserFromGroupRequest) GetUserId() *google_protobuf.StringValue {
+var xxx_messageInfo_RemoveUserFromGroupRequest proto.InternalMessageInfo
+
+func (m *RemoveUserFromGroupRequest) GetUserId() *wrappers.StringValue {
 	if m != nil {
 		return m.UserId
 	}
 	return nil
 }
 
-func (m *RemoveUserFromGroupRequest) GetGroupId() *google_protobuf.StringValue {
+func (m *RemoveUserFromGroupRequest) GetGroupId() *wrappers.StringValue {
 	if m != nil {
 		return m.GroupId
 	}
@@ -42,9 +70,11 @@ func init() {
 	proto.RegisterType((*RemoveUserFromGroupRequest)(nil), "ai.metathings.service.identity.RemoveUserFromGroupRequest")
 }
 
-func init() { proto.RegisterFile("remove_user_from_group.proto", fileDescriptor63) }
+func init() {
+	proto.RegisterFile("remove_user_from_group.proto", fileDescriptor_remove_user_from_group_13da83558b09c502)
+}
 
-var fileDescriptor63 = []byte{
+var fileDescriptor_remove_user_from_group_13da83558b09c502 = []byte{
 	// 239 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0xcf, 0xb1, 0x4a, 0xc4, 0x40,
 	0x10, 0xc6, 0x71, 0x72, 0x45, 0x4e, 0x62, 0x97, 0x4a, 0xc2, 0x71, 0x1e, 0x56, 0x36, 0xb7, 0x01,

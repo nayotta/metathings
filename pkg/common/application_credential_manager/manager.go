@@ -45,8 +45,8 @@ func (mgr *applicationCredentialManager) refreshToken() error {
 		Method: identityd_pb.AUTH_METHOD_APPLICATION_CREDENTIAL,
 		Payload: &identityd_pb.IssueTokenRequest_ApplicationCredential{
 			&identityd_pb.ApplicationCredentialPayload{
-				Id:     &gpb.StringValue{mgr.application_credential_id},
-				Secret: &gpb.StringValue{mgr.application_credential_secret},
+				Id:     &gpb.StringValue{Value: mgr.application_credential_id},
+				Secret: &gpb.StringValue{Value: mgr.application_credential_secret},
 			},
 		},
 	}

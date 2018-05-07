@@ -6,7 +6,7 @@ package identity
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import google_protobuf "github.com/golang/protobuf/ptypes/wrappers"
+import wrappers "github.com/golang/protobuf/ptypes/wrappers"
 import _ "github.com/mwitkow/go-proto-validators"
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -14,16 +14,44 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+
 type ListRegionsRequest struct {
-	ParentRegionId *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=parent_region_id,json=parentRegionId" json:"parent_region_id,omitempty"`
+	ParentRegionId       *wrappers.StringValue `protobuf:"bytes,1,opt,name=parent_region_id,json=parentRegionId" json:"parent_region_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *ListRegionsRequest) Reset()                    { *m = ListRegionsRequest{} }
-func (m *ListRegionsRequest) String() string            { return proto.CompactTextString(m) }
-func (*ListRegionsRequest) ProtoMessage()               {}
-func (*ListRegionsRequest) Descriptor() ([]byte, []int) { return fileDescriptor42, []int{0} }
+func (m *ListRegionsRequest) Reset()         { *m = ListRegionsRequest{} }
+func (m *ListRegionsRequest) String() string { return proto.CompactTextString(m) }
+func (*ListRegionsRequest) ProtoMessage()    {}
+func (*ListRegionsRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_list_regions_483dc1b0d005e48a, []int{0}
+}
+func (m *ListRegionsRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ListRegionsRequest.Unmarshal(m, b)
+}
+func (m *ListRegionsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ListRegionsRequest.Marshal(b, m, deterministic)
+}
+func (dst *ListRegionsRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ListRegionsRequest.Merge(dst, src)
+}
+func (m *ListRegionsRequest) XXX_Size() int {
+	return xxx_messageInfo_ListRegionsRequest.Size(m)
+}
+func (m *ListRegionsRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_ListRegionsRequest.DiscardUnknown(m)
+}
 
-func (m *ListRegionsRequest) GetParentRegionId() *google_protobuf.StringValue {
+var xxx_messageInfo_ListRegionsRequest proto.InternalMessageInfo
+
+func (m *ListRegionsRequest) GetParentRegionId() *wrappers.StringValue {
 	if m != nil {
 		return m.ParentRegionId
 	}
@@ -31,13 +59,35 @@ func (m *ListRegionsRequest) GetParentRegionId() *google_protobuf.StringValue {
 }
 
 type ListRegionsResponse struct {
-	Regions []*Region `protobuf:"bytes,1,rep,name=regions" json:"regions,omitempty"`
+	Regions              []*Region `protobuf:"bytes,1,rep,name=regions" json:"regions,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}  `json:"-"`
+	XXX_unrecognized     []byte    `json:"-"`
+	XXX_sizecache        int32     `json:"-"`
 }
 
-func (m *ListRegionsResponse) Reset()                    { *m = ListRegionsResponse{} }
-func (m *ListRegionsResponse) String() string            { return proto.CompactTextString(m) }
-func (*ListRegionsResponse) ProtoMessage()               {}
-func (*ListRegionsResponse) Descriptor() ([]byte, []int) { return fileDescriptor42, []int{1} }
+func (m *ListRegionsResponse) Reset()         { *m = ListRegionsResponse{} }
+func (m *ListRegionsResponse) String() string { return proto.CompactTextString(m) }
+func (*ListRegionsResponse) ProtoMessage()    {}
+func (*ListRegionsResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_list_regions_483dc1b0d005e48a, []int{1}
+}
+func (m *ListRegionsResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ListRegionsResponse.Unmarshal(m, b)
+}
+func (m *ListRegionsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ListRegionsResponse.Marshal(b, m, deterministic)
+}
+func (dst *ListRegionsResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ListRegionsResponse.Merge(dst, src)
+}
+func (m *ListRegionsResponse) XXX_Size() int {
+	return xxx_messageInfo_ListRegionsResponse.Size(m)
+}
+func (m *ListRegionsResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_ListRegionsResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ListRegionsResponse proto.InternalMessageInfo
 
 func (m *ListRegionsResponse) GetRegions() []*Region {
 	if m != nil {
@@ -51,9 +101,9 @@ func init() {
 	proto.RegisterType((*ListRegionsResponse)(nil), "ai.metathings.service.identity.ListRegionsResponse")
 }
 
-func init() { proto.RegisterFile("list_regions.proto", fileDescriptor42) }
+func init() { proto.RegisterFile("list_regions.proto", fileDescriptor_list_regions_483dc1b0d005e48a) }
 
-var fileDescriptor42 = []byte{
+var fileDescriptor_list_regions_483dc1b0d005e48a = []byte{
 	// 244 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x7c, 0x90, 0x41, 0x4b, 0x33, 0x31,
 	0x10, 0x86, 0x59, 0x3e, 0xf8, 0x84, 0x54, 0x44, 0xe2, 0xa5, 0x14, 0x29, 0xa5, 0x07, 0xe9, 0xa5,

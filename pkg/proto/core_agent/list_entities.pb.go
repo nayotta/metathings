@@ -6,7 +6,7 @@ package core_agent
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import google_protobuf "github.com/golang/protobuf/ptypes/wrappers"
+import wrappers "github.com/golang/protobuf/ptypes/wrappers"
 import _ "github.com/mwitkow/go-proto-validators"
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -14,24 +14,52 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+
 type ListEntitiesRequest struct {
-	Name        *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
-	ServiceName *google_protobuf.StringValue `protobuf:"bytes,2,opt,name=service_name,json=serviceName" json:"service_name,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
+	ServiceName          *wrappers.StringValue `protobuf:"bytes,2,opt,name=service_name,json=serviceName" json:"service_name,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *ListEntitiesRequest) Reset()                    { *m = ListEntitiesRequest{} }
-func (m *ListEntitiesRequest) String() string            { return proto.CompactTextString(m) }
-func (*ListEntitiesRequest) ProtoMessage()               {}
-func (*ListEntitiesRequest) Descriptor() ([]byte, []int) { return fileDescriptor6, []int{0} }
+func (m *ListEntitiesRequest) Reset()         { *m = ListEntitiesRequest{} }
+func (m *ListEntitiesRequest) String() string { return proto.CompactTextString(m) }
+func (*ListEntitiesRequest) ProtoMessage()    {}
+func (*ListEntitiesRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_list_entities_a635e696f32a4391, []int{0}
+}
+func (m *ListEntitiesRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ListEntitiesRequest.Unmarshal(m, b)
+}
+func (m *ListEntitiesRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ListEntitiesRequest.Marshal(b, m, deterministic)
+}
+func (dst *ListEntitiesRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ListEntitiesRequest.Merge(dst, src)
+}
+func (m *ListEntitiesRequest) XXX_Size() int {
+	return xxx_messageInfo_ListEntitiesRequest.Size(m)
+}
+func (m *ListEntitiesRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_ListEntitiesRequest.DiscardUnknown(m)
+}
 
-func (m *ListEntitiesRequest) GetName() *google_protobuf.StringValue {
+var xxx_messageInfo_ListEntitiesRequest proto.InternalMessageInfo
+
+func (m *ListEntitiesRequest) GetName() *wrappers.StringValue {
 	if m != nil {
 		return m.Name
 	}
 	return nil
 }
 
-func (m *ListEntitiesRequest) GetServiceName() *google_protobuf.StringValue {
+func (m *ListEntitiesRequest) GetServiceName() *wrappers.StringValue {
 	if m != nil {
 		return m.ServiceName
 	}
@@ -39,13 +67,35 @@ func (m *ListEntitiesRequest) GetServiceName() *google_protobuf.StringValue {
 }
 
 type ListEntitiesResponse struct {
-	Entities []*Entity `protobuf:"bytes,1,rep,name=entities" json:"entities,omitempty"`
+	Entities             []*Entity `protobuf:"bytes,1,rep,name=entities" json:"entities,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}  `json:"-"`
+	XXX_unrecognized     []byte    `json:"-"`
+	XXX_sizecache        int32     `json:"-"`
 }
 
-func (m *ListEntitiesResponse) Reset()                    { *m = ListEntitiesResponse{} }
-func (m *ListEntitiesResponse) String() string            { return proto.CompactTextString(m) }
-func (*ListEntitiesResponse) ProtoMessage()               {}
-func (*ListEntitiesResponse) Descriptor() ([]byte, []int) { return fileDescriptor6, []int{1} }
+func (m *ListEntitiesResponse) Reset()         { *m = ListEntitiesResponse{} }
+func (m *ListEntitiesResponse) String() string { return proto.CompactTextString(m) }
+func (*ListEntitiesResponse) ProtoMessage()    {}
+func (*ListEntitiesResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_list_entities_a635e696f32a4391, []int{1}
+}
+func (m *ListEntitiesResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ListEntitiesResponse.Unmarshal(m, b)
+}
+func (m *ListEntitiesResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ListEntitiesResponse.Marshal(b, m, deterministic)
+}
+func (dst *ListEntitiesResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ListEntitiesResponse.Merge(dst, src)
+}
+func (m *ListEntitiesResponse) XXX_Size() int {
+	return xxx_messageInfo_ListEntitiesResponse.Size(m)
+}
+func (m *ListEntitiesResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_ListEntitiesResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ListEntitiesResponse proto.InternalMessageInfo
 
 func (m *ListEntitiesResponse) GetEntities() []*Entity {
 	if m != nil {
@@ -59,9 +109,9 @@ func init() {
 	proto.RegisterType((*ListEntitiesResponse)(nil), "ai.metathings.service.core_agent.ListEntitiesResponse")
 }
 
-func init() { proto.RegisterFile("list_entities.proto", fileDescriptor6) }
+func init() { proto.RegisterFile("list_entities.proto", fileDescriptor_list_entities_a635e696f32a4391) }
 
-var fileDescriptor6 = []byte{
+var fileDescriptor_list_entities_a635e696f32a4391 = []byte{
 	// 257 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x90, 0xc1, 0x4b, 0xc3, 0x30,
 	0x14, 0xc6, 0xa9, 0x8a, 0x48, 0xb6, 0x53, 0xe7, 0x61, 0x0c, 0x91, 0xb2, 0x53, 0x2f, 0x7b, 0x95,

@@ -6,7 +6,7 @@ package identity
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import google_protobuf "github.com/golang/protobuf/ptypes/wrappers"
+import wrappers "github.com/golang/protobuf/ptypes/wrappers"
 import _ "github.com/mwitkow/go-proto-validators"
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -14,24 +14,52 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+
 type PatchRoleRequest struct {
-	RoleId *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=role_id,json=roleId" json:"role_id,omitempty"`
-	Name   *google_protobuf.StringValue `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
+	RoleId               *wrappers.StringValue `protobuf:"bytes,1,opt,name=role_id,json=roleId" json:"role_id,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *PatchRoleRequest) Reset()                    { *m = PatchRoleRequest{} }
-func (m *PatchRoleRequest) String() string            { return proto.CompactTextString(m) }
-func (*PatchRoleRequest) ProtoMessage()               {}
-func (*PatchRoleRequest) Descriptor() ([]byte, []int) { return fileDescriptor55, []int{0} }
+func (m *PatchRoleRequest) Reset()         { *m = PatchRoleRequest{} }
+func (m *PatchRoleRequest) String() string { return proto.CompactTextString(m) }
+func (*PatchRoleRequest) ProtoMessage()    {}
+func (*PatchRoleRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_patch_role_7cf2f385865eef9e, []int{0}
+}
+func (m *PatchRoleRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_PatchRoleRequest.Unmarshal(m, b)
+}
+func (m *PatchRoleRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_PatchRoleRequest.Marshal(b, m, deterministic)
+}
+func (dst *PatchRoleRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PatchRoleRequest.Merge(dst, src)
+}
+func (m *PatchRoleRequest) XXX_Size() int {
+	return xxx_messageInfo_PatchRoleRequest.Size(m)
+}
+func (m *PatchRoleRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_PatchRoleRequest.DiscardUnknown(m)
+}
 
-func (m *PatchRoleRequest) GetRoleId() *google_protobuf.StringValue {
+var xxx_messageInfo_PatchRoleRequest proto.InternalMessageInfo
+
+func (m *PatchRoleRequest) GetRoleId() *wrappers.StringValue {
 	if m != nil {
 		return m.RoleId
 	}
 	return nil
 }
 
-func (m *PatchRoleRequest) GetName() *google_protobuf.StringValue {
+func (m *PatchRoleRequest) GetName() *wrappers.StringValue {
 	if m != nil {
 		return m.Name
 	}
@@ -39,13 +67,35 @@ func (m *PatchRoleRequest) GetName() *google_protobuf.StringValue {
 }
 
 type PatchRoleResponse struct {
-	Role *Role `protobuf:"bytes,1,opt,name=role" json:"role,omitempty"`
+	Role                 *Role    `protobuf:"bytes,1,opt,name=role" json:"role,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *PatchRoleResponse) Reset()                    { *m = PatchRoleResponse{} }
-func (m *PatchRoleResponse) String() string            { return proto.CompactTextString(m) }
-func (*PatchRoleResponse) ProtoMessage()               {}
-func (*PatchRoleResponse) Descriptor() ([]byte, []int) { return fileDescriptor55, []int{1} }
+func (m *PatchRoleResponse) Reset()         { *m = PatchRoleResponse{} }
+func (m *PatchRoleResponse) String() string { return proto.CompactTextString(m) }
+func (*PatchRoleResponse) ProtoMessage()    {}
+func (*PatchRoleResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_patch_role_7cf2f385865eef9e, []int{1}
+}
+func (m *PatchRoleResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_PatchRoleResponse.Unmarshal(m, b)
+}
+func (m *PatchRoleResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_PatchRoleResponse.Marshal(b, m, deterministic)
+}
+func (dst *PatchRoleResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PatchRoleResponse.Merge(dst, src)
+}
+func (m *PatchRoleResponse) XXX_Size() int {
+	return xxx_messageInfo_PatchRoleResponse.Size(m)
+}
+func (m *PatchRoleResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_PatchRoleResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_PatchRoleResponse proto.InternalMessageInfo
 
 func (m *PatchRoleResponse) GetRole() *Role {
 	if m != nil {
@@ -59,9 +109,9 @@ func init() {
 	proto.RegisterType((*PatchRoleResponse)(nil), "ai.metathings.service.identity.PatchRoleResponse")
 }
 
-func init() { proto.RegisterFile("patch_role.proto", fileDescriptor55) }
+func init() { proto.RegisterFile("patch_role.proto", fileDescriptor_patch_role_7cf2f385865eef9e) }
 
-var fileDescriptor55 = []byte{
+var fileDescriptor_patch_role_7cf2f385865eef9e = []byte{
 	// 255 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x90, 0x4d, 0x4b, 0xc3, 0x40,
 	0x10, 0x40, 0x49, 0x29, 0x11, 0xd6, 0x4b, 0xcd, 0xa9, 0x14, 0xa9, 0xa5, 0x78, 0xf0, 0xd2, 0x89,

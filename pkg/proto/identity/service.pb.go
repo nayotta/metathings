@@ -6,7 +6,7 @@ package identity
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import google_protobuf3 "github.com/golang/protobuf/ptypes/empty"
+import empty "github.com/golang/protobuf/ptypes/empty"
 
 import (
 	context "golang.org/x/net/context"
@@ -17,6 +17,12 @@ import (
 var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
+
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ context.Context
@@ -32,7 +38,7 @@ type IdentityServiceClient interface {
 	// https://developer.openstack.org/api-ref/identity/v3/#create-region
 	CreateRegion(ctx context.Context, in *CreateRegionRequest, opts ...grpc.CallOption) (*CreateRegionResponse, error)
 	// https://developer.openstack.org/api-ref/identity/v3/#delete-region
-	DeleteRegion(ctx context.Context, in *DeleteRegionRequest, opts ...grpc.CallOption) (*google_protobuf3.Empty, error)
+	DeleteRegion(ctx context.Context, in *DeleteRegionRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 	// https://developer.openstack.org/api-ref/identity/v3/#update-region
 	PatchRegion(ctx context.Context, in *PatchRegionRequest, opts ...grpc.CallOption) (*PatchRegionResponse, error)
 	// https://developer.openstack.org/api-ref/identity/v3/#show-region-details
@@ -42,7 +48,7 @@ type IdentityServiceClient interface {
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#create-domain
 	CreateDomain(ctx context.Context, in *CreateDomainRequest, opts ...grpc.CallOption) (*CreateDomainResponse, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#delete-domain
-	DeleteDomain(ctx context.Context, in *DeleteDomainRequest, opts ...grpc.CallOption) (*google_protobuf3.Empty, error)
+	DeleteDomain(ctx context.Context, in *DeleteDomainRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#update-domain
 	PatchDomain(ctx context.Context, in *PatchDomainRequest, opts ...grpc.CallOption) (*PatchDomainResponse, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#show-domain-details
@@ -52,7 +58,7 @@ type IdentityServiceClient interface {
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#create-project
 	CreateProject(ctx context.Context, in *CreateProjectRequest, opts ...grpc.CallOption) (*CreateProjectResponse, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#delete-project
-	DeleteProject(ctx context.Context, in *DeleteProjectRequest, opts ...grpc.CallOption) (*google_protobuf3.Empty, error)
+	DeleteProject(ctx context.Context, in *DeleteProjectRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#update-project
 	PatchProject(ctx context.Context, in *PatchProjectRequest, opts ...grpc.CallOption) (*PatchProjectResponse, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#show-project-details
@@ -64,7 +70,7 @@ type IdentityServiceClient interface {
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#create-user
 	CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*CreateUserResponse, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#delete-user
-	DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*google_protobuf3.Empty, error)
+	DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#update-user
 	PatchUser(ctx context.Context, in *PatchUserRequest, opts ...grpc.CallOption) (*PatchUserResponse, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#show-user-details
@@ -72,13 +78,13 @@ type IdentityServiceClient interface {
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#list-users
 	ListUsers(ctx context.Context, in *ListUsersRequest, opts ...grpc.CallOption) (*ListUsersResponse, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#change-password-for-user
-	ChangePassword(ctx context.Context, in *ChangePasswordRequest, opts ...grpc.CallOption) (*google_protobuf3.Empty, error)
+	ChangePassword(ctx context.Context, in *ChangePasswordRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#list-users-in-group
 	ListUsersInGroup(ctx context.Context, in *ListUsersInGroupRequest, opts ...grpc.CallOption) (*ListUsersInGroupResponse, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#create-group
 	CreateGroup(ctx context.Context, in *CreateGroupRequest, opts ...grpc.CallOption) (*CreateGroupResponse, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#delete-group
-	DeleteGroup(ctx context.Context, in *DeleteGroupRequest, opts ...grpc.CallOption) (*google_protobuf3.Empty, error)
+	DeleteGroup(ctx context.Context, in *DeleteGroupRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#update-group
 	PatchGroup(ctx context.Context, in *PatchGroupRequest, opts ...grpc.CallOption) (*PatchGroupResponse, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#show-group-details
@@ -86,17 +92,17 @@ type IdentityServiceClient interface {
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#list-groups
 	ListGroups(ctx context.Context, in *ListGroupsRequest, opts ...grpc.CallOption) (*ListGroupsResponse, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#add-user-to-group
-	AddUserToGroup(ctx context.Context, in *AddUserToGroupRequest, opts ...grpc.CallOption) (*google_protobuf3.Empty, error)
+	AddUserToGroup(ctx context.Context, in *AddUserToGroupRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#remove-user-from-group
-	RemoveUserFromGroup(ctx context.Context, in *RemoveUserFromGroupRequest, opts ...grpc.CallOption) (*google_protobuf3.Empty, error)
+	RemoveUserFromGroup(ctx context.Context, in *RemoveUserFromGroupRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#check-whether-user-belongs-to-group
-	CheckUserInGroup(ctx context.Context, in *CheckUserInGroupRequest, opts ...grpc.CallOption) (*google_protobuf3.Empty, error)
+	CheckUserInGroup(ctx context.Context, in *CheckUserInGroupRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#list-groups-to-which-a-user-belongs
 	ListGroupsForUser(ctx context.Context, in *ListGroupsForUserRequest, opts ...grpc.CallOption) (*ListGroupsForUserResponse, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#create-role
 	CreateRole(ctx context.Context, in *CreateRoleRequest, opts ...grpc.CallOption) (*CreateRoleResponse, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#delete-role
-	DeleteRole(ctx context.Context, in *DeleteRoleRequest, opts ...grpc.CallOption) (*google_protobuf3.Empty, error)
+	DeleteRole(ctx context.Context, in *DeleteRoleRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#update-role
 	PatchRole(ctx context.Context, in *PatchRoleRequest, opts ...grpc.CallOption) (*PatchRoleResponse, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#show-role-details
@@ -104,35 +110,35 @@ type IdentityServiceClient interface {
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#list-roles
 	ListRoles(ctx context.Context, in *ListRolesRequest, opts ...grpc.CallOption) (*ListRolesResponse, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#assign-role-to-group-on-domain
-	AddRoleToGroupOnDomain(ctx context.Context, in *AddRoleToGroupOnDomainRequest, opts ...grpc.CallOption) (*google_protobuf3.Empty, error)
+	AddRoleToGroupOnDomain(ctx context.Context, in *AddRoleToGroupOnDomainRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#unassign-role-from-group-on-domain
-	RemoveRoleFromGroupOnDomain(ctx context.Context, in *RemoveRoleFromGroupOnDomainRequest, opts ...grpc.CallOption) (*google_protobuf3.Empty, error)
+	RemoveRoleFromGroupOnDomain(ctx context.Context, in *RemoveRoleFromGroupOnDomainRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#check-whether-user-has-role-assignment-on-domain
-	CheckRoleInGroupOnDomain(ctx context.Context, in *CheckRoleInGroupOnDomainRequest, opts ...grpc.CallOption) (*google_protobuf3.Empty, error)
+	CheckRoleInGroupOnDomain(ctx context.Context, in *CheckRoleInGroupOnDomainRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#list-role-assignments-for-group-on-domain
 	ListRolesForGroupOnDomain(ctx context.Context, in *ListRolesForGroupOnDomainRequest, opts ...grpc.CallOption) (*ListRolesForGroupOnDomainResponse, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#list-role-assignments-for-group-on-domain
-	AddRoleToUserOnDomain(ctx context.Context, in *AddRoleToUserOnDomainRequest, opts ...grpc.CallOption) (*google_protobuf3.Empty, error)
+	AddRoleToUserOnDomain(ctx context.Context, in *AddRoleToUserOnDomainRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#list-role-assignments-for-group-on-domain
-	RemoveRoleFromUserOnDomain(ctx context.Context, in *RemoveRoleFromUserOnDomainRequest, opts ...grpc.CallOption) (*google_protobuf3.Empty, error)
+	RemoveRoleFromUserOnDomain(ctx context.Context, in *RemoveRoleFromUserOnDomainRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#list-role-assignments-for-group-on-domain
-	CheckRoleInUserOnDomain(ctx context.Context, in *CheckRoleInUserOnDomainRequest, opts ...grpc.CallOption) (*google_protobuf3.Empty, error)
+	CheckRoleInUserOnDomain(ctx context.Context, in *CheckRoleInUserOnDomainRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#list-role-assignments-for-group-on-domain
 	ListRolesForUserOnDomain(ctx context.Context, in *ListRolesForUserOnDomainRequest, opts ...grpc.CallOption) (*ListRolesForUserOnDomainResponse, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#assign-role-to-group-on-project
-	AddRoleToGroupOnProject(ctx context.Context, in *AddRoleToGroupOnProjectRequest, opts ...grpc.CallOption) (*google_protobuf3.Empty, error)
+	AddRoleToGroupOnProject(ctx context.Context, in *AddRoleToGroupOnProjectRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#assign-role-to-group-on-project
-	RemoveRoleFromGroupOnProject(ctx context.Context, in *RemoveRoleFromGroupOnProjectRequest, opts ...grpc.CallOption) (*google_protobuf3.Empty, error)
+	RemoveRoleFromGroupOnProject(ctx context.Context, in *RemoveRoleFromGroupOnProjectRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#check-whether-group-has-role-assignment-on-project
-	CheckRoleInGroupOnProject(ctx context.Context, in *CheckRoleInGroupOnProjectRequest, opts ...grpc.CallOption) (*google_protobuf3.Empty, error)
+	CheckRoleInGroupOnProject(ctx context.Context, in *CheckRoleInGroupOnProjectRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#list-role-assignments-for-user-on-project
 	ListRolesForGroupOnProject(ctx context.Context, in *ListRolesForGroupOnProjectRequest, opts ...grpc.CallOption) (*ListRolesForGroupOnProjectResponse, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#assign-role-to-user-on-project
-	AddRoleToUserOnProject(ctx context.Context, in *AddRoleToUserOnProjectRequest, opts ...grpc.CallOption) (*google_protobuf3.Empty, error)
+	AddRoleToUserOnProject(ctx context.Context, in *AddRoleToUserOnProjectRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#unassign-role-from-user-on-project
-	RemoveRoleFromUserOnProject(ctx context.Context, in *RemoveRoleFromUserOnProjectRequest, opts ...grpc.CallOption) (*google_protobuf3.Empty, error)
+	RemoveRoleFromUserOnProject(ctx context.Context, in *RemoveRoleFromUserOnProjectRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#check-whether-user-has-role-assignment-on-project
-	CheckRoleInUserOnProject(ctx context.Context, in *CheckRoleInUserOnProjectRequest, opts ...grpc.CallOption) (*google_protobuf3.Empty, error)
+	CheckRoleInUserOnProject(ctx context.Context, in *CheckRoleInUserOnProjectRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#list-role-assignments-for-user-on-project
 	ListRolesForUserOnProject(ctx context.Context, in *ListRolesForUserOnProjectRequest, opts ...grpc.CallOption) (*ListRolesForUserOnProjectResponse, error)
 	// password authentication with unsnscoped authorization
@@ -151,15 +157,15 @@ type IdentityServiceClient interface {
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#authenticating-with-an-application-credential
 	IssueToken(ctx context.Context, in *IssueTokenRequest, opts ...grpc.CallOption) (*IssueTokenResponse, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#revoke-token
-	RevokeToken(ctx context.Context, in *google_protobuf3.Empty, opts ...grpc.CallOption) (*google_protobuf3.Empty, error)
+	RevokeToken(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*empty.Empty, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#check-token
-	CheckToken(ctx context.Context, in *google_protobuf3.Empty, opts ...grpc.CallOption) (*google_protobuf3.Empty, error)
+	CheckToken(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*empty.Empty, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#validate-and-show-information-for-token
-	ValidateToken(ctx context.Context, in *google_protobuf3.Empty, opts ...grpc.CallOption) (*ValidateTokenResponse, error)
+	ValidateToken(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*ValidateTokenResponse, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#create-application-credential
 	CreateApplicationCredential(ctx context.Context, in *CreateApplicationCredentialRequest, opts ...grpc.CallOption) (*CreateApplicationCredentialResponse, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#delete-application-credential
-	DeleteApplicationCredential(ctx context.Context, in *DeleteApplicationCredentialRequest, opts ...grpc.CallOption) (*google_protobuf3.Empty, error)
+	DeleteApplicationCredential(ctx context.Context, in *DeleteApplicationCredentialRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#show-application-credential-details
 	GetApplicationCredential(ctx context.Context, in *GetApplicationCredentialRequest, opts ...grpc.CallOption) (*GetApplicationCredentialResponse, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#list-application-credentials
@@ -183,8 +189,8 @@ func (c *identityServiceClient) CreateRegion(ctx context.Context, in *CreateRegi
 	return out, nil
 }
 
-func (c *identityServiceClient) DeleteRegion(ctx context.Context, in *DeleteRegionRequest, opts ...grpc.CallOption) (*google_protobuf3.Empty, error) {
-	out := new(google_protobuf3.Empty)
+func (c *identityServiceClient) DeleteRegion(ctx context.Context, in *DeleteRegionRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
 	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/DeleteRegion", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
@@ -228,8 +234,8 @@ func (c *identityServiceClient) CreateDomain(ctx context.Context, in *CreateDoma
 	return out, nil
 }
 
-func (c *identityServiceClient) DeleteDomain(ctx context.Context, in *DeleteDomainRequest, opts ...grpc.CallOption) (*google_protobuf3.Empty, error) {
-	out := new(google_protobuf3.Empty)
+func (c *identityServiceClient) DeleteDomain(ctx context.Context, in *DeleteDomainRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
 	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/DeleteDomain", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
@@ -273,8 +279,8 @@ func (c *identityServiceClient) CreateProject(ctx context.Context, in *CreatePro
 	return out, nil
 }
 
-func (c *identityServiceClient) DeleteProject(ctx context.Context, in *DeleteProjectRequest, opts ...grpc.CallOption) (*google_protobuf3.Empty, error) {
-	out := new(google_protobuf3.Empty)
+func (c *identityServiceClient) DeleteProject(ctx context.Context, in *DeleteProjectRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
 	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/DeleteProject", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
@@ -327,8 +333,8 @@ func (c *identityServiceClient) CreateUser(ctx context.Context, in *CreateUserRe
 	return out, nil
 }
 
-func (c *identityServiceClient) DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*google_protobuf3.Empty, error) {
-	out := new(google_protobuf3.Empty)
+func (c *identityServiceClient) DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
 	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/DeleteUser", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
@@ -363,8 +369,8 @@ func (c *identityServiceClient) ListUsers(ctx context.Context, in *ListUsersRequ
 	return out, nil
 }
 
-func (c *identityServiceClient) ChangePassword(ctx context.Context, in *ChangePasswordRequest, opts ...grpc.CallOption) (*google_protobuf3.Empty, error) {
-	out := new(google_protobuf3.Empty)
+func (c *identityServiceClient) ChangePassword(ctx context.Context, in *ChangePasswordRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
 	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/ChangePassword", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
@@ -390,8 +396,8 @@ func (c *identityServiceClient) CreateGroup(ctx context.Context, in *CreateGroup
 	return out, nil
 }
 
-func (c *identityServiceClient) DeleteGroup(ctx context.Context, in *DeleteGroupRequest, opts ...grpc.CallOption) (*google_protobuf3.Empty, error) {
-	out := new(google_protobuf3.Empty)
+func (c *identityServiceClient) DeleteGroup(ctx context.Context, in *DeleteGroupRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
 	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/DeleteGroup", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
@@ -426,8 +432,8 @@ func (c *identityServiceClient) ListGroups(ctx context.Context, in *ListGroupsRe
 	return out, nil
 }
 
-func (c *identityServiceClient) AddUserToGroup(ctx context.Context, in *AddUserToGroupRequest, opts ...grpc.CallOption) (*google_protobuf3.Empty, error) {
-	out := new(google_protobuf3.Empty)
+func (c *identityServiceClient) AddUserToGroup(ctx context.Context, in *AddUserToGroupRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
 	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/AddUserToGroup", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
@@ -435,8 +441,8 @@ func (c *identityServiceClient) AddUserToGroup(ctx context.Context, in *AddUserT
 	return out, nil
 }
 
-func (c *identityServiceClient) RemoveUserFromGroup(ctx context.Context, in *RemoveUserFromGroupRequest, opts ...grpc.CallOption) (*google_protobuf3.Empty, error) {
-	out := new(google_protobuf3.Empty)
+func (c *identityServiceClient) RemoveUserFromGroup(ctx context.Context, in *RemoveUserFromGroupRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
 	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/RemoveUserFromGroup", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
@@ -444,8 +450,8 @@ func (c *identityServiceClient) RemoveUserFromGroup(ctx context.Context, in *Rem
 	return out, nil
 }
 
-func (c *identityServiceClient) CheckUserInGroup(ctx context.Context, in *CheckUserInGroupRequest, opts ...grpc.CallOption) (*google_protobuf3.Empty, error) {
-	out := new(google_protobuf3.Empty)
+func (c *identityServiceClient) CheckUserInGroup(ctx context.Context, in *CheckUserInGroupRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
 	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/CheckUserInGroup", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
@@ -471,8 +477,8 @@ func (c *identityServiceClient) CreateRole(ctx context.Context, in *CreateRoleRe
 	return out, nil
 }
 
-func (c *identityServiceClient) DeleteRole(ctx context.Context, in *DeleteRoleRequest, opts ...grpc.CallOption) (*google_protobuf3.Empty, error) {
-	out := new(google_protobuf3.Empty)
+func (c *identityServiceClient) DeleteRole(ctx context.Context, in *DeleteRoleRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
 	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/DeleteRole", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
@@ -507,8 +513,8 @@ func (c *identityServiceClient) ListRoles(ctx context.Context, in *ListRolesRequ
 	return out, nil
 }
 
-func (c *identityServiceClient) AddRoleToGroupOnDomain(ctx context.Context, in *AddRoleToGroupOnDomainRequest, opts ...grpc.CallOption) (*google_protobuf3.Empty, error) {
-	out := new(google_protobuf3.Empty)
+func (c *identityServiceClient) AddRoleToGroupOnDomain(ctx context.Context, in *AddRoleToGroupOnDomainRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
 	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/AddRoleToGroupOnDomain", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
@@ -516,8 +522,8 @@ func (c *identityServiceClient) AddRoleToGroupOnDomain(ctx context.Context, in *
 	return out, nil
 }
 
-func (c *identityServiceClient) RemoveRoleFromGroupOnDomain(ctx context.Context, in *RemoveRoleFromGroupOnDomainRequest, opts ...grpc.CallOption) (*google_protobuf3.Empty, error) {
-	out := new(google_protobuf3.Empty)
+func (c *identityServiceClient) RemoveRoleFromGroupOnDomain(ctx context.Context, in *RemoveRoleFromGroupOnDomainRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
 	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/RemoveRoleFromGroupOnDomain", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
@@ -525,8 +531,8 @@ func (c *identityServiceClient) RemoveRoleFromGroupOnDomain(ctx context.Context,
 	return out, nil
 }
 
-func (c *identityServiceClient) CheckRoleInGroupOnDomain(ctx context.Context, in *CheckRoleInGroupOnDomainRequest, opts ...grpc.CallOption) (*google_protobuf3.Empty, error) {
-	out := new(google_protobuf3.Empty)
+func (c *identityServiceClient) CheckRoleInGroupOnDomain(ctx context.Context, in *CheckRoleInGroupOnDomainRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
 	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/CheckRoleInGroupOnDomain", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
@@ -543,8 +549,8 @@ func (c *identityServiceClient) ListRolesForGroupOnDomain(ctx context.Context, i
 	return out, nil
 }
 
-func (c *identityServiceClient) AddRoleToUserOnDomain(ctx context.Context, in *AddRoleToUserOnDomainRequest, opts ...grpc.CallOption) (*google_protobuf3.Empty, error) {
-	out := new(google_protobuf3.Empty)
+func (c *identityServiceClient) AddRoleToUserOnDomain(ctx context.Context, in *AddRoleToUserOnDomainRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
 	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/AddRoleToUserOnDomain", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
@@ -552,8 +558,8 @@ func (c *identityServiceClient) AddRoleToUserOnDomain(ctx context.Context, in *A
 	return out, nil
 }
 
-func (c *identityServiceClient) RemoveRoleFromUserOnDomain(ctx context.Context, in *RemoveRoleFromUserOnDomainRequest, opts ...grpc.CallOption) (*google_protobuf3.Empty, error) {
-	out := new(google_protobuf3.Empty)
+func (c *identityServiceClient) RemoveRoleFromUserOnDomain(ctx context.Context, in *RemoveRoleFromUserOnDomainRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
 	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/RemoveRoleFromUserOnDomain", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
@@ -561,8 +567,8 @@ func (c *identityServiceClient) RemoveRoleFromUserOnDomain(ctx context.Context, 
 	return out, nil
 }
 
-func (c *identityServiceClient) CheckRoleInUserOnDomain(ctx context.Context, in *CheckRoleInUserOnDomainRequest, opts ...grpc.CallOption) (*google_protobuf3.Empty, error) {
-	out := new(google_protobuf3.Empty)
+func (c *identityServiceClient) CheckRoleInUserOnDomain(ctx context.Context, in *CheckRoleInUserOnDomainRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
 	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/CheckRoleInUserOnDomain", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
@@ -579,8 +585,8 @@ func (c *identityServiceClient) ListRolesForUserOnDomain(ctx context.Context, in
 	return out, nil
 }
 
-func (c *identityServiceClient) AddRoleToGroupOnProject(ctx context.Context, in *AddRoleToGroupOnProjectRequest, opts ...grpc.CallOption) (*google_protobuf3.Empty, error) {
-	out := new(google_protobuf3.Empty)
+func (c *identityServiceClient) AddRoleToGroupOnProject(ctx context.Context, in *AddRoleToGroupOnProjectRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
 	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/AddRoleToGroupOnProject", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
@@ -588,8 +594,8 @@ func (c *identityServiceClient) AddRoleToGroupOnProject(ctx context.Context, in 
 	return out, nil
 }
 
-func (c *identityServiceClient) RemoveRoleFromGroupOnProject(ctx context.Context, in *RemoveRoleFromGroupOnProjectRequest, opts ...grpc.CallOption) (*google_protobuf3.Empty, error) {
-	out := new(google_protobuf3.Empty)
+func (c *identityServiceClient) RemoveRoleFromGroupOnProject(ctx context.Context, in *RemoveRoleFromGroupOnProjectRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
 	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/RemoveRoleFromGroupOnProject", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
@@ -597,8 +603,8 @@ func (c *identityServiceClient) RemoveRoleFromGroupOnProject(ctx context.Context
 	return out, nil
 }
 
-func (c *identityServiceClient) CheckRoleInGroupOnProject(ctx context.Context, in *CheckRoleInGroupOnProjectRequest, opts ...grpc.CallOption) (*google_protobuf3.Empty, error) {
-	out := new(google_protobuf3.Empty)
+func (c *identityServiceClient) CheckRoleInGroupOnProject(ctx context.Context, in *CheckRoleInGroupOnProjectRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
 	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/CheckRoleInGroupOnProject", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
@@ -615,8 +621,8 @@ func (c *identityServiceClient) ListRolesForGroupOnProject(ctx context.Context, 
 	return out, nil
 }
 
-func (c *identityServiceClient) AddRoleToUserOnProject(ctx context.Context, in *AddRoleToUserOnProjectRequest, opts ...grpc.CallOption) (*google_protobuf3.Empty, error) {
-	out := new(google_protobuf3.Empty)
+func (c *identityServiceClient) AddRoleToUserOnProject(ctx context.Context, in *AddRoleToUserOnProjectRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
 	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/AddRoleToUserOnProject", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
@@ -624,8 +630,8 @@ func (c *identityServiceClient) AddRoleToUserOnProject(ctx context.Context, in *
 	return out, nil
 }
 
-func (c *identityServiceClient) RemoveRoleFromUserOnProject(ctx context.Context, in *RemoveRoleFromUserOnProjectRequest, opts ...grpc.CallOption) (*google_protobuf3.Empty, error) {
-	out := new(google_protobuf3.Empty)
+func (c *identityServiceClient) RemoveRoleFromUserOnProject(ctx context.Context, in *RemoveRoleFromUserOnProjectRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
 	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/RemoveRoleFromUserOnProject", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
@@ -633,8 +639,8 @@ func (c *identityServiceClient) RemoveRoleFromUserOnProject(ctx context.Context,
 	return out, nil
 }
 
-func (c *identityServiceClient) CheckRoleInUserOnProject(ctx context.Context, in *CheckRoleInUserOnProjectRequest, opts ...grpc.CallOption) (*google_protobuf3.Empty, error) {
-	out := new(google_protobuf3.Empty)
+func (c *identityServiceClient) CheckRoleInUserOnProject(ctx context.Context, in *CheckRoleInUserOnProjectRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
 	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/CheckRoleInUserOnProject", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
@@ -660,8 +666,8 @@ func (c *identityServiceClient) IssueToken(ctx context.Context, in *IssueTokenRe
 	return out, nil
 }
 
-func (c *identityServiceClient) RevokeToken(ctx context.Context, in *google_protobuf3.Empty, opts ...grpc.CallOption) (*google_protobuf3.Empty, error) {
-	out := new(google_protobuf3.Empty)
+func (c *identityServiceClient) RevokeToken(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
 	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/RevokeToken", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
@@ -669,8 +675,8 @@ func (c *identityServiceClient) RevokeToken(ctx context.Context, in *google_prot
 	return out, nil
 }
 
-func (c *identityServiceClient) CheckToken(ctx context.Context, in *google_protobuf3.Empty, opts ...grpc.CallOption) (*google_protobuf3.Empty, error) {
-	out := new(google_protobuf3.Empty)
+func (c *identityServiceClient) CheckToken(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
 	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/CheckToken", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
@@ -678,7 +684,7 @@ func (c *identityServiceClient) CheckToken(ctx context.Context, in *google_proto
 	return out, nil
 }
 
-func (c *identityServiceClient) ValidateToken(ctx context.Context, in *google_protobuf3.Empty, opts ...grpc.CallOption) (*ValidateTokenResponse, error) {
+func (c *identityServiceClient) ValidateToken(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*ValidateTokenResponse, error) {
 	out := new(ValidateTokenResponse)
 	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/ValidateToken", in, out, c.cc, opts...)
 	if err != nil {
@@ -696,8 +702,8 @@ func (c *identityServiceClient) CreateApplicationCredential(ctx context.Context,
 	return out, nil
 }
 
-func (c *identityServiceClient) DeleteApplicationCredential(ctx context.Context, in *DeleteApplicationCredentialRequest, opts ...grpc.CallOption) (*google_protobuf3.Empty, error) {
-	out := new(google_protobuf3.Empty)
+func (c *identityServiceClient) DeleteApplicationCredential(ctx context.Context, in *DeleteApplicationCredentialRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
 	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/DeleteApplicationCredential", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
@@ -729,7 +735,7 @@ type IdentityServiceServer interface {
 	// https://developer.openstack.org/api-ref/identity/v3/#create-region
 	CreateRegion(context.Context, *CreateRegionRequest) (*CreateRegionResponse, error)
 	// https://developer.openstack.org/api-ref/identity/v3/#delete-region
-	DeleteRegion(context.Context, *DeleteRegionRequest) (*google_protobuf3.Empty, error)
+	DeleteRegion(context.Context, *DeleteRegionRequest) (*empty.Empty, error)
 	// https://developer.openstack.org/api-ref/identity/v3/#update-region
 	PatchRegion(context.Context, *PatchRegionRequest) (*PatchRegionResponse, error)
 	// https://developer.openstack.org/api-ref/identity/v3/#show-region-details
@@ -739,7 +745,7 @@ type IdentityServiceServer interface {
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#create-domain
 	CreateDomain(context.Context, *CreateDomainRequest) (*CreateDomainResponse, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#delete-domain
-	DeleteDomain(context.Context, *DeleteDomainRequest) (*google_protobuf3.Empty, error)
+	DeleteDomain(context.Context, *DeleteDomainRequest) (*empty.Empty, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#update-domain
 	PatchDomain(context.Context, *PatchDomainRequest) (*PatchDomainResponse, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#show-domain-details
@@ -749,7 +755,7 @@ type IdentityServiceServer interface {
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#create-project
 	CreateProject(context.Context, *CreateProjectRequest) (*CreateProjectResponse, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#delete-project
-	DeleteProject(context.Context, *DeleteProjectRequest) (*google_protobuf3.Empty, error)
+	DeleteProject(context.Context, *DeleteProjectRequest) (*empty.Empty, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#update-project
 	PatchProject(context.Context, *PatchProjectRequest) (*PatchProjectResponse, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#show-project-details
@@ -761,7 +767,7 @@ type IdentityServiceServer interface {
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#create-user
 	CreateUser(context.Context, *CreateUserRequest) (*CreateUserResponse, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#delete-user
-	DeleteUser(context.Context, *DeleteUserRequest) (*google_protobuf3.Empty, error)
+	DeleteUser(context.Context, *DeleteUserRequest) (*empty.Empty, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#update-user
 	PatchUser(context.Context, *PatchUserRequest) (*PatchUserResponse, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#show-user-details
@@ -769,13 +775,13 @@ type IdentityServiceServer interface {
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#list-users
 	ListUsers(context.Context, *ListUsersRequest) (*ListUsersResponse, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#change-password-for-user
-	ChangePassword(context.Context, *ChangePasswordRequest) (*google_protobuf3.Empty, error)
+	ChangePassword(context.Context, *ChangePasswordRequest) (*empty.Empty, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#list-users-in-group
 	ListUsersInGroup(context.Context, *ListUsersInGroupRequest) (*ListUsersInGroupResponse, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#create-group
 	CreateGroup(context.Context, *CreateGroupRequest) (*CreateGroupResponse, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#delete-group
-	DeleteGroup(context.Context, *DeleteGroupRequest) (*google_protobuf3.Empty, error)
+	DeleteGroup(context.Context, *DeleteGroupRequest) (*empty.Empty, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#update-group
 	PatchGroup(context.Context, *PatchGroupRequest) (*PatchGroupResponse, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#show-group-details
@@ -783,17 +789,17 @@ type IdentityServiceServer interface {
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#list-groups
 	ListGroups(context.Context, *ListGroupsRequest) (*ListGroupsResponse, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#add-user-to-group
-	AddUserToGroup(context.Context, *AddUserToGroupRequest) (*google_protobuf3.Empty, error)
+	AddUserToGroup(context.Context, *AddUserToGroupRequest) (*empty.Empty, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#remove-user-from-group
-	RemoveUserFromGroup(context.Context, *RemoveUserFromGroupRequest) (*google_protobuf3.Empty, error)
+	RemoveUserFromGroup(context.Context, *RemoveUserFromGroupRequest) (*empty.Empty, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#check-whether-user-belongs-to-group
-	CheckUserInGroup(context.Context, *CheckUserInGroupRequest) (*google_protobuf3.Empty, error)
+	CheckUserInGroup(context.Context, *CheckUserInGroupRequest) (*empty.Empty, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#list-groups-to-which-a-user-belongs
 	ListGroupsForUser(context.Context, *ListGroupsForUserRequest) (*ListGroupsForUserResponse, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#create-role
 	CreateRole(context.Context, *CreateRoleRequest) (*CreateRoleResponse, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#delete-role
-	DeleteRole(context.Context, *DeleteRoleRequest) (*google_protobuf3.Empty, error)
+	DeleteRole(context.Context, *DeleteRoleRequest) (*empty.Empty, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#update-role
 	PatchRole(context.Context, *PatchRoleRequest) (*PatchRoleResponse, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#show-role-details
@@ -801,35 +807,35 @@ type IdentityServiceServer interface {
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#list-roles
 	ListRoles(context.Context, *ListRolesRequest) (*ListRolesResponse, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#assign-role-to-group-on-domain
-	AddRoleToGroupOnDomain(context.Context, *AddRoleToGroupOnDomainRequest) (*google_protobuf3.Empty, error)
+	AddRoleToGroupOnDomain(context.Context, *AddRoleToGroupOnDomainRequest) (*empty.Empty, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#unassign-role-from-group-on-domain
-	RemoveRoleFromGroupOnDomain(context.Context, *RemoveRoleFromGroupOnDomainRequest) (*google_protobuf3.Empty, error)
+	RemoveRoleFromGroupOnDomain(context.Context, *RemoveRoleFromGroupOnDomainRequest) (*empty.Empty, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#check-whether-user-has-role-assignment-on-domain
-	CheckRoleInGroupOnDomain(context.Context, *CheckRoleInGroupOnDomainRequest) (*google_protobuf3.Empty, error)
+	CheckRoleInGroupOnDomain(context.Context, *CheckRoleInGroupOnDomainRequest) (*empty.Empty, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#list-role-assignments-for-group-on-domain
 	ListRolesForGroupOnDomain(context.Context, *ListRolesForGroupOnDomainRequest) (*ListRolesForGroupOnDomainResponse, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#list-role-assignments-for-group-on-domain
-	AddRoleToUserOnDomain(context.Context, *AddRoleToUserOnDomainRequest) (*google_protobuf3.Empty, error)
+	AddRoleToUserOnDomain(context.Context, *AddRoleToUserOnDomainRequest) (*empty.Empty, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#list-role-assignments-for-group-on-domain
-	RemoveRoleFromUserOnDomain(context.Context, *RemoveRoleFromUserOnDomainRequest) (*google_protobuf3.Empty, error)
+	RemoveRoleFromUserOnDomain(context.Context, *RemoveRoleFromUserOnDomainRequest) (*empty.Empty, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#list-role-assignments-for-group-on-domain
-	CheckRoleInUserOnDomain(context.Context, *CheckRoleInUserOnDomainRequest) (*google_protobuf3.Empty, error)
+	CheckRoleInUserOnDomain(context.Context, *CheckRoleInUserOnDomainRequest) (*empty.Empty, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#list-role-assignments-for-group-on-domain
 	ListRolesForUserOnDomain(context.Context, *ListRolesForUserOnDomainRequest) (*ListRolesForUserOnDomainResponse, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#assign-role-to-group-on-project
-	AddRoleToGroupOnProject(context.Context, *AddRoleToGroupOnProjectRequest) (*google_protobuf3.Empty, error)
+	AddRoleToGroupOnProject(context.Context, *AddRoleToGroupOnProjectRequest) (*empty.Empty, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#assign-role-to-group-on-project
-	RemoveRoleFromGroupOnProject(context.Context, *RemoveRoleFromGroupOnProjectRequest) (*google_protobuf3.Empty, error)
+	RemoveRoleFromGroupOnProject(context.Context, *RemoveRoleFromGroupOnProjectRequest) (*empty.Empty, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#check-whether-group-has-role-assignment-on-project
-	CheckRoleInGroupOnProject(context.Context, *CheckRoleInGroupOnProjectRequest) (*google_protobuf3.Empty, error)
+	CheckRoleInGroupOnProject(context.Context, *CheckRoleInGroupOnProjectRequest) (*empty.Empty, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#list-role-assignments-for-user-on-project
 	ListRolesForGroupOnProject(context.Context, *ListRolesForGroupOnProjectRequest) (*ListRolesForGroupOnProjectResponse, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#assign-role-to-user-on-project
-	AddRoleToUserOnProject(context.Context, *AddRoleToUserOnProjectRequest) (*google_protobuf3.Empty, error)
+	AddRoleToUserOnProject(context.Context, *AddRoleToUserOnProjectRequest) (*empty.Empty, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#unassign-role-from-user-on-project
-	RemoveRoleFromUserOnProject(context.Context, *RemoveRoleFromUserOnProjectRequest) (*google_protobuf3.Empty, error)
+	RemoveRoleFromUserOnProject(context.Context, *RemoveRoleFromUserOnProjectRequest) (*empty.Empty, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#check-whether-user-has-role-assignment-on-project
-	CheckRoleInUserOnProject(context.Context, *CheckRoleInUserOnProjectRequest) (*google_protobuf3.Empty, error)
+	CheckRoleInUserOnProject(context.Context, *CheckRoleInUserOnProjectRequest) (*empty.Empty, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#list-role-assignments-for-user-on-project
 	ListRolesForUserOnProject(context.Context, *ListRolesForUserOnProjectRequest) (*ListRolesForUserOnProjectResponse, error)
 	// password authentication with unsnscoped authorization
@@ -848,15 +854,15 @@ type IdentityServiceServer interface {
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#authenticating-with-an-application-credential
 	IssueToken(context.Context, *IssueTokenRequest) (*IssueTokenResponse, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#revoke-token
-	RevokeToken(context.Context, *google_protobuf3.Empty) (*google_protobuf3.Empty, error)
+	RevokeToken(context.Context, *empty.Empty) (*empty.Empty, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#check-token
-	CheckToken(context.Context, *google_protobuf3.Empty) (*google_protobuf3.Empty, error)
+	CheckToken(context.Context, *empty.Empty) (*empty.Empty, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#validate-and-show-information-for-token
-	ValidateToken(context.Context, *google_protobuf3.Empty) (*ValidateTokenResponse, error)
+	ValidateToken(context.Context, *empty.Empty) (*ValidateTokenResponse, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#create-application-credential
 	CreateApplicationCredential(context.Context, *CreateApplicationCredentialRequest) (*CreateApplicationCredentialResponse, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#delete-application-credential
-	DeleteApplicationCredential(context.Context, *DeleteApplicationCredentialRequest) (*google_protobuf3.Empty, error)
+	DeleteApplicationCredential(context.Context, *DeleteApplicationCredentialRequest) (*empty.Empty, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#show-application-credential-details
 	GetApplicationCredential(context.Context, *GetApplicationCredentialRequest) (*GetApplicationCredentialResponse, error)
 	// https://developer.openstack.org/api-ref/identity/v3/index.html#list-application-credentials
@@ -1840,7 +1846,7 @@ func _IdentityService_IssueToken_Handler(srv interface{}, ctx context.Context, d
 }
 
 func _IdentityService_RevokeToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(google_protobuf3.Empty)
+	in := new(empty.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -1852,13 +1858,13 @@ func _IdentityService_RevokeToken_Handler(srv interface{}, ctx context.Context, 
 		FullMethod: "/ai.metathings.service.identity.IdentityService/RevokeToken",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(IdentityServiceServer).RevokeToken(ctx, req.(*google_protobuf3.Empty))
+		return srv.(IdentityServiceServer).RevokeToken(ctx, req.(*empty.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _IdentityService_CheckToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(google_protobuf3.Empty)
+	in := new(empty.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -1870,13 +1876,13 @@ func _IdentityService_CheckToken_Handler(srv interface{}, ctx context.Context, d
 		FullMethod: "/ai.metathings.service.identity.IdentityService/CheckToken",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(IdentityServiceServer).CheckToken(ctx, req.(*google_protobuf3.Empty))
+		return srv.(IdentityServiceServer).CheckToken(ctx, req.(*empty.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _IdentityService_ValidateToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(google_protobuf3.Empty)
+	in := new(empty.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -1888,7 +1894,7 @@ func _IdentityService_ValidateToken_Handler(srv interface{}, ctx context.Context
 		FullMethod: "/ai.metathings.service.identity.IdentityService/ValidateToken",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(IdentityServiceServer).ValidateToken(ctx, req.(*google_protobuf3.Empty))
+		return srv.(IdentityServiceServer).ValidateToken(ctx, req.(*empty.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -2218,9 +2224,9 @@ var _IdentityService_serviceDesc = grpc.ServiceDesc{
 	Metadata: "service.proto",
 }
 
-func init() { proto.RegisterFile("service.proto", fileDescriptor65) }
+func init() { proto.RegisterFile("service.proto", fileDescriptor_service_b5157b164cd1c928) }
 
-var fileDescriptor65 = []byte{
+var fileDescriptor_service_b5157b164cd1c928 = []byte{
 	// 1474 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xa4, 0x59, 0x5d, 0x6f, 0x1b, 0x45,
 	0x14, 0xad, 0x5f, 0xa0, 0x9d, 0x34, 0x6d, 0xb2, 0x69, 0x9b, 0xc6, 0x89, 0x50, 0x9b, 0xb4, 0xe5,

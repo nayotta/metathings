@@ -6,13 +6,19 @@ package identity
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import google_protobuf "github.com/golang/protobuf/ptypes/wrappers"
+import wrappers "github.com/golang/protobuf/ptypes/wrappers"
 import _ "github.com/mwitkow/go-proto-validators"
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
+
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type AUTH_METHOD int32
 
@@ -39,26 +45,50 @@ var AUTH_METHOD_value = map[string]int32{
 func (x AUTH_METHOD) String() string {
 	return proto.EnumName(AUTH_METHOD_name, int32(x))
 }
-func (AUTH_METHOD) EnumDescriptor() ([]byte, []int) { return fileDescriptor35, []int{0} }
-
-type TokenScope struct {
-	DomainId  *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=domain_id,json=domainId" json:"domain_id,omitempty"`
-	ProjectId *google_protobuf.StringValue `protobuf:"bytes,2,opt,name=project_id,json=projectId" json:"project_id,omitempty"`
+func (AUTH_METHOD) EnumDescriptor() ([]byte, []int) {
+	return fileDescriptor_issue_token_ed79a117d66229c6, []int{0}
 }
 
-func (m *TokenScope) Reset()                    { *m = TokenScope{} }
-func (m *TokenScope) String() string            { return proto.CompactTextString(m) }
-func (*TokenScope) ProtoMessage()               {}
-func (*TokenScope) Descriptor() ([]byte, []int) { return fileDescriptor35, []int{0} }
+type TokenScope struct {
+	DomainId             *wrappers.StringValue `protobuf:"bytes,1,opt,name=domain_id,json=domainId" json:"domain_id,omitempty"`
+	ProjectId            *wrappers.StringValue `protobuf:"bytes,2,opt,name=project_id,json=projectId" json:"project_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
+}
 
-func (m *TokenScope) GetDomainId() *google_protobuf.StringValue {
+func (m *TokenScope) Reset()         { *m = TokenScope{} }
+func (m *TokenScope) String() string { return proto.CompactTextString(m) }
+func (*TokenScope) ProtoMessage()    {}
+func (*TokenScope) Descriptor() ([]byte, []int) {
+	return fileDescriptor_issue_token_ed79a117d66229c6, []int{0}
+}
+func (m *TokenScope) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_TokenScope.Unmarshal(m, b)
+}
+func (m *TokenScope) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_TokenScope.Marshal(b, m, deterministic)
+}
+func (dst *TokenScope) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TokenScope.Merge(dst, src)
+}
+func (m *TokenScope) XXX_Size() int {
+	return xxx_messageInfo_TokenScope.Size(m)
+}
+func (m *TokenScope) XXX_DiscardUnknown() {
+	xxx_messageInfo_TokenScope.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_TokenScope proto.InternalMessageInfo
+
+func (m *TokenScope) GetDomainId() *wrappers.StringValue {
 	if m != nil {
 		return m.DomainId
 	}
 	return nil
 }
 
-func (m *TokenScope) GetProjectId() *google_protobuf.StringValue {
+func (m *TokenScope) GetProjectId() *wrappers.StringValue {
 	if m != nil {
 		return m.ProjectId
 	}
@@ -66,48 +96,70 @@ func (m *TokenScope) GetProjectId() *google_protobuf.StringValue {
 }
 
 type PasswordPayload struct {
-	Id         *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	Username   *google_protobuf.StringValue `protobuf:"bytes,2,opt,name=username" json:"username,omitempty"`
-	Password   *google_protobuf.StringValue `protobuf:"bytes,3,opt,name=password" json:"password,omitempty"`
-	DomainId   *google_protobuf.StringValue `protobuf:"bytes,4,opt,name=domain_id,json=domainId" json:"domain_id,omitempty"`
-	DomainName *google_protobuf.StringValue `protobuf:"bytes,5,opt,name=domain_name,json=domainName" json:"domain_name,omitempty"`
-	Scope      *TokenScope                  `protobuf:"bytes,6,opt,name=scope" json:"scope,omitempty"`
+	Id                   *wrappers.StringValue `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
+	Username             *wrappers.StringValue `protobuf:"bytes,2,opt,name=username" json:"username,omitempty"`
+	Password             *wrappers.StringValue `protobuf:"bytes,3,opt,name=password" json:"password,omitempty"`
+	DomainId             *wrappers.StringValue `protobuf:"bytes,4,opt,name=domain_id,json=domainId" json:"domain_id,omitempty"`
+	DomainName           *wrappers.StringValue `protobuf:"bytes,5,opt,name=domain_name,json=domainName" json:"domain_name,omitempty"`
+	Scope                *TokenScope           `protobuf:"bytes,6,opt,name=scope" json:"scope,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *PasswordPayload) Reset()                    { *m = PasswordPayload{} }
-func (m *PasswordPayload) String() string            { return proto.CompactTextString(m) }
-func (*PasswordPayload) ProtoMessage()               {}
-func (*PasswordPayload) Descriptor() ([]byte, []int) { return fileDescriptor35, []int{1} }
+func (m *PasswordPayload) Reset()         { *m = PasswordPayload{} }
+func (m *PasswordPayload) String() string { return proto.CompactTextString(m) }
+func (*PasswordPayload) ProtoMessage()    {}
+func (*PasswordPayload) Descriptor() ([]byte, []int) {
+	return fileDescriptor_issue_token_ed79a117d66229c6, []int{1}
+}
+func (m *PasswordPayload) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_PasswordPayload.Unmarshal(m, b)
+}
+func (m *PasswordPayload) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_PasswordPayload.Marshal(b, m, deterministic)
+}
+func (dst *PasswordPayload) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PasswordPayload.Merge(dst, src)
+}
+func (m *PasswordPayload) XXX_Size() int {
+	return xxx_messageInfo_PasswordPayload.Size(m)
+}
+func (m *PasswordPayload) XXX_DiscardUnknown() {
+	xxx_messageInfo_PasswordPayload.DiscardUnknown(m)
+}
 
-func (m *PasswordPayload) GetId() *google_protobuf.StringValue {
+var xxx_messageInfo_PasswordPayload proto.InternalMessageInfo
+
+func (m *PasswordPayload) GetId() *wrappers.StringValue {
 	if m != nil {
 		return m.Id
 	}
 	return nil
 }
 
-func (m *PasswordPayload) GetUsername() *google_protobuf.StringValue {
+func (m *PasswordPayload) GetUsername() *wrappers.StringValue {
 	if m != nil {
 		return m.Username
 	}
 	return nil
 }
 
-func (m *PasswordPayload) GetPassword() *google_protobuf.StringValue {
+func (m *PasswordPayload) GetPassword() *wrappers.StringValue {
 	if m != nil {
 		return m.Password
 	}
 	return nil
 }
 
-func (m *PasswordPayload) GetDomainId() *google_protobuf.StringValue {
+func (m *PasswordPayload) GetDomainId() *wrappers.StringValue {
 	if m != nil {
 		return m.DomainId
 	}
 	return nil
 }
 
-func (m *PasswordPayload) GetDomainName() *google_protobuf.StringValue {
+func (m *PasswordPayload) GetDomainName() *wrappers.StringValue {
 	if m != nil {
 		return m.DomainName
 	}
@@ -122,16 +174,38 @@ func (m *PasswordPayload) GetScope() *TokenScope {
 }
 
 type TokenPayload struct {
-	TokenId *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=token_id,json=tokenId" json:"token_id,omitempty"`
-	Scope   *TokenScope                  `protobuf:"bytes,2,opt,name=scope" json:"scope,omitempty"`
+	TokenId              *wrappers.StringValue `protobuf:"bytes,1,opt,name=token_id,json=tokenId" json:"token_id,omitempty"`
+	Scope                *TokenScope           `protobuf:"bytes,2,opt,name=scope" json:"scope,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *TokenPayload) Reset()                    { *m = TokenPayload{} }
-func (m *TokenPayload) String() string            { return proto.CompactTextString(m) }
-func (*TokenPayload) ProtoMessage()               {}
-func (*TokenPayload) Descriptor() ([]byte, []int) { return fileDescriptor35, []int{2} }
+func (m *TokenPayload) Reset()         { *m = TokenPayload{} }
+func (m *TokenPayload) String() string { return proto.CompactTextString(m) }
+func (*TokenPayload) ProtoMessage()    {}
+func (*TokenPayload) Descriptor() ([]byte, []int) {
+	return fileDescriptor_issue_token_ed79a117d66229c6, []int{2}
+}
+func (m *TokenPayload) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_TokenPayload.Unmarshal(m, b)
+}
+func (m *TokenPayload) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_TokenPayload.Marshal(b, m, deterministic)
+}
+func (dst *TokenPayload) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TokenPayload.Merge(dst, src)
+}
+func (m *TokenPayload) XXX_Size() int {
+	return xxx_messageInfo_TokenPayload.Size(m)
+}
+func (m *TokenPayload) XXX_DiscardUnknown() {
+	xxx_messageInfo_TokenPayload.DiscardUnknown(m)
+}
 
-func (m *TokenPayload) GetTokenId() *google_protobuf.StringValue {
+var xxx_messageInfo_TokenPayload proto.InternalMessageInfo
+
+func (m *TokenPayload) GetTokenId() *wrappers.StringValue {
 	if m != nil {
 		return m.TokenId
 	}
@@ -146,55 +220,77 @@ func (m *TokenPayload) GetScope() *TokenScope {
 }
 
 type ApplicationCredentialPayload struct {
-	Id       *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	Name     *google_protobuf.StringValue `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
-	Secret   *google_protobuf.StringValue `protobuf:"bytes,3,opt,name=secret" json:"secret,omitempty"`
-	UserId   *google_protobuf.StringValue `protobuf:"bytes,4,opt,name=user_id,json=userId" json:"user_id,omitempty"`
-	Username *google_protobuf.StringValue `protobuf:"bytes,5,opt,name=username" json:"username,omitempty"`
-	DomainId *google_protobuf.StringValue `protobuf:"bytes,6,opt,name=domain_id,json=domainId" json:"domain_id,omitempty"`
+	Id                   *wrappers.StringValue `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
+	Secret               *wrappers.StringValue `protobuf:"bytes,3,opt,name=secret" json:"secret,omitempty"`
+	UserId               *wrappers.StringValue `protobuf:"bytes,4,opt,name=user_id,json=userId" json:"user_id,omitempty"`
+	Username             *wrappers.StringValue `protobuf:"bytes,5,opt,name=username" json:"username,omitempty"`
+	DomainId             *wrappers.StringValue `protobuf:"bytes,6,opt,name=domain_id,json=domainId" json:"domain_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *ApplicationCredentialPayload) Reset()                    { *m = ApplicationCredentialPayload{} }
-func (m *ApplicationCredentialPayload) String() string            { return proto.CompactTextString(m) }
-func (*ApplicationCredentialPayload) ProtoMessage()               {}
-func (*ApplicationCredentialPayload) Descriptor() ([]byte, []int) { return fileDescriptor35, []int{3} }
+func (m *ApplicationCredentialPayload) Reset()         { *m = ApplicationCredentialPayload{} }
+func (m *ApplicationCredentialPayload) String() string { return proto.CompactTextString(m) }
+func (*ApplicationCredentialPayload) ProtoMessage()    {}
+func (*ApplicationCredentialPayload) Descriptor() ([]byte, []int) {
+	return fileDescriptor_issue_token_ed79a117d66229c6, []int{3}
+}
+func (m *ApplicationCredentialPayload) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ApplicationCredentialPayload.Unmarshal(m, b)
+}
+func (m *ApplicationCredentialPayload) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ApplicationCredentialPayload.Marshal(b, m, deterministic)
+}
+func (dst *ApplicationCredentialPayload) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ApplicationCredentialPayload.Merge(dst, src)
+}
+func (m *ApplicationCredentialPayload) XXX_Size() int {
+	return xxx_messageInfo_ApplicationCredentialPayload.Size(m)
+}
+func (m *ApplicationCredentialPayload) XXX_DiscardUnknown() {
+	xxx_messageInfo_ApplicationCredentialPayload.DiscardUnknown(m)
+}
 
-func (m *ApplicationCredentialPayload) GetId() *google_protobuf.StringValue {
+var xxx_messageInfo_ApplicationCredentialPayload proto.InternalMessageInfo
+
+func (m *ApplicationCredentialPayload) GetId() *wrappers.StringValue {
 	if m != nil {
 		return m.Id
 	}
 	return nil
 }
 
-func (m *ApplicationCredentialPayload) GetName() *google_protobuf.StringValue {
+func (m *ApplicationCredentialPayload) GetName() *wrappers.StringValue {
 	if m != nil {
 		return m.Name
 	}
 	return nil
 }
 
-func (m *ApplicationCredentialPayload) GetSecret() *google_protobuf.StringValue {
+func (m *ApplicationCredentialPayload) GetSecret() *wrappers.StringValue {
 	if m != nil {
 		return m.Secret
 	}
 	return nil
 }
 
-func (m *ApplicationCredentialPayload) GetUserId() *google_protobuf.StringValue {
+func (m *ApplicationCredentialPayload) GetUserId() *wrappers.StringValue {
 	if m != nil {
 		return m.UserId
 	}
 	return nil
 }
 
-func (m *ApplicationCredentialPayload) GetUsername() *google_protobuf.StringValue {
+func (m *ApplicationCredentialPayload) GetUsername() *wrappers.StringValue {
 	if m != nil {
 		return m.Username
 	}
 	return nil
 }
 
-func (m *ApplicationCredentialPayload) GetDomainId() *google_protobuf.StringValue {
+func (m *ApplicationCredentialPayload) GetDomainId() *wrappers.StringValue {
 	if m != nil {
 		return m.DomainId
 	}
@@ -207,13 +303,35 @@ type IssueTokenRequest struct {
 	//	*IssueTokenRequest_Password
 	//	*IssueTokenRequest_Token
 	//	*IssueTokenRequest_ApplicationCredential
-	Payload isIssueTokenRequest_Payload `protobuf_oneof:"payload"`
+	Payload              isIssueTokenRequest_Payload `protobuf_oneof:"payload"`
+	XXX_NoUnkeyedLiteral struct{}                    `json:"-"`
+	XXX_unrecognized     []byte                      `json:"-"`
+	XXX_sizecache        int32                       `json:"-"`
 }
 
-func (m *IssueTokenRequest) Reset()                    { *m = IssueTokenRequest{} }
-func (m *IssueTokenRequest) String() string            { return proto.CompactTextString(m) }
-func (*IssueTokenRequest) ProtoMessage()               {}
-func (*IssueTokenRequest) Descriptor() ([]byte, []int) { return fileDescriptor35, []int{4} }
+func (m *IssueTokenRequest) Reset()         { *m = IssueTokenRequest{} }
+func (m *IssueTokenRequest) String() string { return proto.CompactTextString(m) }
+func (*IssueTokenRequest) ProtoMessage()    {}
+func (*IssueTokenRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_issue_token_ed79a117d66229c6, []int{4}
+}
+func (m *IssueTokenRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_IssueTokenRequest.Unmarshal(m, b)
+}
+func (m *IssueTokenRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_IssueTokenRequest.Marshal(b, m, deterministic)
+}
+func (dst *IssueTokenRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_IssueTokenRequest.Merge(dst, src)
+}
+func (m *IssueTokenRequest) XXX_Size() int {
+	return xxx_messageInfo_IssueTokenRequest.Size(m)
+}
+func (m *IssueTokenRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_IssueTokenRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_IssueTokenRequest proto.InternalMessageInfo
 
 type isIssueTokenRequest_Payload interface {
 	isIssueTokenRequest_Payload()
@@ -341,17 +459,17 @@ func _IssueTokenRequest_OneofSizer(msg proto.Message) (n int) {
 	switch x := m.Payload.(type) {
 	case *IssueTokenRequest_Password:
 		s := proto.Size(x.Password)
-		n += proto.SizeVarint(2<<3 | proto.WireBytes)
+		n += 1 // tag and wire
 		n += proto.SizeVarint(uint64(s))
 		n += s
 	case *IssueTokenRequest_Token:
 		s := proto.Size(x.Token)
-		n += proto.SizeVarint(3<<3 | proto.WireBytes)
+		n += 1 // tag and wire
 		n += proto.SizeVarint(uint64(s))
 		n += s
 	case *IssueTokenRequest_ApplicationCredential:
 		s := proto.Size(x.ApplicationCredential)
-		n += proto.SizeVarint(4<<3 | proto.WireBytes)
+		n += 1 // tag and wire
 		n += proto.SizeVarint(uint64(s))
 		n += s
 	case nil:
@@ -362,13 +480,35 @@ func _IssueTokenRequest_OneofSizer(msg proto.Message) (n int) {
 }
 
 type IssueTokenResponse struct {
-	Token *Token `protobuf:"bytes,1,opt,name=token" json:"token,omitempty"`
+	Token                *Token   `protobuf:"bytes,1,opt,name=token" json:"token,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *IssueTokenResponse) Reset()                    { *m = IssueTokenResponse{} }
-func (m *IssueTokenResponse) String() string            { return proto.CompactTextString(m) }
-func (*IssueTokenResponse) ProtoMessage()               {}
-func (*IssueTokenResponse) Descriptor() ([]byte, []int) { return fileDescriptor35, []int{5} }
+func (m *IssueTokenResponse) Reset()         { *m = IssueTokenResponse{} }
+func (m *IssueTokenResponse) String() string { return proto.CompactTextString(m) }
+func (*IssueTokenResponse) ProtoMessage()    {}
+func (*IssueTokenResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_issue_token_ed79a117d66229c6, []int{5}
+}
+func (m *IssueTokenResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_IssueTokenResponse.Unmarshal(m, b)
+}
+func (m *IssueTokenResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_IssueTokenResponse.Marshal(b, m, deterministic)
+}
+func (dst *IssueTokenResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_IssueTokenResponse.Merge(dst, src)
+}
+func (m *IssueTokenResponse) XXX_Size() int {
+	return xxx_messageInfo_IssueTokenResponse.Size(m)
+}
+func (m *IssueTokenResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_IssueTokenResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_IssueTokenResponse proto.InternalMessageInfo
 
 func (m *IssueTokenResponse) GetToken() *Token {
 	if m != nil {
@@ -387,9 +527,9 @@ func init() {
 	proto.RegisterEnum("ai.metathings.service.identity.AUTH_METHOD", AUTH_METHOD_name, AUTH_METHOD_value)
 }
 
-func init() { proto.RegisterFile("issue_token.proto", fileDescriptor35) }
+func init() { proto.RegisterFile("issue_token.proto", fileDescriptor_issue_token_ed79a117d66229c6) }
 
-var fileDescriptor35 = []byte{
+var fileDescriptor_issue_token_ed79a117d66229c6 = []byte{
 	// 619 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x94, 0x5d, 0x4f, 0xdb, 0x3e,
 	0x14, 0xc6, 0x69, 0xa0, 0x69, 0x7b, 0x8a, 0xfe, 0xff, 0x62, 0x69, 0x08, 0x21, 0xc4, 0x50, 0xa5,

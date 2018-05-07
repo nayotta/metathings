@@ -6,7 +6,7 @@ package identity
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import google_protobuf "github.com/golang/protobuf/ptypes/wrappers"
+import wrappers "github.com/golang/protobuf/ptypes/wrappers"
 import _ "github.com/mwitkow/go-proto-validators"
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -14,32 +14,60 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+
 type CreateGroupRequest struct {
-	DomainId    *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=domain_id,json=domainId" json:"domain_id,omitempty"`
-	Name        *google_protobuf.StringValue `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
-	Description *google_protobuf.StringValue `protobuf:"bytes,3,opt,name=description" json:"description,omitempty"`
+	DomainId             *wrappers.StringValue `protobuf:"bytes,1,opt,name=domain_id,json=domainId" json:"domain_id,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
+	Description          *wrappers.StringValue `protobuf:"bytes,3,opt,name=description" json:"description,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *CreateGroupRequest) Reset()                    { *m = CreateGroupRequest{} }
-func (m *CreateGroupRequest) String() string            { return proto.CompactTextString(m) }
-func (*CreateGroupRequest) ProtoMessage()               {}
-func (*CreateGroupRequest) Descriptor() ([]byte, []int) { return fileDescriptor14, []int{0} }
+func (m *CreateGroupRequest) Reset()         { *m = CreateGroupRequest{} }
+func (m *CreateGroupRequest) String() string { return proto.CompactTextString(m) }
+func (*CreateGroupRequest) ProtoMessage()    {}
+func (*CreateGroupRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_create_group_cca7cb43649e9069, []int{0}
+}
+func (m *CreateGroupRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_CreateGroupRequest.Unmarshal(m, b)
+}
+func (m *CreateGroupRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_CreateGroupRequest.Marshal(b, m, deterministic)
+}
+func (dst *CreateGroupRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CreateGroupRequest.Merge(dst, src)
+}
+func (m *CreateGroupRequest) XXX_Size() int {
+	return xxx_messageInfo_CreateGroupRequest.Size(m)
+}
+func (m *CreateGroupRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_CreateGroupRequest.DiscardUnknown(m)
+}
 
-func (m *CreateGroupRequest) GetDomainId() *google_protobuf.StringValue {
+var xxx_messageInfo_CreateGroupRequest proto.InternalMessageInfo
+
+func (m *CreateGroupRequest) GetDomainId() *wrappers.StringValue {
 	if m != nil {
 		return m.DomainId
 	}
 	return nil
 }
 
-func (m *CreateGroupRequest) GetName() *google_protobuf.StringValue {
+func (m *CreateGroupRequest) GetName() *wrappers.StringValue {
 	if m != nil {
 		return m.Name
 	}
 	return nil
 }
 
-func (m *CreateGroupRequest) GetDescription() *google_protobuf.StringValue {
+func (m *CreateGroupRequest) GetDescription() *wrappers.StringValue {
 	if m != nil {
 		return m.Description
 	}
@@ -47,13 +75,35 @@ func (m *CreateGroupRequest) GetDescription() *google_protobuf.StringValue {
 }
 
 type CreateGroupResponse struct {
-	Group *Group `protobuf:"bytes,1,opt,name=group" json:"group,omitempty"`
+	Group                *Group   `protobuf:"bytes,1,opt,name=group" json:"group,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *CreateGroupResponse) Reset()                    { *m = CreateGroupResponse{} }
-func (m *CreateGroupResponse) String() string            { return proto.CompactTextString(m) }
-func (*CreateGroupResponse) ProtoMessage()               {}
-func (*CreateGroupResponse) Descriptor() ([]byte, []int) { return fileDescriptor14, []int{1} }
+func (m *CreateGroupResponse) Reset()         { *m = CreateGroupResponse{} }
+func (m *CreateGroupResponse) String() string { return proto.CompactTextString(m) }
+func (*CreateGroupResponse) ProtoMessage()    {}
+func (*CreateGroupResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_create_group_cca7cb43649e9069, []int{1}
+}
+func (m *CreateGroupResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_CreateGroupResponse.Unmarshal(m, b)
+}
+func (m *CreateGroupResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_CreateGroupResponse.Marshal(b, m, deterministic)
+}
+func (dst *CreateGroupResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CreateGroupResponse.Merge(dst, src)
+}
+func (m *CreateGroupResponse) XXX_Size() int {
+	return xxx_messageInfo_CreateGroupResponse.Size(m)
+}
+func (m *CreateGroupResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_CreateGroupResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_CreateGroupResponse proto.InternalMessageInfo
 
 func (m *CreateGroupResponse) GetGroup() *Group {
 	if m != nil {
@@ -67,9 +117,9 @@ func init() {
 	proto.RegisterType((*CreateGroupResponse)(nil), "ai.metathings.service.identity.CreateGroupResponse")
 }
 
-func init() { proto.RegisterFile("create_group.proto", fileDescriptor14) }
+func init() { proto.RegisterFile("create_group.proto", fileDescriptor_create_group_cca7cb43649e9069) }
 
-var fileDescriptor14 = []byte{
+var fileDescriptor_create_group_cca7cb43649e9069 = []byte{
 	// 276 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0xd0, 0xc1, 0x4a, 0x03, 0x31,
 	0x10, 0x06, 0x60, 0xb6, 0x6a, 0xd1, 0xf4, 0x16, 0x2f, 0xa5, 0x48, 0x2d, 0x05, 0xc1, 0x4b, 0xb3,

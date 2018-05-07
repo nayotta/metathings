@@ -6,7 +6,7 @@ package identity
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import google_protobuf "github.com/golang/protobuf/ptypes/wrappers"
+import wrappers "github.com/golang/protobuf/ptypes/wrappers"
 import _ "github.com/mwitkow/go-proto-validators"
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -14,34 +14,60 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+
 type RemoveRoleFromGroupOnDomainRequest struct {
-	DomainId *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=domain_id,json=domainId" json:"domain_id,omitempty"`
-	GroupId  *google_protobuf.StringValue `protobuf:"bytes,2,opt,name=group_id,json=groupId" json:"group_id,omitempty"`
-	RoleId   *google_protobuf.StringValue `protobuf:"bytes,3,opt,name=role_id,json=roleId" json:"role_id,omitempty"`
+	DomainId             *wrappers.StringValue `protobuf:"bytes,1,opt,name=domain_id,json=domainId" json:"domain_id,omitempty"`
+	GroupId              *wrappers.StringValue `protobuf:"bytes,2,opt,name=group_id,json=groupId" json:"group_id,omitempty"`
+	RoleId               *wrappers.StringValue `protobuf:"bytes,3,opt,name=role_id,json=roleId" json:"role_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
 func (m *RemoveRoleFromGroupOnDomainRequest) Reset()         { *m = RemoveRoleFromGroupOnDomainRequest{} }
 func (m *RemoveRoleFromGroupOnDomainRequest) String() string { return proto.CompactTextString(m) }
 func (*RemoveRoleFromGroupOnDomainRequest) ProtoMessage()    {}
 func (*RemoveRoleFromGroupOnDomainRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor59, []int{0}
+	return fileDescriptor_remove_role_from_group_on_domain_a026a83cc94342c3, []int{0}
+}
+func (m *RemoveRoleFromGroupOnDomainRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_RemoveRoleFromGroupOnDomainRequest.Unmarshal(m, b)
+}
+func (m *RemoveRoleFromGroupOnDomainRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_RemoveRoleFromGroupOnDomainRequest.Marshal(b, m, deterministic)
+}
+func (dst *RemoveRoleFromGroupOnDomainRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_RemoveRoleFromGroupOnDomainRequest.Merge(dst, src)
+}
+func (m *RemoveRoleFromGroupOnDomainRequest) XXX_Size() int {
+	return xxx_messageInfo_RemoveRoleFromGroupOnDomainRequest.Size(m)
+}
+func (m *RemoveRoleFromGroupOnDomainRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_RemoveRoleFromGroupOnDomainRequest.DiscardUnknown(m)
 }
 
-func (m *RemoveRoleFromGroupOnDomainRequest) GetDomainId() *google_protobuf.StringValue {
+var xxx_messageInfo_RemoveRoleFromGroupOnDomainRequest proto.InternalMessageInfo
+
+func (m *RemoveRoleFromGroupOnDomainRequest) GetDomainId() *wrappers.StringValue {
 	if m != nil {
 		return m.DomainId
 	}
 	return nil
 }
 
-func (m *RemoveRoleFromGroupOnDomainRequest) GetGroupId() *google_protobuf.StringValue {
+func (m *RemoveRoleFromGroupOnDomainRequest) GetGroupId() *wrappers.StringValue {
 	if m != nil {
 		return m.GroupId
 	}
 	return nil
 }
 
-func (m *RemoveRoleFromGroupOnDomainRequest) GetRoleId() *google_protobuf.StringValue {
+func (m *RemoveRoleFromGroupOnDomainRequest) GetRoleId() *wrappers.StringValue {
 	if m != nil {
 		return m.RoleId
 	}
@@ -52,9 +78,11 @@ func init() {
 	proto.RegisterType((*RemoveRoleFromGroupOnDomainRequest)(nil), "ai.metathings.service.identity.RemoveRoleFromGroupOnDomainRequest")
 }
 
-func init() { proto.RegisterFile("remove_role_from_group_on_domain.proto", fileDescriptor59) }
+func init() {
+	proto.RegisterFile("remove_role_from_group_on_domain.proto", fileDescriptor_remove_role_from_group_on_domain_a026a83cc94342c3)
+}
 
-var fileDescriptor59 = []byte{
+var fileDescriptor_remove_role_from_group_on_domain_a026a83cc94342c3 = []byte{
 	// 268 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x90, 0x41, 0x4b, 0xf3, 0x40,
 	0x10, 0x86, 0x49, 0x3f, 0x68, 0xfb, 0xc5, 0x5b, 0x4e, 0xa1, 0x48, 0x2d, 0x3d, 0x88, 0x97, 0x6e,

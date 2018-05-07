@@ -6,25 +6,53 @@ package core
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import google_protobuf "github.com/golang/protobuf/ptypes/wrappers"
-import google_protobuf2 "github.com/golang/protobuf/ptypes/any"
+import any "github.com/golang/protobuf/ptypes/any"
+import wrappers "github.com/golang/protobuf/ptypes/wrappers"
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+
 type StreamErrorResponsePayload struct {
-	Name        string `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
-	ServiceName string `protobuf:"bytes,2,opt,name=service_name,json=serviceName" json:"service_name,omitempty"`
-	MethodName  string `protobuf:"bytes,3,opt,name=method_name,json=methodName" json:"method_name,omitempty"`
-	Context     string `protobuf:"bytes,4,opt,name=context" json:"context,omitempty"`
+	Name                 string   `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
+	ServiceName          string   `protobuf:"bytes,2,opt,name=service_name,json=serviceName" json:"service_name,omitempty"`
+	MethodName           string   `protobuf:"bytes,3,opt,name=method_name,json=methodName" json:"method_name,omitempty"`
+	Context              string   `protobuf:"bytes,4,opt,name=context" json:"context,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *StreamErrorResponsePayload) Reset()                    { *m = StreamErrorResponsePayload{} }
-func (m *StreamErrorResponsePayload) String() string            { return proto.CompactTextString(m) }
-func (*StreamErrorResponsePayload) ProtoMessage()               {}
-func (*StreamErrorResponsePayload) Descriptor() ([]byte, []int) { return fileDescriptor15, []int{0} }
+func (m *StreamErrorResponsePayload) Reset()         { *m = StreamErrorResponsePayload{} }
+func (m *StreamErrorResponsePayload) String() string { return proto.CompactTextString(m) }
+func (*StreamErrorResponsePayload) ProtoMessage()    {}
+func (*StreamErrorResponsePayload) Descriptor() ([]byte, []int) {
+	return fileDescriptor_payload_53353c93751ab692, []int{0}
+}
+func (m *StreamErrorResponsePayload) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_StreamErrorResponsePayload.Unmarshal(m, b)
+}
+func (m *StreamErrorResponsePayload) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_StreamErrorResponsePayload.Marshal(b, m, deterministic)
+}
+func (dst *StreamErrorResponsePayload) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StreamErrorResponsePayload.Merge(dst, src)
+}
+func (m *StreamErrorResponsePayload) XXX_Size() int {
+	return xxx_messageInfo_StreamErrorResponsePayload.Size(m)
+}
+func (m *StreamErrorResponsePayload) XXX_DiscardUnknown() {
+	xxx_messageInfo_StreamErrorResponsePayload.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_StreamErrorResponsePayload proto.InternalMessageInfo
 
 func (m *StreamErrorResponsePayload) GetName() string {
 	if m != nil {
@@ -55,39 +83,61 @@ func (m *StreamErrorResponsePayload) GetContext() string {
 }
 
 type UnaryCallRequestPayload struct {
-	Name        *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
-	ServiceName *google_protobuf.StringValue `protobuf:"bytes,2,opt,name=service_name,json=serviceName" json:"service_name,omitempty"`
-	MethodName  *google_protobuf.StringValue `protobuf:"bytes,3,opt,name=method_name,json=methodName" json:"method_name,omitempty"`
-	Payload     *google_protobuf2.Any        `protobuf:"bytes,4,opt,name=payload" json:"payload,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
+	ServiceName          *wrappers.StringValue `protobuf:"bytes,2,opt,name=service_name,json=serviceName" json:"service_name,omitempty"`
+	MethodName           *wrappers.StringValue `protobuf:"bytes,3,opt,name=method_name,json=methodName" json:"method_name,omitempty"`
+	Payload              *any.Any              `protobuf:"bytes,4,opt,name=payload" json:"payload,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *UnaryCallRequestPayload) Reset()                    { *m = UnaryCallRequestPayload{} }
-func (m *UnaryCallRequestPayload) String() string            { return proto.CompactTextString(m) }
-func (*UnaryCallRequestPayload) ProtoMessage()               {}
-func (*UnaryCallRequestPayload) Descriptor() ([]byte, []int) { return fileDescriptor15, []int{1} }
+func (m *UnaryCallRequestPayload) Reset()         { *m = UnaryCallRequestPayload{} }
+func (m *UnaryCallRequestPayload) String() string { return proto.CompactTextString(m) }
+func (*UnaryCallRequestPayload) ProtoMessage()    {}
+func (*UnaryCallRequestPayload) Descriptor() ([]byte, []int) {
+	return fileDescriptor_payload_53353c93751ab692, []int{1}
+}
+func (m *UnaryCallRequestPayload) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_UnaryCallRequestPayload.Unmarshal(m, b)
+}
+func (m *UnaryCallRequestPayload) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_UnaryCallRequestPayload.Marshal(b, m, deterministic)
+}
+func (dst *UnaryCallRequestPayload) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_UnaryCallRequestPayload.Merge(dst, src)
+}
+func (m *UnaryCallRequestPayload) XXX_Size() int {
+	return xxx_messageInfo_UnaryCallRequestPayload.Size(m)
+}
+func (m *UnaryCallRequestPayload) XXX_DiscardUnknown() {
+	xxx_messageInfo_UnaryCallRequestPayload.DiscardUnknown(m)
+}
 
-func (m *UnaryCallRequestPayload) GetName() *google_protobuf.StringValue {
+var xxx_messageInfo_UnaryCallRequestPayload proto.InternalMessageInfo
+
+func (m *UnaryCallRequestPayload) GetName() *wrappers.StringValue {
 	if m != nil {
 		return m.Name
 	}
 	return nil
 }
 
-func (m *UnaryCallRequestPayload) GetServiceName() *google_protobuf.StringValue {
+func (m *UnaryCallRequestPayload) GetServiceName() *wrappers.StringValue {
 	if m != nil {
 		return m.ServiceName
 	}
 	return nil
 }
 
-func (m *UnaryCallRequestPayload) GetMethodName() *google_protobuf.StringValue {
+func (m *UnaryCallRequestPayload) GetMethodName() *wrappers.StringValue {
 	if m != nil {
 		return m.MethodName
 	}
 	return nil
 }
 
-func (m *UnaryCallRequestPayload) GetPayload() *google_protobuf2.Any {
+func (m *UnaryCallRequestPayload) GetPayload() *any.Any {
 	if m != nil {
 		return m.Payload
 	}
@@ -95,16 +145,38 @@ func (m *UnaryCallRequestPayload) GetPayload() *google_protobuf2.Any {
 }
 
 type UnaryCallResponsePayload struct {
-	Name        string                `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
-	ServiceName string                `protobuf:"bytes,2,opt,name=service_name,json=serviceName" json:"service_name,omitempty"`
-	MethodName  string                `protobuf:"bytes,3,opt,name=method_name,json=methodName" json:"method_name,omitempty"`
-	Payload     *google_protobuf2.Any `protobuf:"bytes,4,opt,name=payload" json:"payload,omitempty"`
+	Name                 string   `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
+	ServiceName          string   `protobuf:"bytes,2,opt,name=service_name,json=serviceName" json:"service_name,omitempty"`
+	MethodName           string   `protobuf:"bytes,3,opt,name=method_name,json=methodName" json:"method_name,omitempty"`
+	Payload              *any.Any `protobuf:"bytes,4,opt,name=payload" json:"payload,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *UnaryCallResponsePayload) Reset()                    { *m = UnaryCallResponsePayload{} }
-func (m *UnaryCallResponsePayload) String() string            { return proto.CompactTextString(m) }
-func (*UnaryCallResponsePayload) ProtoMessage()               {}
-func (*UnaryCallResponsePayload) Descriptor() ([]byte, []int) { return fileDescriptor15, []int{2} }
+func (m *UnaryCallResponsePayload) Reset()         { *m = UnaryCallResponsePayload{} }
+func (m *UnaryCallResponsePayload) String() string { return proto.CompactTextString(m) }
+func (*UnaryCallResponsePayload) ProtoMessage()    {}
+func (*UnaryCallResponsePayload) Descriptor() ([]byte, []int) {
+	return fileDescriptor_payload_53353c93751ab692, []int{2}
+}
+func (m *UnaryCallResponsePayload) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_UnaryCallResponsePayload.Unmarshal(m, b)
+}
+func (m *UnaryCallResponsePayload) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_UnaryCallResponsePayload.Marshal(b, m, deterministic)
+}
+func (dst *UnaryCallResponsePayload) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_UnaryCallResponsePayload.Merge(dst, src)
+}
+func (m *UnaryCallResponsePayload) XXX_Size() int {
+	return xxx_messageInfo_UnaryCallResponsePayload.Size(m)
+}
+func (m *UnaryCallResponsePayload) XXX_DiscardUnknown() {
+	xxx_messageInfo_UnaryCallResponsePayload.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_UnaryCallResponsePayload proto.InternalMessageInfo
 
 func (m *UnaryCallResponsePayload) GetName() string {
 	if m != nil {
@@ -127,7 +199,7 @@ func (m *UnaryCallResponsePayload) GetMethodName() string {
 	return ""
 }
 
-func (m *UnaryCallResponsePayload) GetPayload() *google_protobuf2.Any {
+func (m *UnaryCallResponsePayload) GetPayload() *any.Any {
 	if m != nil {
 		return m.Payload
 	}
@@ -140,9 +212,9 @@ func init() {
 	proto.RegisterType((*UnaryCallResponsePayload)(nil), "ai.metathings.service.core.UnaryCallResponsePayload")
 }
 
-func init() { proto.RegisterFile("payload.proto", fileDescriptor15) }
+func init() { proto.RegisterFile("payload.proto", fileDescriptor_payload_53353c93751ab692) }
 
-var fileDescriptor15 = []byte{
+var fileDescriptor_payload_53353c93751ab692 = []byte{
 	// 291 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xbc, 0x91, 0x4f, 0x4b, 0xc3, 0x40,
 	0x10, 0xc5, 0x89, 0x16, 0x8b, 0x1b, 0xbd, 0x04, 0xc1, 0x18, 0xc4, 0x3f, 0x3d, 0x79, 0xda, 0x4a,

@@ -6,7 +6,7 @@ package identity
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import google_protobuf "github.com/golang/protobuf/ptypes/wrappers"
+import wrappers "github.com/golang/protobuf/ptypes/wrappers"
 import _ "github.com/mwitkow/go-proto-validators"
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -14,16 +14,44 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+
 type GetRegionRequest struct {
-	RegionId *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=region_id,json=regionId" json:"region_id,omitempty"`
+	RegionId             *wrappers.StringValue `protobuf:"bytes,1,opt,name=region_id,json=regionId" json:"region_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *GetRegionRequest) Reset()                    { *m = GetRegionRequest{} }
-func (m *GetRegionRequest) String() string            { return proto.CompactTextString(m) }
-func (*GetRegionRequest) ProtoMessage()               {}
-func (*GetRegionRequest) Descriptor() ([]byte, []int) { return fileDescriptor31, []int{0} }
+func (m *GetRegionRequest) Reset()         { *m = GetRegionRequest{} }
+func (m *GetRegionRequest) String() string { return proto.CompactTextString(m) }
+func (*GetRegionRequest) ProtoMessage()    {}
+func (*GetRegionRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_get_region_f894b673086edc13, []int{0}
+}
+func (m *GetRegionRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GetRegionRequest.Unmarshal(m, b)
+}
+func (m *GetRegionRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GetRegionRequest.Marshal(b, m, deterministic)
+}
+func (dst *GetRegionRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetRegionRequest.Merge(dst, src)
+}
+func (m *GetRegionRequest) XXX_Size() int {
+	return xxx_messageInfo_GetRegionRequest.Size(m)
+}
+func (m *GetRegionRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_GetRegionRequest.DiscardUnknown(m)
+}
 
-func (m *GetRegionRequest) GetRegionId() *google_protobuf.StringValue {
+var xxx_messageInfo_GetRegionRequest proto.InternalMessageInfo
+
+func (m *GetRegionRequest) GetRegionId() *wrappers.StringValue {
 	if m != nil {
 		return m.RegionId
 	}
@@ -31,13 +59,35 @@ func (m *GetRegionRequest) GetRegionId() *google_protobuf.StringValue {
 }
 
 type GetRegionResponse struct {
-	Region *Region `protobuf:"bytes,1,opt,name=region" json:"region,omitempty"`
+	Region               *Region  `protobuf:"bytes,1,opt,name=region" json:"region,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *GetRegionResponse) Reset()                    { *m = GetRegionResponse{} }
-func (m *GetRegionResponse) String() string            { return proto.CompactTextString(m) }
-func (*GetRegionResponse) ProtoMessage()               {}
-func (*GetRegionResponse) Descriptor() ([]byte, []int) { return fileDescriptor31, []int{1} }
+func (m *GetRegionResponse) Reset()         { *m = GetRegionResponse{} }
+func (m *GetRegionResponse) String() string { return proto.CompactTextString(m) }
+func (*GetRegionResponse) ProtoMessage()    {}
+func (*GetRegionResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_get_region_f894b673086edc13, []int{1}
+}
+func (m *GetRegionResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GetRegionResponse.Unmarshal(m, b)
+}
+func (m *GetRegionResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GetRegionResponse.Marshal(b, m, deterministic)
+}
+func (dst *GetRegionResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetRegionResponse.Merge(dst, src)
+}
+func (m *GetRegionResponse) XXX_Size() int {
+	return xxx_messageInfo_GetRegionResponse.Size(m)
+}
+func (m *GetRegionResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_GetRegionResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GetRegionResponse proto.InternalMessageInfo
 
 func (m *GetRegionResponse) GetRegion() *Region {
 	if m != nil {
@@ -51,9 +101,9 @@ func init() {
 	proto.RegisterType((*GetRegionResponse)(nil), "ai.metathings.service.identity.GetRegionResponse")
 }
 
-func init() { proto.RegisterFile("get_region.proto", fileDescriptor31) }
+func init() { proto.RegisterFile("get_region.proto", fileDescriptor_get_region_f894b673086edc13) }
 
-var fileDescriptor31 = []byte{
+var fileDescriptor_get_region_f894b673086edc13 = []byte{
 	// 239 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x7c, 0x90, 0xc1, 0x4a, 0xc3, 0x40,
 	0x10, 0x86, 0x89, 0x87, 0xa0, 0xab, 0x87, 0x9a, 0x93, 0x14, 0xa9, 0xa5, 0x07, 0xf1, 0xd2, 0x59,

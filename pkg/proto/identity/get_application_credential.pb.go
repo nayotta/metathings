@@ -6,7 +6,7 @@ package identity
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import google_protobuf "github.com/golang/protobuf/ptypes/wrappers"
+import wrappers "github.com/golang/protobuf/ptypes/wrappers"
 import _ "github.com/mwitkow/go-proto-validators"
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -14,26 +14,52 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+
 type GetApplicationCredentialRequest struct {
-	UserId                  *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=user_id,json=userId" json:"user_id,omitempty"`
-	ApplicationCredentialId *google_protobuf.StringValue `protobuf:"bytes,2,opt,name=application_credential_id,json=applicationCredentialId" json:"application_credential_id,omitempty"`
+	UserId                  *wrappers.StringValue `protobuf:"bytes,1,opt,name=user_id,json=userId" json:"user_id,omitempty"`
+	ApplicationCredentialId *wrappers.StringValue `protobuf:"bytes,2,opt,name=application_credential_id,json=applicationCredentialId" json:"application_credential_id,omitempty"`
+	XXX_NoUnkeyedLiteral    struct{}              `json:"-"`
+	XXX_unrecognized        []byte                `json:"-"`
+	XXX_sizecache           int32                 `json:"-"`
 }
 
 func (m *GetApplicationCredentialRequest) Reset()         { *m = GetApplicationCredentialRequest{} }
 func (m *GetApplicationCredentialRequest) String() string { return proto.CompactTextString(m) }
 func (*GetApplicationCredentialRequest) ProtoMessage()    {}
 func (*GetApplicationCredentialRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor27, []int{0}
+	return fileDescriptor_get_application_credential_c5ee9ef8dc8b9827, []int{0}
+}
+func (m *GetApplicationCredentialRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GetApplicationCredentialRequest.Unmarshal(m, b)
+}
+func (m *GetApplicationCredentialRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GetApplicationCredentialRequest.Marshal(b, m, deterministic)
+}
+func (dst *GetApplicationCredentialRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetApplicationCredentialRequest.Merge(dst, src)
+}
+func (m *GetApplicationCredentialRequest) XXX_Size() int {
+	return xxx_messageInfo_GetApplicationCredentialRequest.Size(m)
+}
+func (m *GetApplicationCredentialRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_GetApplicationCredentialRequest.DiscardUnknown(m)
 }
 
-func (m *GetApplicationCredentialRequest) GetUserId() *google_protobuf.StringValue {
+var xxx_messageInfo_GetApplicationCredentialRequest proto.InternalMessageInfo
+
+func (m *GetApplicationCredentialRequest) GetUserId() *wrappers.StringValue {
 	if m != nil {
 		return m.UserId
 	}
 	return nil
 }
 
-func (m *GetApplicationCredentialRequest) GetApplicationCredentialId() *google_protobuf.StringValue {
+func (m *GetApplicationCredentialRequest) GetApplicationCredentialId() *wrappers.StringValue {
 	if m != nil {
 		return m.ApplicationCredentialId
 	}
@@ -42,14 +68,34 @@ func (m *GetApplicationCredentialRequest) GetApplicationCredentialId() *google_p
 
 type GetApplicationCredentialResponse struct {
 	ApplicationCredential *ApplicationCredential `protobuf:"bytes,1,opt,name=application_credential,json=applicationCredential" json:"application_credential,omitempty"`
+	XXX_NoUnkeyedLiteral  struct{}               `json:"-"`
+	XXX_unrecognized      []byte                 `json:"-"`
+	XXX_sizecache         int32                  `json:"-"`
 }
 
 func (m *GetApplicationCredentialResponse) Reset()         { *m = GetApplicationCredentialResponse{} }
 func (m *GetApplicationCredentialResponse) String() string { return proto.CompactTextString(m) }
 func (*GetApplicationCredentialResponse) ProtoMessage()    {}
 func (*GetApplicationCredentialResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor27, []int{1}
+	return fileDescriptor_get_application_credential_c5ee9ef8dc8b9827, []int{1}
 }
+func (m *GetApplicationCredentialResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GetApplicationCredentialResponse.Unmarshal(m, b)
+}
+func (m *GetApplicationCredentialResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GetApplicationCredentialResponse.Marshal(b, m, deterministic)
+}
+func (dst *GetApplicationCredentialResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetApplicationCredentialResponse.Merge(dst, src)
+}
+func (m *GetApplicationCredentialResponse) XXX_Size() int {
+	return xxx_messageInfo_GetApplicationCredentialResponse.Size(m)
+}
+func (m *GetApplicationCredentialResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_GetApplicationCredentialResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GetApplicationCredentialResponse proto.InternalMessageInfo
 
 func (m *GetApplicationCredentialResponse) GetApplicationCredential() *ApplicationCredential {
 	if m != nil {
@@ -63,9 +109,11 @@ func init() {
 	proto.RegisterType((*GetApplicationCredentialResponse)(nil), "ai.metathings.service.identity.GetApplicationCredentialResponse")
 }
 
-func init() { proto.RegisterFile("get_application_credential.proto", fileDescriptor27) }
+func init() {
+	proto.RegisterFile("get_application_credential.proto", fileDescriptor_get_application_credential_c5ee9ef8dc8b9827)
+}
 
-var fileDescriptor27 = []byte{
+var fileDescriptor_get_application_credential_c5ee9ef8dc8b9827 = []byte{
 	// 279 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x91, 0xcf, 0x4a, 0xf3, 0x40,
 	0x14, 0xc5, 0x49, 0x17, 0xf9, 0x60, 0xbe, 0x5d, 0xc0, 0x7f, 0xa5, 0xb4, 0xa1, 0x2b, 0x37, 0x9d,

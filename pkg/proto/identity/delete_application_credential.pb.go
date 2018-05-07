@@ -6,7 +6,7 @@ package identity
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import google_protobuf "github.com/golang/protobuf/ptypes/wrappers"
+import wrappers "github.com/golang/protobuf/ptypes/wrappers"
 import _ "github.com/mwitkow/go-proto-validators"
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -14,26 +14,52 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+
 type DeleteApplicationCredentialRequest struct {
-	UserId                  *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=user_id,json=userId" json:"user_id,omitempty"`
-	ApplicationCredentialId *google_protobuf.StringValue `protobuf:"bytes,2,opt,name=application_credential_id,json=applicationCredentialId" json:"application_credential_id,omitempty"`
+	UserId                  *wrappers.StringValue `protobuf:"bytes,1,opt,name=user_id,json=userId" json:"user_id,omitempty"`
+	ApplicationCredentialId *wrappers.StringValue `protobuf:"bytes,2,opt,name=application_credential_id,json=applicationCredentialId" json:"application_credential_id,omitempty"`
+	XXX_NoUnkeyedLiteral    struct{}              `json:"-"`
+	XXX_unrecognized        []byte                `json:"-"`
+	XXX_sizecache           int32                 `json:"-"`
 }
 
 func (m *DeleteApplicationCredentialRequest) Reset()         { *m = DeleteApplicationCredentialRequest{} }
 func (m *DeleteApplicationCredentialRequest) String() string { return proto.CompactTextString(m) }
 func (*DeleteApplicationCredentialRequest) ProtoMessage()    {}
 func (*DeleteApplicationCredentialRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor19, []int{0}
+	return fileDescriptor_delete_application_credential_5990b7f1e4b37882, []int{0}
+}
+func (m *DeleteApplicationCredentialRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DeleteApplicationCredentialRequest.Unmarshal(m, b)
+}
+func (m *DeleteApplicationCredentialRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DeleteApplicationCredentialRequest.Marshal(b, m, deterministic)
+}
+func (dst *DeleteApplicationCredentialRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DeleteApplicationCredentialRequest.Merge(dst, src)
+}
+func (m *DeleteApplicationCredentialRequest) XXX_Size() int {
+	return xxx_messageInfo_DeleteApplicationCredentialRequest.Size(m)
+}
+func (m *DeleteApplicationCredentialRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_DeleteApplicationCredentialRequest.DiscardUnknown(m)
 }
 
-func (m *DeleteApplicationCredentialRequest) GetUserId() *google_protobuf.StringValue {
+var xxx_messageInfo_DeleteApplicationCredentialRequest proto.InternalMessageInfo
+
+func (m *DeleteApplicationCredentialRequest) GetUserId() *wrappers.StringValue {
 	if m != nil {
 		return m.UserId
 	}
 	return nil
 }
 
-func (m *DeleteApplicationCredentialRequest) GetApplicationCredentialId() *google_protobuf.StringValue {
+func (m *DeleteApplicationCredentialRequest) GetApplicationCredentialId() *wrappers.StringValue {
 	if m != nil {
 		return m.ApplicationCredentialId
 	}
@@ -44,9 +70,11 @@ func init() {
 	proto.RegisterType((*DeleteApplicationCredentialRequest)(nil), "ai.metathings.service.identity.DeleteApplicationCredentialRequest")
 }
 
-func init() { proto.RegisterFile("delete_application_credential.proto", fileDescriptor19) }
+func init() {
+	proto.RegisterFile("delete_application_credential.proto", fileDescriptor_delete_application_credential_5990b7f1e4b37882)
+}
 
-var fileDescriptor19 = []byte{
+var fileDescriptor_delete_application_credential_5990b7f1e4b37882 = []byte{
 	// 246 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x8f, 0xbf, 0x4e, 0xc3, 0x30,
 	0x10, 0xc6, 0x95, 0x0e, 0x41, 0x0a, 0x5b, 0x16, 0xa0, 0x42, 0xa5, 0x2a, 0x0b, 0x4b, 0x6d, 0x09,

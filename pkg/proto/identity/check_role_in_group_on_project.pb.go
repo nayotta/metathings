@@ -6,7 +6,7 @@ package identity
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import google_protobuf "github.com/golang/protobuf/ptypes/wrappers"
+import wrappers "github.com/golang/protobuf/ptypes/wrappers"
 import _ "github.com/mwitkow/go-proto-validators"
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -14,34 +14,60 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+
 type CheckRoleInGroupOnProjectRequest struct {
-	ProjectId *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=project_id,json=projectId" json:"project_id,omitempty"`
-	GroupId   *google_protobuf.StringValue `protobuf:"bytes,2,opt,name=group_id,json=groupId" json:"group_id,omitempty"`
-	RoleId    *google_protobuf.StringValue `protobuf:"bytes,3,opt,name=role_id,json=roleId" json:"role_id,omitempty"`
+	ProjectId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=project_id,json=projectId" json:"project_id,omitempty"`
+	GroupId              *wrappers.StringValue `protobuf:"bytes,2,opt,name=group_id,json=groupId" json:"group_id,omitempty"`
+	RoleId               *wrappers.StringValue `protobuf:"bytes,3,opt,name=role_id,json=roleId" json:"role_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
 func (m *CheckRoleInGroupOnProjectRequest) Reset()         { *m = CheckRoleInGroupOnProjectRequest{} }
 func (m *CheckRoleInGroupOnProjectRequest) String() string { return proto.CompactTextString(m) }
 func (*CheckRoleInGroupOnProjectRequest) ProtoMessage()    {}
 func (*CheckRoleInGroupOnProjectRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor8, []int{0}
+	return fileDescriptor_check_role_in_group_on_project_bb9c50657137e098, []int{0}
+}
+func (m *CheckRoleInGroupOnProjectRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_CheckRoleInGroupOnProjectRequest.Unmarshal(m, b)
+}
+func (m *CheckRoleInGroupOnProjectRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_CheckRoleInGroupOnProjectRequest.Marshal(b, m, deterministic)
+}
+func (dst *CheckRoleInGroupOnProjectRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CheckRoleInGroupOnProjectRequest.Merge(dst, src)
+}
+func (m *CheckRoleInGroupOnProjectRequest) XXX_Size() int {
+	return xxx_messageInfo_CheckRoleInGroupOnProjectRequest.Size(m)
+}
+func (m *CheckRoleInGroupOnProjectRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_CheckRoleInGroupOnProjectRequest.DiscardUnknown(m)
 }
 
-func (m *CheckRoleInGroupOnProjectRequest) GetProjectId() *google_protobuf.StringValue {
+var xxx_messageInfo_CheckRoleInGroupOnProjectRequest proto.InternalMessageInfo
+
+func (m *CheckRoleInGroupOnProjectRequest) GetProjectId() *wrappers.StringValue {
 	if m != nil {
 		return m.ProjectId
 	}
 	return nil
 }
 
-func (m *CheckRoleInGroupOnProjectRequest) GetGroupId() *google_protobuf.StringValue {
+func (m *CheckRoleInGroupOnProjectRequest) GetGroupId() *wrappers.StringValue {
 	if m != nil {
 		return m.GroupId
 	}
 	return nil
 }
 
-func (m *CheckRoleInGroupOnProjectRequest) GetRoleId() *google_protobuf.StringValue {
+func (m *CheckRoleInGroupOnProjectRequest) GetRoleId() *wrappers.StringValue {
 	if m != nil {
 		return m.RoleId
 	}
@@ -52,9 +78,11 @@ func init() {
 	proto.RegisterType((*CheckRoleInGroupOnProjectRequest)(nil), "ai.metathings.service.identity.CheckRoleInGroupOnProjectRequest")
 }
 
-func init() { proto.RegisterFile("check_role_in_group_on_project.proto", fileDescriptor8) }
+func init() {
+	proto.RegisterFile("check_role_in_group_on_project.proto", fileDescriptor_check_role_in_group_on_project_bb9c50657137e098)
+}
 
-var fileDescriptor8 = []byte{
+var fileDescriptor_check_role_in_group_on_project_bb9c50657137e098 = []byte{
 	// 266 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x90, 0xc1, 0x4a, 0xc3, 0x40,
 	0x10, 0x86, 0x49, 0x85, 0x56, 0xd7, 0x5b, 0x4e, 0xa5, 0x48, 0x2d, 0xe2, 0xc1, 0x4b, 0x37, 0xa0,

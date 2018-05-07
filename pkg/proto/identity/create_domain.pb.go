@@ -6,7 +6,7 @@ package identity
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import google_protobuf "github.com/golang/protobuf/ptypes/wrappers"
+import wrappers "github.com/golang/protobuf/ptypes/wrappers"
 import _ "github.com/mwitkow/go-proto-validators"
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -14,32 +14,60 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+
 type CreateDomainRequest struct {
-	Name        *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
-	Description *google_protobuf.StringValue `protobuf:"bytes,2,opt,name=description" json:"description,omitempty"`
-	Enabled     *google_protobuf.BoolValue   `protobuf:"bytes,3,opt,name=enabled" json:"enabled,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
+	Description          *wrappers.StringValue `protobuf:"bytes,2,opt,name=description" json:"description,omitempty"`
+	Enabled              *wrappers.BoolValue   `protobuf:"bytes,3,opt,name=enabled" json:"enabled,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *CreateDomainRequest) Reset()                    { *m = CreateDomainRequest{} }
-func (m *CreateDomainRequest) String() string            { return proto.CompactTextString(m) }
-func (*CreateDomainRequest) ProtoMessage()               {}
-func (*CreateDomainRequest) Descriptor() ([]byte, []int) { return fileDescriptor13, []int{0} }
+func (m *CreateDomainRequest) Reset()         { *m = CreateDomainRequest{} }
+func (m *CreateDomainRequest) String() string { return proto.CompactTextString(m) }
+func (*CreateDomainRequest) ProtoMessage()    {}
+func (*CreateDomainRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_create_domain_cf0be3b951446183, []int{0}
+}
+func (m *CreateDomainRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_CreateDomainRequest.Unmarshal(m, b)
+}
+func (m *CreateDomainRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_CreateDomainRequest.Marshal(b, m, deterministic)
+}
+func (dst *CreateDomainRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CreateDomainRequest.Merge(dst, src)
+}
+func (m *CreateDomainRequest) XXX_Size() int {
+	return xxx_messageInfo_CreateDomainRequest.Size(m)
+}
+func (m *CreateDomainRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_CreateDomainRequest.DiscardUnknown(m)
+}
 
-func (m *CreateDomainRequest) GetName() *google_protobuf.StringValue {
+var xxx_messageInfo_CreateDomainRequest proto.InternalMessageInfo
+
+func (m *CreateDomainRequest) GetName() *wrappers.StringValue {
 	if m != nil {
 		return m.Name
 	}
 	return nil
 }
 
-func (m *CreateDomainRequest) GetDescription() *google_protobuf.StringValue {
+func (m *CreateDomainRequest) GetDescription() *wrappers.StringValue {
 	if m != nil {
 		return m.Description
 	}
 	return nil
 }
 
-func (m *CreateDomainRequest) GetEnabled() *google_protobuf.BoolValue {
+func (m *CreateDomainRequest) GetEnabled() *wrappers.BoolValue {
 	if m != nil {
 		return m.Enabled
 	}
@@ -47,13 +75,35 @@ func (m *CreateDomainRequest) GetEnabled() *google_protobuf.BoolValue {
 }
 
 type CreateDomainResponse struct {
-	Domain *Domain `protobuf:"bytes,1,opt,name=domain" json:"domain,omitempty"`
+	Domain               *Domain  `protobuf:"bytes,1,opt,name=domain" json:"domain,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *CreateDomainResponse) Reset()                    { *m = CreateDomainResponse{} }
-func (m *CreateDomainResponse) String() string            { return proto.CompactTextString(m) }
-func (*CreateDomainResponse) ProtoMessage()               {}
-func (*CreateDomainResponse) Descriptor() ([]byte, []int) { return fileDescriptor13, []int{1} }
+func (m *CreateDomainResponse) Reset()         { *m = CreateDomainResponse{} }
+func (m *CreateDomainResponse) String() string { return proto.CompactTextString(m) }
+func (*CreateDomainResponse) ProtoMessage()    {}
+func (*CreateDomainResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_create_domain_cf0be3b951446183, []int{1}
+}
+func (m *CreateDomainResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_CreateDomainResponse.Unmarshal(m, b)
+}
+func (m *CreateDomainResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_CreateDomainResponse.Marshal(b, m, deterministic)
+}
+func (dst *CreateDomainResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CreateDomainResponse.Merge(dst, src)
+}
+func (m *CreateDomainResponse) XXX_Size() int {
+	return xxx_messageInfo_CreateDomainResponse.Size(m)
+}
+func (m *CreateDomainResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_CreateDomainResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_CreateDomainResponse proto.InternalMessageInfo
 
 func (m *CreateDomainResponse) GetDomain() *Domain {
 	if m != nil {
@@ -67,9 +117,9 @@ func init() {
 	proto.RegisterType((*CreateDomainResponse)(nil), "ai.metathings.service.identity.CreateDomainResponse")
 }
 
-func init() { proto.RegisterFile("create_domain.proto", fileDescriptor13) }
+func init() { proto.RegisterFile("create_domain.proto", fileDescriptor_create_domain_cf0be3b951446183) }
 
-var fileDescriptor13 = []byte{
+var fileDescriptor_create_domain_cf0be3b951446183 = []byte{
 	// 279 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0xd0, 0x41, 0x4b, 0xc3, 0x30,
 	0x14, 0x07, 0x70, 0x3a, 0xa5, 0x42, 0xe6, 0xa9, 0xf3, 0x50, 0x8a, 0xcc, 0xb1, 0x83, 0x78, 0x59,

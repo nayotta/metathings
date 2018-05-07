@@ -6,7 +6,7 @@ package identity
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import google_protobuf "github.com/golang/protobuf/ptypes/wrappers"
+import wrappers "github.com/golang/protobuf/ptypes/wrappers"
 import _ "github.com/mwitkow/go-proto-validators"
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -14,16 +14,44 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+
 type DeleteRegionRequest struct {
-	RegionId *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=region_id,json=regionId" json:"region_id,omitempty"`
+	RegionId             *wrappers.StringValue `protobuf:"bytes,1,opt,name=region_id,json=regionId" json:"region_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *DeleteRegionRequest) Reset()                    { *m = DeleteRegionRequest{} }
-func (m *DeleteRegionRequest) String() string            { return proto.CompactTextString(m) }
-func (*DeleteRegionRequest) ProtoMessage()               {}
-func (*DeleteRegionRequest) Descriptor() ([]byte, []int) { return fileDescriptor23, []int{0} }
+func (m *DeleteRegionRequest) Reset()         { *m = DeleteRegionRequest{} }
+func (m *DeleteRegionRequest) String() string { return proto.CompactTextString(m) }
+func (*DeleteRegionRequest) ProtoMessage()    {}
+func (*DeleteRegionRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_delete_region_15863f9387a27ec0, []int{0}
+}
+func (m *DeleteRegionRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DeleteRegionRequest.Unmarshal(m, b)
+}
+func (m *DeleteRegionRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DeleteRegionRequest.Marshal(b, m, deterministic)
+}
+func (dst *DeleteRegionRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DeleteRegionRequest.Merge(dst, src)
+}
+func (m *DeleteRegionRequest) XXX_Size() int {
+	return xxx_messageInfo_DeleteRegionRequest.Size(m)
+}
+func (m *DeleteRegionRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_DeleteRegionRequest.DiscardUnknown(m)
+}
 
-func (m *DeleteRegionRequest) GetRegionId() *google_protobuf.StringValue {
+var xxx_messageInfo_DeleteRegionRequest proto.InternalMessageInfo
+
+func (m *DeleteRegionRequest) GetRegionId() *wrappers.StringValue {
 	if m != nil {
 		return m.RegionId
 	}
@@ -34,9 +62,9 @@ func init() {
 	proto.RegisterType((*DeleteRegionRequest)(nil), "ai.metathings.service.identity.DeleteRegionRequest")
 }
 
-func init() { proto.RegisterFile("delete_region.proto", fileDescriptor23) }
+func init() { proto.RegisterFile("delete_region.proto", fileDescriptor_delete_region_15863f9387a27ec0) }
 
-var fileDescriptor23 = []byte{
+var fileDescriptor_delete_region_15863f9387a27ec0 = []byte{
 	// 208 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x3c, 0xce, 0xc1, 0x4a, 0xc4, 0x30,
 	0x10, 0xc6, 0x71, 0xea, 0x61, 0xd1, 0x7a, 0xdb, 0xbd, 0xc8, 0x22, 0xeb, 0xe2, 0xc9, 0x4b, 0x27,

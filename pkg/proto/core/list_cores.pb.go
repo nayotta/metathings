@@ -6,63 +6,113 @@ package core
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import google_protobuf "github.com/golang/protobuf/ptypes/wrappers"
+import state "github.com/bigdatagz/metathings/pkg/proto/common/state"
+import wrappers "github.com/golang/protobuf/ptypes/wrappers"
 import _ "github.com/mwitkow/go-proto-validators"
-import ai_metathings_state "github.com/bigdatagz/metathings/pkg/proto/common/state"
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+
 type ListCoresRequest struct {
-	Name      *google_protobuf.StringValue  `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
-	ProjectId *google_protobuf.StringValue  `protobuf:"bytes,2,opt,name=project_id,json=projectId" json:"project_id,omitempty"`
-	OwnerId   *google_protobuf.StringValue  `protobuf:"bytes,3,opt,name=owner_id,json=ownerId" json:"owner_id,omitempty"`
-	State     ai_metathings_state.CoreState `protobuf:"varint,4,opt,name=state,enum=ai.metathings.state.CoreState" json:"state,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
+	ProjectId            *wrappers.StringValue `protobuf:"bytes,2,opt,name=project_id,json=projectId" json:"project_id,omitempty"`
+	OwnerId              *wrappers.StringValue `protobuf:"bytes,3,opt,name=owner_id,json=ownerId" json:"owner_id,omitempty"`
+	State                state.CoreState       `protobuf:"varint,4,opt,name=state,enum=ai.metathings.state.CoreState" json:"state,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *ListCoresRequest) Reset()                    { *m = ListCoresRequest{} }
-func (m *ListCoresRequest) String() string            { return proto.CompactTextString(m) }
-func (*ListCoresRequest) ProtoMessage()               {}
-func (*ListCoresRequest) Descriptor() ([]byte, []int) { return fileDescriptor9, []int{0} }
+func (m *ListCoresRequest) Reset()         { *m = ListCoresRequest{} }
+func (m *ListCoresRequest) String() string { return proto.CompactTextString(m) }
+func (*ListCoresRequest) ProtoMessage()    {}
+func (*ListCoresRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_list_cores_c9e34e088f468c00, []int{0}
+}
+func (m *ListCoresRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ListCoresRequest.Unmarshal(m, b)
+}
+func (m *ListCoresRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ListCoresRequest.Marshal(b, m, deterministic)
+}
+func (dst *ListCoresRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ListCoresRequest.Merge(dst, src)
+}
+func (m *ListCoresRequest) XXX_Size() int {
+	return xxx_messageInfo_ListCoresRequest.Size(m)
+}
+func (m *ListCoresRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_ListCoresRequest.DiscardUnknown(m)
+}
 
-func (m *ListCoresRequest) GetName() *google_protobuf.StringValue {
+var xxx_messageInfo_ListCoresRequest proto.InternalMessageInfo
+
+func (m *ListCoresRequest) GetName() *wrappers.StringValue {
 	if m != nil {
 		return m.Name
 	}
 	return nil
 }
 
-func (m *ListCoresRequest) GetProjectId() *google_protobuf.StringValue {
+func (m *ListCoresRequest) GetProjectId() *wrappers.StringValue {
 	if m != nil {
 		return m.ProjectId
 	}
 	return nil
 }
 
-func (m *ListCoresRequest) GetOwnerId() *google_protobuf.StringValue {
+func (m *ListCoresRequest) GetOwnerId() *wrappers.StringValue {
 	if m != nil {
 		return m.OwnerId
 	}
 	return nil
 }
 
-func (m *ListCoresRequest) GetState() ai_metathings_state.CoreState {
+func (m *ListCoresRequest) GetState() state.CoreState {
 	if m != nil {
 		return m.State
 	}
-	return ai_metathings_state.CoreState_CORE_STATE_UNKNOWN
+	return state.CoreState_CORE_STATE_UNKNOWN
 }
 
 type ListCoresResponse struct {
-	Cores []*Core `protobuf:"bytes,1,rep,name=cores" json:"cores,omitempty"`
+	Cores                []*Core  `protobuf:"bytes,1,rep,name=cores" json:"cores,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *ListCoresResponse) Reset()                    { *m = ListCoresResponse{} }
-func (m *ListCoresResponse) String() string            { return proto.CompactTextString(m) }
-func (*ListCoresResponse) ProtoMessage()               {}
-func (*ListCoresResponse) Descriptor() ([]byte, []int) { return fileDescriptor9, []int{1} }
+func (m *ListCoresResponse) Reset()         { *m = ListCoresResponse{} }
+func (m *ListCoresResponse) String() string { return proto.CompactTextString(m) }
+func (*ListCoresResponse) ProtoMessage()    {}
+func (*ListCoresResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_list_cores_c9e34e088f468c00, []int{1}
+}
+func (m *ListCoresResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ListCoresResponse.Unmarshal(m, b)
+}
+func (m *ListCoresResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ListCoresResponse.Marshal(b, m, deterministic)
+}
+func (dst *ListCoresResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ListCoresResponse.Merge(dst, src)
+}
+func (m *ListCoresResponse) XXX_Size() int {
+	return xxx_messageInfo_ListCoresResponse.Size(m)
+}
+func (m *ListCoresResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_ListCoresResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ListCoresResponse proto.InternalMessageInfo
 
 func (m *ListCoresResponse) GetCores() []*Core {
 	if m != nil {
@@ -76,9 +126,9 @@ func init() {
 	proto.RegisterType((*ListCoresResponse)(nil), "ai.metathings.service.core.ListCoresResponse")
 }
 
-func init() { proto.RegisterFile("list_cores.proto", fileDescriptor9) }
+func init() { proto.RegisterFile("list_cores.proto", fileDescriptor_list_cores_c9e34e088f468c00) }
 
-var fileDescriptor9 = []byte{
+var fileDescriptor_list_cores_c9e34e088f468c00 = []byte{
 	// 324 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x91, 0x41, 0x4b, 0xf3, 0x40,
 	0x10, 0x86, 0xc9, 0xd7, 0xf6, 0x53, 0xb7, 0x20, 0x35, 0xa7, 0x50, 0xa4, 0x84, 0x9e, 0x7a, 0xe9,

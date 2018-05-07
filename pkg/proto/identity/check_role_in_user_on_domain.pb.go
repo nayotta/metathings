@@ -6,7 +6,7 @@ package identity
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import google_protobuf "github.com/golang/protobuf/ptypes/wrappers"
+import wrappers "github.com/golang/protobuf/ptypes/wrappers"
 import _ "github.com/mwitkow/go-proto-validators"
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -14,32 +14,60 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+
 type CheckRoleInUserOnDomainRequest struct {
-	DomainId *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=domain_id,json=domainId" json:"domain_id,omitempty"`
-	UserId   *google_protobuf.StringValue `protobuf:"bytes,2,opt,name=user_id,json=userId" json:"user_id,omitempty"`
-	RoleId   *google_protobuf.StringValue `protobuf:"bytes,3,opt,name=role_id,json=roleId" json:"role_id,omitempty"`
+	DomainId             *wrappers.StringValue `protobuf:"bytes,1,opt,name=domain_id,json=domainId" json:"domain_id,omitempty"`
+	UserId               *wrappers.StringValue `protobuf:"bytes,2,opt,name=user_id,json=userId" json:"user_id,omitempty"`
+	RoleId               *wrappers.StringValue `protobuf:"bytes,3,opt,name=role_id,json=roleId" json:"role_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *CheckRoleInUserOnDomainRequest) Reset()                    { *m = CheckRoleInUserOnDomainRequest{} }
-func (m *CheckRoleInUserOnDomainRequest) String() string            { return proto.CompactTextString(m) }
-func (*CheckRoleInUserOnDomainRequest) ProtoMessage()               {}
-func (*CheckRoleInUserOnDomainRequest) Descriptor() ([]byte, []int) { return fileDescriptor9, []int{0} }
+func (m *CheckRoleInUserOnDomainRequest) Reset()         { *m = CheckRoleInUserOnDomainRequest{} }
+func (m *CheckRoleInUserOnDomainRequest) String() string { return proto.CompactTextString(m) }
+func (*CheckRoleInUserOnDomainRequest) ProtoMessage()    {}
+func (*CheckRoleInUserOnDomainRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_check_role_in_user_on_domain_4f781d25cbc62ae5, []int{0}
+}
+func (m *CheckRoleInUserOnDomainRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_CheckRoleInUserOnDomainRequest.Unmarshal(m, b)
+}
+func (m *CheckRoleInUserOnDomainRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_CheckRoleInUserOnDomainRequest.Marshal(b, m, deterministic)
+}
+func (dst *CheckRoleInUserOnDomainRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CheckRoleInUserOnDomainRequest.Merge(dst, src)
+}
+func (m *CheckRoleInUserOnDomainRequest) XXX_Size() int {
+	return xxx_messageInfo_CheckRoleInUserOnDomainRequest.Size(m)
+}
+func (m *CheckRoleInUserOnDomainRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_CheckRoleInUserOnDomainRequest.DiscardUnknown(m)
+}
 
-func (m *CheckRoleInUserOnDomainRequest) GetDomainId() *google_protobuf.StringValue {
+var xxx_messageInfo_CheckRoleInUserOnDomainRequest proto.InternalMessageInfo
+
+func (m *CheckRoleInUserOnDomainRequest) GetDomainId() *wrappers.StringValue {
 	if m != nil {
 		return m.DomainId
 	}
 	return nil
 }
 
-func (m *CheckRoleInUserOnDomainRequest) GetUserId() *google_protobuf.StringValue {
+func (m *CheckRoleInUserOnDomainRequest) GetUserId() *wrappers.StringValue {
 	if m != nil {
 		return m.UserId
 	}
 	return nil
 }
 
-func (m *CheckRoleInUserOnDomainRequest) GetRoleId() *google_protobuf.StringValue {
+func (m *CheckRoleInUserOnDomainRequest) GetRoleId() *wrappers.StringValue {
 	if m != nil {
 		return m.RoleId
 	}
@@ -50,9 +78,11 @@ func init() {
 	proto.RegisterType((*CheckRoleInUserOnDomainRequest)(nil), "ai.metathings.service.identity.CheckRoleInUserOnDomainRequest")
 }
 
-func init() { proto.RegisterFile("check_role_in_user_on_domain.proto", fileDescriptor9) }
+func init() {
+	proto.RegisterFile("check_role_in_user_on_domain.proto", fileDescriptor_check_role_in_user_on_domain_4f781d25cbc62ae5)
+}
 
-var fileDescriptor9 = []byte{
+var fileDescriptor_check_role_in_user_on_domain_4f781d25cbc62ae5 = []byte{
 	// 258 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0xd0, 0x4d, 0x4b, 0xf4, 0x30,
 	0x10, 0xc0, 0x71, 0xba, 0x0f, 0xf4, 0xd1, 0x7a, 0xeb, 0xa9, 0x2c, 0x52, 0x97, 0x3d, 0x79, 0xd9,

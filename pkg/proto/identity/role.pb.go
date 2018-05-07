@@ -12,16 +12,44 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+
 type Role struct {
-	Id       string `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	Name     string `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
-	DomainId string `protobuf:"bytes,3,opt,name=domain_id,json=domainId" json:"domain_id,omitempty"`
+	Id                   string   `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
+	Name                 string   `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
+	DomainId             string   `protobuf:"bytes,3,opt,name=domain_id,json=domainId" json:"domain_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *Role) Reset()                    { *m = Role{} }
-func (m *Role) String() string            { return proto.CompactTextString(m) }
-func (*Role) ProtoMessage()               {}
-func (*Role) Descriptor() ([]byte, []int) { return fileDescriptor64, []int{0} }
+func (m *Role) Reset()         { *m = Role{} }
+func (m *Role) String() string { return proto.CompactTextString(m) }
+func (*Role) ProtoMessage()    {}
+func (*Role) Descriptor() ([]byte, []int) {
+	return fileDescriptor_role_6c9f8b6fb05f92a6, []int{0}
+}
+func (m *Role) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Role.Unmarshal(m, b)
+}
+func (m *Role) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Role.Marshal(b, m, deterministic)
+}
+func (dst *Role) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Role.Merge(dst, src)
+}
+func (m *Role) XXX_Size() int {
+	return xxx_messageInfo_Role.Size(m)
+}
+func (m *Role) XXX_DiscardUnknown() {
+	xxx_messageInfo_Role.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Role proto.InternalMessageInfo
 
 func (m *Role) GetId() string {
 	if m != nil {
@@ -48,9 +76,9 @@ func init() {
 	proto.RegisterType((*Role)(nil), "ai.metathings.service.identity.Role")
 }
 
-func init() { proto.RegisterFile("role.proto", fileDescriptor64) }
+func init() { proto.RegisterFile("role.proto", fileDescriptor_role_6c9f8b6fb05f92a6) }
 
-var fileDescriptor64 = []byte{
+var fileDescriptor_role_6c9f8b6fb05f92a6 = []byte{
 	// 133 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xe2, 0x2a, 0xca, 0xcf, 0x49,
 	0xd5, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x92, 0x4b, 0xcc, 0xd4, 0xcb, 0x4d, 0x2d, 0x49, 0x2c,

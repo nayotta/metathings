@@ -77,10 +77,8 @@ func (mgr *streamManager) Register(core_id string, stream cored_pb.CoreService_S
 }
 
 func (mgr *streamManager) UnaryCall(core_id string, req *cored_pb.UnaryCallRequestPayload) (*cored_pb.UnaryCallResponsePayload, error) {
-	var stream cored_pb.CoreService_StreamServer
-	var ok bool
-
-	if stream, ok = mgr.streams[core_id]; !ok {
+	stream, ok := mgr.streams[core_id]
+	if !ok {
 		mgr.logger.WithField("core_id", core_id).Warningf("core not found")
 		return nil, NotFound
 	}
@@ -90,7 +88,7 @@ func (mgr *streamManager) UnaryCall(core_id string, req *cored_pb.UnaryCallReque
 	mgr.sessions[sess_id] = ch
 
 	stm_req := &cored_pb.StreamRequest{
-		SessionId:   &gpb.StringValue{sess_id},
+		SessionId:   &gpb.StringValue{Value: sess_id},
 		MessageType: cored_pb.StreamMessageType_STREAM_MESSAGE_TYPE_USER,
 		Payload:     &cored_pb.StreamRequest_UnaryCall{req},
 	}

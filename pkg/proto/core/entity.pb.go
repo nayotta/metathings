@@ -6,26 +6,54 @@ package core
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import ai_metathings_state1 "github.com/bigdatagz/metathings/pkg/proto/common/state"
+import state "github.com/bigdatagz/metathings/pkg/proto/common/state"
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+
 type Entity struct {
-	Id          string                           `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	CoreId      string                           `protobuf:"bytes,2,opt,name=core_id,json=coreId" json:"core_id,omitempty"`
-	Name        string                           `protobuf:"bytes,3,opt,name=name" json:"name,omitempty"`
-	ServiceName string                           `protobuf:"bytes,4,opt,name=service_name,json=serviceName" json:"service_name,omitempty"`
-	Endpoint    string                           `protobuf:"bytes,5,opt,name=endpoint" json:"endpoint,omitempty"`
-	State       ai_metathings_state1.EntityState `protobuf:"varint,6,opt,name=state,enum=ai.metathings.state.EntityState" json:"state,omitempty"`
+	Id                   string            `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
+	CoreId               string            `protobuf:"bytes,2,opt,name=core_id,json=coreId" json:"core_id,omitempty"`
+	Name                 string            `protobuf:"bytes,3,opt,name=name" json:"name,omitempty"`
+	ServiceName          string            `protobuf:"bytes,4,opt,name=service_name,json=serviceName" json:"service_name,omitempty"`
+	Endpoint             string            `protobuf:"bytes,5,opt,name=endpoint" json:"endpoint,omitempty"`
+	State                state.EntityState `protobuf:"varint,6,opt,name=state,enum=ai.metathings.state.EntityState" json:"state,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
+	XXX_unrecognized     []byte            `json:"-"`
+	XXX_sizecache        int32             `json:"-"`
 }
 
-func (m *Entity) Reset()                    { *m = Entity{} }
-func (m *Entity) String() string            { return proto.CompactTextString(m) }
-func (*Entity) ProtoMessage()               {}
-func (*Entity) Descriptor() ([]byte, []int) { return fileDescriptor5, []int{0} }
+func (m *Entity) Reset()         { *m = Entity{} }
+func (m *Entity) String() string { return proto.CompactTextString(m) }
+func (*Entity) ProtoMessage()    {}
+func (*Entity) Descriptor() ([]byte, []int) {
+	return fileDescriptor_entity_19e5f5269c80397e, []int{0}
+}
+func (m *Entity) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Entity.Unmarshal(m, b)
+}
+func (m *Entity) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Entity.Marshal(b, m, deterministic)
+}
+func (dst *Entity) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Entity.Merge(dst, src)
+}
+func (m *Entity) XXX_Size() int {
+	return xxx_messageInfo_Entity.Size(m)
+}
+func (m *Entity) XXX_DiscardUnknown() {
+	xxx_messageInfo_Entity.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Entity proto.InternalMessageInfo
 
 func (m *Entity) GetId() string {
 	if m != nil {
@@ -62,20 +90,20 @@ func (m *Entity) GetEndpoint() string {
 	return ""
 }
 
-func (m *Entity) GetState() ai_metathings_state1.EntityState {
+func (m *Entity) GetState() state.EntityState {
 	if m != nil {
 		return m.State
 	}
-	return ai_metathings_state1.EntityState_ENTITY_STATE_UNKNOWN
+	return state.EntityState_ENTITY_STATE_UNKNOWN
 }
 
 func init() {
 	proto.RegisterType((*Entity)(nil), "ai.metathings.service.core.Entity")
 }
 
-func init() { proto.RegisterFile("entity.proto", fileDescriptor5) }
+func init() { proto.RegisterFile("entity.proto", fileDescriptor_entity_19e5f5269c80397e) }
 
-var fileDescriptor5 = []byte{
+var fileDescriptor_entity_19e5f5269c80397e = []byte{
 	// 232 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x5c, 0x4f, 0xcd, 0x4a, 0xc4, 0x30,
 	0x10, 0xa6, 0x75, 0xb7, 0xea, 0xb8, 0xec, 0x21, 0x17, 0x43, 0x4f, 0xd5, 0xd3, 0x9e, 0x12, 0x50,

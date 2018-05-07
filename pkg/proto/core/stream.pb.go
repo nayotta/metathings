@@ -6,13 +6,19 @@ package core
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import google_protobuf "github.com/golang/protobuf/ptypes/wrappers"
+import wrappers "github.com/golang/protobuf/ptypes/wrappers"
 import _ "github.com/mwitkow/go-proto-validators"
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
+
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type StreamMessageType int32
 
@@ -36,7 +42,9 @@ var StreamMessageType_value = map[string]int32{
 func (x StreamMessageType) String() string {
 	return proto.EnumName(StreamMessageType_name, int32(x))
 }
-func (StreamMessageType) EnumDescriptor() ([]byte, []int) { return fileDescriptor17, []int{0} }
+func (StreamMessageType) EnumDescriptor() ([]byte, []int) {
+	return fileDescriptor_stream_a17e0ba23a6e0629, []int{0}
+}
 
 type StreamResponse struct {
 	SessionId   string            `protobuf:"bytes,1,opt,name=session_id,json=sessionId" json:"session_id,omitempty"`
@@ -44,13 +52,35 @@ type StreamResponse struct {
 	// Types that are valid to be assigned to Payload:
 	//	*StreamResponse_Err
 	//	*StreamResponse_UnaryCall
-	Payload isStreamResponse_Payload `protobuf_oneof:"payload"`
+	Payload              isStreamResponse_Payload `protobuf_oneof:"payload"`
+	XXX_NoUnkeyedLiteral struct{}                 `json:"-"`
+	XXX_unrecognized     []byte                   `json:"-"`
+	XXX_sizecache        int32                    `json:"-"`
 }
 
-func (m *StreamResponse) Reset()                    { *m = StreamResponse{} }
-func (m *StreamResponse) String() string            { return proto.CompactTextString(m) }
-func (*StreamResponse) ProtoMessage()               {}
-func (*StreamResponse) Descriptor() ([]byte, []int) { return fileDescriptor17, []int{0} }
+func (m *StreamResponse) Reset()         { *m = StreamResponse{} }
+func (m *StreamResponse) String() string { return proto.CompactTextString(m) }
+func (*StreamResponse) ProtoMessage()    {}
+func (*StreamResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_stream_a17e0ba23a6e0629, []int{0}
+}
+func (m *StreamResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_StreamResponse.Unmarshal(m, b)
+}
+func (m *StreamResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_StreamResponse.Marshal(b, m, deterministic)
+}
+func (dst *StreamResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StreamResponse.Merge(dst, src)
+}
+func (m *StreamResponse) XXX_Size() int {
+	return xxx_messageInfo_StreamResponse.Size(m)
+}
+func (m *StreamResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_StreamResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_StreamResponse proto.InternalMessageInfo
 
 type isStreamResponse_Payload interface {
 	isStreamResponse_Payload()
@@ -160,12 +190,12 @@ func _StreamResponse_OneofSizer(msg proto.Message) (n int) {
 	switch x := m.Payload.(type) {
 	case *StreamResponse_Err:
 		s := proto.Size(x.Err)
-		n += proto.SizeVarint(3<<3 | proto.WireBytes)
+		n += 1 // tag and wire
 		n += proto.SizeVarint(uint64(s))
 		n += s
 	case *StreamResponse_UnaryCall:
 		s := proto.Size(x.UnaryCall)
-		n += proto.SizeVarint(4<<3 | proto.WireBytes)
+		n += 1 // tag and wire
 		n += proto.SizeVarint(uint64(s))
 		n += s
 	case nil:
@@ -176,17 +206,39 @@ func _StreamResponse_OneofSizer(msg proto.Message) (n int) {
 }
 
 type StreamRequest struct {
-	SessionId   *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=session_id,json=sessionId" json:"session_id,omitempty"`
-	MessageType StreamMessageType            `protobuf:"varint,2,opt,name=message_type,json=messageType,enum=ai.metathings.service.core.StreamMessageType" json:"message_type,omitempty"`
+	SessionId   *wrappers.StringValue `protobuf:"bytes,1,opt,name=session_id,json=sessionId" json:"session_id,omitempty"`
+	MessageType StreamMessageType     `protobuf:"varint,2,opt,name=message_type,json=messageType,enum=ai.metathings.service.core.StreamMessageType" json:"message_type,omitempty"`
 	// Types that are valid to be assigned to Payload:
 	//	*StreamRequest_UnaryCall
-	Payload isStreamRequest_Payload `protobuf_oneof:"payload"`
+	Payload              isStreamRequest_Payload `protobuf_oneof:"payload"`
+	XXX_NoUnkeyedLiteral struct{}                `json:"-"`
+	XXX_unrecognized     []byte                  `json:"-"`
+	XXX_sizecache        int32                   `json:"-"`
 }
 
-func (m *StreamRequest) Reset()                    { *m = StreamRequest{} }
-func (m *StreamRequest) String() string            { return proto.CompactTextString(m) }
-func (*StreamRequest) ProtoMessage()               {}
-func (*StreamRequest) Descriptor() ([]byte, []int) { return fileDescriptor17, []int{1} }
+func (m *StreamRequest) Reset()         { *m = StreamRequest{} }
+func (m *StreamRequest) String() string { return proto.CompactTextString(m) }
+func (*StreamRequest) ProtoMessage()    {}
+func (*StreamRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_stream_a17e0ba23a6e0629, []int{1}
+}
+func (m *StreamRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_StreamRequest.Unmarshal(m, b)
+}
+func (m *StreamRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_StreamRequest.Marshal(b, m, deterministic)
+}
+func (dst *StreamRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StreamRequest.Merge(dst, src)
+}
+func (m *StreamRequest) XXX_Size() int {
+	return xxx_messageInfo_StreamRequest.Size(m)
+}
+func (m *StreamRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_StreamRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_StreamRequest proto.InternalMessageInfo
 
 type isStreamRequest_Payload interface {
 	isStreamRequest_Payload()
@@ -205,7 +257,7 @@ func (m *StreamRequest) GetPayload() isStreamRequest_Payload {
 	return nil
 }
 
-func (m *StreamRequest) GetSessionId() *google_protobuf.StringValue {
+func (m *StreamRequest) GetSessionId() *wrappers.StringValue {
 	if m != nil {
 		return m.SessionId
 	}
@@ -271,7 +323,7 @@ func _StreamRequest_OneofSizer(msg proto.Message) (n int) {
 	switch x := m.Payload.(type) {
 	case *StreamRequest_UnaryCall:
 		s := proto.Size(x.UnaryCall)
-		n += proto.SizeVarint(3<<3 | proto.WireBytes)
+		n += 1 // tag and wire
 		n += proto.SizeVarint(uint64(s))
 		n += s
 	case nil:
@@ -287,9 +339,9 @@ func init() {
 	proto.RegisterEnum("ai.metathings.service.core.StreamMessageType", StreamMessageType_name, StreamMessageType_value)
 }
 
-func init() { proto.RegisterFile("stream.proto", fileDescriptor17) }
+func init() { proto.RegisterFile("stream.proto", fileDescriptor_stream_a17e0ba23a6e0629) }
 
-var fileDescriptor17 = []byte{
+var fileDescriptor_stream_a17e0ba23a6e0629 = []byte{
 	// 423 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x91, 0xdf, 0x6e, 0xd3, 0x30,
 	0x14, 0x87, 0x97, 0x0c, 0x0d, 0xc5, 0xdd, 0xa6, 0xe2, 0xab, 0x28, 0x8c, 0x2d, 0xda, 0x55, 0x85,

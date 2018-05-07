@@ -28,7 +28,7 @@ type options struct {
 
 var (
 	default_options = options{
-		heartbeat_interval: 30,
+		heartbeat_interval: 15,
 	}
 )
 
@@ -76,7 +76,7 @@ func (srv *metathingsEchoService) Echo(ctx context.Context, req *pb.EchoRequest)
 	if text != nil {
 		text_str = text.Value
 		srv.logger.Infof("echo: %v", text_str)
-		return &pb.EchoResponse{text_str}, nil
+		return &pb.EchoResponse{Text: text_str}, nil
 	}
 	return nil, grpc.Errorf(codes.InvalidArgument, "empty body")
 }
@@ -91,9 +91,9 @@ func (srv *metathingsEchoService) ConnectToAgent() error {
 	defer closeFn()
 
 	req := &agentd_pb.CreateOrGetEntityRequest{
-		Name:        &gpb.StringValue{srv.opts.name},
-		ServiceName: &gpb.StringValue{"echo"},
-		Endpoint:    &gpb.StringValue{srv.opts.endpoint},
+		Name:        &gpb.StringValue{Value: srv.opts.name},
+		ServiceName: &gpb.StringValue{Value: "echo"},
+		Endpoint:    &gpb.StringValue{Value: srv.opts.endpoint},
 	}
 	res, err := cli.CreateOrGetEntity(ctx, req)
 	if err != nil {
@@ -105,13 +105,16 @@ func (srv *metathingsEchoService) ConnectToAgent() error {
 	go func() {
 		for {
 			req := &agentd_pb.HeartbeatRequest{
-				&gpb.StringValue{srv.opts.id},
+				EntityId: &gpb.StringValue{Value: srv.opts.id},
 			}
+
 			_, err := cli.Heartbeat(ctx, req)
 			if err != nil {
 				errs <- err
 				return
 			}
+
+			srv.logger.Debugf("Heartbeat")
 			<-time.After(time.Duration(srv.opts.heartbeat_interval) * time.Second)
 		}
 	}()
@@ -134,9 +137,7 @@ func NewEchoService(opt ...ServiceOptions) (*metathingsEchoService, error) {
 	cli_fty_cfgs[client_helper.AGENTD_CONFIG] = client_helper.ServiceConfig{opts.agentdAddr}
 	cli_fty, err := client_helper.NewClientFactory(
 		cli_fty_cfgs,
-		func() []grpc.DialOption {
-			return []grpc.DialOption{grpc.WithInsecure()}
-		},
+		client_helper.WithInsecureOptionFunc(),
 	)
 	if err != nil {
 		return nil, err

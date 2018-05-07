@@ -6,7 +6,7 @@ package core
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import google_protobuf "github.com/golang/protobuf/ptypes/wrappers"
+import wrappers "github.com/golang/protobuf/ptypes/wrappers"
 import _ "github.com/mwitkow/go-proto-validators"
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -14,16 +14,44 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+
 type GetCoreRequest struct {
-	Id *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
+	Id                   *wrappers.StringValue `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *GetCoreRequest) Reset()                    { *m = GetCoreRequest{} }
-func (m *GetCoreRequest) String() string            { return proto.CompactTextString(m) }
-func (*GetCoreRequest) ProtoMessage()               {}
-func (*GetCoreRequest) Descriptor() ([]byte, []int) { return fileDescriptor6, []int{0} }
+func (m *GetCoreRequest) Reset()         { *m = GetCoreRequest{} }
+func (m *GetCoreRequest) String() string { return proto.CompactTextString(m) }
+func (*GetCoreRequest) ProtoMessage()    {}
+func (*GetCoreRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_get_core_7914c48d79206c2a, []int{0}
+}
+func (m *GetCoreRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GetCoreRequest.Unmarshal(m, b)
+}
+func (m *GetCoreRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GetCoreRequest.Marshal(b, m, deterministic)
+}
+func (dst *GetCoreRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetCoreRequest.Merge(dst, src)
+}
+func (m *GetCoreRequest) XXX_Size() int {
+	return xxx_messageInfo_GetCoreRequest.Size(m)
+}
+func (m *GetCoreRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_GetCoreRequest.DiscardUnknown(m)
+}
 
-func (m *GetCoreRequest) GetId() *google_protobuf.StringValue {
+var xxx_messageInfo_GetCoreRequest proto.InternalMessageInfo
+
+func (m *GetCoreRequest) GetId() *wrappers.StringValue {
 	if m != nil {
 		return m.Id
 	}
@@ -31,13 +59,35 @@ func (m *GetCoreRequest) GetId() *google_protobuf.StringValue {
 }
 
 type GetCoreResponse struct {
-	Core *Core `protobuf:"bytes,1,opt,name=core" json:"core,omitempty"`
+	Core                 *Core    `protobuf:"bytes,1,opt,name=core" json:"core,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *GetCoreResponse) Reset()                    { *m = GetCoreResponse{} }
-func (m *GetCoreResponse) String() string            { return proto.CompactTextString(m) }
-func (*GetCoreResponse) ProtoMessage()               {}
-func (*GetCoreResponse) Descriptor() ([]byte, []int) { return fileDescriptor6, []int{1} }
+func (m *GetCoreResponse) Reset()         { *m = GetCoreResponse{} }
+func (m *GetCoreResponse) String() string { return proto.CompactTextString(m) }
+func (*GetCoreResponse) ProtoMessage()    {}
+func (*GetCoreResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_get_core_7914c48d79206c2a, []int{1}
+}
+func (m *GetCoreResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GetCoreResponse.Unmarshal(m, b)
+}
+func (m *GetCoreResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GetCoreResponse.Marshal(b, m, deterministic)
+}
+func (dst *GetCoreResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetCoreResponse.Merge(dst, src)
+}
+func (m *GetCoreResponse) XXX_Size() int {
+	return xxx_messageInfo_GetCoreResponse.Size(m)
+}
+func (m *GetCoreResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_GetCoreResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GetCoreResponse proto.InternalMessageInfo
 
 func (m *GetCoreResponse) GetCore() *Core {
 	if m != nil {
@@ -51,9 +101,9 @@ func init() {
 	proto.RegisterType((*GetCoreResponse)(nil), "ai.metathings.service.core.GetCoreResponse")
 }
 
-func init() { proto.RegisterFile("get_core.proto", fileDescriptor6) }
+func init() { proto.RegisterFile("get_core.proto", fileDescriptor_get_core_7914c48d79206c2a) }
 
-var fileDescriptor6 = []byte{
+var fileDescriptor_get_core_7914c48d79206c2a = []byte{
 	// 226 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x74, 0x8f, 0xc1, 0x4a, 0xc3, 0x40,
 	0x10, 0x86, 0x49, 0x90, 0x1e, 0x56, 0xa8, 0x90, 0x93, 0x04, 0xd1, 0xd0, 0x93, 0x97, 0xce, 0x82,

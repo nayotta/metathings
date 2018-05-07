@@ -6,7 +6,7 @@ package identity
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import google_protobuf "github.com/golang/protobuf/ptypes/wrappers"
+import wrappers "github.com/golang/protobuf/ptypes/wrappers"
 import _ "github.com/mwitkow/go-proto-validators"
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -14,40 +14,68 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+
 type PatchDomainRequest struct {
-	DomainId    *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=domain_id,json=domainId" json:"domain_id,omitempty"`
-	Name        *google_protobuf.StringValue `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
-	Description *google_protobuf.StringValue `protobuf:"bytes,3,opt,name=description" json:"description,omitempty"`
-	Enabled     *google_protobuf.BoolValue   `protobuf:"bytes,4,opt,name=enabled" json:"enabled,omitempty"`
+	DomainId             *wrappers.StringValue `protobuf:"bytes,1,opt,name=domain_id,json=domainId" json:"domain_id,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
+	Description          *wrappers.StringValue `protobuf:"bytes,3,opt,name=description" json:"description,omitempty"`
+	Enabled              *wrappers.BoolValue   `protobuf:"bytes,4,opt,name=enabled" json:"enabled,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *PatchDomainRequest) Reset()                    { *m = PatchDomainRequest{} }
-func (m *PatchDomainRequest) String() string            { return proto.CompactTextString(m) }
-func (*PatchDomainRequest) ProtoMessage()               {}
-func (*PatchDomainRequest) Descriptor() ([]byte, []int) { return fileDescriptor51, []int{0} }
+func (m *PatchDomainRequest) Reset()         { *m = PatchDomainRequest{} }
+func (m *PatchDomainRequest) String() string { return proto.CompactTextString(m) }
+func (*PatchDomainRequest) ProtoMessage()    {}
+func (*PatchDomainRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_patch_domain_3c8fad9d4314d7e8, []int{0}
+}
+func (m *PatchDomainRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_PatchDomainRequest.Unmarshal(m, b)
+}
+func (m *PatchDomainRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_PatchDomainRequest.Marshal(b, m, deterministic)
+}
+func (dst *PatchDomainRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PatchDomainRequest.Merge(dst, src)
+}
+func (m *PatchDomainRequest) XXX_Size() int {
+	return xxx_messageInfo_PatchDomainRequest.Size(m)
+}
+func (m *PatchDomainRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_PatchDomainRequest.DiscardUnknown(m)
+}
 
-func (m *PatchDomainRequest) GetDomainId() *google_protobuf.StringValue {
+var xxx_messageInfo_PatchDomainRequest proto.InternalMessageInfo
+
+func (m *PatchDomainRequest) GetDomainId() *wrappers.StringValue {
 	if m != nil {
 		return m.DomainId
 	}
 	return nil
 }
 
-func (m *PatchDomainRequest) GetName() *google_protobuf.StringValue {
+func (m *PatchDomainRequest) GetName() *wrappers.StringValue {
 	if m != nil {
 		return m.Name
 	}
 	return nil
 }
 
-func (m *PatchDomainRequest) GetDescription() *google_protobuf.StringValue {
+func (m *PatchDomainRequest) GetDescription() *wrappers.StringValue {
 	if m != nil {
 		return m.Description
 	}
 	return nil
 }
 
-func (m *PatchDomainRequest) GetEnabled() *google_protobuf.BoolValue {
+func (m *PatchDomainRequest) GetEnabled() *wrappers.BoolValue {
 	if m != nil {
 		return m.Enabled
 	}
@@ -55,13 +83,35 @@ func (m *PatchDomainRequest) GetEnabled() *google_protobuf.BoolValue {
 }
 
 type PatchDomainResponse struct {
-	Domain *Domain `protobuf:"bytes,1,opt,name=domain" json:"domain,omitempty"`
+	Domain               *Domain  `protobuf:"bytes,1,opt,name=domain" json:"domain,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *PatchDomainResponse) Reset()                    { *m = PatchDomainResponse{} }
-func (m *PatchDomainResponse) String() string            { return proto.CompactTextString(m) }
-func (*PatchDomainResponse) ProtoMessage()               {}
-func (*PatchDomainResponse) Descriptor() ([]byte, []int) { return fileDescriptor51, []int{1} }
+func (m *PatchDomainResponse) Reset()         { *m = PatchDomainResponse{} }
+func (m *PatchDomainResponse) String() string { return proto.CompactTextString(m) }
+func (*PatchDomainResponse) ProtoMessage()    {}
+func (*PatchDomainResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_patch_domain_3c8fad9d4314d7e8, []int{1}
+}
+func (m *PatchDomainResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_PatchDomainResponse.Unmarshal(m, b)
+}
+func (m *PatchDomainResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_PatchDomainResponse.Marshal(b, m, deterministic)
+}
+func (dst *PatchDomainResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PatchDomainResponse.Merge(dst, src)
+}
+func (m *PatchDomainResponse) XXX_Size() int {
+	return xxx_messageInfo_PatchDomainResponse.Size(m)
+}
+func (m *PatchDomainResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_PatchDomainResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_PatchDomainResponse proto.InternalMessageInfo
 
 func (m *PatchDomainResponse) GetDomain() *Domain {
 	if m != nil {
@@ -75,9 +125,9 @@ func init() {
 	proto.RegisterType((*PatchDomainResponse)(nil), "ai.metathings.service.identity.PatchDomainResponse")
 }
 
-func init() { proto.RegisterFile("patch_domain.proto", fileDescriptor51) }
+func init() { proto.RegisterFile("patch_domain.proto", fileDescriptor_patch_domain_3c8fad9d4314d7e8) }
 
-var fileDescriptor51 = []byte{
+var fileDescriptor_patch_domain_3c8fad9d4314d7e8 = []byte{
 	// 295 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0xd1, 0xc1, 0x4b, 0xfb, 0x30,
 	0x14, 0x07, 0x70, 0xba, 0xdf, 0xd8, 0x4f, 0x33, 0x4f, 0xf1, 0x52, 0x86, 0xcc, 0xb1, 0x83, 0x78,

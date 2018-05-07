@@ -14,14 +14,42 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+
 type ValidateTokenResponse struct {
-	Token *Token `protobuf:"bytes,1,opt,name=token" json:"token,omitempty"`
+	Token                *Token   `protobuf:"bytes,1,opt,name=token" json:"token,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *ValidateTokenResponse) Reset()                    { *m = ValidateTokenResponse{} }
-func (m *ValidateTokenResponse) String() string            { return proto.CompactTextString(m) }
-func (*ValidateTokenResponse) ProtoMessage()               {}
-func (*ValidateTokenResponse) Descriptor() ([]byte, []int) { return fileDescriptor68, []int{0} }
+func (m *ValidateTokenResponse) Reset()         { *m = ValidateTokenResponse{} }
+func (m *ValidateTokenResponse) String() string { return proto.CompactTextString(m) }
+func (*ValidateTokenResponse) ProtoMessage()    {}
+func (*ValidateTokenResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_validate_token_4375e68e0f5de8e2, []int{0}
+}
+func (m *ValidateTokenResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ValidateTokenResponse.Unmarshal(m, b)
+}
+func (m *ValidateTokenResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ValidateTokenResponse.Marshal(b, m, deterministic)
+}
+func (dst *ValidateTokenResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ValidateTokenResponse.Merge(dst, src)
+}
+func (m *ValidateTokenResponse) XXX_Size() int {
+	return xxx_messageInfo_ValidateTokenResponse.Size(m)
+}
+func (m *ValidateTokenResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_ValidateTokenResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ValidateTokenResponse proto.InternalMessageInfo
 
 func (m *ValidateTokenResponse) GetToken() *Token {
 	if m != nil {
@@ -34,9 +62,11 @@ func init() {
 	proto.RegisterType((*ValidateTokenResponse)(nil), "ai.metathings.service.identity.ValidateTokenResponse")
 }
 
-func init() { proto.RegisterFile("validate_token.proto", fileDescriptor68) }
+func init() {
+	proto.RegisterFile("validate_token.proto", fileDescriptor_validate_token_4375e68e0f5de8e2)
+}
 
-var fileDescriptor68 = []byte{
+var fileDescriptor_validate_token_4375e68e0f5de8e2 = []byte{
 	// 188 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x7c, 0x8e, 0xb1, 0x8a, 0x83, 0x40,
 	0x10, 0x86, 0xb1, 0xb8, 0x2b, 0xb4, 0x93, 0x3b, 0x38, 0x2c, 0xe4, 0x08, 0x04, 0xd2, 0xb8, 0x0b,

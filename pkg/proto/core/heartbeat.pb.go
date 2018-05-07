@@ -14,21 +14,49 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+
 type HeartbeatRequest struct {
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *HeartbeatRequest) Reset()                    { *m = HeartbeatRequest{} }
-func (m *HeartbeatRequest) String() string            { return proto.CompactTextString(m) }
-func (*HeartbeatRequest) ProtoMessage()               {}
-func (*HeartbeatRequest) Descriptor() ([]byte, []int) { return fileDescriptor8, []int{0} }
+func (m *HeartbeatRequest) Reset()         { *m = HeartbeatRequest{} }
+func (m *HeartbeatRequest) String() string { return proto.CompactTextString(m) }
+func (*HeartbeatRequest) ProtoMessage()    {}
+func (*HeartbeatRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_heartbeat_b603d702552163a0, []int{0}
+}
+func (m *HeartbeatRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_HeartbeatRequest.Unmarshal(m, b)
+}
+func (m *HeartbeatRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_HeartbeatRequest.Marshal(b, m, deterministic)
+}
+func (dst *HeartbeatRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_HeartbeatRequest.Merge(dst, src)
+}
+func (m *HeartbeatRequest) XXX_Size() int {
+	return xxx_messageInfo_HeartbeatRequest.Size(m)
+}
+func (m *HeartbeatRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_HeartbeatRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_HeartbeatRequest proto.InternalMessageInfo
 
 func init() {
 	proto.RegisterType((*HeartbeatRequest)(nil), "ai.metathings.service.core.HeartbeatRequest")
 }
 
-func init() { proto.RegisterFile("heartbeat.proto", fileDescriptor8) }
+func init() { proto.RegisterFile("heartbeat.proto", fileDescriptor_heartbeat_b603d702552163a0) }
 
-var fileDescriptor8 = []byte{
+var fileDescriptor_heartbeat_b603d702552163a0 = []byte{
 	// 148 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x3c, 0x8e, 0xb1, 0xae, 0x02, 0x21,
 	0x10, 0x45, 0xbb, 0x57, 0x6c, 0xf3, 0xcc, 0x96, 0x14, 0x16, 0xf6, 0x0b, 0x85, 0x89, 0xdf, 0x60,

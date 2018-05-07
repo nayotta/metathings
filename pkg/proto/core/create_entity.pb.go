@@ -6,7 +6,7 @@ package core
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import google_protobuf "github.com/golang/protobuf/ptypes/wrappers"
+import wrappers "github.com/golang/protobuf/ptypes/wrappers"
 import _ "github.com/mwitkow/go-proto-validators"
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -14,40 +14,68 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+
 type CreateEntityRequest struct {
-	CoreId      *google_protobuf.StringValue `protobuf:"bytes,1,opt,name=core_id,json=coreId" json:"core_id,omitempty"`
-	Name        *google_protobuf.StringValue `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
-	ServiceName *google_protobuf.StringValue `protobuf:"bytes,3,opt,name=service_name,json=serviceName" json:"service_name,omitempty"`
-	Endpoint    *google_protobuf.StringValue `protobuf:"bytes,4,opt,name=endpoint" json:"endpoint,omitempty"`
+	CoreId               *wrappers.StringValue `protobuf:"bytes,1,opt,name=core_id,json=coreId" json:"core_id,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
+	ServiceName          *wrappers.StringValue `protobuf:"bytes,3,opt,name=service_name,json=serviceName" json:"service_name,omitempty"`
+	Endpoint             *wrappers.StringValue `protobuf:"bytes,4,opt,name=endpoint" json:"endpoint,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *CreateEntityRequest) Reset()                    { *m = CreateEntityRequest{} }
-func (m *CreateEntityRequest) String() string            { return proto.CompactTextString(m) }
-func (*CreateEntityRequest) ProtoMessage()               {}
-func (*CreateEntityRequest) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{0} }
+func (m *CreateEntityRequest) Reset()         { *m = CreateEntityRequest{} }
+func (m *CreateEntityRequest) String() string { return proto.CompactTextString(m) }
+func (*CreateEntityRequest) ProtoMessage()    {}
+func (*CreateEntityRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_create_entity_424285a1b03022a0, []int{0}
+}
+func (m *CreateEntityRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_CreateEntityRequest.Unmarshal(m, b)
+}
+func (m *CreateEntityRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_CreateEntityRequest.Marshal(b, m, deterministic)
+}
+func (dst *CreateEntityRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CreateEntityRequest.Merge(dst, src)
+}
+func (m *CreateEntityRequest) XXX_Size() int {
+	return xxx_messageInfo_CreateEntityRequest.Size(m)
+}
+func (m *CreateEntityRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_CreateEntityRequest.DiscardUnknown(m)
+}
 
-func (m *CreateEntityRequest) GetCoreId() *google_protobuf.StringValue {
+var xxx_messageInfo_CreateEntityRequest proto.InternalMessageInfo
+
+func (m *CreateEntityRequest) GetCoreId() *wrappers.StringValue {
 	if m != nil {
 		return m.CoreId
 	}
 	return nil
 }
 
-func (m *CreateEntityRequest) GetName() *google_protobuf.StringValue {
+func (m *CreateEntityRequest) GetName() *wrappers.StringValue {
 	if m != nil {
 		return m.Name
 	}
 	return nil
 }
 
-func (m *CreateEntityRequest) GetServiceName() *google_protobuf.StringValue {
+func (m *CreateEntityRequest) GetServiceName() *wrappers.StringValue {
 	if m != nil {
 		return m.ServiceName
 	}
 	return nil
 }
 
-func (m *CreateEntityRequest) GetEndpoint() *google_protobuf.StringValue {
+func (m *CreateEntityRequest) GetEndpoint() *wrappers.StringValue {
 	if m != nil {
 		return m.Endpoint
 	}
@@ -55,13 +83,35 @@ func (m *CreateEntityRequest) GetEndpoint() *google_protobuf.StringValue {
 }
 
 type CreateEntityResponse struct {
-	Entity *Entity `protobuf:"bytes,1,opt,name=entity" json:"entity,omitempty"`
+	Entity               *Entity  `protobuf:"bytes,1,opt,name=entity" json:"entity,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *CreateEntityResponse) Reset()                    { *m = CreateEntityResponse{} }
-func (m *CreateEntityResponse) String() string            { return proto.CompactTextString(m) }
-func (*CreateEntityResponse) ProtoMessage()               {}
-func (*CreateEntityResponse) Descriptor() ([]byte, []int) { return fileDescriptor2, []int{1} }
+func (m *CreateEntityResponse) Reset()         { *m = CreateEntityResponse{} }
+func (m *CreateEntityResponse) String() string { return proto.CompactTextString(m) }
+func (*CreateEntityResponse) ProtoMessage()    {}
+func (*CreateEntityResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_create_entity_424285a1b03022a0, []int{1}
+}
+func (m *CreateEntityResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_CreateEntityResponse.Unmarshal(m, b)
+}
+func (m *CreateEntityResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_CreateEntityResponse.Marshal(b, m, deterministic)
+}
+func (dst *CreateEntityResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CreateEntityResponse.Merge(dst, src)
+}
+func (m *CreateEntityResponse) XXX_Size() int {
+	return xxx_messageInfo_CreateEntityResponse.Size(m)
+}
+func (m *CreateEntityResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_CreateEntityResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_CreateEntityResponse proto.InternalMessageInfo
 
 func (m *CreateEntityResponse) GetEntity() *Entity {
 	if m != nil {
@@ -75,9 +125,9 @@ func init() {
 	proto.RegisterType((*CreateEntityResponse)(nil), "ai.metathings.service.core.CreateEntityResponse")
 }
 
-func init() { proto.RegisterFile("create_entity.proto", fileDescriptor2) }
+func init() { proto.RegisterFile("create_entity.proto", fileDescriptor_create_entity_424285a1b03022a0) }
 
-var fileDescriptor2 = []byte{
+var fileDescriptor_create_entity_424285a1b03022a0 = []byte{
 	// 288 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x91, 0x31, 0x4b, 0xc4, 0x30,
 	0x18, 0x86, 0x69, 0x3d, 0xaa, 0xe4, 0x6e, 0xea, 0x39, 0x94, 0x22, 0x7a, 0x74, 0x72, 0xb9, 0x54,

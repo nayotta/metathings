@@ -6,55 +6,105 @@ package core
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import google_protobuf "github.com/golang/protobuf/ptypes/wrappers"
+import state "github.com/bigdatagz/metathings/pkg/proto/common/state"
+import wrappers "github.com/golang/protobuf/ptypes/wrappers"
 import _ "github.com/mwitkow/go-proto-validators"
-import ai_metathings_state "github.com/bigdatagz/metathings/pkg/proto/common/state"
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+
 type PatchCoreRequest struct {
-	Id    *google_protobuf.StringValue  `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	Name  *google_protobuf.StringValue  `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
-	State ai_metathings_state.CoreState `protobuf:"varint,3,opt,name=state,enum=ai.metathings.state.CoreState" json:"state,omitempty"`
+	Id                   *wrappers.StringValue `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
+	State                state.CoreState       `protobuf:"varint,3,opt,name=state,enum=ai.metathings.state.CoreState" json:"state,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *PatchCoreRequest) Reset()                    { *m = PatchCoreRequest{} }
-func (m *PatchCoreRequest) String() string            { return proto.CompactTextString(m) }
-func (*PatchCoreRequest) ProtoMessage()               {}
-func (*PatchCoreRequest) Descriptor() ([]byte, []int) { return fileDescriptor13, []int{0} }
+func (m *PatchCoreRequest) Reset()         { *m = PatchCoreRequest{} }
+func (m *PatchCoreRequest) String() string { return proto.CompactTextString(m) }
+func (*PatchCoreRequest) ProtoMessage()    {}
+func (*PatchCoreRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_patch_core_0bd862b004bed491, []int{0}
+}
+func (m *PatchCoreRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_PatchCoreRequest.Unmarshal(m, b)
+}
+func (m *PatchCoreRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_PatchCoreRequest.Marshal(b, m, deterministic)
+}
+func (dst *PatchCoreRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PatchCoreRequest.Merge(dst, src)
+}
+func (m *PatchCoreRequest) XXX_Size() int {
+	return xxx_messageInfo_PatchCoreRequest.Size(m)
+}
+func (m *PatchCoreRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_PatchCoreRequest.DiscardUnknown(m)
+}
 
-func (m *PatchCoreRequest) GetId() *google_protobuf.StringValue {
+var xxx_messageInfo_PatchCoreRequest proto.InternalMessageInfo
+
+func (m *PatchCoreRequest) GetId() *wrappers.StringValue {
 	if m != nil {
 		return m.Id
 	}
 	return nil
 }
 
-func (m *PatchCoreRequest) GetName() *google_protobuf.StringValue {
+func (m *PatchCoreRequest) GetName() *wrappers.StringValue {
 	if m != nil {
 		return m.Name
 	}
 	return nil
 }
 
-func (m *PatchCoreRequest) GetState() ai_metathings_state.CoreState {
+func (m *PatchCoreRequest) GetState() state.CoreState {
 	if m != nil {
 		return m.State
 	}
-	return ai_metathings_state.CoreState_CORE_STATE_UNKNOWN
+	return state.CoreState_CORE_STATE_UNKNOWN
 }
 
 type PatchCoreResponse struct {
-	Core *Core `protobuf:"bytes,1,opt,name=core" json:"core,omitempty"`
+	Core                 *Core    `protobuf:"bytes,1,opt,name=core" json:"core,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *PatchCoreResponse) Reset()                    { *m = PatchCoreResponse{} }
-func (m *PatchCoreResponse) String() string            { return proto.CompactTextString(m) }
-func (*PatchCoreResponse) ProtoMessage()               {}
-func (*PatchCoreResponse) Descriptor() ([]byte, []int) { return fileDescriptor13, []int{1} }
+func (m *PatchCoreResponse) Reset()         { *m = PatchCoreResponse{} }
+func (m *PatchCoreResponse) String() string { return proto.CompactTextString(m) }
+func (*PatchCoreResponse) ProtoMessage()    {}
+func (*PatchCoreResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_patch_core_0bd862b004bed491, []int{1}
+}
+func (m *PatchCoreResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_PatchCoreResponse.Unmarshal(m, b)
+}
+func (m *PatchCoreResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_PatchCoreResponse.Marshal(b, m, deterministic)
+}
+func (dst *PatchCoreResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PatchCoreResponse.Merge(dst, src)
+}
+func (m *PatchCoreResponse) XXX_Size() int {
+	return xxx_messageInfo_PatchCoreResponse.Size(m)
+}
+func (m *PatchCoreResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_PatchCoreResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_PatchCoreResponse proto.InternalMessageInfo
 
 func (m *PatchCoreResponse) GetCore() *Core {
 	if m != nil {
@@ -68,9 +118,9 @@ func init() {
 	proto.RegisterType((*PatchCoreResponse)(nil), "ai.metathings.service.core.PatchCoreResponse")
 }
 
-func init() { proto.RegisterFile("patch_core.proto", fileDescriptor13) }
+func init() { proto.RegisterFile("patch_core.proto", fileDescriptor_patch_core_0bd862b004bed491) }
 
-var fileDescriptor13 = []byte{
+var fileDescriptor_patch_core_0bd862b004bed491 = []byte{
 	// 303 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x91, 0x41, 0x4b, 0xc3, 0x30,
 	0x1c, 0xc5, 0x69, 0x9d, 0x3b, 0x44, 0x90, 0xd9, 0xd3, 0x18, 0x32, 0xcb, 0x4e, 0xbb, 0x2c, 0x91,

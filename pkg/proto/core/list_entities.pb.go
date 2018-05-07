@@ -13,22 +13,72 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+
 type ListEntitiesRequest struct {
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *ListEntitiesRequest) Reset()                    { *m = ListEntitiesRequest{} }
-func (m *ListEntitiesRequest) String() string            { return proto.CompactTextString(m) }
-func (*ListEntitiesRequest) ProtoMessage()               {}
-func (*ListEntitiesRequest) Descriptor() ([]byte, []int) { return fileDescriptor11, []int{0} }
+func (m *ListEntitiesRequest) Reset()         { *m = ListEntitiesRequest{} }
+func (m *ListEntitiesRequest) String() string { return proto.CompactTextString(m) }
+func (*ListEntitiesRequest) ProtoMessage()    {}
+func (*ListEntitiesRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_list_entities_9d656adb83a6269d, []int{0}
+}
+func (m *ListEntitiesRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ListEntitiesRequest.Unmarshal(m, b)
+}
+func (m *ListEntitiesRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ListEntitiesRequest.Marshal(b, m, deterministic)
+}
+func (dst *ListEntitiesRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ListEntitiesRequest.Merge(dst, src)
+}
+func (m *ListEntitiesRequest) XXX_Size() int {
+	return xxx_messageInfo_ListEntitiesRequest.Size(m)
+}
+func (m *ListEntitiesRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_ListEntitiesRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ListEntitiesRequest proto.InternalMessageInfo
 
 type ListEntitiesResponse struct {
-	Entities []*Entity `protobuf:"bytes,1,rep,name=entities" json:"entities,omitempty"`
+	Entities             []*Entity `protobuf:"bytes,1,rep,name=entities" json:"entities,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}  `json:"-"`
+	XXX_unrecognized     []byte    `json:"-"`
+	XXX_sizecache        int32     `json:"-"`
 }
 
-func (m *ListEntitiesResponse) Reset()                    { *m = ListEntitiesResponse{} }
-func (m *ListEntitiesResponse) String() string            { return proto.CompactTextString(m) }
-func (*ListEntitiesResponse) ProtoMessage()               {}
-func (*ListEntitiesResponse) Descriptor() ([]byte, []int) { return fileDescriptor11, []int{1} }
+func (m *ListEntitiesResponse) Reset()         { *m = ListEntitiesResponse{} }
+func (m *ListEntitiesResponse) String() string { return proto.CompactTextString(m) }
+func (*ListEntitiesResponse) ProtoMessage()    {}
+func (*ListEntitiesResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_list_entities_9d656adb83a6269d, []int{1}
+}
+func (m *ListEntitiesResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ListEntitiesResponse.Unmarshal(m, b)
+}
+func (m *ListEntitiesResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ListEntitiesResponse.Marshal(b, m, deterministic)
+}
+func (dst *ListEntitiesResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ListEntitiesResponse.Merge(dst, src)
+}
+func (m *ListEntitiesResponse) XXX_Size() int {
+	return xxx_messageInfo_ListEntitiesResponse.Size(m)
+}
+func (m *ListEntitiesResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_ListEntitiesResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ListEntitiesResponse proto.InternalMessageInfo
 
 func (m *ListEntitiesResponse) GetEntities() []*Entity {
 	if m != nil {
@@ -42,9 +92,9 @@ func init() {
 	proto.RegisterType((*ListEntitiesResponse)(nil), "ai.metathings.service.core.ListEntitiesResponse")
 }
 
-func init() { proto.RegisterFile("list_entities.proto", fileDescriptor11) }
+func init() { proto.RegisterFile("list_entities.proto", fileDescriptor_list_entities_9d656adb83a6269d) }
 
-var fileDescriptor11 = []byte{
+var fileDescriptor_list_entities_9d656adb83a6269d = []byte{
 	// 180 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x74, 0x8e, 0xb1, 0xeb, 0x82, 0x50,
 	0x10, 0x80, 0xf9, 0xf1, 0x83, 0x88, 0x57, 0x93, 0x16, 0x84, 0x53, 0x38, 0xb5, 0xf8, 0x84, 0x82,

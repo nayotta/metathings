@@ -1,27 +1,100 @@
-hash: f40d346641d91dbd9c0c1d7f2431678d4446c0e4163d824f1b6a20bd7cd3a9b7
-updated: 2018-04-25T16:34:55.468376+08:00
+hash: 686e9a32afbd9159d846f3bb74254dee2c646631d8ba5955b54c1805dac25d91
+updated: 2018-05-07T15:46:23.925347+08:00
 imports:
+- name: cloud.google.com/go
+  version: 29f476ffa9c4cd4fd14336b6043090ac1ad76733
+  subpackages:
+  - storage
+- name: github.com/cpuguy83/go-md2man
+  version: 20f5889cbdc3c73dbd2862796665e7c465ade7d1
+  subpackages:
+  - md2man
+- name: github.com/davecgh/go-spew
+  version: 346938d642f2ec3594ed81d874461961cd0faa76
+  subpackages:
+  - spew
 - name: github.com/fsnotify/fsnotify
   version: c2828203cd70a50dcccfb2761f8b1f8ceef9a8e9
 - name: github.com/gogo/protobuf
-  version: 1ef32a8b9fc3f8ec940126907cedb5998f6318e4
+  version: 1adfc126b41513cc696b209667c8656ea7aac67c
   subpackages:
+  - gogoproto
+  - jsonpb
+  - plugin/compare
+  - plugin/defaultcheck
+  - plugin/description
+  - plugin/embedcheck
+  - plugin/enumstringer
+  - plugin/equal
+  - plugin/face
+  - plugin/gostring
+  - plugin/marshalto
+  - plugin/oneofcheck
+  - plugin/populate
+  - plugin/size
+  - plugin/stringer
+  - plugin/testgen
+  - plugin/union
+  - plugin/unmarshal
   - proto
+  - proto/testdata
   - protoc-gen-gogo/descriptor
-- name: github.com/golang/protobuf
-  version: 925541529c1fa6821df4e44ce2723319eb2be768
+  - protoc-gen-gogo/generator
+  - protoc-gen-gogo/grpc
+  - protoc-gen-gogo/plugin
+  - sortkeys
+  - test
+  - test/casttype
+  - test/combos/both
+  - test/custom
+  - test/custom-dash-type
+  - test/example
+  - test/importcustom-issue389/imported
+  - test/importdedup/subpkg
+  - test/importduplicate/proto
+  - test/importduplicate/sortkeys
+  - test/indeximport-issue72/index
+  - test/issue312
+  - test/typedeclimport/subpkg
+  - types
+  - vanity
+  - vanity/command
+  - version
+- name: github.com/golang/glog
+  version: 23def4e6c14b4da8ac2ed8007337bc5eb5007998
+- name: github.com/golang/mock
+  version: c34cdb4725f4c3844d095133c6e40e448b86589b
   subpackages:
+  - gomock
+- name: github.com/golang/protobuf
+  version: b4deda0973fb4c70b50d226b1af49f3da59f5265
+  subpackages:
+  - jsonpb
   - proto
+  - proto/testdata
+  - protoc-gen-go/descriptor
+  - protoc-gen-go/generator
+  - protoc-gen-go/grpc
+  - protoc-gen-go/plugin
   - ptypes
   - ptypes/any
   - ptypes/duration
   - ptypes/empty
+  - ptypes/struct
   - ptypes/timestamp
   - ptypes/wrappers
 - name: github.com/grpc-ecosystem/go-grpc-middleware
   version: b9ed6aed6cf9de7330c7c8e81d3d8e49086539e8
   subpackages:
   - auth
+  - logging
+  - logging/logrus/ctxlogrus
+  - logging/zap/ctxzap
+  - tags
+  - tags/logrus
+  - tags/zap
+  - testing/testproto
+  - util/backoffutils
   - util/metautils
 - name: github.com/hashicorp/hcl
   version: ef8a98b0bbce4a65b5aa4c368430a80ddc533168
@@ -42,25 +115,42 @@ imports:
   subpackages:
   - reflectx
 - name: github.com/magiconair/properties
-  version: 2c9e9502788518c97fe44e8955cd069417ee89df
+  version: c3beff4c2358b44d0493c7dda585e7db7ff28ae6
 - name: github.com/mattn/go-sqlite3
-  version: a72efd674f654961a11ac41aae72c0e43963fe6c
+  version: 6c771bb9887719704b210e87e934f08be014bdb1
+- name: github.com/mitchellh/go-homedir
+  version: b8bc1bf767474819792c23f32d8286a45736f1c6
 - name: github.com/mitchellh/mapstructure
   version: 00c29f56e2386353d58c599509e8dc3801b0d716
 - name: github.com/moul/http2curl
   version: 9ac6cf4d929b2fa8fd2d2e6dec5bb0feb4f4911d
 - name: github.com/mwitkow/go-proto-validators
   version: 0950a79900071e9f3f5979b78078c599376422fd
+  subpackages:
+  - plugin
+- name: github.com/opentracing/opentracing-go
+  version: 1949ddbfd147afd4d964a9f00b24eb291e0e7c38
+  subpackages:
+  - ext
+  - log
 - name: github.com/parnurzeal/gorequest
   version: a578a48e8d6ca8b01a3b18314c43c6716bb5f5a3
 - name: github.com/pelletier/go-toml
-  version: 66540cf1fcd2c3aee6f6787dfa32a6ae9a870f12
+  version: acdc4509485b587f5e675510c4f2c63e90ff68a8
 - name: github.com/pkg/errors
-  version: 816c9085562cd7ee03e7f8188a1cfd942858cded
+  version: 645ef00459ed84a119197bfb8d8205042c6df63d
+- name: github.com/pkg/sftp
+  version: 5bf2a174b604c6b5549dd9740d924ff2f02e3ad7
+- name: github.com/pmezard/go-difflib
+  version: 792786c7400a136282c1664665ae0a8db921c6c2
+  subpackages:
+  - difflib
+- name: github.com/PuerkitoBio/goquery
+  version: a86ea073017a6beddef78c8659e7224e8ca634b0
 - name: github.com/satori/go.uuid
-  version: 36e9d2ebbde5e3f13ab2e25625fd453271d6522e
+  version: f58768cc1a7a7e77a3bd49e98cdd21419399b6a3
 - name: github.com/sirupsen/logrus
-  version: 778f2e774c725116edbc3d039dc0dfc1cc62aae8
+  version: c155da19408a8799da419ed3eeb0cb5db0ad5dbc
 - name: github.com/spf13/afero
   version: 63644898a8da0bc22138abf860edaf5277b6102e
   subpackages:
@@ -69,80 +159,253 @@ imports:
   version: 8965335b8c7107321228e3e3702cab9832751bac
 - name: github.com/spf13/cobra
   version: a1f051bc3eba734da4772d60e2d677f47cf93ef4
+  subpackages:
+  - cobra/cmd
 - name: github.com/spf13/jwalterweatherman
   version: 7c0cea34c8ece3fbeb2b27ab9b59511d360fb394
 - name: github.com/spf13/pflag
   version: 583c0c0531f06d5278b7d917446061adc344b5cd
 - name: github.com/spf13/viper
   version: b5e8006cbee93ec955a89ab31e0e3ce3204f3736
+- name: github.com/stretchr/objx
+  version: facf9a85c22f48d2f52f2380e4efce1768749a89
+- name: github.com/stretchr/testify
+  version: 12b6f73e6084dad08a7c6e575284b177ecafbc71
+  subpackages:
+  - assert
+  - http
+  - mock
+  - require
+  - suite
+- name: github.com/xordataexchange/crypt
+  version: 0d6dc8c093c1c191f00effdfc3b2f858973f0271
+  subpackages:
+  - config
+- name: go.uber.org/zap
+  version: eeedf312bc6c57391d84767a4cd413f02a917974
+  subpackages:
+  - zapcore
+- name: go4.org
+  version: 9599cf28b011184741f249bd9f9330756b506cbc
+  subpackages:
+  - syncutil/singleflight
+- name: golang.org/x/build
+  version: 3848b4733c9cc19581a7557cab0287089ad30ca8
+  subpackages:
+  - autocertcache
 - name: golang.org/x/crypto
   version: d6449816ce06963d9d136eee5a56fca5b0616e7e
   subpackages:
+  - acme
+  - acme/autocert
+  - blake2b
+  - blowfish
+  - cast5
+  - cryptobyte/asn1
+  - curve25519
+  - ed25519
+  - ed25519/internal/edwards25519
+  - internal/chacha20
+  - nacl/secretbox
+  - openpgp/armor
+  - openpgp/elgamal
+  - openpgp/errors
+  - openpgp/packet
+  - openpgp/s2k
+  - pbkdf2
+  - pkcs12/internal/rc2
+  - poly1305
+  - salsa20/salsa
+  - ssh
   - ssh/terminal
 - name: golang.org/x/net
   version: 500e7a4f953ddaf55d316b4d3adc516aa0379622
   subpackages:
+  - bpf
   - context
+  - html
+  - html/atom
   - http2
   - http2/hpack
   - idna
+  - internal/iana
+  - internal/nettest
+  - internal/socket
+  - internal/socks
   - internal/timeseries
+  - ipv4
+  - ipv6
   - lex/httplex
   - publicsuffix
   - trace
+  - webdav/internal/xml
+- name: golang.org/x/oauth2
+  version: cdc340f7c179dbbfa4afd43b7614e8fcadde4269
+  subpackages:
+  - google
+  - jwt
 - name: golang.org/x/sys
   version: 2281fa97ef7b0c26324634d5a22f04babdac8713
   subpackages:
   - unix
   - windows
+  - windows/registry
+  - windows/svc
+  - windows/svc/debug
+  - windows/svc/eventlog
+  - windows/svc/mgr
 - name: golang.org/x/text
-  version: 7922cc490dd5a7dbaa7fd5d6196b49db59ac042f
+  version: f21a4dfb5e38f5895301dc265a8def02365cc3d0
   subpackages:
+  - cases
+  - cmd/gotext/examples/extract_http/pkg
+  - collate
+  - encoding
+  - encoding/charmap
+  - encoding/htmlindex
+  - encoding/internal
+  - encoding/internal/identifier
+  - encoding/japanese
+  - encoding/korean
+  - encoding/simplifiedchinese
+  - encoding/traditionalchinese
+  - encoding/unicode
+  - feature/plural
+  - internal
+  - internal/catmsg
+  - internal/cldrtree
+  - internal/colltab
+  - internal/format
+  - internal/gen
+  - internal/language
+  - internal/language/compact
+  - internal/number
+  - internal/stringset
+  - internal/tag
+  - internal/utf8internal
+  - language
+  - message
+  - message/catalog
+  - message/pipeline
+  - runes
   - secure/bidirule
   - transform
   - unicode/bidi
+  - unicode/cldr
   - unicode/norm
+  - width
+- name: golang.org/x/tools
+  version: 87723262609ca8fd55d449c027454c29cadefd68
+  subpackages:
+  - go/buildutil
+  - go/callgraph
+  - go/callgraph/cha
+  - go/loader
+  - go/ssa
+  - go/ssa/ssautil
+- name: google.golang.org/api
+  version: 20530fd5d65ad2caee87891f9896d7547cb400c9
+  subpackages:
+  - compute/v1
 - name: google.golang.org/genproto
   version: 7fd901a49ba6a7f87732eb344f6e3c5b19d1b200
   subpackages:
+  - googleapis/api
+  - googleapis/api/annotations
+  - googleapis/api/configchange
+  - googleapis/api/distribution
+  - googleapis/api/httpbody
+  - googleapis/api/label
+  - googleapis/api/metric
+  - googleapis/api/monitoredres
+  - googleapis/api/serviceconfig
+  - googleapis/cloud/audit
+  - googleapis/cloud/oslogin/common
+  - googleapis/cloud/support/common
+  - googleapis/devtools/source/v1
+  - googleapis/iam/v1
+  - googleapis/logging/type
+  - googleapis/longrunning
+  - googleapis/rpc/code
+  - googleapis/rpc/errdetails
   - googleapis/rpc/status
+  - googleapis/type/color
+  - googleapis/type/date
+  - googleapis/type/dayofweek
+  - googleapis/type/latlng
+  - googleapis/type/money
+  - googleapis/type/timeofday
+  - protobuf/api
+  - protobuf/field_mask
+  - protobuf/ptype
+  - protobuf/source_context
 - name: google.golang.org/grpc
   version: d11072e7ca9811b1100b80ca0269ac831f06d024
   subpackages:
   - balancer
   - balancer/base
   - balancer/roundrobin
+  - benchmark
+  - benchmark/grpc_testing
+  - benchmark/latency
+  - benchmark/stats
   - codes
   - connectivity
   - credentials
+  - credentials/alts
+  - credentials/alts/core
+  - credentials/alts/core/authinfo
+  - credentials/alts/core/conn
+  - credentials/alts/core/handshaker
+  - credentials/alts/core/handshaker/service
+  - credentials/alts/core/proto/grpc_gcp
+  - credentials/oauth
   - encoding
   - encoding/proto
+  - examples/helloworld/helloworld
+  - examples/route_guide/routeguide
   - grpclb/grpc_lb_v1/messages
   - grpclog
+  - health/grpc_health_v1
   - internal
+  - interop
+  - interop/grpc_testing
   - keepalive
   - metadata
   - naming
   - peer
+  - reflection
+  - reflection/grpc_reflection_v1alpha
   - resolver
   - resolver/dns
   - resolver/passthrough
   - stats
   - status
+  - stress/grpc_testing
   - tap
+  - test/bufconn
+  - testdata
   - transport
 - name: gopkg.in/yaml.v2
   version: 5420a8b6744d3b0345ab293f6fcba19c978f1183
 testImports:
-- name: github.com/davecgh/go-spew
-  version: 8991bc29aa16c548c550c7ff78260e27b9ab7c73
+- name: github.com/BurntSushi/toml
+  version: b26d9c308763d68093482582cea63d69be07a0f0
+- name: github.com/elazarl/goproxy
+  version: 0a5b8bdb09049ae4ae68e75437ded0b7a2e324e3
+- name: github.com/go-sql-driver/mysql
+  version: a0583e0143b1624142adab07e0e97fe106d99561
+- name: github.com/lib/pq
+  version: d34b9ff171c21ad295489235aec8b6626023cd04
+- name: github.com/smartystreets/goconvey
+  version: 9e8dc3f972df6c8fcc0375ef492c24d0bb204857
   subpackages:
-  - spew
-- name: github.com/pmezard/go-difflib
-  version: 792786c7400a136282c1664665ae0a8db921c6c2
+  - convey
+- name: golang.org/x/sync
+  version: 1d60e4601c6fd243af51cc01ddf169918a5407ca
   subpackages:
-  - difflib
-- name: github.com/stretchr/testify
-  version: c679ae2cc0cb27ec3293fea7e254e47386f05d69
-  subpackages:
-  - assert
+  - errgroup
+- name: gopkg.in/check.v1
+  version: 20d25e2804050c1cd24a7eea1e7a6447dd0e74ec
+- name: gopkg.in/gemnasium/logrus-airbrake-hook.v2
+  version: cb25691e43299559827ffb285b0bb5626b722fa7

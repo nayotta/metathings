@@ -315,7 +315,7 @@ func (srv *metathingsCoreService) PatchEntity(ctx context.Context, req *pb.Patch
 	}
 	srv.logger.WithFields(fields).Infof("patch entity")
 
-	return &pb.PatchEntityResponse{srv.copyEntity(entity)}, nil
+	return &pb.PatchEntityResponse{Entity: srv.copyEntity(entity)}, nil
 }
 
 func (srv *metathingsCoreService) GetEntity(ctx context.Context, req *pb.GetEntityRequest) (*pb.GetEntityResponse, error) {
@@ -332,7 +332,7 @@ func (srv *metathingsCoreService) GetEntity(ctx context.Context, req *pb.GetEnti
 	}
 	srv.logger.WithField("id", req.Id.Value).Debugf("get entity")
 
-	return &pb.GetEntityResponse{srv.copyEntity(entity)}, nil
+	return &pb.GetEntityResponse{Entity: srv.copyEntity(entity)}, nil
 }
 
 func (srv *metathingsCoreService) ListEntities(ctx context.Context, req *pb.ListEntitiesRequest) (*pb.ListEntitiesResponse, error) {
@@ -352,7 +352,7 @@ func (srv *metathingsCoreService) ListEntities(ctx context.Context, req *pb.List
 		es = append(es, srv.copyEntity(e))
 	}
 
-	return &pb.ListEntitiesResponse{es}, nil
+	return &pb.ListEntitiesResponse{Entities: es}, nil
 }
 
 func (srv *metathingsCoreService) ListEntitiesForCore(ctx context.Context, req *pb.ListEntitiesForCoreRequest) (*pb.ListEntitiesForCoreResponse, error) {
@@ -373,7 +373,7 @@ func (srv *metathingsCoreService) ListEntitiesForCore(ctx context.Context, req *
 		es = append(es, srv.copyEntity(e))
 	}
 
-	return &pb.ListEntitiesForCoreResponse{es}, nil
+	return &pb.ListEntitiesForCoreResponse{Entities: es}, nil
 }
 
 func (srv *metathingsCoreService) Heartbeat(ctx context.Context, req *pb.HeartbeatRequest) (*empty.Empty, error) {
@@ -419,14 +419,14 @@ func (srv *metathingsCoreService) Stream(stream pb.CoreService_StreamServer) err
 	close_chan, err := srv.stm_mgr.Register(*core.Id, stream)
 	if err != nil {
 		srv.logger.
-			WithField("core_id", core.Id).
+			WithField("core_id", *core.Id).
 			WithError(err).
 			Errorf("failed to register stream")
 	}
-	srv.logger.WithField("core_id", core.Id).Infof("register stream")
+	srv.logger.WithField("core_id", *core.Id).Infof("register stream")
 
 	<-close_chan
-	srv.logger.WithField("core_id", core.Id).Infof("stream closed")
+	srv.logger.WithField("core_id", *core.Id).Infof("stream closed")
 
 	return nil
 }
@@ -442,9 +442,9 @@ func (srv *metathingsCoreService) UnaryCall(ctx context.Context, req *pb.UnaryCa
 			WithField("core_id", req.CoreId.Value).
 			WithError(err).
 			Errorf("failed to unary call")
-		return nil, err
+		return nil, status.Errorf(codes.Internal, err.Error())
 	}
-	return &pb.UnaryCallResponse{res}, nil
+	return &pb.UnaryCallResponse{Payload: res}, nil
 }
 
 func NewCoreService(opt ...ServiceOptions) (*metathingsCoreService, error) {

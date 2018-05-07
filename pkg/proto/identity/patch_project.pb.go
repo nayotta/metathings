@@ -6,7 +6,7 @@ package identity
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import google_protobuf "github.com/golang/protobuf/ptypes/wrappers"
+import wrappers "github.com/golang/protobuf/ptypes/wrappers"
 import _ "github.com/mwitkow/go-proto-validators"
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -14,48 +14,76 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+// This is a compile-time assertion to ensure that this generated file
+// is compatible with the proto package it is being compiled against.
+// A compilation error at this line likely means your copy of the
+// proto package needs to be updated.
+const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+
 type PatchProjectRequest struct {
-	Id          *google_protobuf.StringValue   `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	Enabled     *google_protobuf.BoolValue     `protobuf:"bytes,2,opt,name=enabled" json:"enabled,omitempty"`
-	Name        *google_protobuf.StringValue   `protobuf:"bytes,3,opt,name=name" json:"name,omitempty"`
-	Description *google_protobuf.StringValue   `protobuf:"bytes,4,opt,name=description" json:"description,omitempty"`
-	Tags        []*google_protobuf.StringValue `protobuf:"bytes,5,rep,name=tags" json:"tags,omitempty"`
+	Id                   *wrappers.StringValue   `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
+	Enabled              *wrappers.BoolValue     `protobuf:"bytes,2,opt,name=enabled" json:"enabled,omitempty"`
+	Name                 *wrappers.StringValue   `protobuf:"bytes,3,opt,name=name" json:"name,omitempty"`
+	Description          *wrappers.StringValue   `protobuf:"bytes,4,opt,name=description" json:"description,omitempty"`
+	Tags                 []*wrappers.StringValue `protobuf:"bytes,5,rep,name=tags" json:"tags,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}                `json:"-"`
+	XXX_unrecognized     []byte                  `json:"-"`
+	XXX_sizecache        int32                   `json:"-"`
 }
 
-func (m *PatchProjectRequest) Reset()                    { *m = PatchProjectRequest{} }
-func (m *PatchProjectRequest) String() string            { return proto.CompactTextString(m) }
-func (*PatchProjectRequest) ProtoMessage()               {}
-func (*PatchProjectRequest) Descriptor() ([]byte, []int) { return fileDescriptor53, []int{0} }
+func (m *PatchProjectRequest) Reset()         { *m = PatchProjectRequest{} }
+func (m *PatchProjectRequest) String() string { return proto.CompactTextString(m) }
+func (*PatchProjectRequest) ProtoMessage()    {}
+func (*PatchProjectRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_patch_project_ec77cc60729f8ac6, []int{0}
+}
+func (m *PatchProjectRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_PatchProjectRequest.Unmarshal(m, b)
+}
+func (m *PatchProjectRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_PatchProjectRequest.Marshal(b, m, deterministic)
+}
+func (dst *PatchProjectRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PatchProjectRequest.Merge(dst, src)
+}
+func (m *PatchProjectRequest) XXX_Size() int {
+	return xxx_messageInfo_PatchProjectRequest.Size(m)
+}
+func (m *PatchProjectRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_PatchProjectRequest.DiscardUnknown(m)
+}
 
-func (m *PatchProjectRequest) GetId() *google_protobuf.StringValue {
+var xxx_messageInfo_PatchProjectRequest proto.InternalMessageInfo
+
+func (m *PatchProjectRequest) GetId() *wrappers.StringValue {
 	if m != nil {
 		return m.Id
 	}
 	return nil
 }
 
-func (m *PatchProjectRequest) GetEnabled() *google_protobuf.BoolValue {
+func (m *PatchProjectRequest) GetEnabled() *wrappers.BoolValue {
 	if m != nil {
 		return m.Enabled
 	}
 	return nil
 }
 
-func (m *PatchProjectRequest) GetName() *google_protobuf.StringValue {
+func (m *PatchProjectRequest) GetName() *wrappers.StringValue {
 	if m != nil {
 		return m.Name
 	}
 	return nil
 }
 
-func (m *PatchProjectRequest) GetDescription() *google_protobuf.StringValue {
+func (m *PatchProjectRequest) GetDescription() *wrappers.StringValue {
 	if m != nil {
 		return m.Description
 	}
 	return nil
 }
 
-func (m *PatchProjectRequest) GetTags() []*google_protobuf.StringValue {
+func (m *PatchProjectRequest) GetTags() []*wrappers.StringValue {
 	if m != nil {
 		return m.Tags
 	}
@@ -63,13 +91,35 @@ func (m *PatchProjectRequest) GetTags() []*google_protobuf.StringValue {
 }
 
 type PatchProjectResponse struct {
-	Project *Project `protobuf:"bytes,1,opt,name=project" json:"project,omitempty"`
+	Project              *Project `protobuf:"bytes,1,opt,name=project" json:"project,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *PatchProjectResponse) Reset()                    { *m = PatchProjectResponse{} }
-func (m *PatchProjectResponse) String() string            { return proto.CompactTextString(m) }
-func (*PatchProjectResponse) ProtoMessage()               {}
-func (*PatchProjectResponse) Descriptor() ([]byte, []int) { return fileDescriptor53, []int{1} }
+func (m *PatchProjectResponse) Reset()         { *m = PatchProjectResponse{} }
+func (m *PatchProjectResponse) String() string { return proto.CompactTextString(m) }
+func (*PatchProjectResponse) ProtoMessage()    {}
+func (*PatchProjectResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_patch_project_ec77cc60729f8ac6, []int{1}
+}
+func (m *PatchProjectResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_PatchProjectResponse.Unmarshal(m, b)
+}
+func (m *PatchProjectResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_PatchProjectResponse.Marshal(b, m, deterministic)
+}
+func (dst *PatchProjectResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PatchProjectResponse.Merge(dst, src)
+}
+func (m *PatchProjectResponse) XXX_Size() int {
+	return xxx_messageInfo_PatchProjectResponse.Size(m)
+}
+func (m *PatchProjectResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_PatchProjectResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_PatchProjectResponse proto.InternalMessageInfo
 
 func (m *PatchProjectResponse) GetProject() *Project {
 	if m != nil {
@@ -83,9 +133,9 @@ func init() {
 	proto.RegisterType((*PatchProjectResponse)(nil), "ai.metathings.service.identity.PatchProjectResponse")
 }
 
-func init() { proto.RegisterFile("patch_project.proto", fileDescriptor53) }
+func init() { proto.RegisterFile("patch_project.proto", fileDescriptor_patch_project_ec77cc60729f8ac6) }
 
-var fileDescriptor53 = []byte{
+var fileDescriptor_patch_project_ec77cc60729f8ac6 = []byte{
 	// 323 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x91, 0xc1, 0x4a, 0xeb, 0x40,
 	0x14, 0x86, 0x69, 0xda, 0xdb, 0xd2, 0x29, 0x77, 0x93, 0xde, 0x45, 0x28, 0x97, 0x5a, 0xba, 0xd1,
