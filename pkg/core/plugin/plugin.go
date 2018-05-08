@@ -4,46 +4,96 @@ import (
 	"context"
 	"errors"
 	"plugin"
+	"time"
 
 	"github.com/golang/protobuf/ptypes/any"
+	gpb "github.com/golang/protobuf/ptypes/wrappers"
 	"github.com/spf13/viper"
+
+	client_helper "github.com/bigdatagz/metathings/pkg/common/client"
+	cs_helper "github.com/bigdatagz/metathings/pkg/common/core_service"
+	agentd_pb "github.com/bigdatagz/metathings/pkg/proto/core_agent"
 )
 
 const METATHINGS_PLUGIN_PREFIX = "mtp"
 
-type PluginOptions map[string]interface{}
-
-func (o *PluginOptions) Get(k string) interface{} {
-	v, ok := (*o)[k]
-	if !ok {
-		return nil
-	}
-	return v
+type CoreService struct {
+	opts    cs_helper.Options
+	cli_fty *client_helper.ClientFactory
 }
 
-func (o *PluginOptions) GetString(k string) string {
-	v := o.Get(k)
-	if v == nil {
-		return ""
+func MakeCoreService(opts cs_helper.Options, cli_fty *client_helper.ClientFactory) CoreService {
+	return CoreService{
+		opts:    opts,
+		cli_fty: cli_fty,
 	}
-	return v.(string)
 }
 
-func (o *PluginOptions) GetStrings(k string) []string {
-	v := o.Get(k)
-	if v == nil {
-		return nil
+func (s CoreService) Init() error {
+	req := &agentd_pb.CreateOrGetEntityRequest{
+		Name:        &gpb.StringValue{Value: s.opts.GetString("name")},
+		ServiceName: &gpb.StringValue{Value: s.opts.GetString("service_name")},
+		Endpoint:    &gpb.StringValue{Value: s.opts.GetString("endpoint")},
 	}
-	return v.([]string)
+
+	ctx := context.Background()
+	cli, cfn, err := s.cli_fty.NewCoreAgentServiceClient()
+	if err != nil {
+		return err
+	}
+	defer cfn()
+
+	res, err := cli.CreateOrGetEntity(ctx, req)
+	if err != nil {
+		return err
+	}
+
+	s.opts.Set("id", res.Entity.Id)
+
+	if !s.opts.GetBool("heartbeat.manual") {
+		go s.Heartbeat()
+	}
+
+	return nil
+}
+
+func (s CoreService) Heartbeat() error {
+	for {
+		err := s.HeartbeatOnce()
+		if err != nil {
+			return err
+		}
+		<-time.After(time.Duration(s.opts.GetInt("heartbeat.interval")) * time.Second)
+	}
+}
+
+func (s CoreService) HeartbeatOnce() error {
+	ctx := context.Background()
+	cli, cfn, err := s.cli_fty.NewCoreAgentServiceClient()
+	if err != nil {
+		return err
+	}
+	defer cfn()
+
+	req := &agentd_pb.HeartbeatRequest{
+		EntityId: &gpb.StringValue{Value: s.opts.GetString("id")},
+	}
+
+	_, err = cli.Heartbeat(ctx, req)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 type ServicePlugin interface {
-	Init(opts PluginOptions) error
+	Init(opts cs_helper.Options) error
 	Run() error
 }
 
 type DispatcherPlugin interface {
-	Init(opts PluginOptions) error
+	Init(opts cs_helper.Options) error
 	UnaryCall(method string, ctx context.Context, req *any.Any) (*any.Any, error)
 }
 

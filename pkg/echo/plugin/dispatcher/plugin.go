@@ -7,6 +7,7 @@ import (
 	"github.com/golang/protobuf/ptypes/any"
 
 	client_helper "github.com/bigdatagz/metathings/pkg/common/client"
+	cs_helper "github.com/bigdatagz/metathings/pkg/common/core_service"
 	mt_plugin "github.com/bigdatagz/metathings/pkg/core/plugin"
 	pb "github.com/bigdatagz/metathings/pkg/proto/echo"
 )
@@ -15,7 +16,7 @@ type echoDispatcherPlugin struct {
 	cli_fty *client_helper.ClientFactory
 }
 
-func (dp *echoDispatcherPlugin) Init(opts mt_plugin.PluginOptions) error {
+func (dp *echoDispatcherPlugin) Init(opts cs_helper.Options) error {
 	cfgs := client_helper.NewDefaultServiceConfigs(opts.GetString("endpoint"))
 	cli_fty, err := client_helper.NewClientFactory(cfgs, client_helper.WithInsecureOptionFunc())
 	if err != nil {

@@ -9,6 +9,7 @@ all: \
 	core_agent_proto \
 	echo_proto \
 	echo_plugins \
+	switcher_proto \
 	metathings_bin \
 	metathingsd_bin
 
@@ -21,14 +22,17 @@ state_proto:
 identity_proto:
 	$(MAKE) -C pkg/proto/identity all
 
-echo_proto:
-	$(MAKE) -C pkg/proto/echo all
-
 core_proto:
 	$(MAKE) -C pkg/proto/core all
 
 core_agent_proto:
 	$(MAKE) -C pkg/proto/core_agent all
+
+echo_proto:
+	$(MAKE) -C pkg/proto/echo all
+
+switcher_proto:
+	$(MAKE) -C pkg/proto/switcher all
 
 metathings_bin:
 	$(MAKE) -C cmd/metathings all
@@ -38,6 +42,9 @@ metathingsd_bin:
 
 echo_plugins:
 	$(MAKE) -C pkg/echo/plugin all
+
+switcher_plugins:
+	$(MAKE) -C pkg/switcher/plugin all
 
 build_docker_images:
 	./script/metathings_build.sh

@@ -10,6 +10,7 @@ import (
 	"google.golang.org/grpc"
 
 	cmd_helper "github.com/bigdatagz/metathings/pkg/common/cmd"
+	cs_helper "github.com/bigdatagz/metathings/pkg/common/core_service"
 	mtp "github.com/bigdatagz/metathings/pkg/core/plugin"
 	service "github.com/bigdatagz/metathings/pkg/echo/service"
 	pb "github.com/bigdatagz/metathings/pkg/proto/echo"
@@ -64,38 +65,43 @@ var (
 	}
 )
 
+func defaultOptions() cs_helper.Options {
+	return cs_helper.Options{
+		"heartbeat.interval": 15,
+	}
+}
+
 func runEchod() error {
 	port := strings.SplitAfter(root_opts.Listen, ":")[1]
 	ep := "localhost" + ":" + port
 
-	srv, err := service.NewEchoService(
-		service.SetName(root_opts.Name),
-		service.SetLogLevel(root_opts.Log.Level),
-		service.SetAgentdAddr(root_opts.ServiceConfig.CoreAgentd.Address),
-		service.SetMetathingsdAddr(root_opts.ServiceConfig.Metathingsd.Address),
-		service.SetEndpoint(ep),
-	)
+	opts := defaultOptions()
+	opts.Set("name", root_opts.Name)
+	opts.Set("log.level", root_opts.Log.Level)
+	opts.Set("agent.address", root_opts.ServiceConfig.CoreAgentd.Address)
+	opts.Set("metathings.address", root_opts.ServiceConfig.Metathingsd.Address)
+	opts.Set("endpoint", ep)
+
+	srv, err := service.NewEchoService(opts)
 	if err != nil {
 		return err
 	}
 
-	errs := make(chan error)
-	go func() {
-		errs <- srv.ConnectToAgent()
-	}()
-	go func() {
-		lis, err := net.Listen("tcp", root_opts.Listen)
-		if err != nil {
-			errs <- err
-			return
-		}
-		s := grpc.NewServer()
-		pb.RegisterEchoServiceServer(s, srv)
+	lis, err := net.Listen("tcp", root_opts.Listen)
+	if err != nil {
+		return err
+	}
+	s := grpc.NewServer()
+	pb.RegisterEchoServiceServer(s, srv)
 
-		log.WithField("listen", root_opts.Listen).Infof("echo(core) service listening")
-		errs <- s.Serve(lis)
-	}()
-	return <-errs
+	err = srv.Init()
+	if err != nil {
+		return err
+	}
+	log.Debugf("echo(core) service initialized")
+
+	log.WithField("listen", root_opts.Listen).Infof("echo(core) service listening")
+	return s.Serve(lis)
 }
 
 func initConfig() {
@@ -113,7 +119,7 @@ func (p *echoServicePlugin) Run() error {
 	return rootCmd.Execute()
 }
 
-func (p *echoServicePlugin) Init(opts mtp.PluginOptions) error {
+func (p *echoServicePlugin) Init(opts cs_helper.Options) error {
 	args := opts.GetStrings("args")
 	rootCmd.SetArgs(args)
 
