@@ -5,14 +5,10 @@ option go_package = "switcher";
 
 import "google/protobuf/empty.proto";
 
-import "info.proto";
-import "toggle.proto";
-import "turn_on.proto";
-import "turn_off.proto";
+import "get.proto";
+import "turn.proto";
 
 service SwitcherService {
-	rpc Info(google.protobuf.Empty) returns (InfoResponse) {}
-	rpc Toggle(google.protobuf.Empty) returns (ToggleResponse) {}
-	rpc TurnOn(google.protobuf.Empty) returns (TurnOnResponse) {}
-	rpc TurnOff(google.protobuf.Empty) returns (TurnOffResponse) {}
+	rpc Get(google.protobuf.Empty) returns (GetResponse) {}
+	rpc Turn(TurnRequest) returns (TurnResponse) {}
 }

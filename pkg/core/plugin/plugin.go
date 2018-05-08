@@ -8,6 +8,7 @@ import (
 
 	"github.com/golang/protobuf/ptypes/any"
 	gpb "github.com/golang/protobuf/ptypes/wrappers"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 
 	client_helper "github.com/bigdatagz/metathings/pkg/common/client"
@@ -19,12 +20,14 @@ const METATHINGS_PLUGIN_PREFIX = "mtp"
 
 type CoreService struct {
 	opts    cs_helper.Options
+	logger  log.FieldLogger
 	cli_fty *client_helper.ClientFactory
 }
 
-func MakeCoreService(opts cs_helper.Options, cli_fty *client_helper.ClientFactory) CoreService {
+func MakeCoreService(opts cs_helper.Options, logger log.FieldLogger, cli_fty *client_helper.ClientFactory) CoreService {
 	return CoreService{
 		opts:    opts,
+		logger:  logger,
 		cli_fty: cli_fty,
 	}
 }

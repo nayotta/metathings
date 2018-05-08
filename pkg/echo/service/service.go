@@ -55,7 +55,7 @@ func NewEchoService(opts cs_helper.Options) (*metathingsEchoService, error) {
 		logger:  logger,
 		cli_fty: cli_fty,
 	}
-	srv.CoreService = mt_plugin.MakeCoreService(srv.opts, srv.cli_fty)
+	srv.CoreService = mt_plugin.MakeCoreService(srv.opts, srv.logger, srv.cli_fty)
 
 	return srv, nil
 }

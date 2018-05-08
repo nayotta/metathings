@@ -1,9 +1,0 @@
-syntax = "proto3";
-
-package ai.metathings.service.switcher;
-
-import "switcher.proto";
-
-message TurnOffResponse {
-	Switcher switcher = 1;
-}
