@@ -8,15 +8,15 @@ import (
 	"google.golang.org/grpc/codes"
 
 	client_helper "github.com/bigdatagz/metathings/pkg/common/client"
-	cs_helper "github.com/bigdatagz/metathings/pkg/common/core_service"
 	log_helper "github.com/bigdatagz/metathings/pkg/common/log"
+	opt_helper "github.com/bigdatagz/metathings/pkg/common/option"
 	mt_plugin "github.com/bigdatagz/metathings/pkg/core/plugin"
 	pb "github.com/bigdatagz/metathings/pkg/proto/echo"
 )
 
 type metathingsEchoService struct {
 	mt_plugin.CoreService
-	opts    cs_helper.Options
+	opts    opt_helper.Option
 	logger  log.FieldLogger
 	cli_fty *client_helper.ClientFactory
 }
@@ -32,7 +32,7 @@ func (srv *metathingsEchoService) Echo(ctx context.Context, req *pb.EchoRequest)
 	return nil, grpc.Errorf(codes.InvalidArgument, "empty body")
 }
 
-func NewEchoService(opts cs_helper.Options) (*metathingsEchoService, error) {
+func NewEchoService(opts opt_helper.Option) (*metathingsEchoService, error) {
 	opts.Set("service_name", "echo")
 
 	logger, err := log_helper.NewLogger("echod", opts.GetString("log.level"))

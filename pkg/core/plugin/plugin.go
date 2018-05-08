@@ -12,19 +12,19 @@ import (
 	"github.com/spf13/viper"
 
 	client_helper "github.com/bigdatagz/metathings/pkg/common/client"
-	cs_helper "github.com/bigdatagz/metathings/pkg/common/core_service"
+	opt_helper "github.com/bigdatagz/metathings/pkg/common/option"
 	agentd_pb "github.com/bigdatagz/metathings/pkg/proto/core_agent"
 )
 
 const METATHINGS_PLUGIN_PREFIX = "mtp"
 
 type CoreService struct {
-	opts    cs_helper.Options
+	opts    opt_helper.Option
 	logger  log.FieldLogger
 	cli_fty *client_helper.ClientFactory
 }
 
-func MakeCoreService(opts cs_helper.Options, logger log.FieldLogger, cli_fty *client_helper.ClientFactory) CoreService {
+func MakeCoreService(opts opt_helper.Option, logger log.FieldLogger, cli_fty *client_helper.ClientFactory) CoreService {
 	return CoreService{
 		opts:    opts,
 		logger:  logger,
@@ -91,12 +91,12 @@ func (s CoreService) HeartbeatOnce() error {
 }
 
 type ServicePlugin interface {
-	Init(opts cs_helper.Options) error
+	Init(opts opt_helper.Option) error
 	Run() error
 }
 
 type DispatcherPlugin interface {
-	Init(opts cs_helper.Options) error
+	Init(opts opt_helper.Option) error
 	UnaryCall(method string, ctx context.Context, req *any.Any) (*any.Any, error)
 }
 

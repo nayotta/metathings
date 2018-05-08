@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package ai.metathings.service.switcher;
+
+
+import "switcher.proto";
+
+message GetResponse {
+	Switcher switcher = 1;
+}

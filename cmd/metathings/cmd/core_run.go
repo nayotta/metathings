@@ -6,7 +6,7 @@ import (
 
 	helper "github.com/bigdatagz/metathings/pkg/common"
 	cmd_helper "github.com/bigdatagz/metathings/pkg/common/cmd"
-	cs_helper "github.com/bigdatagz/metathings/pkg/common/core_service"
+	opt_helper "github.com/bigdatagz/metathings/pkg/common/option"
 	mt_plugin "github.com/bigdatagz/metathings/pkg/core/plugin"
 )
 
@@ -66,7 +66,7 @@ func runCore(args []string) error {
 
 	// pass config to service plugin.
 	args = append(args, "--config", root_opts.Config)
-	err = plugin.Init(cs_helper.Options{"args": args})
+	err = plugin.Init(opt_helper.Option{"args": args})
 	if err != nil {
 		return err
 	}

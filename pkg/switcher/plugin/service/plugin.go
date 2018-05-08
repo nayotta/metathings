@@ -10,10 +10,10 @@ import (
 	"google.golang.org/grpc"
 
 	cmd_helper "github.com/bigdatagz/metathings/pkg/common/cmd"
-	opt_helper "github.com/bigdatagz/metathings/pkg/common/option"
+	cs_helper "github.com/bigdatagz/metathings/pkg/common/core_service"
 	mtp "github.com/bigdatagz/metathings/pkg/core/plugin"
-	service "github.com/bigdatagz/metathings/pkg/echo/service"
-	pb "github.com/bigdatagz/metathings/pkg/proto/echo"
+	pb "github.com/bigdatagz/metathings/pkg/proto/switcher"
+	service "github.com/bigdatagz/metathings/pkg/switcher/service"
 )
 
 type _coreAgentdOptions struct {
@@ -43,7 +43,7 @@ var (
 
 var (
 	rootCmd = &cobra.Command{
-		Use: "echo",
+		Use: "switcher",
 		PreRun: cmd_helper.DefaultPreRunHooks(func() {
 			if root_opts.Config == "" {
 				return
@@ -58,20 +58,20 @@ var (
 			root_opts = &_opts
 		}),
 		Run: func(cmd *cobra.Command, args []string) {
-			if err := runEchod(); err != nil {
-				log.WithError(err).Fatalf("failed to run echo(core) service")
+			if err := runSwitcherd(); err != nil {
+				log.WithError(err).Fatalf("failed to run switcher(core) service")
 			}
 		},
 	}
 )
 
-func defaultOptions() opt_helper.Option {
-	return opt_helper.Option{
+func defaultOptions() cs_helper.Options {
+	return cs_helper.Options{
 		"heartbeat.interval": 15,
 	}
 }
 
-func runEchod() error {
+func runSwitcherd() error {
 	port := strings.SplitAfter(root_opts.Listen, ":")[1]
 	ep := "localhost" + ":" + port
 
@@ -82,7 +82,7 @@ func runEchod() error {
 	opts.Set("metathings.address", root_opts.ServiceConfig.Metathingsd.Address)
 	opts.Set("endpoint", ep)
 
-	srv, err := service.NewEchoService(opts)
+	srv, err := service.NewSwitcherService(opts)
 	if err != nil {
 		return err
 	}
@@ -92,15 +92,15 @@ func runEchod() error {
 		return err
 	}
 	s := grpc.NewServer()
-	pb.RegisterEchoServiceServer(s, srv)
+	pb.RegisterSwitcherServiceServer(s, srv)
 
 	err = srv.Init()
 	if err != nil {
 		return err
 	}
-	log.Debugf("echo(core) service initialized")
+	log.Debugf("switcher(core) service initialized")
 
-	log.WithField("listen", root_opts.Listen).Infof("echo(core) service listening")
+	log.WithField("listen", root_opts.Listen).Infof("switcher(core) service listening")
 	return s.Serve(lis)
 }
 
@@ -113,13 +113,13 @@ func initConfig() {
 	}
 }
 
-type echoServicePlugin struct{}
+type switcherServicePlugin struct{}
 
-func (p *echoServicePlugin) Run() error {
+func (p *switcherServicePlugin) Run() error {
 	return rootCmd.Execute()
 }
 
-func (p *echoServicePlugin) Init(opts opt_helper.Option) error {
+func (p *switcherServicePlugin) Init(opts cs_helper.Options) error {
 	args := opts.GetStrings("args")
 	rootCmd.SetArgs(args)
 
@@ -132,11 +132,11 @@ func (p *echoServicePlugin) Init(opts opt_helper.Option) error {
 
 	cobra.OnInitialize(initConfig)
 
-	rootCmd.PersistentFlags().StringVarP(&root_opts.Listen, "listen", "l", "0.0.0.0:13401", "Echo(Core Plugin) Service listenting address")
+	rootCmd.PersistentFlags().StringVarP(&root_opts.Listen, "listen", "l", "0.0.0.0:13401", "Switcher(Core Plugin) Service listenting address")
 	rootCmd.PersistentFlags().StringVarP(&root_opts.Config, "config", "c", "", "Config file")
 	rootCmd.PersistentFlags().BoolVar(&root_opts.Verbose, "verbose", false, "Verbose mode")
 	rootCmd.PersistentFlags().StringVar(&root_opts.Log.Level, "log-level", "info", "Logging Level[debug, info, warn, error]")
-	rootCmd.PersistentFlags().StringVar(&root_opts.Name, "name", "echod", "Core Service Name")
+	rootCmd.PersistentFlags().StringVar(&root_opts.Name, "name", "switcherd", "Core Service Name")
 	rootCmd.PersistentFlags().StringVar(&root_opts.ServiceConfig.CoreAgentd.Address, "agent-addr", "agentd.metathings.local:5002", "Core Agent Service Address")
 	rootCmd.PersistentFlags().StringVar(&root_opts.ServiceConfig.Metathingsd.Address, "metathings-addr", "api.metathings.ai:80", "Metathings Service Address")
 
@@ -144,5 +144,5 @@ func (p *echoServicePlugin) Init(opts opt_helper.Option) error {
 }
 
 func NewServicePlugin() mtp.ServicePlugin {
-	return &echoServicePlugin{}
+	return &switcherServicePlugin{}
 }
