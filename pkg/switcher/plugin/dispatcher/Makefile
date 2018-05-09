@@ -1,7 +1,7 @@
 GO=$(shell which go)
 SRC=$(shell ls *.go)
-OUTPATH=../../../../lib/plugin/echo
-BIN=$(OUTPATH)/ai.metathings.dispatcher.echo.so
+OUTPATH=../../../../lib/plugin/switcher
+BIN=$(OUTPATH)/ai.metathings.dispatcher.switcher.so
 
 all: build
 

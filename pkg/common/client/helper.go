@@ -7,6 +7,7 @@ import (
 	agentd_pb "github.com/bigdatagz/metathings/pkg/proto/core_agent"
 	echod_pb "github.com/bigdatagz/metathings/pkg/proto/echo"
 	identityd_pb "github.com/bigdatagz/metathings/pkg/proto/identity"
+	switcherd_pb "github.com/bigdatagz/metathings/pkg/proto/switcher"
 )
 
 const (
@@ -15,6 +16,7 @@ const (
 	CORED_CONFIG
 	AGENTD_CONFIG
 	ECHOD_CONFIG
+	SWITCHERD_CONFIG
 )
 
 type CloseFn func()
@@ -98,6 +100,19 @@ func (f *ClientFactory) NewEchoServiceClient(opts ...grpc.DialOption) (echod_pb.
 	}
 
 	return echod_pb.NewEchoServiceClient(conn), closeFn, nil
+}
+
+func (f *ClientFactory) NewSwitcherServiceClient(opts ...grpc.DialOption) (switcherd_pb.SwitcherServiceClient, CloseFn, error) {
+	conn, err := f.NewConnection(SWITCHERD_CONFIG, opts...)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	closeFn := func() {
+		conn.Close()
+	}
+
+	return switcherd_pb.NewSwitcherServiceClient(conn), closeFn, nil
 }
 
 func NewClientFactory(configs ServiceConfigs, optFn DialOptionFn) (*ClientFactory, error) {

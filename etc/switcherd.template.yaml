@@ -1,8 +1,8 @@
 dev:
-  name: echod
-  service_name: echo
-  listen: 127.0.0.1:13401
-  verbose: false
+  name: switcherd
+  service_name: switcher
+  listen: 0.0.0.0:15601
+  verbose: true
   log:
     level: info
   application_credential:
@@ -13,3 +13,6 @@ dev:
       address: <core-agentd-address>
     metathingsd:
       address: <metathingsd-address>
+  driver:
+    name: <driver-name>
+    # and more options for driver

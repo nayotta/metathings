@@ -10,7 +10,7 @@ import (
 	"google.golang.org/grpc"
 
 	cmd_helper "github.com/bigdatagz/metathings/pkg/common/cmd"
-	cs_helper "github.com/bigdatagz/metathings/pkg/common/core_service"
+	opt_helper "github.com/bigdatagz/metathings/pkg/common/option"
 	mtp "github.com/bigdatagz/metathings/pkg/core/plugin"
 	pb "github.com/bigdatagz/metathings/pkg/proto/switcher"
 	service "github.com/bigdatagz/metathings/pkg/switcher/service"
@@ -29,11 +29,17 @@ type _serviceConfigOptions struct {
 	Metathingsd _metathingsdOptions `mapstructure:"metathingsd"`
 }
 
+type _driverOptions struct {
+	Name       string
+	Descriptor string
+}
+
 type _rootOptions struct {
 	cmd_helper.RootOptions `mapstructure:",squash"`
 	ServiceConfig          _serviceConfigOptions `mapstructure:"service_config"`
 	Listen                 string
 	Name                   string
+	Driver                 _driverOptions
 }
 
 var (
@@ -55,6 +61,10 @@ var (
 				_opts.ServiceConfig.CoreAgentd.Address = root_opts.ServiceConfig.CoreAgentd.Address
 			}
 
+			if _opts.Driver.Descriptor == "" {
+				_opts.Driver.Descriptor = root_opts.Driver.Descriptor
+			}
+
 			root_opts = &_opts
 		}),
 		Run: func(cmd *cobra.Command, args []string) {
@@ -65,8 +75,8 @@ var (
 	}
 )
 
-func defaultOptions() cs_helper.Options {
-	return cs_helper.Options{
+func defaultOptions() opt_helper.Option {
+	return opt_helper.Option{
 		"heartbeat.interval": 15,
 	}
 }
@@ -81,6 +91,9 @@ func runSwitcherd() error {
 	opts.Set("agent.address", root_opts.ServiceConfig.CoreAgentd.Address)
 	opts.Set("metathings.address", root_opts.ServiceConfig.Metathingsd.Address)
 	opts.Set("endpoint", ep)
+	opts.Set("driver.descriptor", root_opts.Driver.Descriptor)
+	opts.Set("driver.name", root_opts.Driver.Name)
+	opts.Set("driver", v.Sub("driver"))
 
 	srv, err := service.NewSwitcherService(opts)
 	if err != nil {
@@ -119,7 +132,7 @@ func (p *switcherServicePlugin) Run() error {
 	return rootCmd.Execute()
 }
 
-func (p *switcherServicePlugin) Init(opts cs_helper.Options) error {
+func (p *switcherServicePlugin) Init(opts opt_helper.Option) error {
 	args := opts.GetStrings("args")
 	rootCmd.SetArgs(args)
 
@@ -139,6 +152,8 @@ func (p *switcherServicePlugin) Init(opts cs_helper.Options) error {
 	rootCmd.PersistentFlags().StringVar(&root_opts.Name, "name", "switcherd", "Core Service Name")
 	rootCmd.PersistentFlags().StringVar(&root_opts.ServiceConfig.CoreAgentd.Address, "agent-addr", "agentd.metathings.local:5002", "Core Agent Service Address")
 	rootCmd.PersistentFlags().StringVar(&root_opts.ServiceConfig.Metathingsd.Address, "metathings-addr", "api.metathings.ai:80", "Metathings Service Address")
+	rootCmd.PersistentFlags().StringVar(&root_opts.Driver.Descriptor, "driver-descriptor", "~/.metathins/switcher_driver_descriptor.yaml", "Switcher driver descriptor path")
+	rootCmd.PersistentFlags().StringVar(&root_opts.Driver.Name, "driver-name", "", "Switcher driver name")
 
 	return nil
 }

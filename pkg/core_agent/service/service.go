@@ -21,8 +21,8 @@ import (
 	app_cred_mgr "github.com/bigdatagz/metathings/pkg/common/application_credential_manager"
 	client_helper "github.com/bigdatagz/metathings/pkg/common/client"
 	context_helper "github.com/bigdatagz/metathings/pkg/common/context"
-	cs_helper "github.com/bigdatagz/metathings/pkg/common/core_service"
 	log_helper "github.com/bigdatagz/metathings/pkg/common/log"
+	opt_helper "github.com/bigdatagz/metathings/pkg/common/option"
 	state_helper "github.com/bigdatagz/metathings/pkg/common/state"
 	mt_plugin "github.com/bigdatagz/metathings/pkg/core/plugin"
 	state_pb "github.com/bigdatagz/metathings/pkg/proto/common/state"
@@ -255,7 +255,7 @@ func (srv *coreAgentService) loadDispatcherPlugin(e *pb.Entity) {
 		return
 	}
 
-	err = dp.Init(cs_helper.Options{
+	err = dp.Init(opt_helper.Option{
 		"endpoint": e.Endpoint,
 	})
 	if err != nil {

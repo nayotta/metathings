@@ -10,6 +10,8 @@ all: \
 	echo_proto \
 	echo_plugins \
 	switcher_proto \
+	switcher_drivers \
+	switcher_plugins \
 	metathings_bin \
 	metathingsd_bin
 
@@ -42,6 +44,9 @@ metathingsd_bin:
 
 echo_plugins:
 	$(MAKE) -C pkg/echo/plugin all
+
+switcher_drivers:
+	$(MAKE) -C pkg/switcher/driver all
 
 switcher_plugins:
 	$(MAKE) -C pkg/switcher/plugin all
