@@ -38,6 +38,7 @@ func (srv *metathingsSwitcherService) Get(ctx context.Context, _ *empty.Empty) (
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
+	srv.logger.WithField("switcher", sw).Debugf("get switcher")
 
 	return &pb.GetResponse{Switcher: srv.copySwitcher(sw)}, nil
 
@@ -53,6 +54,7 @@ func (srv *metathingsSwitcherService) Turn(ctx context.Context, req *pb.TurnRequ
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
+	srv.logger.WithField("switcher", sw).Infof("switcher state turning")
 
 	return &pb.TurnResponse{Switcher: srv.copySwitcher(sw)}, nil
 }
@@ -80,10 +82,18 @@ func NewSwitcherService(opt opt_helper.Option) (*metathingsSwitcherService, erro
 		return nil, err
 	}
 
+	drv_name := opt.GetString("driver.name")
 	drv, err := drv_fty.New(opt.GetString("driver.name"), opt)
 	if err != nil {
 		return nil, err
 	}
+	logger.WithField("driver_name", drv_name).Debugf("load switcher driver")
+
+	err = drv.Init(opt)
+	if err != nil {
+		return nil, err
+	}
+	logger.Debugf("switcher driver initialized")
 
 	srv := &metathingsSwitcherService{
 		opt:     opt,
@@ -95,5 +105,5 @@ func NewSwitcherService(opt opt_helper.Option) (*metathingsSwitcherService, erro
 	}
 	srv.CoreService = mt_plugin.MakeCoreService(srv.opt, srv.logger, srv.cli_fty)
 
-	return nil, nil
+	return srv, nil
 }

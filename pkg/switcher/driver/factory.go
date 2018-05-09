@@ -89,7 +89,7 @@ func (df *DriverFactory) getNewDriverMethod(name string) (NewDriverMethod, error
 		return nil, err
 	}
 
-	method = fn.(NewDriverMethod)
+	method = *fn.(*NewDriverMethod)
 	df.methods[name] = method
 
 	return method, nil
