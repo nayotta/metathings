@@ -1,3 +1,5 @@
-FROM golang:alpine
+FROM bigdatagz/metathings-protobuf
 
-RUN apk add --update alpine-sdk
+RUN go get -u -v github.com/golang/protobuf/proto && \
+    go get -u -v github.com/golang/protobuf/protoc-gen-go && \
+    go get -u -v github.com/mwitkow/go-proto-validators/protoc-gen-govalidators
