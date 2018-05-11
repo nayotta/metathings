@@ -93,7 +93,7 @@ func runSwitcherd() error {
 	opts.Set("endpoint", ep)
 	opts.Set("driver.descriptor", root_opts.Driver.Descriptor)
 	opts.Set("driver.name", root_opts.Driver.Name)
-	opts.Set("driver", v.Sub("driver"))
+	opts.Set("driver", cmd_helper.GetFromStage(v).Sub("driver"))
 
 	srv, err := service.NewSwitcherService(opts)
 	if err != nil {

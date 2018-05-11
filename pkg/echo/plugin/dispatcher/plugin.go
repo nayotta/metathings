@@ -37,7 +37,6 @@ func (dp *echoDispatcherPlugin) UnaryCall(method string, ctx context.Context, re
 
 	switch method {
 	case "Echo":
-
 		req1 := new(pb.EchoRequest)
 		err = ptypes.UnmarshalAny(req, req1)
 		if err != nil {

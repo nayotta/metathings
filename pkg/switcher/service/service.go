@@ -46,7 +46,7 @@ func (srv *metathingsSwitcherService) Get(ctx context.Context, _ *empty.Empty) (
 
 func (srv *metathingsSwitcherService) Turn(ctx context.Context, req *pb.TurnRequest) (*pb.TurnResponse, error) {
 	st := driver.FromValue(int32(req.State))
-	if st != driver.ON || st != driver.OFF {
+	if st == driver.UNKNOWN {
 		return nil, status.Errorf(codes.InvalidArgument, "unsupported switcher state")
 	}
 
@@ -89,6 +89,7 @@ func NewSwitcherService(opt opt_helper.Option) (*metathingsSwitcherService, erro
 	}
 	logger.WithField("driver_name", drv_name).Debugf("load switcher driver")
 
+	opt.Set("logger", logger.WithField("#driver", drv_name))
 	err = drv.Init(opt)
 	if err != nil {
 		return nil, err

@@ -6,6 +6,14 @@ import (
 )
 
 func UnmarshalConfig(dst interface{}, vs ...*viper.Viper) {
+	v := GetFromStage(vs...)
+	err := v.Unmarshal(dst)
+	if err != nil {
+		log.WithError(err).Fatalf("failed to unmarshal config")
+	}
+}
+
+func GetFromStage(vs ...*viper.Viper) *viper.Viper {
 	var v *viper.Viper
 
 	if len(vs) == 0 {
@@ -15,8 +23,6 @@ func UnmarshalConfig(dst interface{}, vs ...*viper.Viper) {
 	}
 
 	stage := GetStageFromEnv()
-	err := v.Sub(stage).Unmarshal(dst)
-	if err != nil {
-		log.WithError(err).Fatalf("failed to unmarshal config")
-	}
+	v = v.Sub(stage)
+	return v
 }

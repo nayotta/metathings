@@ -22,6 +22,10 @@ func (drv *dummySwitcherDriver) Init(opt opt_helper.Option) error {
 	return nil
 }
 
+func (drv *dummySwitcherDriver) Close() error {
+	return nil
+}
+
 func (drv *dummySwitcherDriver) Get() (driver.Switcher, error) {
 	drv.mutex.Lock()
 	defer drv.mutex.Unlock()
