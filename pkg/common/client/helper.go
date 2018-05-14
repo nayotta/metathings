@@ -3,11 +3,11 @@ package client_helper
 import (
 	"google.golang.org/grpc"
 
-	cored_pb "github.com/bigdatagz/metathings/pkg/proto/core"
-	agentd_pb "github.com/bigdatagz/metathings/pkg/proto/core_agent"
-	echod_pb "github.com/bigdatagz/metathings/pkg/proto/echo"
-	identityd_pb "github.com/bigdatagz/metathings/pkg/proto/identity"
-	switcherd_pb "github.com/bigdatagz/metathings/pkg/proto/switcher"
+	cored_pb "github.com/nayotta/metathings/pkg/proto/core"
+	agentd_pb "github.com/nayotta/metathings/pkg/proto/core_agent"
+	echod_pb "github.com/nayotta/metathings/pkg/proto/echo"
+	identityd_pb "github.com/nayotta/metathings/pkg/proto/identity"
+	switcherd_pb "github.com/nayotta/metathings/pkg/proto/switcher"
 )
 
 const (

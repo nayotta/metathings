@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package ai.metathings.service.core;
 
-import "github.com/bigdatagz/metathings/pkg/proto/common/state/entity_state.proto";
+import "github.com/nayotta/metathings/pkg/proto/common/state/entity_state.proto";
 
 message Entity {
 	string id = 1;

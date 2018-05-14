@@ -3,13 +3,8 @@ CLEAN_PATHS=./bin ./lib
 
 
 all: \
-	state_proto \
-	identity_proto \
-	core_proto \
-	core_agent_proto \
-	echo_proto \
+	protos \
 	echo_plugins \
-	switcher_proto \
 	switcher_drivers \
 	switcher_plugins \
 	metathings_bin \
@@ -18,23 +13,8 @@ all: \
 clean:
 	$(RM) -rf $(CLEAN_PATHS)
 
-state_proto:
-	$(MAKE) -C pkg/proto/common/state all
-
-identity_proto:
-	$(MAKE) -C pkg/proto/identity all
-
-core_proto:
-	$(MAKE) -C pkg/proto/core all
-
-core_agent_proto:
-	$(MAKE) -C pkg/proto/core_agent all
-
-echo_proto:
-	$(MAKE) -C pkg/proto/echo all
-
-switcher_proto:
-	$(MAKE) -C pkg/proto/switcher all
+protos:
+	$(MAKE) -C pkg/proto all
 
 metathings_bin:
 	$(MAKE) -C cmd/metathings all

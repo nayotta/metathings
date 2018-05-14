@@ -7,10 +7,10 @@ import (
 	"github.com/golang/protobuf/ptypes/any"
 	"github.com/golang/protobuf/ptypes/empty"
 
-	client_helper "github.com/bigdatagz/metathings/pkg/common/client"
-	opt_helper "github.com/bigdatagz/metathings/pkg/common/option"
-	mt_plugin "github.com/bigdatagz/metathings/pkg/core/plugin"
-	pb "github.com/bigdatagz/metathings/pkg/proto/switcher"
+	client_helper "github.com/nayotta/metathings/pkg/common/client"
+	opt_helper "github.com/nayotta/metathings/pkg/common/option"
+	mt_plugin "github.com/nayotta/metathings/pkg/core/plugin"
+	pb "github.com/nayotta/metathings/pkg/proto/switcher"
 )
 
 type switcherDispatcherPlugin struct {

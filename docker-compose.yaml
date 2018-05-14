@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: dockerfile/Dockerfile.frontd
-    image: bigdatagz/frontd
+    image: nayotta/frontd
     volumes:
       - ./etc/envoy.front.yaml:/etc/envoy.front.yaml
     networks:
@@ -24,7 +24,7 @@ services:
     build:
       context: .
       dockerfile: dockerfile/Dockerfile.identityd
-    image: bigdatagz/identityd
+    image: nayotta/identityd
     volumes:
       - ./etc/identityd.yaml:/etc/metathings/identityd.yaml
     networks:
@@ -41,7 +41,7 @@ services:
     build:
       context: .
       dockerfile: dockerfile/Dockerfile.cored
-    image: bigdatagz/cored
+    image: nayotta/cored
     volumes:
       - ./etc/cored.yaml:/etc/metathings/cored.yaml
       - ./data/storage:/var/metathings/storage

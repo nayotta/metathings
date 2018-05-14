@@ -1,4 +1,4 @@
-FROM bigdatagz/metathings-development
+FROM nayotta/metathings-development
 
 COPY ./etc/identityd.yaml /etc/metathings/identityd.yaml
 COPY ./script/identityd.dev_start.sh /usr/local/sbin/identityd.dev_start.sh

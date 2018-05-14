@@ -3,7 +3,7 @@ package metathings_core_storage
 import (
 	log "github.com/sirupsen/logrus"
 
-	sql_helper "github.com/bigdatagz/metathings/pkg/common/sql"
+	sql_helper "github.com/nayotta/metathings/pkg/common/sql"
 )
 
 type Core struct {

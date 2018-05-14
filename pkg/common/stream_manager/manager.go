@@ -9,8 +9,8 @@ import (
 	gpb "github.com/golang/protobuf/ptypes/wrappers"
 	log "github.com/sirupsen/logrus"
 
-	helper "github.com/bigdatagz/metathings/pkg/common"
-	cored_pb "github.com/bigdatagz/metathings/pkg/proto/core"
+	helper "github.com/nayotta/metathings/pkg/common"
+	cored_pb "github.com/nayotta/metathings/pkg/proto/core"
 )
 
 var (

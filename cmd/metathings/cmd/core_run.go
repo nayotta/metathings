@@ -4,10 +4,10 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 
-	helper "github.com/bigdatagz/metathings/pkg/common"
-	cmd_helper "github.com/bigdatagz/metathings/pkg/common/cmd"
-	opt_helper "github.com/bigdatagz/metathings/pkg/common/option"
-	mt_plugin "github.com/bigdatagz/metathings/pkg/core/plugin"
+	helper "github.com/nayotta/metathings/pkg/common"
+	cmd_helper "github.com/nayotta/metathings/pkg/common/cmd"
+	opt_helper "github.com/nayotta/metathings/pkg/common/option"
+	mt_plugin "github.com/nayotta/metathings/pkg/core/plugin"
 )
 
 type _coreRunOptions struct {

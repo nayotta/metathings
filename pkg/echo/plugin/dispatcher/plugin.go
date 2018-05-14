@@ -6,10 +6,10 @@ import (
 	"github.com/golang/protobuf/ptypes"
 	"github.com/golang/protobuf/ptypes/any"
 
-	client_helper "github.com/bigdatagz/metathings/pkg/common/client"
-	opt_helper "github.com/bigdatagz/metathings/pkg/common/option"
-	mt_plugin "github.com/bigdatagz/metathings/pkg/core/plugin"
-	pb "github.com/bigdatagz/metathings/pkg/proto/echo"
+	client_helper "github.com/nayotta/metathings/pkg/common/client"
+	opt_helper "github.com/nayotta/metathings/pkg/common/option"
+	mt_plugin "github.com/nayotta/metathings/pkg/core/plugin"
+	pb "github.com/nayotta/metathings/pkg/proto/echo"
 )
 
 type echoDispatcherPlugin struct {

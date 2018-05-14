@@ -11,9 +11,9 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 
-	client_helper "github.com/bigdatagz/metathings/pkg/common/client"
-	opt_helper "github.com/bigdatagz/metathings/pkg/common/option"
-	agentd_pb "github.com/bigdatagz/metathings/pkg/proto/core_agent"
+	client_helper "github.com/nayotta/metathings/pkg/common/client"
+	opt_helper "github.com/nayotta/metathings/pkg/common/option"
+	agentd_pb "github.com/nayotta/metathings/pkg/proto/core_agent"
 )
 
 const METATHINGS_PLUGIN_PREFIX = "mtp"

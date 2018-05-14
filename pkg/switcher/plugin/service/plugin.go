@@ -9,11 +9,11 @@ import (
 	"github.com/spf13/viper"
 	"google.golang.org/grpc"
 
-	cmd_helper "github.com/bigdatagz/metathings/pkg/common/cmd"
-	opt_helper "github.com/bigdatagz/metathings/pkg/common/option"
-	mtp "github.com/bigdatagz/metathings/pkg/core/plugin"
-	pb "github.com/bigdatagz/metathings/pkg/proto/switcher"
-	service "github.com/bigdatagz/metathings/pkg/switcher/service"
+	cmd_helper "github.com/nayotta/metathings/pkg/common/cmd"
+	opt_helper "github.com/nayotta/metathings/pkg/common/option"
+	mtp "github.com/nayotta/metathings/pkg/core/plugin"
+	pb "github.com/nayotta/metathings/pkg/proto/switcher"
+	service "github.com/nayotta/metathings/pkg/switcher/service"
 )
 
 type _coreAgentdOptions struct {

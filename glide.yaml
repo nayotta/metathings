@@ -1,4 +1,4 @@
-package: github.com/bigdatagz/metathings
+package: github.com/nayotta/metathings
 import:
 - package: cloud.google.com/go
   version: ^0.21.0

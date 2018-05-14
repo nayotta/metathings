@@ -7,7 +7,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
-	cmd_helper "github.com/bigdatagz/metathings/pkg/common/cmd"
+	cmd_helper "github.com/nayotta/metathings/pkg/common/cmd"
 )
 
 const (

@@ -1,7 +1,7 @@
 package metathings_switcher_driver
 
 import (
-	opt_helper "github.com/bigdatagz/metathings/pkg/common/option"
+	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 )
 
 type SwitcherState int32

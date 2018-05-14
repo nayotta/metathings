@@ -8,13 +8,13 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	client_helper "github.com/bigdatagz/metathings/pkg/common/client"
-	log_helper "github.com/bigdatagz/metathings/pkg/common/log"
-	opt_helper "github.com/bigdatagz/metathings/pkg/common/option"
-	mt_plugin "github.com/bigdatagz/metathings/pkg/core/plugin"
-	pb "github.com/bigdatagz/metathings/pkg/proto/switcher"
-	driver "github.com/bigdatagz/metathings/pkg/switcher/driver"
-	state_helper "github.com/bigdatagz/metathings/pkg/switcher/state"
+	client_helper "github.com/nayotta/metathings/pkg/common/client"
+	log_helper "github.com/nayotta/metathings/pkg/common/log"
+	opt_helper "github.com/nayotta/metathings/pkg/common/option"
+	mt_plugin "github.com/nayotta/metathings/pkg/core/plugin"
+	pb "github.com/nayotta/metathings/pkg/proto/switcher"
+	driver "github.com/nayotta/metathings/pkg/switcher/driver"
+	state_helper "github.com/nayotta/metathings/pkg/switcher/state"
 )
 
 type metathingsSwitcherService struct {

@@ -1,8 +1,8 @@
 package metathings_switcher_driver
 
 import (
-	pb "github.com/bigdatagz/metathings/pkg/proto/switcher"
-	state_helper "github.com/bigdatagz/metathings/pkg/switcher/state"
+	pb "github.com/nayotta/metathings/pkg/proto/switcher"
+	state_helper "github.com/nayotta/metathings/pkg/switcher/state"
 )
 
 var _switcher_st_psr = state_helper.NewSwitcherStateParser()

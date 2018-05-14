@@ -1,4 +1,4 @@
-FROM bigdatagz/metathings-development
+FROM nayotta/metathings-development
 
 COPY ./etc/cored.yaml /etc/metathings/cored.yaml
 COPY ./script/cored.dev_start.sh /usr/local/sbin/cored.dev_start.sh

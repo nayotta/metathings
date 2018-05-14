@@ -7,8 +7,8 @@ import (
 	"github.com/spf13/viper"
 	rpio "github.com/stianeikeland/go-rpio"
 
-	opt_helper "github.com/bigdatagz/metathings/pkg/common/option"
-	driver "github.com/bigdatagz/metathings/pkg/switcher/driver"
+	opt_helper "github.com/nayotta/metathings/pkg/common/option"
+	driver "github.com/nayotta/metathings/pkg/switcher/driver"
 )
 
 type driverOption struct {

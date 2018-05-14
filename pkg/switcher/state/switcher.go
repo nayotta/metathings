@@ -1,8 +1,8 @@
 package switcher_state_helper
 
 import (
-	state_helper "github.com/bigdatagz/metathings/pkg/common/state"
-	pb "github.com/bigdatagz/metathings/pkg/proto/switcher"
+	state_helper "github.com/nayotta/metathings/pkg/common/state"
+	pb "github.com/nayotta/metathings/pkg/proto/switcher"
 )
 
 type SwitcherStateParser struct {

@@ -14,10 +14,10 @@ import (
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 
-	grpc_helper "github.com/bigdatagz/metathings/pkg/common/grpc"
-	"github.com/bigdatagz/metathings/pkg/common/log"
-	codec "github.com/bigdatagz/metathings/pkg/identity/service/encode_decode"
-	pb "github.com/bigdatagz/metathings/pkg/proto/identity"
+	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
+	"github.com/nayotta/metathings/pkg/common/log"
+	codec "github.com/nayotta/metathings/pkg/identity/service/encode_decode"
+	pb "github.com/nayotta/metathings/pkg/proto/identity"
 )
 
 type options struct {

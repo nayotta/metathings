@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/bigdatagz/metathings/cmd/metathingsd/cmd"
+	"github.com/nayotta/metathings/cmd/metathingsd/cmd"
 )
 
 func main() {
