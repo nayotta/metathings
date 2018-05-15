@@ -362,22 +362,16 @@ func (srv *coreAgentService) ServeOnStream() error {
 	token := srv.app_cred_mgr.GetToken()
 	ctx := context_helper.WithToken(context.Background(), token)
 
-	grpc_opts := []grpc.DialOption{
-		grpc.WithInsecure(),
-		grpc.WithKeepaliveParams(keepalive.ClientParameters{
-			Time:                2 * time.Second,
-			Timeout:             20 * time.Second,
-			PermitWithoutStream: true,
-		}),
-	}
-	conn, err := grpc.Dial(srv.opts.metathings_addr, grpc_opts...)
+	cli, cfn, err := srv.cli_fty.NewCoreServiceClient(grpc.WithKeepaliveParams(keepalive.ClientParameters{
+		Time:                2 * time.Second,
+		Timeout:             20 * time.Second,
+		PermitWithoutStream: true,
+	}))
 	if err != nil {
 		srv.logger.WithError(err).Errorf("failed to dial to metathings service")
 		return err
 	}
-	defer conn.Close()
-
-	cli := cored_pb.NewCoreServiceClient(conn)
+	defer cfn()
 
 	stream, err := cli.Stream(ctx)
 	if err != nil {

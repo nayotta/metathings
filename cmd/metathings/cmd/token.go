@@ -126,13 +126,11 @@ func issueToken() error {
 	}
 
 	ctx := context.Background()
-	opts := []grpc.DialOption{grpc.WithInsecure()}
-	conn, err := grpc.Dial(root_opts.ServiceConfig.Metathings.Address, opts...)
+	cli, cfn, err := getClientFactory().NewIdentityServiceClient()
 	if err != nil {
 		return err
 	}
-	defer conn.Close()
-	cli := pb.NewIdentityServiceClient(conn)
+	defer cfn()
 
 	var header metadata.MD
 	res, err := cli.IssueToken(ctx, req, grpc.Header(&header))

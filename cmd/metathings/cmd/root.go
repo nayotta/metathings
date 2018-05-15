@@ -7,6 +7,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
+	client_helper "github.com/nayotta/metathings/pkg/common/client"
 	cmd_helper "github.com/nayotta/metathings/pkg/common/cmd"
 )
 
@@ -31,6 +32,21 @@ type _rootOptions struct {
 var (
 	root_opts *_rootOptions
 )
+
+var (
+	_cli_fty *client_helper.ClientFactory
+)
+
+func getClientFactory() *client_helper.ClientFactory {
+	if _cli_fty == nil {
+		_cli_fty, _ = client_helper.NewClientFactory(
+			client_helper.NewDefaultServiceConfigs(root_opts.ServiceConfig.Metathings.Address),
+			client_helper.WithInsecureOptionFunc(),
+		)
+	}
+
+	return _cli_fty
+}
 
 var (
 	RootCmd = &cobra.Command{
