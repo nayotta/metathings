@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: dockerfile/Dockerfile.frontd
-    image: nayotta/frontd
+    image: nayotta/metathings-frontd
     volumes:
       - ./etc/envoy.front.yaml:/etc/envoy.front.yaml
     networks:
