@@ -64,6 +64,7 @@ func (drv *rpiSwitcherDriver) Init(opt opt_helper.Option) error {
 	if err != nil {
 		return err
 	}
+	drv.pin.Output()
 	drv.pin.Low()
 
 	drv.logger.WithFields(log.Fields{
