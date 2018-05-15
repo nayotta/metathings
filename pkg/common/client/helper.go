@@ -1,6 +1,9 @@
 package client_helper
 
 import (
+	"fmt"
+	"strings"
+
 	"google.golang.org/grpc"
 
 	cored_pb "github.com/nayotta/metathings/pkg/proto/core"
@@ -18,6 +21,17 @@ const (
 	ECHOD_CONFIG
 	SWITCHERD_CONFIG
 )
+
+const (
+	defaultPort = 21733
+)
+
+func parseAddress(addr string) string {
+	if !strings.Contains(addr, ":") {
+		addr = fmt.Sprintf("%v:%v", addr, defaultPort)
+	}
+	return addr
+}
 
 type CloseFn func()
 type ServiceConfigs map[int]ServiceConfig
@@ -42,7 +56,7 @@ func (f *ClientFactory) NewConnection(cfg_val int, opts ...grpc.DialOption) (*gr
 		cfg = f.configs[DEFAULT_CONFIG]
 	}
 
-	conn, err := grpc.Dial(cfg.Address, opts...)
+	conn, err := grpc.Dial(parseAddress(cfg.Address), opts...)
 	if err != nil {
 		return nil, err
 	}
