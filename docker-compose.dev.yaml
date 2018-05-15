@@ -1,4 +1,4 @@
-version: '2'
+version: "3"
 services:
 
   metathings:
@@ -9,12 +9,12 @@ services:
     volumes:
       - ./etc/envoy.front.yaml:/etc/envoy.front.yaml
     networks:
-      metathingsmesh: {}
+      - metathingsmesh
     expose:
       - "80"
       - "8001"
     ports:
-      - "80:80"
+      - "21733:80"
       - "8001:8001"
     restart: on-failure
 
@@ -29,9 +29,7 @@ services:
       - .:/go/src/github.com/nayotta/metathings
       - ./etc/identityd.yaml:/etc/metathings/identityd.yaml
     networks:
-      metathingsmesh: {}
-    ports:
-      - "5000:5000"
+      - metathingsmesh
     expose:
       - "5000"
     restart: on-failure
@@ -48,12 +46,10 @@ services:
       - .:/go/src/github.com/nayotta/metathings
       - ./etc/cored.yaml:/etc/metathings/cored.yaml
     networks:
-      metathingsmesh: {}
-    ports:
-      - "5001:5001"
+      - metathingsmesh
     expose:
       - "5001"
     restart: on-failure
 
 networks:
-  metathingsmesh: {}
+  metathingsmesh:
