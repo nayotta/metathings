@@ -23,6 +23,7 @@ import "stream.proto";
 
 import "list_cores_for_user.proto";
 import "unary_call.proto";
+import "stream_call.proto";
 
 service CoreService {
 	rpc CreateCore(CreateCoreRequest) returns (CreateCoreResponse) {}
@@ -45,4 +46,5 @@ service CoreService {
 
 	rpc ListCoresForUser(ListCoresForUserRequest) returns (ListCoresForUserResponse) {}
 	rpc UnaryCall(UnaryCallRequest) returns (UnaryCallResponse) {}
+	rpc StreamCall(stream StreamCallRequest) returns (stream StreamCallResponse) {}
 }

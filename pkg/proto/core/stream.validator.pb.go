@@ -30,6 +30,13 @@ func (this *StreamResponse) Validate() error {
 			}
 		}
 	}
+	if oneOfNester, ok := this.GetPayload().(*StreamResponse_StreamCall); ok {
+		if oneOfNester.StreamCall != nil {
+			if err := go_proto_validators.CallValidatorIfExists(oneOfNester.StreamCall); err != nil {
+				return go_proto_validators.FieldError("StreamCall", err)
+			}
+		}
+	}
 	return nil
 }
 func (this *StreamRequest) Validate() error {
@@ -45,6 +52,13 @@ func (this *StreamRequest) Validate() error {
 		if oneOfNester.UnaryCall != nil {
 			if err := go_proto_validators.CallValidatorIfExists(oneOfNester.UnaryCall); err != nil {
 				return go_proto_validators.FieldError("UnaryCall", err)
+			}
+		}
+	}
+	if oneOfNester, ok := this.GetPayload().(*StreamRequest_StreamCall); ok {
+		if oneOfNester.StreamCall != nil {
+			if err := go_proto_validators.CallValidatorIfExists(oneOfNester.StreamCall); err != nil {
+				return go_proto_validators.FieldError("StreamCall", err)
 			}
 		}
 	}

@@ -35,6 +35,7 @@ const _ = grpc.SupportPackageIsVersion4
 
 type EchoServiceClient interface {
 	Echo(ctx context.Context, in *EchoRequest, opts ...grpc.CallOption) (*EchoResponse, error)
+	StreamingEcho(ctx context.Context, opts ...grpc.CallOption) (EchoService_StreamingEchoClient, error)
 }
 
 type echoServiceClient struct {
@@ -54,10 +55,42 @@ func (c *echoServiceClient) Echo(ctx context.Context, in *EchoRequest, opts ...g
 	return out, nil
 }
 
+func (c *echoServiceClient) StreamingEcho(ctx context.Context, opts ...grpc.CallOption) (EchoService_StreamingEchoClient, error) {
+	stream, err := grpc.NewClientStream(ctx, &_EchoService_serviceDesc.Streams[0], c.cc, "/ai.metathings.service.echo.EchoService/StreamingEcho", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &echoServiceStreamingEchoClient{stream}
+	return x, nil
+}
+
+type EchoService_StreamingEchoClient interface {
+	Send(*EchoRequest) error
+	Recv() (*EchoResponse, error)
+	grpc.ClientStream
+}
+
+type echoServiceStreamingEchoClient struct {
+	grpc.ClientStream
+}
+
+func (x *echoServiceStreamingEchoClient) Send(m *EchoRequest) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *echoServiceStreamingEchoClient) Recv() (*EchoResponse, error) {
+	m := new(EchoResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // Server API for EchoService service
 
 type EchoServiceServer interface {
 	Echo(context.Context, *EchoRequest) (*EchoResponse, error)
+	StreamingEcho(EchoService_StreamingEchoServer) error
 }
 
 func RegisterEchoServiceServer(s *grpc.Server, srv EchoServiceServer) {
@@ -82,6 +115,32 @@ func _EchoService_Echo_Handler(srv interface{}, ctx context.Context, dec func(in
 	return interceptor(ctx, in, info, handler)
 }
 
+func _EchoService_StreamingEcho_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(EchoServiceServer).StreamingEcho(&echoServiceStreamingEchoServer{stream})
+}
+
+type EchoService_StreamingEchoServer interface {
+	Send(*EchoResponse) error
+	Recv() (*EchoRequest, error)
+	grpc.ServerStream
+}
+
+type echoServiceStreamingEchoServer struct {
+	grpc.ServerStream
+}
+
+func (x *echoServiceStreamingEchoServer) Send(m *EchoResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *echoServiceStreamingEchoServer) Recv() (*EchoRequest, error) {
+	m := new(EchoRequest)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 var _EchoService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "ai.metathings.service.echo.EchoService",
 	HandlerType: (*EchoServiceServer)(nil),
@@ -91,20 +150,28 @@ var _EchoService_serviceDesc = grpc.ServiceDesc{
 			Handler:    _EchoService_Echo_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "StreamingEcho",
+			Handler:       _EchoService_StreamingEcho_Handler,
+			ServerStreams: true,
+			ClientStreams: true,
+		},
+	},
 	Metadata: "service.proto",
 }
 
-func init() { proto.RegisterFile("service.proto", fileDescriptor_service_24422d9a70d54be4) }
+func init() { proto.RegisterFile("service.proto", fileDescriptor_service_9d492615016064a4) }
 
-var fileDescriptor_service_24422d9a70d54be4 = []byte{
-	// 122 bytes of a gzipped FileDescriptorProto
+var fileDescriptor_service_9d492615016064a4 = []byte{
+	// 143 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xe2, 0x2d, 0x4e, 0x2d, 0x2a,
 	0xcb, 0x4c, 0x4e, 0xd5, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x92, 0x4a, 0xcc, 0xd4, 0xcb, 0x4d,
 	0x2d, 0x49, 0x2c, 0xc9, 0xc8, 0xcc, 0x4b, 0x2f, 0xd6, 0x83, 0x49, 0xa6, 0x26, 0x67, 0xe4, 0x4b,
-	0x71, 0x81, 0x48, 0x88, 0x3a, 0xa3, 0x2c, 0x2e, 0x6e, 0xd7, 0xe4, 0x8c, 0xfc, 0x60, 0x88, 0xbc,
-	0x50, 0x34, 0x17, 0x0b, 0x88, 0x2b, 0xa4, 0xae, 0x87, 0x5b, 0xbf, 0x1e, 0x48, 0x45, 0x50, 0x6a,
-	0x61, 0x69, 0x6a, 0x71, 0x89, 0x94, 0x06, 0x61, 0x85, 0xc5, 0x05, 0xf9, 0x79, 0xc5, 0xa9, 0x4a,
-	0x0c, 0x4e, 0x6c, 0x51, 0x2c, 0x20, 0xe1, 0x24, 0x36, 0xb0, 0xd5, 0xc6, 0x80, 0x00, 0x00, 0x00,
-	0xff, 0xff, 0x1b, 0x9b, 0x46, 0x4d, 0xb3, 0x00, 0x00, 0x00,
+	0x71, 0x81, 0x48, 0x88, 0x3a, 0xa3, 0x2b, 0x8c, 0x5c, 0xdc, 0xae, 0xc9, 0x19, 0xf9, 0xc1, 0x10,
+	0x05, 0x42, 0xd1, 0x5c, 0x2c, 0x20, 0xae, 0x90, 0xba, 0x1e, 0x6e, 0x03, 0xf4, 0x40, 0x2a, 0x82,
+	0x52, 0x0b, 0x4b, 0x53, 0x8b, 0x4b, 0xa4, 0x34, 0x08, 0x2b, 0x2c, 0x2e, 0xc8, 0xcf, 0x2b, 0x4e,
+	0x55, 0x62, 0x10, 0xca, 0xe0, 0xe2, 0x0d, 0x2e, 0x29, 0x4a, 0x4d, 0xcc, 0xcd, 0xcc, 0x4b, 0xa7,
+	0x99, 0x2d, 0x1a, 0x8c, 0x06, 0x8c, 0x4e, 0x6c, 0x51, 0x2c, 0x20, 0xa9, 0x24, 0x36, 0xb0, 0x2f,
+	0x8d, 0x01, 0x01, 0x00, 0x00, 0xff, 0xff, 0x5f, 0x0f, 0x1d, 0xb1, 0x1e, 0x01, 0x00, 0x00,
 }

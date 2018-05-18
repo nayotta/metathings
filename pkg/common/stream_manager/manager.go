@@ -1,12 +1,14 @@
 package stream_manager
 
 import (
+	"context"
 	"errors"
 	"io"
 	"sync"
 	"time"
 
 	gpb "github.com/golang/protobuf/ptypes/wrappers"
+	"github.com/grpc-ecosystem/go-grpc-middleware/util/metautils"
 	log "github.com/sirupsen/logrus"
 
 	helper "github.com/nayotta/metathings/pkg/common"
@@ -22,20 +24,25 @@ var (
 type StreamManager interface {
 	Register(core_id string, stream cored_pb.CoreService_StreamServer) (chan interface{}, error)
 	UnaryCall(core_id string, req *cored_pb.UnaryCallRequestPayload) (*cored_pb.UnaryCallResponsePayload, error)
+	StreamCall(core_id string, req *cored_pb.StreamCallRequestPayload) (cored_pb.CoreService_StreamServer, error)
 }
 
 type streamManager struct {
 	streams  map[string]cored_pb.CoreService_StreamServer
 	sessions map[string]chan *cored_pb.StreamResponse
 
+	streaming_streams map[string]cored_pb.CoreService_StreamServer
+	streaming_notity  map[string]chan interface{}
+
 	lock   *sync.Mutex
 	logger log.FieldLogger
 }
 
-func (mgr *streamManager) Register(core_id string, stream cored_pb.CoreService_StreamServer) (chan interface{}, error) {
-	mgr.lock.Lock()
-	defer mgr.lock.Unlock()
+func (mgr *streamManager) getSessionIdFromContext(ctx context.Context) string {
+	return metautils.ExtractIncoming(ctx).Get("session-id")
+}
 
+func (mgr *streamManager) register_default(core_id string, stream cored_pb.CoreService_StreamServer) (chan interface{}, error) {
 	if _, ok := mgr.streams[core_id]; ok {
 		return nil, Registered
 	}
@@ -51,14 +58,9 @@ func (mgr *streamManager) Register(core_id string, stream cored_pb.CoreService_S
 				delete(mgr.streams, core_id)
 				close <- nil
 				if err == io.EOF {
-					mgr.logger.
-						WithField("core_id", core_id).
-						Infof("core agent stream closed")
+					mgr.logger.WithField("core_id", core_id).Debugf("core agent stream closed")
 				} else {
-					mgr.logger.
-						WithError(err).
-						WithField("core_id", core_id).
-						Warningf("core agent stream closed with unexpected error")
+					mgr.logger.WithError(err).WithField("core_id", core_id).Warningf("core agent stream closed with unexpected error")
 				}
 				return
 			}
@@ -74,6 +76,61 @@ func (mgr *streamManager) Register(core_id string, stream cored_pb.CoreService_S
 	}()
 
 	return close, nil
+}
+
+func (mgr *streamManager) register_streaming(core_id string, sess_id string, stream cored_pb.CoreService_StreamServer) (chan interface{}, error) {
+	if _, ok := mgr.streaming_streams[sess_id]; ok {
+		return nil, Registered
+	}
+	mgr.streaming_streams[sess_id] = stream
+
+	close := make(chan interface{})
+	go func() {
+		for {
+			res, err := stream.Recv()
+			if err != nil {
+				mgr.lock.Lock()
+				defer mgr.lock.Unlock()
+				delete(mgr.streaming_streams, sess_id)
+				close <- nil
+				if err == io.EOF {
+					mgr.logger.WithFields(log.Fields{
+						"core_id":    core_id,
+						"session_id": sess_id,
+					}).Debugf("core agent streaming stream closed")
+				} else {
+					mgr.logger.WithError(err).WithFields(log.Fields{}).Warningf("core agent streaming stream closed with unexpected error")
+				}
+				return
+			}
+
+			if ch, ok := mgr.sessions[res.SessionId]; !ok {
+				mgr.logger.WithFields(log.Fields{
+					"core_id":    core_id,
+					"session_id": sess_id,
+				}).Errorf("unknown session id")
+			} else {
+				ch <- res
+			}
+		}
+	}()
+
+	return close, nil
+}
+
+func (mgr *streamManager) Register(core_id string, stream cored_pb.CoreService_StreamServer) (chan interface{}, error) {
+	mgr.lock.Lock()
+	defer mgr.lock.Unlock()
+
+	ctx := stream.Context()
+	sess_id := mgr.getSessionIdFromContext(ctx)
+
+	if sess_id == "" {
+		return mgr.register_default(core_id, stream)
+	} else {
+		return mgr.register_streaming(core_id, sess_id, stream)
+	}
+
 }
 
 func (mgr *streamManager) UnaryCall(core_id string, req *cored_pb.UnaryCallRequestPayload) (*cored_pb.UnaryCallResponsePayload, error) {
@@ -108,6 +165,65 @@ func (mgr *streamManager) UnaryCall(core_id string, req *cored_pb.UnaryCallReque
 		res := stm_res.Payload.(*cored_pb.StreamResponse_UnaryCall).UnaryCall
 		return res, nil
 	case <-time.After(30 * time.Second):
+		return nil, Timeout
+	}
+}
+
+func (mgr *streamManager) StreamCall(core_id string, req *cored_pb.StreamCallRequestPayload) (cored_pb.CoreService_StreamServer, error) {
+	agstm, ok := mgr.streams[core_id]
+	if !ok {
+		mgr.logger.WithField("core_id", core_id).Warningf("core stream not foound")
+		return nil, NotFound
+	}
+
+	sess_id := helper.NewId()
+	ch := make(chan *cored_pb.StreamResponse)
+	notity := make(chan interface{})
+	mgr.sessions[sess_id] = ch
+	mgr.streaming_notity[sess_id] = notity
+
+	stm_req := &cored_pb.StreamRequest{
+		SessionId:   &gpb.StringValue{Value: sess_id},
+		MessageType: cored_pb.StreamMessageType_STREAM_MESSAGE_TYPE_SYSTEM,
+		Payload: &cored_pb.StreamRequest_StreamCall{
+			StreamCall: req,
+		},
+	}
+
+	if err := agstm.Send(stm_req); err != nil {
+		mgr.logger.WithError(err).Errorf("failed to send stream call config")
+		return nil, err
+	}
+
+	defer func() {
+		close(ch)
+		delete(mgr.sessions, sess_id)
+		mgr.logger.WithField("session_id", sess_id).Debugf("close session receive channel")
+	}()
+	select {
+	case <-ch:
+		mgr.logger.WithField("session_id", sess_id).Debugf("receive stream call config response from core agent")
+	case <-time.After(30 * time.Second):
+		return nil, Timeout
+	}
+
+	defer func() {
+		close(notity)
+		delete(mgr.streaming_notity, sess_id)
+		mgr.logger.WithField("session_id", sess_id).Debugf("close session receive notity channel")
+	}()
+	select {
+	case <-notity:
+		stm, ok := mgr.streaming_streams[sess_id]
+		if !ok {
+			mgr.logger.WithFields(log.Fields{
+				"core_id":    core_id,
+				"session_id": sess_id,
+			}).Errorf("core streaming stream not found")
+			return nil, NotFound
+		}
+		return stm, nil
+	case <-time.After(10 * time.Second):
 		return nil, Timeout
 	}
 }

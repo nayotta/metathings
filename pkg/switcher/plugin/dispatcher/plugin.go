@@ -3,9 +3,7 @@ package main
 import (
 	"context"
 
-	"github.com/golang/protobuf/ptypes"
 	"github.com/golang/protobuf/ptypes/any"
-	"github.com/golang/protobuf/ptypes/empty"
 
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
@@ -29,6 +27,10 @@ func (dp *switcherDispatcherPlugin) Init(opt opt_helper.Option) error {
 	return nil
 }
 
+var (
+	unary_call_methods = map[string]func(pb.SwitcherServiceClient, context.Context, *any.Any) (*any.Any, error){}
+)
+
 func (dp *switcherDispatcherPlugin) UnaryCall(method string, ctx context.Context, req *any.Any) (*any.Any, error) {
 	cli, cfn, err := dp.cli_fty.NewSwitcherServiceClient()
 	if err != nil {
@@ -36,40 +38,15 @@ func (dp *switcherDispatcherPlugin) UnaryCall(method string, ctx context.Context
 	}
 	defer cfn()
 
-	switch method {
-	case "Get":
-		res, err := cli.Get(ctx, &empty.Empty{})
-		if err != nil {
-			return nil, err
-		}
-
-		res1, err := ptypes.MarshalAny(res)
-		if err != nil {
-			return nil, err
-		}
-
-		return res1, nil
-	case "Turn":
-		req1 := &pb.TurnRequest{}
-		err = ptypes.UnmarshalAny(req, req1)
-		if err != nil {
-			return nil, err
-		}
-
-		res, err := cli.Turn(ctx, req1)
-		if err != nil {
-			return nil, err
-		}
-
-		res1, err := ptypes.MarshalAny(res)
-		if err != nil {
-			return nil, err
-		}
-
-		return res1, nil
-	default:
+	fn, ok := unary_call_methods[method]
+	if !ok {
 		return nil, mt_plugin.ErrUnknownMethod
 	}
+	return fn(cli, ctx, req)
+}
+
+func (dp *switcherDispatcherPlugin) StreamCall(method string, ctx context.Context) (mt_plugin.Stream, error) {
+	return nil, mt_plugin.ErrUnknownMethod
 }
 
 func NewDispatcherPlugin() mt_plugin.DispatcherPlugin {

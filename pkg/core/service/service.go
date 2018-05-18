@@ -447,6 +447,114 @@ func (srv *metathingsCoreService) UnaryCall(ctx context.Context, req *pb.UnaryCa
 	return &pb.UnaryCallResponse{Payload: res}, nil
 }
 
+func (srv *metathingsCoreService) StreamCall(stream pb.CoreService_StreamCallServer) error {
+	req, err := stream.Recv()
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to recv config")
+		return status.Errorf(codes.Internal, err.Error())
+	}
+
+	if !isStreamCallConfigRequestPayload(req.Payload) {
+		return status.Errorf(codes.Internal, "unconfiged stream call request")
+	}
+
+	stm, err := srv.stm_mgr.StreamCall(req.CoreId.Value, req.Payload)
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to stream call to core agent")
+		return status.Errorf(codes.Internal, err.Error())
+	}
+
+	errs := make(chan error)
+	quit := make(chan interface{})
+
+	go func() {
+		var err error
+		var req *pb.StreamCallRequest
+
+		defer func() {
+			errs <- err
+			quit <- nil
+		}()
+
+		for {
+			select {
+			case <-quit:
+				return
+			default:
+			}
+
+			req, err = stream.Recv()
+			if err != nil {
+				srv.logger.WithError(err).Errorf("failed to recv data from client")
+				return
+			}
+
+			if !isStreamCallDataRequestPayload(req.Payload) {
+				srv.logger.Warningf("not stream call data request")
+				continue
+			}
+
+			err = stm.Send(&pb.StreamRequest{
+				MessageType: pb.StreamMessageType_STREAM_MESSAGE_TYPE_USER,
+				Payload:     &pb.StreamRequest_StreamCall{StreamCall: req.Payload},
+			})
+			if err != nil {
+				srv.logger.WithError(err).Errorf("failed to send data to client")
+				return
+			}
+
+		}
+	}()
+
+	go func() {
+		var err error
+		var res *pb.StreamResponse
+
+		defer func() {
+			errs <- err
+			quit <- nil
+		}()
+
+		for {
+			select {
+			case <-quit:
+				return
+			default:
+			}
+
+			res, err = stm.Recv()
+			if err != nil {
+				srv.logger.WithError(err).Errorf("failed to recv data from agent")
+				return
+			}
+
+			if !isStreamCallDataResponsePayload(res) {
+				srv.logger.Warningf("not stream call data response")
+				continue
+			}
+
+			err = stream.Send(&pb.StreamCallResponse{
+				Payload: &pb.StreamCallResponsePayload{
+					Payload: res.Payload.(*pb.StreamResponse_StreamCall).StreamCall.Payload,
+				},
+			})
+			if err != nil {
+				srv.logger.WithError(err).Errorf("failed to send data to core")
+			}
+		}
+	}()
+
+	err = <-errs
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to stream call")
+		return err
+	}
+
+	srv.logger.Debugf("stream call done")
+
+	return nil
+}
+
 func NewCoreService(opt ...ServiceOptions) (*metathingsCoreService, error) {
 	opts := defaultServiceOptions
 	for _, o := range opt {

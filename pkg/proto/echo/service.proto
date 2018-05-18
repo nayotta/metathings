@@ -7,4 +7,5 @@ import "echo.proto";
 
 service EchoService {
 	rpc Echo(EchoRequest) returns (EchoResponse) {}
+	rpc StreamingEcho(stream EchoRequest) returns (stream EchoResponse) {}
 }

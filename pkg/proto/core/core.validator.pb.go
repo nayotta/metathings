@@ -23,6 +23,7 @@ It is generated from these files:
 	payload.proto
 	service.proto
 	stream.proto
+	stream_call.proto
 	unary_call.proto
 
 It has these top-level messages:
@@ -54,8 +55,16 @@ It has these top-level messages:
 	StreamErrorResponsePayload
 	UnaryCallRequestPayload
 	UnaryCallResponsePayload
+	StreamCallRequestPayload
+	StreamCallResponsePayload
+	StreamCallConfigRequest
+	StreamCallConfigResponse
+	StreamCallDataRequest
+	StreamCallDataResponse
 	StreamResponse
 	StreamRequest
+	StreamCallRequest
+	StreamCallResponse
 	UnaryCallRequest
 	UnaryCallResponse
 */

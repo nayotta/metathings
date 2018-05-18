@@ -2,6 +2,7 @@ package metathings_echo_service
 
 import (
 	"context"
+	"io"
 
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
@@ -30,6 +31,34 @@ func (srv *metathingsEchoService) Echo(ctx context.Context, req *pb.EchoRequest)
 		return &pb.EchoResponse{Text: text_str}, nil
 	}
 	return nil, grpc.Errorf(codes.InvalidArgument, "empty body")
+}
+
+func (srv *metathingsEchoService) StreamingEcho(stream pb.EchoService_StreamingEchoServer) error {
+	quit := make(chan interface{})
+
+	go func() {
+		defer func() { quit <- nil }()
+		for {
+			req, err := stream.Recv()
+			if err != nil {
+				if err == io.EOF {
+					srv.logger.Debugf("streaming echo closed")
+					return
+				}
+			}
+			text := req.GetText()
+			if text != nil {
+				text_str := text.Value
+				srv.logger.Infof("streaming echo: %v", text_str)
+				stream.Send(&pb.EchoResponse{Text: text_str})
+			}
+		}
+	}()
+
+	<-quit
+	srv.logger.Infof("streaming echo done")
+
+	return nil
 }
 
 func NewEchoService(opts opt_helper.Option) (*metathingsEchoService, error) {

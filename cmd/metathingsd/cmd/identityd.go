@@ -66,7 +66,6 @@ func runIdentityd() error {
 	if err != nil {
 		return err
 	}
-
 	pb.RegisterIdentityServiceServer(s, srv)
 	log.WithFields(log.Fields{
 		"bind": identityd_opts.Listen,

@@ -20,6 +20,7 @@ message StreamResponse {
 	oneof payload {
 		StreamErrorResponsePayload err = 3;
 		UnaryCallResponsePayload unary_call = 4;
+		StreamCallResponsePayload stream_call = 5;
 	}
 
 }
@@ -29,5 +30,6 @@ message StreamRequest {
 	StreamMessageType message_type = 2 [(validator.field) = {msg_exists: true}];
 	oneof payload {
 		UnaryCallRequestPayload unary_call = 3;
+		StreamCallRequestPayload stream_call = 4;
 	};
 }

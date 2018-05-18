@@ -9,9 +9,29 @@ import (
 )
 
 func WithToken(ctx context.Context, token string) context.Context {
-	md := metadata.Pairs("authorization", token)
-	ctx = metadata.NewOutgoingContext(ctx, md)
+	return NewOutgoingContext(ctx, WithTokenOp(token))
+}
 
+func WithTokenOp(token string) func(metadata.MD) metadata.MD {
+	return func(md metadata.MD) metadata.MD {
+		md.Append("authorization", token)
+		return md
+	}
+}
+
+func WithSessionIdOp(sess_id string) func(metadata.MD) metadata.MD {
+	return func(md metadata.MD) metadata.MD {
+		md.Append("session-id", sess_id)
+		return md
+	}
+}
+
+func NewOutgoingContext(ctx context.Context, fns ...func(metadata.MD) metadata.MD) context.Context {
+	md := metadata.MD{}
+	for _, fn := range fns {
+		md = fn(md)
+	}
+	ctx = metadata.NewOutgoingContext(ctx, md)
 	return ctx
 }
 

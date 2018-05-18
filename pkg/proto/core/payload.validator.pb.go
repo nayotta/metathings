@@ -34,17 +34,88 @@ func (this *UnaryCallRequestPayload) Validate() error {
 			return go_proto_validators.FieldError("MethodName", err)
 		}
 	}
-	if this.Payload != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Payload); err != nil {
-			return go_proto_validators.FieldError("Payload", err)
+	if this.Value != nil {
+		if err := go_proto_validators.CallValidatorIfExists(this.Value); err != nil {
+			return go_proto_validators.FieldError("Value", err)
 		}
 	}
 	return nil
 }
 func (this *UnaryCallResponsePayload) Validate() error {
-	if this.Payload != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Payload); err != nil {
-			return go_proto_validators.FieldError("Payload", err)
+	if this.Value != nil {
+		if err := go_proto_validators.CallValidatorIfExists(this.Value); err != nil {
+			return go_proto_validators.FieldError("Value", err)
+		}
+	}
+	return nil
+}
+func (this *StreamCallRequestPayload) Validate() error {
+	if oneOfNester, ok := this.GetPayload().(*StreamCallRequestPayload_Config); ok {
+		if oneOfNester.Config != nil {
+			if err := go_proto_validators.CallValidatorIfExists(oneOfNester.Config); err != nil {
+				return go_proto_validators.FieldError("Config", err)
+			}
+		}
+	}
+	if oneOfNester, ok := this.GetPayload().(*StreamCallRequestPayload_Data); ok {
+		if oneOfNester.Data != nil {
+			if err := go_proto_validators.CallValidatorIfExists(oneOfNester.Data); err != nil {
+				return go_proto_validators.FieldError("Data", err)
+			}
+		}
+	}
+	return nil
+}
+func (this *StreamCallResponsePayload) Validate() error {
+	if oneOfNester, ok := this.GetPayload().(*StreamCallResponsePayload_Config); ok {
+		if oneOfNester.Config != nil {
+			if err := go_proto_validators.CallValidatorIfExists(oneOfNester.Config); err != nil {
+				return go_proto_validators.FieldError("Config", err)
+			}
+		}
+	}
+	if oneOfNester, ok := this.GetPayload().(*StreamCallResponsePayload_Data); ok {
+		if oneOfNester.Data != nil {
+			if err := go_proto_validators.CallValidatorIfExists(oneOfNester.Data); err != nil {
+				return go_proto_validators.FieldError("Data", err)
+			}
+		}
+	}
+	return nil
+}
+func (this *StreamCallConfigRequest) Validate() error {
+	if this.Name != nil {
+		if err := go_proto_validators.CallValidatorIfExists(this.Name); err != nil {
+			return go_proto_validators.FieldError("Name", err)
+		}
+	}
+	if this.ServiceName != nil {
+		if err := go_proto_validators.CallValidatorIfExists(this.ServiceName); err != nil {
+			return go_proto_validators.FieldError("ServiceName", err)
+		}
+	}
+	if this.MethodName != nil {
+		if err := go_proto_validators.CallValidatorIfExists(this.MethodName); err != nil {
+			return go_proto_validators.FieldError("MethodName", err)
+		}
+	}
+	return nil
+}
+func (this *StreamCallConfigResponse) Validate() error {
+	return nil
+}
+func (this *StreamCallDataRequest) Validate() error {
+	if this.Value != nil {
+		if err := go_proto_validators.CallValidatorIfExists(this.Value); err != nil {
+			return go_proto_validators.FieldError("Value", err)
+		}
+	}
+	return nil
+}
+func (this *StreamCallDataResponse) Validate() error {
+	if this.Value != nil {
+		if err := go_proto_validators.CallValidatorIfExists(this.Value); err != nil {
+			return go_proto_validators.FieldError("Value", err)
 		}
 	}
 	return nil

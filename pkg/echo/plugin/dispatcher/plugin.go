@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 
-	"github.com/golang/protobuf/ptypes"
 	"github.com/golang/protobuf/ptypes/any"
 
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
@@ -28,36 +27,40 @@ func (dp *echoDispatcherPlugin) Init(opt opt_helper.Option) error {
 	return nil
 }
 
+var (
+	unary_call_methods = map[string]func(pb.EchoServiceClient, context.Context, *any.Any) (*any.Any, error){}
+)
+
 func (dp *echoDispatcherPlugin) UnaryCall(method string, ctx context.Context, req *any.Any) (*any.Any, error) {
-	cli, fn, err := dp.cli_fty.NewEchoServiceClient()
+	cli, cfn, err := dp.cli_fty.NewEchoServiceClient()
 	if err != nil {
 		return nil, err
 	}
-	defer fn()
+	defer cfn()
 
-	switch method {
-	case "Echo":
-		req1 := new(pb.EchoRequest)
-		err = ptypes.UnmarshalAny(req, req1)
-		if err != nil {
-			return nil, err
-		}
-
-		res, err := cli.Echo(ctx, req1)
-		if err != nil {
-			return nil, err
-		}
-
-		res1, err := ptypes.MarshalAny(res)
-		if err != nil {
-			return nil, err
-		}
-
-		return res1, nil
-	default:
+	fn, ok := unary_call_methods[method]
+	if !ok {
 		return nil, mt_plugin.ErrUnknownMethod
 	}
+	return fn(cli, ctx, req)
+}
 
+var (
+	stream_call_methods = map[string]func(pb.EchoServiceClient, context.Context) (mt_plugin.Stream, error){}
+)
+
+func (dp *echoDispatcherPlugin) StreamCall(method string, ctx context.Context) (mt_plugin.Stream, error) {
+	cli, cfn, err := dp.cli_fty.NewEchoServiceClient()
+	if err != nil {
+		return nil, err
+	}
+	defer cfn()
+
+	fn, ok := stream_call_methods[method]
+	if !ok {
+		return nil, mt_plugin.ErrUnknownMethod
+	}
+	return fn(cli, ctx)
 }
 
 func NewDispatcherPlugin() mt_plugin.DispatcherPlugin {

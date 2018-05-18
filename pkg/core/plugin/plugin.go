@@ -10,6 +10,7 @@ import (
 	gpb "github.com/golang/protobuf/ptypes/wrappers"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
+	"google.golang.org/grpc"
 
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
@@ -90,6 +91,12 @@ func (s CoreService) HeartbeatOnce() error {
 	return nil
 }
 
+type Stream interface {
+	Send(*any.Any) error
+	Recv() (*any.Any, error)
+	grpc.ClientStream
+}
+
 type ServicePlugin interface {
 	Init(opts opt_helper.Option) error
 	Run() error
@@ -98,6 +105,7 @@ type ServicePlugin interface {
 type DispatcherPlugin interface {
 	Init(opts opt_helper.Option) error
 	UnaryCall(method string, ctx context.Context, req *any.Any) (*any.Any, error)
+	StreamCall(method string, ctx context.Context) (Stream, error)
 }
 
 type PluginCommandOptions struct {

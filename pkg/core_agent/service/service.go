@@ -42,6 +42,14 @@ type options struct {
 	service_descriptor_path       string
 }
 
+var (
+	GRPC_KEEPALIVE = grpc.WithKeepaliveParams(keepalive.ClientParameters{
+		Time:                2 * time.Second,
+		Timeout:             10 * time.Second,
+		PermitWithoutStream: true,
+	})
+)
+
 var defaultServiceOptions = options{
 	logLevel: "info",
 }
@@ -362,11 +370,7 @@ func (srv *coreAgentService) ServeOnStream() error {
 	token := srv.app_cred_mgr.GetToken()
 	ctx := context_helper.WithToken(context.Background(), token)
 
-	cli, cfn, err := srv.cli_fty.NewCoreServiceClient(grpc.WithKeepaliveParams(keepalive.ClientParameters{
-		Time:                2 * time.Second,
-		Timeout:             20 * time.Second,
-		PermitWithoutStream: true,
-	}))
+	cli, cfn, err := srv.cli_fty.NewCoreServiceClient(GRPC_KEEPALIVE)
 	if err != nil {
 		srv.logger.WithError(err).Errorf("failed to dial to metathings service")
 		return err
@@ -408,11 +412,149 @@ func (srv *coreAgentService) serveOnStream(stream core_pb.CoreService_StreamClie
 
 }
 
-func (srv *coreAgentService) dispatch(ctx context.Context, req *core_pb.StreamRequest) (*core_pb.StreamResponse, error) {
-	if req.MessageType != core_pb.StreamMessageType_STREAM_MESSAGE_TYPE_USER {
+func (srv *coreAgentService) dispatch_system(ctx context.Context, req *core_pb.StreamRequest) (*core_pb.StreamResponse, error) {
+	switch req.Payload.(type) {
+	case *core_pb.StreamRequest_StreamCall:
+		return srv.dispatch_system_stream(ctx, req)
+	default:
 		return nil, ErrUnsupportMessageType
 	}
 
+}
+
+func (srv *coreAgentService) dispatch_system_stream(ctx context.Context, req *core_pb.StreamRequest) (*core_pb.StreamResponse, error) {
+	payload := req.Payload.(*core_pb.StreamRequest_StreamCall)
+
+	switch payload.StreamCall.Payload.(type) {
+	case *core_pb.StreamCallRequestPayload_Config:
+		return srv.dispatch_system_stream_config(ctx, req)
+	default:
+		return nil, ErrUnsupportMessageType
+	}
+}
+
+func (srv *coreAgentService) dispatch_system_stream_config(ctx context.Context, req *core_pb.StreamRequest) (*core_pb.StreamResponse, error) {
+	payload := req.Payload.(*core_pb.StreamRequest_StreamCall)
+	config := payload.StreamCall.Payload.(*core_pb.StreamCallRequestPayload_Config)
+	name := config.Config.Name.Value
+	service_name := config.Config.ServiceName.Value
+	method_name := config.Config.MethodName.Value
+
+	srv.logger.WithFields(log.Fields{
+		"name":         name,
+		"service_name": service_name,
+	}).Debugf("load dispatcher plugin")
+	dp, ok := srv.getDispatcherPlugin(name, service_name)
+	if !ok {
+		return nil, ErrPluginNotFound
+	}
+
+	estm, err := dp.StreamCall(method_name, ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	cli, cfn, err := srv.cli_fty.NewCoreServiceClient(GRPC_KEEPALIVE)
+	if err != nil {
+		return nil, err
+	}
+	defer cfn()
+
+	cstm_ctx := context_helper.NewOutgoingContext(
+		context.Background(),
+		context_helper.WithTokenOp(srv.app_cred_mgr.GetToken()),
+		context_helper.WithSessionIdOp(req.SessionId.Value))
+	cstm, err := cli.Stream(cstm_ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	clear := func() {
+		cstm.CloseSend()
+		estm.CloseSend()
+	}
+
+	// TODO(Peer): pass context to entity.
+	// core -> entity
+	go func() {
+		defer clear()
+		for {
+			creq, err := cstm.Recv()
+			if err == io.EOF {
+				srv.logger.Debugf("core service closed")
+				return
+			}
+
+			if err != nil {
+				srv.logger.WithError(err).Errorf("failed to recv")
+				return
+			}
+
+			stm_call, ok := creq.Payload.(*core_pb.StreamRequest_StreamCall)
+			if !ok {
+				srv.logger.WithField("stage", "StreamRequest_StreamCall").Errorf("failed to convert request type")
+				continue
+			}
+
+			dat, ok := stm_call.StreamCall.Payload.(*core_pb.StreamCallRequestPayload_Data)
+			if !ok {
+				srv.logger.WithField("stage", "StreamCallRequestPayload_Data").Errorf("failed to convert request type")
+				continue
+			}
+
+			req := dat.Data.Value
+			err = estm.Send(req)
+			if err != nil {
+				srv.logger.WithError(err).Errorf("failed to send data to entity")
+				continue
+			}
+		}
+	}()
+
+	// entity -> core
+	go func() {
+		defer clear()
+		for {
+			ereq, err := estm.Recv()
+			if err == io.EOF {
+				srv.logger.WithFields(log.Fields{
+					"name":         name,
+					"service_name": service_name,
+					"method_name":  method_name,
+				}).Debugf("entity service closed")
+				return
+			}
+
+			if err != nil {
+				srv.logger.WithError(err).Errorf("failed to recv")
+				return
+			}
+
+			res := &core_pb.StreamResponse{
+				MessageType: core_pb.StreamMessageType_STREAM_MESSAGE_TYPE_USER,
+				Payload: &core_pb.StreamResponse_StreamCall{
+					StreamCall: &core_pb.StreamCallResponsePayload{
+						Payload: &core_pb.StreamCallResponsePayload_Data{
+							Data: &core_pb.StreamCallDataResponse{
+								Value: ereq,
+							},
+						},
+					},
+				},
+			}
+
+			err = cstm.Send(res)
+			if err != nil {
+				srv.logger.WithError(err).Errorf("failed to send data to core")
+				continue
+			}
+		}
+	}()
+
+	return nil, nil
+}
+
+func (srv *coreAgentService) dispatch_user(ctx context.Context, req *core_pb.StreamRequest) (*core_pb.StreamResponse, error) {
 	payload, ok := req.Payload.(*core_pb.StreamRequest_UnaryCall)
 	if !ok {
 		return nil, ErrUnsupportPayloadType
@@ -421,19 +563,19 @@ func (srv *coreAgentService) dispatch(ctx context.Context, req *core_pb.StreamRe
 	name := payload.UnaryCall.Name.Value
 	service_name := payload.UnaryCall.ServiceName.Value
 	method_name := payload.UnaryCall.MethodName.Value
-	req_payload := payload.UnaryCall.Payload
+	req_value := payload.UnaryCall.Value
 
 	dp, ok := srv.getDispatcherPlugin(name, service_name)
 	if !ok {
 		return nil, ErrPluginNotFound
 	}
 
-	res, err := dp.UnaryCall(method_name, ctx, req_payload)
+	res, err := dp.UnaryCall(method_name, ctx, req_value)
 	if err != nil {
 		return nil, err
 	}
 
-	res_payload, err := ptypes.MarshalAny(res)
+	res_value, err := ptypes.MarshalAny(res)
 	if err != nil {
 		return nil, err
 	}
@@ -446,12 +588,23 @@ func (srv *coreAgentService) dispatch(ctx context.Context, req *core_pb.StreamRe
 				Name:        name,
 				ServiceName: service_name,
 				MethodName:  method_name,
-				Payload:     res_payload,
+				Value:       res_value,
 			},
 		},
 	}
 
 	return res1, nil
+}
+
+func (srv *coreAgentService) dispatch(ctx context.Context, req *core_pb.StreamRequest) (*core_pb.StreamResponse, error) {
+	switch req.MessageType {
+	case core_pb.StreamMessageType_STREAM_MESSAGE_TYPE_USER:
+		return srv.dispatch_user(ctx, req)
+	case core_pb.StreamMessageType_STREAM_MESSAGE_TYPE_SYSTEM:
+		return srv.dispatch_system(ctx, req)
+	default:
+		return nil, ErrUnsupportMessageType
+	}
 }
 
 func getCoreIdFromFile(path string) (string, error) {
