@@ -11,10 +11,10 @@ services:
     networks:
       - metathingsmesh
     expose:
-      - "80"
+      - "21733"
       - "8001"
     ports:
-      - "21733:80"
+      - "21733:21733"
       - "8001:8001"
     restart: on-failure
 
