@@ -43,8 +43,10 @@ func (srv *metathingsEchoService) StreamingEcho(stream pb.EchoService_StreamingE
 			if err != nil {
 				if err == io.EOF {
 					srv.logger.Debugf("streaming echo closed")
-					return
+				} else {
+					srv.logger.WithError(err).Errorf("failed to recv")
 				}
+				return
 			}
 			text := req.GetText()
 			if text != nil {
