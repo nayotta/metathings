@@ -1,8 +1,7 @@
-package meatathings_core_agent_service
+package metathings_core_agent_service
 
 import (
 	"context"
-	"io"
 	"os"
 	"path"
 	"sync"
@@ -390,13 +389,8 @@ func (srv *coreAgentService) ServeOnStream() error {
 func (srv *coreAgentService) serveOnStream(stream core_pb.CoreService_StreamClient) error {
 	for {
 		req, err := stream.Recv()
-		if err == io.EOF {
-			srv.logger.Infof("core service closed")
-			return nil
-		}
-
 		if err != nil {
-			srv.logger.WithError(err).Errorf("failed to recv")
+			err = srv.handleGRPCError(err, "failed to recv data from core")
 			return err
 		}
 
@@ -407,7 +401,11 @@ func (srv *coreAgentService) serveOnStream(stream core_pb.CoreService_StreamClie
 			continue
 		}
 
-		stream.Send(res)
+		err = stream.Send(res)
+		if err != nil {
+			err = srv.handleGRPCError(err, "failed to send data to entity")
+			return err
+		}
 	}
 }
 
@@ -487,12 +485,7 @@ func (srv *coreAgentService) dispatch_system_stream_config(ctx context.Context, 
 		for {
 			creq, err := cstm.Recv()
 			if err != nil {
-				if err == io.EOF {
-					srv.logger.Debugf("core service closed")
-
-				} else {
-					srv.logger.WithError(err).WithField("flow", "core->entity").Errorf("failed to recv")
-				}
+				srv.handleGRPCError(err, "failed to recv stream data from core")
 				return
 			}
 			srv.logger.Debugf("recv data from core")
@@ -512,8 +505,8 @@ func (srv *coreAgentService) dispatch_system_stream_config(ctx context.Context, 
 			req := dat.Data.Value
 			err = estm.Send(req)
 			if err != nil {
-				srv.logger.WithError(err).Errorf("failed to send data to entity")
-				continue
+				srv.handleGRPCError(err, "failed to send data to entity")
+				return
 			}
 			srv.logger.Debugf("send data to entity")
 		}
@@ -525,16 +518,7 @@ func (srv *coreAgentService) dispatch_system_stream_config(ctx context.Context, 
 		for {
 			ereq, err := estm.Recv()
 			if err != nil {
-				if err == io.EOF {
-					srv.logger.WithFields(log.Fields{
-						"name":         name,
-						"service_name": service_name,
-						"method_name":  method_name,
-					}).Debugf("entity service closed")
-
-				} else {
-					srv.logger.WithError(err).WithField("flow", "entity->core").Errorf("failed to recv")
-				}
+				srv.handleGRPCError(err, "failed to recv data from entity")
 				return
 			}
 			srv.logger.Debugf("recv data from entity")
@@ -554,8 +538,8 @@ func (srv *coreAgentService) dispatch_system_stream_config(ctx context.Context, 
 
 			err = cstm.Send(res)
 			if err != nil {
-				srv.logger.WithError(err).Errorf("failed to send data to core")
-				continue
+				srv.handleGRPCError(err, "failed to send data to core")
+				return
 			}
 			srv.logger.Debugf("send data to core")
 		}

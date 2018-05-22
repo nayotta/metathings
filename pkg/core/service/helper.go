@@ -4,6 +4,8 @@ import (
 	"context"
 
 	"github.com/grpc-ecosystem/go-grpc-middleware/util/metautils"
+
+	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
 	pb "github.com/nayotta/metathings/pkg/proto/core"
 )
 
@@ -38,4 +40,8 @@ func isStreamCallDataResponsePayload(res *pb.StreamResponse) bool {
 
 func (srv *metathingsCoreService) GetSessionIdFromContext(ctx context.Context) string {
 	return metautils.ExtractIncoming(ctx).Get("session-id")
+}
+
+func (srv *metathingsCoreService) handleGRPCError(err error, format string, args ...interface{}) error {
+	return grpc_helper.HandleGRPCError(srv.logger, err, format, args)
 }

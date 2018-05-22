@@ -1,4 +1,4 @@
-package meatathings_core_agent_service
+package metathings_core_agent_service
 
 import "errors"
 

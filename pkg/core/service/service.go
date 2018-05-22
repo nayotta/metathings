@@ -489,8 +489,9 @@ func (srv *metathingsCoreService) StreamCall(cstm pb.CoreService_StreamCallServe
 
 			req, err = cstm.Recv()
 			if err != nil {
-				srv.logger.WithError(err).Errorf("failed to recv data from client")
+				err = srv.handleGRPCError(err, "failed to recv data from client")
 				return
+
 			}
 			srv.logger.Debugf("recv data from client")
 
@@ -504,7 +505,7 @@ func (srv *metathingsCoreService) StreamCall(cstm pb.CoreService_StreamCallServe
 				Payload:     &pb.StreamRequest_StreamCall{StreamCall: req.Payload},
 			})
 			if err != nil {
-				srv.logger.WithError(err).Errorf("failed to send data to client")
+				err = srv.handleGRPCError(err, "failed to send data to client")
 				return
 			}
 			srv.logger.Debugf("send data to agent")
@@ -531,7 +532,7 @@ func (srv *metathingsCoreService) StreamCall(cstm pb.CoreService_StreamCallServe
 
 			res, err = agstm.Recv()
 			if err != nil {
-				srv.logger.WithError(err).Errorf("failed to recv data from agent")
+				err = srv.handleGRPCError(err, "failed to recv data from agent")
 				return
 			}
 			srv.logger.Debugf("recv data from agent")
@@ -547,7 +548,8 @@ func (srv *metathingsCoreService) StreamCall(cstm pb.CoreService_StreamCallServe
 				},
 			})
 			if err != nil {
-				srv.logger.WithError(err).Errorf("failed to send data to core")
+				err = srv.handleGRPCError(err, "failed to send data to core")
+				return
 			}
 			srv.logger.Debugf("send data to client")
 		}

@@ -3,9 +3,11 @@ package grpc_helper
 import (
 	"context"
 	"errors"
+	"io"
 	"strings"
 
 	"github.com/grpc-ecosystem/go-grpc-middleware/util/metautils"
+	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -70,4 +72,21 @@ func (p AuthorizationTokenParser) GetTokenFromContext(ctx context.Context) (stri
 
 func (p AuthorizationTokenParser) GetSubjectTokenFromContext(ctx context.Context) (string, error) {
 	return AuthFromMD(ctx, "mt", "authorization-subject")
+}
+
+func HandleGRPCError(logger log.FieldLogger, err error, format string, args ...interface{}) error {
+	if err == io.EOF {
+		return nil
+	}
+
+	stat, ok := status.FromError(err)
+	if ok {
+		if stat.Code() == codes.Canceled {
+			return nil
+		}
+	}
+
+	logger.WithError(err).Errorf(format, args...)
+
+	return err
 }

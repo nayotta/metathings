@@ -22,12 +22,7 @@ func (s streamingEchoStream) Send(req *any.Any) error {
 		return err
 	}
 
-	err = s.EchoService_StreamingEchoClient.Send(req1)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return s.EchoService_StreamingEchoClient.Send(req1)
 }
 
 func (s streamingEchoStream) Recv() (*any.Any, error) {
@@ -36,12 +31,7 @@ func (s streamingEchoStream) Recv() (*any.Any, error) {
 		return nil, err
 	}
 
-	res1, err := ptypes.MarshalAny(res)
-	if err != nil {
-		return nil, err
-	}
-
-	return res1, nil
+	return ptypes.MarshalAny(res)
 }
 
 func stream_streaming_echo(cli pb.EchoServiceClient, ctx context.Context, cbs ...func()) (mt_plugin.Stream, error) {

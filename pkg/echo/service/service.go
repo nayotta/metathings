@@ -2,7 +2,6 @@ package metathings_echo_service
 
 import (
 	"context"
-	"io"
 
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
@@ -41,11 +40,7 @@ func (srv *metathingsEchoService) StreamingEcho(stream pb.EchoService_StreamingE
 		for {
 			req, err := stream.Recv()
 			if err != nil {
-				if err == io.EOF {
-					srv.logger.Debugf("streaming echo closed")
-				} else {
-					srv.logger.WithError(err).Errorf("failed to recv")
-				}
+				srv.handleGRPCError(err, "failed to recv data from agent")
 				return
 			}
 			text := req.GetText()
