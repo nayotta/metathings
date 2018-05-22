@@ -24,7 +24,7 @@ var (
 type StreamManager interface {
 	Register(core_id string, stream cored_pb.CoreService_StreamServer) (chan interface{}, error)
 	UnaryCall(core_id string, req *cored_pb.UnaryCallRequestPayload) (*cored_pb.UnaryCallResponsePayload, error)
-	StreamCall(core_id string, req *cored_pb.StreamCallRequestPayload) (cored_pb.CoreService_StreamServer, error)
+	StreamCall(core_id string, req *cored_pb.StreamCallRequestPayload) (cored_pb.CoreService_StreamServer, func(), error)
 }
 
 type streamManager struct {
@@ -32,6 +32,7 @@ type streamManager struct {
 	sessions map[string]chan *cored_pb.StreamResponse
 
 	streaming_streams map[string]cored_pb.CoreService_StreamServer
+	streaming_close   map[string]chan interface{}
 	streaming_notity  map[string]chan interface{}
 
 	lock   *sync.Mutex
@@ -43,6 +44,9 @@ func (mgr *streamManager) getSessionIdFromContext(ctx context.Context) string {
 }
 
 func (mgr *streamManager) register_default(core_id string, stream cored_pb.CoreService_StreamServer) (chan interface{}, error) {
+	mgr.lock.Lock()
+	defer mgr.lock.Unlock()
+
 	if _, ok := mgr.streams[core_id]; ok {
 		return nil, Registered
 	}
@@ -79,58 +83,38 @@ func (mgr *streamManager) register_default(core_id string, stream cored_pb.CoreS
 }
 
 func (mgr *streamManager) register_streaming(core_id string, sess_id string, stream cored_pb.CoreService_StreamServer) (chan interface{}, error) {
+	mgr.lock.Lock()
+	defer mgr.lock.Unlock()
+
+	notity, ok := mgr.streaming_notity[sess_id]
+	if !ok {
+		mgr.logger.WithField("session_id", sess_id).Errorf("invalid session id")
+		return nil, NotFound
+	}
+
 	if _, ok := mgr.streaming_streams[sess_id]; ok {
 		return nil, Registered
 	}
 	mgr.streaming_streams[sess_id] = stream
 
-	close := make(chan interface{})
-	go func() {
-		for {
-			res, err := stream.Recv()
-			if err != nil {
-				mgr.lock.Lock()
-				defer mgr.lock.Unlock()
-				delete(mgr.streaming_streams, sess_id)
-				close <- nil
-				if err == io.EOF {
-					mgr.logger.WithFields(log.Fields{
-						"core_id":    core_id,
-						"session_id": sess_id,
-					}).Debugf("core agent streaming stream closed")
-				} else {
-					mgr.logger.WithError(err).WithFields(log.Fields{}).Warningf("core agent streaming stream closed with unexpected error")
-				}
-				return
-			}
+	close_ch := make(chan interface{})
+	mgr.streaming_close[sess_id] = close_ch
+	notity <- nil
 
-			if ch, ok := mgr.sessions[res.SessionId]; !ok {
-				mgr.logger.WithFields(log.Fields{
-					"core_id":    core_id,
-					"session_id": sess_id,
-				}).Errorf("unknown session id")
-			} else {
-				ch <- res
-			}
-		}
-	}()
-
-	return close, nil
+	return close_ch, nil
 }
 
 func (mgr *streamManager) Register(core_id string, stream cored_pb.CoreService_StreamServer) (chan interface{}, error) {
-	mgr.lock.Lock()
-	defer mgr.lock.Unlock()
-
 	ctx := stream.Context()
 	sess_id := mgr.getSessionIdFromContext(ctx)
 
 	if sess_id == "" {
+		mgr.logger.WithFields(log.Fields{"core_id": core_id}).Debugf("register default stream")
 		return mgr.register_default(core_id, stream)
 	} else {
+		mgr.logger.WithFields(log.Fields{"core_id": core_id, "session_id": sess_id}).Debugf("register streaming stream")
 		return mgr.register_streaming(core_id, sess_id, stream)
 	}
-
 }
 
 func (mgr *streamManager) UnaryCall(core_id string, req *cored_pb.UnaryCallRequestPayload) (*cored_pb.UnaryCallResponsePayload, error) {
@@ -169,11 +153,11 @@ func (mgr *streamManager) UnaryCall(core_id string, req *cored_pb.UnaryCallReque
 	}
 }
 
-func (mgr *streamManager) StreamCall(core_id string, req *cored_pb.StreamCallRequestPayload) (cored_pb.CoreService_StreamServer, error) {
+func (mgr *streamManager) StreamCall(core_id string, req *cored_pb.StreamCallRequestPayload) (cored_pb.CoreService_StreamServer, func(), error) {
 	agstm, ok := mgr.streams[core_id]
 	if !ok {
 		mgr.logger.WithField("core_id", core_id).Warningf("core stream not foound")
-		return nil, NotFound
+		return nil, nil, NotFound
 	}
 
 	sess_id := helper.NewId()
@@ -192,26 +176,26 @@ func (mgr *streamManager) StreamCall(core_id string, req *cored_pb.StreamCallReq
 
 	if err := agstm.Send(stm_req); err != nil {
 		mgr.logger.WithError(err).Errorf("failed to send stream call config")
-		return nil, err
+		return nil, nil, err
 	}
-
-	defer func() {
-		close(ch)
-		delete(mgr.sessions, sess_id)
-		mgr.logger.WithField("session_id", sess_id).Debugf("close session receive channel")
-	}()
-	select {
-	case <-ch:
-		mgr.logger.WithField("session_id", sess_id).Debugf("receive stream call config response from core agent")
-	case <-time.After(30 * time.Second):
-		return nil, Timeout
-	}
+	mgr.logger.WithFields(log.Fields{
+		"core_id":    core_id,
+		"session_id": sess_id,
+	}).Debugf("send stream call config request to core agent")
 
 	defer func() {
 		close(notity)
 		delete(mgr.streaming_notity, sess_id)
 		mgr.logger.WithField("session_id", sess_id).Debugf("close session receive notity channel")
 	}()
+	select {
+	case <-ch:
+		mgr.logger.WithField("session_id", sess_id).Debugf("receive stream call config response from core agent")
+	case <-time.After(30 * time.Second):
+		mgr.logger.WithField("session_id", sess_id).Errorf("receive stream call config response timeout")
+		return nil, nil, Timeout
+	}
+
 	select {
 	case <-notity:
 		stm, ok := mgr.streaming_streams[sess_id]
@@ -220,11 +204,12 @@ func (mgr *streamManager) StreamCall(core_id string, req *cored_pb.StreamCallReq
 				"core_id":    core_id,
 				"session_id": sess_id,
 			}).Errorf("core streaming stream not found")
-			return nil, NotFound
+			return nil, nil, NotFound
 		}
-		return stm, nil
+		return stm, func() { mgr.streaming_close[sess_id] <- nil }, nil
 	case <-time.After(10 * time.Second):
-		return nil, Timeout
+		mgr.logger.WithField("session_id", sess_id).Errorf("receive stream call confirm timeout")
+		return nil, nil, Timeout
 	}
 }
 
@@ -232,7 +217,12 @@ func NewStreamManager(logger log.FieldLogger) (StreamManager, error) {
 	return &streamManager{
 		streams:  make(map[string]cored_pb.CoreService_StreamServer),
 		sessions: make(map[string]chan *cored_pb.StreamResponse),
-		lock:     new(sync.Mutex),
-		logger:   logger,
+
+		streaming_streams: make(map[string]cored_pb.CoreService_StreamServer),
+		streaming_close:   make(map[string]chan interface{}),
+		streaming_notity:  make(map[string]chan interface{}),
+
+		lock:   new(sync.Mutex),
+		logger: logger,
 	}, nil
 }

@@ -447,22 +447,25 @@ func (srv *metathingsCoreService) UnaryCall(ctx context.Context, req *pb.UnaryCa
 	return &pb.UnaryCallResponse{Payload: res}, nil
 }
 
-func (srv *metathingsCoreService) StreamCall(stream pb.CoreService_StreamCallServer) error {
-	req, err := stream.Recv()
+func (srv *metathingsCoreService) StreamCall(cstm pb.CoreService_StreamCallServer) error {
+	req, err := cstm.Recv()
 	if err != nil {
 		srv.logger.WithError(err).Errorf("failed to recv config")
 		return status.Errorf(codes.Internal, err.Error())
 	}
 
 	if !isStreamCallConfigRequestPayload(req.Payload) {
+		srv.logger.Errorf("not stream call config request")
 		return status.Errorf(codes.Internal, "unconfiged stream call request")
 	}
 
-	stm, err := srv.stm_mgr.StreamCall(req.CoreId.Value, req.Payload)
+	agstm, close_fn, err := srv.stm_mgr.StreamCall(req.CoreId.Value, req.Payload)
 	if err != nil {
 		srv.logger.WithError(err).Errorf("failed to stream call to core agent")
 		return status.Errorf(codes.Internal, err.Error())
 	}
+	defer close_fn()
+	srv.logger.Debugf("stream call config done")
 
 	errs := make(chan error)
 	quit := make(chan interface{})
@@ -479,22 +482,24 @@ func (srv *metathingsCoreService) StreamCall(stream pb.CoreService_StreamCallSer
 		for {
 			select {
 			case <-quit:
+				srv.logger.Debugf("receive quit signal, quit core side stream")
 				return
 			default:
 			}
 
-			req, err = stream.Recv()
+			req, err = cstm.Recv()
 			if err != nil {
 				srv.logger.WithError(err).Errorf("failed to recv data from client")
 				return
 			}
+			srv.logger.Debugf("recv data from client")
 
 			if !isStreamCallDataRequestPayload(req.Payload) {
 				srv.logger.Warningf("not stream call data request")
 				continue
 			}
 
-			err = stm.Send(&pb.StreamRequest{
+			err = agstm.Send(&pb.StreamRequest{
 				MessageType: pb.StreamMessageType_STREAM_MESSAGE_TYPE_USER,
 				Payload:     &pb.StreamRequest_StreamCall{StreamCall: req.Payload},
 			})
@@ -502,6 +507,7 @@ func (srv *metathingsCoreService) StreamCall(stream pb.CoreService_StreamCallSer
 				srv.logger.WithError(err).Errorf("failed to send data to client")
 				return
 			}
+			srv.logger.Debugf("send data to agent")
 
 		}
 	}()
@@ -518,22 +524,24 @@ func (srv *metathingsCoreService) StreamCall(stream pb.CoreService_StreamCallSer
 		for {
 			select {
 			case <-quit:
+				srv.logger.Debugf("receive quit signal, quit agent side stream")
 				return
 			default:
 			}
 
-			res, err = stm.Recv()
+			res, err = agstm.Recv()
 			if err != nil {
 				srv.logger.WithError(err).Errorf("failed to recv data from agent")
 				return
 			}
+			srv.logger.Debugf("recv data from agent")
 
 			if !isStreamCallDataResponsePayload(res) {
 				srv.logger.Warningf("not stream call data response")
 				continue
 			}
 
-			err = stream.Send(&pb.StreamCallResponse{
+			err = cstm.Send(&pb.StreamCallResponse{
 				Payload: &pb.StreamCallResponsePayload{
 					Payload: res.Payload.(*pb.StreamResponse_StreamCall).StreamCall.Payload,
 				},
@@ -541,6 +549,7 @@ func (srv *metathingsCoreService) StreamCall(stream pb.CoreService_StreamCallSer
 			if err != nil {
 				srv.logger.WithError(err).Errorf("failed to send data to core")
 			}
+			srv.logger.Debugf("send data to client")
 		}
 	}()
 

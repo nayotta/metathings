@@ -91,9 +91,20 @@ func (s CoreService) HeartbeatOnce() error {
 	return nil
 }
 
+type Closer struct {
+	Callbacks []func()
+}
+
+func (c Closer) Close() {
+	for _, cb := range c.Callbacks {
+		cb()
+	}
+}
+
 type Stream interface {
 	Send(*any.Any) error
 	Recv() (*any.Any, error)
+	Close()
 	grpc.ClientStream
 }
 

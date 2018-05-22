@@ -12,6 +12,7 @@ import (
 
 type streamingEchoStream struct {
 	pb.EchoService_StreamingEchoClient
+	mt_plugin.Closer
 }
 
 func (s streamingEchoStream) Send(req *any.Any) error {
@@ -43,13 +44,16 @@ func (s streamingEchoStream) Recv() (*any.Any, error) {
 	return res1, nil
 }
 
-func stream_streaming_echo(cli pb.EchoServiceClient, ctx context.Context) (mt_plugin.Stream, error) {
+func stream_streaming_echo(cli pb.EchoServiceClient, ctx context.Context, cbs ...func()) (mt_plugin.Stream, error) {
 	stream, err := cli.StreamingEcho(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	return streamingEchoStream{stream}, nil
+	return streamingEchoStream{
+		EchoService_StreamingEchoClient: stream,
+		Closer: mt_plugin.Closer{cbs},
+	}, nil
 }
 
 func init() {

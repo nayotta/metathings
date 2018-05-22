@@ -409,7 +409,6 @@ func (srv *coreAgentService) serveOnStream(stream core_pb.CoreService_StreamClie
 
 		stream.Send(res)
 	}
-
 }
 
 func (srv *coreAgentService) dispatch_system(ctx context.Context, req *core_pb.StreamRequest) (*core_pb.StreamResponse, error) {
@@ -453,12 +452,13 @@ func (srv *coreAgentService) dispatch_system_stream_config(ctx context.Context, 
 	if err != nil {
 		return nil, err
 	}
+	srv.logger.Debugf("build streaming to entity for stream call")
 
 	cli, cfn, err := srv.cli_fty.NewCoreServiceClient(GRPC_KEEPALIVE)
 	if err != nil {
 		return nil, err
 	}
-	defer cfn()
+	// dont close connect here, cause it will be used by other goroutines.
 
 	cstm_ctx := context_helper.NewOutgoingContext(
 		context.Background(),
@@ -468,9 +468,15 @@ func (srv *coreAgentService) dispatch_system_stream_config(ctx context.Context, 
 	if err != nil {
 		return nil, err
 	}
+	srv.logger.Debugf("build streaming to core for stream call")
 
 	clear := func() {
+		// close core stream connect.
+		cfn()
 		cstm.CloseSend()
+
+		// close entity stream connect.
+		estm.Close()
 		estm.CloseSend()
 	}
 
@@ -480,15 +486,16 @@ func (srv *coreAgentService) dispatch_system_stream_config(ctx context.Context, 
 		defer clear()
 		for {
 			creq, err := cstm.Recv()
-			if err == io.EOF {
-				srv.logger.Debugf("core service closed")
-				return
-			}
-
 			if err != nil {
-				srv.logger.WithError(err).Errorf("failed to recv")
+				if err == io.EOF {
+					srv.logger.Debugf("core service closed")
+
+				} else {
+					srv.logger.WithError(err).WithField("flow", "core->entity").Errorf("failed to recv")
+				}
 				return
 			}
+			srv.logger.Debugf("recv data from core")
 
 			stm_call, ok := creq.Payload.(*core_pb.StreamRequest_StreamCall)
 			if !ok {
@@ -508,6 +515,7 @@ func (srv *coreAgentService) dispatch_system_stream_config(ctx context.Context, 
 				srv.logger.WithError(err).Errorf("failed to send data to entity")
 				continue
 			}
+			srv.logger.Debugf("send data to entity")
 		}
 	}()
 
@@ -516,19 +524,20 @@ func (srv *coreAgentService) dispatch_system_stream_config(ctx context.Context, 
 		defer clear()
 		for {
 			ereq, err := estm.Recv()
-			if err == io.EOF {
-				srv.logger.WithFields(log.Fields{
-					"name":         name,
-					"service_name": service_name,
-					"method_name":  method_name,
-				}).Debugf("entity service closed")
-				return
-			}
-
 			if err != nil {
-				srv.logger.WithError(err).Errorf("failed to recv")
+				if err == io.EOF {
+					srv.logger.WithFields(log.Fields{
+						"name":         name,
+						"service_name": service_name,
+						"method_name":  method_name,
+					}).Debugf("entity service closed")
+
+				} else {
+					srv.logger.WithError(err).WithField("flow", "entity->core").Errorf("failed to recv")
+				}
 				return
 			}
+			srv.logger.Debugf("recv data from entity")
 
 			res := &core_pb.StreamResponse{
 				MessageType: core_pb.StreamMessageType_STREAM_MESSAGE_TYPE_USER,
@@ -548,10 +557,25 @@ func (srv *coreAgentService) dispatch_system_stream_config(ctx context.Context, 
 				srv.logger.WithError(err).Errorf("failed to send data to core")
 				continue
 			}
+			srv.logger.Debugf("send data to core")
 		}
 	}()
 
-	return nil, nil
+	return &core_pb.StreamResponse{
+		SessionId:   req.SessionId.Value,
+		MessageType: req.MessageType,
+		Payload: &core_pb.StreamResponse_StreamCall{
+			StreamCall: &core_pb.StreamCallResponsePayload{
+				Payload: &core_pb.StreamCallResponsePayload_Config{
+					Config: &core_pb.StreamCallConfigResponse{
+						Name:        name,
+						ServiceName: service_name,
+						MethodName:  method_name,
+					},
+				},
+			},
+		},
+	}, nil
 }
 
 func (srv *coreAgentService) dispatch_user(ctx context.Context, req *core_pb.StreamRequest) (*core_pb.StreamResponse, error) {

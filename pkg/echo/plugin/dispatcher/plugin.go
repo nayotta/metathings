@@ -46,7 +46,7 @@ func (dp *echoDispatcherPlugin) UnaryCall(method string, ctx context.Context, re
 }
 
 var (
-	stream_call_methods = map[string]func(pb.EchoServiceClient, context.Context) (mt_plugin.Stream, error){}
+	stream_call_methods = map[string]func(cli pb.EchoServiceClient, ctx context.Context, cbs ...func()) (mt_plugin.Stream, error){}
 )
 
 func (dp *echoDispatcherPlugin) StreamCall(method string, ctx context.Context) (mt_plugin.Stream, error) {
@@ -54,13 +54,12 @@ func (dp *echoDispatcherPlugin) StreamCall(method string, ctx context.Context) (
 	if err != nil {
 		return nil, err
 	}
-	defer cfn()
 
 	fn, ok := stream_call_methods[method]
 	if !ok {
 		return nil, mt_plugin.ErrUnknownMethod
 	}
-	return fn(cli, ctx)
+	return fn(cli, ctx, cfn)
 }
 
 func NewDispatcherPlugin() mt_plugin.DispatcherPlugin {

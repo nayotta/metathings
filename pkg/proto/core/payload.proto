@@ -47,10 +47,9 @@ message StreamCallConfigRequest {
 }
 
 message StreamCallConfigResponse {
-	uint64 session = 1;
-	string name = 2;
-	string service_name = 3;
-	string method_name = 4;
+	string name = 1;
+	string service_name = 2;
+	string method_name = 3;
 }
 
 message StreamCallDataRequest {
