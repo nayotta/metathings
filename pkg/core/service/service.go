@@ -480,14 +480,13 @@ func (srv *metathingsCoreService) StreamCall(cstm pb.CoreService_StreamCallServe
 		}()
 
 		for {
+			req, err = cstm.Recv()
 			select {
 			case <-quit:
 				srv.logger.Debugf("receive quit signal, quit core side stream")
 				return
 			default:
 			}
-
-			req, err = cstm.Recv()
 			if err != nil {
 				err = srv.handleGRPCError(err, "failed to recv data from client")
 				return
@@ -523,6 +522,7 @@ func (srv *metathingsCoreService) StreamCall(cstm pb.CoreService_StreamCallServe
 		}()
 
 		for {
+			res, err = agstm.Recv()
 			select {
 			case <-quit:
 				srv.logger.Debugf("receive quit signal, quit agent side stream")
@@ -530,7 +530,6 @@ func (srv *metathingsCoreService) StreamCall(cstm pb.CoreService_StreamCallServe
 			default:
 			}
 
-			res, err = agstm.Recv()
 			if err != nil {
 				err = srv.handleGRPCError(err, "failed to recv data from agent")
 				return

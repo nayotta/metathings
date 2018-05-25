@@ -469,13 +469,8 @@ func (srv *coreAgentService) dispatch_system_stream_config(ctx context.Context, 
 	srv.logger.Debugf("build streaming to core for stream call")
 
 	clear := func() {
-		// close core stream connect.
 		cfn()
-		cstm.CloseSend()
-
-		// close entity stream connect.
 		estm.Close()
-		estm.CloseSend()
 	}
 
 	// TODO(Peer): pass context to entity.
