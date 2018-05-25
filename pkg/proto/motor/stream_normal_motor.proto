@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+package ai.metathings.service.motor;
+
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/timestamp.proto";
+
+import "motor.proto";
+
+message StreamNormalMotorPingRequest{
+	google.protobuf.Timestamp timestamp = 2;
+}
+
+message StreamNormalMotorPingResponse{
+	google.protobuf.Timestamp timestamp = 2;
+}
+
+message StreamNormalMotorSetSpeedRequest {
+	google.protobuf.FloatValue speed = 1;
+}
+
+message StreamNormalMotorSetStateRequest {
+	MotorState state = 1;
+}
+
+message StreamNormalMotorRequest {
+	google.protobuf.UInt64Value session = 1;
+	oneof payload {
+	        StreamNormalMotorPingRequest ping = 2;
+		StreamNormalMotorSetSpeedRequest set_speed = 3;
+	}
+}
+
+message StreamNormalMotorRequests {
+	repeated StreamNormalMotorRequest requests = 1;
+}
+
+message StreamNormalMotorResponse {
+	uint64 session = 1;
+	oneof payload {
+		StreamNormalMotorPingResponse ping = 2;
+	}
+}
