@@ -6,10 +6,12 @@ import (
 
 	"google.golang.org/grpc"
 
+	constant_helper "github.com/nayotta/metathings/pkg/common/constant"
 	cored_pb "github.com/nayotta/metathings/pkg/proto/core"
 	agentd_pb "github.com/nayotta/metathings/pkg/proto/core_agent"
 	echod_pb "github.com/nayotta/metathings/pkg/proto/echo"
 	identityd_pb "github.com/nayotta/metathings/pkg/proto/identity"
+	motord_pb "github.com/nayotta/metathings/pkg/proto/motor"
 	switcherd_pb "github.com/nayotta/metathings/pkg/proto/switcher"
 )
 
@@ -20,15 +22,12 @@ const (
 	AGENTD_CONFIG
 	ECHOD_CONFIG
 	SWITCHERD_CONFIG
-)
-
-const (
-	defaultPort = 21733
+	MOTORD_CONFIG
 )
 
 func parseAddress(addr string) string {
 	if !strings.Contains(addr, ":") {
-		addr = fmt.Sprintf("%v:%v", addr, defaultPort)
+		addr = fmt.Sprintf("%v:%v", addr, constant_helper.CONSTANT_METATHINGSD_DEFAULT_PORT)
 	}
 	return addr
 }
@@ -127,6 +126,19 @@ func (f *ClientFactory) NewSwitcherServiceClient(opts ...grpc.DialOption) (switc
 	}
 
 	return switcherd_pb.NewSwitcherServiceClient(conn), closeFn, nil
+}
+
+func (f *ClientFactory) NewMotorServiceClient(opts ...grpc.DialOption) (motord_pb.MotorServiceClient, CloseFn, error) {
+	conn, err := f.NewConnection(MOTORD_CONFIG, opts...)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	closeFn := func() {
+		conn.Close()
+	}
+
+	return motord_pb.NewMotorServiceClient(conn), closeFn, nil
 }
 
 func NewClientFactory(configs ServiceConfigs, optFn DialOptionFn) (*ClientFactory, error) {

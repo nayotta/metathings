@@ -9,6 +9,7 @@ It is generated from these files:
 	list.proto
 	motor.proto
 	service.proto
+	stream.proto
 	stream_normal_motor.proto
 
 It has these top-level messages:
@@ -17,7 +18,14 @@ It has these top-level messages:
 	ListRequest
 	ListResponse
 	Motor
-	NormalMotor
+	StreamPingRequest
+	StreamPingResponse
+	StreamSetStateRequest
+	StreamSetDirectionRequest
+	StreamSetSpeedRequest
+	StreamRequest
+	StreamRequests
+	StreamResponse
 	StreamNormalMotorPingRequest
 	StreamNormalMotorPingResponse
 	StreamNormalMotorSetSpeedRequest

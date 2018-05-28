@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+package ai.metathings.service.motor;
+
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/timestamp.proto";
+
+import "motor.proto";
+
+message StreamPingRequest{
+	google.protobuf.Timestamp timestamp = 1;
+}
+
+message StreamPingResponse{
+	google.protobuf.Timestamp timestamp = 1;
+}
+
+message StreamSetStateRequest {
+	google.protobuf.StringValue name = 1;
+	MotorState state = 2;
+}
+
+message StreamSetDirectionRequest {
+	google.protobuf.StringValue name = 1;
+	MotorDirection direction = 2;
+}
+
+message StreamSetSpeedRequest {
+	google.protobuf.StringValue name = 1;
+	google.protobuf.FloatValue speed = 2;
+}
+
+message StreamRequest {
+	google.protobuf.UInt64Value session = 1;
+	oneof payload {
+	        StreamPingRequest ping = 2;
+		StreamSetStateRequest set_state = 3;
+		StreamSetDirectionRequest set_direction = 4;
+		StreamSetSpeedRequest set_speed = 5;
+	}
+}
+
+message StreamRequests {
+	repeated StreamRequest requests = 1;
+}
+
+message StreamResponse {
+	uint64 session = 1;
+	oneof payload {
+		StreamPingResponse ping = 2;
+	}
+}

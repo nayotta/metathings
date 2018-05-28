@@ -8,8 +8,8 @@ import (
 
 	"github.com/golang/protobuf/ptypes/any"
 	gpb "github.com/golang/protobuf/ptypes/wrappers"
+	"github.com/nayotta/viper"
 	log "github.com/sirupsen/logrus"
-	"github.com/spf13/viper"
 	"google.golang.org/grpc"
 
 	client_helper "github.com/nayotta/metathings/pkg/common/client"

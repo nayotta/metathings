@@ -4,29 +4,26 @@ import (
 	"net"
 	"strings"
 
+	"github.com/nayotta/viper"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 	"google.golang.org/grpc"
 
 	cmd_helper "github.com/nayotta/metathings/pkg/common/cmd"
+	constant_helper "github.com/nayotta/metathings/pkg/common/constant"
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 	mtp "github.com/nayotta/metathings/pkg/core/plugin"
 	pb "github.com/nayotta/metathings/pkg/proto/switcher"
 	service "github.com/nayotta/metathings/pkg/switcher/service"
 )
 
-type _coreAgentdOptions struct {
-	Address string
-}
-
-type _metathingsdOptions struct {
+type _serviceConfigOption struct {
 	Address string
 }
 
 type _serviceConfigOptions struct {
-	CoreAgentd  _coreAgentdOptions  `mapstructure:"core_agentd"`
-	Metathingsd _metathingsdOptions `mapstructure:"metathingsd"`
+	CoreAgentd  _serviceConfigOption `mapstructure:"core_agentd"`
+	Metathingsd _serviceConfigOption `mapstructure:"metathingsd"`
 }
 
 type _driverOptions struct {
@@ -150,8 +147,8 @@ func (p *switcherServicePlugin) Init(opts opt_helper.Option) error {
 	rootCmd.PersistentFlags().BoolVar(&root_opts.Verbose, "verbose", false, "Verbose mode")
 	rootCmd.PersistentFlags().StringVar(&root_opts.Log.Level, "log-level", "info", "Logging Level[debug, info, warn, error]")
 	rootCmd.PersistentFlags().StringVar(&root_opts.Name, "name", "switcherd", "Core Service Name")
-	rootCmd.PersistentFlags().StringVar(&root_opts.ServiceConfig.CoreAgentd.Address, "agent-addr", "agentd.metathings.local:5002", "Core Agent Service Address")
-	rootCmd.PersistentFlags().StringVar(&root_opts.ServiceConfig.Metathingsd.Address, "metathings-addr", "api.metathings.ai:80", "Metathings Service Address")
+	rootCmd.PersistentFlags().StringVar(&root_opts.ServiceConfig.CoreAgentd.Address, "agent-addr", constant_helper.CONSTANT_CORE_AGENTD_ADDRESS, "Core Agent Service Address")
+	rootCmd.PersistentFlags().StringVar(&root_opts.ServiceConfig.Metathingsd.Address, "metathings-addr", constant_helper.CONSTANT_METATHINGSD_ADDRESS, "Metathings Service Address")
 	rootCmd.PersistentFlags().StringVar(&root_opts.Driver.Descriptor, "driver-descriptor", "~/.metathins/switcher_driver_descriptor.yaml", "Switcher driver descriptor path")
 	rootCmd.PersistentFlags().StringVar(&root_opts.Driver.Name, "driver-name", "", "Switcher driver name")
 

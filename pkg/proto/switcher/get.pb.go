@@ -29,7 +29,7 @@ func (m *GetResponse) Reset()         { *m = GetResponse{} }
 func (m *GetResponse) String() string { return proto.CompactTextString(m) }
 func (*GetResponse) ProtoMessage()    {}
 func (*GetResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_get_09ff71a6d5500e1e, []int{0}
+	return fileDescriptor_get_591eebf9986b77fc, []int{0}
 }
 func (m *GetResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_GetResponse.Unmarshal(m, b)
@@ -60,9 +60,9 @@ func init() {
 	proto.RegisterType((*GetResponse)(nil), "ai.metathings.service.switcher.GetResponse")
 }
 
-func init() { proto.RegisterFile("get.proto", fileDescriptor_get_09ff71a6d5500e1e) }
+func init() { proto.RegisterFile("get.proto", fileDescriptor_get_591eebf9986b77fc) }
 
-var fileDescriptor_get_09ff71a6d5500e1e = []byte{
+var fileDescriptor_get_591eebf9986b77fc = []byte{
 	// 117 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xe2, 0x4c, 0x4f, 0x2d, 0xd1,
 	0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x92, 0x4b, 0xcc, 0xd4, 0xcb, 0x4d, 0x2d, 0x49, 0x2c, 0xc9,

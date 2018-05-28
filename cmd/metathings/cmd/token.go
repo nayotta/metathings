@@ -6,9 +6,9 @@ import (
 	"fmt"
 
 	gpb "github.com/golang/protobuf/ptypes/wrappers"
+	"github.com/nayotta/viper"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
 

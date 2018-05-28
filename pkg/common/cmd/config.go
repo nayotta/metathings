@@ -1,8 +1,8 @@
 package cmd_helper
 
 import (
+	"github.com/nayotta/viper"
 	log "github.com/sirupsen/logrus"
-	"github.com/spf13/viper"
 )
 
 func UnmarshalConfig(dst interface{}, vs ...*viper.Viper) {

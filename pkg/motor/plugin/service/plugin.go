@@ -10,23 +10,24 @@ import (
 	"google.golang.org/grpc"
 
 	cmd_helper "github.com/nayotta/metathings/pkg/common/cmd"
+	constant_helper "github.com/nayotta/metathings/pkg/common/constant"
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 	mtp "github.com/nayotta/metathings/pkg/core/plugin"
-	service "github.com/nayotta/metathings/pkg/echo/service"
-	pb "github.com/nayotta/metathings/pkg/proto/echo"
+	service "github.com/nayotta/metathings/pkg/motor/service"
+	pb "github.com/nayotta/metathings/pkg/proto/motor"
 )
 
-type _coreAgentdOptions struct {
-	Address string
-}
-
-type _metathingsdOptions struct {
+type _serviceConfigOption struct {
 	Address string
 }
 
 type _serviceConfigOptions struct {
-	CoreAgentd  _coreAgentdOptions  `mapstructure:"core_agentd"`
-	Metathingsd _metathingsdOptions `mapstructure:"metathingsd"`
+	CoreAgentd  _serviceConfigOption `mapstructure:"core_agentd"`
+	Metathingsd _serviceConfigOption `mapstructure:"metathingsd"`
+}
+
+type _motorDriverOption struct {
+	Name string
 }
 
 type _rootOptions struct {
@@ -34,6 +35,7 @@ type _rootOptions struct {
 	ServiceConfig          _serviceConfigOptions `mapstructure:"service_config"`
 	Listen                 string
 	Name                   string
+	DriverDescriptor       string
 }
 
 var (
@@ -43,7 +45,7 @@ var (
 
 var (
 	rootCmd = &cobra.Command{
-		Use: "echo",
+		Use: "motor",
 		PreRun: cmd_helper.DefaultPreRunHooks(func() {
 			if root_opts.Config == "" {
 				return
@@ -55,23 +57,25 @@ var (
 				_opts.ServiceConfig.CoreAgentd.Address = root_opts.ServiceConfig.CoreAgentd.Address
 			}
 
+			if _opts.DriverDescriptor == "" {
+				_opts.DriverDescriptor = root_opts.DriverDescriptor
+			}
+
 			root_opts = &_opts
 		}),
 		Run: func(cmd *cobra.Command, args []string) {
-			if err := runEchod(); err != nil {
-				log.WithError(err).Fatalf("failed to run echo(core) service")
+			if err := runMotord(); err != nil {
+				log.WithError(err).Fatalf("failed to run motor(core) service")
 			}
 		},
 	}
 )
 
 func defaultOptions() opt_helper.Option {
-	return opt_helper.Option{
-		"heartbeat.interval": 15,
-	}
+	return opt_helper.Option{}
 }
 
-func runEchod() error {
+func runMotord() error {
 	port := strings.SplitAfter(root_opts.Listen, ":")[1]
 	ep := "localhost" + ":" + port
 
@@ -81,8 +85,10 @@ func runEchod() error {
 	opts.Set("agent.address", root_opts.ServiceConfig.CoreAgentd.Address)
 	opts.Set("metathings.address", root_opts.ServiceConfig.Metathingsd.Address)
 	opts.Set("endpoint", ep)
+	opts.Set("driver.descriptor", root_opts.DriverDescriptor)
+	opts.Set("motors", cmd_helper.GetFromStage(v).Get("motors"))
 
-	srv, err := service.NewEchoService(opts)
+	srv, err := service.NewMotorService(opts)
 	if err != nil {
 		return err
 	}
@@ -92,15 +98,15 @@ func runEchod() error {
 		return err
 	}
 	s := grpc.NewServer()
-	pb.RegisterEchoServiceServer(s, srv)
+	pb.RegisterMotorServiceServer(s, srv)
 
 	err = srv.Init()
 	if err != nil {
 		return err
 	}
-	log.Debugf("echo(core) service initialized")
+	log.Debugf("motor(core) service initialized")
 
-	log.WithField("listen", root_opts.Listen).Infof("echo(core) service listening")
+	log.WithField("listen", root_opts.Listen).Infof("motor(core) service listening")
 	return s.Serve(lis)
 }
 
@@ -113,13 +119,13 @@ func initConfig() {
 	}
 }
 
-type echoServicePlugin struct{}
+type motorServicePlugin struct{}
 
-func (p *echoServicePlugin) Run() error {
+func (p *motorServicePlugin) Run() error {
 	return rootCmd.Execute()
 }
 
-func (p *echoServicePlugin) Init(opts opt_helper.Option) error {
+func (p *motorServicePlugin) Init(opts opt_helper.Option) error {
 	args := opts.GetStrings("args")
 	rootCmd.SetArgs(args)
 
@@ -132,17 +138,18 @@ func (p *echoServicePlugin) Init(opts opt_helper.Option) error {
 
 	cobra.OnInitialize(initConfig)
 
-	rootCmd.PersistentFlags().StringVarP(&root_opts.Listen, "listen", "l", "0.0.0.0:13401", "Echo(Core Plugin) Service listenting address")
+	rootCmd.PersistentFlags().StringVarP(&root_opts.Listen, "listen", "l", "0.0.0.0:13402", "Motor(Core Plugin) Service listening address")
 	rootCmd.PersistentFlags().StringVarP(&root_opts.Config, "config", "c", "", "Config file")
 	rootCmd.PersistentFlags().BoolVar(&root_opts.Verbose, "verbose", false, "Verbose mode")
 	rootCmd.PersistentFlags().StringVar(&root_opts.Log.Level, "log-level", "info", "Logging Level[debug, info, warn, error]")
-	rootCmd.PersistentFlags().StringVar(&root_opts.Name, "name", "echod", "Core Service Name")
-	rootCmd.PersistentFlags().StringVar(&root_opts.ServiceConfig.CoreAgentd.Address, "agent-addr", "agentd.metathings.local:5002", "Core Agent Service Address")
-	rootCmd.PersistentFlags().StringVar(&root_opts.ServiceConfig.Metathingsd.Address, "metathings-addr", "api.metathings.ai:80", "Metathings Service Address")
+	rootCmd.PersistentFlags().StringVar(&root_opts.Name, "name", "motord", "Core Service Name")
+	rootCmd.PersistentFlags().StringVar(&root_opts.ServiceConfig.CoreAgentd.Address, "agent-addr", constant_helper.CONSTANT_CORE_AGENTD_ADDRESS, "Core Agent Service Address")
+	rootCmd.PersistentFlags().StringVar(&root_opts.ServiceConfig.Metathingsd.Address, "metathings-addr", constant_helper.CONSTANT_METATHINGSD_ADDRESS, "Metathings Service Address")
+	rootCmd.PersistentFlags().StringVar(&root_opts.DriverDescriptor, "driver-descriptor", "~/.metathins/motor_driver_descriptor.yaml", "Motor driver descriptor path")
 
 	return nil
 }
 
 func NewServicePlugin() mtp.ServicePlugin {
-	return &echoServicePlugin{}
+	return &motorServicePlugin{}
 }

@@ -2,27 +2,22 @@ syntax = "proto3";
 
 package ai.metathings.service.motor;
 
-enum MotorType {
-	MOTOR_TYPE_UNKNOWN = 0;
-	MOTOR_TYPE_NORMAL = 1;
-}
-
 enum MotorState {
 	MOTOR_STATE_UNKNOWN = 0;
 	MOTOR_STATE_ON = 1;
 	MOTOR_STATE_OFF = 2;
 }
 
-message Motor {
-	string name = 1;
-	MotorType type = 2;
-	MotorState state = 3;
-	oneof motor {
-		NormalMotor normal = 4;
-	}
+enum MotorDirection {
+	MTOOR_DIRECTION_UNKNOWN = 0;
+	MOTOR_DIRECTION_FORWARD = 1;
+	MOTOR_DIRECTION_BACKWARD = 2;
 }
 
-message NormalMotor {
-	// speed range from -1 to 1.
-	float speed = 1;
+message Motor {
+	string name = 1;
+	MotorState state = 2;
+	MotorDirection direction = 3;
+	// speed range from 0 to 1
+	float speed = 4;
 }

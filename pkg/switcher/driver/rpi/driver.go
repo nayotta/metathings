@@ -3,8 +3,8 @@ package main
 import (
 	"sync"
 
+	"github.com/nayotta/viper"
 	log "github.com/sirupsen/logrus"
-	"github.com/spf13/viper"
 	rpio "github.com/stianeikeland/go-rpio"
 
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
@@ -30,7 +30,7 @@ func (drv *rpiSwitcherDriver) Init(opt opt_helper.Option) error {
 	drv.mutex.Lock()
 	defer drv.mutex.Unlock()
 
-	drv.state = driver.OFF
+	drv.state = driver.STATE_OFF
 	v, ok := opt.Get("driver").(*viper.Viper)
 	if !ok {
 		return driver.ErrInitFail
@@ -97,9 +97,9 @@ func (drv *rpiSwitcherDriver) Turn(x driver.SwitcherState) (driver.Switcher, err
 
 	drv.state = x
 	switch x {
-	case driver.ON:
+	case driver.STATE_ON:
 		drv.pin.High()
-	case driver.OFF:
+	case driver.STATE_OFF:
 		drv.pin.Low()
 	}
 
@@ -110,6 +110,6 @@ func (drv *rpiSwitcherDriver) Turn(x driver.SwitcherState) (driver.Switcher, err
 var NewDriver driver.NewDriverMethod = func(opt opt_helper.Option) (driver.SwitcherDriver, error) {
 	return &rpiSwitcherDriver{
 		mutex: &sync.Mutex{},
-		state: driver.UNKNOWN,
+		state: driver.STATE_UNKNOWN,
 	}, nil
 }

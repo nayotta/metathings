@@ -46,7 +46,7 @@ func (srv *metathingsSwitcherService) Get(ctx context.Context, _ *empty.Empty) (
 
 func (srv *metathingsSwitcherService) Turn(ctx context.Context, req *pb.TurnRequest) (*pb.TurnResponse, error) {
 	st := driver.FromValue(int32(req.State))
-	if st == driver.UNKNOWN {
+	if st == driver.STATE_UNKNOWN {
 		return nil, status.Errorf(codes.InvalidArgument, "unsupported switcher state")
 	}
 

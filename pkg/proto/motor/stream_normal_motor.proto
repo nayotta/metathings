@@ -8,11 +8,11 @@ import "google/protobuf/timestamp.proto";
 import "motor.proto";
 
 message StreamNormalMotorPingRequest{
-	google.protobuf.Timestamp timestamp = 2;
+	google.protobuf.Timestamp timestamp = 1;
 }
 
 message StreamNormalMotorPingResponse{
-	google.protobuf.Timestamp timestamp = 2;
+	google.protobuf.Timestamp timestamp = 1;
 }
 
 message StreamNormalMotorSetSpeedRequest {

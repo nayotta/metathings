@@ -3,7 +3,6 @@
 
 package motor
 
-import go_proto_validators "github.com/mwitkow/go-proto-validators"
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
@@ -14,15 +13,5 @@ var _ = fmt.Errorf
 var _ = math.Inf
 
 func (this *Motor) Validate() error {
-	if oneOfNester, ok := this.GetMotor().(*Motor_Normal); ok {
-		if oneOfNester.Normal != nil {
-			if err := go_proto_validators.CallValidatorIfExists(oneOfNester.Normal); err != nil {
-				return go_proto_validators.FieldError("Normal", err)
-			}
-		}
-	}
-	return nil
-}
-func (this *NormalMotor) Validate() error {
 	return nil
 }

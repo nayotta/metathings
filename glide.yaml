@@ -84,6 +84,7 @@ import:
   - ptypes/timestamp
   - ptypes/wrappers
 - package: github.com/grpc-ecosystem/go-grpc-middleware
+  version: ^1.0.0
   subpackages:
   - auth
   - logging
@@ -155,8 +156,6 @@ import:
 - package: github.com/spf13/jwalterweatherman
 - package: github.com/spf13/pflag
   version: ^1.0.1
-- package: github.com/spf13/viper
-  version: ^1.0.2
 - package: github.com/stretchr/objx
   version: ^0.1.0
 - package: github.com/stretchr/testify

@@ -12,8 +12,8 @@ func (s SwitcherState) ToString() string {
 }
 
 func FromValue(x int32) SwitcherState {
-	if x >= int32(OVERFLOW) {
-		return UNKNOWN
+	if x >= int32(STATE_OVERFLOW) {
+		return STATE_UNKNOWN
 	}
 	return SwitcherState(x)
 }

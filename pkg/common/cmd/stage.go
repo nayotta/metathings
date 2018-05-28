@@ -1,6 +1,6 @@
 package cmd_helper
 
-import "github.com/spf13/viper"
+import "github.com/nayotta/viper"
 
 func GetStageFromEnv() string {
 	stage := viper.GetString("stage")

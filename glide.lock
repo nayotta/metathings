@@ -1,8 +1,8 @@
-hash: ea82e843abbfcc49188a8851b0592a674e2006ebac9d34c5501305002c13f562
-updated: 2018-05-12T01:49:38.680377+08:00
+hash: ba920599696315e3d64a9893be876a3b1379873990c55e0b7c9cdfaab9a4a2c6
+updated: 2018-05-28T16:57:03.980744+08:00
 imports:
 - name: cloud.google.com/go
-  version: 056a55f54a6cc77b440b31a56a5e7c3982d32811
+  version: 0fd7230b2a7505833d5f69b75cbd6c9582401479
   subpackages:
   - storage
 - name: github.com/cpuguy83/go-md2man
@@ -115,11 +115,11 @@ imports:
   subpackages:
   - reflectx
 - name: github.com/magiconair/properties
-  version: c3beff4c2358b44d0493c7dda585e7db7ff28ae6
+  version: c2353362d570a7bfa228149c62842019201cfb71
 - name: github.com/mattn/go-sqlite3
-  version: 6c771bb9887719704b210e87e934f08be014bdb1
+  version: 323a32be5a2421b8c7087225079c6c900ec397cd
 - name: github.com/mitchellh/go-homedir
-  version: b8bc1bf767474819792c23f32d8286a45736f1c6
+  version: 3864e76763d94a6df2f9960b16a20a33da9f9a66
 - name: github.com/mitchellh/mapstructure
   version: 00c29f56e2386353d58c599509e8dc3801b0d716
 - name: github.com/moul/http2curl
@@ -128,6 +128,8 @@ imports:
   version: 0950a79900071e9f3f5979b78078c599376422fd
   subpackages:
   - plugin
+- name: github.com/nayotta/viper
+  version: 019fa2bda1e56d898bc2744f700e07bf2fff79de
 - name: github.com/opentracing/opentracing-go
   version: 1949ddbfd147afd4d964a9f00b24eb291e0e7c38
   subpackages:
@@ -140,7 +142,7 @@ imports:
 - name: github.com/pkg/errors
   version: 645ef00459ed84a119197bfb8d8205042c6df63d
 - name: github.com/pkg/sftp
-  version: 5bf2a174b604c6b5549dd9740d924ff2f02e3ad7
+  version: d2aa419835609d317c34baae11bc345d1f9971a7
 - name: github.com/pmezard/go-difflib
   version: 792786c7400a136282c1664665ae0a8db921c6c2
   subpackages:
@@ -158,15 +160,13 @@ imports:
 - name: github.com/spf13/cast
   version: 8965335b8c7107321228e3e3702cab9832751bac
 - name: github.com/spf13/cobra
-  version: a1f051bc3eba734da4772d60e2d677f47cf93ef4
+  version: ef82de70bb3f60c65fb8eebacbb2d122ef517385
   subpackages:
   - cobra/cmd
 - name: github.com/spf13/jwalterweatherman
   version: 7c0cea34c8ece3fbeb2b27ab9b59511d360fb394
 - name: github.com/spf13/pflag
   version: 583c0c0531f06d5278b7d917446061adc344b5cd
-- name: github.com/spf13/viper
-  version: b5e8006cbee93ec955a89ab31e0e3ce3204f3736
 - name: github.com/stianeikeland/go-rpio
   version: a6b0dffd47b6b1ddf7f1bfe2144f05bf335e911d
 - name: github.com/stretchr/objx
@@ -192,7 +192,7 @@ imports:
   subpackages:
   - syncutil/singleflight
 - name: golang.org/x/build
-  version: 4b011fe7b60b1bd7609f5d80ad9dbbc46477c433
+  version: 99c796b9503befd21645b5fc26c76c6676978834
   subpackages:
   - autocertcache
 - name: golang.org/x/crypto
@@ -242,7 +242,7 @@ imports:
   - trace
   - webdav/internal/xml
 - name: golang.org/x/oauth2
-  version: cdc340f7c179dbbfa4afd43b7614e8fcadde4269
+  version: 770e5ebd4ab27c4d70b0983674d138217f5e2c72
   subpackages:
   - google
   - jwt
@@ -297,7 +297,7 @@ imports:
   - unicode/norm
   - width
 - name: golang.org/x/tools
-  version: 48418e5732e1b1e2a10207c8007a5f959e422f20
+  version: a5b4c53f6e8bdcafa95a94671bf2d1203365858b
   subpackages:
   - go/buildutil
   - go/callgraph
@@ -306,7 +306,7 @@ imports:
   - go/ssa
   - go/ssa/ssautil
 - name: google.golang.org/api
-  version: 4bd7f4beb291148443ed4553071c4e0697ff4afb
+  version: 8180fb51da879301a8ddb7e2ee122ca5862da7f5
   subpackages:
   - compute/v1
 - name: google.golang.org/genproto
@@ -399,7 +399,7 @@ testImports:
 - name: github.com/go-sql-driver/mysql
   version: a0583e0143b1624142adab07e0e97fe106d99561
 - name: github.com/lib/pq
-  version: d34b9ff171c21ad295489235aec8b6626023cd04
+  version: 90697d60dd844d5ef6ff15135d0203f65d2f53b8
 - name: github.com/smartystreets/goconvey
   version: 9e8dc3f972df6c8fcc0375ef492c24d0bb204857
   subpackages:

@@ -1,4 +1,4 @@
-package metathings_switcher_driver
+package metathings_motor_driver
 
 import (
 	"plugin"
@@ -54,7 +54,7 @@ func NewDriverFactory(path string) (*DriverFactory, error) {
 	}, nil
 }
 
-func (df *DriverFactory) New(name string, opt opt_helper.Option) (SwitcherDriver, error) {
+func (df *DriverFactory) New(name string, opt opt_helper.Option) (MotorDriver, error) {
 	method, err := df.getNewDriverMethod(name)
 	if err != nil {
 		return nil, err

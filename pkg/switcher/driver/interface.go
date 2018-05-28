@@ -7,10 +7,10 @@ import (
 type SwitcherState int32
 
 const (
-	UNKNOWN SwitcherState = iota
-	ON
-	OFF
-	OVERFLOW
+	STATE_UNKNOWN SwitcherState = iota
+	STATE_ON
+	STATE_OFF
+	STATE_OVERFLOW
 )
 
 type Switcher struct {
@@ -19,9 +19,9 @@ type Switcher struct {
 
 type SwitcherDriver interface {
 	Init(opt_helper.Option) error
+	Close() error
 	Get() (Switcher, error)
 	Turn(SwitcherState) (Switcher, error)
-	Close() error
 }
 
 type NewDriverMethod func(opt_helper.Option) (SwitcherDriver, error)

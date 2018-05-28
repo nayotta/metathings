@@ -18,29 +18,6 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
-type MotorType int32
-
-const (
-	MotorType_MOTOR_TYPE_UNKNOWN MotorType = 0
-	MotorType_MOTOR_TYPE_NORMAL  MotorType = 1
-)
-
-var MotorType_name = map[int32]string{
-	0: "MOTOR_TYPE_UNKNOWN",
-	1: "MOTOR_TYPE_NORMAL",
-}
-var MotorType_value = map[string]int32{
-	"MOTOR_TYPE_UNKNOWN": 0,
-	"MOTOR_TYPE_NORMAL":  1,
-}
-
-func (x MotorType) String() string {
-	return proto.EnumName(MotorType_name, int32(x))
-}
-func (MotorType) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_motor_db7d681320e7e40f, []int{0}
-}
-
 type MotorState int32
 
 const (
@@ -64,26 +41,51 @@ func (x MotorState) String() string {
 	return proto.EnumName(MotorState_name, int32(x))
 }
 func (MotorState) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_motor_db7d681320e7e40f, []int{1}
+	return fileDescriptor_motor_2df5e2122e28dd77, []int{0}
+}
+
+type MotorDirection int32
+
+const (
+	MotorDirection_MTOOR_DIRECTION_UNKNOWN  MotorDirection = 0
+	MotorDirection_MOTOR_DIRECTION_FORWARD  MotorDirection = 1
+	MotorDirection_MOTOR_DIRECTION_BACKWARD MotorDirection = 2
+)
+
+var MotorDirection_name = map[int32]string{
+	0: "MTOOR_DIRECTION_UNKNOWN",
+	1: "MOTOR_DIRECTION_FORWARD",
+	2: "MOTOR_DIRECTION_BACKWARD",
+}
+var MotorDirection_value = map[string]int32{
+	"MTOOR_DIRECTION_UNKNOWN":  0,
+	"MOTOR_DIRECTION_FORWARD":  1,
+	"MOTOR_DIRECTION_BACKWARD": 2,
+}
+
+func (x MotorDirection) String() string {
+	return proto.EnumName(MotorDirection_name, int32(x))
+}
+func (MotorDirection) EnumDescriptor() ([]byte, []int) {
+	return fileDescriptor_motor_2df5e2122e28dd77, []int{1}
 }
 
 type Motor struct {
-	Name  string     `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
-	Type  MotorType  `protobuf:"varint,2,opt,name=type,enum=ai.metathings.service.motor.MotorType" json:"type,omitempty"`
-	State MotorState `protobuf:"varint,3,opt,name=state,enum=ai.metathings.service.motor.MotorState" json:"state,omitempty"`
-	// Types that are valid to be assigned to Motor:
-	//	*Motor_Normal
-	Motor                isMotor_Motor `protobuf_oneof:"motor"`
-	XXX_NoUnkeyedLiteral struct{}      `json:"-"`
-	XXX_unrecognized     []byte        `json:"-"`
-	XXX_sizecache        int32         `json:"-"`
+	Name      string         `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
+	State     MotorState     `protobuf:"varint,2,opt,name=state,enum=ai.metathings.service.motor.MotorState" json:"state,omitempty"`
+	Direction MotorDirection `protobuf:"varint,3,opt,name=direction,enum=ai.metathings.service.motor.MotorDirection" json:"direction,omitempty"`
+	// speed range from 0 to 1
+	Speed                float32  `protobuf:"fixed32,4,opt,name=speed" json:"speed,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
 func (m *Motor) Reset()         { *m = Motor{} }
 func (m *Motor) String() string { return proto.CompactTextString(m) }
 func (*Motor) ProtoMessage()    {}
 func (*Motor) Descriptor() ([]byte, []int) {
-	return fileDescriptor_motor_db7d681320e7e40f, []int{0}
+	return fileDescriptor_motor_2df5e2122e28dd77, []int{0}
 }
 func (m *Motor) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Motor.Unmarshal(m, b)
@@ -103,35 +105,11 @@ func (m *Motor) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_Motor proto.InternalMessageInfo
 
-type isMotor_Motor interface {
-	isMotor_Motor()
-}
-
-type Motor_Normal struct {
-	Normal *NormalMotor `protobuf:"bytes,4,opt,name=normal,oneof"`
-}
-
-func (*Motor_Normal) isMotor_Motor() {}
-
-func (m *Motor) GetMotor() isMotor_Motor {
-	if m != nil {
-		return m.Motor
-	}
-	return nil
-}
-
 func (m *Motor) GetName() string {
 	if m != nil {
 		return m.Name
 	}
 	return ""
-}
-
-func (m *Motor) GetType() MotorType {
-	if m != nil {
-		return m.Type
-	}
-	return MotorType_MOTOR_TYPE_UNKNOWN
 }
 
 func (m *Motor) GetState() MotorState {
@@ -141,101 +119,14 @@ func (m *Motor) GetState() MotorState {
 	return MotorState_MOTOR_STATE_UNKNOWN
 }
 
-func (m *Motor) GetNormal() *NormalMotor {
-	if x, ok := m.GetMotor().(*Motor_Normal); ok {
-		return x.Normal
+func (m *Motor) GetDirection() MotorDirection {
+	if m != nil {
+		return m.Direction
 	}
-	return nil
+	return MotorDirection_MTOOR_DIRECTION_UNKNOWN
 }
 
-// XXX_OneofFuncs is for the internal use of the proto package.
-func (*Motor) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) error, func(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error), func(msg proto.Message) (n int), []interface{}) {
-	return _Motor_OneofMarshaler, _Motor_OneofUnmarshaler, _Motor_OneofSizer, []interface{}{
-		(*Motor_Normal)(nil),
-	}
-}
-
-func _Motor_OneofMarshaler(msg proto.Message, b *proto.Buffer) error {
-	m := msg.(*Motor)
-	// motor
-	switch x := m.Motor.(type) {
-	case *Motor_Normal:
-		b.EncodeVarint(4<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Normal); err != nil {
-			return err
-		}
-	case nil:
-	default:
-		return fmt.Errorf("Motor.Motor has unexpected type %T", x)
-	}
-	return nil
-}
-
-func _Motor_OneofUnmarshaler(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error) {
-	m := msg.(*Motor)
-	switch tag {
-	case 4: // motor.normal
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(NormalMotor)
-		err := b.DecodeMessage(msg)
-		m.Motor = &Motor_Normal{msg}
-		return true, err
-	default:
-		return false, nil
-	}
-}
-
-func _Motor_OneofSizer(msg proto.Message) (n int) {
-	m := msg.(*Motor)
-	// motor
-	switch x := m.Motor.(type) {
-	case *Motor_Normal:
-		s := proto.Size(x.Normal)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case nil:
-	default:
-		panic(fmt.Sprintf("proto: unexpected type %T in oneof", x))
-	}
-	return n
-}
-
-type NormalMotor struct {
-	// speed range from -1 to 1.
-	Speed                float32  `protobuf:"fixed32,1,opt,name=speed" json:"speed,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *NormalMotor) Reset()         { *m = NormalMotor{} }
-func (m *NormalMotor) String() string { return proto.CompactTextString(m) }
-func (*NormalMotor) ProtoMessage()    {}
-func (*NormalMotor) Descriptor() ([]byte, []int) {
-	return fileDescriptor_motor_db7d681320e7e40f, []int{1}
-}
-func (m *NormalMotor) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_NormalMotor.Unmarshal(m, b)
-}
-func (m *NormalMotor) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_NormalMotor.Marshal(b, m, deterministic)
-}
-func (dst *NormalMotor) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_NormalMotor.Merge(dst, src)
-}
-func (m *NormalMotor) XXX_Size() int {
-	return xxx_messageInfo_NormalMotor.Size(m)
-}
-func (m *NormalMotor) XXX_DiscardUnknown() {
-	xxx_messageInfo_NormalMotor.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_NormalMotor proto.InternalMessageInfo
-
-func (m *NormalMotor) GetSpeed() float32 {
+func (m *Motor) GetSpeed() float32 {
 	if m != nil {
 		return m.Speed
 	}
@@ -244,31 +135,29 @@ func (m *NormalMotor) GetSpeed() float32 {
 
 func init() {
 	proto.RegisterType((*Motor)(nil), "ai.metathings.service.motor.Motor")
-	proto.RegisterType((*NormalMotor)(nil), "ai.metathings.service.motor.NormalMotor")
-	proto.RegisterEnum("ai.metathings.service.motor.MotorType", MotorType_name, MotorType_value)
 	proto.RegisterEnum("ai.metathings.service.motor.MotorState", MotorState_name, MotorState_value)
+	proto.RegisterEnum("ai.metathings.service.motor.MotorDirection", MotorDirection_name, MotorDirection_value)
 }
 
-func init() { proto.RegisterFile("motor.proto", fileDescriptor_motor_db7d681320e7e40f) }
+func init() { proto.RegisterFile("motor.proto", fileDescriptor_motor_2df5e2122e28dd77) }
 
-var fileDescriptor_motor_db7d681320e7e40f = []byte{
-	// 280 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x91, 0x5f, 0x4b, 0xf3, 0x30,
-	0x14, 0xc6, 0x97, 0xbe, 0xed, 0x5e, 0x76, 0x0a, 0xb3, 0x9e, 0xf9, 0xa7, 0xe0, 0x4d, 0x51, 0xd0,
-	0xb2, 0x8b, 0x5c, 0xcc, 0xbb, 0x81, 0x17, 0x1b, 0x38, 0x04, 0x6d, 0x22, 0x59, 0x44, 0xbc, 0x1a,
-	0x51, 0x83, 0x16, 0x6c, 0x53, 0xda, 0x20, 0xec, 0xf3, 0xfa, 0x45, 0x64, 0xa9, 0x68, 0xbd, 0x99,
-	0x77, 0x27, 0x27, 0xbf, 0xdf, 0x03, 0x0f, 0x07, 0xc2, 0xc2, 0x58, 0x53, 0xd3, 0xaa, 0x36, 0xd6,
-	0xe0, 0x91, 0xca, 0x69, 0xa1, 0xad, 0xb2, 0xaf, 0x79, 0xf9, 0xd2, 0xd0, 0x46, 0xd7, 0xef, 0xf9,
-	0x93, 0xa6, 0x0e, 0x39, 0xfe, 0x20, 0x10, 0x64, 0x9b, 0x09, 0x11, 0xfc, 0x52, 0x15, 0x3a, 0x26,
-	0x09, 0x49, 0x07, 0xc2, 0xcd, 0x38, 0x05, 0xdf, 0xae, 0x2b, 0x1d, 0x7b, 0x09, 0x49, 0x87, 0x93,
-	0x53, 0xba, 0x25, 0x89, 0xba, 0x14, 0xb9, 0xae, 0xb4, 0x70, 0x0e, 0x5e, 0x40, 0xd0, 0x58, 0x65,
-	0x75, 0xfc, 0xcf, 0xc9, 0x67, 0x7f, 0xcb, 0xcb, 0x0d, 0x2e, 0x5a, 0x0b, 0xe7, 0xd0, 0x2f, 0x4d,
-	0x5d, 0xa8, 0xb7, 0xd8, 0x4f, 0x48, 0x1a, 0x4e, 0xd2, 0xad, 0x3e, 0x73, 0xa8, 0x4b, 0xb9, 0xea,
-	0x89, 0x2f, 0x73, 0xfe, 0x1f, 0x82, 0xb6, 0xe5, 0x09, 0x84, 0x1d, 0x02, 0xf7, 0x20, 0x68, 0x2a,
-	0xad, 0x9f, 0x5d, 0x57, 0x4f, 0xb4, 0x8f, 0xf1, 0x14, 0x06, 0xdf, 0x1d, 0xf0, 0x00, 0x30, 0xe3,
-	0x92, 0x8b, 0x95, 0x7c, 0xb8, 0xbd, 0x5c, 0xdd, 0xb1, 0x6b, 0xc6, 0xef, 0x59, 0xd4, 0xc3, 0x7d,
-	0xd8, 0xed, 0xec, 0x19, 0x17, 0xd9, 0xec, 0x26, 0x22, 0x63, 0x06, 0xf0, 0x53, 0x01, 0x0f, 0x61,
-	0xd4, 0x42, 0x4b, 0x39, 0x93, 0x5d, 0x1b, 0x61, 0xd8, 0xfd, 0xe0, 0x2c, 0x22, 0x38, 0x82, 0x9d,
-	0x5f, 0xbb, 0xc5, 0x22, 0xf2, 0x1e, 0xfb, 0xee, 0x74, 0xe7, 0x9f, 0x01, 0x00, 0x00, 0xff, 0xff,
-	0x89, 0x46, 0x72, 0xbb, 0xc9, 0x01, 0x00, 0x00,
+var fileDescriptor_motor_2df5e2122e28dd77 = []byte{
+	// 267 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x91, 0x41, 0x4b, 0xc3, 0x30,
+	0x14, 0xc7, 0x4d, 0x5d, 0x85, 0x3d, 0xa1, 0x96, 0x37, 0x61, 0x85, 0x79, 0x28, 0x5e, 0x2c, 0x13,
+	0x72, 0xd0, 0xb3, 0x87, 0xba, 0xae, 0x50, 0x46, 0x13, 0xc8, 0x2a, 0x3b, 0x96, 0xba, 0x05, 0x97,
+	0x43, 0x9b, 0xd1, 0x06, 0xbf, 0x9c, 0x5f, 0x4e, 0x9a, 0x21, 0xdd, 0x3c, 0xe8, 0xed, 0x25, 0xbf,
+	0xff, 0xff, 0x97, 0xc0, 0x83, 0xeb, 0x5a, 0x1b, 0xdd, 0xd2, 0x43, 0xab, 0x8d, 0xc6, 0x59, 0xa5,
+	0x68, 0x2d, 0x4d, 0x65, 0xf6, 0xaa, 0xf9, 0xe8, 0x68, 0x27, 0xdb, 0x4f, 0xb5, 0x95, 0xd4, 0x46,
+	0xee, 0xbf, 0x08, 0xb8, 0x79, 0x3f, 0x21, 0xc2, 0xa8, 0xa9, 0x6a, 0x19, 0x90, 0x90, 0x44, 0x63,
+	0x61, 0x67, 0x7c, 0x01, 0xb7, 0x33, 0x95, 0x91, 0x81, 0x13, 0x92, 0xc8, 0x7b, 0x7a, 0xa0, 0x7f,
+	0xa8, 0xa8, 0xd5, 0xac, 0xfb, 0xb8, 0x38, 0xb6, 0x30, 0x83, 0xf1, 0x4e, 0xb5, 0x72, 0x6b, 0x94,
+	0x6e, 0x82, 0x4b, 0xab, 0x78, 0xfc, 0x5f, 0x91, 0xfc, 0x54, 0xc4, 0xd0, 0xc6, 0x5b, 0x70, 0xbb,
+	0x83, 0x94, 0xbb, 0x60, 0x14, 0x92, 0xc8, 0x11, 0xc7, 0xc3, 0x9c, 0x01, 0x0c, 0xaf, 0xe2, 0x14,
+	0x26, 0x39, 0x2f, 0xb8, 0x28, 0xd7, 0x45, 0x5c, 0x2c, 0xcb, 0x37, 0xb6, 0x62, 0x7c, 0xc3, 0xfc,
+	0x0b, 0x44, 0xf0, 0x4e, 0x01, 0x67, 0x3e, 0xc1, 0x09, 0xdc, 0x9c, 0xdd, 0xa5, 0xa9, 0xef, 0xcc,
+	0xf7, 0xe0, 0x9d, 0x7f, 0x01, 0x67, 0x30, 0xcd, 0x0b, 0xce, 0x45, 0x99, 0x64, 0x62, 0xb9, 0x28,
+	0x32, 0xce, 0x4e, 0xbc, 0x3d, 0xb4, 0x8e, 0x01, 0xa6, 0x5c, 0x6c, 0x62, 0x91, 0xf8, 0x04, 0xef,
+	0x20, 0xf8, 0x0d, 0x5f, 0xe3, 0xc5, 0xca, 0x52, 0xe7, 0xfd, 0xca, 0xee, 0xe6, 0xf9, 0x3b, 0x00,
+	0x00, 0xff, 0xff, 0x5e, 0x92, 0x29, 0x52, 0xaa, 0x01, 0x00, 0x00,
 }

@@ -1,12 +1,13 @@
 RM=$(shell which rm)
 CLEAN_PATHS=./bin ./lib
 
-
 all: \
 	protos \
 	echo_plugins \
 	switcher_drivers \
 	switcher_plugins \
+	motor_drivers \
+	motor_plugins \
 	metathings_bin \
 	metathingsd_bin
 
@@ -30,6 +31,12 @@ switcher_drivers:
 
 switcher_plugins:
 	$(MAKE) -C pkg/switcher/plugin all
+
+motor_drivers:
+	$(MAKE) -C pkg/motor/driver all
+
+motor_plugins:
+	$(MAKE) -C pkg/motor/plugin all
 
 build_docker_images:
 	./script/metathings_build.sh
