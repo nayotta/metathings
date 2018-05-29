@@ -1,5 +1,5 @@
-hash: ba920599696315e3d64a9893be876a3b1379873990c55e0b7c9cdfaab9a4a2c6
-updated: 2018-05-28T16:57:03.980744+08:00
+hash: 2a2f75c009bb55ab796873acfda004b549b90dffd8720be80bea2b0fe916b6d2
+updated: 2018-05-29T09:38:54.964705+08:00
 imports:
 - name: cloud.google.com/go
   version: 0fd7230b2a7505833d5f69b75cbd6c9582401479
@@ -84,7 +84,7 @@ imports:
   - ptypes/timestamp
   - ptypes/wrappers
 - name: github.com/grpc-ecosystem/go-grpc-middleware
-  version: b9ed6aed6cf9de7330c7c8e81d3d8e49086539e8
+  version: c250d6563d4d4c20252cd865923440e829844f4e
   subpackages:
   - auth
   - logging
@@ -129,7 +129,7 @@ imports:
   subpackages:
   - plugin
 - name: github.com/nayotta/viper
-  version: 019fa2bda1e56d898bc2744f700e07bf2fff79de
+  version: b5e8006cbee93ec955a89ab31e0e3ce3204f3736
 - name: github.com/opentracing/opentracing-go
   version: 1949ddbfd147afd4d964a9f00b24eb291e0e7c38
   subpackages:
@@ -242,7 +242,7 @@ imports:
   - trace
   - webdav/internal/xml
 - name: golang.org/x/oauth2
-  version: 770e5ebd4ab27c4d70b0983674d138217f5e2c72
+  version: 8373c646843f3728aafb0d706e6edb223532ae73
   subpackages:
   - google
   - jwt
@@ -306,7 +306,7 @@ imports:
   - go/ssa
   - go/ssa/ssautil
 - name: google.golang.org/api
-  version: 8180fb51da879301a8ddb7e2ee122ca5862da7f5
+  version: de6fadef861e6dbf0af2a8d98d6c1389aaa28ca5
   subpackages:
   - compute/v1
 - name: google.golang.org/genproto
