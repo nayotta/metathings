@@ -41,7 +41,7 @@ func (drv *dummyMotorDriver) Init(opt opt_helper.Option) error {
 	drv.direction = driver.DIRECTION_FORWARD
 	drv.speed = 0.0
 
-	logger.Debugf("driver initialized")
+	logger.Infof("driver initialized")
 
 	return nil
 }
@@ -94,6 +94,8 @@ func (drv *dummyMotorDriver) SetSpeed(spd float32) (driver.Motor, error) {
 }
 
 var NewDriver driver.NewDriverMethod = func(opt opt_helper.Option) (driver.MotorDriver, error) {
+	log.Infof("new motor dummy driver")
+
 	return &dummyMotorDriver{
 		mutex:     &sync.Mutex{},
 		direction: driver.DIRECTION_UNKNOWN,

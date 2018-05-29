@@ -27,7 +27,7 @@ func (drv *dummySwitcherDriver) Init(opt opt_helper.Option) error {
 
 	drv.state = driver.STATE_OFF
 
-	logger.Debugf("driver initialized")
+	logger.Infof("driver initialized")
 
 	return nil
 }
@@ -55,7 +55,7 @@ func (drv *dummySwitcherDriver) Turn(x driver.SwitcherState) (driver.Switcher, e
 }
 
 var NewDriver driver.NewDriverMethod = func(opt opt_helper.Option) (driver.SwitcherDriver, error) {
-	logger.Debugf("new driver")
+	logger.Infof("new switcher dummy driver")
 
 	return &dummySwitcherDriver{
 		mutex: &sync.Mutex{},

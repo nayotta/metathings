@@ -62,6 +62,10 @@ func NewMotorManager(opt opt_helper.Option) (*MotorManager, error) {
 		if err != nil {
 			return nil, err
 		}
+		err = drv.Init(new_mtr_opt)
+		if err != nil {
+			return nil, err
+		}
 
 		mtrs[mtr_opt_s.Name] = Motor{
 			Name:   mtr_opt_s.Name,
