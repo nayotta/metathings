@@ -90,7 +90,7 @@ func init() {
 
 	RootCmd.PersistentFlags().StringVar(&root_opts.Log.Level, "log-level", "info", "Logging Level[debug, info, warn, error]")
 
-	RootCmd.PersistentFlags().StringVar(&root_opts.ServiceConfig.Metathings.Address, "addr", "", "Metathings Service Address")
+	RootCmd.PersistentFlags().StringVar(&root_opts.ServiceConfig.Metathings.Address, "addr", "mt-api.nayotta.com", "Metathings Service Address")
 
 	RootCmd.PersistentFlags().StringVar(&root_opts.Token, "token", "", "MetaThings Token")
 	viper.BindPFlag("token", RootCmd.PersistentFlags().Lookup("token"))

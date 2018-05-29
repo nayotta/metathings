@@ -88,7 +88,10 @@ func (srv *metathingsMotorService) Stream(stream pb.MotorService_StreamServer) e
 		}
 	}()
 
-	return status.Errorf(codes.Unimplemented, "unimplemented")
+	<-quit
+	srv.logger.Infof("stream closed")
+
+	return nil
 }
 
 func (srv *metathingsMotorService) handleStreamRequest(stream pb.MotorService_StreamServer, req *pb.StreamRequest) {
