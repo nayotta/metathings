@@ -1,5 +1,5 @@
-hash: 2a2f75c009bb55ab796873acfda004b549b90dffd8720be80bea2b0fe916b6d2
-updated: 2018-05-29T09:38:54.964705+08:00
+hash: 6ae88a551dc93b7d8c7e50dc98159899109e7d0f3731e85ec26d76bbb2841cd3
+updated: 2018-05-29T09:45:29.0698+08:00
 imports:
 - name: cloud.google.com/go
   version: 0fd7230b2a7505833d5f69b75cbd6c9582401479
@@ -129,7 +129,7 @@ imports:
   subpackages:
   - plugin
 - name: github.com/nayotta/viper
-  version: b5e8006cbee93ec955a89ab31e0e3ce3204f3736
+  version: 019fa2bda1e56d898bc2744f700e07bf2fff79de
 - name: github.com/opentracing/opentracing-go
   version: 1949ddbfd147afd4d964a9f00b24eb291e0e7c38
   subpackages:
