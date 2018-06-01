@@ -45,3 +45,11 @@ func (o Option) GetBool(k string) bool {
 	}
 	return v.(bool)
 }
+
+func Copy(opt Option) Option {
+	o := Option{}
+	for k := range opt {
+		o[k] = opt[k]
+	}
+	return o
+}

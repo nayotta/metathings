@@ -98,6 +98,7 @@ var NewDriver driver.NewDriverMethod = func(opt opt_helper.Option) (driver.Motor
 
 	return &dummyMotorDriver{
 		mutex:     &sync.Mutex{},
+		name:      opt.GetString("name"),
 		direction: driver.DIRECTION_UNKNOWN,
 		state:     driver.STATE_UNKNOWN,
 		speed:     0.0,

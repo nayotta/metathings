@@ -8,6 +8,7 @@ import (
 	rpio "github.com/stianeikeland/go-rpio"
 
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
+	pin_helper "github.com/nayotta/metathings/pkg/common/pin/rpi"
 	driver "github.com/nayotta/metathings/pkg/switcher/driver"
 )
 
@@ -60,7 +61,7 @@ func (drv *rpiSwitcherDriver) Init(opt opt_helper.Option) error {
 		drv.opt.Pin = 18
 	}
 
-	drv.pin, err = Pin(drv.opt.Model, drv.opt.Pin)
+	drv.pin, err = pin_helper.Pin(drv.opt.Model, drv.opt.Pin)
 	if err != nil {
 		return err
 	}

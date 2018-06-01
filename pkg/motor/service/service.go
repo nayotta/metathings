@@ -73,6 +73,8 @@ func (srv *metathingsMotorService) Get(ctx context.Context, req *pb.GetRequest) 
 func (srv *metathingsMotorService) Stream(stream pb.MotorService_StreamServer) error {
 	quit := make(chan interface{})
 
+	srv.logger.Infof("stream begin")
+
 	go func() {
 		defer func() { quit <- nil }()
 		for {
@@ -145,7 +147,7 @@ func (srv *metathingsMotorService) handleStreamRequest_setState(stream pb.MotorS
 		srv.logger.WithError(err).Errorf("failed to turn motor state")
 		return
 	}
-	srv.logger.WithField("motor", mtr).Infof("motor state turning")
+	srv.logger.WithField("motor", mtr).Debugf("motor state turning")
 }
 
 func (srv *metathingsMotorService) handleStreamRequest_setDirection(stream pb.MotorService_StreamServer, req *pb.StreamRequest) {
@@ -162,7 +164,7 @@ func (srv *metathingsMotorService) handleStreamRequest_setDirection(stream pb.Mo
 		srv.logger.WithError(err).Errorf("failed to set motor direction")
 		return
 	}
-	srv.logger.WithField("motor", mtr).Infof("motor set direction")
+	srv.logger.WithField("motor", mtr).Debugf("motor set direction")
 }
 
 func (srv *metathingsMotorService) handleStreamRequest_setSpeed(stream pb.MotorService_StreamServer, req *pb.StreamRequest) {
@@ -178,7 +180,7 @@ func (srv *metathingsMotorService) handleStreamRequest_setSpeed(stream pb.MotorS
 		srv.logger.WithError(err).Errorf("failed to set motor speed")
 		return
 	}
-	srv.logger.WithField("motor", mtr).Infof("motor set speed")
+	srv.logger.WithField("motor", mtr).Debugf("motor set speed")
 }
 
 func NewMotorService(opt opt_helper.Option) (*metathingsMotorService, error) {
@@ -199,10 +201,12 @@ func NewMotorService(opt opt_helper.Option) (*metathingsMotorService, error) {
 		return nil, err
 	}
 
+	opt.Set("logger", logger)
 	mtr_mgr, err := NewMotorManager(opt)
 	if err != nil {
 		return nil, err
 	}
+	logger.Debugf("new motor manager")
 
 	srv := &metathingsMotorService{
 		opt:     opt,

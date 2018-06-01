@@ -1,9 +1,11 @@
-package main
+package rpi_pin_helper
 
 import (
 	"strings"
 
 	rpio "github.com/stianeikeland/go-rpio"
+
+	pin_helper "github.com/nayotta/metathings/pkg/common/pin"
 )
 
 /*
@@ -118,7 +120,7 @@ func Pin(model string, pin int) (rpio.Pin, error) {
 
 	m, ok := models[strings.ToLower(model)]
 	if !ok {
-		return rpio.Pin(0), ErrUnknownModel
+		return rpio.Pin(0), pin_helper.ErrUnknownModel
 	}
 
 	if m == LEGACY {
@@ -129,7 +131,7 @@ func Pin(model string, pin int) (rpio.Pin, error) {
 
 	p, ok := mapper[pin]
 	if !ok {
-		return rpio.Pin(0), ErrUnknownPin
+		return rpio.Pin(0), pin_helper.ErrUnknownPin
 	}
 
 	return p, nil

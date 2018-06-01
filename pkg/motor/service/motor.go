@@ -1,6 +1,7 @@
 package metathings_motor_service
 
 import (
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cast"
 
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
@@ -54,10 +55,13 @@ func NewMotorManager(opt opt_helper.Option) (*MotorManager, error) {
 		}
 		v.Unmarshal(&mtr_opt_s)
 
-		new_mtr_opt := opt_helper.Option{
-			"driver": v.Sub("driver"),
-		}
-
+		new_mtr_opt := opt_helper.Copy(opt)
+		new_mtr_opt.Set("name", mtr_opt_s.Name)
+		new_mtr_opt.Set("driver", v.Sub("driver"))
+		new_mtr_opt.Set("logger", opt.Get("logger").(log.FieldLogger).WithFields(log.Fields{
+			"#driver": mtr_opt_s.Driver.Name,
+			"#name":   mtr_opt_s.Name,
+		}))
 		drv, err := drv_fty.New(mtr_opt_s.Driver.Name, new_mtr_opt)
 		if err != nil {
 			return nil, err

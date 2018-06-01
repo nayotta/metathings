@@ -1,4 +1,4 @@
-package main
+package pin_helper
 
 import "errors"
 
