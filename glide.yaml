@@ -371,6 +371,8 @@ import:
 - package: github.com/stianeikeland/go-rpio
   version: ^4.0.0
 - package: github.com/nayotta/viper
+- package: gobot.io/x/gobot
+  version: ^1.11.0
 testImport:
 - package: github.com/BurntSushi/toml
   version: ^0.3.0

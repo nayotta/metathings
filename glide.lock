@@ -1,5 +1,5 @@
-hash: 6ae88a551dc93b7d8c7e50dc98159899109e7d0f3731e85ec26d76bbb2841cd3
-updated: 2018-05-29T09:45:29.0698+08:00
+hash: c4daf3a2cd74ebd1705a2d0e2b860c19ed31dceedf8885401c9a696c4dc02ff7
+updated: 2018-06-01T11:02:04.877113+08:00
 imports:
 - name: cloud.google.com/go
   version: 0fd7230b2a7505833d5f69b75cbd6c9582401479
@@ -96,6 +96,10 @@ imports:
   - testing/testproto
   - util/backoffutils
   - util/metautils
+- name: github.com/hashicorp/errwrap
+  version: 7554cd9344cec97297fa6649b055a8c98c2a1e55
+- name: github.com/hashicorp/go-multierror
+  version: b7773ae218740a7be65057fc60b366a49b538a44
 - name: github.com/hashicorp/hcl
   version: ef8a98b0bbce4a65b5aa4c368430a80ddc533168
   subpackages:
@@ -151,6 +155,10 @@ imports:
   version: a86ea073017a6beddef78c8659e7224e8ca634b0
 - name: github.com/satori/go.uuid
   version: f58768cc1a7a7e77a3bd49e98cdd21419399b6a3
+- name: github.com/sigurn/crc8
+  version: e55481d6f45c5a8f040343bace9013571dae103e
+- name: github.com/sigurn/utils
+  version: f19e41f79f8f006116f682c1af454591bc278ad4
 - name: github.com/sirupsen/logrus
   version: c155da19408a8799da419ed3eeb0cb5db0ad5dbc
 - name: github.com/spf13/afero
@@ -191,6 +199,14 @@ imports:
   version: 9599cf28b011184741f249bd9f9330756b506cbc
   subpackages:
   - syncutil/singleflight
+- name: gobot.io/x/gobot
+  version: 635adea96f788ab19bf77470b075f8db44d34fa0
+  subpackages:
+  - drivers/gpio
+  - drivers/i2c
+  - drivers/spi
+  - platforms/raspi
+  - sysfs
 - name: golang.org/x/build
   version: 99c796b9503befd21645b5fc26c76c6676978834
   subpackages:
@@ -391,6 +407,20 @@ imports:
   - transport
 - name: gopkg.in/yaml.v2
   version: 5420a8b6744d3b0345ab293f6fcba19c978f1183
+- name: periph.io/x/periph
+  version: 0a05915b7d4888ca4dcdad3be1d08eb47a07e25d
+  subpackages:
+  - conn
+  - conn/gpio
+  - conn/gpio/gpioreg
+  - conn/i2c
+  - conn/i2c/i2creg
+  - conn/physic
+  - conn/pin
+  - conn/spi
+  - conn/spi/spireg
+  - host/fs
+  - host/sysfs
 testImports:
 - name: github.com/BurntSushi/toml
   version: b26d9c308763d68093482582cea63d69be07a0f0
