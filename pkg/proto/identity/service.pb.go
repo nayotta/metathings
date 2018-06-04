@@ -32,8 +32,9 @@ var _ grpc.ClientConn
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion4
 
-// Client API for IdentityService service
-
+// IdentityServiceClient is the client API for IdentityService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type IdentityServiceClient interface {
 	// https://developer.openstack.org/api-ref/identity/v3/#create-region
 	CreateRegion(ctx context.Context, in *CreateRegionRequest, opts ...grpc.CallOption) (*CreateRegionResponse, error)
@@ -182,7 +183,7 @@ func NewIdentityServiceClient(cc *grpc.ClientConn) IdentityServiceClient {
 
 func (c *identityServiceClient) CreateRegion(ctx context.Context, in *CreateRegionRequest, opts ...grpc.CallOption) (*CreateRegionResponse, error) {
 	out := new(CreateRegionResponse)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/CreateRegion", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/CreateRegion", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -191,7 +192,7 @@ func (c *identityServiceClient) CreateRegion(ctx context.Context, in *CreateRegi
 
 func (c *identityServiceClient) DeleteRegion(ctx context.Context, in *DeleteRegionRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
 	out := new(empty.Empty)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/DeleteRegion", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/DeleteRegion", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -200,7 +201,7 @@ func (c *identityServiceClient) DeleteRegion(ctx context.Context, in *DeleteRegi
 
 func (c *identityServiceClient) PatchRegion(ctx context.Context, in *PatchRegionRequest, opts ...grpc.CallOption) (*PatchRegionResponse, error) {
 	out := new(PatchRegionResponse)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/PatchRegion", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/PatchRegion", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -209,7 +210,7 @@ func (c *identityServiceClient) PatchRegion(ctx context.Context, in *PatchRegion
 
 func (c *identityServiceClient) GetRegion(ctx context.Context, in *GetRegionRequest, opts ...grpc.CallOption) (*GetRegionResponse, error) {
 	out := new(GetRegionResponse)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/GetRegion", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/GetRegion", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -218,7 +219,7 @@ func (c *identityServiceClient) GetRegion(ctx context.Context, in *GetRegionRequ
 
 func (c *identityServiceClient) ListRegions(ctx context.Context, in *ListRegionsRequest, opts ...grpc.CallOption) (*ListRegionsResponse, error) {
 	out := new(ListRegionsResponse)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/ListRegions", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/ListRegions", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -227,7 +228,7 @@ func (c *identityServiceClient) ListRegions(ctx context.Context, in *ListRegions
 
 func (c *identityServiceClient) CreateDomain(ctx context.Context, in *CreateDomainRequest, opts ...grpc.CallOption) (*CreateDomainResponse, error) {
 	out := new(CreateDomainResponse)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/CreateDomain", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/CreateDomain", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -236,7 +237,7 @@ func (c *identityServiceClient) CreateDomain(ctx context.Context, in *CreateDoma
 
 func (c *identityServiceClient) DeleteDomain(ctx context.Context, in *DeleteDomainRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
 	out := new(empty.Empty)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/DeleteDomain", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/DeleteDomain", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -245,7 +246,7 @@ func (c *identityServiceClient) DeleteDomain(ctx context.Context, in *DeleteDoma
 
 func (c *identityServiceClient) PatchDomain(ctx context.Context, in *PatchDomainRequest, opts ...grpc.CallOption) (*PatchDomainResponse, error) {
 	out := new(PatchDomainResponse)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/PatchDomain", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/PatchDomain", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -254,7 +255,7 @@ func (c *identityServiceClient) PatchDomain(ctx context.Context, in *PatchDomain
 
 func (c *identityServiceClient) GetDomain(ctx context.Context, in *GetDomainRequest, opts ...grpc.CallOption) (*GetDomainResponse, error) {
 	out := new(GetDomainResponse)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/GetDomain", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/GetDomain", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -263,7 +264,7 @@ func (c *identityServiceClient) GetDomain(ctx context.Context, in *GetDomainRequ
 
 func (c *identityServiceClient) ListDomains(ctx context.Context, in *ListDomainsRequest, opts ...grpc.CallOption) (*ListDomainsResponse, error) {
 	out := new(ListDomainsResponse)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/ListDomains", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/ListDomains", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -272,7 +273,7 @@ func (c *identityServiceClient) ListDomains(ctx context.Context, in *ListDomains
 
 func (c *identityServiceClient) CreateProject(ctx context.Context, in *CreateProjectRequest, opts ...grpc.CallOption) (*CreateProjectResponse, error) {
 	out := new(CreateProjectResponse)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/CreateProject", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/CreateProject", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -281,7 +282,7 @@ func (c *identityServiceClient) CreateProject(ctx context.Context, in *CreatePro
 
 func (c *identityServiceClient) DeleteProject(ctx context.Context, in *DeleteProjectRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
 	out := new(empty.Empty)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/DeleteProject", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/DeleteProject", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -290,7 +291,7 @@ func (c *identityServiceClient) DeleteProject(ctx context.Context, in *DeletePro
 
 func (c *identityServiceClient) PatchProject(ctx context.Context, in *PatchProjectRequest, opts ...grpc.CallOption) (*PatchProjectResponse, error) {
 	out := new(PatchProjectResponse)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/PatchProject", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/PatchProject", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -299,7 +300,7 @@ func (c *identityServiceClient) PatchProject(ctx context.Context, in *PatchProje
 
 func (c *identityServiceClient) GetProject(ctx context.Context, in *GetProjectRequest, opts ...grpc.CallOption) (*GetProjectResponse, error) {
 	out := new(GetProjectResponse)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/GetProject", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/GetProject", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -308,7 +309,7 @@ func (c *identityServiceClient) GetProject(ctx context.Context, in *GetProjectRe
 
 func (c *identityServiceClient) ListProjects(ctx context.Context, in *ListProjectsRequest, opts ...grpc.CallOption) (*ListProjectsResponse, error) {
 	out := new(ListProjectsResponse)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/ListProjects", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/ListProjects", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -317,7 +318,7 @@ func (c *identityServiceClient) ListProjects(ctx context.Context, in *ListProjec
 
 func (c *identityServiceClient) ListProjectsForUser(ctx context.Context, in *ListProjectsForUserRequest, opts ...grpc.CallOption) (*ListProjectsForUserResponse, error) {
 	out := new(ListProjectsForUserResponse)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/ListProjectsForUser", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/ListProjectsForUser", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -326,7 +327,7 @@ func (c *identityServiceClient) ListProjectsForUser(ctx context.Context, in *Lis
 
 func (c *identityServiceClient) CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*CreateUserResponse, error) {
 	out := new(CreateUserResponse)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/CreateUser", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/CreateUser", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -335,7 +336,7 @@ func (c *identityServiceClient) CreateUser(ctx context.Context, in *CreateUserRe
 
 func (c *identityServiceClient) DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
 	out := new(empty.Empty)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/DeleteUser", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/DeleteUser", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -344,7 +345,7 @@ func (c *identityServiceClient) DeleteUser(ctx context.Context, in *DeleteUserRe
 
 func (c *identityServiceClient) PatchUser(ctx context.Context, in *PatchUserRequest, opts ...grpc.CallOption) (*PatchUserResponse, error) {
 	out := new(PatchUserResponse)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/PatchUser", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/PatchUser", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -353,7 +354,7 @@ func (c *identityServiceClient) PatchUser(ctx context.Context, in *PatchUserRequ
 
 func (c *identityServiceClient) GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error) {
 	out := new(GetUserResponse)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/GetUser", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/GetUser", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -362,7 +363,7 @@ func (c *identityServiceClient) GetUser(ctx context.Context, in *GetUserRequest,
 
 func (c *identityServiceClient) ListUsers(ctx context.Context, in *ListUsersRequest, opts ...grpc.CallOption) (*ListUsersResponse, error) {
 	out := new(ListUsersResponse)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/ListUsers", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/ListUsers", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -371,7 +372,7 @@ func (c *identityServiceClient) ListUsers(ctx context.Context, in *ListUsersRequ
 
 func (c *identityServiceClient) ChangePassword(ctx context.Context, in *ChangePasswordRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
 	out := new(empty.Empty)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/ChangePassword", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/ChangePassword", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -380,7 +381,7 @@ func (c *identityServiceClient) ChangePassword(ctx context.Context, in *ChangePa
 
 func (c *identityServiceClient) ListUsersInGroup(ctx context.Context, in *ListUsersInGroupRequest, opts ...grpc.CallOption) (*ListUsersInGroupResponse, error) {
 	out := new(ListUsersInGroupResponse)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/ListUsersInGroup", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/ListUsersInGroup", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -389,7 +390,7 @@ func (c *identityServiceClient) ListUsersInGroup(ctx context.Context, in *ListUs
 
 func (c *identityServiceClient) CreateGroup(ctx context.Context, in *CreateGroupRequest, opts ...grpc.CallOption) (*CreateGroupResponse, error) {
 	out := new(CreateGroupResponse)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/CreateGroup", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/CreateGroup", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -398,7 +399,7 @@ func (c *identityServiceClient) CreateGroup(ctx context.Context, in *CreateGroup
 
 func (c *identityServiceClient) DeleteGroup(ctx context.Context, in *DeleteGroupRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
 	out := new(empty.Empty)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/DeleteGroup", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/DeleteGroup", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -407,7 +408,7 @@ func (c *identityServiceClient) DeleteGroup(ctx context.Context, in *DeleteGroup
 
 func (c *identityServiceClient) PatchGroup(ctx context.Context, in *PatchGroupRequest, opts ...grpc.CallOption) (*PatchGroupResponse, error) {
 	out := new(PatchGroupResponse)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/PatchGroup", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/PatchGroup", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -416,7 +417,7 @@ func (c *identityServiceClient) PatchGroup(ctx context.Context, in *PatchGroupRe
 
 func (c *identityServiceClient) GetGroup(ctx context.Context, in *GetGroupRequest, opts ...grpc.CallOption) (*GetGroupResponse, error) {
 	out := new(GetGroupResponse)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/GetGroup", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/GetGroup", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -425,7 +426,7 @@ func (c *identityServiceClient) GetGroup(ctx context.Context, in *GetGroupReques
 
 func (c *identityServiceClient) ListGroups(ctx context.Context, in *ListGroupsRequest, opts ...grpc.CallOption) (*ListGroupsResponse, error) {
 	out := new(ListGroupsResponse)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/ListGroups", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/ListGroups", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -434,7 +435,7 @@ func (c *identityServiceClient) ListGroups(ctx context.Context, in *ListGroupsRe
 
 func (c *identityServiceClient) AddUserToGroup(ctx context.Context, in *AddUserToGroupRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
 	out := new(empty.Empty)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/AddUserToGroup", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/AddUserToGroup", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -443,7 +444,7 @@ func (c *identityServiceClient) AddUserToGroup(ctx context.Context, in *AddUserT
 
 func (c *identityServiceClient) RemoveUserFromGroup(ctx context.Context, in *RemoveUserFromGroupRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
 	out := new(empty.Empty)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/RemoveUserFromGroup", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/RemoveUserFromGroup", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -452,7 +453,7 @@ func (c *identityServiceClient) RemoveUserFromGroup(ctx context.Context, in *Rem
 
 func (c *identityServiceClient) CheckUserInGroup(ctx context.Context, in *CheckUserInGroupRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
 	out := new(empty.Empty)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/CheckUserInGroup", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/CheckUserInGroup", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -461,7 +462,7 @@ func (c *identityServiceClient) CheckUserInGroup(ctx context.Context, in *CheckU
 
 func (c *identityServiceClient) ListGroupsForUser(ctx context.Context, in *ListGroupsForUserRequest, opts ...grpc.CallOption) (*ListGroupsForUserResponse, error) {
 	out := new(ListGroupsForUserResponse)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/ListGroupsForUser", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/ListGroupsForUser", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -470,7 +471,7 @@ func (c *identityServiceClient) ListGroupsForUser(ctx context.Context, in *ListG
 
 func (c *identityServiceClient) CreateRole(ctx context.Context, in *CreateRoleRequest, opts ...grpc.CallOption) (*CreateRoleResponse, error) {
 	out := new(CreateRoleResponse)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/CreateRole", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/CreateRole", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -479,7 +480,7 @@ func (c *identityServiceClient) CreateRole(ctx context.Context, in *CreateRoleRe
 
 func (c *identityServiceClient) DeleteRole(ctx context.Context, in *DeleteRoleRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
 	out := new(empty.Empty)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/DeleteRole", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/DeleteRole", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -488,7 +489,7 @@ func (c *identityServiceClient) DeleteRole(ctx context.Context, in *DeleteRoleRe
 
 func (c *identityServiceClient) PatchRole(ctx context.Context, in *PatchRoleRequest, opts ...grpc.CallOption) (*PatchRoleResponse, error) {
 	out := new(PatchRoleResponse)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/PatchRole", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/PatchRole", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -497,7 +498,7 @@ func (c *identityServiceClient) PatchRole(ctx context.Context, in *PatchRoleRequ
 
 func (c *identityServiceClient) GetRole(ctx context.Context, in *GetRoleRequest, opts ...grpc.CallOption) (*GetRoleResponse, error) {
 	out := new(GetRoleResponse)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/GetRole", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/GetRole", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -506,7 +507,7 @@ func (c *identityServiceClient) GetRole(ctx context.Context, in *GetRoleRequest,
 
 func (c *identityServiceClient) ListRoles(ctx context.Context, in *ListRolesRequest, opts ...grpc.CallOption) (*ListRolesResponse, error) {
 	out := new(ListRolesResponse)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/ListRoles", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/ListRoles", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -515,7 +516,7 @@ func (c *identityServiceClient) ListRoles(ctx context.Context, in *ListRolesRequ
 
 func (c *identityServiceClient) AddRoleToGroupOnDomain(ctx context.Context, in *AddRoleToGroupOnDomainRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
 	out := new(empty.Empty)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/AddRoleToGroupOnDomain", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/AddRoleToGroupOnDomain", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -524,7 +525,7 @@ func (c *identityServiceClient) AddRoleToGroupOnDomain(ctx context.Context, in *
 
 func (c *identityServiceClient) RemoveRoleFromGroupOnDomain(ctx context.Context, in *RemoveRoleFromGroupOnDomainRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
 	out := new(empty.Empty)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/RemoveRoleFromGroupOnDomain", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/RemoveRoleFromGroupOnDomain", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -533,7 +534,7 @@ func (c *identityServiceClient) RemoveRoleFromGroupOnDomain(ctx context.Context,
 
 func (c *identityServiceClient) CheckRoleInGroupOnDomain(ctx context.Context, in *CheckRoleInGroupOnDomainRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
 	out := new(empty.Empty)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/CheckRoleInGroupOnDomain", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/CheckRoleInGroupOnDomain", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -542,7 +543,7 @@ func (c *identityServiceClient) CheckRoleInGroupOnDomain(ctx context.Context, in
 
 func (c *identityServiceClient) ListRolesForGroupOnDomain(ctx context.Context, in *ListRolesForGroupOnDomainRequest, opts ...grpc.CallOption) (*ListRolesForGroupOnDomainResponse, error) {
 	out := new(ListRolesForGroupOnDomainResponse)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/ListRolesForGroupOnDomain", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/ListRolesForGroupOnDomain", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -551,7 +552,7 @@ func (c *identityServiceClient) ListRolesForGroupOnDomain(ctx context.Context, i
 
 func (c *identityServiceClient) AddRoleToUserOnDomain(ctx context.Context, in *AddRoleToUserOnDomainRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
 	out := new(empty.Empty)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/AddRoleToUserOnDomain", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/AddRoleToUserOnDomain", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -560,7 +561,7 @@ func (c *identityServiceClient) AddRoleToUserOnDomain(ctx context.Context, in *A
 
 func (c *identityServiceClient) RemoveRoleFromUserOnDomain(ctx context.Context, in *RemoveRoleFromUserOnDomainRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
 	out := new(empty.Empty)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/RemoveRoleFromUserOnDomain", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/RemoveRoleFromUserOnDomain", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -569,7 +570,7 @@ func (c *identityServiceClient) RemoveRoleFromUserOnDomain(ctx context.Context, 
 
 func (c *identityServiceClient) CheckRoleInUserOnDomain(ctx context.Context, in *CheckRoleInUserOnDomainRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
 	out := new(empty.Empty)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/CheckRoleInUserOnDomain", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/CheckRoleInUserOnDomain", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -578,7 +579,7 @@ func (c *identityServiceClient) CheckRoleInUserOnDomain(ctx context.Context, in 
 
 func (c *identityServiceClient) ListRolesForUserOnDomain(ctx context.Context, in *ListRolesForUserOnDomainRequest, opts ...grpc.CallOption) (*ListRolesForUserOnDomainResponse, error) {
 	out := new(ListRolesForUserOnDomainResponse)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/ListRolesForUserOnDomain", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/ListRolesForUserOnDomain", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -587,7 +588,7 @@ func (c *identityServiceClient) ListRolesForUserOnDomain(ctx context.Context, in
 
 func (c *identityServiceClient) AddRoleToGroupOnProject(ctx context.Context, in *AddRoleToGroupOnProjectRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
 	out := new(empty.Empty)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/AddRoleToGroupOnProject", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/AddRoleToGroupOnProject", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -596,7 +597,7 @@ func (c *identityServiceClient) AddRoleToGroupOnProject(ctx context.Context, in 
 
 func (c *identityServiceClient) RemoveRoleFromGroupOnProject(ctx context.Context, in *RemoveRoleFromGroupOnProjectRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
 	out := new(empty.Empty)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/RemoveRoleFromGroupOnProject", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/RemoveRoleFromGroupOnProject", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -605,7 +606,7 @@ func (c *identityServiceClient) RemoveRoleFromGroupOnProject(ctx context.Context
 
 func (c *identityServiceClient) CheckRoleInGroupOnProject(ctx context.Context, in *CheckRoleInGroupOnProjectRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
 	out := new(empty.Empty)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/CheckRoleInGroupOnProject", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/CheckRoleInGroupOnProject", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -614,7 +615,7 @@ func (c *identityServiceClient) CheckRoleInGroupOnProject(ctx context.Context, i
 
 func (c *identityServiceClient) ListRolesForGroupOnProject(ctx context.Context, in *ListRolesForGroupOnProjectRequest, opts ...grpc.CallOption) (*ListRolesForGroupOnProjectResponse, error) {
 	out := new(ListRolesForGroupOnProjectResponse)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/ListRolesForGroupOnProject", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/ListRolesForGroupOnProject", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -623,7 +624,7 @@ func (c *identityServiceClient) ListRolesForGroupOnProject(ctx context.Context, 
 
 func (c *identityServiceClient) AddRoleToUserOnProject(ctx context.Context, in *AddRoleToUserOnProjectRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
 	out := new(empty.Empty)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/AddRoleToUserOnProject", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/AddRoleToUserOnProject", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -632,7 +633,7 @@ func (c *identityServiceClient) AddRoleToUserOnProject(ctx context.Context, in *
 
 func (c *identityServiceClient) RemoveRoleFromUserOnProject(ctx context.Context, in *RemoveRoleFromUserOnProjectRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
 	out := new(empty.Empty)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/RemoveRoleFromUserOnProject", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/RemoveRoleFromUserOnProject", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -641,7 +642,7 @@ func (c *identityServiceClient) RemoveRoleFromUserOnProject(ctx context.Context,
 
 func (c *identityServiceClient) CheckRoleInUserOnProject(ctx context.Context, in *CheckRoleInUserOnProjectRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
 	out := new(empty.Empty)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/CheckRoleInUserOnProject", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/CheckRoleInUserOnProject", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -650,7 +651,7 @@ func (c *identityServiceClient) CheckRoleInUserOnProject(ctx context.Context, in
 
 func (c *identityServiceClient) ListRolesForUserOnProject(ctx context.Context, in *ListRolesForUserOnProjectRequest, opts ...grpc.CallOption) (*ListRolesForUserOnProjectResponse, error) {
 	out := new(ListRolesForUserOnProjectResponse)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/ListRolesForUserOnProject", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/ListRolesForUserOnProject", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -659,7 +660,7 @@ func (c *identityServiceClient) ListRolesForUserOnProject(ctx context.Context, i
 
 func (c *identityServiceClient) IssueToken(ctx context.Context, in *IssueTokenRequest, opts ...grpc.CallOption) (*IssueTokenResponse, error) {
 	out := new(IssueTokenResponse)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/IssueToken", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/IssueToken", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -668,7 +669,7 @@ func (c *identityServiceClient) IssueToken(ctx context.Context, in *IssueTokenRe
 
 func (c *identityServiceClient) RevokeToken(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*empty.Empty, error) {
 	out := new(empty.Empty)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/RevokeToken", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/RevokeToken", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -677,7 +678,7 @@ func (c *identityServiceClient) RevokeToken(ctx context.Context, in *empty.Empty
 
 func (c *identityServiceClient) CheckToken(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*empty.Empty, error) {
 	out := new(empty.Empty)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/CheckToken", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/CheckToken", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -686,7 +687,7 @@ func (c *identityServiceClient) CheckToken(ctx context.Context, in *empty.Empty,
 
 func (c *identityServiceClient) ValidateToken(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*ValidateTokenResponse, error) {
 	out := new(ValidateTokenResponse)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/ValidateToken", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/ValidateToken", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -695,7 +696,7 @@ func (c *identityServiceClient) ValidateToken(ctx context.Context, in *empty.Emp
 
 func (c *identityServiceClient) CreateApplicationCredential(ctx context.Context, in *CreateApplicationCredentialRequest, opts ...grpc.CallOption) (*CreateApplicationCredentialResponse, error) {
 	out := new(CreateApplicationCredentialResponse)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/CreateApplicationCredential", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/CreateApplicationCredential", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -704,7 +705,7 @@ func (c *identityServiceClient) CreateApplicationCredential(ctx context.Context,
 
 func (c *identityServiceClient) DeleteApplicationCredential(ctx context.Context, in *DeleteApplicationCredentialRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
 	out := new(empty.Empty)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/DeleteApplicationCredential", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/DeleteApplicationCredential", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -713,7 +714,7 @@ func (c *identityServiceClient) DeleteApplicationCredential(ctx context.Context,
 
 func (c *identityServiceClient) GetApplicationCredential(ctx context.Context, in *GetApplicationCredentialRequest, opts ...grpc.CallOption) (*GetApplicationCredentialResponse, error) {
 	out := new(GetApplicationCredentialResponse)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/GetApplicationCredential", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/GetApplicationCredential", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -722,15 +723,14 @@ func (c *identityServiceClient) GetApplicationCredential(ctx context.Context, in
 
 func (c *identityServiceClient) ListApplicationCredentials(ctx context.Context, in *ListApplicationCredentialsRequest, opts ...grpc.CallOption) (*ListApplicationCredentialsResponse, error) {
 	out := new(ListApplicationCredentialsResponse)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/ListApplicationCredentials", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.identity.IdentityService/ListApplicationCredentials", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// Server API for IdentityService service
-
+// IdentityServiceServer is the server API for IdentityService service.
 type IdentityServiceServer interface {
 	// https://developer.openstack.org/api-ref/identity/v3/#create-region
 	CreateRegion(context.Context, *CreateRegionRequest) (*CreateRegionResponse, error)
