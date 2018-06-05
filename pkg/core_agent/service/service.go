@@ -7,7 +7,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/golang/protobuf/ptypes"
 	"github.com/golang/protobuf/ptypes/empty"
 	gpb "github.com/golang/protobuf/ptypes/wrappers"
 	log "github.com/sirupsen/logrus"
@@ -578,11 +577,6 @@ func (srv *coreAgentService) dispatch_user(ctx context.Context, req *core_pb.Str
 		return nil, err
 	}
 
-	res_value, err := ptypes.MarshalAny(res)
-	if err != nil {
-		return nil, err
-	}
-
 	res1 := &core_pb.StreamResponse{
 		SessionId:   req.SessionId.Value,
 		MessageType: req.MessageType,
@@ -591,7 +585,7 @@ func (srv *coreAgentService) dispatch_user(ctx context.Context, req *core_pb.Str
 				Name:        name,
 				ServiceName: service_name,
 				MethodName:  method_name,
-				Value:       res_value,
+				Value:       res,
 			},
 		},
 	}

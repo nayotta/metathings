@@ -13,10 +13,20 @@ type TokenOptions struct {
 	Token string
 }
 
+type ServiceConfigOption struct {
+	Address string
+}
+
+type ServiceConfigOptions struct {
+	CoreAgentd  ServiceConfigOption `mapstructure:"core_agentd"`
+	Metathingsd ServiceConfigOption `mapstructure:"metathingsd"`
+}
+
 type RootOptions struct {
 	Config                string
 	Stage                 string
 	Verbose               bool
 	Log                   LogOptions
 	ApplicationCredential ApplicationCredentialOptions `mapstructure:"application_credential"`
+	ServiceConfig         ServiceConfigOptions         `mapstructure:"service_config"`
 }

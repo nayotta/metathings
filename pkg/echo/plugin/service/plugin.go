@@ -16,22 +16,8 @@ import (
 	pb "github.com/nayotta/metathings/pkg/proto/echo"
 )
 
-type _coreAgentdOptions struct {
-	Address string
-}
-
-type _metathingsdOptions struct {
-	Address string
-}
-
-type _serviceConfigOptions struct {
-	CoreAgentd  _coreAgentdOptions  `mapstructure:"core_agentd"`
-	Metathingsd _metathingsdOptions `mapstructure:"metathingsd"`
-}
-
 type _rootOptions struct {
 	cmd_helper.RootOptions `mapstructure:",squash"`
-	ServiceConfig          _serviceConfigOptions `mapstructure:"service_config"`
 	Listen                 string
 	Name                   string
 }
@@ -65,17 +51,12 @@ var (
 	}
 )
 
-func defaultOptions() opt_helper.Option {
-	return opt_helper.Option{
-		"heartbeat.interval": 15,
-	}
-}
-
 func runEchod() error {
+	// TODO(Peer): hard code here now.
 	port := strings.SplitAfter(root_opts.Listen, ":")[1]
 	ep := "localhost" + ":" + port
 
-	opts := defaultOptions()
+	opts := mtp.DefaultOptions()
 	opts.Set("name", root_opts.Name)
 	opts.Set("log.level", root_opts.Log.Level)
 	opts.Set("agent.address", root_opts.ServiceConfig.CoreAgentd.Address)

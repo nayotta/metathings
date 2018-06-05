@@ -7,6 +7,7 @@ import (
 	"google.golang.org/grpc"
 
 	constant_helper "github.com/nayotta/metathings/pkg/common/constant"
+	camerad_pb "github.com/nayotta/metathings/pkg/proto/camera"
 	cored_pb "github.com/nayotta/metathings/pkg/proto/core"
 	agentd_pb "github.com/nayotta/metathings/pkg/proto/core_agent"
 	echod_pb "github.com/nayotta/metathings/pkg/proto/echo"
@@ -23,6 +24,7 @@ const (
 	ECHOD_CONFIG
 	SWITCHERD_CONFIG
 	MOTORD_CONFIG
+	CAMERA_CONFIG
 )
 
 func parseAddress(addr string) string {
@@ -139,6 +141,19 @@ func (f *ClientFactory) NewMotorServiceClient(opts ...grpc.DialOption) (motord_p
 	}
 
 	return motord_pb.NewMotorServiceClient(conn), closeFn, nil
+}
+
+func (f *ClientFactory) NewCameraServiceClient(opts ...grpc.DialOption) (camerad_pb.CameraServiceClient, CloseFn, error) {
+	conn, err := f.NewConnection(CAMERA_CONFIG, opts...)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	closeFn := func() {
+		conn.Close()
+	}
+
+	return camerad_pb.NewCameraServiceClient(conn), closeFn, nil
 }
 
 func NewClientFactory(configs ServiceConfigs, optFn DialOptionFn) (*ClientFactory, error) {

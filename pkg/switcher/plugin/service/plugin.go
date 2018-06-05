@@ -17,15 +17,6 @@ import (
 	service "github.com/nayotta/metathings/pkg/switcher/service"
 )
 
-type _serviceConfigOption struct {
-	Address string
-}
-
-type _serviceConfigOptions struct {
-	CoreAgentd  _serviceConfigOption `mapstructure:"core_agentd"`
-	Metathingsd _serviceConfigOption `mapstructure:"metathingsd"`
-}
-
 type _driverOptions struct {
 	Name       string
 	Descriptor string
@@ -33,7 +24,6 @@ type _driverOptions struct {
 
 type _rootOptions struct {
 	cmd_helper.RootOptions `mapstructure:",squash"`
-	ServiceConfig          _serviceConfigOptions `mapstructure:"service_config"`
 	Listen                 string
 	Name                   string
 	Driver                 _driverOptions
@@ -72,17 +62,12 @@ var (
 	}
 )
 
-func defaultOptions() opt_helper.Option {
-	return opt_helper.Option{
-		"heartbeat.interval": 15,
-	}
-}
-
 func runSwitcherd() error {
+	// TODO(Peer): hard code here now.
 	port := strings.SplitAfter(root_opts.Listen, ":")[1]
 	ep := "localhost" + ":" + port
 
-	opts := defaultOptions()
+	opts := mtp.DefaultOptions()
 	opts.Set("name", root_opts.Name)
 	opts.Set("log.level", root_opts.Log.Level)
 	opts.Set("agent.address", root_opts.ServiceConfig.CoreAgentd.Address)
@@ -101,6 +86,7 @@ func runSwitcherd() error {
 	if err != nil {
 		return err
 	}
+
 	s := grpc.NewServer()
 	pb.RegisterSwitcherServiceServer(s, srv)
 
