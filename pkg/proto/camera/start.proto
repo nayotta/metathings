@@ -10,7 +10,7 @@ import "camera.proto";
 message StartConfig {
 	google.protobuf.StringValue url = 1 [(validator.field) = {msg_exists: true}];
 	google.protobuf.StringValue device = 2;
-	VideoSize size = 3;
+	Dimension dimension = 3;
 	google.protobuf.UInt32Value bitrate = 4;
 	google.protobuf.UInt32Value framerate = 5;
 }

@@ -29,9 +29,9 @@ func (this *StartConfig) Validate() error {
 			return go_proto_validators.FieldError("Device", err)
 		}
 	}
-	if this.Size_ != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Size_); err != nil {
-			return go_proto_validators.FieldError("Size_", err)
+	if this.Dimension != nil {
+		if err := go_proto_validators.CallValidatorIfExists(this.Dimension); err != nil {
+			return go_proto_validators.FieldError("Dimension", err)
 		}
 	}
 	if this.Bitrate != nil {
