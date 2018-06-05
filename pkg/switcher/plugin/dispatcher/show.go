@@ -10,8 +10,8 @@ import (
 	pb "github.com/nayotta/metathings/pkg/proto/switcher"
 )
 
-func unary_get(cli pb.SwitcherServiceClient, ctx context.Context, req *any.Any) (*any.Any, error) {
-	res, err := cli.Get(ctx, &empty.Empty{})
+func unary_show(cli pb.SwitcherServiceClient, ctx context.Context, req *any.Any) (*any.Any, error) {
+	res, err := cli.Show(ctx, &empty.Empty{})
 	if err != nil {
 		return nil, err
 	}
@@ -26,5 +26,5 @@ func unary_get(cli pb.SwitcherServiceClient, ctx context.Context, req *any.Any) 
 }
 
 func init() {
-	unary_call_methods["Get"] = unary_get
+	unary_call_methods["Show"] = unary_show
 }

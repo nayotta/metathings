@@ -20,7 +20,7 @@ type Switcher struct {
 type SwitcherDriver interface {
 	Init(opt_helper.Option) error
 	Close() error
-	Get() (Switcher, error)
+	Show() (Switcher, error)
 	Turn(SwitcherState) (Switcher, error)
 }
 

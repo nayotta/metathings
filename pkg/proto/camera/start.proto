@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package ai.metathings.service.camera;
+
+import "google/protobuf/wrappers.proto";
+import "github.com/mwitkow/go-proto-validators/validator.proto";
+
+import "camera.proto";
+
+message StartConfig {
+	google.protobuf.StringValue url = 1 [(validator.field) = {msg_exists: true}];
+	google.protobuf.StringValue device = 2;
+	VideoSize size = 3;
+	google.protobuf.UInt32Value bitrate = 4;
+	google.protobuf.UInt32Value framerate = 5;
+}
+
+message StartRequest {
+	StartConfig config = 1 [(validator.field) = {msg_exists: true}];
+}
+
+message StartResponse {
+	Camera camera = 1;
+}

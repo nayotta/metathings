@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+package ai.metathings.service.camera;
+
+import "camera.proto";
+
+message ShowResponse {
+	Camera camera = 1;
+}

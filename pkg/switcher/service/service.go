@@ -33,14 +33,14 @@ func (srv *metathingsSwitcherService) copySwitcher(sw driver.Switcher) *pb.Switc
 	}
 }
 
-func (srv *metathingsSwitcherService) Get(ctx context.Context, _ *empty.Empty) (*pb.GetResponse, error) {
-	sw, err := srv.drv.Get()
+func (srv *metathingsSwitcherService) Show(ctx context.Context, _ *empty.Empty) (*pb.ShowResponse, error) {
+	sw, err := srv.drv.Show()
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 	srv.logger.WithField("switcher", sw).Debugf("get switcher")
 
-	return &pb.GetResponse{Switcher: srv.copySwitcher(sw)}, nil
+	return &pb.ShowResponse{Switcher: srv.copySwitcher(sw)}, nil
 
 }
 

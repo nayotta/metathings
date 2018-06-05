@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package ai.metathings.service.camera;
+
+enum CameraState {
+	CAMERA_STATE_UNKNOWN = 0;
+	CAMERA_STATE_STOP = 1;
+	CAMERA_STATE_STARTING = 2;
+	CAMERA_STATE_RUNNING = 3;
+}
+
+message VideoSize {
+	uint32 width = 1;
+	uint32 height = 2;
+}
+
+message CameraConfig {
+	string url = 1;
+	string device = 2;
+	VideoSize size = 3;
+	uint32 bitrate = 4;
+	uint32 framerate = 5;
+}
+
+message Camera {
+	CameraState state = 1;
+	CameraConfig config = 2;
+}

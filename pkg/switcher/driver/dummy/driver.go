@@ -38,7 +38,7 @@ func (drv *dummySwitcherDriver) Close() error {
 	return nil
 }
 
-func (drv *dummySwitcherDriver) Get() (driver.Switcher, error) {
+func (drv *dummySwitcherDriver) Show() (driver.Switcher, error) {
 	drv.mutex.Lock()
 	defer drv.mutex.Unlock()
 

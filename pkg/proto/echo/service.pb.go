@@ -31,9 +31,8 @@ var _ grpc.ClientConn
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion4
 
-// EchoServiceClient is the client API for EchoService service.
-//
-// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
+// Client API for EchoService service
+
 type EchoServiceClient interface {
 	Echo(ctx context.Context, in *EchoRequest, opts ...grpc.CallOption) (*EchoResponse, error)
 	StreamingEcho(ctx context.Context, opts ...grpc.CallOption) (EchoService_StreamingEchoClient, error)
@@ -49,7 +48,7 @@ func NewEchoServiceClient(cc *grpc.ClientConn) EchoServiceClient {
 
 func (c *echoServiceClient) Echo(ctx context.Context, in *EchoRequest, opts ...grpc.CallOption) (*EchoResponse, error) {
 	out := new(EchoResponse)
-	err := c.cc.Invoke(ctx, "/ai.metathings.service.echo.EchoService/Echo", in, out, opts...)
+	err := grpc.Invoke(ctx, "/ai.metathings.service.echo.EchoService/Echo", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -57,7 +56,7 @@ func (c *echoServiceClient) Echo(ctx context.Context, in *EchoRequest, opts ...g
 }
 
 func (c *echoServiceClient) StreamingEcho(ctx context.Context, opts ...grpc.CallOption) (EchoService_StreamingEchoClient, error) {
-	stream, err := c.cc.NewStream(ctx, &_EchoService_serviceDesc.Streams[0], "/ai.metathings.service.echo.EchoService/StreamingEcho", opts...)
+	stream, err := grpc.NewClientStream(ctx, &_EchoService_serviceDesc.Streams[0], c.cc, "/ai.metathings.service.echo.EchoService/StreamingEcho", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -87,7 +86,8 @@ func (x *echoServiceStreamingEchoClient) Recv() (*EchoResponse, error) {
 	return m, nil
 }
 
-// EchoServiceServer is the server API for EchoService service.
+// Server API for EchoService service
+
 type EchoServiceServer interface {
 	Echo(context.Context, *EchoRequest) (*EchoResponse, error)
 	StreamingEcho(EchoService_StreamingEchoServer) error

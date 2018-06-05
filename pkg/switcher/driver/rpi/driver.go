@@ -84,7 +84,7 @@ func (drv *rpiSwitcherDriver) Close() error {
 	return nil
 }
 
-func (drv *rpiSwitcherDriver) Get() (driver.Switcher, error) {
+func (drv *rpiSwitcherDriver) Show() (driver.Switcher, error) {
 	drv.mutex.Lock()
 	defer drv.mutex.Unlock()
 

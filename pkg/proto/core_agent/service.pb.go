@@ -32,9 +32,8 @@ var _ grpc.ClientConn
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion4
 
-// CoreAgentServiceClient is the client API for CoreAgentService service.
-//
-// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
+// Client API for CoreAgentService service
+
 type CoreAgentServiceClient interface {
 	CreateEntity(ctx context.Context, in *CreateEntityRequest, opts ...grpc.CallOption) (*CreateEntityResponse, error)
 	DeleteEntity(ctx context.Context, in *DeleteEntityRequest, opts ...grpc.CallOption) (*empty.Empty, error)
@@ -55,7 +54,7 @@ func NewCoreAgentServiceClient(cc *grpc.ClientConn) CoreAgentServiceClient {
 
 func (c *coreAgentServiceClient) CreateEntity(ctx context.Context, in *CreateEntityRequest, opts ...grpc.CallOption) (*CreateEntityResponse, error) {
 	out := new(CreateEntityResponse)
-	err := c.cc.Invoke(ctx, "/ai.metathings.service.core_agent.CoreAgentService/CreateEntity", in, out, opts...)
+	err := grpc.Invoke(ctx, "/ai.metathings.service.core_agent.CoreAgentService/CreateEntity", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -64,7 +63,7 @@ func (c *coreAgentServiceClient) CreateEntity(ctx context.Context, in *CreateEnt
 
 func (c *coreAgentServiceClient) DeleteEntity(ctx context.Context, in *DeleteEntityRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
 	out := new(empty.Empty)
-	err := c.cc.Invoke(ctx, "/ai.metathings.service.core_agent.CoreAgentService/DeleteEntity", in, out, opts...)
+	err := grpc.Invoke(ctx, "/ai.metathings.service.core_agent.CoreAgentService/DeleteEntity", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -73,7 +72,7 @@ func (c *coreAgentServiceClient) DeleteEntity(ctx context.Context, in *DeleteEnt
 
 func (c *coreAgentServiceClient) PatchEntity(ctx context.Context, in *PatchEntityRequest, opts ...grpc.CallOption) (*PatchEntityResponse, error) {
 	out := new(PatchEntityResponse)
-	err := c.cc.Invoke(ctx, "/ai.metathings.service.core_agent.CoreAgentService/PatchEntity", in, out, opts...)
+	err := grpc.Invoke(ctx, "/ai.metathings.service.core_agent.CoreAgentService/PatchEntity", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -82,7 +81,7 @@ func (c *coreAgentServiceClient) PatchEntity(ctx context.Context, in *PatchEntit
 
 func (c *coreAgentServiceClient) GetEntity(ctx context.Context, in *GetEntityRequest, opts ...grpc.CallOption) (*GetEntityResponse, error) {
 	out := new(GetEntityResponse)
-	err := c.cc.Invoke(ctx, "/ai.metathings.service.core_agent.CoreAgentService/GetEntity", in, out, opts...)
+	err := grpc.Invoke(ctx, "/ai.metathings.service.core_agent.CoreAgentService/GetEntity", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -91,7 +90,7 @@ func (c *coreAgentServiceClient) GetEntity(ctx context.Context, in *GetEntityReq
 
 func (c *coreAgentServiceClient) ListEntities(ctx context.Context, in *ListEntitiesRequest, opts ...grpc.CallOption) (*ListEntitiesResponse, error) {
 	out := new(ListEntitiesResponse)
-	err := c.cc.Invoke(ctx, "/ai.metathings.service.core_agent.CoreAgentService/ListEntities", in, out, opts...)
+	err := grpc.Invoke(ctx, "/ai.metathings.service.core_agent.CoreAgentService/ListEntities", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -100,7 +99,7 @@ func (c *coreAgentServiceClient) ListEntities(ctx context.Context, in *ListEntit
 
 func (c *coreAgentServiceClient) CreateOrGetEntity(ctx context.Context, in *CreateOrGetEntityRequest, opts ...grpc.CallOption) (*CreateOrGetEntityResponse, error) {
 	out := new(CreateOrGetEntityResponse)
-	err := c.cc.Invoke(ctx, "/ai.metathings.service.core_agent.CoreAgentService/CreateOrGetEntity", in, out, opts...)
+	err := grpc.Invoke(ctx, "/ai.metathings.service.core_agent.CoreAgentService/CreateOrGetEntity", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -109,14 +108,15 @@ func (c *coreAgentServiceClient) CreateOrGetEntity(ctx context.Context, in *Crea
 
 func (c *coreAgentServiceClient) Heartbeat(ctx context.Context, in *HeartbeatRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
 	out := new(empty.Empty)
-	err := c.cc.Invoke(ctx, "/ai.metathings.service.core_agent.CoreAgentService/Heartbeat", in, out, opts...)
+	err := grpc.Invoke(ctx, "/ai.metathings.service.core_agent.CoreAgentService/Heartbeat", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// CoreAgentServiceServer is the server API for CoreAgentService service.
+// Server API for CoreAgentService service
+
 type CoreAgentServiceServer interface {
 	CreateEntity(context.Context, *CreateEntityRequest) (*CreateEntityResponse, error)
 	DeleteEntity(context.Context, *DeleteEntityRequest) (*empty.Empty, error)
