@@ -9,6 +9,7 @@ import (
 	"google.golang.org/grpc/status"
 
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
+	driver_helper "github.com/nayotta/metathings/pkg/common/driver"
 	log_helper "github.com/nayotta/metathings/pkg/common/log"
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 	mt_plugin "github.com/nayotta/metathings/pkg/core/plugin"
@@ -77,7 +78,7 @@ func NewSwitcherService(opt opt_helper.Option) (*metathingsSwitcherService, erro
 		return nil, err
 	}
 
-	drv_fty, err := driver.NewDriverFactory(opt.GetString("driver.descriptor"))
+	drv_fty, err := driver_helper.NewDriverFactory(opt.GetString("driver.descriptor"))
 	if err != nil {
 		return nil, err
 	}
@@ -86,6 +87,10 @@ func NewSwitcherService(opt opt_helper.Option) (*metathingsSwitcherService, erro
 	drv, err := drv_fty.New(opt.GetString("driver.name"), opt)
 	if err != nil {
 		return nil, err
+	}
+	sw_drv, ok := drv.(driver.SwitcherDriver)
+	if !ok {
+		return nil, driver_helper.ErrUnmatchDriver
 	}
 	logger.WithField("driver_name", drv_name).Debugf("load switcher driver")
 
@@ -100,7 +105,7 @@ func NewSwitcherService(opt opt_helper.Option) (*metathingsSwitcherService, erro
 		opt:     opt,
 		logger:  logger,
 		cli_fty: cli_fty,
-		drv:     drv,
+		drv:     sw_drv,
 
 		switcher_st_psr: state_helper.NewSwitcherStateParser(),
 	}

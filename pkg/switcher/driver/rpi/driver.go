@@ -7,6 +7,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	rpio "github.com/stianeikeland/go-rpio"
 
+	driver_helper "github.com/nayotta/metathings/pkg/common/driver"
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 	pin_helper "github.com/nayotta/metathings/pkg/common/pin/rpi"
 	driver "github.com/nayotta/metathings/pkg/switcher/driver"
@@ -108,7 +109,7 @@ func (drv *rpiSwitcherDriver) Turn(x driver.SwitcherState) (driver.Switcher, err
 	return driver.Switcher{drv.state}, nil
 }
 
-var NewDriver driver.NewDriverMethod = func(opt opt_helper.Option) (driver.SwitcherDriver, error) {
+var NewDriver driver_helper.NewDriverMethod = func(opt opt_helper.Option) (driver_helper.Driver, error) {
 	return &rpiSwitcherDriver{
 		mutex: &sync.Mutex{},
 		state: driver.STATE_UNKNOWN,

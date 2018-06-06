@@ -1,4 +1,4 @@
-package metathings_switcher_driver
+package driver_helper
 
 import (
 	"plugin"
@@ -8,10 +8,17 @@ import (
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 )
 
+type Driver interface {
+	Init(opt_helper.Option) error
+	Close() error
+}
+
 type Descriptor struct {
 	Name string
 	Path string
 }
+
+type NewDriverMethod func(opt_helper.Option) (Driver, error)
 
 type DriverFactory struct {
 	descriptors map[string]Descriptor
@@ -54,7 +61,7 @@ func NewDriverFactory(path string) (*DriverFactory, error) {
 	}, nil
 }
 
-func (df *DriverFactory) New(name string, opt opt_helper.Option) (SwitcherDriver, error) {
+func (df *DriverFactory) New(name string, opt opt_helper.Option) (Driver, error) {
 	method, err := df.getNewDriverMethod(name)
 	if err != nil {
 		return nil, err

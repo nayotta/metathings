@@ -10,6 +10,7 @@ import (
 	"gobot.io/x/gobot/drivers/gpio"
 	"gobot.io/x/gobot/platforms/raspi"
 
+	driver_helper "github.com/nayotta/metathings/pkg/common/driver"
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 	driver "github.com/nayotta/metathings/pkg/motor/driver"
 )
@@ -90,7 +91,7 @@ func (drv *l298pMotorDriver) Close() error {
 	return nil
 }
 
-func (drv *l298pMotorDriver) Get() driver.Motor {
+func (drv *l298pMotorDriver) Show() driver.Motor {
 	drv.mutex.Lock()
 	defer drv.mutex.Unlock()
 
@@ -199,7 +200,7 @@ func (drv *l298pMotorDriver) setSpeed(spd float32) error {
 	return nil
 }
 
-var NewDriver driver.NewDriverMethod = func(opt opt_helper.Option) (driver.MotorDriver, error) {
+var NewDriver driver_helper.NewDriverMethod = func(opt opt_helper.Option) (driver_helper.Driver, error) {
 	log.Debugf("new motor dummy driver")
 
 	return &l298pMotorDriver{

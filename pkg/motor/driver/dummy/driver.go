@@ -5,6 +5,7 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
+	driver_helper "github.com/nayotta/metathings/pkg/common/driver"
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 	driver "github.com/nayotta/metathings/pkg/motor/driver"
 )
@@ -52,7 +53,7 @@ func (drv *dummyMotorDriver) Close() error {
 	return nil
 }
 
-func (drv *dummyMotorDriver) Get() driver.Motor {
+func (drv *dummyMotorDriver) Show() driver.Motor {
 	drv.mutex.Lock()
 	defer drv.mutex.Unlock()
 
@@ -93,7 +94,7 @@ func (drv *dummyMotorDriver) SetSpeed(spd float32) (driver.Motor, error) {
 	return drv.toDriverMotor(), nil
 }
 
-var NewDriver driver.NewDriverMethod = func(opt opt_helper.Option) (driver.MotorDriver, error) {
+var NewDriver driver_helper.NewDriverMethod = func(opt opt_helper.Option) (driver_helper.Driver, error) {
 	log.Infof("new motor dummy driver")
 
 	return &dummyMotorDriver{

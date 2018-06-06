@@ -1,6 +1,7 @@
 package metathings_motor_driver
 
 import (
+	driver_helper "github.com/nayotta/metathings/pkg/common/driver"
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 )
 
@@ -35,10 +36,8 @@ type Motor struct {
 }
 
 type MotorDriver interface {
-	Init(opt_helper.Option) error
-	Close() error
-
-	Get() Motor
+	driver_helper.Driver
+	Show() Motor
 	Turn(MotorState) (Motor, error)
 	SetDirection(MotorDirection) (Motor, error)
 	SetSpeed(float32) (Motor, error)

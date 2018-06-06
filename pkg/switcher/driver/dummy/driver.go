@@ -5,6 +5,7 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
+	driver_helper "github.com/nayotta/metathings/pkg/common/driver"
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 	driver "github.com/nayotta/metathings/pkg/switcher/driver"
 )
@@ -27,13 +28,13 @@ func (drv *dummySwitcherDriver) Init(opt opt_helper.Option) error {
 
 	drv.state = driver.STATE_OFF
 
-	logger.Infof("driver initialized")
+	logger.Debugf("driver initialized")
 
 	return nil
 }
 
 func (drv *dummySwitcherDriver) Close() error {
-	logger.Infof("driver closed")
+	logger.Debugf("driver closed")
 
 	return nil
 }
@@ -50,11 +51,11 @@ func (drv *dummySwitcherDriver) Turn(x driver.SwitcherState) (driver.Switcher, e
 	defer drv.mutex.Unlock()
 
 	drv.state = x
-	logger.WithField("state", x.ToString()).Infof("turn siwtcher state")
+	logger.WithField("state", x.ToString()).Debugf("turn siwtcher state")
 	return driver.Switcher{drv.state}, nil
 }
 
-var NewDriver driver.NewDriverMethod = func(opt opt_helper.Option) (driver.SwitcherDriver, error) {
+var NewDriver driver_helper.NewDriverMethod = func(opt opt_helper.Option) (driver_helper.Driver, error) {
 	logger.Infof("new switcher dummy driver")
 
 	return &dummySwitcherDriver{

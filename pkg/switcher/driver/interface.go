@@ -1,6 +1,7 @@
 package metathings_switcher_driver
 
 import (
+	driver_helper "github.com/nayotta/metathings/pkg/common/driver"
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 )
 
@@ -18,8 +19,7 @@ type Switcher struct {
 }
 
 type SwitcherDriver interface {
-	Init(opt_helper.Option) error
-	Close() error
+	driver_helper.Driver
 	Show() (Switcher, error)
 	Turn(SwitcherState) (Switcher, error)
 }

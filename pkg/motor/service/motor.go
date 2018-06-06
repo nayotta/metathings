@@ -1,12 +1,13 @@
 package metathings_motor_service
 
 import (
+	"github.com/nayotta/viper"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cast"
 
+	driver_helper "github.com/nayotta/metathings/pkg/common/driver"
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 	driver "github.com/nayotta/metathings/pkg/motor/driver"
-	"github.com/nayotta/viper"
 )
 
 type Motor struct {
@@ -15,7 +16,7 @@ type Motor struct {
 }
 
 type MotorManager struct {
-	drv_fty *driver.DriverFactory
+	drv_fty *driver_helper.DriverFactory
 
 	motors map[string]Motor
 }
@@ -37,7 +38,7 @@ func (mgr *MotorManager) GetMotor(name string) (Motor, error) {
 }
 
 func NewMotorManager(opt opt_helper.Option) (*MotorManager, error) {
-	drv_fty, err := driver.NewDriverFactory(opt.GetString("driver.descriptor"))
+	drv_fty, err := driver_helper.NewDriverFactory(opt.GetString("driver.descriptor"))
 	if err != nil {
 		return nil, err
 	}
@@ -66,14 +67,19 @@ func NewMotorManager(opt opt_helper.Option) (*MotorManager, error) {
 		if err != nil {
 			return nil, err
 		}
-		err = drv.Init(new_mtr_opt)
+		mtr_drv, ok := drv.(driver.MotorDriver)
+		if !ok {
+			return nil, driver_helper.ErrUnmatchDriver
+		}
+
+		err = mtr_drv.Init(new_mtr_opt)
 		if err != nil {
 			return nil, err
 		}
 
 		mtrs[mtr_opt_s.Name] = Motor{
 			Name:   mtr_opt_s.Name,
-			Driver: drv,
+			Driver: mtr_drv,
 		}
 	}
 

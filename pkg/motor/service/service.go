@@ -28,7 +28,7 @@ type metathingsMotorService struct {
 }
 
 func (srv *metathingsMotorService) copyMotor(m Motor) *pb.Motor {
-	mtr := m.Driver.Get()
+	mtr := m.Driver.Show()
 	return &pb.Motor{
 		Name:      m.Name,
 		State:     srv.motor_st_psr.ToValue(mtr.State.ToString()),
