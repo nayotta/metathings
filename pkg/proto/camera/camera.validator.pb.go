@@ -12,7 +12,6 @@ It is generated from these files:
 	stop.proto
 
 It has these top-level messages:
-	Dimension
 	CameraConfig
 	Camera
 	ShowResponse
@@ -33,15 +32,7 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
-func (this *Dimension) Validate() error {
-	return nil
-}
 func (this *CameraConfig) Validate() error {
-	if this.Dimension != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Dimension); err != nil {
-			return go_proto_validators.FieldError("Dimension", err)
-		}
-	}
 	return nil
 }
 func (this *Camera) Validate() error {

@@ -84,7 +84,7 @@ func NewSwitcherService(opt opt_helper.Option) (*metathingsSwitcherService, erro
 	}
 
 	drv_name := opt.GetString("driver.name")
-	drv, err := drv_fty.New(opt.GetString("driver.name"), opt)
+	drv, err := drv_fty.New(drv_name, opt)
 	if err != nil {
 		return nil, err
 	}
@@ -95,7 +95,7 @@ func NewSwitcherService(opt opt_helper.Option) (*metathingsSwitcherService, erro
 	logger.WithField("driver_name", drv_name).Debugf("load switcher driver")
 
 	opt.Set("logger", logger.WithField("#driver", drv_name))
-	err = drv.Init(opt)
+	err = sw_drv.Init(opt)
 	if err != nil {
 		return nil, err
 	}

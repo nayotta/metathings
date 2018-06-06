@@ -8,7 +8,10 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
+	driver "github.com/nayotta/metathings/pkg/camera/driver"
+	state_helper "github.com/nayotta/metathings/pkg/camera/state"
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
+	driver_helper "github.com/nayotta/metathings/pkg/common/driver"
 	log_helper "github.com/nayotta/metathings/pkg/common/log"
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 	mt_plugin "github.com/nayotta/metathings/pkg/core/plugin"
@@ -20,17 +23,41 @@ type metathingsCameraService struct {
 	opt     opt_helper.Option
 	logger  log.FieldLogger
 	cli_fty *client_helper.ClientFactory
+	drv     driver.CameraDriver
+
+	camera_st_psr state_helper.CameraStateParser
 }
 
-func (srv *metathingsCameraService) Start(context.Context, *pb.StartRequest) (*pb.StartResponse, error) {
+func (srv *metathingsCameraService) copyCamera() (*pb.Camera, error) {
+	cam, err := srv.drv.Show()
+	if err != nil {
+		return nil, err
+	}
+
+	cfg := cam.Config
+
+	return &pb.Camera{
+		State: srv.camera_st_psr.ToValue(cam.State.ToString()),
+		Config: &pb.CameraConfig{
+			Url:       cfg.Url,
+			Device:    cfg.Device,
+			Width:     cfg.Width,
+			Height:    cfg.Height,
+			Bitrate:   cfg.Bitrate,
+			Framerate: cfg.Framerate,
+		},
+	}, nil
+}
+
+func (srv *metathingsCameraService) Start(ctx context.Context, req *pb.StartRequest) (*pb.StartResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "unimplemented")
 }
 
-func (srv *metathingsCameraService) Stop(context.Context, *empty.Empty) (*pb.StopResponse, error) {
+func (srv *metathingsCameraService) Stop(ctx context.Context, req *empty.Empty) (*pb.StopResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "unimplemented")
 }
 
-func (srv *metathingsCameraService) Show(context.Context, *empty.Empty) (*pb.ShowResponse, error) {
+func (srv *metathingsCameraService) Show(ctx context.Context, req *empty.Empty) (*pb.ShowResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "unimplemented")
 }
 
@@ -52,10 +79,36 @@ func NewCameraService(opt opt_helper.Option) (*metathingsCameraService, error) {
 		return nil, err
 	}
 
+	drv_fty, err := driver_helper.NewDriverFactory(opt.GetString("driver.descriptor"))
+	if err != nil {
+		return nil, err
+	}
+
+	drv_name := opt.GetString("driver.name")
+	drv, err := drv_fty.New(drv_name, opt)
+	if err != nil {
+		return nil, err
+	}
+	cam_drv, ok := drv.(driver.CameraDriver)
+	if !ok {
+		return nil, driver_helper.ErrUnmatchDriver
+	}
+	logger.WithField("driver_name", drv_name).Debugf("load camera driver")
+
+	opt.Set("logger", logger.WithField("#driver", drv_name))
+	err = cam_drv.Init(opt)
+	if err != nil {
+		return nil, err
+	}
+	logger.Debugf("camera driver initialized")
+
 	srv := &metathingsCameraService{
 		logger:  logger,
 		cli_fty: cli_fty,
 		opt:     opt,
+		drv:     cam_drv,
+
+		camera_st_psr: state_helper.NewCameraStateParser(),
 	}
 
 	srv.CoreService = mt_plugin.MakeCoreService(srv.opt, srv.logger, srv.cli_fty)

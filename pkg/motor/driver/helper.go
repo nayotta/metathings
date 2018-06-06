@@ -12,7 +12,7 @@ func (s MotorState) ToString() string {
 }
 
 func StateFromValue(x int32) MotorState {
-	if x >= int32(STATE_OVERFLOW) {
+	if x >= int32(STATE_OVERFLOW) || x < int32(STATE_UNKNOWN) {
 		return STATE_UNKNOWN
 	}
 
@@ -26,7 +26,7 @@ func (d MotorDirection) ToString() string {
 }
 
 func DirectionFromValue(x int32) MotorDirection {
-	if x >= int32(DIRECTION_OVERFLOW) {
+	if x >= int32(DIRECTION_OVERFLOW) || x < int32(STATE_UNKNOWN) {
 		return DIRECTION_UNKNOWN
 	}
 

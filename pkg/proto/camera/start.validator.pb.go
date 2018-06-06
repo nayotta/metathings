@@ -29,9 +29,14 @@ func (this *StartConfig) Validate() error {
 			return go_proto_validators.FieldError("Device", err)
 		}
 	}
-	if this.Dimension != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Dimension); err != nil {
-			return go_proto_validators.FieldError("Dimension", err)
+	if this.Width != nil {
+		if err := go_proto_validators.CallValidatorIfExists(this.Width); err != nil {
+			return go_proto_validators.FieldError("Width", err)
+		}
+	}
+	if this.Height != nil {
+		if err := go_proto_validators.CallValidatorIfExists(this.Height); err != nil {
+			return go_proto_validators.FieldError("Height", err)
 		}
 	}
 	if this.Bitrate != nil {
