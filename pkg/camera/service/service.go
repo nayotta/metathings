@@ -28,37 +28,97 @@ type metathingsCameraService struct {
 	camera_st_psr state_helper.CameraStateParser
 }
 
-func (srv *metathingsCameraService) copyCamera() (*pb.Camera, error) {
-	cam, err := srv.drv.Show()
-	if err != nil {
-		return nil, err
-	}
-
-	cfg := cam.Config
+func (srv *metathingsCameraService) copyCamera(cam driver.Camera) *pb.Camera {
 
 	return &pb.Camera{
 		State: srv.camera_st_psr.ToValue(cam.State.ToString()),
 		Config: &pb.CameraConfig{
-			Url:       cfg.Url,
-			Device:    cfg.Device,
-			Width:     cfg.Width,
-			Height:    cfg.Height,
-			Bitrate:   cfg.Bitrate,
-			Framerate: cfg.Framerate,
+			Url:       cam.Config.Url,
+			Device:    cam.Config.Device,
+			Width:     cam.Config.Width,
+			Height:    cam.Config.Height,
+			Bitrate:   cam.Config.Bitrate,
+			Framerate: cam.Config.Framerate,
 		},
-	}, nil
+	}
 }
 
 func (srv *metathingsCameraService) Start(ctx context.Context, req *pb.StartRequest) (*pb.StartResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "unimplemented")
+	err := req.Validate()
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, err.Error())
+	}
+
+	cam, err := srv.drv.Show()
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
+	if cam.State != driver.STATE_STOP {
+		return nil, status.Errorf(codes.FailedPrecondition, "camera not startable")
+	}
+
+	cfg := driver.CameraConfig{
+		Url: req.Config.GetUrl().GetValue(),
+	}
+	srv.logger.WithField("url", cfg.Url).Debugf("set camera url")
+	if dev := req.Config.GetDevice(); dev != nil {
+		cfg.Device = dev.GetValue()
+		srv.logger.WithField("device", cfg.Device).Debugf("set camera device")
+	}
+	if w := req.Config.GetWidth(); w != nil {
+		cfg.Width = w.GetValue()
+		srv.logger.WithField("width", cfg.Width).Debugf("set camera width")
+	}
+	if h := req.Config.GetHeight(); h != nil {
+		cfg.Height = h.GetValue()
+		srv.logger.WithField("height", cfg.Height).Debugf("set camera height")
+	}
+	if br := req.Config.GetBitrate(); br != nil {
+		cfg.Bitrate = br.GetValue()
+		srv.logger.WithField("bitrate", cfg.Bitrate).Debugf("set camera bitrate")
+	}
+	if fr := req.Config.GetFramerate(); fr != nil {
+		cfg.Framerate = fr.GetValue()
+		srv.logger.WithField("framerate", cfg.Framerate).Debugf("set camera framerate")
+	}
+
+	cam, err = srv.drv.Start(cfg)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+	srv.logger.Infof("start camera")
+
+	return &pb.StartResponse{Camera: srv.copyCamera(cam)}, nil
 }
 
 func (srv *metathingsCameraService) Stop(ctx context.Context, req *empty.Empty) (*pb.StopResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "unimplemented")
+	cam, err := srv.drv.Show()
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
+	if cam.State != driver.STATE_RUNNING {
+		return nil, status.Errorf(codes.FailedPrecondition, "camera not stopable")
+	}
+
+	cam, err = srv.drv.Stop()
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+	srv.logger.Infof("stop camera")
+
+	return &pb.StopResponse{Camera: srv.copyCamera(cam)}, nil
 }
 
 func (srv *metathingsCameraService) Show(ctx context.Context, req *empty.Empty) (*pb.ShowResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "unimplemented")
+	cam, err := srv.drv.Show()
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+	srv.logger.WithField("camera", cam).Debugf("show camera")
+
+	return &pb.ShowResponse{Camera: srv.copyCamera(cam)}, nil
 }
 
 func NewCameraService(opt opt_helper.Option) (*metathingsCameraService, error) {

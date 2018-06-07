@@ -1,0 +1,18 @@
+dev:
+  name: camerad
+  service_name: camera
+  listen: 0.0.0.0:15603
+  verbose: true
+  log:
+    level: info
+  application_credential:
+    id: <application-credential-id>
+    secret: <application-credential-secret>
+  service_config:
+    core_agentd:
+      address: <core-agentd-address>
+    metathingsd:
+      address: <metathingsd-address>
+  driver:
+    name: <driver-name>
+    # and more options for driver

@@ -6,6 +6,7 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	driver "github.com/nayotta/metathings/pkg/camera/driver"
+	driver_helper "github.com/nayotta/metathings/pkg/common/driver"
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 )
 
@@ -100,4 +101,13 @@ func (drv *dummyCameraDriver) Stop() (driver.Camera, error) {
 	logger.Debugf("camera terminating")
 
 	return drv.show(), nil
+}
+
+var NewDriver driver_helper.NewDriverMethod = func(opt opt_helper.Option) (driver_helper.Driver, error) {
+	logger.Debugf("new camera dummy driver")
+
+	return &dummyCameraDriver{
+		mutex: &sync.Mutex{},
+		state: driver.STATE_UNKNOWN,
+	}, nil
 }

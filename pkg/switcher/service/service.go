@@ -39,7 +39,7 @@ func (srv *metathingsSwitcherService) Show(ctx context.Context, _ *empty.Empty) 
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
-	srv.logger.WithField("switcher", sw).Debugf("get switcher")
+	srv.logger.WithField("switcher", sw).Debugf("show switcher")
 
 	return &pb.ShowResponse{Switcher: srv.copySwitcher(sw)}, nil
 

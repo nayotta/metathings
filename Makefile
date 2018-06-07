@@ -8,6 +8,8 @@ all: \
 	switcher_plugins \
 	motor_drivers \
 	motor_plugins \
+	camera_drivers \
+	camera_plugins \
 	metathings_bin \
 	metathingsd_bin
 
@@ -37,6 +39,12 @@ motor_drivers:
 
 motor_plugins:
 	$(MAKE) -C pkg/motor/plugin all
+
+camera_drivers:
+	$(MAKE) -C pkg/camera/driver all
+
+camera_plugins:
+	$(MAKE) -C pkg/camera/plugin all
 
 build_docker_images:
 	./script/metathings_build.sh

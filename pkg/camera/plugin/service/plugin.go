@@ -48,6 +48,10 @@ var (
 				_opts.ServiceConfig.CoreAgentd.Address = root_opts.ServiceConfig.CoreAgentd.Address
 			}
 
+			if _opts.Driver.Descriptor == "" {
+				_opts.Driver.Descriptor = root_opts.Driver.Descriptor
+			}
+
 			root_opts = &_opts
 		}),
 		Run: func(cmd *cobra.Command, args []string) {
@@ -102,7 +106,6 @@ func initConfig() {
 		if err := v.ReadInConfig(); err != nil {
 			log.WithError(err).Fatalf("failed to read plugin config")
 		}
-
 	}
 }
 
