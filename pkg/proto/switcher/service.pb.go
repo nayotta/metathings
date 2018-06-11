@@ -32,8 +32,9 @@ var _ grpc.ClientConn
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion4
 
-// Client API for SwitcherService service
-
+// SwitcherServiceClient is the client API for SwitcherService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type SwitcherServiceClient interface {
 	Show(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*ShowResponse, error)
 	Turn(ctx context.Context, in *TurnRequest, opts ...grpc.CallOption) (*TurnResponse, error)
@@ -49,7 +50,7 @@ func NewSwitcherServiceClient(cc *grpc.ClientConn) SwitcherServiceClient {
 
 func (c *switcherServiceClient) Show(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*ShowResponse, error) {
 	out := new(ShowResponse)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.switcher.SwitcherService/Show", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.switcher.SwitcherService/Show", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -58,15 +59,14 @@ func (c *switcherServiceClient) Show(ctx context.Context, in *empty.Empty, opts 
 
 func (c *switcherServiceClient) Turn(ctx context.Context, in *TurnRequest, opts ...grpc.CallOption) (*TurnResponse, error) {
 	out := new(TurnResponse)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.switcher.SwitcherService/Turn", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.switcher.SwitcherService/Turn", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// Server API for SwitcherService service
-
+// SwitcherServiceServer is the server API for SwitcherService service.
 type SwitcherServiceServer interface {
 	Show(context.Context, *empty.Empty) (*ShowResponse, error)
 	Turn(context.Context, *TurnRequest) (*TurnResponse, error)

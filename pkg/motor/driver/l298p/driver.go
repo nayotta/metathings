@@ -59,13 +59,13 @@ func (drv *l298pMotorDriver) Init(opt opt_helper.Option) error {
 	v, ok := opt.Get("driver").(*viper.Viper)
 	if !ok {
 		drv.logger.Debugf("failed to get driver")
-		return driver.ErrInitFail
+		return driver_helper.ErrInitFail
 	}
 
 	logger, ok := opt.Get("logger").(log.FieldLogger)
 	if !ok {
 		drv.logger.Debugf("failed to get logger")
-		return driver.ErrInitFail
+		return driver_helper.ErrInitFail
 	}
 	drv.logger = logger
 
@@ -176,7 +176,7 @@ func (drv *l298pMotorDriver) SetSpeed(spd float32) (driver.Motor, error) {
 
 func (drv *l298pMotorDriver) initPins() error {
 	if drv.opt.Pins.Enable == 0 || drv.opt.Pins.Input1 == 0 || drv.opt.Pins.Input2 == 0 {
-		return driver.ErrInitFail
+		return driver_helper.ErrInitFail
 	}
 
 	drv.adaptor = raspi.NewAdaptor()

@@ -32,8 +32,9 @@ var _ grpc.ClientConn
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion4
 
-// Client API for CameraService service
-
+// CameraServiceClient is the client API for CameraService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type CameraServiceClient interface {
 	Start(ctx context.Context, in *StartRequest, opts ...grpc.CallOption) (*StartResponse, error)
 	Stop(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*StopResponse, error)
@@ -50,7 +51,7 @@ func NewCameraServiceClient(cc *grpc.ClientConn) CameraServiceClient {
 
 func (c *cameraServiceClient) Start(ctx context.Context, in *StartRequest, opts ...grpc.CallOption) (*StartResponse, error) {
 	out := new(StartResponse)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.camera.CameraService/Start", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.camera.CameraService/Start", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -59,7 +60,7 @@ func (c *cameraServiceClient) Start(ctx context.Context, in *StartRequest, opts 
 
 func (c *cameraServiceClient) Stop(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*StopResponse, error) {
 	out := new(StopResponse)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.camera.CameraService/Stop", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.camera.CameraService/Stop", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -68,15 +69,14 @@ func (c *cameraServiceClient) Stop(ctx context.Context, in *empty.Empty, opts ..
 
 func (c *cameraServiceClient) Show(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*ShowResponse, error) {
 	out := new(ShowResponse)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.camera.CameraService/Show", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.camera.CameraService/Show", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// Server API for CameraService service
-
+// CameraServiceServer is the server API for CameraService service.
 type CameraServiceServer interface {
 	Start(context.Context, *StartRequest) (*StartResponse, error)
 	Stop(context.Context, *empty.Empty) (*StopResponse, error)

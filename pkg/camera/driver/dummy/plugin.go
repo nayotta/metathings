@@ -76,7 +76,7 @@ func (drv *dummyCameraDriver) Start(cfg driver.CameraConfig) (driver.Camera, err
 		drv.state = driver.STATE_RUNNING
 		logger.Debugf("camera is running")
 	}()
-	logger.Debugf("starting camera")
+	logger.Debugf("camera is starting")
 
 	return drv.show(), nil
 }
@@ -98,7 +98,7 @@ func (drv *dummyCameraDriver) Stop() (driver.Camera, error) {
 		drv.state = driver.STATE_STOP
 		logger.Debugf("camera stopped")
 	}()
-	logger.Debugf("camera terminating")
+	logger.Debugf("camera is terminating")
 
 	return drv.show(), nil
 }

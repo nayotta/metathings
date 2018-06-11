@@ -436,10 +436,6 @@ func (srv *coreAgentService) dispatch_system_stream_config(ctx context.Context, 
 	service_name := config.Config.ServiceName.Value
 	method_name := config.Config.MethodName.Value
 
-	srv.logger.WithFields(log.Fields{
-		"name":         name,
-		"service_name": service_name,
-	}).Debugf("load dispatcher plugin")
 	dp, ok := srv.getDispatcherPlugin(name, service_name)
 	if !ok {
 		return nil, ErrPluginNotFound

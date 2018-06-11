@@ -35,12 +35,12 @@ func (drv *rpiSwitcherDriver) Init(opt opt_helper.Option) error {
 	drv.state = driver.STATE_OFF
 	v, ok := opt.Get("driver").(*viper.Viper)
 	if !ok {
-		return driver.ErrInitFail
+		return driver_helper.ErrInitFail
 	}
 
 	logger, ok := opt.Get("logger").(log.FieldLogger)
 	if !ok {
-		return driver.ErrInitFail
+		return driver_helper.ErrInitFail
 	}
 	drv.logger = logger
 

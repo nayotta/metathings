@@ -85,7 +85,7 @@ func (drv *dummyMotorDriver) SetSpeed(spd float32) (driver.Motor, error) {
 	defer drv.mutex.Unlock()
 
 	if !driver.IsValidSpeed(spd) {
-		return driver.Motor{}, driver.ErrInvalidArgument
+		return driver.Motor{}, driver_helper.ErrInvalidArgument
 	}
 
 	drv.speed = spd
