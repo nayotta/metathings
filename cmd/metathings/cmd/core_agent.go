@@ -17,11 +17,16 @@ type _agentdConfigOptions struct {
 	Home string
 }
 
+type _heartbeatOptions struct {
+	Interval int
+}
+
 type _coreAgentdOptions struct {
-	_rootOptions          `mapstructure:",squash"`
-	Listen                string
-	AgentdConfig          _agentdConfigOptions `mapstructure:"agentd_config"`
-	ServiceDescriptorPath string               `mapstructure:"service_descriptor"`
+	_rootOptions      `mapstructure:",squash"`
+	Listen            string
+	AgentdConfig      _agentdConfigOptions `mapstructure:"agentd_config"`
+	ServiceDescriptor string               `mapstructure:"service_descriptor"`
+	Heartbeat         _heartbeatOptions
 }
 
 var (
@@ -40,8 +45,11 @@ var (
 			var opt _coreAgentdOptions
 			cmd_helper.UnmarshalConfig(&opt)
 
-			if opt.ServiceDescriptorPath == "" {
-				opt.ServiceDescriptorPath = core_agentd_opts.ServiceDescriptorPath
+			if opt.ServiceDescriptor == "" {
+				opt.ServiceDescriptor = core_agentd_opts.ServiceDescriptor
+			}
+			if opt.Heartbeat.Interval == 0 {
+				opt.Heartbeat.Interval = core_agentd_opts.Heartbeat.Interval
 			}
 
 			core_agentd_opts = &opt
@@ -66,7 +74,8 @@ func runCoreAgentd() error {
 			root_opts.ApplicationCredential.Id,
 			root_opts.ApplicationCredential.Secret,
 		),
-		service.SetServiceDescriptorPath(core_agentd_opts.ServiceDescriptorPath),
+		service.SetServiceDescriptor(core_agentd_opts.ServiceDescriptor),
+		service.SetHeartbeatInterval(core_agentd_opts.Heartbeat.Interval),
 	)
 	if err != nil {
 		return err
@@ -76,6 +85,10 @@ func runCoreAgentd() error {
 	go func() {
 		log.Infof("serve on stram")
 		errs <- srv.ServeOnStream()
+	}()
+	go func() {
+		log.Infof("start heartbeat loop")
+		srv.HeartbeatLoop()
 	}()
 	go func() {
 		lis, err := net.Listen("tcp", core_agentd_opts.Listen)
@@ -97,7 +110,8 @@ func init() {
 
 	coreAgentdCmd.Flags().StringVar(&core_agentd_opts.Listen, "bind", "127.0.0.1:5002", "Core Agentd Service binding address")
 	coreAgentdCmd.Flags().StringVar(&core_agentd_opts.AgentdConfig.Home, "core-agent-home", "~/.metathings/core-agent/", "Core Agent Home Path")
-	coreAgentdCmd.Flags().StringVar(&core_agentd_opts.ServiceDescriptorPath, "service-descriptor-path", "~/.metathings/service_descriptor.yaml", "Core Service Plugin Descriptor")
+	coreAgentdCmd.Flags().StringVar(&core_agentd_opts.ServiceDescriptor, "service-descriptor", "~/.metathings/service_descriptor.yaml", "Core Service Plugin Descriptor")
 	coreAgentdCmd.Flags().StringVar(&core_agentd_opts.AgentdConfig.Id, "core-id", "", "Core(Agent) ID")
+	coreAgentdCmd.Flags().IntVar(&core_agentd_opts.Heartbeat.Interval, "heartbeat-interval", 5, "Core(Agent) heartbeat interval")
 	coreCmd.AddCommand(coreAgentdCmd)
 }

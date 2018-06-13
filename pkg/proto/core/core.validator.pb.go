@@ -39,6 +39,7 @@ It has these top-level messages:
 	GetCoreResponse
 	GetEntityRequest
 	GetEntityResponse
+	HeartbeatEntity
 	HeartbeatRequest
 	ListCoresRequest
 	ListCoresResponse

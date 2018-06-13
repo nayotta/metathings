@@ -55,19 +55,22 @@ func (s CoreService) Init() error {
 	s.opts.Set("id", res.Entity.Id)
 
 	if !s.opts.GetBool("heartbeat.manual") {
-		go s.Heartbeat()
+		go s.HeartbeatLoop()
 	}
 
 	return nil
 }
 
-func (s CoreService) Heartbeat() error {
+func (s CoreService) HeartbeatLoop() error {
+	interval := time.Duration(s.opts.GetInt("heartbeat.interval")) * time.Second
 	for {
-		err := s.HeartbeatOnce()
-		if err != nil {
-			return err
-		}
-		<-time.After(time.Duration(s.opts.GetInt("heartbeat.interval")) * time.Second)
+		go func() {
+			err := s.HeartbeatOnce()
+			if err != nil {
+				s.logger.WithError(err).Errorf("failed to heartbeat")
+			}
+		}()
+		<-time.After(interval)
 	}
 }
 

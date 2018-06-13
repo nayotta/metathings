@@ -13,7 +13,7 @@ import (
 type _coreRunOptions struct {
 	_rootOptions                   `mapstructure:",squash"`
 	mt_plugin.PluginCommandOptions `mapstructure:",squash"`
-	ServiceDescriptorPath          string `mapstructure:"service_descriptor"`
+	ServiceDescriptor              string `mapstructure:"service_descriptor"`
 }
 
 var (
@@ -32,8 +32,8 @@ var (
 			var opt _coreRunOptions
 			cmd_helper.UnmarshalConfig(&opt)
 
-			if opt.ServiceDescriptorPath == "" {
-				opt.ServiceDescriptorPath = core_run_opts.ServiceDescriptorPath
+			if opt.ServiceDescriptor == "" {
+				opt.ServiceDescriptor = core_run_opts.ServiceDescriptor
 			}
 
 			if opt.Config == "" {
@@ -53,7 +53,7 @@ var (
 )
 
 func runCore(args []string) error {
-	path := helper.ExpendHomePath(core_run_opts.ServiceDescriptorPath)
+	path := helper.ExpendHomePath(core_run_opts.ServiceDescriptor)
 	sd, err := mt_plugin.LoadServiceDescriptor(path)
 	if err != nil {
 		return err
@@ -77,7 +77,7 @@ func runCore(args []string) error {
 func init() {
 	core_run_opts = &_coreRunOptions{}
 
-	coreRunCmd.Flags().StringVarP(&core_run_opts.ServiceDescriptorPath, "service-descriptor-path", "p", "~/.metathings/service_descriptor.yaml", "Core Service Descriptor File Path")
+	coreRunCmd.Flags().StringVarP(&core_run_opts.ServiceDescriptor, "service-descriptor", "p", "~/.metathings/service_descriptor.yaml", "Core Service Descriptor")
 
 	coreCmd.AddCommand(coreRunCmd)
 }

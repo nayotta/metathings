@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS core (
     project_id varchar(255),
     owner_id varchar(255),
     state varchar(255),
+    heartbeat_at datetime,
 
     created_at datetime,
     updated_at datetime
@@ -29,6 +30,7 @@ CREATE TABLE IF NOT EXISTS entity (
     service_name varchar(255),
     endpoint varchar(255),
     state varchar(255),
+    heartbeat_at datetime,
 
     created_at datetime,
     updated_at datetime
@@ -48,7 +50,9 @@ type storageImpl struct {
 func (s *storageImpl) CreateCore(core Core) (Core, error) {
 	c := Core{}
 
-	core.InitializedAtNow()
+	now := time.Now()
+	core.CreatedAt = now
+	core.UpdatedAt = now
 	_, err := s.db.NamedExec(`
 INSERT INTO core (id, name, project_id, owner_id, state, created_at, updated_at)
 VALUES (:id, :name, :project_id, :owner_id, :state, :created_at, :updated_at)`, &core)
@@ -59,7 +63,7 @@ VALUES (:id, :name, :project_id, :owner_id, :state, :created_at, :updated_at)`, 
 
 	s.db.Get(&c, "SELECT * FROM core WHERE id=$1", *core.Id)
 
-	s.logger.WithField("core_id", *core.Id).Infof("create core")
+	s.logger.WithField("core_id", *core.Id).Debugf("create core")
 	return c, nil
 }
 
@@ -80,7 +84,7 @@ func (s *storageImpl) DeleteCore(core_id string) error {
 		return err
 	}
 
-	s.logger.WithField("core_id", core_id).Infof("delete core")
+	s.logger.WithField("core_id", core_id).Debugf("delete core")
 	return nil
 }
 
@@ -99,6 +103,12 @@ func (s *storageImpl) PatchCore(core_id string, core Core) (Core, error) {
 	if core.State != nil {
 		values = append(values, fmt.Sprintf("state=$%v", i))
 		arguments = append(arguments, *core.State)
+		i += 1
+	}
+
+	if core.HeartbeatAt != nil {
+		values = append(values, fmt.Sprintf("heartbeat_at=$%v", i))
+		arguments = append(arguments, *core.HeartbeatAt)
 		i += 1
 	}
 
@@ -123,7 +133,7 @@ func (s *storageImpl) PatchCore(core_id string, core Core) (Core, error) {
 			return c, err
 		}
 		s.db.Get(&c, "SELECT * FROM core WHERE id=$1", core_id)
-		s.logger.WithField("core_id", core_id).Infof("update core")
+		s.logger.WithField("core_id", core_id).Debugf("update core")
 		return c, nil
 	}
 	s.logger.WithField("core_id", core_id).Debugf("nothing changed when update core")
@@ -180,7 +190,7 @@ func (s *storageImpl) AssignCoreToApplicationCredential(core_id string, app_cred
 	s.logger.WithFields(log.Fields{
 		"core_id":                   core_id,
 		"application_credential_id": app_cred_id,
-	}).Infof("assign core to application credential")
+	}).Debugf("assign core to application credential")
 	return nil
 }
 
@@ -204,7 +214,9 @@ WHERE r.app_cred_id = $1`, app_cred_id)
 func (s *storageImpl) CreateEntity(entity Entity) (Entity, error) {
 	e := Entity{}
 
-	e.InitializedAtNow()
+	now := time.Now()
+	e.CreatedAt = now
+	e.UpdatedAt = now
 	_, err := s.db.NamedExec(`
 INSERT INTO entity (id, core_id, name, service_name, endpoint, state, created_at, updated_at)
 VALUES (:id, :core_id, :name, :service_name, :endpoint, :state, :created_at, :updated_at)`, &entity)
@@ -213,19 +225,19 @@ VALUES (:id, :core_id, :name, :service_name, :endpoint, :state, :created_at, :up
 	}
 
 	s.db.Get(&e, "SELECT * FROM entity WHERE id=$1", *entity.Id)
-	s.logger.WithField("entity_id", *e.Id).Infof("create entity")
+	s.logger.WithField("entity_id", *e.Id).Debugf("create entity")
 	return e, nil
 }
 
 func (s *storageImpl) DeleteEntity(entity_id string) error {
-	_, err := s.db.Exec("DELETE FROM core WHERE id=$1", entity_id)
+	_, err := s.db.Exec("DELETE FROM entity WHERE id=$1", entity_id)
 	if err != nil {
 		s.logger.WithError(err).
 			WithField("entity_id", entity_id).
 			Errorf("failed to delete entity")
 		return err
 	}
-	s.logger.WithField("entity_id", entity_id).Infof("delete entity")
+	s.logger.WithField("entity_id", entity_id).Debugf("delete entity")
 	return nil
 }
 
@@ -238,6 +250,12 @@ func (s *storageImpl) PatchEntity(entity_id string, entity Entity) (Entity, erro
 	if entity.State != nil {
 		values = append(values, fmt.Sprintf("state=$%v", i))
 		arguments = append(arguments, *entity.State)
+		i += 1
+	}
+
+	if entity.HeartbeatAt != nil {
+		values = append(values, fmt.Sprintf("heartbeat_at=$%v", i))
+		arguments = append(arguments, *entity.HeartbeatAt)
 		i += 1
 	}
 
@@ -262,7 +280,7 @@ func (s *storageImpl) PatchEntity(entity_id string, entity Entity) (Entity, erro
 			return e, err
 		}
 		s.db.Get(&e, "SELECT * FROM entity WHERE id=$1", entity_id)
-		s.logger.WithField("entity_id", entity_id).Infof("update entity")
+		s.logger.WithField("entity_id", entity_id).Debugf("update entity")
 		return e, nil
 
 	}

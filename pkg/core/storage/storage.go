@@ -1,28 +1,34 @@
 package metathings_core_storage
 
 import (
-	log "github.com/sirupsen/logrus"
+	"time"
 
-	sql_helper "github.com/nayotta/metathings/pkg/common/sql"
+	log "github.com/sirupsen/logrus"
 )
 
 type Core struct {
-	sql_helper.Metadata
-	Id        *string
-	Name      *string
-	ProjectId *string `db:"project_id"`
-	OwnerId   *string `db:"owner_id"`
-	State     *string
+	CreatedAt time.Time `db:"created_at"`
+	UpdatedAt time.Time `db:"updated_at"`
+
+	Id          *string
+	Name        *string
+	ProjectId   *string `db:"project_id"`
+	OwnerId     *string `db:"owner_id"`
+	State       *string
+	HeartbeatAt *time.Time `db:"heartbeat_at"`
 }
 
 type Entity struct {
-	sql_helper.Metadata
+	CreatedAt time.Time `db:"created_at"`
+	UpdatedAt time.Time `db:"updated_at"`
+
 	Id          *string
 	CoreId      *string `db:"core_id"`
 	Name        *string
 	ServiceName *string `db:"service_name"`
 	Endpoint    *string
 	State       *string
+	HeartbeatAt *time.Time `db:"heartbeat_at"`
 }
 
 type Storage interface {

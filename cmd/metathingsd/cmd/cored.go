@@ -18,6 +18,7 @@ type _coredOptions struct {
 	Listen        string
 	Storage       _storageOptions
 	ServiceConfig _serviceConfigOptions `mapstructure:"service_config"`
+	Heartbeat     _heartbeatOptions
 }
 
 var (
@@ -33,7 +34,15 @@ var (
 				return
 			}
 
-			cmd_helper.UnmarshalConfig(cored_opts)
+			var opts _coredOptions
+			cmd_helper.UnmarshalConfig(&opts)
+			if opts.Heartbeat.CoreAliveTimeout == 0 {
+				opts.Heartbeat.CoreAliveTimeout = cored_opts.Heartbeat.CoreAliveTimeout
+			}
+			if opts.Heartbeat.EntityAliveTimeout == 0 {
+				opts.Heartbeat.EntityAliveTimeout = cored_opts.Heartbeat.EntityAliveTimeout
+			}
+			cored_opts = &opts
 			root_opts = &cored_opts._rootOptions
 			cored_opts.Service = "cored"
 			cored_opts.Stage = cmd_helper.GetStageFromEnv()
@@ -64,6 +73,8 @@ func runCored() error {
 			cored_opts.ApplicationCredential.Id,
 			cored_opts.ApplicationCredential.Secret,
 		),
+		service.SetCoreAliveTimeout(cored_opts.Heartbeat.CoreAliveTimeout),
+		service.SetEntityAliveTimeout(cored_opts.Heartbeat.EntityAliveTimeout),
 	)
 	if err != nil {
 		log.WithError(err).Errorf("failed to new core service")
@@ -83,6 +94,8 @@ func init() {
 	coredCmd.Flags().StringVar(&cored_opts.ServiceConfig.Identityd.Address, "identityd-addr", "", "MetaThings Identity Service address")
 	coredCmd.Flags().StringVar(&cored_opts.Storage.Driver, "storage-driver", "sqlite3", "Storage Driver [sqlite3]")
 	coredCmd.Flags().StringVar(&cored_opts.Storage.Uri, "storage-uri", "", "Storage URI")
+	coredCmd.Flags().IntVar(&cored_opts.Heartbeat.CoreAliveTimeout, "core-alive-timeout", 30, "Core Agent alive timeout")
+	coredCmd.Flags().IntVar(&cored_opts.Heartbeat.CoreAliveTimeout, "entity-alive-timeout", 30, "Entity alive timeout")
 
 	RootCmd.AddCommand(coredCmd)
 }

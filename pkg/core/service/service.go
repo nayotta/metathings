@@ -2,6 +2,7 @@ package metathings_core_service
 
 import (
 	"context"
+	"time"
 
 	empty "github.com/golang/protobuf/ptypes/empty"
 	log "github.com/sirupsen/logrus"
@@ -16,6 +17,7 @@ import (
 	context_helper "github.com/nayotta/metathings/pkg/common/context"
 	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
 	log_helper "github.com/nayotta/metathings/pkg/common/log"
+	protobuf_helper "github.com/nayotta/metathings/pkg/common/protobuf"
 	state_helper "github.com/nayotta/metathings/pkg/common/state"
 	stm_mgr "github.com/nayotta/metathings/pkg/common/stream_manager"
 	storage "github.com/nayotta/metathings/pkg/core/storage"
@@ -31,10 +33,14 @@ type options struct {
 	application_credential_secret string
 	storage_driver                string
 	storage_uri                   string
+	core_alive_timeout            time.Duration
+	entity_alive_timeout          time.Duration
 }
 
 var defaultServiceOptions = options{
-	logLevel: "info",
+	logLevel:             "info",
+	core_alive_timeout:   30,
+	entity_alive_timeout: 30,
 }
 
 type ServiceOptions func(*options)
@@ -62,6 +68,18 @@ func SetStorage(driver, uri string) ServiceOptions {
 	return func(o *options) {
 		o.storage_driver = driver
 		o.storage_uri = uri
+	}
+}
+
+func SetCoreAliveTimeout(timeout int) ServiceOptions {
+	return func(o *options) {
+		o.core_alive_timeout = time.Duration(timeout)
+	}
+}
+
+func SetEntityAliveTimeout(timeout int) ServiceOptions {
+	return func(o *options) {
+		o.entity_alive_timeout = time.Duration(timeout)
 	}
 }
 
@@ -390,12 +408,56 @@ func (srv *metathingsCoreService) Heartbeat(ctx context.Context, req *pb.Heartbe
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
+	now := time.Now()
+	pc := storage.Core{
+		HeartbeatAt: &now,
+	}
+
 	if *core.State != "online" {
 		state_str := "online"
-		_, err = srv.storage.PatchCore(*core.Id, storage.Core{State: &state_str})
+		pc.State = &state_str
+	}
+	_, err = srv.storage.PatchCore(*core.Id, pc)
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to patch core")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
+	for _, hbe := range req.Entities {
+		e, err := srv.storage.GetEntity(hbe.Id.Value)
 		if err != nil {
-			srv.logger.WithError(err).Errorf("failed to patch core")
-			return nil, status.Errorf(codes.Internal, err.Error())
+			srv.logger.WithError(err).Warningf("failed to get entity on heartbeat")
+			continue
+		}
+
+		if *e.CoreId != *core.Id {
+			srv.logger.Warningf("entity not belong to core")
+			continue
+		}
+
+		patch_flag := false
+		var pe storage.Entity
+		var state_str string
+		hbt := protobuf_helper.ToTime(*hbe.HeartbeatAt)
+		if e.HeartbeatAt == nil || !e.HeartbeatAt.Equal(hbt) {
+			pe.HeartbeatAt = &hbt
+			patch_flag = true
+		}
+		if time.Now().Sub(hbt) > srv.opts.entity_alive_timeout {
+			state_str = "offline"
+		} else {
+			state_str = "online"
+		}
+		if *e.State != state_str {
+			pe.State = &state_str
+			patch_flag = true
+		}
+		if patch_flag {
+			_, err = srv.storage.PatchEntity(hbe.Id.Value, pe)
+			if err != nil {
+				srv.logger.WithError(err).Errorf("failed to patch entity")
+				return nil, status.Errorf(codes.Internal, err.Error())
+			}
 		}
 	}
 

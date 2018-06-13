@@ -3,10 +3,12 @@
 
 package core
 
+import go_proto_validators "github.com/mwitkow/go-proto-validators"
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
 import _ "github.com/golang/protobuf/ptypes/wrappers"
+import _ "github.com/golang/protobuf/ptypes/timestamp"
 import _ "github.com/mwitkow/go-proto-validators"
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -14,6 +16,26 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+func (this *HeartbeatEntity) Validate() error {
+	if this.Id != nil {
+		if err := go_proto_validators.CallValidatorIfExists(this.Id); err != nil {
+			return go_proto_validators.FieldError("Id", err)
+		}
+	}
+	if this.HeartbeatAt != nil {
+		if err := go_proto_validators.CallValidatorIfExists(this.HeartbeatAt); err != nil {
+			return go_proto_validators.FieldError("HeartbeatAt", err)
+		}
+	}
+	return nil
+}
 func (this *HeartbeatRequest) Validate() error {
+	for _, item := range this.Entities {
+		if item != nil {
+			if err := go_proto_validators.CallValidatorIfExists(item); err != nil {
+				return go_proto_validators.FieldError("Entities", err)
+			}
+		}
+	}
 	return nil
 }

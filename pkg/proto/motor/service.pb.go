@@ -31,9 +31,8 @@ var _ grpc.ClientConn
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion4
 
-// MotorServiceClient is the client API for MotorService service.
-//
-// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
+// Client API for MotorService service
+
 type MotorServiceClient interface {
 	List(ctx context.Context, in *ListRequest, opts ...grpc.CallOption) (*ListResponse, error)
 	Get(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*GetResponse, error)
@@ -50,7 +49,7 @@ func NewMotorServiceClient(cc *grpc.ClientConn) MotorServiceClient {
 
 func (c *motorServiceClient) List(ctx context.Context, in *ListRequest, opts ...grpc.CallOption) (*ListResponse, error) {
 	out := new(ListResponse)
-	err := c.cc.Invoke(ctx, "/ai.metathings.service.motor.MotorService/List", in, out, opts...)
+	err := grpc.Invoke(ctx, "/ai.metathings.service.motor.MotorService/List", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -59,7 +58,7 @@ func (c *motorServiceClient) List(ctx context.Context, in *ListRequest, opts ...
 
 func (c *motorServiceClient) Get(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*GetResponse, error) {
 	out := new(GetResponse)
-	err := c.cc.Invoke(ctx, "/ai.metathings.service.motor.MotorService/Get", in, out, opts...)
+	err := grpc.Invoke(ctx, "/ai.metathings.service.motor.MotorService/Get", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -67,7 +66,7 @@ func (c *motorServiceClient) Get(ctx context.Context, in *GetRequest, opts ...gr
 }
 
 func (c *motorServiceClient) Stream(ctx context.Context, opts ...grpc.CallOption) (MotorService_StreamClient, error) {
-	stream, err := c.cc.NewStream(ctx, &_MotorService_serviceDesc.Streams[0], "/ai.metathings.service.motor.MotorService/Stream", opts...)
+	stream, err := grpc.NewClientStream(ctx, &_MotorService_serviceDesc.Streams[0], c.cc, "/ai.metathings.service.motor.MotorService/Stream", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -97,7 +96,8 @@ func (x *motorServiceStreamClient) Recv() (*StreamResponse, error) {
 	return m, nil
 }
 
-// MotorServiceServer is the server API for MotorService service.
+// Server API for MotorService service
+
 type MotorServiceServer interface {
 	List(context.Context, *ListRequest) (*ListResponse, error)
 	Get(context.Context, *GetRequest) (*GetResponse, error)

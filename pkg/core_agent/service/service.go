@@ -21,6 +21,7 @@ import (
 	context_helper "github.com/nayotta/metathings/pkg/common/context"
 	log_helper "github.com/nayotta/metathings/pkg/common/log"
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
+	protobuf_helper "github.com/nayotta/metathings/pkg/common/protobuf"
 	state_helper "github.com/nayotta/metathings/pkg/common/state"
 	mt_plugin "github.com/nayotta/metathings/pkg/core/plugin"
 	state_pb "github.com/nayotta/metathings/pkg/proto/common/state"
@@ -37,7 +38,9 @@ type options struct {
 	core_id                       string
 	application_credential_id     string
 	application_credential_secret string
-	service_descriptor_path       string
+	service_descriptor            string
+
+	heartbeat_interval int
 }
 
 var (
@@ -49,7 +52,8 @@ var (
 )
 
 var defaultServiceOptions = options{
-	logLevel: "info",
+	logLevel:           "info",
+	heartbeat_interval: 5,
 }
 
 type ServiceOptions func(*options)
@@ -85,10 +89,16 @@ func SetApplicationCredential(id, secret string) ServiceOptions {
 	}
 }
 
-func SetServiceDescriptorPath(path string) ServiceOptions {
+func SetServiceDescriptor(path string) ServiceOptions {
 	return func(o *options) {
 		path = helper.ExpendHomePath(path)
-		o.service_descriptor_path = path
+		o.service_descriptor = path
+	}
+}
+
+func SetHeartbeatInterval(interval int) ServiceOptions {
+	return func(o *options) {
+		o.heartbeat_interval = interval
 	}
 }
 
@@ -101,8 +111,51 @@ type coreAgentService struct {
 	mtx_dp_op   *sync.Mutex
 	dispatchers map[string]mt_plugin.DispatcherPlugin
 
+	heartbeat_entities map[string]time.Time
+
 	logger log.FieldLogger
 	opts   options
+}
+
+func (srv *coreAgentService) HeartbeatLoop() error {
+	interval := time.Duration(srv.opts.heartbeat_interval) * time.Second
+	for {
+		go func() {
+			err := srv.HeartbeatOnce()
+			if err != nil {
+				srv.logger.WithError(err).Errorf("failed to heartbeat")
+			}
+		}()
+		<-time.After(interval)
+	}
+}
+
+func (srv *coreAgentService) HeartbeatOnce() error {
+	ctx := context_helper.WithToken(context.Background(), srv.app_cred_mgr.GetToken())
+	cli, cfn, err := srv.cli_fty.NewCoreServiceClient()
+	if err != nil {
+		return err
+	}
+	defer cfn()
+
+	entities := []*core_pb.HeartbeatEntity{}
+	for id, _ := range srv.heartbeat_entities {
+		ts := protobuf_helper.FromTime(srv.heartbeat_entities[id])
+		entities = append(entities, &core_pb.HeartbeatEntity{
+			Id:          &gpb.StringValue{Value: id},
+			HeartbeatAt: &ts,
+		})
+	}
+
+	req := &core_pb.HeartbeatRequest{
+		Entities: entities,
+	}
+	_, err = cli.Heartbeat(ctx, req)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (srv *coreAgentService) copyEntity(e *core_pb.Entity) *pb.Entity {
@@ -328,38 +381,25 @@ func (srv *coreAgentService) CreateOrGetEntity(ctx context.Context, req *pb.Crea
 }
 
 func (srv *coreAgentService) Heartbeat(ctx context.Context, req *pb.HeartbeatRequest) (*empty.Empty, error) {
-	ctx = context_helper.WithToken(ctx, srv.app_cred_mgr.GetToken())
-	cli, closeFn, err := srv.cli_fty.NewCoreServiceClient()
-	if err != nil {
-		srv.logger.WithError(err).Errorf("failed to new core service client")
-		return nil, status.Errorf(codes.Internal, err.Error())
-	}
-	defer closeFn()
-
-	r := &core_pb.GetEntityRequest{Id: req.EntityId}
-	res, err := cli.GetEntity(ctx, r)
-	if err != nil {
-		srv.logger.WithError(err).Errorf("failed to get entity")
-		return nil, status.Errorf(codes.Internal, err.Error())
-	}
-
-	if res.Entity.State != state_pb.EntityState_ENTITY_STATE_ONLINE {
-		r1 := &core_pb.PatchEntityRequest{
-			Id:    req.EntityId,
-			State: state_pb.EntityState_ENTITY_STATE_ONLINE,
-		}
-
-		_, err = cli.PatchEntity(ctx, r1)
+	entity_id := req.GetEntityId().GetValue()
+	if _, ok := srv.heartbeat_entities[entity_id]; !ok {
+		ctx = context_helper.WithToken(ctx, srv.app_cred_mgr.GetToken())
+		cli, closeFn, err := srv.cli_fty.NewCoreServiceClient()
 		if err != nil {
-			srv.logger.WithError(err).Errorf("failed to patch entity")
-			return nil, grpc.Errorf(codes.Internal, err.Error())
+			srv.logger.WithError(err).Errorf("failed to new core service client")
+			return nil, status.Errorf(codes.Internal, err.Error())
+		}
+		defer closeFn()
+
+		r := &core_pb.GetEntityRequest{Id: req.EntityId}
+		_, err = cli.GetEntity(ctx, r)
+		if err != nil {
+			srv.logger.WithError(err).Errorf("failed to get entity")
+			return nil, status.Errorf(codes.Internal, err.Error())
 		}
 	}
-	srv.logger.WithFields(log.Fields{
-		"id":      res.Entity.Id,
-		"service": res.Entity.ServiceName,
-		"name":    res.Entity.Name,
-	}).Debugf("entity heartbeat")
+	srv.heartbeat_entities[entity_id] = time.Now()
+	srv.logger.WithField("id", req.EntityId.Value).Debugf("entity heartbeat")
 
 	return &empty.Empty{}, nil
 }
@@ -694,7 +734,7 @@ func NewCoreAgentService(opt ...ServiceOptions) (srv *coreAgentService, err erro
 		opts.core_id = core_id
 	}
 
-	serv_desc, err := mt_plugin.LoadServiceDescriptor(opts.service_descriptor_path)
+	serv_desc, err := mt_plugin.LoadServiceDescriptor(opts.service_descriptor)
 	if err != nil {
 		log.WithError(err).Errorf("failed to load service descriptor")
 		return nil, err
@@ -708,8 +748,9 @@ func NewCoreAgentService(opt ...ServiceOptions) (srv *coreAgentService, err erro
 		logger:        logger,
 		opts:          opts,
 
-		mtx_dp_op:   new(sync.Mutex),
-		dispatchers: make(map[string]mt_plugin.DispatcherPlugin),
+		mtx_dp_op:          new(sync.Mutex),
+		dispatchers:        make(map[string]mt_plugin.DispatcherPlugin),
+		heartbeat_entities: make(map[string]time.Time),
 	}
 	return srv, nil
 }

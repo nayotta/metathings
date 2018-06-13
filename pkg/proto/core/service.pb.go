@@ -32,9 +32,8 @@ var _ grpc.ClientConn
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion4
 
-// CoreServiceClient is the client API for CoreService service.
-//
-// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
+// Client API for CoreService service
+
 type CoreServiceClient interface {
 	CreateCore(ctx context.Context, in *CreateCoreRequest, opts ...grpc.CallOption) (*CreateCoreResponse, error)
 	DeleteCore(ctx context.Context, in *DeleteCoreRequest, opts ...grpc.CallOption) (*empty.Empty, error)
@@ -66,7 +65,7 @@ func NewCoreServiceClient(cc *grpc.ClientConn) CoreServiceClient {
 
 func (c *coreServiceClient) CreateCore(ctx context.Context, in *CreateCoreRequest, opts ...grpc.CallOption) (*CreateCoreResponse, error) {
 	out := new(CreateCoreResponse)
-	err := c.cc.Invoke(ctx, "/ai.metathings.service.core.CoreService/CreateCore", in, out, opts...)
+	err := grpc.Invoke(ctx, "/ai.metathings.service.core.CoreService/CreateCore", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -75,7 +74,7 @@ func (c *coreServiceClient) CreateCore(ctx context.Context, in *CreateCoreReques
 
 func (c *coreServiceClient) DeleteCore(ctx context.Context, in *DeleteCoreRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
 	out := new(empty.Empty)
-	err := c.cc.Invoke(ctx, "/ai.metathings.service.core.CoreService/DeleteCore", in, out, opts...)
+	err := grpc.Invoke(ctx, "/ai.metathings.service.core.CoreService/DeleteCore", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -84,7 +83,7 @@ func (c *coreServiceClient) DeleteCore(ctx context.Context, in *DeleteCoreReques
 
 func (c *coreServiceClient) PatchCore(ctx context.Context, in *PatchCoreRequest, opts ...grpc.CallOption) (*PatchCoreResponse, error) {
 	out := new(PatchCoreResponse)
-	err := c.cc.Invoke(ctx, "/ai.metathings.service.core.CoreService/PatchCore", in, out, opts...)
+	err := grpc.Invoke(ctx, "/ai.metathings.service.core.CoreService/PatchCore", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -93,7 +92,7 @@ func (c *coreServiceClient) PatchCore(ctx context.Context, in *PatchCoreRequest,
 
 func (c *coreServiceClient) GetCore(ctx context.Context, in *GetCoreRequest, opts ...grpc.CallOption) (*GetCoreResponse, error) {
 	out := new(GetCoreResponse)
-	err := c.cc.Invoke(ctx, "/ai.metathings.service.core.CoreService/GetCore", in, out, opts...)
+	err := grpc.Invoke(ctx, "/ai.metathings.service.core.CoreService/GetCore", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -102,7 +101,7 @@ func (c *coreServiceClient) GetCore(ctx context.Context, in *GetCoreRequest, opt
 
 func (c *coreServiceClient) ListCores(ctx context.Context, in *ListCoresRequest, opts ...grpc.CallOption) (*ListCoresResponse, error) {
 	out := new(ListCoresResponse)
-	err := c.cc.Invoke(ctx, "/ai.metathings.service.core.CoreService/ListCores", in, out, opts...)
+	err := grpc.Invoke(ctx, "/ai.metathings.service.core.CoreService/ListCores", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -111,7 +110,7 @@ func (c *coreServiceClient) ListCores(ctx context.Context, in *ListCoresRequest,
 
 func (c *coreServiceClient) CreateEntity(ctx context.Context, in *CreateEntityRequest, opts ...grpc.CallOption) (*CreateEntityResponse, error) {
 	out := new(CreateEntityResponse)
-	err := c.cc.Invoke(ctx, "/ai.metathings.service.core.CoreService/CreateEntity", in, out, opts...)
+	err := grpc.Invoke(ctx, "/ai.metathings.service.core.CoreService/CreateEntity", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -120,7 +119,7 @@ func (c *coreServiceClient) CreateEntity(ctx context.Context, in *CreateEntityRe
 
 func (c *coreServiceClient) DeleteEntity(ctx context.Context, in *DeleteEntityRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
 	out := new(empty.Empty)
-	err := c.cc.Invoke(ctx, "/ai.metathings.service.core.CoreService/DeleteEntity", in, out, opts...)
+	err := grpc.Invoke(ctx, "/ai.metathings.service.core.CoreService/DeleteEntity", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -129,7 +128,7 @@ func (c *coreServiceClient) DeleteEntity(ctx context.Context, in *DeleteEntityRe
 
 func (c *coreServiceClient) PatchEntity(ctx context.Context, in *PatchEntityRequest, opts ...grpc.CallOption) (*PatchEntityResponse, error) {
 	out := new(PatchEntityResponse)
-	err := c.cc.Invoke(ctx, "/ai.metathings.service.core.CoreService/PatchEntity", in, out, opts...)
+	err := grpc.Invoke(ctx, "/ai.metathings.service.core.CoreService/PatchEntity", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -138,7 +137,7 @@ func (c *coreServiceClient) PatchEntity(ctx context.Context, in *PatchEntityRequ
 
 func (c *coreServiceClient) GetEntity(ctx context.Context, in *GetEntityRequest, opts ...grpc.CallOption) (*GetEntityResponse, error) {
 	out := new(GetEntityResponse)
-	err := c.cc.Invoke(ctx, "/ai.metathings.service.core.CoreService/GetEntity", in, out, opts...)
+	err := grpc.Invoke(ctx, "/ai.metathings.service.core.CoreService/GetEntity", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -147,7 +146,7 @@ func (c *coreServiceClient) GetEntity(ctx context.Context, in *GetEntityRequest,
 
 func (c *coreServiceClient) ListEntities(ctx context.Context, in *ListEntitiesRequest, opts ...grpc.CallOption) (*ListEntitiesResponse, error) {
 	out := new(ListEntitiesResponse)
-	err := c.cc.Invoke(ctx, "/ai.metathings.service.core.CoreService/ListEntities", in, out, opts...)
+	err := grpc.Invoke(ctx, "/ai.metathings.service.core.CoreService/ListEntities", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -156,7 +155,7 @@ func (c *coreServiceClient) ListEntities(ctx context.Context, in *ListEntitiesRe
 
 func (c *coreServiceClient) ListEntitiesForCore(ctx context.Context, in *ListEntitiesForCoreRequest, opts ...grpc.CallOption) (*ListEntitiesForCoreResponse, error) {
 	out := new(ListEntitiesForCoreResponse)
-	err := c.cc.Invoke(ctx, "/ai.metathings.service.core.CoreService/ListEntitiesForCore", in, out, opts...)
+	err := grpc.Invoke(ctx, "/ai.metathings.service.core.CoreService/ListEntitiesForCore", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -165,7 +164,7 @@ func (c *coreServiceClient) ListEntitiesForCore(ctx context.Context, in *ListEnt
 
 func (c *coreServiceClient) Heartbeat(ctx context.Context, in *HeartbeatRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
 	out := new(empty.Empty)
-	err := c.cc.Invoke(ctx, "/ai.metathings.service.core.CoreService/Heartbeat", in, out, opts...)
+	err := grpc.Invoke(ctx, "/ai.metathings.service.core.CoreService/Heartbeat", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -173,7 +172,7 @@ func (c *coreServiceClient) Heartbeat(ctx context.Context, in *HeartbeatRequest,
 }
 
 func (c *coreServiceClient) Stream(ctx context.Context, opts ...grpc.CallOption) (CoreService_StreamClient, error) {
-	stream, err := c.cc.NewStream(ctx, &_CoreService_serviceDesc.Streams[0], "/ai.metathings.service.core.CoreService/Stream", opts...)
+	stream, err := grpc.NewClientStream(ctx, &_CoreService_serviceDesc.Streams[0], c.cc, "/ai.metathings.service.core.CoreService/Stream", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -205,7 +204,7 @@ func (x *coreServiceStreamClient) Recv() (*StreamRequest, error) {
 
 func (c *coreServiceClient) ListCoresForUser(ctx context.Context, in *ListCoresForUserRequest, opts ...grpc.CallOption) (*ListCoresForUserResponse, error) {
 	out := new(ListCoresForUserResponse)
-	err := c.cc.Invoke(ctx, "/ai.metathings.service.core.CoreService/ListCoresForUser", in, out, opts...)
+	err := grpc.Invoke(ctx, "/ai.metathings.service.core.CoreService/ListCoresForUser", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -214,7 +213,7 @@ func (c *coreServiceClient) ListCoresForUser(ctx context.Context, in *ListCoresF
 
 func (c *coreServiceClient) UnaryCall(ctx context.Context, in *UnaryCallRequest, opts ...grpc.CallOption) (*UnaryCallResponse, error) {
 	out := new(UnaryCallResponse)
-	err := c.cc.Invoke(ctx, "/ai.metathings.service.core.CoreService/UnaryCall", in, out, opts...)
+	err := grpc.Invoke(ctx, "/ai.metathings.service.core.CoreService/UnaryCall", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -222,7 +221,7 @@ func (c *coreServiceClient) UnaryCall(ctx context.Context, in *UnaryCallRequest,
 }
 
 func (c *coreServiceClient) StreamCall(ctx context.Context, opts ...grpc.CallOption) (CoreService_StreamCallClient, error) {
-	stream, err := c.cc.NewStream(ctx, &_CoreService_serviceDesc.Streams[1], "/ai.metathings.service.core.CoreService/StreamCall", opts...)
+	stream, err := grpc.NewClientStream(ctx, &_CoreService_serviceDesc.Streams[1], c.cc, "/ai.metathings.service.core.CoreService/StreamCall", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -252,7 +251,8 @@ func (x *coreServiceStreamCallClient) Recv() (*StreamCallResponse, error) {
 	return m, nil
 }
 
-// CoreServiceServer is the server API for CoreService service.
+// Server API for CoreService service
+
 type CoreServiceServer interface {
 	CreateCore(context.Context, *CreateCoreRequest) (*CreateCoreResponse, error)
 	DeleteCore(context.Context, *DeleteCoreRequest) (*empty.Empty, error)
