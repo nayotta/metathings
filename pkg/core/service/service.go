@@ -196,13 +196,7 @@ func (srv *metathingsCoreService) CreateCore(ctx context.Context, req *pb.Create
 	}).Infof("assign core to application credential")
 
 	res := &pb.CreateCoreResponse{
-		Core: &pb.Core{
-			Id:        *cc.Id,
-			Name:      *cc.Name,
-			ProjectId: *cc.ProjectId,
-			OwnerId:   *cc.OwnerId,
-			State:     srv.core_st_psr.ToValue(*cc.State),
-		},
+		Core: srv.copyCore(cc),
 	}
 
 	return res, nil
@@ -216,12 +210,97 @@ func (srv *metathingsCoreService) PatchCore(context.Context, *pb.PatchCoreReques
 	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
 }
 
-func (srv *metathingsCoreService) GetCore(context.Context, *pb.GetCoreRequest) (*pb.GetCoreResponse, error) {
-	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
+func (srv *metathingsCoreService) GetCore(ctx context.Context, req *pb.GetCoreRequest) (*pb.GetCoreResponse, error) {
+	err := req.Validate()
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to validate request data")
+		return nil, status.Errorf(codes.InvalidArgument, err.Error())
+	}
+
+	c, err := srv.storage.GetCore(req.GetId().GetValue())
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to get core")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
+	srv.logger.WithField("id", *c.Id).Debugf("get core")
+
+	res := &pb.GetCoreResponse{
+		Core: srv.copyCore(c),
+	}
+
+	return res, nil
 }
 
-func (srv *metathingsCoreService) ListCores(context.Context, *pb.ListCoresRequest) (*pb.ListCoresResponse, error) {
-	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
+func (srv *metathingsCoreService) ListCores(ctx context.Context, req *pb.ListCoresRequest) (*pb.ListCoresResponse, error) {
+	err := req.Validate()
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to validate request data")
+		return nil, status.Errorf(codes.InvalidArgument, err.Error())
+	}
+
+	c := storage.Core{}
+
+	name := req.GetName()
+	if name != nil {
+		c.Name = &name.Value
+	}
+	projectId := req.GetProjectId()
+	if projectId != nil {
+		c.ProjectId = &projectId.Value
+	}
+	ownerId := req.GetOwnerId()
+	if ownerId != nil {
+		c.OwnerId = &ownerId.Value
+	}
+	state := req.GetState()
+	if state != state_pb.CoreState_CORE_STATE_UNKNOWN {
+		state_str := srv.core_st_psr.ToString(state)
+		c.State = &state_str
+	}
+
+	cs, err := srv.storage.ListCores(c)
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to list cores")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
+	res := &pb.ListCoresResponse{
+		Cores: []*pb.Core{},
+	}
+	for _, c := range cs {
+		res.Cores = append(res.Cores, srv.copyCore(c))
+	}
+
+	srv.logger.Debugf("list cores")
+	return res, nil
+}
+
+func (srv *metathingsCoreService) ShowCore(ctx context.Context, req *empty.Empty) (*pb.ShowCoreResponse, error) {
+	cred := context_helper.Credential(ctx)
+
+	c, err := srv.storage.GetAssignedCoreFromApplicationCredential(cred.ApplicationCredential.Id)
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to get assigned core from application credential")
+		return nil, grpc.Errorf(codes.Internal, err.Error())
+	}
+
+	res := &pb.ShowCoreResponse{
+		Core: srv.copyCore(c),
+	}
+
+	srv.logger.WithField("application_credential_id", cred.ApplicationCredential.Id).Debugf("show core")
+	return res, nil
+}
+
+func (srv *metathingsCoreService) copyCore(c storage.Core) *pb.Core {
+	return &pb.Core{
+		Id:        *c.Id,
+		Name:      *c.Name,
+		ProjectId: *c.ProjectId,
+		OwnerId:   *c.OwnerId,
+		State:     srv.core_st_psr.ToValue(*c.State),
+	}
 }
 
 func (srv *metathingsCoreService) copyEntity(e storage.Entity) *pb.Entity {
@@ -275,11 +354,6 @@ func (srv *metathingsCoreService) CreateEntity(ctx context.Context, req *pb.Crea
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
-	srv.logger.WithFields(log.Fields{
-		"entity_id": *ce.Id,
-		"core_id":   *ce.CoreId,
-	}).Infof("create entity")
-
 	res := &pb.CreateEntityResponse{
 		Entity: &pb.Entity{
 			Id:          *ce.Id,
@@ -291,6 +365,10 @@ func (srv *metathingsCoreService) CreateEntity(ctx context.Context, req *pb.Crea
 		},
 	}
 
+	srv.logger.WithFields(log.Fields{
+		"entity_id": *ce.Id,
+		"core_id":   *ce.CoreId,
+	}).Infof("create entity")
 	return res, nil
 }
 
@@ -360,7 +438,30 @@ func (srv *metathingsCoreService) ListEntities(ctx context.Context, req *pb.List
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 
-	entities, err := srv.storage.ListEntities(storage.Entity{})
+	e := storage.Entity{}
+
+	core_id := req.GetCoreId()
+	if core_id != nil {
+		e.CoreId = &core_id.Value
+	}
+
+	name := req.GetName()
+	if name != nil {
+		e.Name = &name.Value
+	}
+
+	service_name := req.GetServiceName()
+	if service_name != nil {
+		e.ServiceName = &service_name.Value
+	}
+
+	state := req.GetState()
+	if state != state_pb.EntityState_ENTITY_STATE_UNKNOWN {
+		state_str := srv.entity_st_psr.ToString(state)
+		e.State = &state_str
+	}
+
+	entities, err := srv.storage.ListEntities(e)
 	if err != nil {
 		srv.logger.WithError(err).Errorf("failed to list entities")
 		return nil, status.Errorf(codes.Internal, err.Error())
@@ -380,7 +481,32 @@ func (srv *metathingsCoreService) ListEntitiesForCore(ctx context.Context, req *
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 
-	entites, err := srv.storage.ListEntitiesForCore(req.CoreId.Value, storage.Entity{})
+	cred := context_helper.Credential(ctx)
+	core, err := srv.storage.GetAssignedCoreFromApplicationCredential(cred.ApplicationCredential.Id)
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to get assigned core from application credential")
+		return nil, status.Errorf(codes.InvalidArgument, err.Error())
+	}
+
+	e := storage.Entity{}
+
+	name := req.GetName()
+	if name != nil {
+		e.Name = &name.Value
+	}
+
+	service_name := req.GetServiceName()
+	if service_name != nil {
+		e.ServiceName = &service_name.Value
+	}
+
+	state := req.GetState()
+	if state != state_pb.EntityState_ENTITY_STATE_UNKNOWN {
+		state_str := srv.entity_st_psr.ToString(state)
+		e.State = &state_str
+	}
+
+	entites, err := srv.storage.ListEntitiesForCore(*core.Id, e)
 	if err != nil {
 		srv.logger.WithError(err).Errorf("failed to list entities for core")
 		return nil, status.Errorf(codes.Internal, err.Error())
@@ -484,6 +610,7 @@ func (srv *metathingsCoreService) Stream(stream pb.CoreService_StreamServer) err
 			WithField("core_id", *core.Id).
 			WithError(err).
 			Errorf("failed to register stream")
+		return err
 	}
 	srv.logger.WithField("core_id", *core.Id).Infof("register stream")
 
@@ -493,8 +620,43 @@ func (srv *metathingsCoreService) Stream(stream pb.CoreService_StreamServer) err
 	return nil
 }
 
-func (srv *metathingsCoreService) ListCoresForUser(context.Context, *pb.ListCoresForUserRequest) (*pb.ListCoresForUserResponse, error) {
-	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
+func (srv *metathingsCoreService) ListCoresForUser(ctx context.Context, req *pb.ListCoresForUserRequest) (*pb.ListCoresForUserResponse, error) {
+	cred := context_helper.Credential(ctx)
+	user_id := cred.User.Id
+	c := storage.Core{}
+
+	name := req.GetName()
+	if name != nil {
+		c.Name = &name.Value
+	}
+
+	projectId := req.GetProjectId()
+	if projectId != nil {
+		c.ProjectId = &projectId.Value
+	}
+
+	state := req.GetState()
+	if state != state_pb.CoreState_CORE_STATE_UNKNOWN {
+		state_str := srv.core_st_psr.ToString(state)
+		c.State = &state_str
+	}
+
+	cs, err := srv.storage.ListCoresForUser(user_id, c)
+	if err != nil {
+		srv.logger.WithField("user_id", user_id).WithError(err).Errorf("failed to list cores for user")
+		return nil, grpc.Errorf(codes.Internal, err.Error())
+	}
+
+	res := &pb.ListCoresForUserResponse{
+		Cores: []*pb.Core{},
+	}
+	for _, c := range cs {
+		res.Cores = append(res.Cores, srv.copyCore(c))
+	}
+
+	srv.logger.WithField("user_id", user_id).Debugf("list cores for user")
+
+	return res, nil
 }
 
 func (srv *metathingsCoreService) UnaryCall(ctx context.Context, req *pb.UnaryCallRequest) (*pb.UnaryCallResponse, error) {

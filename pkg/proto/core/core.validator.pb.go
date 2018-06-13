@@ -22,6 +22,7 @@ It is generated from these files:
 	patch_entity.proto
 	payload.proto
 	service.proto
+	show_core.proto
 	stream.proto
 	stream_call.proto
 	unary_call.proto
@@ -62,6 +63,7 @@ It has these top-level messages:
 	StreamCallConfigResponse
 	StreamCallDataRequest
 	StreamCallDataResponse
+	ShowCoreResponse
 	StreamResponse
 	StreamRequest
 	StreamCallRequest

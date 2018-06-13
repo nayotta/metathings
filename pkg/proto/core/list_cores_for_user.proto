@@ -2,13 +2,18 @@ syntax = "proto3";
 
 package ai.metathings.service.core;
 
-// import "google/protobuf/wrappers.proto";
+import "google/protobuf/wrappers.proto";
 
 import "github.com/mwitkow/go-proto-validators/validator.proto";
 
 import "core.proto";
+import "github.com/nayotta/metathings/pkg/proto/common/state/core_state.proto";
 
-message ListCoresForUserRequest {}
+message ListCoresForUserRequest {
+	google.protobuf.StringValue name = 1;
+	google.protobuf.StringValue project_id = 2;
+	ai.metathings.state.CoreState state = 4;
+}
 
 message ListCoresForUserResponse {
 	repeated Core cores = 1;

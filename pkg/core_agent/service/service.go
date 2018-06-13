@@ -275,7 +275,9 @@ func (srv *coreAgentService) ListEntities(ctx context.Context, req *pb.ListEntit
 	defer closeFn()
 
 	r := &core_pb.ListEntitiesForCoreRequest{
-		CoreId: &gpb.StringValue{Value: srv.opts.core_id},
+		Name:        req.Name,
+		ServiceName: req.ServiceName,
+		State:       req.State,
 	}
 
 	res, err := cli.ListEntitiesForCore(ctx, r)
@@ -344,10 +346,7 @@ func (srv *coreAgentService) CreateOrGetEntity(ctx context.Context, req *pb.Crea
 	}
 	defer closeFn()
 
-	r := &core_pb.ListEntitiesForCoreRequest{
-		CoreId: &gpb.StringValue{Value: srv.opts.core_id},
-	}
-
+	r := &core_pb.ListEntitiesForCoreRequest{}
 	res, err := cli.ListEntitiesForCore(ctx, r)
 	if err != nil {
 		srv.logger.WithError(err).Errorf("failed to list entities for core")
@@ -665,13 +664,18 @@ func getCoreIdFromService(cli_fty *client_helper.ClientFactory, token string) (s
 	}
 	defer fn()
 
-	req := &cored_pb.CreateCoreRequest{}
-	res, err := cli.CreateCore(ctx, req)
+	show_core_res, err := cli.ShowCore(ctx, &empty.Empty{})
+	if err == nil {
+		return show_core_res.Core.Id, nil
+	}
+
+	create_core_req := &cored_pb.CreateCoreRequest{}
+	create_core_res, err := cli.CreateCore(ctx, create_core_req)
 	if err != nil {
 		return "", err
 	}
 
-	return res.Core.Id, nil
+	return create_core_res.Core.Id, nil
 }
 
 func saveCoreIdToPath(id, path string) error {

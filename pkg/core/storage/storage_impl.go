@@ -154,30 +154,74 @@ func (s *storageImpl) GetCore(core_id string) (Core, error) {
 	return c, nil
 }
 
-func (s *storageImpl) ListCores(_ Core) ([]Core, error) {
-	cores := []Core{}
-	err := s.db.Select(&cores, "SELECT * FROM core")
+func (s *storageImpl) ListCores(core Core) ([]Core, error) {
+	cs, err := s.list_cores(core)
 	if err != nil {
 		s.logger.WithError(err).
 			Errorf("failed to list cores")
-		return cores, err
+		return nil, err
 	}
-
 	s.logger.Debugf("list cores")
-	return cores, nil
+	return cs, nil
 }
 
-func (s *storageImpl) ListCoresForUser(owner_id string, _ Core) ([]Core, error) {
-	cores := []Core{}
-	err := s.db.Select(&cores, "SELECT * FROM core WHERE owner_id=$1", owner_id)
+func (s *storageImpl) ListCoresForUser(owner_id string, core Core) ([]Core, error) {
+	core.OwnerId = &owner_id
+	cs, err := s.list_cores(core)
 	if err != nil {
-		s.logger.WithError(err).
-			WithField("owner_id", owner_id).
-			Errorf("failed to list cores for user")
-		return cores, err
+		s.logger.WithField("owner_id", owner_id).WithError(err).Errorf("failed to list cores for user")
+		return nil, err
+	}
+	s.logger.WithField("owner_id", owner_id).Debugf("list cores for user")
+	return cs, nil
+}
+
+func (s *storageImpl) list_cores(core Core) ([]Core, error) {
+	var err error
+	values := []string{}
+	arguments := []interface{}{}
+	i := 0
+	cores := []Core{}
+
+	if core.Name != nil {
+		values = append(values, fmt.Sprintf("name=$%v", i))
+		arguments = append(arguments, *core.Name)
+		i += 1
 	}
 
-	s.logger.WithField("owner_id", owner_id).Debugf("list cores for user")
+	if core.ProjectId != nil {
+		values = append(values, fmt.Sprintf("project_id=$%v", i))
+		arguments = append(arguments, *core.ProjectId)
+		i += 1
+	}
+
+	if core.OwnerId != nil {
+		values = append(values, fmt.Sprintf("owner_id=$%v", i))
+		arguments = append(arguments, *core.OwnerId)
+		i += 1
+	}
+
+	if core.State != nil {
+		values = append(values, fmt.Sprintf("state=$%v", i))
+		arguments = append(arguments, *core.State)
+		i += 1
+	}
+
+	if len(values) == 0 {
+		err = s.db.Select(&cores, "SELECT * FROM core")
+	} else {
+		val := strings.Join(values, " and ")
+		sql_str := fmt.Sprintf("SELECT * FROM core WHERE %v", val)
+		s.logger.WithFields(log.Fields{
+			"sql":  sql_str,
+			"args": arguments,
+		}).Debugf("execute sql")
+		err = s.db.Select(&cores, sql_str, arguments...)
+	}
+	if err != nil {
+		return nil, err
+	}
+
 	return cores, nil
 }
 
@@ -303,28 +347,73 @@ func (s *storageImpl) GetEntity(entity_id string) (Entity, error) {
 	return e, nil
 }
 
-func (s *storageImpl) ListEntities(_ Entity) ([]Entity, error) {
-	entities := []Entity{}
-	err := s.db.Select(&entities, "SELECT * FROM entity")
+func (s *storageImpl) ListEntities(entity Entity) ([]Entity, error) {
+	es, err := s.list_entities(entity)
 	if err != nil {
 		s.logger.WithError(err).
 			Errorf("failed to list entities")
-		return entities, err
+		return nil, err
 	}
+
 	s.logger.Debugf("list entities")
+	return es, nil
+}
+
+func (s *storageImpl) list_entities(entity Entity) ([]Entity, error) {
+	var err error
+	values := []string{}
+	arguments := []interface{}{}
+	i := 0
+	entities := []Entity{}
+
+	if entity.CoreId != nil {
+		values = append(values, fmt.Sprintf("core_id=$%v", i))
+		arguments = append(arguments, *entity.CoreId)
+		i += 1
+	}
+
+	if entity.Name != nil {
+		values = append(values, fmt.Sprintf("name=$%v", i))
+		arguments = append(arguments, *entity.Name)
+	}
+
+	if entity.ServiceName != nil {
+		values = append(values, fmt.Sprintf("service_name=$%v", i))
+		arguments = append(arguments, *entity.ServiceName)
+	}
+
+	if entity.State != nil {
+		values = append(values, fmt.Sprintf("state=$%v", i))
+		arguments = append(arguments, *entity.State)
+	}
+
+	if len(values) == 0 {
+		err = s.db.Select(&entities, "SELECT * FROM entity")
+	} else {
+		val := strings.Join(values, " and ")
+		sql_str := fmt.Sprintf("SELECT * FROM entity WHERE %v", val)
+		s.logger.WithFields(log.Fields{
+			"sql":  sql_str,
+			"args": arguments,
+		}).Debugf("execute sql")
+		err = s.db.Select(&entities, sql_str, arguments...)
+	}
+	if err != nil {
+		return nil, err
+	}
 	return entities, nil
 }
 
-func (s *storageImpl) ListEntitiesForCore(core_id string, _ Entity) ([]Entity, error) {
-	entities := []Entity{}
-	err := s.db.Select(&entities, "SELECT * FROM entity WHERE core_id=$1", core_id)
+func (s *storageImpl) ListEntitiesForCore(core_id string, entity Entity) ([]Entity, error) {
+	entity.CoreId = &core_id
+	es, err := s.list_entities(entity)
 	if err != nil {
-		s.logger.WithError(err).
-			Errorf("failed to list entities for core")
-		return entities, err
+		s.logger.WithError(err).Errorf("failed to list entities for core")
+		return nil, err
 	}
-	s.logger.Debugf("list entities for core")
-	return entities, nil
+
+	s.logger.WithField("core_id", core_id).Debugf("list entities for core")
+	return es, nil
 }
 
 func newStorageImpl(driver, uri string, logger log.FieldLogger) (*storageImpl, error) {

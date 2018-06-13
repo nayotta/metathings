@@ -10,6 +10,7 @@ import "delete_core.proto";
 import "patch_core.proto";
 import "get_core.proto";
 import "list_cores.proto";
+import "show_core.proto";
 
 import "create_entity.proto";
 import "delete_entity.proto";
@@ -31,6 +32,7 @@ service CoreService {
 	rpc PatchCore(PatchCoreRequest) returns (PatchCoreResponse) {}
 	rpc GetCore(GetCoreRequest) returns (GetCoreResponse) {}
 	rpc ListCores(ListCoresRequest) returns (ListCoresResponse) {}
+	rpc ShowCore(google.protobuf.Empty) returns (ShowCoreResponse) {}
 
 	rpc CreateEntity(CreateEntityRequest) returns (CreateEntityResponse) {}
 	rpc DeleteEntity(DeleteEntityRequest) returns (google.protobuf.Empty) {}
