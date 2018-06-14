@@ -73,13 +73,13 @@ func SetStorage(driver, uri string) ServiceOptions {
 
 func SetCoreAliveTimeout(timeout int) ServiceOptions {
 	return func(o *options) {
-		o.core_alive_timeout = time.Duration(timeout)
+		o.core_alive_timeout = time.Duration(timeout) * time.Second
 	}
 }
 
 func SetEntityAliveTimeout(timeout int) ServiceOptions {
 	return func(o *options) {
-		o.entity_alive_timeout = time.Duration(timeout)
+		o.entity_alive_timeout = time.Duration(timeout) * time.Second
 	}
 }
 

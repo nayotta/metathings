@@ -95,7 +95,7 @@ func init() {
 	coredCmd.Flags().StringVar(&cored_opts.Storage.Driver, "storage-driver", "sqlite3", "Storage Driver [sqlite3]")
 	coredCmd.Flags().StringVar(&cored_opts.Storage.Uri, "storage-uri", "", "Storage URI")
 	coredCmd.Flags().IntVar(&cored_opts.Heartbeat.CoreAliveTimeout, "core-alive-timeout", 30, "Core Agent alive timeout")
-	coredCmd.Flags().IntVar(&cored_opts.Heartbeat.CoreAliveTimeout, "entity-alive-timeout", 30, "Entity alive timeout")
+	coredCmd.Flags().IntVar(&cored_opts.Heartbeat.EntityAliveTimeout, "entity-alive-timeout", 30, "Entity alive timeout")
 
 	RootCmd.AddCommand(coredCmd)
 }
