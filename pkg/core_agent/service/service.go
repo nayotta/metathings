@@ -299,15 +299,18 @@ func (srv *coreAgentService) ListEntities(ctx context.Context, req *pb.ListEntit
 	return &pb.ListEntitiesResponse{Entities: entities}, nil
 }
 
-func (srv *coreAgentService) loadDispatcherPlugin(e *pb.Entity) {
+func (srv *coreAgentService) LoadDispatcherPlugin(e *pb.Entity) {
 	srv.mtx_dp_op.Lock()
 	defer srv.mtx_dp_op.Unlock()
 
-	_, ok := srv.dispatchers[e.Name]
-	if ok {
+	if srv.isLoadedDispatcherPlugin(e) {
 		return
 	}
 
+	srv.loadDispatcherPlugin(e)
+}
+
+func (srv *coreAgentService) loadDispatcherPlugin(e *pb.Entity) {
 	dp, err := srv.serv_desc.GetDispatcherPlugin(e.ServiceName)
 	if err != nil {
 		srv.logger.WithError(err).
@@ -336,6 +339,31 @@ func (srv *coreAgentService) loadDispatcherPlugin(e *pb.Entity) {
 	}).Debugf("load dispatcher plugin")
 }
 
+func (srv *coreAgentService) IsLoadedDispatcherPlugin(e *pb.Entity) bool {
+	srv.mtx_dp_op.Lock()
+	defer srv.mtx_dp_op.Unlock()
+
+	return srv.isLoadedDispatcherPlugin(e)
+}
+
+func (srv *coreAgentService) isLoadedDispatcherPlugin(e *pb.Entity) bool {
+	if id := e.GetId(); id != "" {
+		_, ok := srv.dispatchers[id]
+		if ok {
+			return true
+		}
+	}
+
+	if name := e.GetName(); name != "" {
+		_, ok := srv.dispatchers[name]
+		if ok {
+			return true
+		}
+	}
+
+	return false
+}
+
 func (srv *coreAgentService) getDispatcherPlugin(name string, service_name string) (mt_plugin.DispatcherPlugin, bool) {
 	dp, ok := srv.dispatchers[name]
 	return dp, ok
@@ -360,7 +388,7 @@ func (srv *coreAgentService) CreateOrGetEntity(ctx context.Context, req *pb.Crea
 	for _, e := range res.Entities {
 		if e.Name == req.Name.Value {
 			e1 := srv.copyEntity(e)
-			defer srv.loadDispatcherPlugin(e1)
+			defer srv.LoadDispatcherPlugin(e1)
 			return &pb.CreateOrGetEntityResponse{Entity: e1}, nil
 		}
 	}
@@ -395,10 +423,20 @@ func (srv *coreAgentService) Heartbeat(ctx context.Context, req *pb.HeartbeatReq
 		defer closeFn()
 
 		r := &core_pb.GetEntityRequest{Id: req.EntityId}
-		_, err = cli.GetEntity(ctx, r)
+		res, err := cli.GetEntity(ctx, r)
 		if err != nil {
 			srv.logger.WithError(err).Errorf("failed to get entity")
 			return nil, status.Errorf(codes.Internal, err.Error())
+		}
+
+		e := &pb.Entity{
+			Id:          res.Entity.Id,
+			Name:        res.Entity.Name,
+			ServiceName: res.Entity.ServiceName,
+		}
+
+		if !srv.IsLoadedDispatcherPlugin(e) {
+			srv.LoadDispatcherPlugin(e)
 		}
 	}
 	srv.heartbeat_entities[entity_id] = time.Now()
