@@ -2,7 +2,6 @@ package metathings_core_storage
 
 import (
 	"testing"
-	"time"
 
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/suite"
@@ -57,15 +56,12 @@ func (suite *storageImplTestSuite) TestCreateCoreAndAssignCoreToApplicationCrede
 	project_id := "project-id"
 	owner_id := "owner-id"
 	state := "unknown"
-	now := time.Now()
 	c := Core{
 		Id:        &id,
 		Name:      &name,
 		ProjectId: &project_id,
 		OwnerId:   &owner_id,
 		State:     &state,
-		CreatedAt: now,
-		UpdatedAt: now,
 	}
 
 	nc, err := suite.s.CreateCore(c)
@@ -75,7 +71,7 @@ func (suite *storageImplTestSuite) TestCreateCoreAndAssignCoreToApplicationCrede
 	suite.Equal(project_id, *nc.ProjectId)
 	suite.Equal(owner_id, *nc.OwnerId)
 	suite.Equal(state, *nc.State)
-	suite.Equal("0001-01-01 00:00:00 +0000 UTC", nc.HeartbeatAt.String())
+	suite.NotEqual("0001-01-01 00:00:00 +0000 UTC", nc.HeartbeatAt.String())
 	suite.NotEqual("0001-01-01 00:00:00 +0000 UTC", nc.CreatedAt.String())
 	suite.NotEqual("0001-01-01 00:00:00 +0000 UTC", nc.UpdatedAt.String())
 
@@ -141,6 +137,9 @@ func (suite *storageImplTestSuite) TestCreateEntity() {
 	suite.Equal(service_name, *ne.ServiceName)
 	suite.Equal(endpoint, *ne.Endpoint)
 	suite.Equal(state, *ne.State)
+	suite.NotEqual("0001-01-01 00:00:00 +0000 UTC", ne.HeartbeatAt.String())
+	suite.NotEqual("0001-01-01 00:00:00 +0000 UTC", ne.CreatedAt.String())
+	suite.NotEqual("0001-01-01 00:00:00 +0000 UTC", ne.UpdatedAt.String())
 }
 
 func (suite *storageImplTestSuite) TestDeleteEntity() {

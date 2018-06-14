@@ -53,9 +53,10 @@ func (s *storageImpl) CreateCore(core Core) (Core, error) {
 	now := time.Now()
 	core.CreatedAt = now
 	core.UpdatedAt = now
+	core.HeartbeatAt = &now
 	_, err := s.db.NamedExec(`
-INSERT INTO core (id, name, project_id, owner_id, state, created_at, updated_at)
-VALUES (:id, :name, :project_id, :owner_id, :state, :created_at, :updated_at)`, &core)
+INSERT INTO core (id, name, project_id, owner_id, state, created_at, updated_at, heartbeat_at)
+VALUES (:id, :name, :project_id, :owner_id, :state, :created_at, :updated_at, :heartbeat_at)`, &core)
 	if err != nil {
 		s.logger.WithError(err).Errorf("failed to create core")
 		return c, err
@@ -259,11 +260,12 @@ func (s *storageImpl) CreateEntity(entity Entity) (Entity, error) {
 	e := Entity{}
 
 	now := time.Now()
-	e.CreatedAt = now
-	e.UpdatedAt = now
+	entity.CreatedAt = now
+	entity.UpdatedAt = now
+	entity.HeartbeatAt = &now
 	_, err := s.db.NamedExec(`
-INSERT INTO entity (id, core_id, name, service_name, endpoint, state, created_at, updated_at)
-VALUES (:id, :core_id, :name, :service_name, :endpoint, :state, :created_at, :updated_at)`, &entity)
+INSERT INTO entity (id, core_id, name, service_name, endpoint, state, created_at, updated_at, heartbeat_at)
+VALUES (:id, :core_id, :name, :service_name, :endpoint, :state, :created_at, :updated_at, :heartbeat_at)`, &entity)
 	if err != nil {
 		s.logger.WithError(err).Errorf("failed to create entity")
 	}
