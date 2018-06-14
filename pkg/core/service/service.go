@@ -2,6 +2,7 @@ package metathings_core_service
 
 import (
 	"context"
+	"sync"
 	"time"
 
 	empty "github.com/golang/protobuf/ptypes/empty"
@@ -86,14 +87,15 @@ func SetEntityAliveTimeout(timeout int) ServiceOptions {
 type metathingsCoreService struct {
 	grpc_helper.AuthorizationTokenParser
 
-	cli_fty       *client_helper.ClientFactory
-	core_st_psr   state_helper.CoreStateParser
-	entity_st_psr state_helper.EntityStateParser
-	app_cred_mgr  app_cred_mgr.ApplicationCredentialManager
-	stm_mgr       stm_mgr.StreamManager
-	logger        log.FieldLogger
-	opts          options
-	storage       storage.Storage
+	cli_fty             *client_helper.ClientFactory
+	core_st_psr         state_helper.CoreStateParser
+	entity_st_psr       state_helper.EntityStateParser
+	app_cred_mgr        app_cred_mgr.ApplicationCredentialManager
+	stm_mgr             stm_mgr.StreamManager
+	logger              log.FieldLogger
+	opts                options
+	storage             storage.Storage
+	core_maintain_chans map[string]chan interface{}
 }
 
 func (srv *metathingsCoreService) validateTokenViaIdentityd(token string) (*identityd_pb.Token, error) {
@@ -143,6 +145,64 @@ func (srv *metathingsCoreService) AuthFuncOverride(ctx context.Context, fullMeth
 	}).Debugf("validate token via metathings identity service")
 
 	return ctx, nil
+}
+
+func (srv *metathingsCoreService) maintain_core_once(core_id string) {
+	var ch chan interface{}
+	var ok bool
+	if ch, ok = srv.core_maintain_chans[core_id]; !ok {
+		var wg sync.WaitGroup
+		wg.Add(1)
+		go func() {
+			ch := make(chan interface{})
+			srv.core_maintain_chans[core_id] = ch
+			wg.Done()
+			for {
+				select {
+				case <-ch:
+					continue
+				case <-time.After(srv.opts.core_alive_timeout):
+					srv.maintain_core(core_id)
+					delete(srv.core_maintain_chans, core_id)
+					break
+				}
+			}
+		}()
+		wg.Wait()
+		ch = srv.core_maintain_chans[core_id]
+	}
+	ch <- nil
+}
+
+func (srv *metathingsCoreService) maintain_core(core_id string) {
+	state_str := "offline"
+	pc := storage.Core{State: &state_str}
+	_, err := srv.storage.PatchCore(core_id, pc)
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to patch core")
+		return
+	}
+
+	es, err := srv.storage.ListEntitiesForCore(core_id, storage.Entity{})
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to list entities for core")
+		return
+	}
+
+	entity_ids := []string{}
+	for _, e := range es {
+		pe := storage.Entity{State: &state_str}
+		_, err := srv.storage.PatchEntity(*e.Id, pe)
+		entity_ids = append(entity_ids, *e.Id)
+		if err != nil {
+			srv.logger.WithError(err).Errorf("failed to patch entity")
+		}
+	}
+
+	srv.logger.WithFields(log.Fields{
+		"core_id":    core_id,
+		"entity_ids": entity_ids,
+	}).Infof("core agent offline")
 }
 
 func (srv *metathingsCoreService) CreateCore(ctx context.Context, req *pb.CreateCoreRequest) (*pb.CreateCoreResponse, error) {
@@ -548,6 +608,7 @@ func (srv *metathingsCoreService) Heartbeat(ctx context.Context, req *pb.Heartbe
 		srv.logger.WithError(err).Errorf("failed to patch core")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
+	srv.maintain_core_once(*core.Id)
 
 	for _, hbe := range req.Entities {
 		e, err := srv.storage.GetEntity(hbe.Id.Value)
@@ -833,14 +894,15 @@ func NewCoreService(opt ...ServiceOptions) (*metathingsCoreService, error) {
 	}
 
 	srv := &metathingsCoreService{
-		cli_fty:       cli_fty,
-		core_st_psr:   state_helper.NewCoreStateParser(),
-		entity_st_psr: state_helper.NewEntityStateParser(),
-		app_cred_mgr:  app_cred_mgr,
-		stm_mgr:       stm_mgr,
-		opts:          opts,
-		logger:        logger,
-		storage:       storage,
+		cli_fty:             cli_fty,
+		core_st_psr:         state_helper.NewCoreStateParser(),
+		entity_st_psr:       state_helper.NewEntityStateParser(),
+		app_cred_mgr:        app_cred_mgr,
+		stm_mgr:             stm_mgr,
+		opts:                opts,
+		logger:              logger,
+		storage:             storage,
+		core_maintain_chans: map[string]chan interface{}{},
 	}
 	return srv, nil
 }
