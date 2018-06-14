@@ -39,8 +39,8 @@ type options struct {
 
 var defaultServiceOptions = options{
 	logLevel:             "info",
-	core_alive_timeout:   30,
-	entity_alive_timeout: 30,
+	core_alive_timeout:   30 * time.Second,
+	entity_alive_timeout: 30 * time.Second,
 }
 
 type ServiceOptions func(*options)
