@@ -2,7 +2,6 @@ package metathings_core_service
 
 import (
 	"context"
-	"sync"
 	"time"
 
 	empty "github.com/golang/protobuf/ptypes/empty"
@@ -148,30 +147,40 @@ func (srv *metathingsCoreService) AuthFuncOverride(ctx context.Context, fullMeth
 }
 
 func (srv *metathingsCoreService) maintain_core_once(core_id string) {
-	var ch chan interface{}
-	var ok bool
-	if ch, ok = srv.core_maintain_chans[core_id]; !ok {
-		var wg sync.WaitGroup
-		wg.Add(1)
-		go func() {
-			ch := make(chan interface{})
-			srv.core_maintain_chans[core_id] = ch
-			wg.Done()
-			for {
-				select {
-				case <-ch:
-					continue
-				case <-time.After(srv.opts.core_alive_timeout):
-					srv.maintain_core(core_id)
-					delete(srv.core_maintain_chans, core_id)
-					break
-				}
-			}
-		}()
-		wg.Wait()
-		ch = srv.core_maintain_chans[core_id]
+	if _, ok := srv.core_maintain_chans[core_id]; !ok {
+		srv.core_maintain_chans[core_id] = make(chan interface{})
+		srv.logger.WithField("core_id", core_id).Debugf("create core maintain channel")
+		go srv.maintain_core_loop(core_id)
 	}
-	ch <- nil
+	srv.core_maintain_chans[core_id] <- nil
+	srv.logger.WithField("core_id", core_id).Debugf("send heartbeat signal to core maintain channel")
+}
+
+func (srv *metathingsCoreService) maintain_core_loop(core_id string) {
+	ch, ok := srv.core_maintain_chans[core_id]
+	if !ok {
+		srv.logger.WithField("core_id", core_id).Errorf("core maintain channel not found")
+		return
+	}
+	srv.logger.WithField("core_id", core_id).Debugf("start core maintain loop")
+
+	defer func() {
+		delete(srv.core_maintain_chans, core_id)
+		srv.logger.WithField("core_id", core_id).Debugf("quit core maintain loop")
+	}()
+
+	for {
+		select {
+		case <-ch:
+			srv.logger.WithField("core_id", core_id).Debugf("receive heartbeat signal")
+			continue
+		case <-time.After(srv.opts.core_alive_timeout):
+			srv.logger.WithField("core_id", core_id).Warningf("core heartbeat timeout")
+			srv.maintain_core(core_id)
+			return
+		}
+	}
+
 }
 
 func (srv *metathingsCoreService) maintain_core(core_id string) {
@@ -191,6 +200,9 @@ func (srv *metathingsCoreService) maintain_core(core_id string) {
 
 	entity_ids := []string{}
 	for _, e := range es {
+		if *e.State == "offline" {
+			continue
+		}
 		pe := storage.Entity{State: &state_str}
 		_, err := srv.storage.PatchEntity(*e.Id, pe)
 		entity_ids = append(entity_ids, *e.Id)
@@ -608,7 +620,6 @@ func (srv *metathingsCoreService) Heartbeat(ctx context.Context, req *pb.Heartbe
 		srv.logger.WithError(err).Errorf("failed to patch core")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
-	srv.maintain_core_once(*core.Id)
 
 	for _, hbe := range req.Entities {
 		e, err := srv.storage.GetEntity(hbe.Id.Value)
@@ -647,6 +658,7 @@ func (srv *metathingsCoreService) Heartbeat(ctx context.Context, req *pb.Heartbe
 			}
 		}
 	}
+	srv.maintain_core_once(*core.Id)
 
 	return &empty.Empty{}, nil
 }

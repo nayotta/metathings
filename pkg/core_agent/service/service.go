@@ -140,15 +140,11 @@ func (srv *coreAgentService) HeartbeatOnce() error {
 
 	entities := []*core_pb.HeartbeatEntity{}
 	for id, _ := range srv.heartbeat_entities {
-		if srv.heartbeat_entities[id].Equal(UNAVAILABLE_TIME) {
-			continue
-		}
 		ts := protobuf_helper.FromTime(srv.heartbeat_entities[id])
 		entities = append(entities, &core_pb.HeartbeatEntity{
 			Id:          &gpb.StringValue{Value: id},
 			HeartbeatAt: &ts,
 		})
-		srv.heartbeat_entities[id] = UNAVAILABLE_TIME
 	}
 
 	req := &core_pb.HeartbeatRequest{
