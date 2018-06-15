@@ -12,7 +12,7 @@ import (
 	service "github.com/nayotta/metathings/pkg/camera/service"
 	cmd_helper "github.com/nayotta/metathings/pkg/common/cmd"
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
-	mtp "github.com/nayotta/metathings/pkg/core/plugin"
+	mtp "github.com/nayotta/metathings/pkg/cored/plugin"
 	pb "github.com/nayotta/metathings/pkg/proto/camera"
 )
 

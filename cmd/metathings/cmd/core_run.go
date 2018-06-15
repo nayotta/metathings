@@ -7,7 +7,7 @@ import (
 	helper "github.com/nayotta/metathings/pkg/common"
 	cmd_helper "github.com/nayotta/metathings/pkg/common/cmd"
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
-	mt_plugin "github.com/nayotta/metathings/pkg/core/plugin"
+	mt_plugin "github.com/nayotta/metathings/pkg/cored/plugin"
 )
 
 type _coreRunOptions struct {

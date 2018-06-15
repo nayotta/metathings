@@ -20,7 +20,7 @@ import (
 	protobuf_helper "github.com/nayotta/metathings/pkg/common/protobuf"
 	state_helper "github.com/nayotta/metathings/pkg/common/state"
 	stm_mgr "github.com/nayotta/metathings/pkg/common/stream_manager"
-	storage "github.com/nayotta/metathings/pkg/core/storage"
+	storage "github.com/nayotta/metathings/pkg/cored/storage"
 	state_pb "github.com/nayotta/metathings/pkg/proto/common/state"
 	pb "github.com/nayotta/metathings/pkg/proto/core"
 	identityd_pb "github.com/nayotta/metathings/pkg/proto/identity"

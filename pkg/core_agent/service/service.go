@@ -23,7 +23,7 @@ import (
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 	protobuf_helper "github.com/nayotta/metathings/pkg/common/protobuf"
 	state_helper "github.com/nayotta/metathings/pkg/common/state"
-	mt_plugin "github.com/nayotta/metathings/pkg/core/plugin"
+	mt_plugin "github.com/nayotta/metathings/pkg/cored/plugin"
 	state_pb "github.com/nayotta/metathings/pkg/proto/common/state"
 	core_pb "github.com/nayotta/metathings/pkg/proto/core"
 	cored_pb "github.com/nayotta/metathings/pkg/proto/core"

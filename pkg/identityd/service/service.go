@@ -16,7 +16,7 @@ import (
 
 	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
 	"github.com/nayotta/metathings/pkg/common/log"
-	codec "github.com/nayotta/metathings/pkg/identity/service/encode_decode"
+	codec "github.com/nayotta/metathings/pkg/identityd/service/encode_decode"
 	pb "github.com/nayotta/metathings/pkg/proto/identity"
 )
 

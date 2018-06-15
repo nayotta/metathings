@@ -10,7 +10,7 @@ import (
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
 	log_helper "github.com/nayotta/metathings/pkg/common/log"
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
-	mt_plugin "github.com/nayotta/metathings/pkg/core/plugin"
+	mt_plugin "github.com/nayotta/metathings/pkg/cored/plugin"
 	driver "github.com/nayotta/metathings/pkg/motor/driver"
 	state_helper "github.com/nayotta/metathings/pkg/motor/state"
 	pb "github.com/nayotta/metathings/pkg/proto/motor"

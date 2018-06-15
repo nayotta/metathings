@@ -12,7 +12,7 @@ import (
 	driver_helper "github.com/nayotta/metathings/pkg/common/driver"
 	log_helper "github.com/nayotta/metathings/pkg/common/log"
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
-	mt_plugin "github.com/nayotta/metathings/pkg/core/plugin"
+	mt_plugin "github.com/nayotta/metathings/pkg/cored/plugin"
 	pb "github.com/nayotta/metathings/pkg/proto/switcher"
 	driver "github.com/nayotta/metathings/pkg/switcher/driver"
 	state_helper "github.com/nayotta/metathings/pkg/switcher/state"

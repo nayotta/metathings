@@ -9,7 +9,7 @@ import (
 	"google.golang.org/grpc"
 
 	cmd_helper "github.com/nayotta/metathings/pkg/common/cmd"
-	service "github.com/nayotta/metathings/pkg/identity/service"
+	service "github.com/nayotta/metathings/pkg/identityd/service"
 	pb "github.com/nayotta/metathings/pkg/proto/identity"
 )
 
