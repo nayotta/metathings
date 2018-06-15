@@ -183,6 +183,17 @@ func (srv *metathingsMotorService) handleStreamRequest_setSpeed(stream pb.MotorS
 	srv.logger.WithField("motor", mtr).Debugf("motor set speed")
 }
 
+func (srv *metathingsMotorService) Close() {
+	var err error
+	for _, mtr := range srv.mtr_mgr.ListMotors() {
+		if err = mtr.Driver.Close(); err != nil {
+			srv.logger.WithField("name", mtr.Name).WithError(err).Debugf("failed to close motor driver")
+		}
+
+	}
+	srv.logger.Debugf("service closed")
+}
+
 func NewMotorService(opt opt_helper.Option) (*metathingsMotorService, error) {
 	opt.Set("service_name", "motor")
 

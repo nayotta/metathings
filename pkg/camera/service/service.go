@@ -121,6 +121,15 @@ func (srv *metathingsCameraService) Show(ctx context.Context, req *empty.Empty) 
 	return &pb.ShowResponse{Camera: srv.copyCamera(cam)}, nil
 }
 
+func (srv *metathingsCameraService) Close() {
+	err := srv.drv.Close()
+	if err != nil {
+		srv.logger.WithError(err).Debugf("failed to close driver")
+	}
+
+	srv.logger.Debugf("service closed")
+}
+
 func NewCameraService(opt opt_helper.Option) (*metathingsCameraService, error) {
 	opt.Set("service_name", "camera")
 

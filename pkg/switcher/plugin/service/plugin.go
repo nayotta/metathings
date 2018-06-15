@@ -95,6 +95,10 @@ func runSwitcherd() error {
 		return err
 	}
 	log.Debugf("switcher(core) service initialized")
+	defer func() {
+		srv.Close()
+		log.Infof("switcher(core) service closed")
+	}()
 
 	log.WithField("listen", root_opts.Listen).Infof("switcher(core) service listening")
 	return s.Serve(lis)

@@ -180,7 +180,6 @@ func (srv *metathingsCoreService) maintain_core_loop(core_id string) {
 			return
 		}
 	}
-
 }
 
 func (srv *metathingsCoreService) maintain_core(core_id string) {

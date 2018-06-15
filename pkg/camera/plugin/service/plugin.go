@@ -95,6 +95,10 @@ func runCamerad() error {
 		return err
 	}
 	log.Debugf("camera(core) service initialized")
+	defer func() {
+		srv.Close()
+		log.Infof("camera(core) service closed")
+	}()
 
 	log.WithField("listen", root_opts.Listen).Infof("camera(core) service listening")
 	return s.Serve(lis)

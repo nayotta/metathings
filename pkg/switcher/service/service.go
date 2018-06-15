@@ -60,6 +60,15 @@ func (srv *metathingsSwitcherService) Turn(ctx context.Context, req *pb.TurnRequ
 	return &pb.TurnResponse{Switcher: srv.copySwitcher(sw)}, nil
 }
 
+func (srv *metathingsSwitcherService) Close() {
+	err := srv.drv.Close()
+	if err != nil {
+		srv.logger.WithError(err).Debugf("failed to close driver")
+	}
+
+	srv.logger.Debugf("service closed")
+}
+
 func NewSwitcherService(opt opt_helper.Option) (*metathingsSwitcherService, error) {
 	opt.Set("service_name", "switcher")
 

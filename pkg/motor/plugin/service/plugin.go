@@ -92,6 +92,10 @@ func runMotord() error {
 		return err
 	}
 	log.Debugf("motor(core) service initialized")
+	defer func() {
+		srv.Close()
+		log.Infof("motor(core) service closed")
+	}()
 
 	log.WithField("listen", root_opts.Listen).Infof("motor(core) service listening")
 	return s.Serve(lis)

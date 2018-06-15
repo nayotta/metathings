@@ -80,6 +80,9 @@ func runEchod() error {
 		return err
 	}
 	log.Debugf("echo(core) service initialized")
+	go func() {
+		log.Infof("echo(core) service closed")
+	}()
 
 	log.WithField("listen", root_opts.Listen).Infof("echo(core) service listening")
 	return s.Serve(lis)
