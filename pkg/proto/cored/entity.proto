@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package ai.metathings.service.cored;
+
+import "github.com/nayotta/metathings/pkg/proto/common/state/entity_state.proto";
+
+message Entity {
+	string id = 1;
+	string core_id = 2;
+	string name = 3;
+	string service_name = 4;
+	string endpoint = 5;
+	ai.metathings.state.EntityState state = 6;
+}

@@ -10,7 +10,7 @@ import (
 
 	cmd_helper "github.com/nayotta/metathings/pkg/common/cmd"
 	service "github.com/nayotta/metathings/pkg/cored/service"
-	pb "github.com/nayotta/metathings/pkg/proto/core"
+	pb "github.com/nayotta/metathings/pkg/proto/cored"
 )
 
 type _coredOptions struct {
@@ -65,7 +65,7 @@ func runCored() error {
 		grpc.UnaryInterceptor(grpc_auth.UnaryServerInterceptor(nil)),
 		grpc.StreamInterceptor(grpc_auth.StreamServerInterceptor(nil)),
 	)
-	srv, err := service.NewCoreService(
+	srv, err := service.NewCoredService(
 		service.SetStorage(cored_opts.Storage.Driver, cored_opts.Storage.Uri),
 		service.SetIdentitydAddr(cored_opts.ServiceConfig.Identityd.Address),
 		service.SetLogLevel(cored_opts.Log.Level),
@@ -81,7 +81,7 @@ func runCored() error {
 		return err
 	}
 
-	pb.RegisterCoreServiceServer(s, srv)
+	pb.RegisterCoredServiceServer(s, srv)
 
 	log.WithField("listen", cored_opts.Listen).Infof("metathings core service listening")
 	return s.Serve(lis)

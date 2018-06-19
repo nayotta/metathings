@@ -1,9 +1,0 @@
-syntax = "proto3";
-
-package ai.metathings.service.identity;
-
-message Region {
-	string id = 1;
-	string parent_region_id = 2;
-	string description = 3;
-}

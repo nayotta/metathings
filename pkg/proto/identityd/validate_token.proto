@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package ai.metathings.service.identityd;
+
+import "google/protobuf/wrappers.proto";
+
+import "github.com/mwitkow/go-proto-validators/validator.proto";
+
+import "token.proto";
+
+message ValidateTokenResponse {
+	Token token = 1;
+}

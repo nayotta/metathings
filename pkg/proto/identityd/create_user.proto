@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package ai.metathings.service.identityd;
+
+import "google/protobuf/wrappers.proto";
+
+import "github.com/mwitkow/go-proto-validators/validator.proto";
+
+import "user.proto";
+
+message CreateUserRequest {
+	google.protobuf.StringValue domain_id = 1 [(validator.field) = {msg_exists: true}];
+	google.protobuf.StringValue default_project_id = 2;
+	google.protobuf.StringValue name = 3 [(validator.field) = {msg_exists: true}];
+	google.protobuf.StringValue password = 4 [(validator.field) = {msg_exists: true}];
+	google.protobuf.BoolValue enabled = 5;
+	map<string, string> extra = 6;
+}
+
+message CreateUserResponse {
+	User user = 1;
+}

@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+package ai.metathings.service.identityd;
+
+message Role {
+	string id = 1;
+	string name = 2;
+	string domain_id = 3;
+}

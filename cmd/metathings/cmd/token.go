@@ -13,7 +13,7 @@ import (
 	"google.golang.org/grpc/metadata"
 
 	cmd_helper "github.com/nayotta/metathings/pkg/common/cmd"
-	pb "github.com/nayotta/metathings/pkg/proto/identity"
+	pb "github.com/nayotta/metathings/pkg/proto/identityd"
 )
 
 type _tokenIssueOptions struct {

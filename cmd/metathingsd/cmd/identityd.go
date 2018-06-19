@@ -10,7 +10,7 @@ import (
 
 	cmd_helper "github.com/nayotta/metathings/pkg/common/cmd"
 	service "github.com/nayotta/metathings/pkg/identityd/service"
-	pb "github.com/nayotta/metathings/pkg/proto/identity"
+	pb "github.com/nayotta/metathings/pkg/proto/identityd"
 )
 
 type _keystoneOptions struct {
@@ -59,14 +59,14 @@ func runIdentityd() error {
 		grpc.UnaryInterceptor(grpc_auth.UnaryServerInterceptor(nil)),
 		grpc.StreamInterceptor(grpc_auth.StreamServerInterceptor(nil)),
 	)
-	srv, err := service.NewIdentityService(
+	srv, err := service.NewIdentitydService(
 		service.SetKeystoneBaseURL(identityd_opts.Keystone.Url),
 		service.SetLogLevel(identityd_opts.Log.Level),
 	)
 	if err != nil {
 		return err
 	}
-	pb.RegisterIdentityServiceServer(s, srv)
+	pb.RegisterIdentitydServiceServer(s, srv)
 	log.WithFields(log.Fields{
 		"bind": identityd_opts.Listen,
 	}).Infof("metathings identity service listening")

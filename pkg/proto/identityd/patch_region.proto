@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package ai.metathings.service.identityd;
+
+import "google/protobuf/wrappers.proto";
+
+import "github.com/mwitkow/go-proto-validators/validator.proto";
+
+import "region.proto";
+
+message PatchRegionRequest {
+	google.protobuf.StringValue region_id = 1 [(validator.field) = {msg_exists: true}];
+	google.protobuf.StringValue parent_region_id = 2;
+	google.protobuf.StringValue description = 3;
+}
+
+message PatchRegionResponse {
+	Region region = 1;
+}

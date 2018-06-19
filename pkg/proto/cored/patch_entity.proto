@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package ai.metathings.service.cored;
+
+import "google/protobuf/wrappers.proto";
+
+import "github.com/mwitkow/go-proto-validators/validator.proto";
+
+import "github.com/nayotta/metathings/pkg/proto/common/state/entity_state.proto";
+import "entity.proto";
+
+message PatchEntityRequest {
+	google.protobuf.StringValue id = 1 [(validator.field) = {msg_exists: true}];
+	ai.metathings.state.EntityState state = 2;
+}
+
+message PatchEntityResponse {
+	Entity entity = 1;
+}

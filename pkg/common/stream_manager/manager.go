@@ -12,7 +12,7 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	helper "github.com/nayotta/metathings/pkg/common"
-	cored_pb "github.com/nayotta/metathings/pkg/proto/core"
+	cored_pb "github.com/nayotta/metathings/pkg/proto/cored"
 )
 
 var (
@@ -22,16 +22,16 @@ var (
 )
 
 type StreamManager interface {
-	Register(core_id string, stream cored_pb.CoreService_StreamServer) (chan interface{}, error)
+	Register(core_id string, stream cored_pb.CoredService_StreamServer) (chan interface{}, error)
 	UnaryCall(core_id string, req *cored_pb.UnaryCallRequestPayload) (*cored_pb.UnaryCallResponsePayload, error)
-	StreamCall(core_id string, req *cored_pb.StreamCallRequestPayload) (cored_pb.CoreService_StreamServer, func(), error)
+	StreamCall(core_id string, req *cored_pb.StreamCallRequestPayload) (cored_pb.CoredService_StreamServer, func(), error)
 }
 
 type streamManager struct {
-	streams  map[string]cored_pb.CoreService_StreamServer
+	streams  map[string]cored_pb.CoredService_StreamServer
 	sessions map[string]chan *cored_pb.StreamResponse
 
-	streaming_streams map[string]cored_pb.CoreService_StreamServer
+	streaming_streams map[string]cored_pb.CoredService_StreamServer
 	streaming_close   map[string]chan interface{}
 	streaming_notity  map[string]chan interface{}
 
@@ -43,7 +43,7 @@ func (mgr *streamManager) getSessionIdFromContext(ctx context.Context) string {
 	return metautils.ExtractIncoming(ctx).Get("session-id")
 }
 
-func (mgr *streamManager) register_default(core_id string, stream cored_pb.CoreService_StreamServer) (chan interface{}, error) {
+func (mgr *streamManager) register_default(core_id string, stream cored_pb.CoredService_StreamServer) (chan interface{}, error) {
 	mgr.lock.Lock()
 	defer mgr.lock.Unlock()
 
@@ -82,7 +82,7 @@ func (mgr *streamManager) register_default(core_id string, stream cored_pb.CoreS
 	return close, nil
 }
 
-func (mgr *streamManager) register_streaming(core_id string, sess_id string, stream cored_pb.CoreService_StreamServer) (chan interface{}, error) {
+func (mgr *streamManager) register_streaming(core_id string, sess_id string, stream cored_pb.CoredService_StreamServer) (chan interface{}, error) {
 	mgr.lock.Lock()
 	defer mgr.lock.Unlock()
 
@@ -104,7 +104,7 @@ func (mgr *streamManager) register_streaming(core_id string, sess_id string, str
 	return close_ch, nil
 }
 
-func (mgr *streamManager) Register(core_id string, stream cored_pb.CoreService_StreamServer) (chan interface{}, error) {
+func (mgr *streamManager) Register(core_id string, stream cored_pb.CoredService_StreamServer) (chan interface{}, error) {
 	ctx := stream.Context()
 	sess_id := mgr.getSessionIdFromContext(ctx)
 
@@ -153,7 +153,7 @@ func (mgr *streamManager) UnaryCall(core_id string, req *cored_pb.UnaryCallReque
 	}
 }
 
-func (mgr *streamManager) StreamCall(core_id string, req *cored_pb.StreamCallRequestPayload) (cored_pb.CoreService_StreamServer, func(), error) {
+func (mgr *streamManager) StreamCall(core_id string, req *cored_pb.StreamCallRequestPayload) (cored_pb.CoredService_StreamServer, func(), error) {
 	agstm, ok := mgr.streams[core_id]
 	if !ok {
 		mgr.logger.WithField("core_id", core_id).Warningf("core stream not foound")
@@ -215,10 +215,10 @@ func (mgr *streamManager) StreamCall(core_id string, req *cored_pb.StreamCallReq
 
 func NewStreamManager(logger log.FieldLogger) (StreamManager, error) {
 	return &streamManager{
-		streams:  make(map[string]cored_pb.CoreService_StreamServer),
+		streams:  make(map[string]cored_pb.CoredService_StreamServer),
 		sessions: make(map[string]chan *cored_pb.StreamResponse),
 
-		streaming_streams: make(map[string]cored_pb.CoreService_StreamServer),
+		streaming_streams: make(map[string]cored_pb.CoredService_StreamServer),
 		streaming_close:   make(map[string]chan interface{}),
 		streaming_notity:  make(map[string]chan interface{}),
 

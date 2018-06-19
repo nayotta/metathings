@@ -17,7 +17,7 @@ import (
 	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
 	"github.com/nayotta/metathings/pkg/common/log"
 	codec "github.com/nayotta/metathings/pkg/identityd/service/encode_decode"
-	pb "github.com/nayotta/metathings/pkg/proto/identity"
+	pb "github.com/nayotta/metathings/pkg/proto/identityd"
 )
 
 type options struct {
@@ -43,7 +43,7 @@ func SetLogLevel(lvl string) ServiceOptions {
 	}
 }
 
-type metathingsIdentityService struct {
+type metathingsIdentitydService struct {
 	grpc_helper.AuthorizationTokenParser
 
 	logger log.FieldLogger
@@ -52,7 +52,7 @@ type metathingsIdentityService struct {
 }
 
 type helper struct {
-	srv *metathingsIdentityService
+	srv *metathingsIdentitydService
 }
 
 func (h *helper) JoinURL(p string) string {
@@ -70,7 +70,7 @@ func (h *helper) SendHeader(ctx context.Context, pairs ...string) error {
 	return grpc.SendHeader(ctx, metadata.Pairs(pairs...))
 }
 
-func (srv *metathingsIdentityService) ignoreAuthMethods() []string {
+func (srv *metathingsIdentitydService) ignoreAuthMethods() []string {
 	methods := []string{
 		"IssueToken",
 		"CheckToken",
@@ -79,7 +79,7 @@ func (srv *metathingsIdentityService) ignoreAuthMethods() []string {
 	return methods
 }
 
-func (srv *metathingsIdentityService) validateTokenViaHTTP(token, subject_token string) (gorequest.Response, string, error) {
+func (srv *metathingsIdentitydService) validateTokenViaHTTP(token, subject_token string) (gorequest.Response, string, error) {
 	url := srv.h.JoinURL("/v3/auth/tokens")
 
 	http_res, http_body, errs := gorequest.
@@ -99,7 +99,7 @@ func (srv *metathingsIdentityService) validateTokenViaHTTP(token, subject_token 
 	return http_res, http_body, nil
 }
 
-func (srv *metathingsIdentityService) AuthFuncOverride(ctx context.Context, fullMethodName string) (context.Context, error) {
+func (srv *metathingsIdentitydService) AuthFuncOverride(ctx context.Context, fullMethodName string) (context.Context, error) {
 	methDesc, _ := grpc_helper.ParseMethodDescription(fullMethodName)
 	for _, m := range srv.ignoreAuthMethods() {
 		if m == methDesc.Method {
@@ -155,267 +155,267 @@ func (srv *metathingsIdentityService) AuthFuncOverride(ctx context.Context, full
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/#create-region
-func (srv *metathingsIdentityService) CreateRegion(context.Context, *pb.CreateRegionRequest) (*pb.CreateRegionResponse, error) {
+func (srv *metathingsIdentitydService) CreateRegion(context.Context, *pb.CreateRegionRequest) (*pb.CreateRegionResponse, error) {
 	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/#delete-region
-func (srv *metathingsIdentityService) DeleteRegion(context.Context, *pb.DeleteRegionRequest) (*empty.Empty, error) {
+func (srv *metathingsIdentitydService) DeleteRegion(context.Context, *pb.DeleteRegionRequest) (*empty.Empty, error) {
 	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/#update-region
-func (srv *metathingsIdentityService) PatchRegion(context.Context, *pb.PatchRegionRequest) (*pb.PatchRegionResponse, error) {
+func (srv *metathingsIdentitydService) PatchRegion(context.Context, *pb.PatchRegionRequest) (*pb.PatchRegionResponse, error) {
 	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/#show-region-details
-func (srv *metathingsIdentityService) GetRegion(context.Context, *pb.GetRegionRequest) (*pb.GetRegionResponse, error) {
+func (srv *metathingsIdentitydService) GetRegion(context.Context, *pb.GetRegionRequest) (*pb.GetRegionResponse, error) {
 	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/#list-regions
-func (srv *metathingsIdentityService) ListRegions(context.Context, *pb.ListRegionsRequest) (*pb.ListRegionsResponse, error) {
+func (srv *metathingsIdentitydService) ListRegions(context.Context, *pb.ListRegionsRequest) (*pb.ListRegionsResponse, error) {
 	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#create-domain
-func (srv *metathingsIdentityService) CreateDomain(context.Context, *pb.CreateDomainRequest) (*pb.CreateDomainResponse, error) {
+func (srv *metathingsIdentitydService) CreateDomain(context.Context, *pb.CreateDomainRequest) (*pb.CreateDomainResponse, error) {
 	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#delete-domain
-func (srv *metathingsIdentityService) DeleteDomain(context.Context, *pb.DeleteDomainRequest) (*empty.Empty, error) {
+func (srv *metathingsIdentitydService) DeleteDomain(context.Context, *pb.DeleteDomainRequest) (*empty.Empty, error) {
 	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#update-domain
-func (srv *metathingsIdentityService) PatchDomain(context.Context, *pb.PatchDomainRequest) (*pb.PatchDomainResponse, error) {
+func (srv *metathingsIdentitydService) PatchDomain(context.Context, *pb.PatchDomainRequest) (*pb.PatchDomainResponse, error) {
 	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#show-domain-details
-func (srv *metathingsIdentityService) GetDomain(context.Context, *pb.GetDomainRequest) (*pb.GetDomainResponse, error) {
+func (srv *metathingsIdentitydService) GetDomain(context.Context, *pb.GetDomainRequest) (*pb.GetDomainResponse, error) {
 	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#list-domains
-func (srv *metathingsIdentityService) ListDomains(context.Context, *pb.ListDomainsRequest) (*pb.ListDomainsResponse, error) {
+func (srv *metathingsIdentitydService) ListDomains(context.Context, *pb.ListDomainsRequest) (*pb.ListDomainsResponse, error) {
 	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#create-project
-func (srv *metathingsIdentityService) CreateProject(context.Context, *pb.CreateProjectRequest) (*pb.CreateProjectResponse, error) {
+func (srv *metathingsIdentitydService) CreateProject(context.Context, *pb.CreateProjectRequest) (*pb.CreateProjectResponse, error) {
 	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#delete-project
-func (srv *metathingsIdentityService) DeleteProject(context.Context, *pb.DeleteProjectRequest) (*empty.Empty, error) {
+func (srv *metathingsIdentitydService) DeleteProject(context.Context, *pb.DeleteProjectRequest) (*empty.Empty, error) {
 	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#update-project
-func (srv *metathingsIdentityService) PatchProject(context.Context, *pb.PatchProjectRequest) (*pb.PatchProjectResponse, error) {
+func (srv *metathingsIdentitydService) PatchProject(context.Context, *pb.PatchProjectRequest) (*pb.PatchProjectResponse, error) {
 	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#show-project-details
-func (srv *metathingsIdentityService) GetProject(context.Context, *pb.GetProjectRequest) (*pb.GetProjectResponse, error) {
+func (srv *metathingsIdentitydService) GetProject(context.Context, *pb.GetProjectRequest) (*pb.GetProjectResponse, error) {
 	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#list-projects
-func (srv *metathingsIdentityService) ListProjects(context.Context, *pb.ListProjectsRequest) (*pb.ListProjectsResponse, error) {
+func (srv *metathingsIdentitydService) ListProjects(context.Context, *pb.ListProjectsRequest) (*pb.ListProjectsResponse, error) {
 	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#list-projects-for-user
-func (srv *metathingsIdentityService) ListProjectsForUser(context.Context, *pb.ListProjectsForUserRequest) (*pb.ListProjectsForUserResponse, error) {
+func (srv *metathingsIdentitydService) ListProjectsForUser(context.Context, *pb.ListProjectsForUserRequest) (*pb.ListProjectsForUserResponse, error) {
 	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#create-user
-func (srv *metathingsIdentityService) CreateUser(context.Context, *pb.CreateUserRequest) (*pb.CreateUserResponse, error) {
+func (srv *metathingsIdentitydService) CreateUser(context.Context, *pb.CreateUserRequest) (*pb.CreateUserResponse, error) {
 	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#delete-user
-func (srv *metathingsIdentityService) DeleteUser(context.Context, *pb.DeleteUserRequest) (*empty.Empty, error) {
+func (srv *metathingsIdentitydService) DeleteUser(context.Context, *pb.DeleteUserRequest) (*empty.Empty, error) {
 	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#update-user
-func (srv *metathingsIdentityService) PatchUser(context.Context, *pb.PatchUserRequest) (*pb.PatchUserResponse, error) {
+func (srv *metathingsIdentitydService) PatchUser(context.Context, *pb.PatchUserRequest) (*pb.PatchUserResponse, error) {
 	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#show-user-details
-func (srv *metathingsIdentityService) GetUser(context.Context, *pb.GetUserRequest) (*pb.GetUserResponse, error) {
+func (srv *metathingsIdentitydService) GetUser(context.Context, *pb.GetUserRequest) (*pb.GetUserResponse, error) {
 	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#list-users
-func (srv *metathingsIdentityService) ListUsers(context.Context, *pb.ListUsersRequest) (*pb.ListUsersResponse, error) {
+func (srv *metathingsIdentitydService) ListUsers(context.Context, *pb.ListUsersRequest) (*pb.ListUsersResponse, error) {
 	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#change-password-for-user
-func (srv *metathingsIdentityService) ChangePassword(context.Context, *pb.ChangePasswordRequest) (*empty.Empty, error) {
+func (srv *metathingsIdentitydService) ChangePassword(context.Context, *pb.ChangePasswordRequest) (*empty.Empty, error) {
 	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#list-users-in-group
-func (srv *metathingsIdentityService) ListUsersInGroup(context.Context, *pb.ListUsersInGroupRequest) (*pb.ListUsersInGroupResponse, error) {
+func (srv *metathingsIdentitydService) ListUsersInGroup(context.Context, *pb.ListUsersInGroupRequest) (*pb.ListUsersInGroupResponse, error) {
 	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#create-group
-func (srv *metathingsIdentityService) CreateGroup(context.Context, *pb.CreateGroupRequest) (*pb.CreateGroupResponse, error) {
+func (srv *metathingsIdentitydService) CreateGroup(context.Context, *pb.CreateGroupRequest) (*pb.CreateGroupResponse, error) {
 	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#delete-group
-func (srv *metathingsIdentityService) DeleteGroup(context.Context, *pb.DeleteGroupRequest) (*empty.Empty, error) {
+func (srv *metathingsIdentitydService) DeleteGroup(context.Context, *pb.DeleteGroupRequest) (*empty.Empty, error) {
 	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#update-group
-func (srv *metathingsIdentityService) PatchGroup(context.Context, *pb.PatchGroupRequest) (*pb.PatchGroupResponse, error) {
+func (srv *metathingsIdentitydService) PatchGroup(context.Context, *pb.PatchGroupRequest) (*pb.PatchGroupResponse, error) {
 	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#show-group-details
-func (srv *metathingsIdentityService) GetGroup(context.Context, *pb.GetGroupRequest) (*pb.GetGroupResponse, error) {
+func (srv *metathingsIdentitydService) GetGroup(context.Context, *pb.GetGroupRequest) (*pb.GetGroupResponse, error) {
 	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#list-groups
-func (srv *metathingsIdentityService) ListGroups(context.Context, *pb.ListGroupsRequest) (*pb.ListGroupsResponse, error) {
+func (srv *metathingsIdentitydService) ListGroups(context.Context, *pb.ListGroupsRequest) (*pb.ListGroupsResponse, error) {
 	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#add-user-to-group
-func (srv *metathingsIdentityService) AddUserToGroup(context.Context, *pb.AddUserToGroupRequest) (*empty.Empty, error) {
+func (srv *metathingsIdentitydService) AddUserToGroup(context.Context, *pb.AddUserToGroupRequest) (*empty.Empty, error) {
 	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#remove-user-from-group
-func (srv *metathingsIdentityService) RemoveUserFromGroup(context.Context, *pb.RemoveUserFromGroupRequest) (*empty.Empty, error) {
+func (srv *metathingsIdentitydService) RemoveUserFromGroup(context.Context, *pb.RemoveUserFromGroupRequest) (*empty.Empty, error) {
 	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#check-whether-user-belongs-to-group
-func (srv *metathingsIdentityService) CheckUserInGroup(context.Context, *pb.CheckUserInGroupRequest) (*empty.Empty, error) {
+func (srv *metathingsIdentitydService) CheckUserInGroup(context.Context, *pb.CheckUserInGroupRequest) (*empty.Empty, error) {
 	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#list-groups-to-which-a-user-belongs
-func (srv *metathingsIdentityService) ListGroupsForUser(context.Context, *pb.ListGroupsForUserRequest) (*pb.ListGroupsForUserResponse, error) {
+func (srv *metathingsIdentitydService) ListGroupsForUser(context.Context, *pb.ListGroupsForUserRequest) (*pb.ListGroupsForUserResponse, error) {
 	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#create-role
-func (srv *metathingsIdentityService) CreateRole(context.Context, *pb.CreateRoleRequest) (*pb.CreateRoleResponse, error) {
+func (srv *metathingsIdentitydService) CreateRole(context.Context, *pb.CreateRoleRequest) (*pb.CreateRoleResponse, error) {
 	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#delete-role
-func (srv *metathingsIdentityService) DeleteRole(context.Context, *pb.DeleteRoleRequest) (*empty.Empty, error) {
+func (srv *metathingsIdentitydService) DeleteRole(context.Context, *pb.DeleteRoleRequest) (*empty.Empty, error) {
 	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#update-role
-func (srv *metathingsIdentityService) PatchRole(context.Context, *pb.PatchRoleRequest) (*pb.PatchRoleResponse, error) {
+func (srv *metathingsIdentitydService) PatchRole(context.Context, *pb.PatchRoleRequest) (*pb.PatchRoleResponse, error) {
 	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#show-role-details
-func (srv *metathingsIdentityService) GetRole(context.Context, *pb.GetRoleRequest) (*pb.GetRoleResponse, error) {
+func (srv *metathingsIdentitydService) GetRole(context.Context, *pb.GetRoleRequest) (*pb.GetRoleResponse, error) {
 	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#list-roles
-func (srv *metathingsIdentityService) ListRoles(context.Context, *pb.ListRolesRequest) (*pb.ListRolesResponse, error) {
+func (srv *metathingsIdentitydService) ListRoles(context.Context, *pb.ListRolesRequest) (*pb.ListRolesResponse, error) {
 	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#assign-role-to-group-on-domain
-func (srv *metathingsIdentityService) AddRoleToGroupOnDomain(context.Context, *pb.AddRoleToGroupOnDomainRequest) (*empty.Empty, error) {
+func (srv *metathingsIdentitydService) AddRoleToGroupOnDomain(context.Context, *pb.AddRoleToGroupOnDomainRequest) (*empty.Empty, error) {
 	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#unassign-role-from-group-on-domain
-func (srv *metathingsIdentityService) RemoveRoleFromGroupOnDomain(context.Context, *pb.RemoveRoleFromGroupOnDomainRequest) (*empty.Empty, error) {
+func (srv *metathingsIdentitydService) RemoveRoleFromGroupOnDomain(context.Context, *pb.RemoveRoleFromGroupOnDomainRequest) (*empty.Empty, error) {
 	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#check-whether-user-has-role-assignment-on-domain
-func (srv *metathingsIdentityService) CheckRoleInGroupOnDomain(context.Context, *pb.CheckRoleInGroupOnDomainRequest) (*empty.Empty, error) {
+func (srv *metathingsIdentitydService) CheckRoleInGroupOnDomain(context.Context, *pb.CheckRoleInGroupOnDomainRequest) (*empty.Empty, error) {
 	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#list-role-assignments-for-group-on-domain
-func (srv *metathingsIdentityService) ListRolesForGroupOnDomain(context.Context, *pb.ListRolesForGroupOnDomainRequest) (*pb.ListRolesForGroupOnDomainResponse, error) {
+func (srv *metathingsIdentitydService) ListRolesForGroupOnDomain(context.Context, *pb.ListRolesForGroupOnDomainRequest) (*pb.ListRolesForGroupOnDomainResponse, error) {
 	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#list-role-assignments-for-group-on-domain
-func (srv *metathingsIdentityService) AddRoleToUserOnDomain(context.Context, *pb.AddRoleToUserOnDomainRequest) (*empty.Empty, error) {
+func (srv *metathingsIdentitydService) AddRoleToUserOnDomain(context.Context, *pb.AddRoleToUserOnDomainRequest) (*empty.Empty, error) {
 	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#list-role-assignments-for-group-on-domain
-func (srv *metathingsIdentityService) RemoveRoleFromUserOnDomain(context.Context, *pb.RemoveRoleFromUserOnDomainRequest) (*empty.Empty, error) {
+func (srv *metathingsIdentitydService) RemoveRoleFromUserOnDomain(context.Context, *pb.RemoveRoleFromUserOnDomainRequest) (*empty.Empty, error) {
 	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#list-role-assignments-for-group-on-domain
-func (srv *metathingsIdentityService) CheckRoleInUserOnDomain(context.Context, *pb.CheckRoleInUserOnDomainRequest) (*empty.Empty, error) {
+func (srv *metathingsIdentitydService) CheckRoleInUserOnDomain(context.Context, *pb.CheckRoleInUserOnDomainRequest) (*empty.Empty, error) {
 	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#list-role-assignments-for-group-on-domain
-func (srv *metathingsIdentityService) ListRolesForUserOnDomain(context.Context, *pb.ListRolesForUserOnDomainRequest) (*pb.ListRolesForUserOnDomainResponse, error) {
+func (srv *metathingsIdentitydService) ListRolesForUserOnDomain(context.Context, *pb.ListRolesForUserOnDomainRequest) (*pb.ListRolesForUserOnDomainResponse, error) {
 	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#assign-role-to-group-on-project
-func (srv *metathingsIdentityService) AddRoleToGroupOnProject(context.Context, *pb.AddRoleToGroupOnProjectRequest) (*empty.Empty, error) {
+func (srv *metathingsIdentitydService) AddRoleToGroupOnProject(context.Context, *pb.AddRoleToGroupOnProjectRequest) (*empty.Empty, error) {
 	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#assign-role-to-group-on-project
-func (srv *metathingsIdentityService) RemoveRoleFromGroupOnProject(context.Context, *pb.RemoveRoleFromGroupOnProjectRequest) (*empty.Empty, error) {
+func (srv *metathingsIdentitydService) RemoveRoleFromGroupOnProject(context.Context, *pb.RemoveRoleFromGroupOnProjectRequest) (*empty.Empty, error) {
 	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#check-whether-group-has-role-assignment-on-project
-func (srv *metathingsIdentityService) CheckRoleInGroupOnProject(context.Context, *pb.CheckRoleInGroupOnProjectRequest) (*empty.Empty, error) {
+func (srv *metathingsIdentitydService) CheckRoleInGroupOnProject(context.Context, *pb.CheckRoleInGroupOnProjectRequest) (*empty.Empty, error) {
 	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#list-role-assignments-for-user-on-project
-func (srv *metathingsIdentityService) ListRolesForGroupOnProject(context.Context, *pb.ListRolesForGroupOnProjectRequest) (*pb.ListRolesForGroupOnProjectResponse, error) {
+func (srv *metathingsIdentitydService) ListRolesForGroupOnProject(context.Context, *pb.ListRolesForGroupOnProjectRequest) (*pb.ListRolesForGroupOnProjectResponse, error) {
 	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#assign-role-to-user-on-project
-func (srv *metathingsIdentityService) AddRoleToUserOnProject(context.Context, *pb.AddRoleToUserOnProjectRequest) (*empty.Empty, error) {
+func (srv *metathingsIdentitydService) AddRoleToUserOnProject(context.Context, *pb.AddRoleToUserOnProjectRequest) (*empty.Empty, error) {
 	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#unassign-role-from-user-on-project
-func (srv *metathingsIdentityService) RemoveRoleFromUserOnProject(context.Context, *pb.RemoveRoleFromUserOnProjectRequest) (*empty.Empty, error) {
+func (srv *metathingsIdentitydService) RemoveRoleFromUserOnProject(context.Context, *pb.RemoveRoleFromUserOnProjectRequest) (*empty.Empty, error) {
 	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#check-whether-user-has-role-assignment-on-project
-func (srv *metathingsIdentityService) CheckRoleInUserOnProject(context.Context, *pb.CheckRoleInUserOnProjectRequest) (*empty.Empty, error) {
+func (srv *metathingsIdentitydService) CheckRoleInUserOnProject(context.Context, *pb.CheckRoleInUserOnProjectRequest) (*empty.Empty, error) {
 	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#list-role-assignments-for-user-on-project
-func (srv *metathingsIdentityService) ListRolesForUserOnProject(context.Context, *pb.ListRolesForUserOnProjectRequest) (*pb.ListRolesForUserOnProjectResponse, error) {
+func (srv *metathingsIdentitydService) ListRolesForUserOnProject(context.Context, *pb.ListRolesForUserOnProjectRequest) (*pb.ListRolesForUserOnProjectResponse, error) {
 	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
 }
 
@@ -433,7 +433,7 @@ func (srv *metathingsIdentityService) ListRolesForUserOnProject(context.Context,
 // https://developer.openstack.org/api-ref/identity/v3/index.html#token-authentication-with-explicit-unscoped-authorization
 // application credential authorization
 // https://developer.openstack.org/api-ref/identity/v3/index.html#authenticating-with-an-application-credential
-func (srv *metathingsIdentityService) IssueToken(ctx context.Context, req *pb.IssueTokenRequest) (*pb.IssueTokenResponse, error) {
+func (srv *metathingsIdentitydService) IssueToken(ctx context.Context, req *pb.IssueTokenRequest) (*pb.IssueTokenResponse, error) {
 	body, err := codec.EncodeIssueTokenRequest(ctx, req)
 	if err != nil {
 		switch err {
@@ -487,12 +487,12 @@ func (srv *metathingsIdentityService) IssueToken(ctx context.Context, req *pb.Is
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#revoke-token
-func (srv *metathingsIdentityService) RevokeToken(context.Context, *empty.Empty) (*empty.Empty, error) {
+func (srv *metathingsIdentitydService) RevokeToken(context.Context, *empty.Empty) (*empty.Empty, error) {
 	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#check-token
-func (srv *metathingsIdentityService) CheckToken(ctx context.Context, _ *empty.Empty) (*empty.Empty, error) {
+func (srv *metathingsIdentitydService) CheckToken(ctx context.Context, _ *empty.Empty) (*empty.Empty, error) {
 	token, err := srv.GetTokenFromContext(ctx)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
@@ -516,7 +516,7 @@ func (srv *metathingsIdentityService) CheckToken(ctx context.Context, _ *empty.E
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#validate-and-show-information-for-token
-func (srv *metathingsIdentityService) ValidateToken(ctx context.Context, _ *empty.Empty) (*pb.ValidateTokenResponse, error) {
+func (srv *metathingsIdentitydService) ValidateToken(ctx context.Context, _ *empty.Empty) (*pb.ValidateTokenResponse, error) {
 	token, err := srv.GetTokenFromContext(ctx)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
@@ -566,26 +566,26 @@ func (srv *metathingsIdentityService) ValidateToken(ctx context.Context, _ *empt
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#create-application-credential
-func (srv *metathingsIdentityService) CreateApplicationCredential(context.Context, *pb.CreateApplicationCredentialRequest) (*pb.CreateApplicationCredentialResponse, error) {
+func (srv *metathingsIdentitydService) CreateApplicationCredential(context.Context, *pb.CreateApplicationCredentialRequest) (*pb.CreateApplicationCredentialResponse, error) {
 	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#delete-application-credential
-func (srv *metathingsIdentityService) DeleteApplicationCredential(context.Context, *pb.DeleteApplicationCredentialRequest) (*empty.Empty, error) {
+func (srv *metathingsIdentitydService) DeleteApplicationCredential(context.Context, *pb.DeleteApplicationCredentialRequest) (*empty.Empty, error) {
 	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#show-application-credential-details
-func (srv *metathingsIdentityService) GetApplicationCredential(context.Context, *pb.GetApplicationCredentialRequest) (*pb.GetApplicationCredentialResponse, error) {
+func (srv *metathingsIdentitydService) GetApplicationCredential(context.Context, *pb.GetApplicationCredentialRequest) (*pb.GetApplicationCredentialResponse, error) {
 	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#list-application-credentials
-func (srv *metathingsIdentityService) ListApplicationCredentials(context.Context, *pb.ListApplicationCredentialsRequest) (*pb.ListApplicationCredentialsResponse, error) {
+func (srv *metathingsIdentitydService) ListApplicationCredentials(context.Context, *pb.ListApplicationCredentialsRequest) (*pb.ListApplicationCredentialsResponse, error) {
 	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
 }
 
-func NewIdentityService(opt ...ServiceOptions) (*metathingsIdentityService, error) {
+func NewIdentitydService(opt ...ServiceOptions) (*metathingsIdentitydService, error) {
 	opts := defaultServiceOptions
 	for _, o := range opt {
 		o(&opts)
@@ -597,7 +597,7 @@ func NewIdentityService(opt ...ServiceOptions) (*metathingsIdentityService, erro
 		return nil, err
 	}
 
-	srv := &metathingsIdentityService{
+	srv := &metathingsIdentitydService{
 		opts:   opts,
 		logger: logger,
 	}

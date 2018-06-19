@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package ai.metathings.service.identityd;
+
+import "google/protobuf/wrappers.proto";
+
+import "github.com/mwitkow/go-proto-validators/validator.proto";
+
+import "group.proto";
+
+message ListGroupsRequest {
+	google.protobuf.StringValue domain_id = 1;
+	google.protobuf.StringValue name = 2;
+}
+
+message ListGroupsResponse {
+	repeated Group groups = 1;
+}

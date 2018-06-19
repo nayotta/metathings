@@ -5,7 +5,7 @@ import (
 
 	"github.com/parnurzeal/gorequest"
 
-	pb "github.com/nayotta/metathings/pkg/proto/identity"
+	pb "github.com/nayotta/metathings/pkg/proto/identityd"
 )
 
 type _user1 struct {

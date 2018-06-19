@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package ai.metathings.service.cored;
+
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/timestamp.proto";
+
+import "github.com/mwitkow/go-proto-validators/validator.proto";
+
+message HeartbeatEntity {
+	google.protobuf.StringValue id = 1;
+	google.protobuf.Timestamp heartbeat_at = 2;
+}
+
+message HeartbeatRequest {
+	repeated HeartbeatEntity entities = 1;
+}

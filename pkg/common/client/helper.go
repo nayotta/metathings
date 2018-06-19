@@ -8,10 +8,10 @@ import (
 
 	constant_helper "github.com/nayotta/metathings/pkg/common/constant"
 	camerad_pb "github.com/nayotta/metathings/pkg/proto/camera"
-	cored_pb "github.com/nayotta/metathings/pkg/proto/core"
 	agentd_pb "github.com/nayotta/metathings/pkg/proto/core_agent"
+	cored_pb "github.com/nayotta/metathings/pkg/proto/cored"
 	echod_pb "github.com/nayotta/metathings/pkg/proto/echo"
-	identityd_pb "github.com/nayotta/metathings/pkg/proto/identity"
+	identityd_pb "github.com/nayotta/metathings/pkg/proto/identityd"
 	motord_pb "github.com/nayotta/metathings/pkg/proto/motor"
 	switcherd_pb "github.com/nayotta/metathings/pkg/proto/switcher"
 )
@@ -65,7 +65,7 @@ func (f *ClientFactory) NewConnection(cfg_val int, opts ...grpc.DialOption) (*gr
 	return conn, nil
 }
 
-func (f *ClientFactory) NewCoreServiceClient(opts ...grpc.DialOption) (cored_pb.CoreServiceClient, CloseFn, error) {
+func (f *ClientFactory) NewCoreServiceClient(opts ...grpc.DialOption) (cored_pb.CoredServiceClient, CloseFn, error) {
 	conn, err := f.NewConnection(CORED_CONFIG, opts...)
 	if err != nil {
 		return nil, nil, err
@@ -75,10 +75,10 @@ func (f *ClientFactory) NewCoreServiceClient(opts ...grpc.DialOption) (cored_pb.
 		conn.Close()
 	}
 
-	return cored_pb.NewCoreServiceClient(conn), closeFn, nil
+	return cored_pb.NewCoredServiceClient(conn), closeFn, nil
 }
 
-func (f *ClientFactory) NewIdentityServiceClient(opts ...grpc.DialOption) (identityd_pb.IdentityServiceClient, CloseFn, error) {
+func (f *ClientFactory) NewIdentityServiceClient(opts ...grpc.DialOption) (identityd_pb.IdentitydServiceClient, CloseFn, error) {
 	conn, err := f.NewConnection(IDENTITYD_CONFIG, opts...)
 	if err != nil {
 		return nil, nil, err
@@ -88,7 +88,7 @@ func (f *ClientFactory) NewIdentityServiceClient(opts ...grpc.DialOption) (ident
 		conn.Close()
 	}
 
-	return identityd_pb.NewIdentityServiceClient(conn), closeFn, nil
+	return identityd_pb.NewIdentitydServiceClient(conn), closeFn, nil
 }
 
 func (f *ClientFactory) NewCoreAgentServiceClient(opts ...grpc.DialOption) (agentd_pb.CoreAgentServiceClient, CloseFn, error) {

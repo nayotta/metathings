@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package ai.metathings.service.cored;
+
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/any.proto";
+
+import "github.com/mwitkow/go-proto-validators/validator.proto";
+
+import "payload.proto";
+
+message StreamCallRequest {
+	google.protobuf.StringValue core_id = 1;
+	StreamCallRequestPayload payload = 2;
+}
+
+message StreamCallResponse {
+	StreamCallResponsePayload payload = 2;
+}

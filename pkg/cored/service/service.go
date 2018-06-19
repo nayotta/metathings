@@ -22,8 +22,8 @@ import (
 	stm_mgr "github.com/nayotta/metathings/pkg/common/stream_manager"
 	storage "github.com/nayotta/metathings/pkg/cored/storage"
 	state_pb "github.com/nayotta/metathings/pkg/proto/common/state"
-	pb "github.com/nayotta/metathings/pkg/proto/core"
-	identityd_pb "github.com/nayotta/metathings/pkg/proto/identity"
+	pb "github.com/nayotta/metathings/pkg/proto/cored"
+	identityd_pb "github.com/nayotta/metathings/pkg/proto/identityd"
 )
 
 type options struct {
@@ -83,7 +83,7 @@ func SetEntityAliveTimeout(timeout int) ServiceOptions {
 	}
 }
 
-type metathingsCoreService struct {
+type metathingsCoredService struct {
 	grpc_helper.AuthorizationTokenParser
 
 	cli_fty             *client_helper.ClientFactory
@@ -97,7 +97,7 @@ type metathingsCoreService struct {
 	core_maintain_chans map[string]chan interface{}
 }
 
-func (srv *metathingsCoreService) validateTokenViaIdentityd(token string) (*identityd_pb.Token, error) {
+func (srv *metathingsCoredService) validateTokenViaIdentityd(token string) (*identityd_pb.Token, error) {
 	ctx := context.Background()
 	md := metadata.Pairs(
 		"authorization-subject", "mt "+token,
@@ -120,7 +120,7 @@ func (srv *metathingsCoreService) validateTokenViaIdentityd(token string) (*iden
 	return res.Token, nil
 }
 
-func (srv *metathingsCoreService) AuthFuncOverride(ctx context.Context, fullMethodName string) (context.Context, error) {
+func (srv *metathingsCoredService) AuthFuncOverride(ctx context.Context, fullMethodName string) (context.Context, error) {
 	token_str, err := srv.GetTokenFromContext(ctx)
 	if err != nil {
 		return nil, err
@@ -146,7 +146,7 @@ func (srv *metathingsCoreService) AuthFuncOverride(ctx context.Context, fullMeth
 	return ctx, nil
 }
 
-func (srv *metathingsCoreService) maintain_core_once(core_id string) {
+func (srv *metathingsCoredService) maintain_core_once(core_id string) {
 	if _, ok := srv.core_maintain_chans[core_id]; !ok {
 		srv.core_maintain_chans[core_id] = make(chan interface{})
 		srv.logger.WithField("core_id", core_id).Debugf("create core maintain channel")
@@ -156,7 +156,7 @@ func (srv *metathingsCoreService) maintain_core_once(core_id string) {
 	srv.logger.WithField("core_id", core_id).Debugf("send heartbeat signal to core maintain channel")
 }
 
-func (srv *metathingsCoreService) maintain_core_loop(core_id string) {
+func (srv *metathingsCoredService) maintain_core_loop(core_id string) {
 	ch, ok := srv.core_maintain_chans[core_id]
 	if !ok {
 		srv.logger.WithField("core_id", core_id).Errorf("core maintain channel not found")
@@ -182,7 +182,7 @@ func (srv *metathingsCoreService) maintain_core_loop(core_id string) {
 	}
 }
 
-func (srv *metathingsCoreService) maintain_core(core_id string) {
+func (srv *metathingsCoredService) maintain_core(core_id string) {
 	state_str := "offline"
 	pc := storage.Core{State: &state_str}
 	_, err := srv.storage.PatchCore(core_id, pc)
@@ -216,7 +216,7 @@ func (srv *metathingsCoreService) maintain_core(core_id string) {
 	}).Infof("core agent offline")
 }
 
-func (srv *metathingsCoreService) CreateCore(ctx context.Context, req *pb.CreateCoreRequest) (*pb.CreateCoreResponse, error) {
+func (srv *metathingsCoredService) CreateCore(ctx context.Context, req *pb.CreateCoreRequest) (*pb.CreateCoreResponse, error) {
 	err := req.Validate()
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
@@ -273,15 +273,15 @@ func (srv *metathingsCoreService) CreateCore(ctx context.Context, req *pb.Create
 	return res, nil
 }
 
-func (srv *metathingsCoreService) DeleteCore(ctx context.Context, req *pb.DeleteCoreRequest) (*empty.Empty, error) {
+func (srv *metathingsCoredService) DeleteCore(ctx context.Context, req *pb.DeleteCoreRequest) (*empty.Empty, error) {
 	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
 }
 
-func (srv *metathingsCoreService) PatchCore(context.Context, *pb.PatchCoreRequest) (*pb.PatchCoreResponse, error) {
+func (srv *metathingsCoredService) PatchCore(context.Context, *pb.PatchCoreRequest) (*pb.PatchCoreResponse, error) {
 	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
 }
 
-func (srv *metathingsCoreService) GetCore(ctx context.Context, req *pb.GetCoreRequest) (*pb.GetCoreResponse, error) {
+func (srv *metathingsCoredService) GetCore(ctx context.Context, req *pb.GetCoreRequest) (*pb.GetCoreResponse, error) {
 	err := req.Validate()
 	if err != nil {
 		srv.logger.WithError(err).Errorf("failed to validate request data")
@@ -303,7 +303,7 @@ func (srv *metathingsCoreService) GetCore(ctx context.Context, req *pb.GetCoreRe
 	return res, nil
 }
 
-func (srv *metathingsCoreService) ListCores(ctx context.Context, req *pb.ListCoresRequest) (*pb.ListCoresResponse, error) {
+func (srv *metathingsCoredService) ListCores(ctx context.Context, req *pb.ListCoresRequest) (*pb.ListCoresResponse, error) {
 	err := req.Validate()
 	if err != nil {
 		srv.logger.WithError(err).Errorf("failed to validate request data")
@@ -347,7 +347,7 @@ func (srv *metathingsCoreService) ListCores(ctx context.Context, req *pb.ListCor
 	return res, nil
 }
 
-func (srv *metathingsCoreService) ShowCore(ctx context.Context, req *empty.Empty) (*pb.ShowCoreResponse, error) {
+func (srv *metathingsCoredService) ShowCore(ctx context.Context, req *empty.Empty) (*pb.ShowCoreResponse, error) {
 	cred := context_helper.Credential(ctx)
 
 	c, err := srv.storage.GetAssignedCoreFromApplicationCredential(cred.ApplicationCredential.Id)
@@ -364,7 +364,7 @@ func (srv *metathingsCoreService) ShowCore(ctx context.Context, req *empty.Empty
 	return res, nil
 }
 
-func (srv *metathingsCoreService) copyCore(c storage.Core) *pb.Core {
+func (srv *metathingsCoredService) copyCore(c storage.Core) *pb.Core {
 	return &pb.Core{
 		Id:        *c.Id,
 		Name:      *c.Name,
@@ -374,7 +374,7 @@ func (srv *metathingsCoreService) copyCore(c storage.Core) *pb.Core {
 	}
 }
 
-func (srv *metathingsCoreService) copyEntity(e storage.Entity) *pb.Entity {
+func (srv *metathingsCoredService) copyEntity(e storage.Entity) *pb.Entity {
 	return &pb.Entity{
 		Id:          *e.Id,
 		CoreId:      *e.CoreId,
@@ -385,7 +385,7 @@ func (srv *metathingsCoreService) copyEntity(e storage.Entity) *pb.Entity {
 	}
 }
 
-func (srv *metathingsCoreService) CreateEntity(ctx context.Context, req *pb.CreateEntityRequest) (*pb.CreateEntityResponse, error) {
+func (srv *metathingsCoredService) CreateEntity(ctx context.Context, req *pb.CreateEntityRequest) (*pb.CreateEntityResponse, error) {
 	err := req.Validate()
 	if err != nil {
 		srv.logger.WithError(err).Errorf("failed to validate request data")
@@ -443,7 +443,7 @@ func (srv *metathingsCoreService) CreateEntity(ctx context.Context, req *pb.Crea
 	return res, nil
 }
 
-func (srv *metathingsCoreService) DeleteEntity(ctx context.Context, req *pb.DeleteEntityRequest) (*empty.Empty, error) {
+func (srv *metathingsCoredService) DeleteEntity(ctx context.Context, req *pb.DeleteEntityRequest) (*empty.Empty, error) {
 	err := req.Validate()
 	if err != nil {
 		srv.logger.WithError(err).Errorf("failed to validate request data")
@@ -460,7 +460,7 @@ func (srv *metathingsCoreService) DeleteEntity(ctx context.Context, req *pb.Dele
 	return &empty.Empty{}, nil
 }
 
-func (srv *metathingsCoreService) PatchEntity(ctx context.Context, req *pb.PatchEntityRequest) (*pb.PatchEntityResponse, error) {
+func (srv *metathingsCoredService) PatchEntity(ctx context.Context, req *pb.PatchEntityRequest) (*pb.PatchEntityResponse, error) {
 	err := req.Validate()
 	if err != nil {
 		srv.logger.WithError(err).Errorf("failed to validate request data")
@@ -485,7 +485,7 @@ func (srv *metathingsCoreService) PatchEntity(ctx context.Context, req *pb.Patch
 	return &pb.PatchEntityResponse{Entity: srv.copyEntity(entity)}, nil
 }
 
-func (srv *metathingsCoreService) GetEntity(ctx context.Context, req *pb.GetEntityRequest) (*pb.GetEntityResponse, error) {
+func (srv *metathingsCoredService) GetEntity(ctx context.Context, req *pb.GetEntityRequest) (*pb.GetEntityResponse, error) {
 	err := req.Validate()
 	if err != nil {
 		srv.logger.WithError(err).Errorf("failed to validate request data")
@@ -502,7 +502,7 @@ func (srv *metathingsCoreService) GetEntity(ctx context.Context, req *pb.GetEnti
 	return &pb.GetEntityResponse{Entity: srv.copyEntity(entity)}, nil
 }
 
-func (srv *metathingsCoreService) ListEntities(ctx context.Context, req *pb.ListEntitiesRequest) (*pb.ListEntitiesResponse, error) {
+func (srv *metathingsCoredService) ListEntities(ctx context.Context, req *pb.ListEntitiesRequest) (*pb.ListEntitiesResponse, error) {
 	err := req.Validate()
 	if err != nil {
 		srv.logger.WithError(err).Errorf("failed to validate request data")
@@ -545,7 +545,7 @@ func (srv *metathingsCoreService) ListEntities(ctx context.Context, req *pb.List
 	return &pb.ListEntitiesResponse{Entities: es}, nil
 }
 
-func (srv *metathingsCoreService) ListEntitiesForCore(ctx context.Context, req *pb.ListEntitiesForCoreRequest) (*pb.ListEntitiesForCoreResponse, error) {
+func (srv *metathingsCoredService) ListEntitiesForCore(ctx context.Context, req *pb.ListEntitiesForCoreRequest) (*pb.ListEntitiesForCoreResponse, error) {
 	err := req.Validate()
 	if err != nil {
 		srv.logger.WithError(err).Errorf("failed to validate request data")
@@ -591,7 +591,7 @@ func (srv *metathingsCoreService) ListEntitiesForCore(ctx context.Context, req *
 	return &pb.ListEntitiesForCoreResponse{Entities: es}, nil
 }
 
-func (srv *metathingsCoreService) Heartbeat(ctx context.Context, req *pb.HeartbeatRequest) (*empty.Empty, error) {
+func (srv *metathingsCoredService) Heartbeat(ctx context.Context, req *pb.HeartbeatRequest) (*empty.Empty, error) {
 	err := req.Validate()
 	if err != nil {
 		srv.logger.WithError(err).Errorf("failed to validate request data")
@@ -662,7 +662,7 @@ func (srv *metathingsCoreService) Heartbeat(ctx context.Context, req *pb.Heartbe
 	return &empty.Empty{}, nil
 }
 
-func (srv *metathingsCoreService) Stream(stream pb.CoreService_StreamServer) error {
+func (srv *metathingsCoredService) Stream(stream pb.CoredService_StreamServer) error {
 	ctx := stream.Context()
 	cred := context_helper.Credential(ctx)
 	if cred == nil || cred.ApplicationCredential == nil {
@@ -692,7 +692,7 @@ func (srv *metathingsCoreService) Stream(stream pb.CoreService_StreamServer) err
 	return nil
 }
 
-func (srv *metathingsCoreService) ListCoresForUser(ctx context.Context, req *pb.ListCoresForUserRequest) (*pb.ListCoresForUserResponse, error) {
+func (srv *metathingsCoredService) ListCoresForUser(ctx context.Context, req *pb.ListCoresForUserRequest) (*pb.ListCoresForUserResponse, error) {
 	cred := context_helper.Credential(ctx)
 	user_id := cred.User.Id
 	c := storage.Core{}
@@ -731,7 +731,7 @@ func (srv *metathingsCoreService) ListCoresForUser(ctx context.Context, req *pb.
 	return res, nil
 }
 
-func (srv *metathingsCoreService) UnaryCall(ctx context.Context, req *pb.UnaryCallRequest) (*pb.UnaryCallResponse, error) {
+func (srv *metathingsCoredService) UnaryCall(ctx context.Context, req *pb.UnaryCallRequest) (*pb.UnaryCallResponse, error) {
 	res, err := srv.stm_mgr.UnaryCall(req.CoreId.Value, req.Payload)
 	if err != nil {
 		srv.logger.
@@ -743,7 +743,7 @@ func (srv *metathingsCoreService) UnaryCall(ctx context.Context, req *pb.UnaryCa
 	return &pb.UnaryCallResponse{Payload: res}, nil
 }
 
-func (srv *metathingsCoreService) StreamCall(cstm pb.CoreService_StreamCallServer) error {
+func (srv *metathingsCoredService) StreamCall(cstm pb.CoredService_StreamCallServer) error {
 	req, err := cstm.Recv()
 	if err != nil {
 		srv.logger.WithError(err).Errorf("failed to recv config")
@@ -861,7 +861,7 @@ func (srv *metathingsCoreService) StreamCall(cstm pb.CoreService_StreamCallServe
 	return nil
 }
 
-func NewCoreService(opt ...ServiceOptions) (*metathingsCoreService, error) {
+func NewCoredService(opt ...ServiceOptions) (*metathingsCoredService, error) {
 	opts := defaultServiceOptions
 	for _, o := range opt {
 		o(&opts)
@@ -904,7 +904,7 @@ func NewCoreService(opt ...ServiceOptions) (*metathingsCoreService, error) {
 		return nil, err
 	}
 
-	srv := &metathingsCoreService{
+	srv := &metathingsCoredService{
 		cli_fty:             cli_fty,
 		core_st_psr:         state_helper.NewCoreStateParser(),
 		entity_st_psr:       state_helper.NewEntityStateParser(),

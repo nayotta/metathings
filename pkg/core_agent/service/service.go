@@ -25,9 +25,8 @@ import (
 	state_helper "github.com/nayotta/metathings/pkg/common/state"
 	mt_plugin "github.com/nayotta/metathings/pkg/cored/plugin"
 	state_pb "github.com/nayotta/metathings/pkg/proto/common/state"
-	core_pb "github.com/nayotta/metathings/pkg/proto/core"
-	cored_pb "github.com/nayotta/metathings/pkg/proto/core"
 	pb "github.com/nayotta/metathings/pkg/proto/core_agent"
+	cored_pb "github.com/nayotta/metathings/pkg/proto/cored"
 )
 
 type options struct {
@@ -138,16 +137,16 @@ func (srv *coreAgentService) HeartbeatOnce() error {
 	}
 	defer cfn()
 
-	entities := []*core_pb.HeartbeatEntity{}
+	entities := []*cored_pb.HeartbeatEntity{}
 	for id, _ := range srv.heartbeat_entities {
 		ts := protobuf_helper.FromTime(srv.heartbeat_entities[id])
-		entities = append(entities, &core_pb.HeartbeatEntity{
+		entities = append(entities, &cored_pb.HeartbeatEntity{
 			Id:          &gpb.StringValue{Value: id},
 			HeartbeatAt: &ts,
 		})
 	}
 
-	req := &core_pb.HeartbeatRequest{
+	req := &cored_pb.HeartbeatRequest{
 		Entities: entities,
 	}
 	_, err = cli.Heartbeat(ctx, req)
@@ -158,7 +157,7 @@ func (srv *coreAgentService) HeartbeatOnce() error {
 	return nil
 }
 
-func (srv *coreAgentService) copyEntity(e *core_pb.Entity) *pb.Entity {
+func (srv *coreAgentService) copyEntity(e *cored_pb.Entity) *pb.Entity {
 	return &pb.Entity{
 		Id:          e.Id,
 		Name:        e.Name,
@@ -177,7 +176,7 @@ func (srv *coreAgentService) CreateEntity(ctx context.Context, req *pb.CreateEnt
 	}
 	defer closeFn()
 
-	r := &core_pb.CreateEntityRequest{
+	r := &cored_pb.CreateEntityRequest{
 		CoreId:      &gpb.StringValue{Value: srv.opts.core_id},
 		Name:        req.Name,
 		ServiceName: req.ServiceName,
@@ -207,7 +206,7 @@ func (srv *coreAgentService) DeleteEntity(ctx context.Context, req *pb.DeleteEnt
 	}
 	defer closeFn()
 
-	r := &core_pb.DeleteEntityRequest{Id: req.Id}
+	r := &cored_pb.DeleteEntityRequest{Id: req.Id}
 	_, err = cli.DeleteEntity(ctx, r)
 	if err != nil {
 		srv.logger.WithError(err).Errorf("failed to delete entity")
@@ -228,7 +227,7 @@ func (srv *coreAgentService) PatchEntity(ctx context.Context, req *pb.PatchEntit
 	defer closeFn()
 
 	fields := log.Fields{"id": req.Id.Value}
-	r := &core_pb.PatchEntityRequest{Id: req.Id}
+	r := &cored_pb.PatchEntityRequest{Id: req.Id}
 	if req.State != state_pb.EntityState_ENTITY_STATE_UNKNOWN {
 		r.State = req.State
 		fields["state"] = srv.entity_st_psr.ToString(req.State)
@@ -253,7 +252,7 @@ func (srv *coreAgentService) GetEntity(ctx context.Context, req *pb.GetEntityReq
 	}
 	defer closeFn()
 
-	r := &core_pb.GetEntityRequest{Id: req.Id}
+	r := &cored_pb.GetEntityRequest{Id: req.Id}
 
 	res, err := cli.GetEntity(ctx, r)
 	if err != nil {
@@ -274,7 +273,7 @@ func (srv *coreAgentService) ListEntities(ctx context.Context, req *pb.ListEntit
 	}
 	defer closeFn()
 
-	r := &core_pb.ListEntitiesForCoreRequest{
+	r := &cored_pb.ListEntitiesForCoreRequest{
 		Name:        req.Name,
 		ServiceName: req.ServiceName,
 		State:       req.State,
@@ -374,7 +373,7 @@ func (srv *coreAgentService) CreateOrGetEntity(ctx context.Context, req *pb.Crea
 	}
 	defer closeFn()
 
-	r := &core_pb.ListEntitiesForCoreRequest{}
+	r := &cored_pb.ListEntitiesForCoreRequest{}
 	res, err := cli.ListEntitiesForCore(ctx, r)
 	if err != nil {
 		srv.logger.WithError(err).Errorf("failed to list entities for core")
@@ -389,7 +388,7 @@ func (srv *coreAgentService) CreateOrGetEntity(ctx context.Context, req *pb.Crea
 		}
 	}
 
-	r1 := &core_pb.CreateEntityRequest{
+	r1 := &cored_pb.CreateEntityRequest{
 		CoreId:      &gpb.StringValue{Value: srv.opts.core_id},
 		Name:        req.Name,
 		ServiceName: req.ServiceName,
@@ -418,7 +417,7 @@ func (srv *coreAgentService) Heartbeat(ctx context.Context, req *pb.HeartbeatReq
 		}
 		defer closeFn()
 
-		r := &core_pb.GetEntityRequest{Id: req.EntityId}
+		r := &cored_pb.GetEntityRequest{Id: req.EntityId}
 		res, err := cli.GetEntity(ctx, r)
 		if err != nil {
 			srv.logger.WithError(err).Errorf("failed to get entity")
@@ -462,7 +461,7 @@ func (srv *coreAgentService) ServeOnStream() error {
 	return srv.serveOnStream(stream)
 }
 
-func (srv *coreAgentService) serveOnStream(stream core_pb.CoreService_StreamClient) error {
+func (srv *coreAgentService) serveOnStream(stream cored_pb.CoredService_StreamClient) error {
 	for {
 		req, err := stream.Recv()
 		if err != nil {
@@ -485,9 +484,9 @@ func (srv *coreAgentService) serveOnStream(stream core_pb.CoreService_StreamClie
 	}
 }
 
-func (srv *coreAgentService) dispatch_system(ctx context.Context, req *core_pb.StreamRequest) (*core_pb.StreamResponse, error) {
+func (srv *coreAgentService) dispatch_system(ctx context.Context, req *cored_pb.StreamRequest) (*cored_pb.StreamResponse, error) {
 	switch req.Payload.(type) {
-	case *core_pb.StreamRequest_StreamCall:
+	case *cored_pb.StreamRequest_StreamCall:
 		return srv.dispatch_system_stream(ctx, req)
 	default:
 		return nil, ErrUnsupportMessageType
@@ -495,20 +494,20 @@ func (srv *coreAgentService) dispatch_system(ctx context.Context, req *core_pb.S
 
 }
 
-func (srv *coreAgentService) dispatch_system_stream(ctx context.Context, req *core_pb.StreamRequest) (*core_pb.StreamResponse, error) {
-	payload := req.Payload.(*core_pb.StreamRequest_StreamCall)
+func (srv *coreAgentService) dispatch_system_stream(ctx context.Context, req *cored_pb.StreamRequest) (*cored_pb.StreamResponse, error) {
+	payload := req.Payload.(*cored_pb.StreamRequest_StreamCall)
 
 	switch payload.StreamCall.Payload.(type) {
-	case *core_pb.StreamCallRequestPayload_Config:
+	case *cored_pb.StreamCallRequestPayload_Config:
 		return srv.dispatch_system_stream_config(ctx, req)
 	default:
 		return nil, ErrUnsupportMessageType
 	}
 }
 
-func (srv *coreAgentService) dispatch_system_stream_config(ctx context.Context, req *core_pb.StreamRequest) (*core_pb.StreamResponse, error) {
-	payload := req.Payload.(*core_pb.StreamRequest_StreamCall)
-	config := payload.StreamCall.Payload.(*core_pb.StreamCallRequestPayload_Config)
+func (srv *coreAgentService) dispatch_system_stream_config(ctx context.Context, req *cored_pb.StreamRequest) (*cored_pb.StreamResponse, error) {
+	payload := req.Payload.(*cored_pb.StreamRequest_StreamCall)
+	config := payload.StreamCall.Payload.(*cored_pb.StreamCallRequestPayload_Config)
 	name := config.Config.Name.Value
 	service_name := config.Config.ServiceName.Value
 	method_name := config.Config.MethodName.Value
@@ -557,13 +556,13 @@ func (srv *coreAgentService) dispatch_system_stream_config(ctx context.Context, 
 			}
 			srv.logger.Debugf("recv data from core")
 
-			stm_call, ok := creq.Payload.(*core_pb.StreamRequest_StreamCall)
+			stm_call, ok := creq.Payload.(*cored_pb.StreamRequest_StreamCall)
 			if !ok {
 				srv.logger.WithField("stage", "StreamRequest_StreamCall").Errorf("failed to convert request type")
 				continue
 			}
 
-			dat, ok := stm_call.StreamCall.Payload.(*core_pb.StreamCallRequestPayload_Data)
+			dat, ok := stm_call.StreamCall.Payload.(*cored_pb.StreamCallRequestPayload_Data)
 			if !ok {
 				srv.logger.WithField("stage", "StreamCallRequestPayload_Data").Errorf("failed to convert request type")
 				continue
@@ -590,12 +589,12 @@ func (srv *coreAgentService) dispatch_system_stream_config(ctx context.Context, 
 			}
 			srv.logger.Debugf("recv data from entity")
 
-			res := &core_pb.StreamResponse{
-				MessageType: core_pb.StreamMessageType_STREAM_MESSAGE_TYPE_USER,
-				Payload: &core_pb.StreamResponse_StreamCall{
-					StreamCall: &core_pb.StreamCallResponsePayload{
-						Payload: &core_pb.StreamCallResponsePayload_Data{
-							Data: &core_pb.StreamCallDataResponse{
+			res := &cored_pb.StreamResponse{
+				MessageType: cored_pb.StreamMessageType_STREAM_MESSAGE_TYPE_USER,
+				Payload: &cored_pb.StreamResponse_StreamCall{
+					StreamCall: &cored_pb.StreamCallResponsePayload{
+						Payload: &cored_pb.StreamCallResponsePayload_Data{
+							Data: &cored_pb.StreamCallDataResponse{
 								Value: ereq,
 							},
 						},
@@ -612,13 +611,13 @@ func (srv *coreAgentService) dispatch_system_stream_config(ctx context.Context, 
 		}
 	}()
 
-	return &core_pb.StreamResponse{
+	return &cored_pb.StreamResponse{
 		SessionId:   req.SessionId.Value,
 		MessageType: req.MessageType,
-		Payload: &core_pb.StreamResponse_StreamCall{
-			StreamCall: &core_pb.StreamCallResponsePayload{
-				Payload: &core_pb.StreamCallResponsePayload_Config{
-					Config: &core_pb.StreamCallConfigResponse{
+		Payload: &cored_pb.StreamResponse_StreamCall{
+			StreamCall: &cored_pb.StreamCallResponsePayload{
+				Payload: &cored_pb.StreamCallResponsePayload_Config{
+					Config: &cored_pb.StreamCallConfigResponse{
 						Name:        name,
 						ServiceName: service_name,
 						MethodName:  method_name,
@@ -629,8 +628,8 @@ func (srv *coreAgentService) dispatch_system_stream_config(ctx context.Context, 
 	}, nil
 }
 
-func (srv *coreAgentService) dispatch_user(ctx context.Context, req *core_pb.StreamRequest) (*core_pb.StreamResponse, error) {
-	payload, ok := req.Payload.(*core_pb.StreamRequest_UnaryCall)
+func (srv *coreAgentService) dispatch_user(ctx context.Context, req *cored_pb.StreamRequest) (*cored_pb.StreamResponse, error) {
+	payload, ok := req.Payload.(*cored_pb.StreamRequest_UnaryCall)
 	if !ok {
 		return nil, ErrUnsupportPayloadType
 	}
@@ -650,11 +649,11 @@ func (srv *coreAgentService) dispatch_user(ctx context.Context, req *core_pb.Str
 		return nil, err
 	}
 
-	res1 := &core_pb.StreamResponse{
+	res1 := &cored_pb.StreamResponse{
 		SessionId:   req.SessionId.Value,
 		MessageType: req.MessageType,
-		Payload: &core_pb.StreamResponse_UnaryCall{
-			&core_pb.UnaryCallResponsePayload{
+		Payload: &cored_pb.StreamResponse_UnaryCall{
+			&cored_pb.UnaryCallResponsePayload{
 				Name:        name,
 				ServiceName: service_name,
 				MethodName:  method_name,
@@ -666,11 +665,11 @@ func (srv *coreAgentService) dispatch_user(ctx context.Context, req *core_pb.Str
 	return res1, nil
 }
 
-func (srv *coreAgentService) dispatch(ctx context.Context, req *core_pb.StreamRequest) (*core_pb.StreamResponse, error) {
+func (srv *coreAgentService) dispatch(ctx context.Context, req *cored_pb.StreamRequest) (*cored_pb.StreamResponse, error) {
 	switch req.MessageType {
-	case core_pb.StreamMessageType_STREAM_MESSAGE_TYPE_USER:
+	case cored_pb.StreamMessageType_STREAM_MESSAGE_TYPE_USER:
 		return srv.dispatch_user(ctx, req)
-	case core_pb.StreamMessageType_STREAM_MESSAGE_TYPE_SYSTEM:
+	case cored_pb.StreamMessageType_STREAM_MESSAGE_TYPE_SYSTEM:
 		return srv.dispatch_system(ctx, req)
 	default:
 		return nil, ErrUnsupportMessageType

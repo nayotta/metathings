@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package ai.metathings.service.identityd;
+
+import "google/protobuf/wrappers.proto";
+
+import "github.com/mwitkow/go-proto-validators/validator.proto";
+
+import "role.proto";
+
+message CreateRoleRequest {
+	google.protobuf.StringValue name = 1 [(validator.field) = {msg_exists: true}];
+	google.protobuf.StringValue domain_id = 2;
+}
+
+message CreateRoleResponse {
+	Role role = 1;
+}

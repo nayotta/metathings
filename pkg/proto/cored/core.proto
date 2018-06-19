@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package ai.metathings.service.cored;
+
+import "github.com/nayotta/metathings/pkg/proto/common/state/core_state.proto";
+
+message Core {
+	string id = 1;
+	string name = 2;
+	string project_id = 3;
+	string owner_id = 4;
+	ai.metathings.state.CoreState state = 5;
+}

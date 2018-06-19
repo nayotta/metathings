@@ -11,7 +11,7 @@ import (
 	"google.golang.org/grpc/metadata"
 
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
-	identityd_pb "github.com/nayotta/metathings/pkg/proto/identity"
+	identityd_pb "github.com/nayotta/metathings/pkg/proto/identityd"
 )
 
 type ApplicationCredentialManager interface {
