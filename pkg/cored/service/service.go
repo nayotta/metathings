@@ -8,7 +8,6 @@ import (
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 
 	"github.com/nayotta/metathings/pkg/common"
@@ -20,10 +19,10 @@ import (
 	protobuf_helper "github.com/nayotta/metathings/pkg/common/protobuf"
 	state_helper "github.com/nayotta/metathings/pkg/common/state"
 	stm_mgr "github.com/nayotta/metathings/pkg/common/stream_manager"
+	token_helper "github.com/nayotta/metathings/pkg/common/token"
 	storage "github.com/nayotta/metathings/pkg/cored/storage"
 	state_pb "github.com/nayotta/metathings/pkg/proto/common/state"
 	pb "github.com/nayotta/metathings/pkg/proto/cored"
-	identityd_pb "github.com/nayotta/metathings/pkg/proto/identityd"
 )
 
 type options struct {
@@ -94,30 +93,8 @@ type metathingsCoredService struct {
 	logger              log.FieldLogger
 	opts                options
 	storage             storage.Storage
+	tk_vdr              token_helper.TokenValidator
 	core_maintain_chans map[string]chan interface{}
-}
-
-func (srv *metathingsCoredService) validateTokenViaIdentityd(token string) (*identityd_pb.Token, error) {
-	ctx := context.Background()
-	md := metadata.Pairs(
-		"authorization-subject", "mt "+token,
-		"authorization", srv.app_cred_mgr.GetToken(),
-	)
-	ctx = metadata.NewOutgoingContext(ctx, md)
-
-	cli, closeFn, err := srv.cli_fty.NewIdentityServiceClient()
-	if err != nil {
-		srv.logger.WithError(err).Errorf("failed to new core service client")
-		return nil, err
-	}
-	defer closeFn()
-
-	res, err := cli.ValidateToken(ctx, &empty.Empty{})
-	if err != nil {
-		return nil, err
-	}
-
-	return res.Token, nil
 }
 
 func (srv *metathingsCoredService) AuthFuncOverride(ctx context.Context, fullMethodName string) (context.Context, error) {
@@ -126,11 +103,11 @@ func (srv *metathingsCoredService) AuthFuncOverride(ctx context.Context, fullMet
 		return nil, err
 	}
 
-	token, err := srv.validateTokenViaIdentityd(token_str)
+	token, err := srv.tk_vdr.Validate(token_str)
 	if err != nil {
 		srv.logger.
 			WithField("error", err).
-			Errorf("failed to validate token via metathings identity service")
+			Errorf("failed to validate token via identityd")
 		return nil, err
 	}
 
@@ -141,7 +118,7 @@ func (srv *metathingsCoredService) AuthFuncOverride(ctx context.Context, fullMet
 		"method":   fullMethodName,
 		"user_id":  token.User.Id,
 		"username": token.User.Name,
-	}).Debugf("validate token via metathings identity service")
+	}).Debugf("validate token")
 
 	return ctx, nil
 }
@@ -913,6 +890,7 @@ func NewCoredService(opt ...ServiceOptions) (*metathingsCoredService, error) {
 		opts:                opts,
 		logger:              logger,
 		storage:             storage,
+		tk_vdr:              token_helper.NewTokenValidator(app_cred_mgr, cli_fty, logger),
 		core_maintain_chans: map[string]chan interface{}{},
 	}
 	return srv, nil

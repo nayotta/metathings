@@ -1,10 +1,11 @@
 package cmd
 
 type _serviceConfigOptions struct {
-	Identityd _identitydServiceOptions
+	Identityd _serviceConfigOption
+	Cored     _serviceConfigOption
 }
 
-type _identitydServiceOptions struct {
+type _serviceConfigOption struct {
 	Address string
 }
 

@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package ai.metathings.service.camerad;
+
+import "google/protobuf/wrappers.proto";
+
+import "github.com/mwitkow/go-proto-validators/validator.proto";
+
+import "camera.proto";
+
+message StopRequest {
+	google.protobuf.StringValue id = 1 [(validator.field) = {msg_exists: true}];
+}
+
+message StopResponse {
+	Camera camera = 1;
+}

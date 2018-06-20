@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package ai.metathings.service.camerad;
+
+import "github.com/mwitkow/go-proto-validators/validator.proto";
+
+import "camera.proto";
+
+message ListForUserRequest {
+	OpCore core = 1;
+	OpEntity entity = 2;
+}
+
+message ListForUserResponse {
+	repeated Camera camera = 1;
+}

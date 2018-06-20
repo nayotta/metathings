@@ -1,4 +1,4 @@
-package metathings_core_storage
+package metathings_cored_storage
 
 import "errors"
 

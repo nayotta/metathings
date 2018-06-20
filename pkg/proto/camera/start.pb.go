@@ -36,7 +36,7 @@ func (m *StartConfig) Reset()         { *m = StartConfig{} }
 func (m *StartConfig) String() string { return proto.CompactTextString(m) }
 func (*StartConfig) ProtoMessage()    {}
 func (*StartConfig) Descriptor() ([]byte, []int) {
-	return fileDescriptor_start_00589c9eb9a80525, []int{0}
+	return fileDescriptor_start_5e5de41eb10b6ce8, []int{0}
 }
 func (m *StartConfig) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_StartConfig.Unmarshal(m, b)
@@ -109,7 +109,7 @@ func (m *StartRequest) Reset()         { *m = StartRequest{} }
 func (m *StartRequest) String() string { return proto.CompactTextString(m) }
 func (*StartRequest) ProtoMessage()    {}
 func (*StartRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_start_00589c9eb9a80525, []int{1}
+	return fileDescriptor_start_5e5de41eb10b6ce8, []int{1}
 }
 func (m *StartRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_StartRequest.Unmarshal(m, b)
@@ -147,7 +147,7 @@ func (m *StartResponse) Reset()         { *m = StartResponse{} }
 func (m *StartResponse) String() string { return proto.CompactTextString(m) }
 func (*StartResponse) ProtoMessage()    {}
 func (*StartResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_start_00589c9eb9a80525, []int{2}
+	return fileDescriptor_start_5e5de41eb10b6ce8, []int{2}
 }
 func (m *StartResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_StartResponse.Unmarshal(m, b)
@@ -180,9 +180,9 @@ func init() {
 	proto.RegisterType((*StartResponse)(nil), "ai.metathings.service.camera.StartResponse")
 }
 
-func init() { proto.RegisterFile("start.proto", fileDescriptor_start_00589c9eb9a80525) }
+func init() { proto.RegisterFile("start.proto", fileDescriptor_start_5e5de41eb10b6ce8) }
 
-var fileDescriptor_start_00589c9eb9a80525 = []byte{
+var fileDescriptor_start_5e5de41eb10b6ce8 = []byte{
 	// 335 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x92, 0x31, 0x6f, 0xe2, 0x30,
 	0x1c, 0xc5, 0x05, 0x1c, 0x39, 0x9d, 0xe1, 0x16, 0x4f, 0x11, 0x42, 0x77, 0x08, 0x75, 0x68, 0x07,

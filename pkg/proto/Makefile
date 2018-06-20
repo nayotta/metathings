@@ -7,3 +7,4 @@ all:
 	$(MAKE) -C switcher all
 	$(MAKE) -C motor all
 	$(MAKE) -C camera all
+	$(MAKE) -C camerad all

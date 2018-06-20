@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package ai.metathings.service.camerad;
+option go_package = "camerad";
+
+import "google/protobuf/empty.proto";
+
+import "create.proto";
+import "delete.proto";
+import "patch.proto";
+import "get.proto";
+import "list.proto";
+import "list_for_user.proto";
+import "start.proto";
+import "stop.proto";
+import "callback.proto";
+
+service CameradService {
+	rpc Create(CreateRequest) returns (CreateResponse) {}
+	rpc Delete(DeleteRequest) returns (google.protobuf.Empty) {}
+	rpc Patch(PatchRequest) returns (PatchResponse) {}
+	rpc Get(GetRequest) returns (GetResponse) {}
+	rpc List(ListRequest) returns (ListResponse) {}
+	rpc ListForUser(ListForUserRequest) returns (ListForUserResponse) {}
+	rpc Start(StartRequest) returns (StartResponse) {}
+	rpc Stop(StopRequest) returns (StopResponse) {}
+	// called by camera entity
+	rpc Callback(CallbackRequest) returns (google.protobuf.Empty) {}
+}

@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package ai.metathings.service.camerad;
+
+import "google/protobuf/wrappers.proto";
+
+import "github.com/mwitkow/go-proto-validators/validator.proto";
+
+import "github.com/nayotta/metathings/pkg/proto/cored/core.proto";
+import "github.com/nayotta/metathings/pkg/proto/cored/entity.proto";
+import "github.com/nayotta/metathings/pkg/proto/camera/camera.proto";
+
+message OpCore {
+	google.protobuf.StringValue id = 1 [(validator.field) = {msg_exists: true}];
+}
+
+message OpEntity {
+	google.protobuf.StringValue name = 1 [(validator.field) = {msg_exists: true}];
+}
+
+message OpConfig {
+	google.protobuf.StringValue device = 1;
+	google.protobuf.UInt32Value width = 2;
+	google.protobuf.UInt32Value height = 3;
+	google.protobuf.UInt32Value bitrate = 4;
+	google.protobuf.UInt32Value framerate = 5;
+}
+
+message Camera {
+	string id = 1;
+	string name = 2;
+	ai.metathings.service.cored.Core core = 3;
+	ai.metathings.service.cored.Entity entity = 4;
+	ai.metathings.service.camera.CameraState state = 5;
+	ai.metathings.service.camera.CameraConfig config = 6;
+}

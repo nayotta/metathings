@@ -66,9 +66,9 @@ func runCored() error {
 		grpc.StreamInterceptor(grpc_auth.StreamServerInterceptor(nil)),
 	)
 	srv, err := service.NewCoredService(
-		service.SetStorage(cored_opts.Storage.Driver, cored_opts.Storage.Uri),
-		service.SetIdentitydAddr(cored_opts.ServiceConfig.Identityd.Address),
 		service.SetLogLevel(cored_opts.Log.Level),
+		service.SetIdentitydAddr(cored_opts.ServiceConfig.Identityd.Address),
+		service.SetStorage(cored_opts.Storage.Driver, cored_opts.Storage.Uri),
 		service.SetApplicationCredential(
 			cored_opts.ApplicationCredential.Id,
 			cored_opts.ApplicationCredential.Secret,
