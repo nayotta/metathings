@@ -8,6 +8,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
+	storage "github.com/nayotta/metathings/pkg/camerad/storage"
 	app_cred_mgr "github.com/nayotta/metathings/pkg/common/application_credential_manager"
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
 	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
@@ -78,6 +79,7 @@ type metathingsCameradService struct {
 	app_cred_mgr app_cred_mgr.ApplicationCredentialManager
 	logger       log.FieldLogger
 	opts         options
+	storage      storage.Storage
 	tk_vdr       token_helper.TokenValidator
 }
 
@@ -153,9 +155,39 @@ func NewCameradService(opt ...ServiceOptions) (*metathingsCameradService, error)
 		return nil, err
 	}
 
+	cli_fty_cfgs := client_helper.NewDefaultServiceConfigs(opts.identityd_addr)
+	cli_fty_cfgs[client_helper.CORED_CONFIG] = client_helper.ServiceConfig{Address: opts.cored_addr}
+	cli_fty_cfgs[client_helper.IDENTITYD_CONFIG] = client_helper.ServiceConfig{Address: opts.identityd_addr}
+	cli_fty, err := client_helper.NewClientFactory(
+		cli_fty_cfgs,
+		client_helper.WithInsecureOptionFunc(),
+	)
+
+	storage, err := storage.NewStorage(opts.storage_driver, opts.storage_uri, logger)
+	if err != nil {
+		log.WithError(err).Errorf("failed to connect storage")
+		return nil, err
+	}
+
+	app_cred_mgr, err := app_cred_mgr.NewApplicationCredentialManager(
+		cli_fty,
+		opts.application_credential_id,
+		opts.application_credential_secret,
+	)
+	if err != nil {
+		log.WithError(err).Errorf("failed to new application credential manager")
+		return nil, err
+	}
+
+	tk_vdr := token_helper.NewTokenValidator(app_cred_mgr, cli_fty, logger)
+
 	srv := &metathingsCameradService{
-		logger: logger,
-		opts:   opts,
+		cli_fty:      cli_fty,
+		app_cred_mgr: app_cred_mgr,
+		opts:         opts,
+		logger:       logger,
+		storage:      storage,
+		tk_vdr:       tk_vdr,
 	}
 	return srv, nil
 }

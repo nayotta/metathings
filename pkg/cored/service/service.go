@@ -881,6 +881,8 @@ func NewCoredService(opt ...ServiceOptions) (*metathingsCoredService, error) {
 		return nil, err
 	}
 
+	tk_vdr := token_helper.NewTokenValidator(app_cred_mgr, cli_fty, logger)
+
 	srv := &metathingsCoredService{
 		cli_fty:             cli_fty,
 		core_st_psr:         state_helper.NewCoreStateParser(),
@@ -890,7 +892,7 @@ func NewCoredService(opt ...ServiceOptions) (*metathingsCoredService, error) {
 		opts:                opts,
 		logger:              logger,
 		storage:             storage,
-		tk_vdr:              token_helper.NewTokenValidator(app_cred_mgr, cli_fty, logger),
+		tk_vdr:              tk_vdr,
 		core_maintain_chans: map[string]chan interface{}{},
 	}
 	return srv, nil
