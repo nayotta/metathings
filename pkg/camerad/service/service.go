@@ -105,11 +105,15 @@ func (srv *metathingsCameradService) AuthFuncOverride(ctx context.Context, fullM
 	return ctx, nil
 }
 
-func (srv *metathingsCameradService) Start(ctx context.Context, req *pb.StartRequest) (*pb.StartResponse, error) {
+func (srv *metathingsCameradService) Create(context.Context, *pb.CreateRequest) (*pb.CreateResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "unimplemented")
 }
 
-func (srv *metathingsCameradService) Stop(ctx context.Context, req *pb.StopRequest) (*pb.StopResponse, error) {
+func (srv *metathingsCameradService) Delete(context.Context, *pb.DeleteRequest) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "unimplemented")
+}
+
+func (srv *metathingsCameradService) Patch(context.Context, *pb.PatchRequest) (*pb.PatchResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "unimplemented")
 }
 
@@ -122,6 +126,14 @@ func (srv *metathingsCameradService) List(ctx context.Context, req *pb.ListReque
 }
 
 func (srv *metathingsCameradService) ListForUser(ctx context.Context, req *pb.ListForUserRequest) (*pb.ListForUserResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "unimplemented")
+}
+
+func (srv *metathingsCameradService) Start(ctx context.Context, req *pb.StartRequest) (*pb.StartResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "unimplemented")
+}
+
+func (srv *metathingsCameradService) Stop(ctx context.Context, req *pb.StopRequest) (*pb.StopResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "unimplemented")
 }
 

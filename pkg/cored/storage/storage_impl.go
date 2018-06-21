@@ -98,25 +98,25 @@ func (s *storageImpl) PatchCore(core_id string, core Core) (Core, error) {
 	if core.Name != nil {
 		values = append(values, fmt.Sprintf("name=$%v", i))
 		arguments = append(arguments, *core.Name)
-		i += 1
+		i++
 	}
 
 	if core.State != nil {
 		values = append(values, fmt.Sprintf("state=$%v", i))
 		arguments = append(arguments, *core.State)
-		i += 1
+		i++
 	}
 
 	if core.HeartbeatAt != nil {
 		values = append(values, fmt.Sprintf("heartbeat_at=$%v", i))
 		arguments = append(arguments, *core.HeartbeatAt)
-		i += 1
+		i++
 	}
 
 	if len(values) > 0 {
 		values = append(values, fmt.Sprintf("updated_at=$%v", i))
 		arguments = append(arguments, time.Now())
-		i += 1
+		i++
 
 		val := strings.Join(values, ", ")
 		arguments = append(arguments, core_id)
@@ -187,25 +187,25 @@ func (s *storageImpl) list_cores(core Core) ([]Core, error) {
 	if core.Name != nil {
 		values = append(values, fmt.Sprintf("name=$%v", i))
 		arguments = append(arguments, *core.Name)
-		i += 1
+		i++
 	}
 
 	if core.ProjectId != nil {
 		values = append(values, fmt.Sprintf("project_id=$%v", i))
 		arguments = append(arguments, *core.ProjectId)
-		i += 1
+		i++
 	}
 
 	if core.OwnerId != nil {
 		values = append(values, fmt.Sprintf("owner_id=$%v", i))
 		arguments = append(arguments, *core.OwnerId)
-		i += 1
+		i++
 	}
 
 	if core.State != nil {
 		values = append(values, fmt.Sprintf("state=$%v", i))
 		arguments = append(arguments, *core.State)
-		i += 1
+		i++
 	}
 
 	if len(values) == 0 {
@@ -296,19 +296,19 @@ func (s *storageImpl) PatchEntity(entity_id string, entity Entity) (Entity, erro
 	if entity.State != nil {
 		values = append(values, fmt.Sprintf("state=$%v", i))
 		arguments = append(arguments, *entity.State)
-		i += 1
+		i++
 	}
 
 	if entity.HeartbeatAt != nil {
 		values = append(values, fmt.Sprintf("heartbeat_at=$%v", i))
 		arguments = append(arguments, *entity.HeartbeatAt)
-		i += 1
+		i++
 	}
 
 	if len(values) > 0 {
 		values = append(values, fmt.Sprintf("updated_at=$%v", i))
 		arguments = append(arguments, time.Now())
-		i += 1
+		i++
 
 		val := strings.Join(values, ", ")
 		arguments = append(arguments, entity_id)
@@ -371,7 +371,7 @@ func (s *storageImpl) list_entities(entity Entity) ([]Entity, error) {
 	if entity.CoreId != nil {
 		values = append(values, fmt.Sprintf("core_id=$%v", i))
 		arguments = append(arguments, *entity.CoreId)
-		i += 1
+		i++
 	}
 
 	if entity.Name != nil {
@@ -420,7 +420,7 @@ func (s *storageImpl) ListEntitiesForCore(core_id string, entity Entity) ([]Enti
 
 func newStorageImpl(driver, uri string, logger log.FieldLogger) (*storageImpl, error) {
 	if driver != "sqlite3" {
-		logger.WithField("driver", driver).Errorf("only support sqlite3 now")
+		logger.WithField("driver", driver).Errorf("not supprted driver")
 		return nil, ErrUnknownStorageDriver
 	}
 	db, err := sqlx.Connect(driver, uri)
