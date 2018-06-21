@@ -2,15 +2,20 @@ syntax = "proto3";
 
 package ai.metathings.service.camerad;
 
+import "google/protobuf/wrappers.proto";
+
 import "github.com/mwitkow/go-proto-validators/validator.proto";
 
+import "github.com/nayotta/metathings/pkg/proto/camera/camera.proto";
 import "camera.proto";
 
 message ListRequest {
-	OpCore core = 1;
-	OpEntity entity = 2;
+	google.protobuf.StringValue name = 1;
+	OpCore core = 2;
+	OpEntity entity = 3;
+	ai.metathings.service.camera.CameraState state = 4;
 }
 
 message ListResponse {
-	repeated Camera camera = 1;
+	repeated Camera cameras = 1;
 }
