@@ -14,13 +14,13 @@ It is generated from these files:
 	list_for_user.proto
 	patch.proto
 	service.proto
+	show_by_application_credential_id.proto
+	show_to_entity.proto
 	start.proto
 	stop.proto
 
 It has these top-level messages:
 	CallbackRequest
-	OpCore
-	OpEntity
 	OpConfig
 	Camera
 	CreateRequest
@@ -34,6 +34,9 @@ It has these top-level messages:
 	ListForUserResponse
 	PatchRequest
 	PatchResponse
+	ShowByApplicationCredentialIdRequest
+	ShowByApplicationCredentialIdResponse
+	ShowToEntityResponse
 	StartRequest
 	StartResponse
 	StopRequest

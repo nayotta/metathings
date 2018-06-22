@@ -11,8 +11,8 @@ import "camera.proto";
 
 message ListRequest {
 	google.protobuf.StringValue name = 1;
-	OpCore core = 2;
-	OpEntity entity = 3;
+	google.protobuf.StringValue core_id = 2;
+	google.protobuf.StringValue entity_name = 3;
 	ai.metathings.service.camera.CameraState state = 4;
 }
 

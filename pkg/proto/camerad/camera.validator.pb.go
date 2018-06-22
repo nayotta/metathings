@@ -3,9 +3,9 @@
 
 package camerad
 
-import fmt "fmt"
 import go_proto_validators "github.com/mwitkow/go-proto-validators"
 import proto "github.com/golang/protobuf/proto"
+import fmt "fmt"
 import math "math"
 import _ "github.com/golang/protobuf/ptypes/wrappers"
 import _ "github.com/mwitkow/go-proto-validators"
@@ -18,28 +18,6 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
-func (this *OpCore) Validate() error {
-	if nil == this.Id {
-		return go_proto_validators.FieldError("Id", fmt.Errorf("message must exist"))
-	}
-	if this.Id != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Id); err != nil {
-			return go_proto_validators.FieldError("Id", err)
-		}
-	}
-	return nil
-}
-func (this *OpEntity) Validate() error {
-	if nil == this.Name {
-		return go_proto_validators.FieldError("Name", fmt.Errorf("message must exist"))
-	}
-	if this.Name != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Name); err != nil {
-			return go_proto_validators.FieldError("Name", err)
-		}
-	}
-	return nil
-}
 func (this *OpConfig) Validate() error {
 	if this.Device != nil {
 		if err := go_proto_validators.CallValidatorIfExists(this.Device); err != nil {
@@ -69,16 +47,6 @@ func (this *OpConfig) Validate() error {
 	return nil
 }
 func (this *Camera) Validate() error {
-	if this.Core != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Core); err != nil {
-			return go_proto_validators.FieldError("Core", err)
-		}
-	}
-	if this.Entity != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Entity); err != nil {
-			return go_proto_validators.FieldError("Entity", err)
-		}
-	}
 	if this.Config != nil {
 		if err := go_proto_validators.CallValidatorIfExists(this.Config); err != nil {
 			return go_proto_validators.FieldError("Config", err)

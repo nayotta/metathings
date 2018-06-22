@@ -22,14 +22,14 @@ func (this *ListForUserRequest) Validate() error {
 			return go_proto_validators.FieldError("Name", err)
 		}
 	}
-	if this.Core != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Core); err != nil {
-			return go_proto_validators.FieldError("Core", err)
+	if this.CoreId != nil {
+		if err := go_proto_validators.CallValidatorIfExists(this.CoreId); err != nil {
+			return go_proto_validators.FieldError("CoreId", err)
 		}
 	}
-	if this.Entity != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Entity); err != nil {
-			return go_proto_validators.FieldError("Entity", err)
+	if this.EntityName != nil {
+		if err := go_proto_validators.CallValidatorIfExists(this.EntityName); err != nil {
+			return go_proto_validators.FieldError("EntityName", err)
 		}
 	}
 	return nil

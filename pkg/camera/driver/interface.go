@@ -37,3 +37,8 @@ type CameraDriver interface {
 	Start(cfg CameraConfig) (Camera, error)
 	Stop() (Camera, error)
 }
+
+type NotificationCenter interface {
+	GetStateNotificationChannel() chan CameraState
+	CloseStateNotificationChannel(chan CameraState)
+}

@@ -3,9 +3,9 @@
 
 package camerad
 
+import fmt "fmt"
 import go_proto_validators "github.com/mwitkow/go-proto-validators"
 import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
 import math "math"
 import _ "github.com/golang/protobuf/ptypes/wrappers"
 import _ "github.com/mwitkow/go-proto-validators"
@@ -16,19 +16,36 @@ var _ = fmt.Errorf
 var _ = math.Inf
 
 func (this *CreateRequest) Validate() error {
+	if nil == this.Name {
+		return go_proto_validators.FieldError("Name", fmt.Errorf("message must exist"))
+	}
 	if this.Name != nil {
 		if err := go_proto_validators.CallValidatorIfExists(this.Name); err != nil {
 			return go_proto_validators.FieldError("Name", err)
 		}
 	}
-	if this.Core != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Core); err != nil {
-			return go_proto_validators.FieldError("Core", err)
+	if nil == this.CoreId {
+		return go_proto_validators.FieldError("CoreId", fmt.Errorf("message must exist"))
+	}
+	if this.CoreId != nil {
+		if err := go_proto_validators.CallValidatorIfExists(this.CoreId); err != nil {
+			return go_proto_validators.FieldError("CoreId", err)
 		}
 	}
-	if this.Entity != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Entity); err != nil {
-			return go_proto_validators.FieldError("Entity", err)
+	if nil == this.EntityName {
+		return go_proto_validators.FieldError("EntityName", fmt.Errorf("message must exist"))
+	}
+	if this.EntityName != nil {
+		if err := go_proto_validators.CallValidatorIfExists(this.EntityName); err != nil {
+			return go_proto_validators.FieldError("EntityName", err)
+		}
+	}
+	if nil == this.ApplicationCredentialId {
+		return go_proto_validators.FieldError("ApplicationCredentialId", fmt.Errorf("message must exist"))
+	}
+	if this.ApplicationCredentialId != nil {
+		if err := go_proto_validators.CallValidatorIfExists(this.ApplicationCredentialId); err != nil {
+			return go_proto_validators.FieldError("ApplicationCredentialId", err)
 		}
 	}
 	if this.Config != nil {

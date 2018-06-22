@@ -10,12 +10,13 @@ type Camera struct {
 	CreatedAt time.Time `db:"created_at"`
 	UpdatedAt time.Time `db:"updated_at"`
 
-	Id         *string
-	Name       *string
-	CoreId     *string `db:"core_id"`
-	EntityName *string `db:"entity_name"`
-	OwnerId    *string `db:"owner_id"`
-	State      *string
+	Id                      *string
+	Name                    *string
+	CoreId                  *string `db:"core_id"`
+	EntityName              *string `db:"entity_name"`
+	OwnerId                 *string `db:"owner_id"`
+	ApplicationCredentialId *string `db:"application_credential_id"`
+	State                   *string
 
 	Url       *string
 	Device    *string

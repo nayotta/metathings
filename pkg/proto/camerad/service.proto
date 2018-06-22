@@ -14,6 +14,7 @@ import "list_for_user.proto";
 import "start.proto";
 import "stop.proto";
 import "callback.proto";
+import "show_to_entity.proto";
 
 service CameradService {
 	rpc Create(CreateRequest) returns (CreateResponse) {}
@@ -26,4 +27,5 @@ service CameradService {
 	rpc Stop(StopRequest) returns (StopResponse) {}
 	// for camera entity call
 	rpc Callback(CallbackRequest) returns (google.protobuf.Empty) {}
+	rpc ShowToEntity(google.protobuf.Empty) returns (ShowToEntityResponse) {}
 }

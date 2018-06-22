@@ -9,10 +9,11 @@ import "github.com/mwitkow/go-proto-validators/validator.proto";
 import "camera.proto";
 
 message CreateRequest {
-	google.protobuf.StringValue name = 1;
-	OpCore core = 2;
-	OpEntity entity = 3;
-	OpConfig config = 4;
+	google.protobuf.StringValue name = 1 [(validator.field) = {msg_exists: true}];
+	google.protobuf.StringValue core_id = 2 [(validator.field) = {msg_exists: true}];
+	google.protobuf.StringValue entity_name = 3 [(validator.field) = {msg_exists: true}];
+	google.protobuf.StringValue application_credential_id = 4 [(validator.field) = {msg_exists: true}];
+	OpConfig config = 5;
 }
 
 message CreateResponse {

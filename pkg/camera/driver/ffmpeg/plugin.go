@@ -54,6 +54,30 @@ type ffmpegCameraDriver struct {
 	defaultConfig driver.CameraConfig
 	ffmpegCmd     *exec.Cmd
 	cancel        context.CancelFunc
+
+	state_notification_broadcast_channels map[chan driver.CameraState]interface{}
+}
+
+func (drv *ffmpegCameraDriver) GetStateNotificationChannel() chan driver.CameraState {
+	ch := make(chan driver.CameraState)
+	drv.state_notification_broadcast_channels[ch] = nil
+	return ch
+}
+
+func (drv *ffmpegCameraDriver) CloseStateNotificationChannel(ch chan driver.CameraState) {
+	if _, ok := drv.state_notification_broadcast_channels[ch]; ok {
+		delete(drv.state_notification_broadcast_channels, ch)
+	}
+	close(ch)
+}
+
+func (drv *ffmpegCameraDriver) setState(s driver.CameraState) {
+	drv.state = s
+	go func() {
+		for ch, _ := range drv.state_notification_broadcast_channels {
+			ch <- s
+		}
+	}()
 }
 
 func (drv *ffmpegCameraDriver) show() driver.Camera {
@@ -193,7 +217,7 @@ func (drv *ffmpegCameraDriver) Start(cfg driver.CameraConfig) (driver.Camera, er
 	if err != nil {
 		return drv.show(), err
 	}
-	drv.state = driver.STATE_STARTING
+	drv.setState(driver.STATE_STARTING)
 	go func() {
 		drv.mutex.Lock()
 		defer drv.mutex.Unlock()
@@ -218,7 +242,7 @@ func (drv *ffmpegCameraDriver) Start(cfg driver.CameraConfig) (driver.Camera, er
 		cmd_str, err := mustache.Render(drv.opt.Template, rdr_opts)
 		if err != nil {
 			drv.logger.WithError(err).Errorf("failed to render ffmpeg template")
-			drv.state = driver.STATE_STOP
+			drv.setState(driver.STATE_STOP)
 			return
 		}
 
@@ -230,7 +254,7 @@ func (drv *ffmpegCameraDriver) Start(cfg driver.CameraConfig) (driver.Camera, er
 		err = drv.ffmpegCmd.Start()
 		if err != nil {
 			drv.logger.WithError(err).Errorf("failed to start ffmpeg")
-			drv.state = driver.STATE_STOP
+			drv.setState(driver.STATE_STOP)
 			return
 		}
 		drv.logger.WithField("cmd", cmd_str).Debugf("start ffmpeg")
@@ -242,13 +266,13 @@ func (drv *ffmpegCameraDriver) Start(cfg driver.CameraConfig) (driver.Camera, er
 
 			if err != nil && drv.state == driver.STATE_RUNNING {
 				drv.reset()
-				drv.state = driver.STATE_STOP
+				drv.setState(driver.STATE_STOP)
 				drv.logger.WithError(err).Errorf("ffmpeg unexpected exit")
 			}
 
 			drv.logger.Debugf("ffmpeg exit")
 		}()
-		drv.state = driver.STATE_RUNNING
+		drv.setState(driver.STATE_RUNNING)
 		drv.logger.Debugf("camera is running")
 	}()
 	drv.logger.Debugf("camera is starting")
@@ -270,7 +294,7 @@ func (drv *ffmpegCameraDriver) stop() error {
 		drv.cancel()
 	}
 	drv.reset()
-	drv.state = driver.STATE_STOP
+	drv.setState(driver.STATE_STOP)
 	drv.logger.Debugf("camera stopped")
 
 	return nil
@@ -284,7 +308,7 @@ func (drv *ffmpegCameraDriver) Stop() (driver.Camera, error) {
 		return drv.show(), driver.ErrUnstopable
 	}
 
-	drv.state = driver.STATE_TERMINATING
+	drv.setState(driver.STATE_TERMINATING)
 	go drv.stop()
 	drv.logger.Debugf("camera is terminating")
 
@@ -296,5 +320,6 @@ var NewDriver driver_helper.NewDriverMethod = func(opt opt_helper.Option) (drive
 		mutex: &sync.Mutex{},
 		state: driver.STATE_UNKNOWN,
 		opt:   defaultOptions(),
+		state_notification_broadcast_channels: make(map[chan driver.CameraState]interface{}),
 	}, nil
 }

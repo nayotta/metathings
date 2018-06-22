@@ -25,7 +25,8 @@ type metathingsCameraService struct {
 	cli_fty *client_helper.ClientFactory
 	drv     driver.CameraDriver
 
-	camera_st_psr state_helper.CameraStateParser
+	camera_st_psr              state_helper.CameraStateParser
+	state_notification_channel chan driver.CameraState
 }
 
 func (srv *metathingsCameraService) copyCamera(cam driver.Camera) *pb.Camera {
@@ -127,7 +128,25 @@ func (srv *metathingsCameraService) Close() {
 		srv.logger.WithError(err).Debugf("failed to close driver")
 	}
 
+	if srv.state_notification_channel != nil {
+		nc := srv.drv.(driver.NotificationCenter)
+		nc.CloseStateNotificationChannel(srv.state_notification_channel)
+	}
+
 	srv.logger.Debugf("service closed")
+}
+
+func (srv *metathingsCameraService) state_notification_handler() {
+	for {
+		s := <-srv.state_notification_channel
+		srv.logger.WithField("state", s).Debugf("recv state notification")
+		go func() {
+			srv.update_camerad_state(s)
+		}()
+	}
+}
+
+func (srv *metathingsCameraService) update_camerad_state(s driver.CameraState) {
 }
 
 func NewCameraService(opt opt_helper.Option) (*metathingsCameraService, error) {
@@ -181,6 +200,12 @@ func NewCameraService(opt opt_helper.Option) (*metathingsCameraService, error) {
 	}
 
 	srv.CoreService = mt_plugin.MakeCoreService(srv.opt, srv.logger, srv.cli_fty)
+
+	nc, ok := srv.drv.(driver.NotificationCenter)
+	if ok {
+		srv.state_notification_channel = nc.GetStateNotificationChannel()
+		go srv.state_notification_handler()
+	}
 
 	return srv, nil
 }

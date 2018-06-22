@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS camera (
     core_id varchar(255),
     entity_name varchar(255),
     owner_id varchar(255),
+    application_credential_id varchar(255),
     state varchar(255),
     url varchar(1024),
     device varchar(255),
@@ -42,8 +43,8 @@ func (s *storageImpl) CreateCamera(cam Camera) (Camera, error) {
 	cam.UpdatedAt = now
 
 	_, err := s.db.NamedExec(`
-INSERT INTO camera (id, name, core_id, entity_name, owner_id, state, url, device, width, height, bitrate, framerate)
-VALUES (:id, :name, :core_id, :entity_name, :owner_id, :state, :url, :device, :width, :height, :bitrate, :framerate)`, &cam)
+INSERT INTO camera (id, name, core_id, entity_name, owner_id, application_credential_id, state, url, device, width, height, bitrate, framerate)
+VALUES (:id, :name, :core_id, :entity_name, :owner_id, :application_credential_id, :state, :url, :device, :width, :height, :bitrate, :framerate)`, &cam)
 	if err != nil {
 		s.logger.WithError(err).Errorf("failed to create camera")
 		return c, err
@@ -184,6 +185,30 @@ func (s *storageImpl) list_cameras(cam Camera) ([]Camera, error) {
 	if cam.Name != nil {
 		values = append(values, fmt.Sprintf("name=$%v", i))
 		arguments = append(arguments, *cam.Name)
+		i++
+	}
+
+	if cam.CoreId != nil {
+		values = append(values, fmt.Sprintf("core_id=$%v", i))
+		arguments = append(arguments, *cam.CoreId)
+		i++
+	}
+
+	if cam.EntityName != nil {
+		values = append(values, fmt.Sprintf("entity_name=$%v", i))
+		arguments = append(arguments, *cam.EntityName)
+		i++
+	}
+
+	if cam.OwnerId != nil {
+		values = append(values, fmt.Sprintf("owner_id=$%v", i))
+		arguments = append(arguments, *cam.OwnerId)
+		i++
+	}
+
+	if cam.ApplicationCredentialId != nil {
+		values = append(values, fmt.Sprintf("application_credential_id=$%v", i))
+		arguments = append(arguments, *cam.ApplicationCredentialId)
 		i++
 	}
 

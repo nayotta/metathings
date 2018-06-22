@@ -23,7 +23,6 @@ import (
 	token_helper "github.com/nayotta/metathings/pkg/common/token"
 	camera_pb "github.com/nayotta/metathings/pkg/proto/camera"
 	pb "github.com/nayotta/metathings/pkg/proto/camerad"
-	cored_pb "github.com/nayotta/metathings/pkg/proto/cored"
 )
 
 type options struct {
@@ -119,16 +118,12 @@ func (srv *metathingsCameradService) AuthFuncOverride(ctx context.Context, fullM
 
 func (srv *metathingsCameradService) copyCamera(c storage.Camera) *pb.Camera {
 	return &pb.Camera{
-		Id:   *c.Id,
-		Name: *c.Name,
-		Core: &cored_pb.Core{
-			Id:      *c.CoreId,
-			OwnerId: *c.OwnerId,
-		},
-		Entity: &cored_pb.Entity{
-			Name: *c.EntityName,
-		},
-		State: srv.camera_st_psr.ToValue(*c.State),
+		Id:         *c.Id,
+		Name:       *c.Name,
+		CoreId:     *c.CoreId,
+		OwnerId:    *c.OwnerId,
+		EntityName: *c.EntityName,
+		State:      srv.camera_st_psr.ToValue(*c.State),
 		Config: &camera_pb.CameraConfig{
 			Url:       *c.Url,
 			Device:    *c.Device,
@@ -155,25 +150,27 @@ func (srv *metathingsCameradService) Create(ctx context.Context, req *pb.CreateR
 	} else {
 		name_str = cam_id
 	}
-	core_id := req.GetCore().GetId().GetValue()
-	entity_name := req.GetEntity().GetName().GetValue()
+	core_id := req.GetCoreId().GetValue()
+	entity_name := req.GetEntityName().GetValue()
+	app_cred_id := req.GetApplicationCredentialId().GetValue()
 	state := "unknown"
 	empty_str := ""
 	var zero_int uint32 = 0
 
 	cam := storage.Camera{
-		Id:         &cam_id,
-		Name:       &name_str,
-		CoreId:     &core_id,
-		EntityName: &entity_name,
-		OwnerId:    &cred.User.Id,
-		State:      &state,
-		Url:        &empty_str,
-		Device:     &empty_str,
-		Width:      &zero_int,
-		Height:     &zero_int,
-		Bitrate:    &zero_int,
-		Framerate:  &zero_int,
+		Id:                      &cam_id,
+		Name:                    &name_str,
+		CoreId:                  &core_id,
+		EntityName:              &entity_name,
+		OwnerId:                 &cred.User.Id,
+		ApplicationCredentialId: &app_cred_id,
+		State:     &state,
+		Url:       &empty_str,
+		Device:    &empty_str,
+		Width:     &zero_int,
+		Height:    &zero_int,
+		Bitrate:   &zero_int,
+		Framerate: &zero_int,
 	}
 
 	cfg := req.GetConfig()
@@ -327,14 +324,14 @@ func (srv *metathingsCameradService) List(ctx context.Context, req *pb.ListReque
 		c.Name = &name.Value
 	}
 
-	core := req.GetCore()
-	if core != nil {
-		c.CoreId = &core.Id.Value
+	core_id := req.GetCoreId()
+	if core_id != nil {
+		c.CoreId = &core_id.Value
 	}
 
-	entity := req.GetEntity()
-	if entity != nil {
-		c.EntityName = &entity.Name.Value
+	entity_name := req.GetEntityName()
+	if entity_name != nil {
+		c.EntityName = &entity_name.Value
 	}
 
 	state := req.GetState()
@@ -377,14 +374,14 @@ func (srv *metathingsCameradService) ListForUser(ctx context.Context, req *pb.Li
 		c.Name = &name.Value
 	}
 
-	core := req.GetCore()
-	if core != nil {
-		c.CoreId = &core.Id.Value
+	core_id := req.GetCoreId()
+	if core_id != nil {
+		c.CoreId = &core_id.Value
 	}
 
-	entity := req.GetEntity()
-	if entity != nil {
-		c.EntityName = &entity.Name.Value
+	entity_name := req.GetEntityName()
+	if entity_name != nil {
+		c.EntityName = &entity_name.Value
 	}
 
 	state := req.GetState()
@@ -558,6 +555,33 @@ func (srv *metathingsCameradService) Stop(ctx context.Context, req *pb.StopReque
 
 func (srv *metathingsCameradService) Callback(ctx context.Context, req *pb.CallbackRequest) (*empty.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "unimplemented")
+}
+
+func (srv *metathingsCameradService) ShowToEntity(ctx context.Context, req *empty.Empty) (*pb.ShowToEntityResponse, error) {
+	cred := context_helper.Credential(ctx)
+	app_cred_id := cred.ApplicationCredential.Id
+
+	c := storage.Camera{
+		ApplicationCredentialId: &app_cred_id,
+	}
+	cs, err := srv.storage.ListCameras(c)
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to list cameras for show to entity")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
+	if len(cs) == 0 {
+		srv.logger.WithField("application_credential_id", app_cred_id).Errorf("unknown application credential id")
+		return nil, status.Errorf(codes.NotFound, "unknown application credential id")
+	}
+
+	res := &pb.ShowToEntityResponse{
+		Camera: srv.copyCamera(cs[0]),
+	}
+
+	srv.logger.WithField("application_credential_id", app_cred_id).Debugf("show to entity")
+
+	return res, nil
 }
 
 func NewCameradService(opt ...ServiceOptions) (*metathingsCameradService, error) {

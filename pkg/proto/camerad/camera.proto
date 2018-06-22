@@ -10,14 +10,6 @@ import "github.com/nayotta/metathings/pkg/proto/cored/core.proto";
 import "github.com/nayotta/metathings/pkg/proto/cored/entity.proto";
 import "github.com/nayotta/metathings/pkg/proto/camera/camera.proto";
 
-message OpCore {
-	google.protobuf.StringValue id = 1 [(validator.field) = {msg_exists: true}];
-}
-
-message OpEntity {
-	google.protobuf.StringValue name = 1 [(validator.field) = {msg_exists: true}];
-}
-
 message OpConfig {
 	google.protobuf.StringValue device = 1;
 	google.protobuf.UInt32Value width = 2;
@@ -29,8 +21,10 @@ message OpConfig {
 message Camera {
 	string id = 1;
 	string name = 2;
-	ai.metathings.service.cored.Core core = 3;
-	ai.metathings.service.cored.Entity entity = 4;
-	ai.metathings.service.camera.CameraState state = 5;
-	ai.metathings.service.camera.CameraConfig config = 6;
+	string application_credential_id = 3;
+	string core_id = 4;
+	string entity_name = 5;
+	string owner_id = 6;
+	ai.metathings.service.camera.CameraState state = 7;
+	ai.metathings.service.camera.CameraConfig config = 8;
 }
