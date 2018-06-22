@@ -466,7 +466,7 @@ func (srv *metathingsCameradService) Start(ctx context.Context, req *pb.StartReq
 
 	cli, cfn, err := srv.cli_fty.NewCoredServiceClient()
 	if err != nil {
-		srv.logger.WithError(err).Errorf("failed to new camera service client")
+		srv.logger.WithError(err).Errorf("failed to new core service client")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 	defer cfn()
@@ -510,7 +510,50 @@ func (srv *metathingsCameradService) Start(ctx context.Context, req *pb.StartReq
 }
 
 func (srv *metathingsCameradService) Stop(ctx context.Context, req *pb.StopRequest) (*pb.StopResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "unimplemented")
+	err := req.Validate()
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to validate request data")
+		return nil, status.Errorf(codes.InvalidArgument, err.Error())
+	}
+
+	cam_id := req.GetId().GetValue()
+	c, err := srv.storage.GetCamera(cam_id)
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to get camera")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
+	call_req := client_helper.MustNewUnaryCallRequest(*c.CoreId, *c.EntityName, "camera", "Stop", &empty.Empty{})
+
+	cli, cfn, err := srv.cli_fty.NewCoredServiceClient()
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to new core service client")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+	defer cfn()
+
+	call_res, err := cli.UnaryCall(ctx, call_req)
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to call stop on entity")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
+	var stop_res camera_pb.StopResponse
+	err = client_helper.DecodeUnaryCallResponse(call_res, &stop_res)
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to decode response")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
+	c, _ := srv.storage.GetCamera(cam_id)
+
+	res := &pb.StopResponse{
+		Camera: srv.copyCamera(c),
+	}
+
+	srv.logger.WithField("cam_id", cam_id).Infof("camera terminated")
+
+	return res, nil
 }
 
 func (srv *metathingsCameradService) Callback(ctx context.Context, req *pb.CallbackRequest) (*empty.Empty, error) {
