@@ -126,7 +126,7 @@ func issueToken() error {
 	}
 
 	ctx := context.Background()
-	cli, cfn, err := getClientFactory().NewIdentityServiceClient()
+	cli, cfn, err := getClientFactory().NewIdentitydServiceClient()
 	if err != nil {
 		return err
 	}

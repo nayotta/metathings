@@ -30,7 +30,7 @@ func (vdr *tokenValidator) Validate(token string) (*identityd_pb.Token, error) {
 	)
 	ctx = metadata.NewOutgoingContext(ctx, md)
 
-	cli, closeFn, err := vdr.cli_fty.NewIdentityServiceClient()
+	cli, closeFn, err := vdr.cli_fty.NewIdentitydServiceClient()
 	if err != nil {
 		return nil, err
 	}

@@ -51,7 +51,7 @@ func (mgr *applicationCredentialManager) refreshToken() error {
 		},
 	}
 
-	cli, fn, err := mgr.client_factory.NewIdentityServiceClient()
+	cli, fn, err := mgr.client_factory.NewIdentitydServiceClient()
 	if err != nil {
 		return err
 	}

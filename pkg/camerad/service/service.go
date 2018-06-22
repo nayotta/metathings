@@ -478,14 +478,14 @@ func (srv *metathingsCameradService) Start(ctx context.Context, req *pb.StartReq
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
-	err := client_helper.DecodeUnaryCallResponse(call_res, &start_res)
+	err = client_helper.DecodeUnaryCallResponse(call_res, &start_res)
 	if err != nil {
 		srv.logger.WithError(err).Errorf("failed to decode response")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
 	cfg := start_res.Camera.Config
-	c := storage.Camera{
+	c = storage.Camera{
 		Url:       &cfg.Url,
 		Device:    &cfg.Device,
 		Width:     &cfg.Width,
@@ -494,7 +494,7 @@ func (srv *metathingsCameradService) Start(ctx context.Context, req *pb.StartReq
 		Framerate: &cfg.Framerate,
 	}
 
-	c, err := srv.storage.PatchCamera(cam_id, c)
+	c, err = srv.storage.PatchCamera(cam_id, c)
 	if err != nil {
 		srv.logger.WithError(err).Errorf("failed to update camera")
 		return nil, status.Errorf(codes.Internal, err.Error())
@@ -545,7 +545,7 @@ func (srv *metathingsCameradService) Stop(ctx context.Context, req *pb.StopReque
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
-	c, _ := srv.storage.GetCamera(cam_id)
+	c, _ = srv.storage.GetCamera(cam_id)
 
 	res := &pb.StopResponse{
 		Camera: srv.copyCamera(c),

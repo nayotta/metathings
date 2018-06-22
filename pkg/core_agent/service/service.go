@@ -131,7 +131,7 @@ func (srv *coreAgentService) HeartbeatLoop() error {
 
 func (srv *coreAgentService) HeartbeatOnce() error {
 	ctx := context_helper.WithToken(context.Background(), srv.app_cred_mgr.GetToken())
-	cli, cfn, err := srv.cli_fty.NewCoreServiceClient()
+	cli, cfn, err := srv.cli_fty.NewCoredServiceClient()
 	if err != nil {
 		return err
 	}
@@ -169,7 +169,7 @@ func (srv *coreAgentService) copyEntity(e *cored_pb.Entity) *pb.Entity {
 
 func (srv *coreAgentService) CreateEntity(ctx context.Context, req *pb.CreateEntityRequest) (*pb.CreateEntityResponse, error) {
 	ctx = context_helper.WithToken(ctx, srv.app_cred_mgr.GetToken())
-	cli, closeFn, err := srv.cli_fty.NewCoreServiceClient()
+	cli, closeFn, err := srv.cli_fty.NewCoredServiceClient()
 	if err != nil {
 		srv.logger.WithError(err).Errorf("failed to new core service client")
 		return nil, status.Errorf(codes.Internal, err.Error())
@@ -199,7 +199,7 @@ func (srv *coreAgentService) CreateEntity(ctx context.Context, req *pb.CreateEnt
 
 func (srv *coreAgentService) DeleteEntity(ctx context.Context, req *pb.DeleteEntityRequest) (*empty.Empty, error) {
 	ctx = context_helper.WithToken(ctx, srv.app_cred_mgr.GetToken())
-	cli, closeFn, err := srv.cli_fty.NewCoreServiceClient()
+	cli, closeFn, err := srv.cli_fty.NewCoredServiceClient()
 	if err != nil {
 		srv.logger.WithError(err).Errorf("failed to new core service client")
 		return nil, status.Errorf(codes.Internal, err.Error())
@@ -219,7 +219,7 @@ func (srv *coreAgentService) DeleteEntity(ctx context.Context, req *pb.DeleteEnt
 
 func (srv *coreAgentService) PatchEntity(ctx context.Context, req *pb.PatchEntityRequest) (*pb.PatchEntityResponse, error) {
 	ctx = context_helper.WithToken(ctx, srv.app_cred_mgr.GetToken())
-	cli, closeFn, err := srv.cli_fty.NewCoreServiceClient()
+	cli, closeFn, err := srv.cli_fty.NewCoredServiceClient()
 	if err != nil {
 		srv.logger.WithError(err).Errorf("failed to new core service client")
 		return nil, status.Errorf(codes.Internal, err.Error())
@@ -245,7 +245,7 @@ func (srv *coreAgentService) PatchEntity(ctx context.Context, req *pb.PatchEntit
 
 func (srv *coreAgentService) GetEntity(ctx context.Context, req *pb.GetEntityRequest) (*pb.GetEntityResponse, error) {
 	ctx = context_helper.WithToken(ctx, srv.app_cred_mgr.GetToken())
-	cli, closeFn, err := srv.cli_fty.NewCoreServiceClient()
+	cli, closeFn, err := srv.cli_fty.NewCoredServiceClient()
 	if err != nil {
 		srv.logger.WithError(err).Errorf("failed to new core service client")
 		return nil, status.Errorf(codes.Internal, err.Error())
@@ -266,7 +266,7 @@ func (srv *coreAgentService) GetEntity(ctx context.Context, req *pb.GetEntityReq
 
 func (srv *coreAgentService) ListEntities(ctx context.Context, req *pb.ListEntitiesRequest) (*pb.ListEntitiesResponse, error) {
 	ctx = context_helper.WithToken(ctx, srv.app_cred_mgr.GetToken())
-	cli, closeFn, err := srv.cli_fty.NewCoreServiceClient()
+	cli, closeFn, err := srv.cli_fty.NewCoredServiceClient()
 	if err != nil {
 		srv.logger.WithError(err).Errorf("failed to new core service client")
 		return nil, status.Errorf(codes.Internal, err.Error())
@@ -366,7 +366,7 @@ func (srv *coreAgentService) getDispatcherPlugin(name string, service_name strin
 
 func (srv *coreAgentService) CreateOrGetEntity(ctx context.Context, req *pb.CreateOrGetEntityRequest) (*pb.CreateOrGetEntityResponse, error) {
 	ctx = context_helper.WithToken(ctx, srv.app_cred_mgr.GetToken())
-	cli, closeFn, err := srv.cli_fty.NewCoreServiceClient()
+	cli, closeFn, err := srv.cli_fty.NewCoredServiceClient()
 	if err != nil {
 		srv.logger.WithError(err).Errorf("failed to new core service client")
 		return nil, status.Errorf(codes.Internal, err.Error())
@@ -410,7 +410,7 @@ func (srv *coreAgentService) Heartbeat(ctx context.Context, req *pb.HeartbeatReq
 	entity_id := req.GetEntityId().GetValue()
 	if _, ok := srv.heartbeat_entities[entity_id]; !ok {
 		ctx = context_helper.WithToken(ctx, srv.app_cred_mgr.GetToken())
-		cli, closeFn, err := srv.cli_fty.NewCoreServiceClient()
+		cli, closeFn, err := srv.cli_fty.NewCoredServiceClient()
 		if err != nil {
 			srv.logger.WithError(err).Errorf("failed to new core service client")
 			return nil, status.Errorf(codes.Internal, err.Error())
@@ -444,7 +444,7 @@ func (srv *coreAgentService) ServeOnStream() error {
 	token := srv.app_cred_mgr.GetToken()
 	ctx := context_helper.WithToken(context.Background(), token)
 
-	cli, cfn, err := srv.cli_fty.NewCoreServiceClient(GRPC_KEEPALIVE)
+	cli, cfn, err := srv.cli_fty.NewCoredServiceClient(GRPC_KEEPALIVE)
 	if err != nil {
 		srv.logger.WithError(err).Errorf("failed to dial to metathings service")
 		return err
@@ -523,7 +523,7 @@ func (srv *coreAgentService) dispatch_system_stream_config(ctx context.Context, 
 	}
 	srv.logger.Debugf("build streaming to entity for stream call")
 
-	cli, cfn, err := srv.cli_fty.NewCoreServiceClient(GRPC_KEEPALIVE)
+	cli, cfn, err := srv.cli_fty.NewCoredServiceClient(GRPC_KEEPALIVE)
 	if err != nil {
 		return nil, err
 	}
@@ -695,7 +695,7 @@ func getCoreIdFromFile(path string) (string, error) {
 func getCoreIdFromService(cli_fty *client_helper.ClientFactory, token string) (string, error) {
 	ctx := context.Background()
 	ctx = context_helper.WithToken(ctx, token)
-	cli, fn, err := cli_fty.NewCoreServiceClient()
+	cli, fn, err := cli_fty.NewCoredServiceClient()
 	if err != nil {
 		return "", err
 	}
