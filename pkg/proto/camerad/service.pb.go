@@ -43,7 +43,7 @@ type CameradServiceClient interface {
 	ListForUser(ctx context.Context, in *ListForUserRequest, opts ...grpc.CallOption) (*ListForUserResponse, error)
 	Start(ctx context.Context, in *StartRequest, opts ...grpc.CallOption) (*StartResponse, error)
 	Stop(ctx context.Context, in *StopRequest, opts ...grpc.CallOption) (*StopResponse, error)
-	// called by camera entity
+	// for camera entity call
 	Callback(ctx context.Context, in *CallbackRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 }
 
@@ -147,7 +147,7 @@ type CameradServiceServer interface {
 	ListForUser(context.Context, *ListForUserRequest) (*ListForUserResponse, error)
 	Start(context.Context, *StartRequest) (*StartResponse, error)
 	Stop(context.Context, *StopRequest) (*StopResponse, error)
-	// called by camera entity
+	// for camera entity call
 	Callback(context.Context, *CallbackRequest) (*empty.Empty, error)
 }
 
@@ -362,9 +362,9 @@ var _CameradService_serviceDesc = grpc.ServiceDesc{
 	Metadata: "service.proto",
 }
 
-func init() { proto.RegisterFile("service.proto", fileDescriptor_service_0e763ef8ba5bcb23) }
+func init() { proto.RegisterFile("service.proto", fileDescriptor_service_1a28121d3573c15a) }
 
-var fileDescriptor_service_0e763ef8ba5bcb23 = []byte{
+var fileDescriptor_service_1a28121d3573c15a = []byte{
 	// 354 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x93, 0xcf, 0x4e, 0x02, 0x31,
 	0x10, 0xc6, 0x49, 0x14, 0x90, 0xa2, 0x1c, 0x6a, 0xe2, 0x01, 0xe3, 0x85, 0x9b, 0x82, 0x25, 0xe2,

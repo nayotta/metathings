@@ -223,8 +223,69 @@ func (srv *metathingsCameradService) Delete(context.Context, *pb.DeleteRequest) 
 	return nil, status.Errorf(codes.Unimplemented, "unimplemented")
 }
 
-func (srv *metathingsCameradService) Patch(context.Context, *pb.PatchRequest) (*pb.PatchResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "unimplemented")
+func (srv *metathingsCameradService) Patch(ctx context.Context, req *pb.PatchRequest) (*pb.PatchResponse, error) {
+	err := req.Validate()
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to validate request data")
+		return nil, status.Errorf(codes.InvalidArgument, err.Error())
+	}
+
+	updated := false
+	c := storage.Camera{}
+	cam_id := req.GetId().GetValue()
+
+	name := req.GetName()
+	if name != nil {
+		c.Name = &name.Value
+		updated = true
+	}
+
+	cfg := req.GetConfig()
+	if cfg != nil {
+		device := cfg.GetDevice()
+		if device != nil {
+			c.Device = &device.Value
+			updated = true
+		}
+
+		width := cfg.GetWidth()
+		height := cfg.GetHeight()
+		if width != nil && height != nil {
+			c.Width = &width.Value
+			c.Height = &height.Value
+			updated = true
+		}
+
+		bitrate := cfg.GetBitrate()
+		if bitrate != nil {
+			c.Bitrate = &bitrate.Value
+			updated = true
+		}
+
+		framerate := cfg.GetFramerate()
+		if framerate != nil {
+			c.Framerate = &framerate.Value
+			updated = true
+		}
+	}
+
+	if !updated {
+		return nil, status.Errorf(codes.InvalidArgument, "empty patch request")
+	}
+
+	pc, err := srv.storage.PatchCamera(cam_id, c)
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to patch camera")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
+	res := &pb.PatchResponse{
+		Camera: srv.copyCamera(pc),
+	}
+
+	srv.logger.WithField("cam_id", cam_id).Infof("patch camera")
+
+	return res, nil
 }
 
 func (srv *metathingsCameradService) Get(ctx context.Context, req *pb.GetRequest) (*pb.GetResponse, error) {

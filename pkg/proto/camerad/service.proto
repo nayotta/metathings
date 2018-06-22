@@ -24,6 +24,6 @@ service CameradService {
 	rpc ListForUser(ListForUserRequest) returns (ListForUserResponse) {}
 	rpc Start(StartRequest) returns (StartResponse) {}
 	rpc Stop(StopRequest) returns (StopResponse) {}
-	// called by camera entity
+	// for camera entity call
 	rpc Callback(CallbackRequest) returns (google.protobuf.Empty) {}
 }

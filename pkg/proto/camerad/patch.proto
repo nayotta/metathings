@@ -10,7 +10,8 @@ import "camera.proto";
 
 message PatchRequest {
 	google.protobuf.StringValue id = 1 [(validator.field) = {msg_exists: true}];
-	OpConfig config = 2;
+	google.protobuf.StringValue name = 2;
+	OpConfig config = 3;
 }
 
 message PatchResponse {
