@@ -67,7 +67,7 @@ func NewEchoService(opts opt_helper.Option) (*metathingsEchoService, error) {
 	}
 
 	cli_fty_cfgs := client_helper.NewDefaultServiceConfigs(opts.GetString("metathings.address"))
-	cli_fty_cfgs[client_helper.AGENTD_CONFIG] = client_helper.ServiceConfig{opts.GetString("agent.address")}
+	cli_fty_cfgs[client_helper.AGENT_CONFIG] = client_helper.ServiceConfig{opts.GetString("agent.address")}
 	cli_fty, err := client_helper.NewClientFactory(
 		cli_fty_cfgs,
 		client_helper.WithInsecureOptionFunc(),

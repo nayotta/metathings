@@ -2,8 +2,11 @@ package metathings_camerad_service
 
 import (
 	"context"
+	"net/url"
+	"path"
 
 	"github.com/golang/protobuf/ptypes/empty"
+	gpb "github.com/golang/protobuf/ptypes/wrappers"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -409,7 +412,101 @@ func (srv *metathingsCameradService) ListForUser(ctx context.Context, req *pb.Li
 }
 
 func (srv *metathingsCameradService) Start(ctx context.Context, req *pb.StartRequest) (*pb.StartResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "unimplemented")
+	err := req.Validate()
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to validate request data")
+		return nil, status.Errorf(codes.InvalidArgument, err.Error())
+	}
+
+	live, err := url.Parse(srv.opts.rtmp_addr)
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to parse rtmp address")
+		return nil, status.Errorf(codes.Internal, "bad rtmp address")
+	}
+	live_id := common.NewId()
+	live.Path = path.Join(live.Path, "metathings/live", live_id)
+	live_str := live.String()
+	cam_id := req.GetId().GetValue()
+
+	c, err := srv.storage.GetCamera(cam_id)
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to get camera")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
+	if *c.State != "stop" {
+		srv.logger.WithFields(log.Fields{
+			"cam_id": cam_id,
+			"state":  *c.State,
+		}).Errorf("failed to start camera with unstartable state")
+		return nil, status.Errorf(codes.OutOfRange, "unstartable state")
+	}
+
+	start_req := &camera_pb.StartRequest{
+		Config: &camera_pb.StartConfig{
+			Url: &gpb.StringValue{Value: live_str},
+		},
+	}
+
+	if c.Device != nil {
+		start_req.Config.Device = &gpb.StringValue{Value: *c.Device}
+	}
+	if c.Width != nil && c.Height != nil {
+		start_req.Config.Width = &gpb.UInt32Value{Value: *c.Width}
+		start_req.Config.Height = &gpb.UInt32Value{Value: *c.Height}
+	}
+	if c.Bitrate != nil {
+		start_req.Config.Bitrate = &gpb.UInt32Value{Value: *c.Bitrate}
+	}
+	if c.Framerate != nil {
+		start_req.Config.Framerate = &gpb.UInt32Value{Value: *c.Framerate}
+	}
+
+	call_req := client_helper.MustNewUnaryCallRequest(*c.CoreId, *c.EntityName, "camera", "Start", start_req)
+
+	cli, cfn, err := srv.cli_fty.NewCoredServiceClient()
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to new camera service client")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+	defer cfn()
+
+	var start_res camera_pb.StartResponse
+	call_res, err := cli.UnaryCall(ctx, call_req)
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to call start on entity")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
+	err := client_helper.DecodeUnaryCallResponse(call_res, &start_res)
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to decode response")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
+	cfg := start_res.Camera.Config
+	c := storage.Camera{
+		Url:       &cfg.Url,
+		Device:    &cfg.Device,
+		Width:     &cfg.Width,
+		Height:    &cfg.Height,
+		Bitrate:   &cfg.Bitrate,
+		Framerate: &cfg.Framerate,
+	}
+
+	c, err := srv.storage.PatchCamera(cam_id, c)
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to update camera")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
+	res := &pb.StartResponse{
+		Camera: srv.copyCamera(c),
+	}
+
+	srv.logger.WithField("cam_id", cam_id).Infof("start camera")
+
+	return res, nil
 }
 
 func (srv *metathingsCameradService) Stop(ctx context.Context, req *pb.StopRequest) (*pb.StopResponse, error) {

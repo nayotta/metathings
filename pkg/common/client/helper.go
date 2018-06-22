@@ -7,23 +7,25 @@ import (
 	"google.golang.org/grpc"
 
 	constant_helper "github.com/nayotta/metathings/pkg/common/constant"
-	camerad_pb "github.com/nayotta/metathings/pkg/proto/camera"
-	agentd_pb "github.com/nayotta/metathings/pkg/proto/core_agent"
+	camera_pb "github.com/nayotta/metathings/pkg/proto/camera"
+	camerad_pb "github.com/nayotta/metathings/pkg/proto/camerad"
+	agent_pb "github.com/nayotta/metathings/pkg/proto/core_agent"
 	cored_pb "github.com/nayotta/metathings/pkg/proto/cored"
-	echod_pb "github.com/nayotta/metathings/pkg/proto/echo"
+	echo_pb "github.com/nayotta/metathings/pkg/proto/echo"
 	identityd_pb "github.com/nayotta/metathings/pkg/proto/identityd"
-	motord_pb "github.com/nayotta/metathings/pkg/proto/motor"
-	switcherd_pb "github.com/nayotta/metathings/pkg/proto/switcher"
+	motor_pb "github.com/nayotta/metathings/pkg/proto/motor"
+	switcher_pb "github.com/nayotta/metathings/pkg/proto/switcher"
 )
 
 const (
 	DEFAULT_CONFIG = iota
 	IDENTITYD_CONFIG
 	CORED_CONFIG
-	AGENTD_CONFIG
-	ECHOD_CONFIG
-	SWITCHERD_CONFIG
-	MOTORD_CONFIG
+	CAMERAD_CONFIG
+	AGENT_CONFIG
+	ECHO_CONFIG
+	SWITCHER_CONFIG
+	MOTOR_CONFIG
 	CAMERA_CONFIG
 )
 
@@ -65,7 +67,7 @@ func (f *ClientFactory) NewConnection(cfg_val int, opts ...grpc.DialOption) (*gr
 	return conn, nil
 }
 
-func (f *ClientFactory) NewCoreServiceClient(opts ...grpc.DialOption) (cored_pb.CoredServiceClient, CloseFn, error) {
+func (f *ClientFactory) NewCoredServiceClient(opts ...grpc.DialOption) (cored_pb.CoredServiceClient, CloseFn, error) {
 	conn, err := f.NewConnection(CORED_CONFIG, opts...)
 	if err != nil {
 		return nil, nil, err
@@ -78,7 +80,7 @@ func (f *ClientFactory) NewCoreServiceClient(opts ...grpc.DialOption) (cored_pb.
 	return cored_pb.NewCoredServiceClient(conn), closeFn, nil
 }
 
-func (f *ClientFactory) NewIdentityServiceClient(opts ...grpc.DialOption) (identityd_pb.IdentitydServiceClient, CloseFn, error) {
+func (f *ClientFactory) NewIdentitydServiceClient(opts ...grpc.DialOption) (identityd_pb.IdentitydServiceClient, CloseFn, error) {
 	conn, err := f.NewConnection(IDENTITYD_CONFIG, opts...)
 	if err != nil {
 		return nil, nil, err
@@ -91,8 +93,8 @@ func (f *ClientFactory) NewIdentityServiceClient(opts ...grpc.DialOption) (ident
 	return identityd_pb.NewIdentitydServiceClient(conn), closeFn, nil
 }
 
-func (f *ClientFactory) NewCoreAgentServiceClient(opts ...grpc.DialOption) (agentd_pb.CoreAgentServiceClient, CloseFn, error) {
-	conn, err := f.NewConnection(AGENTD_CONFIG, opts...)
+func (f *ClientFactory) NewCoreAgentServiceClient(opts ...grpc.DialOption) (agent_pb.CoreAgentServiceClient, CloseFn, error) {
+	conn, err := f.NewConnection(AGENT_CONFIG, opts...)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -101,11 +103,11 @@ func (f *ClientFactory) NewCoreAgentServiceClient(opts ...grpc.DialOption) (agen
 		conn.Close()
 	}
 
-	return agentd_pb.NewCoreAgentServiceClient(conn), closeFn, nil
+	return agent_pb.NewCoreAgentServiceClient(conn), closeFn, nil
 }
 
-func (f *ClientFactory) NewEchoServiceClient(opts ...grpc.DialOption) (echod_pb.EchoServiceClient, CloseFn, error) {
-	conn, err := f.NewConnection(ECHOD_CONFIG, opts...)
+func (f *ClientFactory) NewEchoServiceClient(opts ...grpc.DialOption) (echo_pb.EchoServiceClient, CloseFn, error) {
+	conn, err := f.NewConnection(ECHO_CONFIG, opts...)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -114,11 +116,11 @@ func (f *ClientFactory) NewEchoServiceClient(opts ...grpc.DialOption) (echod_pb.
 		conn.Close()
 	}
 
-	return echod_pb.NewEchoServiceClient(conn), closeFn, nil
+	return echo_pb.NewEchoServiceClient(conn), closeFn, nil
 }
 
-func (f *ClientFactory) NewSwitcherServiceClient(opts ...grpc.DialOption) (switcherd_pb.SwitcherServiceClient, CloseFn, error) {
-	conn, err := f.NewConnection(SWITCHERD_CONFIG, opts...)
+func (f *ClientFactory) NewSwitcherServiceClient(opts ...grpc.DialOption) (switcher_pb.SwitcherServiceClient, CloseFn, error) {
+	conn, err := f.NewConnection(SWITCHER_CONFIG, opts...)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -127,11 +129,11 @@ func (f *ClientFactory) NewSwitcherServiceClient(opts ...grpc.DialOption) (switc
 		conn.Close()
 	}
 
-	return switcherd_pb.NewSwitcherServiceClient(conn), closeFn, nil
+	return switcher_pb.NewSwitcherServiceClient(conn), closeFn, nil
 }
 
-func (f *ClientFactory) NewMotorServiceClient(opts ...grpc.DialOption) (motord_pb.MotorServiceClient, CloseFn, error) {
-	conn, err := f.NewConnection(MOTORD_CONFIG, opts...)
+func (f *ClientFactory) NewMotorServiceClient(opts ...grpc.DialOption) (motor_pb.MotorServiceClient, CloseFn, error) {
+	conn, err := f.NewConnection(MOTOR_CONFIG, opts...)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -140,10 +142,10 @@ func (f *ClientFactory) NewMotorServiceClient(opts ...grpc.DialOption) (motord_p
 		conn.Close()
 	}
 
-	return motord_pb.NewMotorServiceClient(conn), closeFn, nil
+	return motor_pb.NewMotorServiceClient(conn), closeFn, nil
 }
 
-func (f *ClientFactory) NewCameraServiceClient(opts ...grpc.DialOption) (camerad_pb.CameraServiceClient, CloseFn, error) {
+func (f *ClientFactory) NewCameraServiceClient(opts ...grpc.DialOption) (camera_pb.CameraServiceClient, CloseFn, error) {
 	conn, err := f.NewConnection(CAMERA_CONFIG, opts...)
 	if err != nil {
 		return nil, nil, err
@@ -153,7 +155,20 @@ func (f *ClientFactory) NewCameraServiceClient(opts ...grpc.DialOption) (camerad
 		conn.Close()
 	}
 
-	return camerad_pb.NewCameraServiceClient(conn), closeFn, nil
+	return camera_pb.NewCameraServiceClient(conn), closeFn, nil
+}
+
+func (f *ClientFactory) NewCameradServiceClient(opts ...grpc.DialOption) (camerad_pb.CameradServiceClient, CloseFn, error) {
+	conn, err := f.NewConnection(CAMERAD_CONFIG, opts...)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	closeFn := func() {
+		conn.Close()
+	}
+
+	return camerad_pb.NewCameradServiceClient(conn), closeFn, nil
 }
 
 func NewClientFactory(configs ServiceConfigs, optFn DialOptionFn) (*ClientFactory, error) {

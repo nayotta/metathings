@@ -203,7 +203,7 @@ func NewMotorService(opt opt_helper.Option) (*metathingsMotorService, error) {
 	}
 
 	cli_fty_cfgs := client_helper.NewDefaultServiceConfigs(opt.GetString("metathings.address"))
-	cli_fty_cfgs[client_helper.AGENTD_CONFIG] = client_helper.ServiceConfig{opt.GetString("agent.address")}
+	cli_fty_cfgs[client_helper.AGENT_CONFIG] = client_helper.ServiceConfig{opt.GetString("agent.address")}
 	cli_fty, err := client_helper.NewClientFactory(
 		cli_fty_cfgs,
 		client_helper.WithInsecureOptionFunc(),
