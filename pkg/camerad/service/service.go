@@ -554,7 +554,54 @@ func (srv *metathingsCameradService) Stop(ctx context.Context, req *pb.StopReque
 }
 
 func (srv *metathingsCameradService) Callback(ctx context.Context, req *pb.CallbackRequest) (*empty.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "unimplemented")
+	pc := storage.Camera{}
+	updated := false
+
+	// TODO(Peer): update config, blablabla
+	state := req.GetState()
+	if state != camera_pb.CameraState_CAMERA_STATE_UNKNOWN {
+		state_str := srv.camera_st_psr.ToString(state)
+		pc.State = &state_str
+		updated = true
+	}
+
+	if !updated {
+		srv.logger.Debugf("not change")
+		return &empty.Empty{}, nil
+	}
+
+	cred := context_helper.Credential(ctx)
+	app_cred_id := cred.ApplicationCredential.Id
+
+	c := storage.Camera{
+		ApplicationCredentialId: &app_cred_id,
+	}
+
+	cs, err := srv.storage.ListCameras(c)
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to list cameras for callback")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
+	if len(cs) == 0 {
+		srv.logger.Debugf("unknown application credential id")
+		return nil, status.Errorf(codes.NotFound, "unknown application credential id")
+	}
+
+	cam_id := *cs[0].Id
+
+	_, err = srv.storage.PatchCamera(cam_id, pc)
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to patch camera")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
+	srv.logger.WithFields(log.Fields{
+		"cam_id":                    cam_id,
+		"application_credential_id": app_cred_id,
+	}).Debugf("camera callback")
+
+	return &empty.Empty{}, nil
 }
 
 func (srv *metathingsCameradService) ShowToEntity(ctx context.Context, req *empty.Empty) (*pb.ShowToEntityResponse, error) {
