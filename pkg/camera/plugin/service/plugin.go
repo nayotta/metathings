@@ -76,6 +76,8 @@ func runCamerad() error {
 	opts.Set("driver.descriptor", root_opts.Driver.Descriptor)
 	opts.Set("driver.name", root_opts.Driver.Name)
 	opts.Set("driver", cmd_helper.GetFromStage(v).Sub("driver"))
+	opts.Set("application_credential.id", root_opts.ApplicationCredential.Id)
+	opts.Set("application_credential.secret", root_opts.ApplicationCredential.Secret)
 
 	srv, err := service.NewCameraService(opts)
 	if err != nil {

@@ -10,20 +10,24 @@ import (
 
 	driver "github.com/nayotta/metathings/pkg/camera/driver"
 	state_helper "github.com/nayotta/metathings/pkg/camera/state"
+	app_cred_mgr "github.com/nayotta/metathings/pkg/common/application_credential_manager"
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
+	context_helper "github.com/nayotta/metathings/pkg/common/context"
 	driver_helper "github.com/nayotta/metathings/pkg/common/driver"
 	log_helper "github.com/nayotta/metathings/pkg/common/log"
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 	mt_plugin "github.com/nayotta/metathings/pkg/cored/plugin"
 	pb "github.com/nayotta/metathings/pkg/proto/camera"
+	camerad_pb "github.com/nayotta/metathings/pkg/proto/camerad"
 )
 
 type metathingsCameraService struct {
 	mt_plugin.CoreService
-	opt     opt_helper.Option
-	logger  log.FieldLogger
-	cli_fty *client_helper.ClientFactory
-	drv     driver.CameraDriver
+	opt          opt_helper.Option
+	logger       log.FieldLogger
+	cli_fty      *client_helper.ClientFactory
+	drv          driver.CameraDriver
+	app_cred_mgr app_cred_mgr.ApplicationCredentialManager
 
 	camera_st_psr              state_helper.CameraStateParser
 	state_notification_channel chan driver.CameraState
@@ -147,6 +151,25 @@ func (srv *metathingsCameraService) state_notification_handler() {
 }
 
 func (srv *metathingsCameraService) update_camerad_state(s driver.CameraState) {
+	cli, cfn, err := srv.cli_fty.NewCameradServiceClient()
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to new camerad service client")
+	}
+	defer cfn()
+
+	token_str := srv.app_cred_mgr.GetToken()
+	ctx := context_helper.WithToken(context.Background(), token_str)
+
+	req := &camerad_pb.CallbackRequest{
+		State: srv.camera_st_psr.ToValue(s.ToString()),
+	}
+
+	_, err = cli.Callback(ctx, req)
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to update camera state")
+		return
+	}
+	srv.logger.WithField("state", s.ToString()).Debugf("update state in camerad")
 }
 
 func NewCameraService(opt opt_helper.Option) (*metathingsCameraService, error) {
@@ -164,6 +187,16 @@ func NewCameraService(opt opt_helper.Option) (*metathingsCameraService, error) {
 		client_helper.WithInsecureOptionFunc(),
 	)
 	if err != nil {
+		return nil, err
+	}
+
+	app_cred_mgr, err := app_cred_mgr.NewApplicationCredentialManager(
+		cli_fty,
+		opt.GetString("application_credential.id"),
+		opt.GetString("application_credential.secret"),
+	)
+	if err != nil {
+		log.WithError(err).Errorf("failed to new application credential managaer")
 		return nil, err
 	}
 
@@ -191,10 +224,11 @@ func NewCameraService(opt opt_helper.Option) (*metathingsCameraService, error) {
 	logger.Debugf("camera driver initialized")
 
 	srv := &metathingsCameraService{
-		logger:  logger,
-		cli_fty: cli_fty,
-		opt:     opt,
-		drv:     cam_drv,
+		logger:       logger,
+		cli_fty:      cli_fty,
+		opt:          opt,
+		drv:          cam_drv,
+		app_cred_mgr: app_cred_mgr,
 
 		camera_st_psr: state_helper.NewCameraStateParser(),
 	}
