@@ -11,10 +11,10 @@ services:
     networks:
       - metathingsmesh
     expose:
-      - "80"
+      - "21733"
       - "8001"
     ports:
-      - "21733:80"
+      - "21733:21733"
       - "8001:8001"
     restart: on-failure
 
@@ -47,6 +47,22 @@ services:
       - metathingsmesh
     expose:
       - "5001"
+    restart: on-failure
+
+  camerad:
+    environment:
+      - MTD_STAGE=debug
+    build:
+      context: .
+      dockerfile: dockerfile/Dockerfile.camerad
+    image: nayotta/camerad
+    volumes:
+      - ./etc/camerad.yaml:/etc/metathings/camerad.yaml
+      - ./data/storage:/var/metathings/storage
+    networks:
+      - metathingsmesh
+    expose:
+      - "5002"
     restart: on-failure
 
 networks:

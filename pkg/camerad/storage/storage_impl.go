@@ -43,8 +43,8 @@ func (s *storageImpl) CreateCamera(cam Camera) (Camera, error) {
 	cam.UpdatedAt = now
 
 	_, err := s.db.NamedExec(`
-INSERT INTO camera (id, name, core_id, entity_name, owner_id, application_credential_id, state, url, device, width, height, bitrate, framerate)
-VALUES (:id, :name, :core_id, :entity_name, :owner_id, :application_credential_id, :state, :url, :device, :width, :height, :bitrate, :framerate)`, &cam)
+INSERT INTO camera (id, name, core_id, entity_name, owner_id, application_credential_id, state, url, device, width, height, bitrate, framerate, created_at, updated_at)
+VALUES (:id, :name, :core_id, :entity_name, :owner_id, :application_credential_id, :state, :url, :device, :width, :height, :bitrate, :framerate, :created_at, :updated_at)`, &cam)
 	if err != nil {
 		s.logger.WithError(err).Errorf("failed to create camera")
 		return c, err
@@ -128,7 +128,7 @@ func (s *storageImpl) PatchCamera(cam_id string, cam Camera) (Camera, error) {
 		val := strings.Join(values, ", ")
 		arguments = append(arguments, cam_id)
 
-		sql_str := "UPDATE camera SET " + val + fmt.Sprintf(" WHRE id=$%v", i)
+		sql_str := "UPDATE camera SET " + val + fmt.Sprintf(" WHERE id=$%v", i)
 		s.logger.WithFields(log.Fields{
 			"sql":  sql_str,
 			"args": arguments,
@@ -138,7 +138,7 @@ func (s *storageImpl) PatchCamera(cam_id string, cam Camera) (Camera, error) {
 			s.logger.WithError(err).WithField("cam_id", cam_id).Errorf("failed to patch camera")
 			return c, err
 		}
-		s.db.Get(&c, "SELECT * FROM camera WHERE id=$%1", cam_id)
+		s.db.Get(&c, "SELECT * FROM camera WHERE id=$1", cam_id)
 		s.logger.WithField("cam_id", cam_id).Debugf("update camera")
 		return c, nil
 	}

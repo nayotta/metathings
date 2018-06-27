@@ -166,7 +166,7 @@ func (srv *metathingsCameraService) update_camerad_state(s driver.CameraState) {
 
 	_, err = cli.Callback(ctx, req)
 	if err != nil {
-		srv.logger.WithError(err).Errorf("failed to update camera state")
+		srv.logger.WithError(err).Debugf("failed to update camera state")
 		return
 	}
 	srv.logger.WithField("state", s.ToString()).Debugf("update state in camerad")
@@ -175,7 +175,7 @@ func (srv *metathingsCameraService) update_camerad_state(s driver.CameraState) {
 func NewCameraService(opt opt_helper.Option) (*metathingsCameraService, error) {
 	opt.Set("service_name", "camera")
 
-	logger, err := log_helper.NewLogger("camerad", opt.GetString("log.level"))
+	logger, err := log_helper.NewLogger("camera", opt.GetString("log.level"))
 	if err != nil {
 		return nil, err
 	}

@@ -61,7 +61,7 @@ func (srv *metathingsEchoService) StreamingEcho(stream pb.EchoService_StreamingE
 func NewEchoService(opts opt_helper.Option) (*metathingsEchoService, error) {
 	opts.Set("service_name", "echo")
 
-	logger, err := log_helper.NewLogger("echod", opts.GetString("log.level"))
+	logger, err := log_helper.NewLogger("echo", opts.GetString("log.level"))
 	if err != nil {
 		return nil, err
 	}

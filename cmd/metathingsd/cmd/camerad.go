@@ -18,7 +18,7 @@ type _cameradOptions struct {
 	Listen        string
 	Storage       _storageOptions
 	ServiceConfig _serviceConfigOptions `mapstructure:"service_config"`
-	RtmpAddr      string
+	RtmpUrl       string                `mapstructure:"rtmp_url"`
 }
 
 var (
@@ -48,7 +48,7 @@ var (
 )
 
 func runCamerad() error {
-	lis, err := net.Listen("tcp", cored_opts.Listen)
+	lis, err := net.Listen("tcp", camerad_opts.Listen)
 	if err != nil {
 		return err
 	}
@@ -66,7 +66,7 @@ func runCamerad() error {
 			camerad_opts.ApplicationCredential.Id,
 			camerad_opts.ApplicationCredential.Secret,
 		),
-		service.SetRtmpAddr(camerad_opts.RtmpAddr),
+		service.SetRtmpUrl(camerad_opts.RtmpUrl),
 	)
 	if err != nil {
 		log.WithError(err).Errorf("failed to new camera service")
@@ -87,7 +87,7 @@ func init() {
 	cameradCmd.Flags().StringVar(&camerad_opts.ServiceConfig.Cored.Address, "cored-addr", "mt-api.nayotta.com", "MetaThings Core Service Address")
 	cameradCmd.Flags().StringVar(&camerad_opts.Storage.Driver, "storage-driver", "sqlite3", "Storage Driver [sqlite3]")
 	cameradCmd.Flags().StringVar(&camerad_opts.Storage.Uri, "storage-uri", "", "Storage URI")
-	cameradCmd.Flags().StringVar(&camerad_opts.RtmpAddr, "rtmp-addr", "", "RTMP Server address")
+	cameradCmd.Flags().StringVar(&camerad_opts.RtmpUrl, "rtmp-url", "", "RTMP Server URL")
 
 	RootCmd.AddCommand(cameradCmd)
 }

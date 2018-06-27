@@ -51,5 +51,22 @@ services:
       - "5001"
     restart: on-failure
 
+  camerad:
+    environment:
+      - MTD_STAGE=dev
+    build:
+      context: .
+      dockerfile: dockerfile/Dockerfile.camerad.dev
+    image: nayotta/metathings-camerad-development
+    volumes:
+      - ./data/storage:/var/metathings/storage
+      - .:/go/src/github.com/nayotta/metathings
+      - ./etc/camerad.yaml:/etc/metathings/camerad.yaml
+    networks:
+      - metathingsmesh
+    expose:
+      - "5002"
+    restart: on-failure
+
 networks:
   metathingsmesh:

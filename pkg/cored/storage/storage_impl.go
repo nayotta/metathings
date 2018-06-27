@@ -55,8 +55,8 @@ func (s *storageImpl) CreateCore(core Core) (Core, error) {
 	core.UpdatedAt = now
 	core.HeartbeatAt = &now
 	_, err := s.db.NamedExec(`
-INSERT INTO core (id, name, project_id, owner_id, state, created_at, updated_at, heartbeat_at)
-VALUES (:id, :name, :project_id, :owner_id, :state, :created_at, :updated_at, :heartbeat_at)`, &core)
+INSERT INTO core (id, name, project_id, owner_id, state, heartbeat_at, created_at, updated_at)
+VALUES (:id, :name, :project_id, :owner_id, :state, :heartbeat_at, :created_at, :updated_at)`, &core)
 	if err != nil {
 		s.logger.WithError(err).Errorf("failed to create core")
 		return c, err

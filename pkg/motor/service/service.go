@@ -197,7 +197,7 @@ func (srv *metathingsMotorService) Close() {
 func NewMotorService(opt opt_helper.Option) (*metathingsMotorService, error) {
 	opt.Set("service_name", "motor")
 
-	logger, err := log_helper.NewLogger("motord", opt.GetString("log.level"))
+	logger, err := log_helper.NewLogger("motor", opt.GetString("log.level"))
 	if err != nil {
 		return nil, err
 	}

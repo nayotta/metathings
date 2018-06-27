@@ -1,0 +1,5 @@
+FROM nayotta/metathings-development
+
+COPY ./etc/camerad.yaml /etc/metathings/camerad.yaml
+COPY ./script/camerad.dev_start.sh /usr/local/sbin/camerad.dev_start.sh
+CMD /usr/local/sbin/camerad.dev_start.sh

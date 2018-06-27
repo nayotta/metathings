@@ -18,13 +18,17 @@ static_resources:
               - "*"
               routes:
               - match:
-                  prefix: "/ai.metathings.service.identity.IdentityService"
+                  prefix: "/ai.metathings.service.identityd.IdentitydService"
                 route:
                   cluster: identityd
               - match:
-                  prefix: "/ai.metathings.service.core.CoreService"
+                  prefix: "/ai.metathings.service.cored.CoredService"
                 route:
                   cluster: cored
+              - match:
+                  prefix: "/ai.metathings.service.camerad.CameradService"
+                route:
+                  cluster: camerad
           http_filters:
           - name: envoy.router
             config: {}
@@ -47,6 +51,15 @@ static_resources:
     - socket_address:
         address: cored
         port_value: 5001
+  - name: camerad
+    connect_timeout: 5s
+    type: strict_dns
+    lb_policy: round_robin
+    http2_protocol_options: {}
+    hosts:
+    - socket_address:
+        address: camerad
+        port_value: 5002
 admin:
   access_log_path: "/dev/null"
   address:

@@ -2,6 +2,8 @@ package metathings_camerad_service
 
 import (
 	"context"
+	"fmt"
+	"math/rand"
 	"net/url"
 	"path"
 
@@ -27,13 +29,14 @@ import (
 
 type options struct {
 	logLevel                      string
+	metathingsd_addr              string
 	identityd_addr                string
 	cored_addr                    string
 	application_credential_id     string
 	application_credential_secret string
 	storage_driver                string
 	storage_uri                   string
-	rtmp_addr                     string
+	rtmp_url                      string
 }
 
 var defaultServiceOptions = options{
@@ -45,6 +48,12 @@ type ServiceOptions func(*options)
 func SetLogLevel(lvl string) ServiceOptions {
 	return func(o *options) {
 		o.logLevel = lvl
+	}
+}
+
+func SetMetathingsdAddr(addr string) ServiceOptions {
+	return func(o *options) {
+		o.metathingsd_addr = addr
 	}
 }
 
@@ -74,9 +83,9 @@ func SetStorage(driver, uri string) ServiceOptions {
 	}
 }
 
-func SetRtmpAddr(addr string) ServiceOptions {
+func SetRtmpUrl(url string) ServiceOptions {
 	return func(o *options) {
-		o.rtmp_addr = addr
+		o.rtmp_url = url
 	}
 }
 
@@ -90,6 +99,16 @@ type metathingsCameradService struct {
 	opts          options
 	storage       storage.Storage
 	tk_vdr        token_helper.TokenValidator
+}
+
+func (srv *metathingsCameradService) ContextWithToken(ctxs ...context.Context) context.Context {
+	ctx := context.Background()
+	if len(ctxs) > 0 {
+		ctx = ctxs[0]
+	}
+	token_str := srv.app_cred_mgr.GetToken()
+	ctx = context_helper.WithToken(ctx, token_str)
+	return ctx
 }
 
 func (srv *metathingsCameradService) AuthFuncOverride(ctx context.Context, fullMethodName string) (context.Context, error) {
@@ -117,6 +136,24 @@ func (srv *metathingsCameradService) AuthFuncOverride(ctx context.Context, fullM
 }
 
 func (srv *metathingsCameradService) copyCamera(c storage.Camera) *pb.Camera {
+	cfg := &camera_pb.CameraConfig{}
+	if c.Url != nil {
+		cfg.Url = *c.Url
+	}
+	if c.Device != nil {
+		cfg.Device = *c.Device
+	}
+	if c.Width != nil && c.Height != nil {
+		cfg.Width = *c.Width
+		cfg.Height = *c.Height
+	}
+	if c.Bitrate != nil {
+		cfg.Bitrate = *c.Bitrate
+	}
+	if c.Framerate != nil {
+		cfg.Framerate = *c.Framerate
+	}
+
 	return &pb.Camera{
 		Id:         *c.Id,
 		Name:       *c.Name,
@@ -124,14 +161,7 @@ func (srv *metathingsCameradService) copyCamera(c storage.Camera) *pb.Camera {
 		OwnerId:    *c.OwnerId,
 		EntityName: *c.EntityName,
 		State:      srv.camera_st_psr.ToValue(*c.State),
-		Config: &camera_pb.CameraConfig{
-			Url:       *c.Url,
-			Device:    *c.Device,
-			Width:     *c.Width,
-			Height:    *c.Height,
-			Bitrate:   *c.Bitrate,
-			Framerate: *c.Framerate,
-		},
+		Config:     cfg,
 	}
 }
 
@@ -203,6 +233,46 @@ func (srv *metathingsCameradService) Create(ctx context.Context, req *pb.CreateR
 		srv.logger.WithError(err).Errorf("failed to create camera")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
+	go func() {
+		cli, cfn, err := srv.cli_fty.NewCoredServiceClient()
+		if err != nil {
+			srv.logger.WithError(err).Errorf("failed to create cored service client")
+			return
+		}
+		defer cfn()
+
+		req := client_helper.MustNewUnaryCallRequest(
+			core_id, entity_name, "camera", "Show", &empty.Empty{},
+		)
+
+		res, err := cli.UnaryCall(srv.ContextWithToken(), req)
+		if err != nil {
+			srv.logger.WithError(err).Errorf("failed to show camera from cored")
+			return
+		}
+
+		var show_res camera_pb.ShowResponse
+		client_helper.DecodeUnaryCallResponse(res, &show_res)
+
+		state := show_res.Camera.State
+		state_str := srv.camera_st_psr.ToString(state)
+
+		c := storage.Camera{
+			State: &state_str,
+		}
+
+		_, err = srv.storage.PatchCamera(cam_id, c)
+		if err != nil {
+			srv.logger.WithField("id", cam_id).WithError(err).Errorf("failed to patch camera")
+			return
+		}
+
+		srv.logger.WithFields(log.Fields{
+			"id":    cam_id,
+			"state": state,
+		}).Debugf("update camera state after created")
+	}()
+
 	srv.logger.WithFields(log.Fields{
 		"id":          *cc.Id,
 		"name":        *cc.Name,
@@ -219,8 +289,24 @@ func (srv *metathingsCameradService) Create(ctx context.Context, req *pb.CreateR
 	return res, nil
 }
 
-func (srv *metathingsCameradService) Delete(context.Context, *pb.DeleteRequest) (*empty.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "unimplemented")
+func (srv *metathingsCameradService) Delete(ctx context.Context, req *pb.DeleteRequest) (*empty.Empty, error) {
+	err := req.Validate()
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to validate request data")
+		return nil, status.Errorf(codes.InvalidArgument, err.Error())
+	}
+
+	cam_id := req.GetId().GetValue()
+
+	err = srv.storage.DeleteCamera(cam_id)
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to delete camera")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
+	srv.logger.WithField("id", cam_id).Infof("delete camera")
+
+	return &empty.Empty{}, nil
 }
 
 func (srv *metathingsCameradService) Patch(ctx context.Context, req *pb.PatchRequest) (*pb.PatchResponse, error) {
@@ -408,6 +494,19 @@ func (srv *metathingsCameradService) ListForUser(ctx context.Context, req *pb.Li
 	return res, nil
 }
 
+const (
+	LIVE_ID_LETTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+	LIVE_ID_LENGTH  = 128
+)
+
+func (srv *metathingsCameradService) newLiveId() string {
+	buf := make([]byte, LIVE_ID_LENGTH)
+	for i := 0; i < LIVE_ID_LENGTH; i++ {
+		buf[i] = LIVE_ID_LETTERS[rand.Int31n(int32(len(LIVE_ID_LETTERS)))]
+	}
+	return string(buf)
+}
+
 func (srv *metathingsCameradService) Start(ctx context.Context, req *pb.StartRequest) (*pb.StartResponse, error) {
 	err := req.Validate()
 	if err != nil {
@@ -415,13 +514,13 @@ func (srv *metathingsCameradService) Start(ctx context.Context, req *pb.StartReq
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 
-	live, err := url.Parse(srv.opts.rtmp_addr)
+	live, err := url.Parse(srv.opts.rtmp_url)
 	if err != nil {
 		srv.logger.WithError(err).Errorf("failed to parse rtmp address")
 		return nil, status.Errorf(codes.Internal, "bad rtmp address")
 	}
-	live_id := common.NewId()
-	live.Path = path.Join(live.Path, "metathings/live", live_id)
+	live_id := srv.newLiveId()
+	live.Path = path.Join(live.Path, fmt.Sprintf("metathings.live.%v", live_id))
 	live_str := live.String()
 	cam_id := req.GetId().GetValue()
 
@@ -469,7 +568,7 @@ func (srv *metathingsCameradService) Start(ctx context.Context, req *pb.StartReq
 	defer cfn()
 
 	var start_res camera_pb.StartResponse
-	call_res, err := cli.UnaryCall(ctx, call_req)
+	call_res, err := cli.UnaryCall(srv.ContextWithToken(), call_req)
 	if err != nil {
 		srv.logger.WithError(err).Errorf("failed to call start on entity")
 		return nil, status.Errorf(codes.Internal, err.Error())
@@ -496,6 +595,8 @@ func (srv *metathingsCameradService) Start(ctx context.Context, req *pb.StartReq
 		srv.logger.WithError(err).Errorf("failed to update camera")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
+
+	srv.logger.WithFields(log.Fields{"camera": c, "id": cam_id}).Debugf("debug!!!!!")
 
 	res := &pb.StartResponse{
 		Camera: srv.copyCamera(c),
@@ -529,7 +630,7 @@ func (srv *metathingsCameradService) Stop(ctx context.Context, req *pb.StopReque
 	}
 	defer cfn()
 
-	call_res, err := cli.UnaryCall(ctx, call_req)
+	call_res, err := cli.UnaryCall(srv.ContextWithToken(), call_req)
 	if err != nil {
 		srv.logger.WithError(err).Errorf("failed to call stop on entity")
 		return nil, status.Errorf(codes.Internal, err.Error())
@@ -643,7 +744,7 @@ func NewCameradService(opt ...ServiceOptions) (*metathingsCameradService, error)
 		return nil, err
 	}
 
-	cli_fty_cfgs := client_helper.NewDefaultServiceConfigs(opts.identityd_addr)
+	cli_fty_cfgs := client_helper.NewDefaultServiceConfigs(opts.metathingsd_addr)
 	cli_fty_cfgs[client_helper.CORED_CONFIG] = client_helper.ServiceConfig{Address: opts.cored_addr}
 	cli_fty_cfgs[client_helper.IDENTITYD_CONFIG] = client_helper.ServiceConfig{Address: opts.identityd_addr}
 	cli_fty, err := client_helper.NewClientFactory(

@@ -1,0 +1,17 @@
+dev:
+  listen: 127.0.0.1:5002
+  verbose: false
+  log:
+    level: info
+  storage:
+    driver: sqlite3  # only support sqlite3 now.
+    uri: <storage-uri>
+  application_credential:
+    id: <application-credential-id>
+    secret: <application-credential-secret>
+  service_config:
+    identityd:
+      address: <identityd-service-address>
+    cored:
+      address: <cored-service-address>
+  rtmp_url: <rtmp-server-address>

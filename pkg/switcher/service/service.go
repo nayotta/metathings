@@ -72,7 +72,7 @@ func (srv *metathingsSwitcherService) Close() {
 func NewSwitcherService(opt opt_helper.Option) (*metathingsSwitcherService, error) {
 	opt.Set("service_name", "switcher")
 
-	logger, err := log_helper.NewLogger("switcherd", opt.GetString("log.level"))
+	logger, err := log_helper.NewLogger("switcher", opt.GetString("log.level"))
 	if err != nil {
 		return nil, err
 	}
