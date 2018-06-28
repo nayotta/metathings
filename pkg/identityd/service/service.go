@@ -560,7 +560,7 @@ func (srv *metathingsIdentitydService) CreateApplicationCredential(ctx context.C
 
 	res, err := codec.DecodeCreateApplicationCredential(http_res, http_body)
 	if err != nil {
-		srv.logger.WithFields(log.Fields{}).Errorf("failed to decode create application credential response")
+		srv.logger.WithError(err).Errorf("failed to decode create application credential response")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
@@ -583,7 +583,10 @@ func (srv *metathingsIdentitydService) DeleteApplicationCredential(ctx context.C
 	}
 
 	if http_res.StatusCode != 204 {
-		srv.logger.WithFields(log.Fields{}).Errorf("unexpected status code")
+		srv.logger.WithFields(log.Fields{
+			"status_code": http_res.StatusCode,
+			"http_body":   http_body,
+		}).Errorf("unexpected status code")
 		return nil, status.Errorf(mapCode(http_res.StatusCode), http_body)
 	}
 
@@ -591,8 +594,34 @@ func (srv *metathingsIdentitydService) DeleteApplicationCredential(ctx context.C
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#show-application-credential-details
-func (srv *metathingsIdentitydService) GetApplicationCredential(context.Context, *pb.GetApplicationCredentialRequest) (*pb.GetApplicationCredentialResponse, error) {
-	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
+func (srv *metathingsIdentitydService) GetApplicationCredential(ctx context.Context, req *pb.GetApplicationCredentialRequest) (*pb.GetApplicationCredentialResponse, error) {
+	if err := req.Validate(); err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, err.Error())
+	}
+
+	url := srv.h.JoinURL("/v3/users/" + req.GetUserId().GetValue() + "/application_credentials/" + req.GetApplicationCredentialId().GetValue())
+
+	http_res, http_body, errs := gorequest.New().Get(url).End()
+	if len(errs) > 0 {
+		srv.logger.WithError(errs[0]).Errorf("failed to get application credential via http")
+		return nil, status.Errorf(codes.Internal, errs[0].Error())
+	}
+
+	if http_res.StatusCode != 200 {
+		srv.logger.WithFields(log.Fields{
+			"status_code": http_res.StatusCode,
+			"http_body":   http_body,
+		}).Errorf("unexpected status code")
+		return nil, status.Errorf(mapCode(http_res.StatusCode), http_body)
+	}
+
+	res, err := codec.DecodeGetApplicationCredential(http_res, http_body)
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to decode get application credential response")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
+	return res, nil
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#list-application-credentials

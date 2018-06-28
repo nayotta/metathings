@@ -4,8 +4,9 @@ import (
 	"context"
 	"time"
 
-	pb "github.com/nayotta/metathings/pkg/proto/identityd"
 	"github.com/parnurzeal/gorequest"
+
+	pb "github.com/nayotta/metathings/pkg/proto/identityd"
 )
 
 type _createApplicationCredentialRequestBody_role struct {
