@@ -10,6 +10,8 @@ import (
 	gpb "github.com/golang/protobuf/ptypes/wrappers"
 	"github.com/grpc-ecosystem/go-grpc-middleware/util/metautils"
 	log "github.com/sirupsen/logrus"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 
 	helper "github.com/nayotta/metathings/pkg/common"
 	cored_pb "github.com/nayotta/metathings/pkg/proto/cored"
@@ -25,11 +27,13 @@ type StreamManager interface {
 	Register(core_id string, stream cored_pb.CoredService_StreamServer) (chan interface{}, error)
 	UnaryCall(core_id string, req *cored_pb.UnaryCallRequestPayload) (*cored_pb.UnaryCallResponsePayload, error)
 	StreamCall(core_id string, req *cored_pb.StreamCallRequestPayload) (cored_pb.CoredService_StreamServer, func(), error)
+	Close(core_id string) error
 }
 
 type streamManager struct {
-	streams  map[string]cored_pb.CoredService_StreamServer
-	sessions map[string]chan *cored_pb.StreamResponse
+	streams          map[string]cored_pb.CoredService_StreamServer
+	stream_exit_chan map[string]chan interface{}
+	sessions         map[string]chan *cored_pb.StreamResponse
 
 	streaming_streams map[string]cored_pb.CoredService_StreamServer
 	streaming_close   map[string]chan interface{}
@@ -43,6 +47,17 @@ func (mgr *streamManager) getSessionIdFromContext(ctx context.Context) string {
 	return metautils.ExtractIncoming(ctx).Get("session-id")
 }
 
+func (mgr *streamManager) clear_default_stream(core_id string) error {
+	if _, ok := mgr.streams[core_id]; ok {
+		delete(mgr.streams, core_id)
+	}
+	if _, ok := mgr.stream_exit_chan[core_id]; ok {
+		delete(mgr.stream_exit_chan, core_id)
+	}
+
+	return nil
+}
+
 func (mgr *streamManager) register_default(core_id string, stream cored_pb.CoredService_StreamServer) (chan interface{}, error) {
 	mgr.lock.Lock()
 	defer mgr.lock.Unlock()
@@ -52,16 +67,24 @@ func (mgr *streamManager) register_default(core_id string, stream cored_pb.Cored
 	}
 	mgr.streams[core_id] = stream
 
-	close := make(chan interface{})
+	exit := make(chan interface{})
+	mgr.stream_exit_chan[core_id] = exit
+
 	go func() {
 		for {
 			res, err := stream.Recv()
 			if err != nil {
 				mgr.lock.Lock()
 				defer mgr.lock.Unlock()
-				delete(mgr.streams, core_id)
-				close <- nil
-				if err == io.EOF {
+				mgr.clear_default_stream(core_id)
+				exit <- nil
+				if gerr, ok := status.FromError(err); ok {
+					if gerr.Code() == codes.Canceled {
+						mgr.logger.WithField("core_id", core_id).Debugf("core agent stream closed")
+					} else {
+						mgr.logger.WithError(err).WithField("core_id", core_id).Warningf("core agent stream closed with unexpected error")
+					}
+				} else if err == io.EOF {
 					mgr.logger.WithField("core_id", core_id).Debugf("core agent stream closed")
 				} else {
 					mgr.logger.WithError(err).WithField("core_id", core_id).Warningf("core agent stream closed with unexpected error")
@@ -70,16 +93,15 @@ func (mgr *streamManager) register_default(core_id string, stream cored_pb.Cored
 			}
 
 			if ch, ok := mgr.sessions[res.SessionId]; !ok {
-				mgr.logger.
-					WithField("session_id", res.SessionId).
-					Errorf("unknown session id")
+				mgr.logger.WithField("session_id", res.SessionId).Errorf("unknown session id")
 			} else {
 				ch <- res
 			}
 		}
+
 	}()
 
-	return close, nil
+	return exit, nil
 }
 
 func (mgr *streamManager) register_streaming(core_id string, sess_id string, stream cored_pb.CoredService_StreamServer) (chan interface{}, error) {
@@ -213,10 +235,22 @@ func (mgr *streamManager) StreamCall(core_id string, req *cored_pb.StreamCallReq
 	}
 }
 
+func (mgr *streamManager) Close(core_id string) error {
+	var ch chan interface{}
+	var ok bool
+
+	if ch, ok = mgr.stream_exit_chan[core_id]; !ok {
+		return NotFound
+	}
+	ch <- nil
+	return nil
+}
+
 func NewStreamManager(logger log.FieldLogger) (StreamManager, error) {
-	return &streamManager{
-		streams:  make(map[string]cored_pb.CoredService_StreamServer),
-		sessions: make(map[string]chan *cored_pb.StreamResponse),
+	mgr := &streamManager{
+		streams:          make(map[string]cored_pb.CoredService_StreamServer),
+		stream_exit_chan: make(map[string]chan interface{}),
+		sessions:         make(map[string]chan *cored_pb.StreamResponse),
 
 		streaming_streams: make(map[string]cored_pb.CoredService_StreamServer),
 		streaming_close:   make(map[string]chan interface{}),
@@ -224,5 +258,7 @@ func NewStreamManager(logger log.FieldLogger) (StreamManager, error) {
 
 		lock:   new(sync.Mutex),
 		logger: logger,
-	}, nil
+	}
+
+	return mgr, nil
 }

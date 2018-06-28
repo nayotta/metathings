@@ -160,9 +160,14 @@ func (srv *metathingsCoredService) maintain_core_loop(core_id string) {
 }
 
 func (srv *metathingsCoredService) maintain_core(core_id string) {
+	err := srv.stm_mgr.Close(core_id)
+	if err != nil {
+		srv.logger.WithError(err).Debugf("failed to send close signal to stream manager, maybe closed")
+	}
+
 	state_str := "offline"
 	pc := storage.Core{State: &state_str}
-	_, err := srv.storage.PatchCore(core_id, pc)
+	_, err = srv.storage.PatchCore(core_id, pc)
 	if err != nil {
 		srv.logger.WithError(err).Errorf("failed to patch core")
 		return
@@ -653,7 +658,7 @@ func (srv *metathingsCoredService) Stream(stream pb.CoredService_StreamServer) e
 		return status.Errorf(codes.Internal, "not core assigned to application credential")
 	}
 
-	close_chan, err := srv.stm_mgr.Register(*core.Id, stream)
+	exit, err := srv.stm_mgr.Register(*core.Id, stream)
 	if err != nil {
 		srv.logger.
 			WithField("core_id", *core.Id).
@@ -663,7 +668,7 @@ func (srv *metathingsCoredService) Stream(stream pb.CoredService_StreamServer) e
 	}
 	srv.logger.WithField("core_id", *core.Id).Infof("register stream")
 
-	<-close_chan
+	<-exit
 	srv.logger.WithField("core_id", *core.Id).Infof("stream closed")
 
 	return nil
