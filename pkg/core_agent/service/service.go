@@ -2,6 +2,7 @@ package metathings_core_agent_service
 
 import (
 	"context"
+	"math/rand"
 	"os"
 	"path"
 	"sync"
@@ -110,6 +111,7 @@ type coreAgentService struct {
 	mtx_dp_op   *sync.Mutex
 	dispatchers map[string]mt_plugin.DispatcherPlugin
 
+	heartbeat_session  uint64
 	heartbeat_entities map[string]time.Time
 
 	logger log.FieldLogger
@@ -147,6 +149,7 @@ func (srv *coreAgentService) HeartbeatOnce() error {
 	}
 
 	req := &cored_pb.HeartbeatRequest{
+		Session:  &gpb.UInt64Value{Value: srv.heartbeat_session},
 		Entities: entities,
 	}
 	_, err = cli.Heartbeat(ctx, req)
@@ -791,6 +794,7 @@ func NewCoreAgentService(opt ...ServiceOptions) (srv *coreAgentService, err erro
 
 		mtx_dp_op:          new(sync.Mutex),
 		dispatchers:        make(map[string]mt_plugin.DispatcherPlugin),
+		heartbeat_session:  rand.Uint64(),
 		heartbeat_entities: make(map[string]time.Time),
 	}
 	return srv, nil

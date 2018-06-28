@@ -3,9 +3,9 @@
 
 package cored
 
+import fmt "fmt"
 import go_proto_validators "github.com/mwitkow/go-proto-validators"
 import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
 import math "math"
 import _ "github.com/golang/protobuf/ptypes/wrappers"
 import _ "github.com/golang/protobuf/ptypes/timestamp"
@@ -30,6 +30,14 @@ func (this *HeartbeatEntity) Validate() error {
 	return nil
 }
 func (this *HeartbeatRequest) Validate() error {
+	if nil == this.Session {
+		return go_proto_validators.FieldError("Session", fmt.Errorf("message must exist"))
+	}
+	if this.Session != nil {
+		if err := go_proto_validators.CallValidatorIfExists(this.Session); err != nil {
+			return go_proto_validators.FieldError("Session", err)
+		}
+	}
 	for _, item := range this.Entities {
 		if item != nil {
 			if err := go_proto_validators.CallValidatorIfExists(item); err != nil {

@@ -13,5 +13,6 @@ message HeartbeatEntity {
 }
 
 message HeartbeatRequest {
-	repeated HeartbeatEntity entities = 1;
+	google.protobuf.UInt64Value session = 1 [(validator.field) = {msg_exists: true}];
+	repeated HeartbeatEntity entities = 2;
 }

@@ -95,6 +95,8 @@ type metathingsCoredService struct {
 	storage             storage.Storage
 	tk_vdr              token_helper.TokenValidator
 	core_maintain_chans map[string]chan interface{}
+
+	heartbeat_sessions map[string]uint64
 }
 
 func (srv *metathingsCoredService) AuthFuncOverride(ctx context.Context, fullMethodName string) (context.Context, error) {
@@ -163,6 +165,14 @@ func (srv *metathingsCoredService) maintain_core(core_id string) {
 	err := srv.stm_mgr.Close(core_id)
 	if err != nil {
 		srv.logger.WithError(err).Debugf("failed to send close signal to stream manager, maybe closed")
+	}
+
+	if es, ok := srv.heartbeat_sessions[core_id]; ok {
+		delete(srv.heartbeat_sessions, core_id)
+		srv.logger.WithFields(log.Fields{
+			"core_id":           core_id,
+			"heartbeat.session": es,
+		}).Debugf("clear heartbeat session")
 	}
 
 	state_str := "offline"
@@ -587,6 +597,20 @@ func (srv *metathingsCoredService) Heartbeat(ctx context.Context, req *pb.Heartb
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
+	sess := req.Session.Value
+	if es, ok := srv.heartbeat_sessions[*core.Id]; !ok {
+		srv.heartbeat_sessions[*core.Id] = sess
+	} else {
+		if sess != es {
+			srv.logger.WithFields(log.Fields{
+				"core_id":           *core.Id,
+				"heartbeat.session": sess,
+				"existed.session":   es,
+			}).Errorf("unstored session")
+			return nil, status.Errorf(codes.InvalidArgument, "heartbeat session out of date")
+		}
+	}
+
 	now := time.Now()
 	pc := storage.Core{
 		HeartbeatAt: &now,
@@ -899,6 +923,7 @@ func NewCoredService(opt ...ServiceOptions) (*metathingsCoredService, error) {
 		storage:             storage,
 		tk_vdr:              tk_vdr,
 		core_maintain_chans: map[string]chan interface{}{},
+		heartbeat_sessions:  make(map[string]uint64),
 	}
 	return srv, nil
 }
