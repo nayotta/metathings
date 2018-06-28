@@ -25,10 +25,6 @@ type createApplicationCredentialRequestBody struct {
 }
 
 func EncodeCreateApplicationCredential(ctx context.Context, req *pb.CreateApplicationCredentialRequest) (res interface{}, err error) {
-	if err = req.Validate(); err != nil {
-		return nil, err
-	}
-
 	body := &createApplicationCredentialRequestBody{}
 	body.ApplicationCredential.Name = req.GetName().GetValue()
 

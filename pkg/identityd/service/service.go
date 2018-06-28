@@ -62,7 +62,7 @@ func (h *helper) JoinURL(p string) string {
 		h.srv.logger.Errorf("bad keystone base url: %v, error: %v\n", url_str, err)
 		return ""
 	}
-	u.Path = path.Join(u.Path, p)
+	u.Path = url.PathEscape(path.Join(u.Path, p))
 	return u.String()
 }
 
@@ -511,8 +511,11 @@ func (srv *metathingsIdentitydService) ValidateToken(ctx context.Context, _ *emp
 	}
 
 	if http_res.StatusCode != 200 {
-		srv.logger.WithField("status_code", http_res.StatusCode).WithField("http_body", http_body).Errorf("unexpected status code")
-		return nil, status.Errorf(codes.Unauthenticated, Unauthenticated.Error())
+		srv.logger.WithFields(log.Fields{
+			"status_code": http_res.StatusCode,
+			"http_body":   http_body,
+		}).Errorf("unexpected status code")
+		return nil, status.Errorf(mapCode(http_res.StatusCode), http_body)
 	}
 
 	res, err := codec.DecodeValidateTokenResponse(http_res, http_body)
@@ -529,6 +532,10 @@ func (srv *metathingsIdentitydService) ValidateToken(ctx context.Context, _ *emp
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#create-application-credential
 func (srv *metathingsIdentitydService) CreateApplicationCredential(ctx context.Context, req *pb.CreateApplicationCredentialRequest) (*pb.CreateApplicationCredentialResponse, error) {
+	if err := req.Validate(); err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, err.Error())
+	}
+
 	body, err := codec.EncodeCreateApplicationCredential(ctx, req)
 	if err != nil {
 		switch err {
@@ -561,8 +568,26 @@ func (srv *metathingsIdentitydService) CreateApplicationCredential(ctx context.C
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#delete-application-credential
-func (srv *metathingsIdentitydService) DeleteApplicationCredential(context.Context, *pb.DeleteApplicationCredentialRequest) (*empty.Empty, error) {
-	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
+func (srv *metathingsIdentitydService) DeleteApplicationCredential(ctx context.Context, req *pb.DeleteApplicationCredentialRequest) (*empty.Empty, error) {
+	if err := req.Validate(); err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, err.Error())
+	}
+
+	url := srv.h.JoinURL("/v3/users/" + req.GetUserId().GetValue() + "/application_credentials/" + req.GetApplicationCredentialId().GetValue())
+
+	http_res, http_body, errs := gorequest.New().Delete(url).End()
+
+	if len(errs) > 0 {
+		srv.logger.WithError(errs[0]).Errorf("failed to delete application credential via http")
+		return nil, status.Errorf(codes.Internal, errs[0].Error())
+	}
+
+	if http_res.StatusCode != 204 {
+		srv.logger.WithFields(log.Fields{}).Errorf("unexpected status code")
+		return nil, status.Errorf(mapCode(http_res.StatusCode), http_body)
+	}
+
+	return &empty.Empty{}, nil
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#show-application-credential-details
