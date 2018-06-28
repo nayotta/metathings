@@ -517,11 +517,10 @@ func (srv *metathingsIdentitydService) ValidateToken(ctx context.Context, _ *emp
 
 	res, err := codec.DecodeValidateTokenResponse(http_res, http_body)
 	if err != nil {
-		srv.logger.
-			WithFields(log.Fields{
-				"error": err,
-				"body":  http_body,
-			}).Errorf("failed to decode validate token response")
+		srv.logger.WithFields(log.Fields{
+			"error": err,
+			"body":  http_body,
+		}).Errorf("failed to decode validate token response")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
@@ -530,7 +529,35 @@ func (srv *metathingsIdentitydService) ValidateToken(ctx context.Context, _ *emp
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#create-application-credential
 func (srv *metathingsIdentitydService) CreateApplicationCredential(ctx context.Context, req *pb.CreateApplicationCredentialRequest) (*pb.CreateApplicationCredentialResponse, error) {
-	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
+	body, err := codec.EncodeCreateApplicationCredential(ctx, req)
+	if err != nil {
+		switch err {
+		case codec.Unimplemented:
+			return nil, status.Errorf(codes.Unimplemented, "unimplemented")
+		default:
+			return nil, status.Errorf(codes.Internal, err.Error())
+		}
+	}
+
+	url := srv.h.JoinURL("/v3/users/" + req.GetUserId().GetValue() + "/application_credentials")
+	http_res, http_body, errs := gorequest.New().Post(url).Send(&body).End()
+	if len(errs) > 0 {
+		srv.logger.WithError(errs[0]).Errorf("failed to keystone create application credential")
+		return nil, status.Errorf(codes.Internal, errs[0].Error())
+	}
+
+	if http_res.StatusCode != 201 {
+		srv.logger.WithField("status_code", http_res.StatusCode).Errorf("unexpected status code")
+		return nil, status.Errorf(mapCode(http_res.StatusCode), http_body)
+	}
+
+	res, err := codec.DecodeCreateApplicationCredential(http_res, http_body)
+	if err != nil {
+		srv.logger.WithFields(log.Fields{}).Errorf("failed to decode create application credential response")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
+	return res, nil
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#delete-application-credential

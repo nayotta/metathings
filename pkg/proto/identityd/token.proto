@@ -40,7 +40,7 @@ message Token {
 	}
 
 	repeated string methods = 1;
-	google.protobuf.Timestamp exipres_at = 2;
+	google.protobuf.Timestamp expires_at = 2;
 	google.protobuf.Timestamp issued_at = 3;
 	bool is_domain = 4;
 	_User user = 5;

@@ -15,9 +15,9 @@ var _ = fmt.Errorf
 var _ = math.Inf
 
 func (this *Token) Validate() error {
-	if this.ExipresAt != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.ExipresAt); err != nil {
-			return go_proto_validators.FieldError("ExipresAt", err)
+	if this.ExpiresAt != nil {
+		if err := go_proto_validators.CallValidatorIfExists(this.ExpiresAt); err != nil {
+			return go_proto_validators.FieldError("ExpiresAt", err)
 		}
 	}
 	if this.IssuedAt != nil {

@@ -216,8 +216,7 @@ func DecodeIssueTokenResponse(req gorequest.Response, body string) (*pb.IssueTok
 		return nil, err
 	}
 
-	res := &pb.IssueTokenResponse{}
-	res.Token = token
+	res := &pb.IssueTokenResponse{Token: token}
 
 	return res, nil
 }

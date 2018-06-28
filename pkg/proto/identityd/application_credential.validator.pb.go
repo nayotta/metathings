@@ -15,9 +15,11 @@ var _ = fmt.Errorf
 var _ = math.Inf
 
 func (this *ApplicationCredential) Validate() error {
-	if this.Role != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Role); err != nil {
-			return go_proto_validators.FieldError("Role", err)
+	for _, item := range this.Roles {
+		if item != nil {
+			if err := go_proto_validators.CallValidatorIfExists(item); err != nil {
+				return go_proto_validators.FieldError("Roles", err)
+			}
 		}
 	}
 	if this.ExpiresAt != nil {

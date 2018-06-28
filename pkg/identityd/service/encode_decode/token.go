@@ -44,7 +44,7 @@ type tokenResponseBody struct {
 		Methods               []string                 `json:"methods"`
 		Roles                 []*_role                 `json:"roles,omitempty"`
 		IsDomain              bool                     `json:"is_domain"`
-		ExipresAt             string                   `json:"exipres_at"`
+		ExpiresAt             string                   `json:"expires_at"`
 		IssuedAt              string                   `json:"issued_at"`
 
 		ApplicationCredentialRestricted bool `json:"application_credential_restricted"`
