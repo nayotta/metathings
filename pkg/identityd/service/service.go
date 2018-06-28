@@ -82,11 +82,7 @@ func (srv *metathingsIdentitydService) ignoreAuthMethods() []string {
 func (srv *metathingsIdentitydService) validateTokenViaHTTP(token, subject_token string) (gorequest.Response, string, error) {
 	url := srv.h.JoinURL("/v3/auth/tokens")
 
-	http_res, http_body, errs := gorequest.
-		New().Get(url).
-		Set("X-Auth-Token", token).
-		Set("X-Subject-Token", token).
-		Query("nocatalog=1").End()
+	http_res, http_body, errs := gorequest.New().Get(url).Set("X-Auth-Token", token).Set("X-Subject-Token", token).Query("nocatalog=1").End()
 
 	if len(errs) > 0 {
 		return nil, "", errs[0]
@@ -119,24 +115,18 @@ func (srv *metathingsIdentitydService) AuthFuncOverride(ctx context.Context, ful
 
 	http_res, http_body, err := srv.validateTokenViaHTTP(token, subject_token)
 	if err != nil {
-		srv.logger.
-			WithField("error", err).
-			Errorf("failed to validate token via http")
+		srv.logger.WithField("error", err).Errorf("failed to validate token via http")
 		return nil, err
 	}
 
 	if http_res.StatusCode != 200 {
-		srv.logger.
-			WithField("status_code", http_res.StatusCode).
-			Errorf("unauthenticated")
+		srv.logger.WithField("status_code", http_res.StatusCode).Errorf("unauthenticated")
 		return nil, Unauthenticated
 	}
 
 	cred, err := codec.DecodeValidateTokenResponse(http_res, http_body)
 	if err != nil {
-		srv.logger.
-			WithField("error", err).
-			Errorf("failed to decode validate token response")
+		srv.logger.WithField("error", err).Errorf("failed to decode validate token response")
 		return nil, err
 	}
 
@@ -444,21 +434,14 @@ func (srv *metathingsIdentitydService) IssueToken(ctx context.Context, req *pb.I
 		}
 	}
 	url := srv.h.JoinURL("/v3/auth/tokens")
-	http_res, http_body, errs := gorequest.
-		New().Post(url).
-		Query("nocatalog=1").
-		Send(&body).End()
+	http_res, http_body, errs := gorequest.New().Post(url).Query("nocatalog=1").Send(&body).End()
 	if len(errs) > 0 {
-		srv.logger.
-			WithField("error", errs[0]).
-			Errorf("failed to keystone issue token")
+		srv.logger.WithField("error", errs[0]).Errorf("failed to keystone issue token")
 		return nil, status.Errorf(codes.Internal, errs[0].Error())
 	}
 
 	if http_res.StatusCode != 201 {
-		srv.logger.
-			WithField("status_code", http_res.StatusCode).
-			Errorf("unexpected status code")
+		srv.logger.WithField("status_code", http_res.StatusCode).Errorf("unexpected status code")
 		return nil, status.Errorf(codes.Unauthenticated, http_body)
 	}
 
@@ -466,16 +449,12 @@ func (srv *metathingsIdentitydService) IssueToken(ctx context.Context, req *pb.I
 	srv.logger.WithField("token", token_str).Debugf("got token from keystone")
 	err = srv.h.SendHeader(ctx, "authorization", fmt.Sprintf("mt %v", token_str))
 	if err != nil {
-		srv.logger.
-			WithField("error", err).
-			Warningf("failed to send headers")
+		srv.logger.WithField("error", err).Warningf("failed to send headers")
 	}
 
 	res, err := codec.DecodeIssueTokenResponse(http_res, http_body)
 	if err != nil {
-		srv.logger.
-			WithFields(log.Fields{}).
-			Errorf("failed to decode issue token response")
+		srv.logger.WithFields(log.Fields{}).Errorf("failed to decode issue token response")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
@@ -499,11 +478,7 @@ func (srv *metathingsIdentitydService) CheckToken(ctx context.Context, _ *empty.
 	}
 
 	url := srv.h.JoinURL("/v3/auth/tokens")
-	http_res, _, errs := gorequest.
-		New().Head(url).
-		Set("X-Auth-Token", token).
-		Set("X-Subject-Token", token).
-		End()
+	http_res, _, errs := gorequest.New().Head(url).Set("X-Auth-Token", token).Set("X-Subject-Token", token).End()
 	if len(errs) > 0 {
 		return nil, status.Errorf(codes.Internal, errs[0].Error())
 	}
@@ -526,28 +501,17 @@ func (srv *metathingsIdentitydService) ValidateToken(ctx context.Context, _ *emp
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 
-	srv.logger.
-		WithFields(log.Fields{"token": token, "sub_token": sub_token}).
-		Debugf("validating token")
+	srv.logger.WithFields(log.Fields{"token": token, "sub_token": sub_token}).Debugf("validating token")
 
 	url := srv.h.JoinURL("/v3/auth/tokens")
-	http_res, http_body, errs := gorequest.
-		New().Get(url).
-		Set("X-Auth-Token", token).
-		Set("X-Subject-Token", sub_token).
-		End()
+	http_res, http_body, errs := gorequest.New().Get(url).Set("X-Auth-Token", token).Set("X-Subject-Token", sub_token).End()
 	if len(errs) > 0 {
-		srv.logger.
-			WithField("error", errs[0]).
-			Errorf("failed to validate token via http")
+		srv.logger.WithField("error", errs[0]).Errorf("failed to validate token via http")
 		return nil, status.Errorf(codes.Internal, errs[0].Error())
 	}
 
 	if http_res.StatusCode != 200 {
-		srv.logger.
-			WithField("status_code", http_res.StatusCode).
-			WithField("http_body", http_body).
-			Errorf("unexpected status code")
+		srv.logger.WithField("status_code", http_res.StatusCode).WithField("http_body", http_body).Errorf("unexpected status code")
 		return nil, status.Errorf(codes.Unauthenticated, Unauthenticated.Error())
 	}
 
@@ -557,8 +521,7 @@ func (srv *metathingsIdentitydService) ValidateToken(ctx context.Context, _ *emp
 			WithFields(log.Fields{
 				"error": err,
 				"body":  http_body,
-			}).
-			Errorf("failed to decode validate token response")
+			}).Errorf("failed to decode validate token response")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
@@ -566,7 +529,7 @@ func (srv *metathingsIdentitydService) ValidateToken(ctx context.Context, _ *emp
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#create-application-credential
-func (srv *metathingsIdentitydService) CreateApplicationCredential(context.Context, *pb.CreateApplicationCredentialRequest) (*pb.CreateApplicationCredentialResponse, error) {
+func (srv *metathingsIdentitydService) CreateApplicationCredential(ctx context.Context, req *pb.CreateApplicationCredentialRequest) (*pb.CreateApplicationCredentialResponse, error) {
 	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
 }
 
