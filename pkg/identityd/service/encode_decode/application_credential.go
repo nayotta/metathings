@@ -16,34 +16,32 @@ type _applicationCredentialResponseBody_role struct {
 	Name     string
 }
 
-type applicationCredentialResponseBody struct {
-	ApplicationCredential struct {
-		Id           string
-		Name         string
-		Secret       string
-		Description  string
-		ExpiresAt    string `json:"expires_at"`
-		ProjectId    string `json:"project_id"`
-		Roles        []_applicationCredentialResponseBody_role
-		Unrestricted bool
-	} `json:"application_credential"`
+type _ApplicationCredential struct {
+	Id           string
+	Name         string
+	Secret       string
+	Description  string
+	ExpiresAt    string `json:"expires_at"`
+	ProjectId    string `json:"project_id"`
+	Roles        []_applicationCredentialResponseBody_role
+	Unrestricted bool
 }
 
-func decodeApplicationCredential(_ gorequest.Response, body string) (*pb.ApplicationCredential, error) {
-	b := applicationCredentialResponseBody{}
-	err := json.Unmarshal([]byte(body), &b)
-	if err != nil {
-		return nil, err
-	}
+type applicationCredentialResponseBody struct {
+	ApplicationCredential _ApplicationCredential `json:"application_credential"`
+}
 
-	ac := b.ApplicationCredential
+type applicationCredentialsResponseBody struct {
+	ApplicationCredentials []_ApplicationCredential `json:"application_credentials"`
+}
 
+func copyApplicationCredential(ac _ApplicationCredential) *pb.ApplicationCredential {
 	t, err := time.Parse(time.RFC3339, ac.ExpiresAt)
 	if err != nil {
-		return nil, err
+		t = time.Unix(0, 0)
 	}
 
-	app_cred := &pb.ApplicationCredential{
+	pb_ac := &pb.ApplicationCredential{
 		Id:           ac.Id,
 		Name:         ac.Name,
 		Secret:       ac.Secret,
@@ -61,7 +59,35 @@ func decodeApplicationCredential(_ gorequest.Response, body string) (*pb.Applica
 			DomainId: r.DomainId,
 		})
 	}
-	app_cred.Roles = rs
+	pb_ac.Roles = rs
+
+	return pb_ac
+}
+
+func decodeApplicationCredential(_ gorequest.Response, body string) (*pb.ApplicationCredential, error) {
+	b := applicationCredentialResponseBody{}
+	err := json.Unmarshal([]byte(body), &b)
+	if err != nil {
+		return nil, err
+	}
+
+	app_cred := copyApplicationCredential(b.ApplicationCredential)
 
 	return app_cred, nil
+}
+
+func decodeApplicationCredentials(_ gorequest.Response, body string) ([]*pb.ApplicationCredential, error) {
+	b := applicationCredentialsResponseBody{}
+	err := json.Unmarshal([]byte(body), &b)
+	if err != nil {
+		return nil, err
+	}
+
+	acs := b.ApplicationCredentials
+	pb_acs := []*pb.ApplicationCredential{}
+	for _, ac := range acs {
+		pb_acs = append(pb_acs, copyApplicationCredential(ac))
+	}
+
+	return pb_acs, nil
 }

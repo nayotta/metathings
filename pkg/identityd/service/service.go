@@ -546,7 +546,8 @@ func (srv *metathingsIdentitydService) CreateApplicationCredential(ctx context.C
 		}
 	}
 
-	url := srv.h.JoinURL("/v3/users/" + req.GetUserId().GetValue() + "/application_credentials")
+	user_id := req.GetUserId().GetValue()
+	url := srv.h.JoinURL("/v3/users/" + user_id + "/application_credentials")
 	http_res, http_body, errs := gorequest.New().Post(url).Send(&body).End()
 	if len(errs) > 0 {
 		srv.logger.WithError(errs[0]).Errorf("failed to keystone create application credential")
@@ -573,7 +574,9 @@ func (srv *metathingsIdentitydService) DeleteApplicationCredential(ctx context.C
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 
-	url := srv.h.JoinURL("/v3/users/" + req.GetUserId().GetValue() + "/application_credentials/" + req.GetApplicationCredentialId().GetValue())
+	user_id := req.GetUserId().GetValue()
+	app_cred_id := req.GetApplicationCredentialId().GetValue()
+	url := srv.h.JoinURL("/v3/users/" + user_id + "/application_credentials/" + app_cred_id)
 
 	http_res, http_body, errs := gorequest.New().Delete(url).End()
 
@@ -599,7 +602,9 @@ func (srv *metathingsIdentitydService) GetApplicationCredential(ctx context.Cont
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 
-	url := srv.h.JoinURL("/v3/users/" + req.GetUserId().GetValue() + "/application_credentials/" + req.GetApplicationCredentialId().GetValue())
+	user_id := req.GetUserId().GetValue()
+	app_cred_id := req.GetApplicationCredentialId().GetValue()
+	url := srv.h.JoinURL("/v3/users/" + user_id + "/application_credentials/" + app_cred_id)
 
 	http_res, http_body, errs := gorequest.New().Get(url).End()
 	if len(errs) > 0 {
@@ -625,8 +630,35 @@ func (srv *metathingsIdentitydService) GetApplicationCredential(ctx context.Cont
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#list-application-credentials
-func (srv *metathingsIdentitydService) ListApplicationCredentials(context.Context, *pb.ListApplicationCredentialsRequest) (*pb.ListApplicationCredentialsResponse, error) {
-	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
+func (srv *metathingsIdentitydService) ListApplicationCredentials(ctx context.Context, req *pb.ListApplicationCredentialsRequest) (*pb.ListApplicationCredentialsResponse, error) {
+	if err := req.Validate(); err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, err.Error())
+	}
+
+	user_id := req.GetUserId().GetValue()
+	url := srv.h.JoinURL("/v3/users/" + user_id + "/application_credentials")
+
+	http_res, http_body, errs := gorequest.New().Get(url).End()
+	if len(errs) > 0 {
+		srv.logger.WithError(errs[0]).Errorf("failed to list application credential via http")
+		return nil, status.Errorf(codes.Internal, errs[0].Error())
+	}
+
+	if http_res.StatusCode != 200 {
+		srv.logger.WithFields(log.Fields{
+			"status_code": http_res.StatusCode,
+			"http_body":   http_body,
+		}).Errorf("unexpected status code")
+		return nil, status.Errorf(mapCode(http_res.StatusCode), http_body)
+	}
+
+	res, err := codec.DecodeListApplicationCredential(http_res, http_body)
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to decode list application credential response")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
+	return res, nil
 }
 
 func NewIdentitydService(opt ...ServiceOptions) (*metathingsIdentitydService, error) {
