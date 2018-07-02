@@ -756,7 +756,7 @@ func (srv *metathingsCoredService) StreamCall(cstm pb.CoredService_StreamCallSer
 		return status.Errorf(codes.Internal, err.Error())
 	}
 
-	if !isStreamCallConfigRequestPayload(req.Payload) {
+	if req.Payload == nil || !isStreamCallConfigRequestPayload(req.Payload) {
 		srv.logger.Errorf("not stream call config request")
 		return status.Errorf(codes.Internal, "unconfiged stream call request")
 	}
@@ -810,7 +810,6 @@ func (srv *metathingsCoredService) StreamCall(cstm pb.CoredService_StreamCallSer
 				return
 			}
 			srv.logger.Debugf("send data to agent")
-
 		}
 	}()
 
