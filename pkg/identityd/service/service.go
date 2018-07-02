@@ -62,7 +62,7 @@ func (h *helper) JoinURL(p string) string {
 		h.srv.logger.Errorf("bad keystone base url: %v, error: %v\n", url_str, err)
 		return ""
 	}
-	u.Path = url.PathEscape(path.Join(u.Path, p))
+	u.Path = path.Join(u.Path, p)
 	return u.String()
 }
 
