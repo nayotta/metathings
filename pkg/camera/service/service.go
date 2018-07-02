@@ -143,7 +143,7 @@ func (srv *metathingsCameraService) Close() {
 func (srv *metathingsCameraService) state_notification_handler() {
 	for {
 		s := <-srv.state_notification_channel
-		srv.logger.WithField("state", s).Debugf("recv state notification")
+		srv.logger.WithField("state", s.ToString()).Debugf("recv state notification")
 		go func() {
 			srv.update_camerad_state(s)
 		}()
