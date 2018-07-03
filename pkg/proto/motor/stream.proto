@@ -5,10 +5,12 @@ package ai.metathings.service.motor;
 import "google/protobuf/wrappers.proto";
 import "google/protobuf/timestamp.proto";
 
+import "github.com/mwitkow/go-proto-validators/validator.proto";
+
 import "motor.proto";
 
 message StreamPingRequest{
-	google.protobuf.Timestamp timestamp = 1;
+	google.protobuf.Timestamp timestamp = 1 [(validator.field) = {msg_exists: true}];
 }
 
 message StreamPingResponse{
@@ -16,22 +18,22 @@ message StreamPingResponse{
 }
 
 message StreamSetStateRequest {
-	google.protobuf.StringValue name = 1;
-	MotorState state = 2;
+	google.protobuf.StringValue name = 1 [(validator.field) = {msg_exists: true}];
+	MotorState state = 2 [(validator.field) = {msg_exists: true}];
 }
 
 message StreamSetDirectionRequest {
-	google.protobuf.StringValue name = 1;
-	MotorDirection direction = 2;
+	google.protobuf.StringValue name = 1 [(validator.field) = {msg_exists: true}];
+	MotorDirection direction = 2 [(validator.field) = {msg_exists: true}];
 }
 
 message StreamSetSpeedRequest {
-	google.protobuf.StringValue name = 1;
-	google.protobuf.FloatValue speed = 2;
+	google.protobuf.StringValue name = 1 [(validator.field) = {msg_exists: true}];
+	google.protobuf.FloatValue speed = 2 [(validator.field) = {msg_exists: true}];
 }
 
 message StreamRequest {
-	google.protobuf.UInt64Value session = 1;
+	google.protobuf.UInt64Value session = 1 [(validator.field) = {msg_exists: true}];
 	oneof payload {
 	        StreamPingRequest ping = 2;
 		StreamSetStateRequest set_state = 3;

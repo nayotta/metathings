@@ -3,12 +3,13 @@
 
 package motor
 
+import fmt "fmt"
 import go_proto_validators "github.com/mwitkow/go-proto-validators"
 import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
 import math "math"
 import _ "github.com/golang/protobuf/ptypes/wrappers"
 import _ "github.com/golang/protobuf/ptypes/timestamp"
+import _ "github.com/mwitkow/go-proto-validators"
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -16,6 +17,9 @@ var _ = fmt.Errorf
 var _ = math.Inf
 
 func (this *StreamPingRequest) Validate() error {
+	if nil == this.Timestamp {
+		return go_proto_validators.FieldError("Timestamp", fmt.Errorf("message must exist"))
+	}
 	if this.Timestamp != nil {
 		if err := go_proto_validators.CallValidatorIfExists(this.Timestamp); err != nil {
 			return go_proto_validators.FieldError("Timestamp", err)
@@ -32,6 +36,9 @@ func (this *StreamPingResponse) Validate() error {
 	return nil
 }
 func (this *StreamSetStateRequest) Validate() error {
+	if nil == this.Name {
+		return go_proto_validators.FieldError("Name", fmt.Errorf("message must exist"))
+	}
 	if this.Name != nil {
 		if err := go_proto_validators.CallValidatorIfExists(this.Name); err != nil {
 			return go_proto_validators.FieldError("Name", err)
@@ -40,6 +47,9 @@ func (this *StreamSetStateRequest) Validate() error {
 	return nil
 }
 func (this *StreamSetDirectionRequest) Validate() error {
+	if nil == this.Name {
+		return go_proto_validators.FieldError("Name", fmt.Errorf("message must exist"))
+	}
 	if this.Name != nil {
 		if err := go_proto_validators.CallValidatorIfExists(this.Name); err != nil {
 			return go_proto_validators.FieldError("Name", err)
@@ -48,10 +58,16 @@ func (this *StreamSetDirectionRequest) Validate() error {
 	return nil
 }
 func (this *StreamSetSpeedRequest) Validate() error {
+	if nil == this.Name {
+		return go_proto_validators.FieldError("Name", fmt.Errorf("message must exist"))
+	}
 	if this.Name != nil {
 		if err := go_proto_validators.CallValidatorIfExists(this.Name); err != nil {
 			return go_proto_validators.FieldError("Name", err)
 		}
+	}
+	if nil == this.Speed {
+		return go_proto_validators.FieldError("Speed", fmt.Errorf("message must exist"))
 	}
 	if this.Speed != nil {
 		if err := go_proto_validators.CallValidatorIfExists(this.Speed); err != nil {
@@ -61,6 +77,9 @@ func (this *StreamSetSpeedRequest) Validate() error {
 	return nil
 }
 func (this *StreamRequest) Validate() error {
+	if nil == this.Session {
+		return go_proto_validators.FieldError("Session", fmt.Errorf("message must exist"))
+	}
 	if this.Session != nil {
 		if err := go_proto_validators.CallValidatorIfExists(this.Session); err != nil {
 			return go_proto_validators.FieldError("Session", err)
