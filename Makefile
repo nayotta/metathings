@@ -46,6 +46,9 @@ camera_drivers:
 camera_plugins:
 	$(MAKE) -C pkg/camera/plugin all
 
+servo_plugins:
+	$(MAKE) -C pkg/servo/plugin all
+
 build_docker_images:
 	./script/metathings_build.sh
 	./script/metathingsd_build.sh
