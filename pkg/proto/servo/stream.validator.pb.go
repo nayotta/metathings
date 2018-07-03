@@ -35,6 +35,17 @@ func (this *StreamPingResponse) Validate() error {
 	}
 	return nil
 }
+func (this *StreamSetStateRequest) Validate() error {
+	if nil == this.Name {
+		return go_proto_validators.FieldError("Name", fmt.Errorf("message must exist"))
+	}
+	if this.Name != nil {
+		if err := go_proto_validators.CallValidatorIfExists(this.Name); err != nil {
+			return go_proto_validators.FieldError("Name", err)
+		}
+	}
+	return nil
+}
 func (this *StreamSetAngleRequest) Validate() error {
 	if nil == this.Name {
 		return go_proto_validators.FieldError("Name", fmt.Errorf("message must exist"))
@@ -67,6 +78,13 @@ func (this *StreamRequest) Validate() error {
 		if oneOfNester.Ping != nil {
 			if err := go_proto_validators.CallValidatorIfExists(oneOfNester.Ping); err != nil {
 				return go_proto_validators.FieldError("Ping", err)
+			}
+		}
+	}
+	if oneOfNester, ok := this.GetPayload().(*StreamRequest_SetState); ok {
+		if oneOfNester.SetState != nil {
+			if err := go_proto_validators.CallValidatorIfExists(oneOfNester.SetState); err != nil {
+				return go_proto_validators.FieldError("SetState", err)
 			}
 		}
 	}

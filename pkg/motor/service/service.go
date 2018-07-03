@@ -46,6 +46,12 @@ func (srv *metathingsMotorService) copyMotors(ms []Motor) []*pb.Motor {
 }
 
 func (srv *metathingsMotorService) List(ctx context.Context, req *pb.ListRequest) (*pb.ListResponse, error) {
+	err := req.Validate()
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to validate request data")
+		return nil, status.Errorf(codes.InvalidArgument, err.Error())
+	}
+
 	mtrs := srv.copyMotors(srv.mtr_mgr.ListMotors())
 	res := &pb.ListResponse{
 		Motors: mtrs,
@@ -56,6 +62,12 @@ func (srv *metathingsMotorService) List(ctx context.Context, req *pb.ListRequest
 }
 
 func (srv *metathingsMotorService) Get(ctx context.Context, req *pb.GetRequest) (*pb.GetResponse, error) {
+	err := req.Validate()
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to validate request data")
+		return nil, status.Errorf(codes.InvalidArgument, err.Error())
+	}
+
 	m, err := srv.mtr_mgr.GetMotor(req.Name.Value)
 	if err != nil {
 		srv.logger.WithError(err).WithField("name", req.Name.Value).Errorf("failed to get motor")
@@ -121,6 +133,7 @@ func (srv *metathingsMotorService) handleStreamRequest_ping(stream pb.MotorServi
 			},
 		},
 	}
+
 	err := stream.Send(res)
 	if err != nil {
 		srv.logger.WithError(err).Errorf("failed to send ping response to agent")

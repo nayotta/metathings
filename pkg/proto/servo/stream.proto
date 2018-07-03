@@ -17,6 +17,11 @@ message StreamPingResponse {
 	google.protobuf.Timestamp timestamp = 1;
 }
 
+message StreamSetStateRequest {
+	google.protobuf.StringValue name = 1 [(validator.field) = {msg_exists: true}];
+	ServoState state = 2 [(validator.field) = {msg_exists: true}];
+}
+
 message StreamSetAngleRequest {
 	google.protobuf.StringValue name = 1 [(validator.field) = {msg_exists: true}];
 	google.protobuf.FloatValue angle = 2 [(validator.field) = {msg_exists: true}];
@@ -26,7 +31,8 @@ message StreamRequest {
 	google.protobuf.UInt64Value session = 1 [(validator.field) = {msg_exists: true}];
 	oneof payload {
 		StreamPingRequest ping = 2;
-		StreamSetAngleRequest set_angle = 3;
+		StreamSetStateRequest set_state = 3;
+		StreamSetAngleRequest set_angle = 4;
 	}
 }
 

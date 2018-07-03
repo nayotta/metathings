@@ -46,6 +46,9 @@ camera_drivers:
 camera_plugins:
 	$(MAKE) -C pkg/camera/plugin all
 
+servo_drivers:
+	$(MAKE) -C pkg/servo/driver all
+
 servo_plugins:
 	$(MAKE) -C pkg/servo/plugin all
 

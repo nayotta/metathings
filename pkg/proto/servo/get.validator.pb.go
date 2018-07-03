@@ -19,6 +19,7 @@ It has these top-level messages:
 	Servo
 	StreamPingRequest
 	StreamPingResponse
+	StreamSetStateRequest
 	StreamSetAngleRequest
 	StreamRequest
 	StreamRequests

@@ -73,11 +73,10 @@ func (drv *ffmpegCameraDriver) CloseStateNotificationChannel(ch chan driver.Came
 
 func (drv *ffmpegCameraDriver) setState(s driver.CameraState) {
 	drv.state = s
-	go func() {
-		for ch, _ := range drv.state_notification_broadcast_channels {
-			ch <- s
-		}
-	}()
+	for ch, _ := range drv.state_notification_broadcast_channels {
+		ch <- s
+	}
+	drv.logger.WithField("state", s).Debugf("update state")
 }
 
 func (drv *ffmpegCameraDriver) show() driver.Camera {
