@@ -580,6 +580,7 @@ func (srv *metathingsCameradService) Start(ctx context.Context, req *pb.StartReq
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
+	state_str := "starting"
 	cfg := start_res.Camera.Config
 	c = storage.Camera{
 		Url:       &cfg.Url,
@@ -588,6 +589,7 @@ func (srv *metathingsCameradService) Start(ctx context.Context, req *pb.StartReq
 		Height:    &cfg.Height,
 		Bitrate:   &cfg.Bitrate,
 		Framerate: &cfg.Framerate,
+		State:     &state_str,
 	}
 
 	c, err = srv.storage.PatchCamera(cam_id, c)
@@ -596,13 +598,11 @@ func (srv *metathingsCameradService) Start(ctx context.Context, req *pb.StartReq
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
-	srv.logger.WithFields(log.Fields{"camera": c, "id": cam_id}).Debugf("debug!!!!!")
-
 	res := &pb.StartResponse{
 		Camera: srv.copyCamera(c),
 	}
 
-	srv.logger.WithField("cam_id", cam_id).Infof("start camera")
+	srv.logger.WithField("cam_id", cam_id).Infof("camera starting")
 
 	return res, nil
 }
@@ -643,13 +643,22 @@ func (srv *metathingsCameradService) Stop(ctx context.Context, req *pb.StopReque
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
-	c, _ = srv.storage.GetCamera(cam_id)
+	state_str := "terminating"
+	c = storage.Camera{
+		State: &state_str,
+	}
+
+	c, err = srv.storage.PatchCamera(cam_id, c)
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to update camera")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
 
 	res := &pb.StopResponse{
 		Camera: srv.copyCamera(c),
 	}
 
-	srv.logger.WithField("cam_id", cam_id).Infof("camera terminated")
+	srv.logger.WithField("cam_id", cam_id).Infof("camera terminating")
 
 	return res, nil
 }
