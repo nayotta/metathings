@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package ai.metathings.service.servo;
+
+import "servo.proto";
+
+message ListRequest {}
+
+message ListResponse {
+	repeated Servo servos = 1;
+}

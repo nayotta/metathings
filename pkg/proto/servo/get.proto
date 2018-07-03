@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package ai.metathings.service.servo;
+
+import "google/protobuf/wrappers.proto";
+
+import "github.com/mwitkow/go-proto-validators/validator.proto";
+
+import "servo.proto";
+
+message GetRequest {
+	google.protobuf.StringValue name = 1 [(validator.field) = {msg_exists: true}];
+}
+
+message GetResponse {
+	Servo servo = 1;
+}
