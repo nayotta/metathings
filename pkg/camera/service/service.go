@@ -2,6 +2,7 @@ package metathings_camera_service
 
 import (
 	"context"
+	"sync"
 
 	"github.com/golang/protobuf/ptypes/empty"
 	log "github.com/sirupsen/logrus"
@@ -141,12 +142,16 @@ func (srv *metathingsCameraService) Close() {
 }
 
 func (srv *metathingsCameraService) state_notification_handler() {
+	var wg sync.WaitGroup
 	for {
 		s := <-srv.state_notification_channel
 		srv.logger.WithField("state", s.ToString()).Debugf("recv state notification")
+		wg.Add(1)
 		go func() {
+			defer wg.Done()
 			srv.update_camerad_state(s)
 		}()
+		wg.Wait()
 	}
 }
 
