@@ -431,6 +431,7 @@ func (srv *coreAgentService) Heartbeat(ctx context.Context, req *pb.HeartbeatReq
 			Id:          res.Entity.Id,
 			Name:        res.Entity.Name,
 			ServiceName: res.Entity.ServiceName,
+			Endpoint:    res.Entity.Endpoint,
 		}
 
 		if !srv.IsLoadedDispatcherPlugin(e) {
