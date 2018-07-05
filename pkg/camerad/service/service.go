@@ -25,6 +25,7 @@ import (
 	token_helper "github.com/nayotta/metathings/pkg/common/token"
 	camera_pb "github.com/nayotta/metathings/pkg/proto/camera"
 	pb "github.com/nayotta/metathings/pkg/proto/camerad"
+	cored_pb "github.com/nayotta/metathings/pkg/proto/cored"
 )
 
 type options struct {
@@ -507,6 +508,32 @@ func (srv *metathingsCameradService) newLiveId() string {
 	return string(buf)
 }
 
+func (srv *metathingsCameradService) sync_camera_state(cli cored_pb.CoredServiceClient, cam_id string, core_id string, entity_name string) error {
+
+	call_req := client_helper.MustNewUnaryCallRequest(core_id, entity_name, "camera", "Show", &empty.Empty{})
+	call_res, err := cli.UnaryCall(srv.ContextWithToken(), call_req)
+	if err != nil {
+		return err
+	}
+
+	var show_res camera_pb.ShowResponse
+	err = client_helper.DecodeUnaryCallResponse(call_res, &show_res)
+	if err != nil {
+		return err
+	}
+
+	cam_st := show_res.Camera.State
+	if cam_st != camera_pb.CameraState_CAMERA_STATE_STOP {
+		state_str := srv.camera_st_psr.ToString(cam_st)
+		_, err = srv.storage.PatchCamera(cam_id, storage.Camera{State: &state_str})
+		if err != nil {
+			return err
+		}
+	}
+	srv.logger.WithFields(log.Fields{"cam_id": cam_id, "state": cam_st}).Debugf("sync camera state")
+	return nil
+}
+
 func (srv *metathingsCameradService) Start(ctx context.Context, req *pb.StartRequest) (*pb.StartResponse, error) {
 	err := req.Validate()
 	if err != nil {
@@ -538,65 +565,91 @@ func (srv *metathingsCameradService) Start(ctx context.Context, req *pb.StartReq
 		return nil, status.Errorf(codes.OutOfRange, "unstartable state")
 	}
 
-	start_req := &camera_pb.StartRequest{
-		Config: &camera_pb.StartConfig{
-			Url: &gpb.StringValue{Value: live_str},
-		},
-	}
-
-	if c.Device != nil {
-		start_req.Config.Device = &gpb.StringValue{Value: *c.Device}
-	}
-	if c.Width != nil && c.Height != nil {
-		start_req.Config.Width = &gpb.UInt32Value{Value: *c.Width}
-		start_req.Config.Height = &gpb.UInt32Value{Value: *c.Height}
-	}
-	if c.Bitrate != nil {
-		start_req.Config.Bitrate = &gpb.UInt32Value{Value: *c.Bitrate}
-	}
-	if c.Framerate != nil {
-		start_req.Config.Framerate = &gpb.UInt32Value{Value: *c.Framerate}
-	}
-
-	call_req := client_helper.MustNewUnaryCallRequest(*c.CoreId, *c.EntityName, "camera", "Start", start_req)
-
-	cli, cfn, err := srv.cli_fty.NewCoredServiceClient()
-	if err != nil {
-		srv.logger.WithError(err).Errorf("failed to new core service client")
-		return nil, status.Errorf(codes.Internal, err.Error())
-	}
-	defer cfn()
-
-	var start_res camera_pb.StartResponse
-	call_res, err := cli.UnaryCall(srv.ContextWithToken(), call_req)
-	if err != nil {
-		srv.logger.WithError(err).Errorf("failed to call start on entity")
-		return nil, status.Errorf(codes.Internal, err.Error())
-	}
-
-	err = client_helper.DecodeUnaryCallResponse(call_res, &start_res)
-	if err != nil {
-		srv.logger.WithError(err).Errorf("failed to decode response")
-		return nil, status.Errorf(codes.Internal, err.Error())
-	}
-
 	state_str := "starting"
-	cfg := start_res.Camera.Config
 	c = storage.Camera{
-		Url:       &cfg.Url,
-		Device:    &cfg.Device,
-		Width:     &cfg.Width,
-		Height:    &cfg.Height,
-		Bitrate:   &cfg.Bitrate,
-		Framerate: &cfg.Framerate,
-		State:     &state_str,
+		State: &state_str,
 	}
-
 	c, err = srv.storage.PatchCamera(cam_id, c)
 	if err != nil {
 		srv.logger.WithError(err).Errorf("failed to update camera")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
+
+	go func() {
+		var err error
+		defer func() {
+			if err != nil {
+				state_str := "stop"
+				srv.storage.PatchCamera(cam_id, storage.Camera{State: &state_str})
+			}
+		}()
+
+		cli, cfn, err := srv.cli_fty.NewCoredServiceClient()
+		if err != nil {
+			srv.logger.WithError(err).Errorf("failed to new core service client")
+			return
+		}
+		defer cfn()
+
+		err = srv.sync_camera_state(cli, cam_id, *c.CoreId, *c.EntityName)
+		if err != nil {
+			srv.logger.WithField("cam_id", cam_id).WithError(err).Errorf("failed to sync camera state from agent")
+			return
+		}
+
+		start_req := &camera_pb.StartRequest{
+			Config: &camera_pb.StartConfig{
+				Url: &gpb.StringValue{Value: live_str},
+			},
+		}
+
+		if c.Device != nil {
+			start_req.Config.Device = &gpb.StringValue{Value: *c.Device}
+		}
+		if c.Width != nil && c.Height != nil {
+			start_req.Config.Width = &gpb.UInt32Value{Value: *c.Width}
+			start_req.Config.Height = &gpb.UInt32Value{Value: *c.Height}
+		}
+		if c.Bitrate != nil {
+			start_req.Config.Bitrate = &gpb.UInt32Value{Value: *c.Bitrate}
+		}
+		if c.Framerate != nil {
+			start_req.Config.Framerate = &gpb.UInt32Value{Value: *c.Framerate}
+		}
+
+		call_req := client_helper.MustNewUnaryCallRequest(*c.CoreId, *c.EntityName, "camera", "Start", start_req)
+
+		call_res, err := cli.UnaryCall(srv.ContextWithToken(), call_req)
+		if err != nil {
+			srv.logger.WithError(err).Errorf("failed to call start on entity")
+			return
+		}
+
+		var start_res camera_pb.StartResponse
+		err = client_helper.DecodeUnaryCallResponse(call_res, &start_res)
+		if err != nil {
+			srv.logger.WithError(err).Errorf("failed to decode start camera response")
+			return
+		}
+
+		cfg := start_res.Camera.Config
+		c = storage.Camera{
+			Url:       &cfg.Url,
+			Device:    &cfg.Device,
+			Width:     &cfg.Width,
+			Height:    &cfg.Height,
+			Bitrate:   &cfg.Bitrate,
+			Framerate: &cfg.Framerate,
+		}
+
+		c, err = srv.storage.PatchCamera(cam_id, c)
+		if err != nil {
+			srv.logger.WithError(err).Errorf("failed to update camera")
+			return
+		}
+
+		srv.logger.WithField("cam_id", cam_id).Debugf("send start command to camera")
+	}()
 
 	res := &pb.StartResponse{
 		Camera: srv.copyCamera(c),
@@ -621,26 +674,9 @@ func (srv *metathingsCameradService) Stop(ctx context.Context, req *pb.StopReque
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
-	call_req := client_helper.MustNewUnaryCallRequest(*c.CoreId, *c.EntityName, "camera", "Stop", &empty.Empty{})
-
-	cli, cfn, err := srv.cli_fty.NewCoredServiceClient()
-	if err != nil {
-		srv.logger.WithError(err).Errorf("failed to new core service client")
-		return nil, status.Errorf(codes.Internal, err.Error())
-	}
-	defer cfn()
-
-	call_res, err := cli.UnaryCall(srv.ContextWithToken(), call_req)
-	if err != nil {
-		srv.logger.WithError(err).Errorf("failed to call stop on entity")
-		return nil, status.Errorf(codes.Internal, err.Error())
-	}
-
-	var stop_res camera_pb.StopResponse
-	err = client_helper.DecodeUnaryCallResponse(call_res, &stop_res)
-	if err != nil {
-		srv.logger.WithError(err).Errorf("failed to decode response")
-		return nil, status.Errorf(codes.Internal, err.Error())
+	if *c.State != "running" {
+		srv.logger.WithFields(log.Fields{}).Errorf("failed to stop camera with unstopable state")
+		return nil, status.Errorf(codes.OutOfRange, "unstopable state")
 	}
 
 	state_str := "terminating"
@@ -653,6 +689,43 @@ func (srv *metathingsCameradService) Stop(ctx context.Context, req *pb.StopReque
 		srv.logger.WithError(err).Errorf("failed to update camera")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
+
+	go func() {
+		var err error
+		if err != nil {
+			state_str := "running"
+			srv.storage.PatchCamera(cam_id, storage.Camera{State: &state_str})
+		}
+
+		cli, cfn, err := srv.cli_fty.NewCoredServiceClient()
+		if err != nil {
+			srv.logger.WithError(err).Errorf("failed to new core service client")
+			return
+		}
+		defer cfn()
+
+		err = srv.sync_camera_state(cli, cam_id, *c.CoreId, *c.EntityName)
+		if err != nil {
+			srv.logger.WithField("cam_id", cam_id).WithError(err).Errorf("failed to sync camera state from agent")
+		}
+
+		call_req := client_helper.MustNewUnaryCallRequest(*c.CoreId, *c.EntityName, "camera", "Stop", &empty.Empty{})
+
+		call_res, err := cli.UnaryCall(srv.ContextWithToken(), call_req)
+		if err != nil {
+			srv.logger.WithError(err).Errorf("failed to call stop on entity")
+			return
+		}
+
+		var stop_res camera_pb.StopResponse
+		err = client_helper.DecodeUnaryCallResponse(call_res, &stop_res)
+		if err != nil {
+			srv.logger.WithError(err).Errorf("failed to decode response")
+			return
+		}
+
+		srv.logger.WithField("cam_id", cam_id).Debugf("send stop command to camera")
+	}()
 
 	res := &pb.StopResponse{
 		Camera: srv.copyCamera(c),
