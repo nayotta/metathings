@@ -50,11 +50,27 @@ func (mgr *streamManager) getSessionIdFromContext(ctx context.Context) string {
 func (mgr *streamManager) clear_default_stream(core_id string) error {
 	if _, ok := mgr.streams[core_id]; ok {
 		delete(mgr.streams, core_id)
+		mgr.logger.WithField("core_id", core_id).Debugf("delete stream in stream manager")
 	}
-	if _, ok := mgr.stream_exit_chan[core_id]; ok {
+	if ch, ok := mgr.stream_exit_chan[core_id]; ok {
+		close(ch)
 		delete(mgr.stream_exit_chan, core_id)
+		mgr.logger.WithField("core_id", core_id).Debugf("delete and close stream exit channel in stream manager")
 	}
+	return nil
+}
 
+func (mgr *streamManager) send_exit_signal(core_id string) error {
+	if ch, ok := mgr.stream_exit_chan[core_id]; ok {
+		select {
+		case ch <- nil:
+			mgr.logger.WithField("core_id", core_id).Debugf("send exit signal to Stream")
+		default:
+			mgr.logger.WithField("core_id", core_id).Debugf("send exit signal blocked, maybe closed")
+		}
+	} else {
+		mgr.logger.WithField("core_id", core_id).Debugf("failed to send exit signal to Stream, maybe closed")
+	}
 	return nil
 }
 
@@ -76,18 +92,13 @@ func (mgr *streamManager) register_default(core_id string, stream cored_pb.Cored
 			if err != nil {
 				mgr.lock.Lock()
 				defer mgr.lock.Unlock()
+				mgr.send_exit_signal(core_id)
 				mgr.clear_default_stream(core_id)
-				exit <- nil
-				if gerr, ok := status.FromError(err); ok {
-					if gerr.Code() == codes.Canceled {
-						mgr.logger.WithField("core_id", core_id).Debugf("core agent stream closed")
-					} else {
-						mgr.logger.WithError(err).WithField("core_id", core_id).Warningf("core agent stream closed with unexpected error")
-					}
-				} else if err == io.EOF {
-					mgr.logger.WithField("core_id", core_id).Debugf("core agent stream closed")
-				} else {
+				gerr, ok := status.FromError(err)
+				if (!ok && err != io.EOF) || (ok && gerr.Code() != codes.Canceled) {
 					mgr.logger.WithError(err).WithField("core_id", core_id).Warningf("core agent stream closed with unexpected error")
+				} else {
+					mgr.logger.WithField("core_id", core_id).Debugf("core agent stream closed")
 				}
 				return
 			}
