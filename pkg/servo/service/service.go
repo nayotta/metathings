@@ -100,13 +100,18 @@ func (srv *metathingsServoService) Stream(stream pb.ServoService_StreamServer) e
 		}
 	}()
 
-	return status.Errorf(codes.Unimplemented, "unimplemented")
+	<-quit
+	srv.logger.Infof("stream closed")
+
+	return nil
 }
 
 func (srv *metathingsServoService) handleStreamRequest(stream pb.ServoService_StreamServer, req *pb.StreamRequest) {
 	switch req.Payload.(type) {
 	case *pb.StreamRequest_Ping:
 		srv.handleStreamRequest_ping(stream, req)
+	case *pb.StreamRequest_SetState:
+		srv.handleStreamRequest_setState(stream, req)
 	case *pb.StreamRequest_SetAngle:
 		srv.handleStreamRequest_setAngle(stream, req)
 	default:
