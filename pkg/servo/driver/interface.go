@@ -20,9 +20,11 @@ const (
 )
 
 type Servo struct {
-	Name  string
-	State ServoState
-	Angle float32
+	Name     string
+	State    ServoState
+	Angle    float32
+	MaxAngle float32
+	MinAngle float32
 }
 
 type ServoDriver interface {

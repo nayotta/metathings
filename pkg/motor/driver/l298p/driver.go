@@ -201,7 +201,7 @@ func (drv *l298pMotorDriver) setSpeed(spd float32) error {
 }
 
 var NewDriver driver_helper.NewDriverMethod = func(opt opt_helper.Option) (driver_helper.Driver, error) {
-	log.Debugf("new motor dummy driver")
+	log.Debugf("new motor l298p driver")
 
 	return &l298pMotorDriver{
 		mutex:     &sync.Mutex{},

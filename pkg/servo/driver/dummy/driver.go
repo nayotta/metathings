@@ -26,9 +26,11 @@ type dummyServoDriver struct {
 
 func (drv *dummyServoDriver) toDriverServo() driver.Servo {
 	return driver.Servo{
-		Name:  drv.name,
-		State: drv.state,
-		Angle: drv.angle,
+		Name:     drv.name,
+		State:    drv.state,
+		Angle:    drv.angle,
+		MinAngle: 0,
+		MaxAngle: 180,
 	}
 }
 
