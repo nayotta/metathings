@@ -11,6 +11,7 @@ import (
 
 	service "github.com/nayotta/metathings/pkg/camera/service"
 	cmd_helper "github.com/nayotta/metathings/pkg/common/cmd"
+	constant_helper "github.com/nayotta/metathings/pkg/common/constant"
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 	mtp "github.com/nayotta/metathings/pkg/cored/plugin"
 	pb "github.com/nayotta/metathings/pkg/proto/camera"
@@ -139,8 +140,8 @@ func (p *cameraServicePlugin) Init(opts opt_helper.Option) error {
 	rootCmd.PersistentFlags().BoolVar(&root_opts.Verbose, "verbose", false, "Verbose mode")
 	rootCmd.PersistentFlags().StringVar(&root_opts.Log.Level, "log-level", "info", "Logging Level[debug, info, warn, error]")
 	rootCmd.PersistentFlags().StringVar(&root_opts.Name, "name", "camerad", "Core Service Name")
-	rootCmd.PersistentFlags().StringVar(&root_opts.ServiceConfig.CoreAgentd.Address, "agent-addr", "agentd.metathings.local:5002", "Core Agent Service Address")
-	rootCmd.PersistentFlags().StringVar(&root_opts.ServiceConfig.Metathingsd.Address, "metathings-addr", "api.metathings.ai:80", "Metathings Service Address")
+	rootCmd.PersistentFlags().StringVar(&root_opts.ServiceConfig.CoreAgentd.Address, "agent-addr", constant_helper.CONSTANT_CORE_AGENT_ADDRESS, "Core Agent Service Address")
+	rootCmd.PersistentFlags().StringVar(&root_opts.ServiceConfig.Metathingsd.Address, "metathings-addr", constant_helper.CONSTANT_METATHINGSD_ADDRESS, "Metathings Service Address")
 	rootCmd.PersistentFlags().StringVar(&root_opts.Driver.Descriptor, "driver-descriptor", "~/.metathings/camera_driver_descriptor.yaml", "Camera driver descriptor path")
 	rootCmd.PersistentFlags().StringVar(&root_opts.Driver.Name, "driver-name", "", "Camera driver name")
 

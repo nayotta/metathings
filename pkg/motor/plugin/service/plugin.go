@@ -134,7 +134,7 @@ func (p *motorServicePlugin) Init(opts opt_helper.Option) error {
 	rootCmd.PersistentFlags().BoolVar(&root_opts.Verbose, "verbose", false, "Verbose mode")
 	rootCmd.PersistentFlags().StringVar(&root_opts.Log.Level, "log-level", "info", "Logging Level[debug, info, warn, error]")
 	rootCmd.PersistentFlags().StringVar(&root_opts.Name, "name", "motord", "Core Service Name")
-	rootCmd.PersistentFlags().StringVar(&root_opts.ServiceConfig.CoreAgentd.Address, "agent-addr", constant_helper.CONSTANT_CORE_AGENTD_ADDRESS, "Core Agent Service Address")
+	rootCmd.PersistentFlags().StringVar(&root_opts.ServiceConfig.CoreAgentd.Address, "agent-addr", constant_helper.CONSTANT_CORE_AGENT_ADDRESS, "Core Agent Service Address")
 	rootCmd.PersistentFlags().StringVar(&root_opts.ServiceConfig.Metathingsd.Address, "metathings-addr", constant_helper.CONSTANT_METATHINGSD_ADDRESS, "Metathings Service Address")
 	rootCmd.PersistentFlags().StringVar(&root_opts.DriverDescriptor, "driver-descriptor", "~/.metathins/motor_driver_descriptor.yaml", "Motor driver descriptor path")
 

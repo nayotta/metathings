@@ -218,5 +218,8 @@ func NewServoService(opt opt_helper.Option) (*metathingsServoService, error) {
 
 		servo_st_psr: state_helper.SERVO_STATE_PARSER,
 	}
+
+	srv.CoreService = mt_plugin.MakeCoreService(srv.opt, srv.logger, srv.cli_fty)
+
 	return srv, nil
 }
