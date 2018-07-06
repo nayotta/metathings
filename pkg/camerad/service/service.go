@@ -508,18 +508,18 @@ func (srv *metathingsCameradService) newLiveId() string {
 	return string(buf)
 }
 
-func (srv *metathingsCameradService) sync_camera_state(cli cored_pb.CoredServiceClient, cam_id string, core_id string, entity_name string) error {
+func (srv *metathingsCameradService) sync_camera_state(cli cored_pb.CoredServiceClient, cam_id string, core_id string, entity_name string) (camera_pb.CameraState, error) {
 
 	call_req := client_helper.MustNewUnaryCallRequest(core_id, entity_name, "camera", "Show", &empty.Empty{})
 	call_res, err := cli.UnaryCall(srv.ContextWithToken(), call_req)
 	if err != nil {
-		return err
+		return camera_pb.CameraState_CAMERA_STATE_UNKNOWN, err
 	}
 
 	var show_res camera_pb.ShowResponse
 	err = client_helper.DecodeUnaryCallResponse(call_res, &show_res)
 	if err != nil {
-		return err
+		return camera_pb.CameraState_CAMERA_STATE_UNKNOWN, err
 	}
 
 	cam_st := show_res.Camera.State
@@ -527,11 +527,11 @@ func (srv *metathingsCameradService) sync_camera_state(cli cored_pb.CoredService
 		state_str := srv.camera_st_psr.ToString(cam_st)
 		_, err = srv.storage.PatchCamera(cam_id, storage.Camera{State: &state_str})
 		if err != nil {
-			return err
+			return camera_pb.CameraState_CAMERA_STATE_UNKNOWN, err
 		}
 	}
 	srv.logger.WithFields(log.Fields{"cam_id": cam_id, "state": cam_st}).Debugf("sync camera state")
-	return nil
+	return cam_st, nil
 }
 
 func (srv *metathingsCameradService) Start(ctx context.Context, req *pb.StartRequest) (*pb.StartResponse, error) {
@@ -591,9 +591,14 @@ func (srv *metathingsCameradService) Start(ctx context.Context, req *pb.StartReq
 		}
 		defer cfn()
 
-		err = srv.sync_camera_state(cli, cam_id, *c.CoreId, *c.EntityName)
+		st, err := srv.sync_camera_state(cli, cam_id, *c.CoreId, *c.EntityName)
 		if err != nil {
 			srv.logger.WithField("cam_id", cam_id).WithError(err).Errorf("failed to sync camera state from agent")
+			return
+		}
+
+		if st == camera_pb.CameraState_CAMERA_STATE_RUNNING {
+			srv.logger.WithField("cam_id", cam_id).Debugf("camera already running")
 			return
 		}
 
@@ -704,9 +709,15 @@ func (srv *metathingsCameradService) Stop(ctx context.Context, req *pb.StopReque
 		}
 		defer cfn()
 
-		err = srv.sync_camera_state(cli, cam_id, *c.CoreId, *c.EntityName)
+		st, err := srv.sync_camera_state(cli, cam_id, *c.CoreId, *c.EntityName)
 		if err != nil {
 			srv.logger.WithField("cam_id", cam_id).WithError(err).Errorf("failed to sync camera state from agent")
+			return
+		}
+
+		if st == camera_pb.CameraState_CAMERA_STATE_STOP {
+			srv.logger.WithField("cam_id", cam_id).Debugf("camera already stop")
+			return
 		}
 
 		call_req := client_helper.MustNewUnaryCallRequest(*c.CoreId, *c.EntityName, "camera", "Stop", &empty.Empty{})
