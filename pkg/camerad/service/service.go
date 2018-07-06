@@ -531,14 +531,12 @@ func (srv *metathingsCameradService) sync_camera_state(cli cored_pb.CoredService
 	}
 
 	cam_st := show_res.Camera.State
-	if cam_st != camera_pb.CameraState_CAMERA_STATE_STOP {
-		srv.set_camera_state(cam_id, srv.camera_st_psr.ToString(cam_st))
-		if err != nil {
-			return camera_pb.CameraState_CAMERA_STATE_UNKNOWN, err
-		}
-	}
+	srv.set_camera_state(cam_id, srv.camera_st_psr.ToString(cam_st))
+	srv.logger.WithFields(log.Fields{
+		"cam_id": cam_id,
+		"state":  cam_st,
+	}).Debugf("sync camera state")
 
-	srv.logger.WithFields(log.Fields{"cam_id": cam_id, "state": cam_st}).Debugf("sync camera state")
 	return cam_st, nil
 }
 
