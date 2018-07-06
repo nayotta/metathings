@@ -258,11 +258,7 @@ func (srv *metathingsCameradService) Create(ctx context.Context, req *pb.CreateR
 		state := show_res.Camera.State
 		state_str := srv.camera_st_psr.ToString(state)
 
-		c := storage.Camera{
-			State: &state_str,
-		}
-
-		_, err = srv.storage.PatchCamera(cam_id, c)
+		_, err = srv.set_camera_state(cam_id, state_str)
 		if err != nil {
 			srv.logger.WithField("id", cam_id).WithError(err).Errorf("failed to patch camera")
 			return
@@ -508,6 +504,18 @@ func (srv *metathingsCameradService) newLiveId() string {
 	return string(buf)
 }
 
+func (srv *metathingsCameradService) set_camera_state(cam_id string, state string) (storage.Camera, error) {
+	c, err := srv.storage.PatchCamera(cam_id, storage.Camera{State: &state})
+	if err != nil {
+		return storage.Camera{}, err
+	}
+
+	srv.logger.WithFields(log.Fields{
+		"state": state,
+	}).Debugf("update camera state")
+	return c, nil
+}
+
 func (srv *metathingsCameradService) sync_camera_state(cli cored_pb.CoredServiceClient, cam_id string, core_id string, entity_name string) (camera_pb.CameraState, error) {
 
 	call_req := client_helper.MustNewUnaryCallRequest(core_id, entity_name, "camera", "Show", &empty.Empty{})
@@ -524,12 +532,12 @@ func (srv *metathingsCameradService) sync_camera_state(cli cored_pb.CoredService
 
 	cam_st := show_res.Camera.State
 	if cam_st != camera_pb.CameraState_CAMERA_STATE_STOP {
-		state_str := srv.camera_st_psr.ToString(cam_st)
-		_, err = srv.storage.PatchCamera(cam_id, storage.Camera{State: &state_str})
+		srv.set_camera_state(cam_id, srv.camera_st_psr.ToString(cam_st))
 		if err != nil {
 			return camera_pb.CameraState_CAMERA_STATE_UNKNOWN, err
 		}
 	}
+
 	srv.logger.WithFields(log.Fields{"cam_id": cam_id, "state": cam_st}).Debugf("sync camera state")
 	return cam_st, nil
 }
@@ -565,11 +573,7 @@ func (srv *metathingsCameradService) Start(ctx context.Context, req *pb.StartReq
 		return nil, status.Errorf(codes.OutOfRange, "unstartable state")
 	}
 
-	state_str := "starting"
-	c = storage.Camera{
-		State: &state_str,
-	}
-	c, err = srv.storage.PatchCamera(cam_id, c)
+	srv.set_camera_state(cam_id, "starting")
 	if err != nil {
 		srv.logger.WithError(err).Errorf("failed to update camera")
 		return nil, status.Errorf(codes.Internal, err.Error())
@@ -579,8 +583,7 @@ func (srv *metathingsCameradService) Start(ctx context.Context, req *pb.StartReq
 		var err error
 		defer func() {
 			if err != nil {
-				state_str := "stop"
-				srv.storage.PatchCamera(cam_id, storage.Camera{State: &state_str})
+				srv.set_camera_state(cam_id, "stop")
 			}
 		}()
 
@@ -680,16 +683,14 @@ func (srv *metathingsCameradService) Stop(ctx context.Context, req *pb.StopReque
 	}
 
 	if *c.State != "running" {
-		srv.logger.WithFields(log.Fields{}).Errorf("failed to stop camera with unstopable state")
+		srv.logger.WithFields(log.Fields{
+			"cam_id": cam_id,
+			"state":  *c.State,
+		}).Errorf("failed to stop camera with unstopable state")
 		return nil, status.Errorf(codes.OutOfRange, "unstopable state")
 	}
 
-	state_str := "terminating"
-	c = storage.Camera{
-		State: &state_str,
-	}
-
-	c, err = srv.storage.PatchCamera(cam_id, c)
+	srv.set_camera_state(cam_id, "terminating")
 	if err != nil {
 		srv.logger.WithError(err).Errorf("failed to update camera")
 		return nil, status.Errorf(codes.Internal, err.Error())
@@ -698,8 +699,7 @@ func (srv *metathingsCameradService) Stop(ctx context.Context, req *pb.StopReque
 	go func() {
 		var err error
 		if err != nil {
-			state_str := "running"
-			srv.storage.PatchCamera(cam_id, storage.Camera{State: &state_str})
+			srv.set_camera_state(cam_id, "running")
 		}
 
 		cli, cfn, err := srv.cli_fty.NewCoredServiceClient()
