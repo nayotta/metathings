@@ -1,7 +1,7 @@
 dev:
   name: motord
   service_name: motor
-  listen: 127.0.0.1:15602
+  listen: 127.0.0.1:13402
   verbose: false
   log:
     level: info

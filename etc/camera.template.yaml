@@ -1,7 +1,7 @@
 dev:
   name: camerad
   service_name: camera
-  listen: 0.0.0.0:15603
+  listen: 0.0.0.0:13403
   verbose: true
   log:
     level: info

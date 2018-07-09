@@ -5,8 +5,8 @@ import (
 	"sync"
 
 	"github.com/go-daq/smbus"
+	"github.com/nayotta/viper"
 	log "github.com/sirupsen/logrus"
-	"github.com/spf13/viper"
 
 	driver_helper "github.com/nayotta/metathings/pkg/common/driver"
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"

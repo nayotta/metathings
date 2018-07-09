@@ -1,7 +1,7 @@
 dev:
   name: servod
   service_name: servo
-  listen: 127.0.0.1:15604
+  listen: 127.0.0.1:13404
   verbose: false
   log:
     level: info

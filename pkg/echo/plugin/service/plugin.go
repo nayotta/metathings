@@ -117,7 +117,7 @@ func (p *echoServicePlugin) Init(opts opt_helper.Option) error {
 
 	cobra.OnInitialize(initConfig)
 
-	rootCmd.PersistentFlags().StringVarP(&root_opts.Listen, "listen", "l", "0.0.0.0:13401", "Echo(Core Plugin) Service listenting address")
+	rootCmd.PersistentFlags().StringVarP(&root_opts.Listen, "listen", "l", "0.0.0.0:13400", "Echo(Core Plugin) Service listenting address")
 	rootCmd.PersistentFlags().StringVarP(&root_opts.Config, "config", "c", "", "Config file")
 	rootCmd.PersistentFlags().BoolVar(&root_opts.Verbose, "verbose", false, "Verbose mode")
 	rootCmd.PersistentFlags().StringVar(&root_opts.Log.Level, "log-level", "info", "Logging Level[debug, info, warn, error]")

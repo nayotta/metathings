@@ -1,7 +1,7 @@
 dev:
   name: echod
   service_name: echo
-  listen: 127.0.0.1:13401
+  listen: 127.0.0.1:13400
   verbose: false
   log:
     level: info

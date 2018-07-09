@@ -43,6 +43,16 @@ var (
 
 			var _opts _rootOptions
 			cmd_helper.UnmarshalConfig(&_opts, v)
+
+			if _opts.ServiceConfig.CoreAgentd.Address == "" {
+				_opts.ServiceConfig.CoreAgentd.Address = root_opts.ServiceConfig.CoreAgentd.Address
+			}
+
+			if _opts.DriverDescriptor == "" {
+				_opts.DriverDescriptor = root_opts.DriverDescriptor
+			}
+
+			root_opts = &_opts
 		}),
 		Run: func(cmd *cobra.Command, args []string) {
 			if err := runServod(); err != nil {

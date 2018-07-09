@@ -1,7 +1,7 @@
 dev:
   name: switcherd
   service_name: switcher
-  listen: 0.0.0.0:15601
+  listen: 0.0.0.0:13401
   verbose: true
   log:
     level: info

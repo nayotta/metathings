@@ -10,6 +10,8 @@ all: \
 	motor_plugins \
 	camera_drivers \
 	camera_plugins \
+	servo_drivers \
+	servo_plugins \
 	metathings_bin \
 	metathingsd_bin
 

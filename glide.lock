@@ -1,10 +1,12 @@
 hash: 8a915871ca64465fe9d3c72efb7c39ce3146d12f14d41989d5eb450b818065fd
-updated: 2018-06-11T15:13:25.253068+08:00
+updated: 2018-07-09T11:01:44.892123+08:00
 imports:
 - name: github.com/cbroglie/mustache
   version: eb931a9d20042e51d8a3a9ad5a9ba9bc8282c564
 - name: github.com/fsnotify/fsnotify
   version: c2828203cd70a50dcccfb2761f8b1f8ceef9a8e9
+- name: github.com/go-daq/smbus
+  version: 15ef727fb3205992e78eb887b88a90f952874459
 - name: github.com/gogo/protobuf
   version: 1adfc126b41513cc696b209667c8656ea7aac67c
   subpackages:

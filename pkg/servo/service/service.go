@@ -146,7 +146,7 @@ func (srv *metathingsServoService) handleStreamRequest_setState(stream pb.ServoS
 	req_setState := req.GetSetState()
 	s, err := srv.srv_mgr.GetServo(req_setState.Name.Value)
 	if err != nil {
-		srv.logger.WithError(err).Errorf("failed to get servo")
+		srv.logger.WithError(err).WithField("name", req_setState.Name.Value).Errorf("failed to get servo")
 		return
 	}
 
@@ -163,7 +163,7 @@ func (srv *metathingsServoService) handleStreamRequest_setAngle(stream pb.ServoS
 	req_setAngle := req.GetSetAngle()
 	s, err := srv.srv_mgr.GetServo(req_setAngle.Name.Value)
 	if err != nil {
-		srv.logger.WithError(err).Errorf("failed to get servo")
+		srv.logger.WithError(err).WithField("name", req_setAngle.Name.Value).Errorf("failed to get servo")
 		return
 	}
 
