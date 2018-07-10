@@ -51,6 +51,7 @@ import:
   - status
 - package: periph.io/x/periph
   version: v2.3.0
+- package: github.com/go-daq/smbus
 testImport:
 - package: github.com/stretchr/testify
   version: ~1.2.2

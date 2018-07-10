@@ -1,5 +1,5 @@
-hash: 8a915871ca64465fe9d3c72efb7c39ce3146d12f14d41989d5eb450b818065fd
-updated: 2018-07-09T11:01:44.892123+08:00
+hash: 17982ed77cb46fc973435a95e8026dad5bb05abbd6940c877165877c973f0f73
+updated: 2018-07-10T23:25:55.81587+08:00
 imports:
 - name: github.com/cbroglie/mustache
   version: eb931a9d20042e51d8a3a9ad5a9ba9bc8282c564
@@ -90,7 +90,7 @@ imports:
 - name: github.com/stianeikeland/go-rpio
   version: 3abdd2207d33843c1c3fbea540bdf07990075c03
 - name: gobot.io/x/gobot
-  version: 635adea96f788ab19bf77470b075f8db44d34fa0
+  version: c1d0e3ce485df0b45076d1d93b7d9240b770d5fc
   subpackages:
   - drivers/gpio
   - drivers/i2c
@@ -164,6 +164,7 @@ imports:
   - conn/gpio/gpioreg
   - conn/i2c
   - conn/i2c/i2creg
+  - conn/physic
   - conn/pin
   - conn/spi
   - conn/spi/spireg
