@@ -22,6 +22,11 @@ type ServiceConfigOptions struct {
 	Metathingsd ServiceConfigOption `mapstructure:"metathingsd"`
 }
 
+type EndpointOptions struct {
+	Type string
+	Host string
+}
+
 type RootOptions struct {
 	Config                string
 	Stage                 string

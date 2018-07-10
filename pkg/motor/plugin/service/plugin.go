@@ -24,6 +24,7 @@ type _motorDriverOption struct {
 type _rootOptions struct {
 	cmd_helper.RootOptions `mapstructure:",squash"`
 	Listen                 string
+	Endpoint               cmd_helper.EndpointOptions
 	Name                   string
 	DriverDescriptor       string
 }
@@ -62,9 +63,7 @@ var (
 )
 
 func runMotord() error {
-	// TODO(Peer): hard code here now.
-	port := strings.SplitAfter(root_opts.Listen, ":")[1]
-	ep := "localhost" + ":" + port
+	ep := cmd_helper.GetEndpoint(root_opts.Endpoint.Type, root_opts.Endpoint.Host, root_opts.Listen)
 
 	opts := mtp.DefaultOptions()
 	opts.Set("name", root_opts.Name)
@@ -130,6 +129,8 @@ func (p *motorServicePlugin) Init(opts opt_helper.Option) error {
 	cobra.OnInitialize(initConfig)
 
 	rootCmd.PersistentFlags().StringVarP(&root_opts.Listen, "listen", "l", "0.0.0.0:13402", "Motor(Core Plugin) Service listening address")
+	rootCmd.PersistentFlags().StringVar(&root_opts.Endpoint.Type, "endpoint-type", "auto", "Get endpoint address type[auto, manual]")
+	rootCmd.PersistentFlags().StringVar(&root_opts.Endpoint.Host, "endpoint-host", "", "Endpoint host address (work on endpoint-type is manual)")
 	rootCmd.PersistentFlags().StringVarP(&root_opts.Config, "config", "c", "", "Config file")
 	rootCmd.PersistentFlags().BoolVar(&root_opts.Verbose, "verbose", false, "Verbose mode")
 	rootCmd.PersistentFlags().StringVar(&root_opts.Log.Level, "log-level", "info", "Logging Level[debug, info, warn, error]")
