@@ -29,9 +29,11 @@ type metathingsServoService struct {
 func (srv *metathingsServoService) copyServo(s Servo) *pb.Servo {
 	sv := s.Driver.Show()
 	return &pb.Servo{
-		Name:  s.Name,
-		State: srv.servo_st_psr.ToValue(sv.State.ToString()),
-		Angle: sv.Angle,
+		Name:     s.Name,
+		State:    srv.servo_st_psr.ToValue(sv.State.ToString()),
+		Angle:    sv.Angle,
+		MinAngle: sv.MinAngle,
+		MaxAngle: sv.MaxAngle,
 	}
 }
 
