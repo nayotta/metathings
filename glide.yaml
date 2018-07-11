@@ -50,7 +50,7 @@ import:
   - metadata
   - status
 - package: periph.io/x/periph
-  version: v2.3.0
+  version: v3.0.0
 - package: github.com/go-daq/smbus
 testImport:
 - package: github.com/stretchr/testify

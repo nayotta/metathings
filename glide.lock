@@ -1,5 +1,5 @@
-hash: 17982ed77cb46fc973435a95e8026dad5bb05abbd6940c877165877c973f0f73
-updated: 2018-07-10T23:25:55.81587+08:00
+hash: 273f0c130cd61d713a6c9ca0a163913cd47125a2929e7191584b5dcf19001634
+updated: 2018-07-11T18:17:37.041242+08:00
 imports:
 - name: github.com/cbroglie/mustache
   version: eb931a9d20042e51d8a3a9ad5a9ba9bc8282c564
@@ -157,7 +157,7 @@ imports:
 - name: gopkg.in/yaml.v2
   version: 5420a8b6744d3b0345ab293f6fcba19c978f1183
 - name: periph.io/x/periph
-  version: c0de80b1b075a2019fced09524f2318cf690a685
+  version: 000523f7fa26b78f012b93221c94434ac5b18e37
   subpackages:
   - conn
   - conn/gpio
@@ -168,7 +168,6 @@ imports:
   - conn/pin
   - conn/spi
   - conn/spi/spireg
-  - devices
   - host/fs
   - host/sysfs
 testImports:
