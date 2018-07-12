@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package ai.metathings.service.sensor;
+
+import "google/protobuf/wrappers.proto";
+
+import "github.com/mwitkow/go-proto-validators/validator.proto";
+
+import "sensor.proto";
+
+message GetDataRequest {
+	google.protobuf.StringValue name = 1 [(validator.field) = {msg_exists: true}];
+}
+
+message GetDataResponse {
+	SensorData data = 1;
+}

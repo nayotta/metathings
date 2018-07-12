@@ -9,3 +9,4 @@ all:
 	$(MAKE) -C motor all
 	$(MAKE) -C camera all
 	$(MAKE) -C servo all
+	$(MAKE) -C sensor all

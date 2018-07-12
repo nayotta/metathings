@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package ai.metathings.service.sensor;
+
+import "github.com/mwitkow/go-proto-validators/validator.proto";
+
+import "sensor.proto";
+
+message ListDataRequest {}
+
+message ListDataResponse {
+	map<string, SensorData> datas = 1;
+}

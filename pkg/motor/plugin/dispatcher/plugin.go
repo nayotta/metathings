@@ -47,7 +47,7 @@ func (dp *motorDispatcherPlugin) UnaryCall(method string, ctx context.Context, r
 }
 
 var (
-	stream_call_methods = map[string]func(cli pb.MotorServiceClient, ctx context.Context, cbs ...func()) (mt_plugin.Stream, error){}
+	stream_call_methods = map[string]func(pb.MotorServiceClient, context.Context, ...func()) (mt_plugin.Stream, error){}
 )
 
 func (dp *motorDispatcherPlugin) StreamCall(method string, ctx context.Context) (mt_plugin.Stream, error) {

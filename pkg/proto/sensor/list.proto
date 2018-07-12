@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package ai.metathings.service.sensor;
+
+import "github.com/mwitkow/go-proto-validators/validator.proto";
+
+import "sensor.proto";
+
+message ListRequest {}
+
+message ListResponse {
+	repeated Sensor sensors = 1;
+}

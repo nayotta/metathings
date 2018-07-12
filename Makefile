@@ -12,6 +12,8 @@ all: \
 	camera_plugins \
 	servo_drivers \
 	servo_plugins \
+	sensor_drivers \
+	sensor_plugins \
 	metathings_bin \
 	metathingsd_bin
 
@@ -53,6 +55,12 @@ servo_drivers:
 
 servo_plugins:
 	$(MAKE) -C pkg/servo/plugin all
+
+sensor_drivers:
+	$(MAKE) -C pkg/sensor/driver all
+
+sensor_plugins:
+	$(MAKE) -C pkg/sensor/plugin all
 
 build_docker_images:
 	./script/metathings_build.sh
