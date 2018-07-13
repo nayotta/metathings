@@ -15,8 +15,8 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
-func (this *SensorData) Validate() error {
-	if oneOfNester, ok := this.GetValue().(*SensorData_Any); ok {
+func (this *SensorValue) Validate() error {
+	if oneOfNester, ok := this.GetValue().(*SensorValue_Any); ok {
 		if oneOfNester.Any != nil {
 			if err := go_proto_validators.CallValidatorIfExists(oneOfNester.Any); err != nil {
 				return go_proto_validators.FieldError("Any", err)
@@ -25,77 +25,8 @@ func (this *SensorData) Validate() error {
 	}
 	return nil
 }
-func (this *SensorConfig) Validate() error {
-	if oneOfNester, ok := this.GetValue().(*SensorConfig_Dobule); ok {
-		if oneOfNester.Dobule != nil {
-			if err := go_proto_validators.CallValidatorIfExists(oneOfNester.Dobule); err != nil {
-				return go_proto_validators.FieldError("Dobule", err)
-			}
-		}
-	}
-	if oneOfNester, ok := this.GetValue().(*SensorConfig_Float); ok {
-		if oneOfNester.Float != nil {
-			if err := go_proto_validators.CallValidatorIfExists(oneOfNester.Float); err != nil {
-				return go_proto_validators.FieldError("Float", err)
-			}
-		}
-	}
-	if oneOfNester, ok := this.GetValue().(*SensorConfig_Int64); ok {
-		if oneOfNester.Int64 != nil {
-			if err := go_proto_validators.CallValidatorIfExists(oneOfNester.Int64); err != nil {
-				return go_proto_validators.FieldError("Int64", err)
-			}
-		}
-	}
-	if oneOfNester, ok := this.GetValue().(*SensorConfig_Uint64); ok {
-		if oneOfNester.Uint64 != nil {
-			if err := go_proto_validators.CallValidatorIfExists(oneOfNester.Uint64); err != nil {
-				return go_proto_validators.FieldError("Uint64", err)
-			}
-		}
-	}
-	if oneOfNester, ok := this.GetValue().(*SensorConfig_Int32); ok {
-		if oneOfNester.Int32 != nil {
-			if err := go_proto_validators.CallValidatorIfExists(oneOfNester.Int32); err != nil {
-				return go_proto_validators.FieldError("Int32", err)
-			}
-		}
-	}
-	if oneOfNester, ok := this.GetValue().(*SensorConfig_Uint32); ok {
-		if oneOfNester.Uint32 != nil {
-			if err := go_proto_validators.CallValidatorIfExists(oneOfNester.Uint32); err != nil {
-				return go_proto_validators.FieldError("Uint32", err)
-			}
-		}
-	}
-	if oneOfNester, ok := this.GetValue().(*SensorConfig_Bool); ok {
-		if oneOfNester.Bool != nil {
-			if err := go_proto_validators.CallValidatorIfExists(oneOfNester.Bool); err != nil {
-				return go_proto_validators.FieldError("Bool", err)
-			}
-		}
-	}
-	if oneOfNester, ok := this.GetValue().(*SensorConfig_String_); ok {
-		if oneOfNester.String_ != nil {
-			if err := go_proto_validators.CallValidatorIfExists(oneOfNester.String_); err != nil {
-				return go_proto_validators.FieldError("String_", err)
-			}
-		}
-	}
-	if oneOfNester, ok := this.GetValue().(*SensorConfig_Bytes); ok {
-		if oneOfNester.Bytes != nil {
-			if err := go_proto_validators.CallValidatorIfExists(oneOfNester.Bytes); err != nil {
-				return go_proto_validators.FieldError("Bytes", err)
-			}
-		}
-	}
-	if oneOfNester, ok := this.GetValue().(*SensorConfig_Any); ok {
-		if oneOfNester.Any != nil {
-			if err := go_proto_validators.CallValidatorIfExists(oneOfNester.Any); err != nil {
-				return go_proto_validators.FieldError("Any", err)
-			}
-		}
-	}
+func (this *SensorData) Validate() error {
+	// Validation of proto3 map<> fields is unsupported.
 	return nil
 }
 func (this *Sensor) Validate() error {

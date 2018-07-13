@@ -12,6 +12,7 @@ import (
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 	mt_plugin "github.com/nayotta/metathings/pkg/cored/plugin"
 	pb "github.com/nayotta/metathings/pkg/proto/sensor"
+	driver "github.com/nayotta/metathings/pkg/sensor/driver"
 	state_helper "github.com/nayotta/metathings/pkg/sensor/state"
 )
 
@@ -25,24 +26,163 @@ type metathingsSensorService struct {
 	sensor_st_psr state_helper.SensorStateParser
 }
 
-func (srv *metathingsSensorService) Get(context.Context, *pb.GetRequest) (*pb.GetResponse, error) {
+func (srv *metathingsSensorService) copySensorConfig(cfg driver.SensorConfig) map[string]*pb.SensorValue {
+	snr_cfg := make(map[string]*pb.SensorValue)
+	for _, key := range cfg.Keys() {
+		val := cfg.Get(key)
+		switch val.(type) {
+		case float64:
+			snr_cfg[key] = &pb.SensorValue{Value: &pb.SensorValue_Double{Double: val.(float64)}}
+		case float32:
+			snr_cfg[key] = &pb.SensorValue{Value: &pb.SensorValue_Float{Float: val.(float32)}}
+		case int64:
+			snr_cfg[key] = &pb.SensorValue{Value: &pb.SensorValue_Int64{Int64: val.(int64)}}
+		case uint64:
+			snr_cfg[key] = &pb.SensorValue{Value: &pb.SensorValue_Uint64{Uint64: val.(uint64)}}
+		case int32:
+			snr_cfg[key] = &pb.SensorValue{Value: &pb.SensorValue_Int32{Int32: val.(int32)}}
+		case uint32:
+			snr_cfg[key] = &pb.SensorValue{Value: &pb.SensorValue_Uint32{Uint32: val.(uint32)}}
+		case bool:
+			snr_cfg[key] = &pb.SensorValue{Value: &pb.SensorValue_Bool{Bool: val.(bool)}}
+		case string:
+			snr_cfg[key] = &pb.SensorValue{Value: &pb.SensorValue_String_{String_: val.(string)}}
+		}
+	}
+	return snr_cfg
+}
+
+func (srv *metathingsSensorService) copySensorData(dat driver.SensorData) map[string]*pb.SensorValue {
+	snr_dat := make(map[string]*pb.SensorValue)
+	for _, key := range dat.Keys() {
+		val := dat.Get(key)
+		switch val.(type) {
+		case float64:
+			snr_dat[key] = &pb.SensorValue{Value: &pb.SensorValue_Double{Double: val.(float64)}}
+		case float32:
+			snr_dat[key] = &pb.SensorValue{Value: &pb.SensorValue_Float{Float: val.(float32)}}
+		case int64:
+			snr_dat[key] = &pb.SensorValue{Value: &pb.SensorValue_Int64{Int64: val.(int64)}}
+		case uint64:
+			snr_dat[key] = &pb.SensorValue{Value: &pb.SensorValue_Uint64{Uint64: val.(uint64)}}
+		case int32:
+			snr_dat[key] = &pb.SensorValue{Value: &pb.SensorValue_Int32{Int32: val.(int32)}}
+		case uint32:
+			snr_dat[key] = &pb.SensorValue{Value: &pb.SensorValue_Uint32{Uint32: val.(uint32)}}
+		case bool:
+			snr_dat[key] = &pb.SensorValue{Value: &pb.SensorValue_Bool{Bool: val.(bool)}}
+		case string:
+			snr_dat[key] = &pb.SensorValue{Value: &pb.SensorValue_String_{String_: val.(string)}}
+		}
+	}
+	return snr_dat
+}
+
+func (srv *metathingsSensorService) copySensor(s Sensor) *pb.Sensor {
+	snr := s.Driver.Show()
+	return &pb.Sensor{
+		Name:   s.Name,
+		State:  srv.sensor_st_psr.ToValue(snr.State.ToString()),
+		Config: srv.copySensorConfig(snr.Config),
+	}
+}
+
+func (srv *metathingsSensorService) copySensors(ss []Sensor) []*pb.Sensor {
+	snrs := make([]*pb.Sensor, 0, len(ss))
+	for _, s := range ss {
+		snrs = append(snrs, srv.copySensor(s))
+	}
+	return snrs
+}
+
+func (srv *metathingsSensorService) Get(ctx context.Context, req *pb.GetRequest) (*pb.GetResponse, error) {
+	err := req.Validate()
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to validate request data")
+		return nil, status.Errorf(codes.InvalidArgument, err.Error())
+	}
+
+	snr, err := srv.snr_mgr.GetSensor(req.Name.Value)
+	if err != nil {
+		srv.logger.WithError(err).WithField("name", req.Name.Value).Errorf("failed to get sensor")
+		return nil, status.Errorf(codes.InvalidArgument, err.Error())
+	}
+
+	res := &pb.GetResponse{
+		Sensor: srv.copySensor(snr),
+	}
+
+	srv.logger.WithField("sensor", snr).Debugf("get sensor")
+
+	return res, nil
+}
+
+func (srv *metathingsSensorService) List(ctx context.Context, req *pb.ListRequest) (*pb.ListResponse, error) {
+	err := req.Validate()
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to validate request data")
+		return nil, status.Errorf(codes.InvalidArgument, err.Error())
+	}
+
+	snrs := srv.copySensors(srv.snr_mgr.ListSensors())
+	res := &pb.ListResponse{
+		Sensors: snrs,
+	}
+
+	srv.logger.WithField("sensors", snrs).Debugf("list sensors")
+
+	return res, nil
+}
+
+func (srv *metathingsSensorService) Patch(ctx context.Context, req *pb.PatchRequest) (*pb.PatchResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "unimplemented")
 }
 
-func (srv *metathingsSensorService) List(context.Context, *pb.ListRequest) (*pb.ListResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "unimplemented")
+func (srv *metathingsSensorService) GetData(ctx context.Context, req *pb.GetDataRequest) (*pb.GetDataResponse, error) {
+	err := req.Validate()
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to validate request data")
+		return nil, status.Errorf(codes.InvalidArgument, err.Error())
+	}
+
+	snr, err := srv.snr_mgr.GetSensor(req.Name.Value)
+	if err != nil {
+		srv.logger.WithError(err).WithField("name", req.Name.Value).Errorf("failed to get sensor")
+		return nil, status.Errorf(codes.InvalidArgument, err.Error())
+	}
+
+	snr_dat := srv.copySensorData(snr.Driver.Data())
+	res := &pb.GetDataResponse{
+		Data: &pb.SensorData{
+			Data: snr_dat,
+		},
+	}
+
+	srv.logger.WithFields(log.Fields{
+		"name": req.Name.Value,
+		"data": snr_dat,
+	}).Debugf("get sensor data")
+	return res, nil
 }
 
-func (srv *metathingsSensorService) Patch(context.Context, *pb.PatchRequest) (*pb.PatchResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "unimplemented")
-}
+func (srv *metathingsSensorService) ListData(ctx context.Context, req *pb.ListDataRequest) (*pb.ListDataResponse, error) {
+	err := req.Validate()
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to validate request data")
+		return nil, status.Errorf(codes.InvalidArgument, err.Error())
+	}
 
-func (srv *metathingsSensorService) GetData(context.Context, *pb.GetDataRequest) (*pb.GetDataResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "unimplemented")
-}
+	snrs := srv.snr_mgr.ListSensors()
+	snr_dats := make(map[string]*pb.SensorData)
+	for _, snr := range snrs {
+		snr_dats[snr.Name] = &pb.SensorData{Data: srv.copySensorData(snr.Driver.Data())}
+	}
+	res := &pb.ListDataResponse{
+		Datas: snr_dats,
+	}
 
-func (srv *metathingsSensorService) ListData(context.Context, *pb.ListDataRequest) (*pb.ListDataResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "unimplemented")
+	srv.logger.WithField("datas", snr_dats).Debugf("list sensor data")
+	return res, nil
 }
 
 func (srv *metathingsSensorService) Close() {

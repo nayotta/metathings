@@ -25,8 +25,8 @@ It has these top-level messages:
 	ListDataResponse
 	PatchRequest
 	PatchResponse
+	SensorValue
 	SensorData
-	SensorConfig
 	Sensor
 	StreamPingRequest
 	StreamPingResponse

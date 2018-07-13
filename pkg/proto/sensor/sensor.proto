@@ -11,7 +11,7 @@ enum SensorState {
 	SENSOR_STATE_OFF = 2;
 }
 
-message SensorData {
+message SensorValue {
 	oneof value {
 		double double = 1;
 		float float = 2;
@@ -21,28 +21,15 @@ message SensorData {
 		uint32 uint32 = 6;
 		bool bool = 7;
 		string string = 8;
-		google.protobuf.Any any = 9;
 	}
 }
 
-message SensorConfig {
-	oneof value {
-		google.protobuf.DoubleValue dobule = 1;
-		google.protobuf.FloatValue float = 2;
-		google.protobuf.Int64Value int64 = 3;
-		google.protobuf.UInt64Value uint64 = 4;
-		google.protobuf.Int32Value int32 = 5;
-		google.protobuf.UInt32Value uint32 = 6;
-		google.protobuf.BoolValue bool = 7;
-		google.protobuf.StringValue string = 8;
-		google.protobuf.BytesValue bytes = 9;
-		// TODO(Peer): oneofs dont support map, encode map to any.
-		google.protobuf.Any any = 10;
-	}
+message SensorData {
+	map<string, SensorValue> data = 1;
 }
 
 message Sensor {
 	string name = 1;
 	SensorState state = 2;
-	map<string, SensorConfig> config = 3;
+	map<string, SensorValue> config = 3;
 }

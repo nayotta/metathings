@@ -10,7 +10,7 @@ import "sensor.proto";
 
 message PatchRequest {
 	google.protobuf.StringValue name = 1 [(validator.field) = {msg_exists: true}];
-	map<string, SensorConfig> config = 2;
+	map<string, SensorValue> config = 2;
 }
 
 message PatchResponse {
