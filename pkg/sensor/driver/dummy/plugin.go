@@ -1,7 +1,7 @@
 package main
 
 import (
-	"errors"
+	"math/rand"
 	"sync"
 
 	log "github.com/sirupsen/logrus"
@@ -19,29 +19,67 @@ var (
 )
 
 type dummySensorDriver struct {
-	mutex *sync.Mutex
-	name  string
-	state driver.SensorState
+	mutex  *sync.Mutex
+	name   string
+	state  driver.SensorState
+	config driver.SensorConfig
+}
+
+func (drv *dummySensorDriver) toDriverSensor() driver.Sensor {
+	return driver.Sensor{
+		Name:   drv.name,
+		State:  drv.state,
+		Config: drv.config,
+	}
+}
+
+func (drv *dummySensorDriver) data() driver.SensorData {
+	random := rand.Int31n(100)
+	return driver.NewSensorData("random", random)
 }
 
 func (drv *dummySensorDriver) Init(opt opt_helper.Option) error {
-	return errors.New("unimplemented")
+	drv.mutex.Lock()
+	defer drv.mutex.Unlock()
+
+	drv.state = driver.STATE_ON
+
+	logger.Infof("driver initialized")
+
+	return nil
 }
 
 func (drv *dummySensorDriver) Close() error {
-	return errors.New("unimplemented")
+	logger.Infof("driver closed")
+
+	return nil
 }
 
 func (drv *dummySensorDriver) Show() driver.Sensor {
-	return driver.Sensor{}
+	drv.mutex.Lock()
+	defer drv.mutex.Unlock()
+
+	return drv.toDriverSensor()
 }
 
-func (drv *dummySensorDriver) Data() driver.Sensor {
-	return driver.Sensor{}
+func (drv *dummySensorDriver) Data() driver.SensorData {
+	drv.mutex.Lock()
+	defer drv.mutex.Unlock()
+
+	data := drv.data()
+	logger.WithField("random", data.GetInt("random")).Infof("data")
+
+	return data
 }
 
 func (drv *dummySensorDriver) Config(cfg driver.SensorConfig) driver.Sensor {
-	return driver.Sensor{}
+	drv.mutex.Lock()
+	defer drv.mutex.Unlock()
+
+	drv.config.Update(cfg)
+	logger.WithField("keys", drv.config.Keys()).Infof("config")
+
+	return drv.toDriverSensor()
 }
 
 var NewDriver driver_helper.NewDriverMethod = func(opt opt_helper.Option) (driver_helper.Driver, error) {

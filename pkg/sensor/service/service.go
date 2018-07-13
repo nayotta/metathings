@@ -12,13 +12,17 @@ import (
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 	mt_plugin "github.com/nayotta/metathings/pkg/cored/plugin"
 	pb "github.com/nayotta/metathings/pkg/proto/sensor"
+	state_helper "github.com/nayotta/metathings/pkg/sensor/state"
 )
 
 type metathingsSensorService struct {
 	mt_plugin.CoreService
-	opts    opt_helper.Option
+	opt     opt_helper.Option
 	logger  log.FieldLogger
 	cli_fty *client_helper.ClientFactory
+	snr_mgr *SensorManager
+
+	sensor_st_psr state_helper.SensorStateParser
 }
 
 func (srv *metathingsSensorService) Get(context.Context, *pb.GetRequest) (*pb.GetResponse, error) {
@@ -41,16 +45,20 @@ func (srv *metathingsSensorService) ListData(context.Context, *pb.ListDataReques
 	return nil, status.Errorf(codes.Unimplemented, "unimplemented")
 }
 
-func NewSensorService(opts opt_helper.Option) (*metathingsSensorService, error) {
-	opts.Set("service_name", "sensor")
+func (srv *metathingsSensorService) Close() {
 
-	logger, err := log_helper.NewLogger("sensor", opts.GetString("log.level"))
+}
+
+func NewSensorService(opt opt_helper.Option) (*metathingsSensorService, error) {
+	opt.Set("service_name", "sensor")
+
+	logger, err := log_helper.NewLogger("sensor", opt.GetString("log.level"))
 	if err != nil {
 		return nil, err
 	}
 
-	cli_fty_cfgs := client_helper.NewDefaultServiceConfigs(opts.GetString("metathings.address"))
-	cli_fty_cfgs[client_helper.AGENT_CONFIG] = client_helper.ServiceConfig{opts.GetString("agent.address")}
+	cli_fty_cfgs := client_helper.NewDefaultServiceConfigs(opt.GetString("metathings.address"))
+	cli_fty_cfgs[client_helper.AGENT_CONFIG] = client_helper.ServiceConfig{opt.GetString("agent.address")}
 	cli_fty, err := client_helper.NewClientFactory(
 		cli_fty_cfgs,
 		client_helper.WithInsecureOptionFunc(),
@@ -59,13 +67,23 @@ func NewSensorService(opts opt_helper.Option) (*metathingsSensorService, error) 
 		return nil, err
 	}
 
+	opt.Set("logger", logger)
+	snr_mgr, err := NewSensorManager(opt)
+	if err != nil {
+		return nil, err
+	}
+	logger.Debugf("new sensor manager")
+
 	srv := &metathingsSensorService{
-		opts:    opts,
+		opt:     opt,
 		logger:  logger,
 		cli_fty: cli_fty,
+		snr_mgr: snr_mgr,
+
+		sensor_st_psr: state_helper.SENSOR_STATE_PARSER,
 	}
 
-	srv.CoreService = mt_plugin.MakeCoreService(srv.opts, srv.logger, srv.cli_fty)
+	srv.CoreService = mt_plugin.MakeCoreService(srv.opt, srv.logger, srv.cli_fty)
 
 	return srv, nil
 }

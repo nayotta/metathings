@@ -66,7 +66,7 @@ func runCore(args []string) error {
 
 	// pass config to service plugin.
 	args = append(args, "--config", root_opts.Config)
-	err = plugin.Init(opt_helper.Option{"args": args})
+	err = plugin.Init(opt_helper.NewOption("args", args))
 	if err != nil {
 		return err
 	}

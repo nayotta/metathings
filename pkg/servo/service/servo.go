@@ -71,12 +71,10 @@ func NewServoManager(opt opt_helper.Option) (*ServoManager, error) {
 		if !ok {
 			return nil, driver_helper.ErrUnmatchDriver
 		}
-
 		err = srv_drv.Init(new_srv_opt)
 		if err != nil {
 			return nil, err
 		}
-
 		srvs[srv_opt_s.Name] = Servo{
 			Name:   srv_opt_s.Name,
 			Driver: srv_drv,

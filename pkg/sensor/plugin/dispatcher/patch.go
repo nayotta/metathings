@@ -1,0 +1,34 @@
+package main
+
+import (
+	"context"
+
+	"github.com/golang/protobuf/ptypes"
+	"github.com/golang/protobuf/ptypes/any"
+
+	pb "github.com/nayotta/metathings/pkg/proto/sensor"
+)
+
+func unary_patch(cli pb.SensorServiceClient, ctx context.Context, req *any.Any) (*any.Any, error) {
+	req1 := new(pb.PatchRequest)
+	err := ptypes.UnmarshalAny(req, req1)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := cli.Patch(ctx, req1)
+	if err != nil {
+		return nil, err
+	}
+
+	res1, err := ptypes.MarshalAny(res)
+	if err != nil {
+		return nil, err
+	}
+
+	return res1, nil
+}
+
+func init() {
+	unary_call_methods["Patch"] = unary_patch
+}

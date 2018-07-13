@@ -5,8 +5,17 @@ import (
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 )
 
-type SensorConfig opt_helper.Option
-type SensorData opt_helper.Option
+type SensorConfig interface {
+	opt_helper.Option
+}
+
+var NewSensorConfig = opt_helper.NewOption
+
+type SensorData interface {
+	opt_helper.Option
+}
+
+var NewSensorData = opt_helper.NewOption
 
 type SensorState int32
 

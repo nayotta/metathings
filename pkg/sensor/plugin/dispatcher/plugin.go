@@ -17,7 +17,15 @@ type sensorDispatcherPlugin struct {
 }
 
 func (dp *sensorDispatcherPlugin) Init(opt opt_helper.Option) error {
-	return errors.New("unimplemented")
+	cfgs := client_helper.NewDefaultServiceConfigs(opt.GetString("endpoint"))
+	cli_fty, err := client_helper.NewClientFactory(cfgs, client_helper.WithInsecureOptionFunc())
+	if err != nil {
+		return err
+	}
+
+	dp.cli_fty = cli_fty
+
+	return nil
 }
 
 var (
@@ -25,7 +33,18 @@ var (
 )
 
 func (dp *sensorDispatcherPlugin) UnaryCall(method string, ctx context.Context, req *any.Any) (*any.Any, error) {
-	return nil, errors.New("unimplemented")
+	cli, cfn, err := dp.cli_fty.NewSensorServiceClient()
+	if err != nil {
+		return nil, err
+	}
+	defer cfn()
+
+	fn, ok := unary_call_methods[method]
+	if !ok {
+		return nil, mt_plugin.ErrUnknownMethod
+	}
+
+	return fn(cli, ctx, req)
 }
 
 var (

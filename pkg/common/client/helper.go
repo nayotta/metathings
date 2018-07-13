@@ -14,6 +14,7 @@ import (
 	echo_pb "github.com/nayotta/metathings/pkg/proto/echo"
 	identityd_pb "github.com/nayotta/metathings/pkg/proto/identityd"
 	motor_pb "github.com/nayotta/metathings/pkg/proto/motor"
+	sensor_pb "github.com/nayotta/metathings/pkg/proto/sensor"
 	servo_pb "github.com/nayotta/metathings/pkg/proto/servo"
 	switcher_pb "github.com/nayotta/metathings/pkg/proto/switcher"
 )
@@ -29,6 +30,7 @@ const (
 	MOTOR_CONFIG
 	CAMERA_CONFIG
 	SERVO_CONFIG
+	SENSOR_CONFIG
 )
 
 func parseAddress(addr string) string {
@@ -184,6 +186,19 @@ func (f *ClientFactory) NewServoServiceClient(opts ...grpc.DialOption) (servo_pb
 	}
 
 	return servo_pb.NewServoServiceClient(conn), closeFn, nil
+}
+
+func (f *ClientFactory) NewSensorServiceClient(opts ...grpc.DialOption) (sensor_pb.SensorServiceClient, CloseFn, error) {
+	conn, err := f.NewConnection(SENSOR_CONFIG, opts...)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	closeFn := func() {
+		conn.Close()
+	}
+
+	return sensor_pb.NewSensorServiceClient(conn), closeFn, nil
 }
 
 func NewClientFactory(configs ServiceConfigs, optFn DialOptionFn) (*ClientFactory, error) {

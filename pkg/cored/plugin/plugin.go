@@ -20,14 +20,14 @@ import (
 const METATHINGS_PLUGIN_PREFIX = "mtp"
 
 type CoreService struct {
-	opts    opt_helper.Option
+	opt     opt_helper.Option
 	logger  log.FieldLogger
 	cli_fty *client_helper.ClientFactory
 }
 
-func MakeCoreService(opts opt_helper.Option, logger log.FieldLogger, cli_fty *client_helper.ClientFactory) CoreService {
+func MakeCoreService(opt opt_helper.Option, logger log.FieldLogger, cli_fty *client_helper.ClientFactory) CoreService {
 	return CoreService{
-		opts:    opts,
+		opt:     opt,
 		logger:  logger,
 		cli_fty: cli_fty,
 	}
@@ -35,9 +35,9 @@ func MakeCoreService(opts opt_helper.Option, logger log.FieldLogger, cli_fty *cl
 
 func (s CoreService) Init() error {
 	req := &agentd_pb.CreateOrGetEntityRequest{
-		Name:        &gpb.StringValue{Value: s.opts.GetString("name")},
-		ServiceName: &gpb.StringValue{Value: s.opts.GetString("service_name")},
-		Endpoint:    &gpb.StringValue{Value: s.opts.GetString("endpoint")},
+		Name:        &gpb.StringValue{Value: s.opt.GetString("name")},
+		ServiceName: &gpb.StringValue{Value: s.opt.GetString("service_name")},
+		Endpoint:    &gpb.StringValue{Value: s.opt.GetString("endpoint")},
 	}
 
 	ctx := context.Background()
@@ -52,9 +52,9 @@ func (s CoreService) Init() error {
 		return err
 	}
 
-	s.opts.Set("id", res.Entity.Id)
+	s.opt.Set("id", res.Entity.Id)
 
-	if !s.opts.GetBool("heartbeat.manual") {
+	if !s.opt.GetBool("heartbeat.manual") {
 		go s.HeartbeatLoop()
 	}
 
@@ -62,7 +62,7 @@ func (s CoreService) Init() error {
 }
 
 func (s CoreService) HeartbeatLoop() error {
-	interval := time.Duration(s.opts.GetInt("heartbeat.interval")) * time.Second
+	interval := time.Duration(s.opt.GetInt("heartbeat.interval")) * time.Second
 	for {
 		go func() {
 			err := s.HeartbeatOnce()
@@ -83,7 +83,7 @@ func (s CoreService) HeartbeatOnce() error {
 	defer cfn()
 
 	req := &agentd_pb.HeartbeatRequest{
-		EntityId: &gpb.StringValue{Value: s.opts.GetString("id")},
+		EntityId: &gpb.StringValue{Value: s.opt.GetString("id")},
 	}
 
 	_, err = cli.Heartbeat(ctx, req)
@@ -112,12 +112,12 @@ type Stream interface {
 }
 
 type ServicePlugin interface {
-	Init(opts opt_helper.Option) error
+	Init(opt opt_helper.Option) error
 	Run() error
 }
 
 type DispatcherPlugin interface {
-	Init(opts opt_helper.Option) error
+	Init(opt opt_helper.Option) error
 	UnaryCall(method string, ctx context.Context, req *any.Any) (*any.Any, error)
 	StreamCall(method string, ctx context.Context) (Stream, error)
 }

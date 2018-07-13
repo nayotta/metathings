@@ -321,9 +321,9 @@ func (srv *coreAgentService) loadDispatcherPlugin(e *pb.Entity) {
 		return
 	}
 
-	err = dp.Init(opt_helper.Option{
-		"endpoint": e.Endpoint,
-	})
+	err = dp.Init(opt_helper.NewOption(
+		"endpoint", e.Endpoint,
+	))
 	if err != nil {
 		srv.logger.WithError(err).Errorf("failed to init plugin")
 		return
