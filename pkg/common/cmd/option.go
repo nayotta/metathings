@@ -19,7 +19,7 @@ type ServiceConfigOption struct {
 
 type ServiceConfigOptions struct {
 	CoreAgentd  ServiceConfigOption `mapstructure:"core_agentd"`
-	Metathingsd ServiceConfigOption `mapstructure:"metathingsd"`
+	Metathingsd ServiceConfigOption
 }
 
 type EndpointOptions struct {

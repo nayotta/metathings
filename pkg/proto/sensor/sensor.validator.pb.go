@@ -3,7 +3,6 @@
 
 package sensor
 
-import go_proto_validators "github.com/mwitkow/go-proto-validators"
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
@@ -16,13 +15,6 @@ var _ = fmt.Errorf
 var _ = math.Inf
 
 func (this *SensorValue) Validate() error {
-	if oneOfNester, ok := this.GetValue().(*SensorValue_Any); ok {
-		if oneOfNester.Any != nil {
-			if err := go_proto_validators.CallValidatorIfExists(oneOfNester.Any); err != nil {
-				return go_proto_validators.FieldError("Any", err)
-			}
-		}
-	}
 	return nil
 }
 func (this *SensorData) Validate() error {

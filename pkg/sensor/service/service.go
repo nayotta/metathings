@@ -135,7 +135,51 @@ func (srv *metathingsSensorService) List(ctx context.Context, req *pb.ListReques
 }
 
 func (srv *metathingsSensorService) Patch(ctx context.Context, req *pb.PatchRequest) (*pb.PatchResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "unimplemented")
+	err := req.Validate()
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to validate request data")
+		return nil, status.Errorf(codes.InvalidArgument, err.Error())
+	}
+
+	snr, err := srv.snr_mgr.GetSensor(req.Name.Value)
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to get sensor")
+	}
+
+	cfg := driver.NewSensorConfig()
+	for key, val := range req.Config {
+		switch val.Value.(type) {
+		case *pb.SensorValue_Double:
+			cfg.Set(key, val.GetDouble())
+		case *pb.SensorValue_Float:
+			cfg.Set(key, val.GetFloat())
+		case *pb.SensorValue_Int64:
+			cfg.Set(key, val.GetInt64())
+		case *pb.SensorValue_Uint64:
+			cfg.Set(key, val.GetUint64())
+		case *pb.SensorValue_Int32:
+			cfg.Set(key, val.GetInt32())
+		case *pb.SensorValue_Uint32:
+			cfg.Set(key, val.GetUint32())
+		case *pb.SensorValue_Bool:
+			cfg.Set(key, val.GetBool())
+		case *pb.SensorValue_String_:
+			cfg.Set(key, val.GetString_())
+		}
+	}
+	snr.Driver.Config(cfg)
+	res := &pb.PatchResponse{
+		Sensor: srv.copySensor(snr),
+	}
+
+	fields := make(log.Fields)
+	for _, key := range cfg.Keys() {
+		fields[key] = cfg.Get(key)
+	}
+	fields["name"] = req.Name.Value
+	log.WithFields(fields).Debugf("patch sensor config")
+
+	return res, nil
 }
 
 func (srv *metathingsSensorService) GetData(ctx context.Context, req *pb.GetDataRequest) (*pb.GetDataResponse, error) {

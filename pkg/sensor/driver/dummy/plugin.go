@@ -34,8 +34,8 @@ func (drv *dummySensorDriver) toDriverSensor() driver.Sensor {
 }
 
 func (drv *dummySensorDriver) data() driver.SensorData {
-	random := rand.Int31n(100)
-	return driver.NewSensorData("random", random)
+	value := rand.Int31n(100)
+	return driver.NewSensorData("value", value)
 }
 
 func (drv *dummySensorDriver) Init(opt opt_helper.Option) error {
@@ -67,7 +67,7 @@ func (drv *dummySensorDriver) Data() driver.SensorData {
 	defer drv.mutex.Unlock()
 
 	data := drv.data()
-	logger.WithField("random", data.GetInt("random")).Infof("data")
+	logger.WithField("value", data.GetInt32("value")).Infof("data")
 
 	return data
 }

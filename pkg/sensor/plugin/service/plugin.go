@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"net"
 	"strings"
 
@@ -147,7 +146,7 @@ func (p *sensorServicePlugin) Init(opts opt_helper.Option) error {
 	rootCmd.PersistentFlags().StringVar(&root_opts.ServiceConfig.Metathingsd.Address, "metathings-addr", constant_helper.CONSTANT_METATHINGSD_ADDRESS, "Metathings Service Address")
 	rootCmd.PersistentFlags().StringVar(&root_opts.DriverDescriptor, "driver-descriptor", "~/.metathins/sensor_driver_descriptor.yaml", "Motor driver descriptor path")
 
-	return errors.New("unimplemented")
+	return nil
 }
 
 func NewServicePlugin() mtp.ServicePlugin {
