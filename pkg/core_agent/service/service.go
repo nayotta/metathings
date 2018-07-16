@@ -650,7 +650,19 @@ func (srv *coreAgentService) dispatch_user(ctx context.Context, req *cored_pb.St
 
 	res, err := dp.UnaryCall(method_name, ctx, req_value)
 	if err != nil {
-		return nil, err
+		err_res := &cored_pb.StreamResponse{
+			SessionId:   req.SessionId.Value,
+			MessageType: req.MessageType,
+			Payload: &cored_pb.StreamResponse_Err{
+				Err: &cored_pb.StreamErrorResponsePayload{
+					Name:        name,
+					ServiceName: service_name,
+					MethodName:  method_name,
+					Context:     err.Error(),
+				},
+			},
+		}
+		return err_res, nil
 	}
 
 	res1 := &cored_pb.StreamResponse{

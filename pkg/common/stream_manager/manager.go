@@ -18,9 +18,10 @@ import (
 )
 
 var (
-	NotFound   = errors.New("not found")
-	Timeout    = errors.New("timeout")
-	Registered = errors.New("registered")
+	NotFound              = errors.New("not found")
+	Timeout               = errors.New("timeout")
+	Registered            = errors.New("registered")
+	UnexpectedMessageType = errors.New("unexpected message type")
 )
 
 type StreamManager interface {
@@ -179,8 +180,14 @@ func (mgr *streamManager) UnaryCall(core_id string, req *cored_pb.UnaryCallReque
 	}()
 	select {
 	case stm_res := <-ch:
-		res := stm_res.Payload.(*cored_pb.StreamResponse_UnaryCall).UnaryCall
-		return res, nil
+		switch stm_res.Payload.(type) {
+		case *cored_pb.StreamResponse_UnaryCall:
+			return stm_res.GetUnaryCall(), nil
+		case *cored_pb.StreamResponse_Err:
+			return nil, errors.New(stm_res.GetErr().GetContext())
+		default:
+			return nil, UnexpectedMessageType
+		}
 	case <-time.After(30 * time.Second):
 		return nil, Timeout
 	}
