@@ -21,6 +21,6 @@ service SensordService {
 	rpc Get(GetRequest) returns (GetResponse) {}
 	rpc List(ListRequest) returns (ListResponse) {}
 	rpc ListForUser(ListForUserRequest) returns (ListForUserResponse) {}
-	rpc Subscribe(stream SubscribeRequest) returns (stream StreamResponse) {}
-	rpc Publish(stream PublishRequest) returns (stream PublishResponse) {}
+	rpc Subscribe(stream SubscribeRequests) returns (stream SubscribeResponses) {}
+	rpc Publish(stream PublishRequests) returns (stream PublishResponses) {}
 }
