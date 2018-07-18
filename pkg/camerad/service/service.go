@@ -10,7 +10,6 @@ import (
 	"github.com/golang/protobuf/ptypes/empty"
 	gpb "github.com/golang/protobuf/ptypes/wrappers"
 	log "github.com/sirupsen/logrus"
-	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
@@ -175,8 +174,7 @@ func (srv *metathingsCameradService) Create(ctx context.Context, req *pb.CreateR
 	cred := context_helper.Credential(ctx)
 	cam_id := common.NewId()
 	var name_str string
-	name := req.GetName()
-	if name != nil {
+	if name := req.GetName(); name != nil {
 		name_str = name.GetValue()
 	} else {
 		name_str = cam_id
@@ -417,6 +415,11 @@ func (srv *metathingsCameradService) List(ctx context.Context, req *pb.ListReque
 		c.EntityName = &entity_name.Value
 	}
 
+	owner_id := req.GetOwnerId()
+	if owner_id != nil {
+		c.OwnerId = &owner_id.Value
+	}
+
 	state := req.GetState()
 	if state != camera_pb.CameraState_CAMERA_STATE_UNKNOWN {
 		state_str := srv.camera_st_psr.ToString(state)
@@ -476,7 +479,7 @@ func (srv *metathingsCameradService) ListForUser(ctx context.Context, req *pb.Li
 	cs, err := srv.storage.ListCamerasForUser(user_id, c)
 	if err != nil {
 		srv.logger.WithField("user_id", user_id).WithError(err).Errorf("failed to list cameras for user")
-		return nil, grpc.Errorf(codes.Internal, err.Error())
+		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
 	res := &pb.ListForUserResponse{
@@ -842,6 +845,10 @@ func NewCameradService(opt ...ServiceOptions) (*metathingsCameradService, error)
 		cli_fty_cfgs,
 		client_helper.WithInsecureOptionFunc(),
 	)
+	if err != nil {
+		log.WithError(err).Errorf("failed to new client factory")
+		return nil, err
+	}
 
 	storage, err := storage.NewStorage(opts.storage_driver, opts.storage_uri, logger)
 	if err != nil {

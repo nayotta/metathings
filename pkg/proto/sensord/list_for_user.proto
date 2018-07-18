@@ -18,5 +18,5 @@ message ListForUserRequest {
 }
 
 message ListForUserResponse {
-	Sensor sensors = 1;
+	repeated Sensor sensors = 1;
 }

@@ -33,8 +33,8 @@ type Storage interface {
 	DeleteSensor(snr_id string) error
 	PatchSensor(snr_id string, snr Sensor) (Sensor, error)
 	GetSensor(snr_id string) (Sensor, error)
-	ListSensor(Sensor) ([]Sensor, error)
-	ListSensorForUser(owner_id string, snr Sensor) ([]Sensor, error)
+	ListSensors(Sensor) ([]Sensor, error)
+	ListSensorsForUser(owner_id string, snr Sensor) ([]Sensor, error)
 	GetSensorTags(snr_id string) ([]SensorTag, error)
 	AddSensorTag(snr_id, tag string) (SensorTag, error)
 	RemoveSensorTag(snr_id, tag string) error

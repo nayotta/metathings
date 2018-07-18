@@ -32,12 +32,19 @@ func (this *ListRequest) Validate() error {
 			return go_proto_validators.FieldError("EntityName", err)
 		}
 	}
+	if this.OwnerId != nil {
+		if err := go_proto_validators.CallValidatorIfExists(this.OwnerId); err != nil {
+			return go_proto_validators.FieldError("OwnerId", err)
+		}
+	}
 	return nil
 }
 func (this *ListResponse) Validate() error {
-	if this.Sensors != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Sensors); err != nil {
-			return go_proto_validators.FieldError("Sensors", err)
+	for _, item := range this.Sensors {
+		if item != nil {
+			if err := go_proto_validators.CallValidatorIfExists(item); err != nil {
+				return go_proto_validators.FieldError("Sensors", err)
+			}
 		}
 	}
 	return nil

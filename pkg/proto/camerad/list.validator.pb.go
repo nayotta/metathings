@@ -32,6 +32,11 @@ func (this *ListRequest) Validate() error {
 			return go_proto_validators.FieldError("EntityName", err)
 		}
 	}
+	if this.OwnerId != nil {
+		if err := go_proto_validators.CallValidatorIfExists(this.OwnerId); err != nil {
+			return go_proto_validators.FieldError("OwnerId", err)
+		}
+	}
 	return nil
 }
 func (this *ListResponse) Validate() error {

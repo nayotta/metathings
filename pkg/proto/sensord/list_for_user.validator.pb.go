@@ -35,9 +35,11 @@ func (this *ListForUserRequest) Validate() error {
 	return nil
 }
 func (this *ListForUserResponse) Validate() error {
-	if this.Sensors != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Sensors); err != nil {
-			return go_proto_validators.FieldError("Sensors", err)
+	for _, item := range this.Sensors {
+		if item != nil {
+			if err := go_proto_validators.CallValidatorIfExists(item); err != nil {
+				return go_proto_validators.FieldError("Sensors", err)
+			}
 		}
 	}
 	return nil

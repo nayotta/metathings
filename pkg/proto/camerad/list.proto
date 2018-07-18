@@ -13,7 +13,8 @@ message ListRequest {
 	google.protobuf.StringValue name = 1;
 	google.protobuf.StringValue core_id = 2;
 	google.protobuf.StringValue entity_name = 3;
-	ai.metathings.service.camera.CameraState state = 4;
+	google.protobuf.StringValue owner_id = 4;
+	ai.metathings.service.camera.CameraState state = 5;
 }
 
 message ListResponse {
