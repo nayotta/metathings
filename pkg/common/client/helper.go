@@ -15,6 +15,7 @@ import (
 	identityd_pb "github.com/nayotta/metathings/pkg/proto/identityd"
 	motor_pb "github.com/nayotta/metathings/pkg/proto/motor"
 	sensor_pb "github.com/nayotta/metathings/pkg/proto/sensor"
+	sensord_pb "github.com/nayotta/metathings/pkg/proto/sensord"
 	servo_pb "github.com/nayotta/metathings/pkg/proto/servo"
 	switcher_pb "github.com/nayotta/metathings/pkg/proto/switcher"
 )
@@ -24,6 +25,7 @@ const (
 	IDENTITYD_CONFIG
 	CORED_CONFIG
 	CAMERAD_CONFIG
+	SENSORD_CONFIG
 	AGENT_CONFIG
 	ECHO_CONFIG
 	SWITCHER_CONFIG
@@ -199,6 +201,19 @@ func (f *ClientFactory) NewSensorServiceClient(opts ...grpc.DialOption) (sensor_
 	}
 
 	return sensor_pb.NewSensorServiceClient(conn), closeFn, nil
+}
+
+func (f *ClientFactory) NewSensordServiceClient(opts ...grpc.DialOption) (sensord_pb.SensordServiceClient, CloseFn, error) {
+	conn, err := f.NewConnection(SENSORD_CONFIG, opts...)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	closeFn := func() {
+		conn.Close()
+	}
+
+	return sensord_pb.NewSensordServiceClient(conn), closeFn, nil
 }
 
 func NewClientFactory(configs ServiceConfigs, optFn DialOptionFn) (*ClientFactory, error) {
