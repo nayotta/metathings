@@ -4,10 +4,6 @@ package ai.metathings.service.camerad;
 
 import "google/protobuf/wrappers.proto";
 
-import "github.com/mwitkow/go-proto-validators/validator.proto";
-
-import "github.com/nayotta/metathings/pkg/proto/cored/core.proto";
-import "github.com/nayotta/metathings/pkg/proto/cored/entity.proto";
 import "github.com/nayotta/metathings/pkg/proto/camera/camera.proto";
 
 message OpConfig {

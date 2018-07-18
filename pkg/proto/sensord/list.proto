@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package ai.metathings.service.sensord;
+
+import "google/protobuf/wrappers.proto";
+
+import "github.com/mwitkow/go-proto-validators/validator.proto";
+
+import "github.com/nayotta/metathings/pkg/proto/sensor/sensor.proto";
+
+import "sensor.proto";
+
+message ListRequest {
+	google.protobuf.StringValue name = 1;
+	google.protobuf.StringValue core_id = 2;
+	google.protobuf.StringValue entity_name = 3;
+	ai.metathings.service.sensor.SensorState state = 4;
+}
+
+message ListResponse {
+	Sensor sensors = 1;
+}

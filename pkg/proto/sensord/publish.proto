@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package ai.metathings.service.sensord;
+
+import "google/protobuf/wrappers.proto";
+
+import "github.com/mwitkow/go-proto-validators/validator.proto";
+
+import "github.com/nayotta/metathings/pkg/proto/sensor/sensor.proto";
+
+import "sensor.proto";
+
+message PublishDataRequest {
+	ai.metathings.service.sensor.SensorData data = 1 [(validator.field) = {msg_exists: true}];
+}
+
+message PublishRequest {
+	google.protobuf.UInt64Value session = 1 [(validator.field) = {msg_exists: true}];
+	oneof payload {
+		PublishDataRequest data = 2;
+	}
+}
+
+message PublishRequests {
+	repeated PublishRequest requests = 1;
+}
+
+message PublishResponse {
+	uint64 session = 1;
+}
+
+message PublishResponses {
+	repeated PublishResponse responses = 1;
+}
