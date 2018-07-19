@@ -347,6 +347,8 @@ func (srv *metathingsSensordService) Publish(stm pb.SensordService_PublishServer
 
 	go func() {
 		defer func() {
+			srv.hub.Close(publisher)
+			srv.logger.WithField("snr_id", snr_id).Debugf("close publisher")
 			quit <- nil
 		}()
 		for {
