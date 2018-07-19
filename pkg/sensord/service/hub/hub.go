@@ -10,6 +10,8 @@ import (
 var (
 	ErrBadHubName     = errors.New("bad hub name")
 	ErrUnsubscribable = errors.New("unsubscribable")
+	ErrSubPubNotFound = errors.New("not found")
+	ErrUnexpected     = errors.New("unexpected")
 )
 
 type SubPub interface {
@@ -18,9 +20,9 @@ type SubPub interface {
 }
 
 type Hub interface {
-	Subscriber(string) Subscriber
-	Publisher(string) Publisher
-	Close(SubPub)
+	Subscriber(string) (Subscriber, error)
+	Publisher(string) (Publisher, error)
+	Close(SubPub) error
 }
 
 type Subscriber interface {

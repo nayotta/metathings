@@ -20,7 +20,7 @@ type defaultHub struct {
 	pub_counters map[string]uint64
 }
 
-func (h *defaultHub) Subscriber(path string) hub.Subscriber {
+func (h *defaultHub) Subscriber(path string) (hub.Subscriber, error) {
 	var ok bool
 	var id uint64
 	var m map[uint64]chan *sensord_pb.SensorData
@@ -42,10 +42,10 @@ func (h *defaultHub) Subscriber(path string) hub.Subscriber {
 		ch: ch,
 	}
 
-	return sub
+	return sub, nil
 }
 
-func (h *defaultHub) Publisher(path string) hub.Publisher {
+func (h *defaultHub) Publisher(path string) (hub.Publisher, error) {
 	var ok bool
 	var ch chan *sensord_pb.SensorData
 
@@ -67,19 +67,20 @@ func (h *defaultHub) Publisher(path string) hub.Publisher {
 	}
 	h.pub_counters[path]++
 
-	return pub
+	return pub, nil
 }
 
-func (h *defaultHub) Close(sp hub.SubPub) {
+func (h *defaultHub) Close(sp hub.SubPub) error {
 	switch sp.(type) {
 	case hub.Subscriber:
-		h.closeSub(sp)
+		return h.closeSub(sp)
 	case hub.Publisher:
-		h.closePub(sp)
+		return h.closePub(sp)
 	}
+	return nil
 }
 
-func (h defaultHub) closeSub(sp hub.SubPub) {
+func (h defaultHub) closeSub(sp hub.SubPub) error {
 	h.glock.Lock()
 	defer h.glock.Unlock()
 
@@ -88,19 +89,23 @@ func (h defaultHub) closeSub(sp hub.SubPub) {
 
 	subs, ok := h.subs[p]
 	if !ok {
-		return
+		h.logger.WithFields(log.Fields{"path": p, "id": id}).Warningf("subscriber not found")
+		return hub.ErrSubPubNotFound
 	}
 
 	ch, ok := subs[id]
 	if !ok {
-		return
+		h.logger.WithFields(log.Fields{"path": p, "id": id}).Warningf("subscriber not found")
+		return hub.ErrSubPubNotFound
 	}
 
 	close(ch)
 	delete(h.subs[p], id)
+	h.logger.WithFields(log.Fields{"path": p, "id": id}).Debugf("close subscriber")
+	return nil
 }
 
-func (h defaultHub) closePub(sp hub.SubPub) {
+func (h defaultHub) closePub(sp hub.SubPub) error {
 	h.glock.Lock()
 	defer h.glock.Unlock()
 
@@ -108,27 +113,29 @@ func (h defaultHub) closePub(sp hub.SubPub) {
 
 	ch, ok := h.pubs[p]
 	if !ok {
-		return
+		return hub.ErrSubPubNotFound
 	}
 
 	if _, ok := h.pub_counters[p]; !ok {
 		h.pub_counters[p] = 0
 		close(ch)
-		h.logger.WithField("path", p).Warningf("SHOULD NOT HAPPEND!!! FIXME PLS!!! close channel with unexpected situation")
-		return
+		h.logger.WithField("path", p).Warningf("close channel with unexpected situation")
+		return hub.ErrUnexpected
 	}
 
 	h.pub_counters[p]--
 	if h.pub_counters[p] < 0 {
 		h.pub_counters[p] = 0
+		h.logger.WithField("path", p).Warningf("reset counter to 0")
 	}
 
 	if h.pub_counters[p] == 0 {
 		close(ch)
 		delete(h.pubs, p)
+		h.logger.WithField("path", p).Debugf("close publisher")
 	}
 
-	return
+	return nil
 }
 
 func (h *defaultHub) transfer(path string, ch chan *sensord_pb.SensorData) {

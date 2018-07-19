@@ -14,10 +14,15 @@ message SubscribeByIdRequest {
 	google.protobuf.StringValue id = 1 [(validator.field) = {msg_exists: true}];
 }
 
+message UnsubscribeByIdRequest {
+	google.protobuf.StringValue id = 1 [(validator.field) = {msg_exists: true}];
+}
+
 message SubscribeRequest {
 	google.protobuf.UInt64Value session = 1 [(validator.field) = {msg_exists: true}];
 	oneof payload {
-		SubscribeByIdRequest id = 2;
+		SubscribeByIdRequest subscribe_by_id = 2;
+		UnsubscribeByIdRequest unsubscribe_by_id = 3;
 	}
 }
 

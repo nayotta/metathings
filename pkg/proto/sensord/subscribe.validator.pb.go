@@ -27,6 +27,17 @@ func (this *SubscribeByIdRequest) Validate() error {
 	}
 	return nil
 }
+func (this *UnsubscribeByIdRequest) Validate() error {
+	if nil == this.Id {
+		return go_proto_validators.FieldError("Id", fmt.Errorf("message must exist"))
+	}
+	if this.Id != nil {
+		if err := go_proto_validators.CallValidatorIfExists(this.Id); err != nil {
+			return go_proto_validators.FieldError("Id", err)
+		}
+	}
+	return nil
+}
 func (this *SubscribeRequest) Validate() error {
 	if nil == this.Session {
 		return go_proto_validators.FieldError("Session", fmt.Errorf("message must exist"))
@@ -36,10 +47,17 @@ func (this *SubscribeRequest) Validate() error {
 			return go_proto_validators.FieldError("Session", err)
 		}
 	}
-	if oneOfNester, ok := this.GetPayload().(*SubscribeRequest_Id); ok {
-		if oneOfNester.Id != nil {
-			if err := go_proto_validators.CallValidatorIfExists(oneOfNester.Id); err != nil {
-				return go_proto_validators.FieldError("Id", err)
+	if oneOfNester, ok := this.GetPayload().(*SubscribeRequest_SubscribeById); ok {
+		if oneOfNester.SubscribeById != nil {
+			if err := go_proto_validators.CallValidatorIfExists(oneOfNester.SubscribeById); err != nil {
+				return go_proto_validators.FieldError("SubscribeById", err)
+			}
+		}
+	}
+	if oneOfNester, ok := this.GetPayload().(*SubscribeRequest_UnsubscribeById); ok {
+		if oneOfNester.UnsubscribeById != nil {
+			if err := go_proto_validators.CallValidatorIfExists(oneOfNester.UnsubscribeById); err != nil {
+				return go_proto_validators.FieldError("UnsubscribeById", err)
 			}
 		}
 	}

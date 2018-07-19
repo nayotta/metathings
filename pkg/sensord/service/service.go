@@ -15,6 +15,7 @@ import (
 	context_helper "github.com/nayotta/metathings/pkg/common/context"
 	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
 	log_helper "github.com/nayotta/metathings/pkg/common/log"
+	protobuf_helper "github.com/nayotta/metathings/pkg/common/protobuf"
 	token_helper "github.com/nayotta/metathings/pkg/common/token"
 	sensor_pb "github.com/nayotta/metathings/pkg/proto/sensor"
 	pb "github.com/nayotta/metathings/pkg/proto/sensord"
@@ -322,7 +323,73 @@ func (srv *metathingsSensordService) sensor_path(id string) string {
 }
 
 func (srv *metathingsSensordService) Subscribe(stm pb.SensordService_SubscribeServer) error {
-	return status.Errorf(codes.Unimplemented, "unimplemented")
+	quit := make(chan interface{})
+
+	go func() {
+		defer func() {
+			quit <- nil
+			srv.logger.Debugf("send quit signal to subscribler")
+		}()
+		subs := make(map[string]hub.Subscriber)
+		for {
+			reqs, err := stm.Recv()
+			if err != nil {
+				grpc_helper.HandleGRPCError(srv.logger, err, "failed to recv data from subscriber")
+				return
+			}
+
+			for _, req := range reqs.Requests {
+				switch req.Payload.(type) {
+				case *pb.SubscribeRequest_SubscribeById:
+					sub_by_id := req.GetSubscribeById()
+					snr_id := sub_by_id.GetId().GetValue()
+					if _, ok := subs[snr_id]; ok {
+						srv.logger.WithField("snr_id", snr_id).Warningf("sensor already in subscribling")
+						continue
+					}
+
+					sub, err := srv.hub.Subscriber(srv.sensor_path(snr_id))
+					if err != nil {
+						srv.logger.WithField("snr_id", snr_id).Errorf("failed to get subscribler")
+						continue
+					}
+
+					subs[snr_id] = sub
+					go func(stm pb.SensordService_SubscribeServer, sub hub.Subscriber) {
+						defer func() {
+							srv.hub.Close(sub)
+							delete(subs, snr_id)
+						}()
+						for {
+							dat, err := sub.Subscribe()
+							if err != nil {
+								srv.logger.WithError(err).Errorf("failed to subscribe data from subscriber")
+								return
+							}
+
+							res := &pb.SubscribeResponses{
+								Responses: []*pb.SubscribeResponse{
+									&pb.SubscribeResponse{Data: dat},
+								},
+							}
+
+							err = stm.Send(res)
+							if err != nil {
+								srv.logger.WithError(err).Errorf("failed to send data to subscribe stream")
+								return
+							}
+						}
+					}(stm, sub)
+
+				case *pb.SubscribeRequest_UnsubscribeById:
+				}
+			}
+		}
+	}()
+
+	<-quit
+
+	return nil
 }
 
 func (srv *metathingsSensordService) Publish(stm pb.SensordService_PublishServer) error {
@@ -342,7 +409,11 @@ func (srv *metathingsSensordService) Publish(stm pb.SensordService_PublishServer
 
 	snr_id := *ss[0].Id
 	path := srv.sensor_path(snr_id)
-	publisher := srv.hub.Publisher(path)
+	publisher, err := srv.hub.Publisher(path)
+	if err != nil {
+		srv.logger.WithError(err).WithField("application_credential_id", app_cred_id).Errorf("failed to get publisher")
+		return status.Errorf(codes.Internal, err.Error())
+	}
 	quit := make(chan interface{})
 
 	go func() {
@@ -350,6 +421,7 @@ func (srv *metathingsSensordService) Publish(stm pb.SensordService_PublishServer
 			srv.hub.Close(publisher)
 			srv.logger.WithField("snr_id", snr_id).Debugf("close publisher")
 			quit <- nil
+			srv.logger.WithField("snr_id", snr_id).Debugf("send quit signal to publisher")
 		}()
 		for {
 			reqs, err := stm.Recv()
@@ -361,10 +433,15 @@ func (srv *metathingsSensordService) Publish(stm pb.SensordService_PublishServer
 			for _, req := range reqs.Requests {
 				switch req.Payload.(type) {
 				case *pb.PublishRequest_Data:
+					dat := req.GetData()
+
+					now := protobuf_helper.Now()
+					dat.ArrivedAt = &now
+					dat.SensorId = snr_id
+
 					if err = publisher.Publish(req.GetData()); err != nil {
 						srv.logger.WithError(err).Warningf("failed to publish data to hub")
 					}
-
 				}
 			}
 		}
@@ -374,7 +451,7 @@ func (srv *metathingsSensordService) Publish(stm pb.SensordService_PublishServer
 	<-quit
 	srv.logger.WithField("snr_id", snr_id).Infof("publish done")
 
-	return status.Errorf(codes.Unimplemented, "unimplemented")
+	return nil
 }
 
 func NewSensordService(opt ...ServiceOptions) (*metathingsSensordService, error) {
