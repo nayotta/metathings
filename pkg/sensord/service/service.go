@@ -313,11 +313,11 @@ func (srv *metathingsSensordService) ListForUser(ctx context.Context, req *pb.Li
 	return res, nil
 }
 
-func (srv *metathingsSensordService) Subscribe(pb.SensordService_SubscribeServer) error {
+func (srv *metathingsSensordService) Subscribe(stm pb.SensordService_SubscribeServer) error {
 	return status.Errorf(codes.Unimplemented, "unimplemented")
 }
 
-func (srv *metathingsSensordService) Publish(pb.SensordService_PublishServer) error {
+func (srv *metathingsSensordService) Publish(stm pb.SensordService_PublishServer) error {
 	return status.Errorf(codes.Unimplemented, "unimplemented")
 }
 
