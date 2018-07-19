@@ -4,7 +4,7 @@ import (
 	"errors"
 
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
-	sensor_pb "github.com/nayotta/metathings/pkg/proto/sensor"
+	sensord_pb "github.com/nayotta/metathings/pkg/proto/sensord"
 )
 
 var (
@@ -12,19 +12,25 @@ var (
 	ErrUnsubscribable = errors.New("unsubscribable")
 )
 
+type SubPub interface {
+	Id() uint64
+	Path() string
+}
+
 type Hub interface {
 	Subscriber(string) Subscriber
 	Publisher(string) Publisher
+	Close(SubPub)
 }
 
 type Subscriber interface {
-	Id() uint64
-	Subscribe() (*sensor_pb.SensorData, error)
+	SubPub
+	Subscribe() (*sensord_pb.SensorData, error)
 }
 
 type Publisher interface {
-	Id() uint64
-	Publish(*sensor_pb.SensorData) error
+	SubPub
+	Publish(*sensord_pb.SensorData) error
 }
 
 var (

@@ -2,6 +2,7 @@ package metathings_sensord_service
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/golang/protobuf/ptypes/empty"
 	log "github.com/sirupsen/logrus"
@@ -18,6 +19,7 @@ import (
 	sensor_pb "github.com/nayotta/metathings/pkg/proto/sensor"
 	pb "github.com/nayotta/metathings/pkg/proto/sensord"
 	state_helper "github.com/nayotta/metathings/pkg/sensor/state"
+	"github.com/nayotta/metathings/pkg/sensord/service/hub"
 	storage "github.com/nayotta/metathings/pkg/sensord/storage"
 )
 
@@ -86,6 +88,8 @@ type metathingsSensordService struct {
 	opts          options
 	storage       storage.Storage
 	tk_vdr        token_helper.TokenValidator
+
+	hub hub.Hub
 }
 
 func (srv *metathingsSensordService) copySensor(snr storage.Sensor) *pb.Sensor {
@@ -313,11 +317,61 @@ func (srv *metathingsSensordService) ListForUser(ctx context.Context, req *pb.Li
 	return res, nil
 }
 
+func (srv *metathingsSensordService) sensor_path(id string) string {
+	return fmt.Sprintf("/metathings/sensord/sensors/%v", id)
+}
+
 func (srv *metathingsSensordService) Subscribe(stm pb.SensordService_SubscribeServer) error {
 	return status.Errorf(codes.Unimplemented, "unimplemented")
 }
 
 func (srv *metathingsSensordService) Publish(stm pb.SensordService_PublishServer) error {
+	ctx := stm.Context()
+	cred := context_helper.Credential(ctx)
+	app_cred_id := cred.ApplicationCredential.Id
+
+	s := storage.Sensor{
+		ApplicationCredentialId: &app_cred_id,
+	}
+
+	ss, err := srv.storage.ListSensors(s)
+	if err != nil {
+		srv.logger.WithError(err).WithField("application_credential_id", app_cred_id).Errorf("failed to list sensors with application credential id")
+		return status.Errorf(codes.Internal, err.Error())
+	}
+
+	snr_id := *ss[0].Id
+	path := srv.sensor_path(snr_id)
+	publisher := srv.hub.Publisher(path)
+	quit := make(chan interface{})
+
+	go func() {
+		defer func() {
+			quit <- nil
+		}()
+		for {
+			reqs, err := stm.Recv()
+			if err != nil {
+				grpc_helper.HandleGRPCError(srv.logger.WithField("snr_id", snr_id), err, "failed to recv data from publisher")
+				return
+			}
+
+			for _, req := range reqs.Requests {
+				switch req.Payload.(type) {
+				case *pb.PublishRequest_Data:
+					if err = publisher.Publish(req.GetData()); err != nil {
+						srv.logger.WithError(err).Warningf("failed to publish data to hub")
+					}
+
+				}
+			}
+		}
+
+	}()
+
+	<-quit
+	srv.logger.WithField("snr_id", snr_id).Infof("publish done")
+
 	return status.Errorf(codes.Unimplemented, "unimplemented")
 }
 

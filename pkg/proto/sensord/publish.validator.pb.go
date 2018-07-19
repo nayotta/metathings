@@ -9,24 +9,12 @@ import proto "github.com/golang/protobuf/proto"
 import math "math"
 import _ "github.com/golang/protobuf/ptypes/wrappers"
 import _ "github.com/mwitkow/go-proto-validators"
-import _ "github.com/nayotta/metathings/pkg/proto/sensor"
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
-func (this *PublishDataRequest) Validate() error {
-	if nil == this.Data {
-		return go_proto_validators.FieldError("Data", fmt.Errorf("message must exist"))
-	}
-	if this.Data != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Data); err != nil {
-			return go_proto_validators.FieldError("Data", err)
-		}
-	}
-	return nil
-}
 func (this *PublishRequest) Validate() error {
 	if nil == this.Session {
 		return go_proto_validators.FieldError("Session", fmt.Errorf("message must exist"))

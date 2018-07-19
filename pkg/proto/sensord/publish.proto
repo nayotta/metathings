@@ -6,18 +6,12 @@ import "google/protobuf/wrappers.proto";
 
 import "github.com/mwitkow/go-proto-validators/validator.proto";
 
-import "github.com/nayotta/metathings/pkg/proto/sensor/sensor.proto";
-
 import "sensor.proto";
-
-message PublishDataRequest {
-	ai.metathings.service.sensor.SensorData data = 1 [(validator.field) = {msg_exists: true}];
-}
 
 message PublishRequest {
 	google.protobuf.UInt64Value session = 1 [(validator.field) = {msg_exists: true}];
 	oneof payload {
-		PublishDataRequest data = 2;
+		SensorData data = 2;
 	}
 }
 

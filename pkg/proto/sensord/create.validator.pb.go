@@ -28,7 +28,6 @@ It has these top-level messages:
 	ListForUserResponse
 	PatchRequest
 	PatchResponse
-	PublishDataRequest
 	PublishRequest
 	PublishRequests
 	PublishResponse
