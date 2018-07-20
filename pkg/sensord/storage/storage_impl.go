@@ -28,7 +28,9 @@ CREATE TABLE IF NOT EXISTS sensor_tag (
     sensor_id VARCHAR(255),
     tag VARCHAR(255),
 
-    created_at DATETIME
+    created_at DATETIME,
+
+    UNIQUE(sensor_id, tag)
 );
 `
 
@@ -45,7 +47,7 @@ func (self *storageImpl) CreateSensor(snr Sensor) (Sensor, error) {
 	snr.UpdatedAt = now
 	_, err := self.db.NamedExec(`
 INSERT INTO sensor(id, name, core_id, entity_name, owner_id, application_credential_id, state)
-values (:id, :name, :core_id, :entity_name, :owner_id, :application_credential_id, :state)`, &snr)
+VALUES (:id, :name, :core_id, :entity_name, :owner_id, :application_credential_id, :state)`, &snr)
 	if err != nil {
 		self.logger.WithError(err).Errorf("failed to create sensor")
 		return s, err
@@ -253,8 +255,24 @@ func (self *storageImpl) GetSensorTags(snr_id string) ([]SensorTag, error) {
 	return tags, nil
 }
 
-func (s *storageImpl) AddSensorTag(SensorTag) (SensorTag, error) {
-	panic("unimplemented")
+func (self *storageImpl) AddSensorTag(snr_tag SensorTag) (SensorTag, error) {
+	var st SensorTag
+
+	now := time.Now()
+	snr_tag.CreatedAt = now
+	_, err := self.db.NamedExec(`
+INSERT INTO sensor_tag(id, sensor_id, tag, created_at)
+VALUES (:id, :sensor_id, :tag, :created_at)`, &snr_tag)
+	if err != nil {
+		self.logger.WithError(err).Errorf("failed to add tag to sensor")
+		return st, err
+	}
+
+	self.db.Get(&st, "SELECT * FROM sensor_tag WHERE id=$1", *snr_tag.Id)
+
+	self.logger.WithField("snr_tag_id", *snr_tag.Id).Debugf("add tag to sensor")
+
+	return st, nil
 }
 
 func (self *storageImpl) RemoveSensorTag(snr_tag_id string) error {
