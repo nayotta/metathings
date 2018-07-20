@@ -38,8 +38,8 @@ type Storage interface {
 	ListSensors(Sensor) ([]Sensor, error)
 	ListSensorsForUser(owner_id string, snr Sensor) ([]Sensor, error)
 	GetSensorTags(snr_id string) ([]SensorTag, error)
-	AddSensorTag(snr_id, tag string) (SensorTag, error)
-	RemoveSensorTag(snr_id, tag string) error
+	AddSensorTag(SensorTag) (SensorTag, error)
+	RemoveSensorTag(snr_tag_id string) error
 }
 
 func NewStorage(driver, uri string, logger log.FieldLogger) (Storage, error) {

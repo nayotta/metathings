@@ -77,15 +77,67 @@ func (self *storageImpl) DeleteSensor(snr_id string) error {
 	return nil
 }
 
-func (s *storageImpl) PatchSensor(snr_id string, snr Sensor) (Sensor, error) {
-	panic("unimplemented")
+func (self *storageImpl) PatchSensor(snr_id string, snr Sensor) (Sensor, error) {
+	values := []string{}
+	arguments := []interface{}{}
+	i := 1
+	s := Sensor{}
+
+	if snr.Name != nil {
+		values = append(values, fmt.Sprintf("name=$%v", i))
+		arguments = append(arguments, *snr.Name)
+		i++
+	}
+
+	if snr.State != nil {
+		values = append(values, fmt.Sprintf("state=$%v", i))
+		arguments = append(arguments, *snr.State)
+		i++
+	}
+
+	if len(values) > 0 {
+		values = append(values, fmt.Sprintf("updated_at=$%v", i))
+		arguments = append(arguments, time.Now())
+		i++
+
+		val := strings.Join(values, ", ")
+		arguments = append(arguments, snr_id)
+
+		sql_str := "UPDATE sensor SET " + val + fmt.Sprintf(" WHERE id$%v", i)
+		self.logger.WithFields(log.Fields{
+			"sql":  sql_str,
+			"args": arguments,
+		}).Debugf("execute sql")
+		_, err := self.db.Exec(sql_str, arguments...)
+		if err != nil {
+			self.logger.WithError(err).WithField("snr_id", snr_id).Errorf("failed to patch sensor")
+			return s, err
+		}
+		s, _ = self.get_sensor(snr_id)
+		self.logger.WithField("snr_id", snr_id).Debugf("update sensor")
+		return s, nil
+	}
+
+	self.logger.WithField("snr_id", snr_id).Debugf("nothing changed when update sensor")
+	return s, ErrNothingChanged
 }
 
 func (self *storageImpl) GetSensor(snr_id string) (Sensor, error) {
+	var err error
+	var s Sensor
+	s, err = self.get_sensor(snr_id)
+	if err != nil {
+		self.logger.WithError(err).Errorf("failed to get sensor")
+		return s, err
+	}
+	self.logger.WithField("snr_id", snr_id).Debugf("get sensor")
+	return s, nil
+}
+
+func (self *storageImpl) get_sensor(snr_id string) (Sensor, error) {
 	var s Sensor
 	err := self.db.Get(&s, "SELECT * FROM sensor WHERE id=$1", snr_id)
 	if err != nil {
-		self.logger.WithError(err).WithField("snr_id", snr_id).Errorf("failed to get sensor")
 		return s, err
 	}
 
@@ -95,6 +147,7 @@ func (self *storageImpl) GetSensor(snr_id string) (Sensor, error) {
 	}
 
 	return s, nil
+
 }
 
 func (self *storageImpl) ListSensors(snr Sensor) ([]Sensor, error) {
@@ -181,11 +234,11 @@ func (s *storageImpl) GetSensorTags(snr_id string) ([]SensorTag, error) {
 	panic("unimplemented")
 }
 
-func (s *storageImpl) AddSensorTag(snr_id, tag string) (SensorTag, error) {
+func (s *storageImpl) AddSensorTag(SensorTag) (SensorTag, error) {
 	panic("unimplemented")
 }
 
-func (s *storageImpl) RemoveSensorTag(snr_id, tag string) error {
+func (s *storageImpl) RemoveSensorTag(snr_tag_id string) error {
 	panic("unimplemented")
 }
 
