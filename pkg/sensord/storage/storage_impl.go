@@ -107,8 +107,14 @@ func (self *storageImpl) ListSensors(snr Sensor) ([]Sensor, error) {
 	return ss, nil
 }
 
-func (s *storageImpl) ListSensorsForUser(owner_id string, snr Sensor) ([]Sensor, error) {
-	panic("unimplemented")
+func (self *storageImpl) ListSensorsForUser(owner_id string, snr Sensor) ([]Sensor, error) {
+	snr.OwnerId = &owner_id
+	ss, err := self.list_sensors(snr)
+	if err != nil {
+		self.logger.WithField("owner_id", owner_id).WithError(err).Errorf("failed to list sensors for user")
+		return nil, err
+	}
+	return ss, nil
 }
 
 func (self *storageImpl) list_sensors(sensor Sensor) ([]Sensor, error) {
