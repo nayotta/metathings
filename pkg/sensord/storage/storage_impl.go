@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/jmoiron/sqlx"
+	_ "github.com/mattn/go-sqlite3"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -46,8 +47,8 @@ func (self *storageImpl) CreateSensor(snr Sensor) (Sensor, error) {
 	snr.CreatedAt = now
 	snr.UpdatedAt = now
 	_, err := self.db.NamedExec(`
-INSERT INTO sensor(id, name, core_id, entity_name, owner_id, application_credential_id, state)
-VALUES (:id, :name, :core_id, :entity_name, :owner_id, :application_credential_id, :state)`, &snr)
+INSERT INTO sensor(id, name, core_id, entity_name, owner_id, application_credential_id, state, created_at, updated_at)
+VALUES (:id, :name, :core_id, :entity_name, :owner_id, :application_credential_id, :state, :created_at, :updated_at)`, &snr)
 	if err != nil {
 		self.logger.WithError(err).Errorf("failed to create sensor")
 		return s, err
