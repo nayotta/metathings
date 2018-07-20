@@ -56,8 +56,23 @@ values (:id, :name, :core_id, :entity_name, :owner_id, :application_credential_i
 	return s, nil
 }
 
-func (s *storageImpl) DeleteSensor(snr_id string) error {
-	panic("unimplemented")
+func (self *storageImpl) DeleteSensor(snr_id string) error {
+	tx, err := self.db.Begin()
+	if err != nil {
+		self.logger.WithError(err).Errorf("failed to begin tx")
+		return err
+	}
+
+	tx.Exec("DELETE FROM sensor_tag WHERE sensor_id=$1", snr_id)
+	tx.Exec("DELETE FROM sensor WHERE id=$1", snr_id)
+	err = tx.Commit()
+	if err != nil {
+		self.logger.WithError(err).WithField("snr_id", snr_id).Errorf("failed to delete sensor")
+		return err
+	}
+
+	self.logger.WithField("snr_id", snr_id).Debugf("delete sensor")
+	return nil
 }
 
 func (s *storageImpl) PatchSensor(snr_id string, snr Sensor) (Sensor, error) {
