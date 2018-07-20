@@ -94,11 +94,11 @@ type metathingsSensordService struct {
 }
 
 func (srv *metathingsSensordService) copySensor(snr storage.Sensor) *pb.Sensor {
-	return nil
+	panic("unimplemented")
 }
 
 func (srv *metathingsSensordService) copySensors(snrs []storage.Sensor) []*pb.Sensor {
-	return nil
+	panic("unimplemented")
 }
 
 func (srv *metathingsSensordService) Create(ctx context.Context, req *pb.CreateRequest) (*pb.CreateResponse, error) {

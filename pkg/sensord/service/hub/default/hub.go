@@ -38,6 +38,7 @@ func (h *defaultHub) Subscriber(path string) (hub.Subscriber, error) {
 	m[id] = ch
 
 	sub := &subscriber{
+		p:  path,
 		id: id,
 		ch: ch,
 	}
@@ -62,6 +63,7 @@ func (h *defaultHub) Publisher(path string) (hub.Publisher, error) {
 	id := rand.Uint64()
 
 	pub := &publisher{
+		p:  path,
 		id: id,
 		ch: ch,
 	}
@@ -142,12 +144,6 @@ func (h *defaultHub) transfer(path string, ch chan *sensord_pb.SensorData) {
 	for {
 		dat, ok := <-ch
 		if !ok {
-			h.glock.Lock()
-			defer h.glock.Unlock()
-
-			close(ch)
-			delete(h.pubs, path)
-
 			h.logger.WithField("path", path).Debugf("failed to recv data from channel, maybe closed")
 			return
 		}

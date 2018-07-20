@@ -36,7 +36,7 @@ type Publisher interface {
 }
 
 var (
-	hubs map[string]func(opt_helper.Option) (Hub, error)
+	hubs = make(map[string]func(opt_helper.Option) (Hub, error))
 )
 
 func XXX_RegisterHub(name string, fn func(opt_helper.Option) (Hub, error)) {
