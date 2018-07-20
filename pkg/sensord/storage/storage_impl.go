@@ -79,8 +79,20 @@ func (s *storageImpl) PatchSensor(snr_id string, snr Sensor) (Sensor, error) {
 	panic("unimplemented")
 }
 
-func (s *storageImpl) GetSensor(snr_id string) (Sensor, error) {
-	panic("unimplemented")
+func (self *storageImpl) GetSensor(snr_id string) (Sensor, error) {
+	var s Sensor
+	err := self.db.Get(&s, "SELECT * FROM sensor WHERE id=$1", snr_id)
+	if err != nil {
+		self.logger.WithError(err).WithField("snr_id", snr_id).Errorf("failed to get sensor")
+		return s, err
+	}
+
+	err = self.db.Select(&s.Tags, "SELECT * FROM sensor_tag WHERE sensor_id=$1", snr_id)
+	if err != nil {
+		self.logger.WithError(err).WithField("snr_id", snr_id).Warningf("failed to get sensor tags")
+	}
+
+	return s, nil
 }
 
 func (s *storageImpl) ListSensors(Sensor) ([]Sensor, error) {
