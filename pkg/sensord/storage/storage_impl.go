@@ -247,6 +247,9 @@ func (self *storageImpl) GetSensorTags(snr_id string) ([]SensorTag, error) {
 		self.logger.WithField("snr_id", snr_id).Errorf("failed to get sensor tags")
 		return nil, err
 	}
+
+	self.logger.WithField("snr_id", snr_id).Debugf("get sensor tags")
+
 	return tags, nil
 }
 
@@ -254,8 +257,16 @@ func (s *storageImpl) AddSensorTag(SensorTag) (SensorTag, error) {
 	panic("unimplemented")
 }
 
-func (s *storageImpl) RemoveSensorTag(snr_tag_id string) error {
-	panic("unimplemented")
+func (self *storageImpl) RemoveSensorTag(snr_tag_id string) error {
+	_, err := self.db.Exec("DELETE FROM sensor_tag WHERE id=$1", snr_tag_id)
+	if err != nil {
+		self.logger.WithError(err).WithField("snr_tag_id", snr_tag_id).Errorf("failed to remove sensor tag")
+		return err
+	}
+
+	self.logger.WithField("snr_tag_id", snr_tag_id).Debugf("remove sensor tag")
+
+	return nil
 }
 
 func newStorageImpl(driver, uri string, logger log.FieldLogger) (*storageImpl, error) {
