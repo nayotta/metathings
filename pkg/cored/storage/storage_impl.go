@@ -12,33 +12,33 @@ import (
 
 var schemas = `
 CREATE TABLE IF NOT EXISTS core (
-    id varchar(255),
-    name varchar(255),
-    project_id varchar(255),
-    owner_id varchar(255),
-    state varchar(255),
-    heartbeat_at datetime,
+    id VARCHAR(255),
+    name VARCHAR(255),
+    project_id VARCHAR(255),
+    owner_id VARCHAR(255),
+    state VARCHAR(255),
+    heartbeat_at DATETIME,
 
-    created_at datetime,
-    updated_at datetime
+    created_at DATETIME,
+    updated_at DATETIME
 );
 
 CREATE TABLE IF NOT EXISTS entity (
-    id varchar(255),
-    core_id varchar(255),
-    name varchar(255),
-    service_name varchar(255),
-    endpoint varchar(255),
-    state varchar(255),
-    heartbeat_at datetime,
+    id VARCHAR(255),
+    core_id VARCHAR(255),
+    name VARCHAR(255),
+    service_name VARCHAR(255),
+    endpoint VARCHAR(255),
+    state VARCHAR(255),
+    heartbeat_at DATETIME,
 
-    created_at datetime,
-    updated_at datetime
+    created_at DATETIME,
+    updated_at DATETIME
 );
 
 CREATE TABLE IF NOT EXISTS core_app_cred_relationship (
-    core_id varchar(255),
-    app_cred_id varchar(255)
+    core_id VARCHAR(255),
+    app_cred_id VARCHAR(255)
 );
 `
 

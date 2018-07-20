@@ -11,22 +11,22 @@ import (
 
 var schemas = `
 CREATE TABLE IF NOT EXISTS camera (
-    id varchar(255),
-    name varchar(255),
-    core_id varchar(255),
-    entity_name varchar(255),
-    owner_id varchar(255),
-    application_credential_id varchar(255),
-    state varchar(255),
-    url varchar(1024),
-    device varchar(255),
-    width int,
-    height int,
-    bitrate int,
-    framerate int,
+    id VARCHAR(255),
+    name VARCHAR(255),
+    core_id VARCHAR(255),
+    entity_name VARCHAR(255),
+    owner_id VARCHAR(255),
+    application_credential_id VARCHAR(255),
+    state VARCHAR(255),
+    url VARCHAR(1024),
+    device VARCHAR(255),
+    width INT,
+    height INT,
+    bitrate INT,
+    framerate INT,
 
-    created_at datetime,
-    updated_at datetime
+    created_at DATETIME,
+    updated_at DATETIME
 );
 `
 

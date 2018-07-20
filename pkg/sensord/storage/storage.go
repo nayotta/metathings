@@ -1,4 +1,4 @@
-package metathings_sensord_service
+package metathings_sensord_storage
 
 import (
 	"errors"
@@ -23,6 +23,8 @@ type Sensor struct {
 }
 
 type SensorTag struct {
+	CreatedAt time.Time `db:"created_at"`
+
 	Id       *string
 	SensorId *string `db:"sensor_id"`
 	Tag      *string
