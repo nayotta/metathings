@@ -1,6 +1,8 @@
 package metathings_sensord_storage
 
 import (
+	"fmt"
+	"strings"
 	"time"
 
 	"github.com/jmoiron/sqlx"
@@ -95,12 +97,78 @@ func (self *storageImpl) GetSensor(snr_id string) (Sensor, error) {
 	return s, nil
 }
 
-func (s *storageImpl) ListSensors(Sensor) ([]Sensor, error) {
-	panic("unimplemented")
+func (self *storageImpl) ListSensors(snr Sensor) ([]Sensor, error) {
+	ss, err := self.list_sensors(snr)
+	if err != nil {
+		self.logger.WithError(err).Errorf("failed to list sensors")
+		return nil, err
+	}
+	self.logger.Debugf("list sensors")
+	return ss, nil
 }
 
 func (s *storageImpl) ListSensorsForUser(owner_id string, snr Sensor) ([]Sensor, error) {
 	panic("unimplemented")
+}
+
+func (self *storageImpl) list_sensors(sensor Sensor) ([]Sensor, error) {
+	var err error
+	values := []string{}
+	arguments := []interface{}{}
+	i := 0
+	sensors := []Sensor{}
+
+	if sensor.Name != nil {
+		values = append(values, fmt.Sprintf("name=$%v", i))
+		arguments = append(arguments, *sensor.Name)
+		i++
+	}
+
+	if sensor.CoreId != nil {
+		values = append(values, fmt.Sprintf("core_id=$%v", i))
+		arguments = append(arguments, *sensor.CoreId)
+		i++
+	}
+
+	if sensor.EntityName != nil {
+		values = append(values, fmt.Sprintf("entity_name=$%v", i))
+		arguments = append(arguments, *sensor.EntityName)
+		i++
+	}
+
+	if sensor.OwnerId != nil {
+		values = append(values, fmt.Sprintf("owner_id=$%v", i))
+		arguments = append(arguments, *sensor.OwnerId)
+		i++
+	}
+
+	if sensor.ApplicationCredentialId != nil {
+		values = append(values, fmt.Sprintf("application_credential_id=$%v", i))
+		arguments = append(arguments, *sensor.ApplicationCredentialId)
+		i++
+	}
+
+	if sensor.State != nil {
+		values = append(values, fmt.Sprintf("state=$%v", i))
+		arguments = append(arguments, *sensor.State)
+		i++
+	}
+
+	if len(values) == 0 {
+		err = self.db.Select(&sensors, "SELECT * FROM sensor")
+	} else {
+		val := strings.Join(values, " and ")
+		sql_str := fmt.Sprintf("SELECT * FROM sensor WHERE %v", val)
+		self.logger.WithFields(log.Fields{
+			"sql":  sql_str,
+			"args": arguments,
+		}).Debugf("execute sql")
+		err = self.db.Select(&sensors, sql_str, arguments...)
+	}
+	if err != nil {
+		return nil, err
+	}
+	return sensors, nil
 }
 
 func (s *storageImpl) GetSensorTags(snr_id string) ([]SensorTag, error) {
