@@ -141,13 +141,13 @@ func (self *storageImpl) get_sensor(snr_id string) (Sensor, error) {
 		return s, err
 	}
 
-	err = self.db.Select(&s.Tags, "SELECT * FROM sensor_tag WHERE sensor_id=$1", snr_id)
+	tags, err := self.get_sensor_tags(snr_id)
 	if err != nil {
 		self.logger.WithError(err).WithField("snr_id", snr_id).Warningf("failed to get sensor tags")
 	}
+	s.Tags = tags
 
 	return s, nil
-
 }
 
 func (self *storageImpl) ListSensors(snr Sensor) ([]Sensor, error) {
@@ -230,8 +230,24 @@ func (self *storageImpl) list_sensors(sensor Sensor) ([]Sensor, error) {
 	return sensors, nil
 }
 
-func (s *storageImpl) GetSensorTags(snr_id string) ([]SensorTag, error) {
-	panic("unimplemented")
+func (self *storageImpl) get_sensor_tags(snr_id string) ([]SensorTag, error) {
+	tags := []SensorTag{}
+
+	err := self.db.Select(&tags, "SELECT * FROM sensor_tag WHERE sensor_id=$1", snr_id)
+	if err != nil {
+		return nil, err
+	}
+
+	return tags, nil
+}
+
+func (self *storageImpl) GetSensorTags(snr_id string) ([]SensorTag, error) {
+	tags, err := self.get_sensor_tags(snr_id)
+	if err != nil {
+		self.logger.WithField("snr_id", snr_id).Errorf("failed to get sensor tags")
+		return nil, err
+	}
+	return tags, nil
 }
 
 func (s *storageImpl) AddSensorTag(SensorTag) (SensorTag, error) {
