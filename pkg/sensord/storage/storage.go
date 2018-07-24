@@ -1,7 +1,6 @@
 package metathings_sensord_storage
 
 import (
-	"errors"
 	"time"
 
 	log "github.com/sirupsen/logrus"
@@ -43,5 +42,5 @@ type Storage interface {
 }
 
 func NewStorage(driver, uri string, logger log.FieldLogger) (Storage, error) {
-	return nil, errors.New("unimplemented")
+	return newStorageImpl(driver, uri, logger)
 }
