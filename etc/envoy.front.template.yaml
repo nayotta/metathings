@@ -29,6 +29,10 @@ static_resources:
                   prefix: "/ai.metathings.service.camerad.CameradService"
                 route:
                   cluster: camerad
+              - match:
+                  prefix: "/ai.metathings.service.sensord.SensordService"
+                route:
+                  cluster: sensord
           http_filters:
           - name: envoy.router
             config: {}
@@ -60,6 +64,15 @@ static_resources:
     - socket_address:
         address: camerad
         port_value: 5002
+  - name: sensord
+    connect_timeout: 5s
+    type: strict_dns
+    lb_policy: round_robin
+    http2_protocol_options: {}
+    hosts:
+    - socket_address:
+        address: sensord
+        port_value: 5003
 admin:
   access_log_path: "/dev/null"
   address:

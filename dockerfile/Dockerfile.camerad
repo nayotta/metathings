@@ -1,5 +1,5 @@
 FROM nayotta/metathingsd
 
-COPY ./etc/cored.yaml /etc/metathings/camerad.yaml
+COPY ./etc/camerada.yaml /etc/metathings/camerad.yaml
 COPY ./script/camerad_start.sh /usr/local/sbin/camerad_start.sh
 CMD /usr/local/sbin/camerad_start.sh

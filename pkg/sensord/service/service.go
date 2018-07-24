@@ -15,6 +15,7 @@ import (
 	context_helper "github.com/nayotta/metathings/pkg/common/context"
 	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
 	log_helper "github.com/nayotta/metathings/pkg/common/log"
+	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 	protobuf_helper "github.com/nayotta/metathings/pkg/common/protobuf"
 	token_helper "github.com/nayotta/metathings/pkg/common/token"
 	sensor_pb "github.com/nayotta/metathings/pkg/proto/sensor"
@@ -33,10 +34,12 @@ type options struct {
 	application_credential_secret string
 	storage_driver                string
 	storage_uri                   string
+	hub                           opt_helper.Option
 }
 
 var defaultServiceOptions = options{
 	logLevel: "info",
+	hub:      opt_helper.NewOption("name", "default"),
 }
 
 type ServiceOptions func(*options)
@@ -79,6 +82,12 @@ func SetStorage(driver, uri string) ServiceOptions {
 	}
 }
 
+func SetHub(opt opt_helper.Option) ServiceOptions {
+	return func(o *options) {
+		o.hub = opt
+	}
+}
+
 type metathingsSensordService struct {
 	grpc_helper.AuthorizationTokenParser
 
@@ -94,11 +103,30 @@ type metathingsSensordService struct {
 }
 
 func (srv *metathingsSensordService) copySensor(snr storage.Sensor) *pb.Sensor {
-	panic("unimplemented")
+	s := &pb.Sensor{
+		Id:                      *snr.Id,
+		Name:                    *snr.Name,
+		CoreId:                  *snr.CoreId,
+		EntityName:              *snr.EntityName,
+		OwnerId:                 *snr.OwnerId,
+		ApplicationCredentialId: *snr.ApplicationCredentialId,
+		State: srv.sensor_st_psr.ToValue(*snr.State),
+	}
+
+	s.Tags = []string{}
+	for _, t := range snr.Tags {
+		s.Tags = append(s.Tags, *t.Tag)
+	}
+
+	return s
 }
 
 func (srv *metathingsSensordService) copySensors(snrs []storage.Sensor) []*pb.Sensor {
-	panic("unimplemented")
+	ss := []*pb.Sensor{}
+	for _, snr := range snrs {
+		ss = append(ss, srv.copySensor(snr))
+	}
+	return ss
 }
 
 func (srv *metathingsSensordService) Create(ctx context.Context, req *pb.CreateRequest) (*pb.CreateResponse, error) {
@@ -473,13 +501,13 @@ func NewSensordService(opt ...ServiceOptions) (*metathingsSensordService, error)
 		client_helper.WithInsecureOptionFunc(),
 	)
 	if err != nil {
-		log.WithError(err).Errorf("failed to new client factory")
+		logger.WithError(err).Errorf("failed to new client factory")
 		return nil, err
 	}
 
 	storage, err := storage.NewStorage(opts.storage_driver, opts.storage_uri, logger)
 	if err != nil {
-		log.WithError(err).Errorf("failed to connect storage")
+		logger.WithError(err).Errorf("failed to connect storage")
 		return nil, err
 	}
 
@@ -489,7 +517,14 @@ func NewSensordService(opt ...ServiceOptions) (*metathingsSensordService, error)
 		opts.application_credential_secret,
 	)
 	if err != nil {
-		log.WithError(err).Errorf("failed to new application credential manager")
+		logger.WithError(err).Errorf("failed to new application credential manager")
+		return nil, err
+	}
+
+	opts.hub.Set("logger", logger)
+	hub, err := hub.NewHub(opts.hub)
+	if err != nil {
+		logger.WithError(err).Errorf("failed to new pubsub hub")
 		return nil, err
 	}
 
@@ -503,6 +538,10 @@ func NewSensordService(opt ...ServiceOptions) (*metathingsSensordService, error)
 		logger:        logger,
 		storage:       storage,
 		tk_vdr:        tk_vdr,
+		hub:           hub,
 	}
+
+	logger.Debugf("new sensord service")
+
 	return srv, nil
 }

@@ -68,5 +68,22 @@ services:
       - "5002"
     restart: on-failure
 
+  sensord:
+    environment:
+      - MTD_STAGE=dev
+    build:
+      context: .
+      dockerfile: dockerfile/Dockerfile.sensord.dev
+    image: nayotta/metathings-sensord-development
+    volumes:
+      - ./data/storage:/var/metathings/storage
+      - .:/go/src/github.com/nayotta/metathings
+      - ./etc/sensord.yaml:/etc/metathings/sensord.yaml
+    networks:
+      - metathingsmesh
+    expose:
+      - "5003"
+    restart: on-failure
+
 networks:
   metathingsmesh:

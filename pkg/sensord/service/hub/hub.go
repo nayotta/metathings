@@ -48,5 +48,11 @@ func NewHub(opt opt_helper.Option) (Hub, error) {
 	if name == "" {
 		return nil, ErrBadHubName
 	}
-	return nil, errors.New("unimplemented")
+
+	hub_maker, ok := hubs[name]
+	if !ok {
+		return nil, ErrBadHubName
+	}
+
+	return hub_maker(opt)
 }
