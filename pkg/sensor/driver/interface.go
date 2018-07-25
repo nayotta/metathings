@@ -39,4 +39,8 @@ type SensorDriver interface {
 	Config(SensorConfig) Sensor
 }
 
+type Changer interface {
+	OnChange(func(SensorData) error)
+}
+
 type NewDriverMethod func(opt_helper.Option) (SensorDriver, error)

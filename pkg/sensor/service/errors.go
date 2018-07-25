@@ -3,5 +3,7 @@ package metathings_sensor_service
 import "errors"
 
 var (
-	ErrSensorNotFound = errors.New("sensor not found")
+	ErrInitialFailed      = errors.New("failed to initialed")
+	ErrUnsupportedTrigger = errors.New("unsupported trigger")
+	ErrSensorNotFound     = errors.New("sensor not found")
 )
