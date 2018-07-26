@@ -77,6 +77,8 @@ func runSensord() error {
 	opts.Set("metathings.address", root_opts.ServiceConfig.Metathingsd.Address)
 	opts.Set("endpoint", ep)
 	opts.Set("driver.descriptor", root_opts.DriverDescriptor)
+	opts.Set("application_credential.id", root_opts.ApplicationCredential.Id)
+	opts.Set("application_credential.secret", root_opts.ApplicationCredential.Secret)
 	opts.Set("sensors", cmd_helper.GetFromStage(v).Get("sensors"))
 
 	srv, err := service.NewSensorService(opts)

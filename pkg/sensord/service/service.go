@@ -410,7 +410,17 @@ func (srv *metathingsSensordService) Subscribe(stm pb.SensordService_SubscribeSe
 						}
 					}(stm, sub)
 
+					srv.logger.WithField("snr_id", snr_id).Debugf("subscrible data by sensor id")
 				case *pb.SubscribeRequest_UnsubscribeById:
+					var ok bool
+					var sub hub.Subscriber
+					unsub_by_id := req.GetUnsubscribeById()
+					snr_id := unsub_by_id.GetId().GetValue()
+					if sub, ok = subs[snr_id]; !ok {
+						srv.logger.WithField("snr_id", snr_id).Errorf("subscribing sensor not found")
+					}
+					srv.hub.Close(sub)
+					srv.logger.WithField("snr_id", snr_id).Debugf("unsubscrible sensor by sensor id")
 				}
 			}
 		}
@@ -459,16 +469,15 @@ func (srv *metathingsSensordService) Publish(stm pb.SensordService_PublishServer
 				return
 			}
 
+			now := protobuf_helper.Now()
 			for _, req := range reqs.Requests {
 				switch req.Payload.(type) {
 				case *pb.PublishRequest_Data:
 					dat := req.GetData()
-
-					now := protobuf_helper.Now()
 					dat.ArrivedAt = &now
 					dat.SensorId = snr_id
 
-					if err = publisher.Publish(req.GetData()); err != nil {
+					if err = publisher.Publish(dat); err != nil {
 						srv.logger.WithError(err).Warningf("failed to publish data to hub")
 					}
 				}

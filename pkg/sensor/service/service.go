@@ -2,26 +2,34 @@ package metathings_sensor_service
 
 import (
 	"context"
+	"math/rand"
+	"time"
 
+	gpb "github.com/golang/protobuf/ptypes/wrappers"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
+	app_cred_mgr "github.com/nayotta/metathings/pkg/common/application_credential_manager"
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
+	context_helper "github.com/nayotta/metathings/pkg/common/context"
 	log_helper "github.com/nayotta/metathings/pkg/common/log"
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
+	protobuf_helper "github.com/nayotta/metathings/pkg/common/protobuf"
 	mt_plugin "github.com/nayotta/metathings/pkg/cored/plugin"
 	pb "github.com/nayotta/metathings/pkg/proto/sensor"
+	sensord_pb "github.com/nayotta/metathings/pkg/proto/sensord"
 	driver "github.com/nayotta/metathings/pkg/sensor/driver"
 	state_helper "github.com/nayotta/metathings/pkg/sensor/state"
 )
 
 type metathingsSensorService struct {
 	mt_plugin.CoreService
-	opt     opt_helper.Option
-	logger  log.FieldLogger
-	cli_fty *client_helper.ClientFactory
-	snr_mgr *SensorManager
+	opt          opt_helper.Option
+	logger       log.FieldLogger
+	cli_fty      *client_helper.ClientFactory
+	app_cred_mgr app_cred_mgr.ApplicationCredentialManager
+	snr_mgr      *SensorManager
 
 	sensor_st_psr state_helper.SensorStateParser
 }
@@ -233,6 +241,78 @@ func (srv *metathingsSensorService) Close() {
 
 }
 
+func (srv *metathingsSensorService) PublishLoop() {
+	published := false
+
+	evt_ch := srv.snr_mgr.DataEvent()
+
+	for {
+		if !published {
+			published = true
+		} else {
+			time.Sleep(15 * time.Second)
+		}
+
+		cli, cfn, err := srv.cli_fty.NewSensordServiceClient()
+		if err != nil {
+			srv.logger.WithError(err).Errorf("failed to new sensord service client")
+			continue
+		}
+		defer cfn()
+
+		ctx := context_helper.WithToken(context.Background(), srv.app_cred_mgr.GetToken())
+		stm, err := cli.Publish(ctx)
+
+		err = srv.publishLoop(stm, evt_ch)
+		if err != nil {
+			srv.logger.WithError(err).Errorf("publish loop exited, restart after 15s")
+		}
+	}
+}
+
+func (srv *metathingsSensorService) publishLoop(stm sensord_pb.SensordService_PublishClient, evt_ch chan DataEvent) error {
+	var quit chan error
+	for {
+		select {
+		case evt := <-evt_ch:
+			go srv.PublishOnce(stm, evt, quit)
+		case err := <-quit:
+			return err
+		}
+	}
+}
+
+func (srv *metathingsSensorService) PublishOnce(stm sensord_pb.SensordService_PublishClient, evt DataEvent, quit chan error) {
+	snr_name := evt.Name
+	snr_data := evt.Data
+	data := srv.copySensorData(snr_data)
+	data["$sensor.name"] = &pb.SensorValue{Value: &pb.SensorValue_String_{String_: snr_name}}
+
+	sess := rand.Uint64()
+	now := protobuf_helper.Now()
+
+	pub_data_req := sensord_pb.PublishRequest_Data{
+		Data: &sensord_pb.SensorData{
+			CreatedAt: &now,
+			Data:      data,
+		},
+	}
+
+	pub_reqs := sensord_pb.PublishRequests{
+		Requests: []*sensord_pb.PublishRequest{
+			&sensord_pb.PublishRequest{
+				Session: &gpb.UInt64Value{Value: sess},
+				Payload: &pub_data_req,
+			},
+		},
+	}
+
+	err := stm.Send(&pub_reqs)
+	if err != nil {
+		quit <- err
+	}
+}
+
 func NewSensorService(opt opt_helper.Option) (*metathingsSensorService, error) {
 	opt.Set("service_name", "sensor")
 
@@ -251,6 +331,16 @@ func NewSensorService(opt opt_helper.Option) (*metathingsSensorService, error) {
 		return nil, err
 	}
 
+	app_cred_mgr, err := app_cred_mgr.NewApplicationCredentialManager(
+		cli_fty,
+		opt.GetString("application_credential.id"),
+		opt.GetString("application_credential.secret"),
+	)
+	if err != nil {
+		logger.WithError(err).Errorf("failed to new application credential manager")
+		return nil, err
+	}
+
 	opt.Set("logger", logger)
 	snr_mgr, err := NewSensorManager(opt)
 	if err != nil {
@@ -259,15 +349,20 @@ func NewSensorService(opt opt_helper.Option) (*metathingsSensorService, error) {
 	logger.Debugf("new sensor manager")
 
 	srv := &metathingsSensorService{
-		opt:     opt,
-		logger:  logger,
-		cli_fty: cli_fty,
-		snr_mgr: snr_mgr,
+		opt:          opt,
+		logger:       logger,
+		cli_fty:      cli_fty,
+		app_cred_mgr: app_cred_mgr,
+		snr_mgr:      snr_mgr,
 
 		sensor_st_psr: state_helper.SENSOR_STATE_PARSER,
 	}
 
 	srv.CoreService = mt_plugin.MakeCoreService(srv.opt, srv.logger, srv.cli_fty)
+
+	if snr_mgr.Publishable() {
+		go srv.PublishLoop()
+	}
 
 	return srv, nil
 }
