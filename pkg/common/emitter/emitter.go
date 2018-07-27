@@ -6,16 +6,16 @@ type Emitter interface {
 }
 
 type emitter struct {
-	listeners []func(Event) error
+	callbacks []func(Event) error
 }
 
-func (self *emitter) OnEvent(lis func(Event) error) {
-	self.listeners = append(self.listeners, lis)
+func (self *emitter) OnEvent(cb func(Event) error) {
+	self.callbacks = append(self.callbacks, cb)
 }
 
 func (self *emitter) Trigger(evt Event) error {
-	for _, lis := range self.listeners {
-		if err := lis(evt); err != nil {
+	for _, cb := range self.callbacks {
+		if err := cb(evt); err != nil {
 			return err
 		}
 	}
@@ -23,5 +23,5 @@ func (self *emitter) Trigger(evt Event) error {
 }
 
 func NewEmitter() Emitter {
-	return &emitter{listeners: []func(Event) error{}}
+	return &emitter{callbacks: []func(Event) error{}}
 }

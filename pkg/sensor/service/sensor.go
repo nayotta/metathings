@@ -98,10 +98,14 @@ func (mgr *SensorManager) initTrigger(drv driver.SensorDriver, snr_v, tgr_v *vip
 	default:
 		err = ErrUnsupportedTrigger
 	}
-	if err == nil {
-		mgr.publishable = true
+
+	if err != nil {
+		mgr.logger.WithField("trigger", name).WithError(err).Debugf("failed to init trigger")
+		return err
 	}
-	return err
+
+	mgr.publishable = true
+	return nil
 }
 
 func (mgr *SensorManager) initPeriodTrigger(drv driver.SensorDriver, snr_v, tgr_v *viper.Viper) error {
@@ -152,8 +156,8 @@ func NewSensorManager(opt opt_helper.Option) (*SensorManager, error) {
 		publishable: false,
 	}
 
-	logger := opt.Get("logger").(log.FieldLogger).WithField("#module", "sensor_manager")
-	snr_mgr.logger = logger
+	logger := opt.Get("logger").(log.FieldLogger)
+	snr_mgr.logger = logger.WithField("#module", "sensor_manager")
 
 	drv_fty, err := driver_helper.NewDriverFactory(opt.GetString("driver.descriptor"))
 	if err != nil {
@@ -183,7 +187,7 @@ func NewSensorManager(opt opt_helper.Option) (*SensorManager, error) {
 		new_snr_opt := opt_helper.Copy(opt)
 		new_snr_opt.Set("name", snr_opt_s.Name)
 		new_snr_opt.Set("driver", v.Sub("driver"))
-		new_snr_opt.Set("logger", opt.Get("logger").(log.FieldLogger).WithFields(log.Fields{
+		new_snr_opt.Set("logger", logger.WithFields(log.Fields{
 			"#driver": snr_opt_s.Driver.Name,
 			"#name":   snr_opt_s.Name,
 		}))
