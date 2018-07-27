@@ -23,6 +23,10 @@ import (
 	state_helper "github.com/nayotta/metathings/pkg/sensor/state"
 )
 
+var (
+	RESTART_PUBLISH_LOOP_INTERVAL = 15 * time.Second
+)
+
 type metathingsSensorService struct {
 	mt_plugin.CoreService
 	opt          opt_helper.Option
@@ -238,40 +242,41 @@ func (srv *metathingsSensorService) ListData(ctx context.Context, req *pb.ListDa
 }
 
 func (srv *metathingsSensorService) Close() {
-
+	for _, snr := range srv.snr_mgr.ListSensors() {
+		snr.Driver.Close()
+	}
+	srv.logger.Infof("sensor service closed")
 }
 
 func (srv *metathingsSensorService) PublishLoop() {
-	published := false
-
 	evt_ch := srv.snr_mgr.DataEvent()
-
 	for {
-		if !published {
-			published = true
-		} else {
-			time.Sleep(15 * time.Second)
-		}
-
-		cli, cfn, err := srv.cli_fty.NewSensordServiceClient()
+		err := srv.publishLoop(evt_ch)
 		if err != nil {
-			srv.logger.WithError(err).Errorf("failed to new sensord service client")
-			continue
-		}
-		defer cfn()
-
-		ctx := context_helper.WithToken(context.Background(), srv.app_cred_mgr.GetToken())
-		stm, err := cli.Publish(ctx)
-
-		err = srv.publishLoop(stm, evt_ch)
-		if err != nil {
-			srv.logger.WithError(err).Errorf("publish loop exited, restart after 15s")
+			srv.logger.WithError(err).Errorf("publish loop exited, restart after %s", RESTART_PUBLISH_LOOP_INTERVAL)
+			time.Sleep(RESTART_PUBLISH_LOOP_INTERVAL)
 		}
 	}
 }
 
-func (srv *metathingsSensorService) publishLoop(stm sensord_pb.SensordService_PublishClient, evt_ch chan DataEvent) error {
-	var quit chan error
+func (srv *metathingsSensorService) publishLoop(evt_ch chan DataEvent) error {
+	quit := make(chan error, 1)
+
+	cli, cfn, err := srv.cli_fty.NewSensordServiceClient()
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to new sensord service client")
+		return err
+	}
+	defer cfn()
+
+	ctx := context_helper.WithToken(context.Background(), srv.app_cred_mgr.GetToken())
+	stm, err := cli.Publish(ctx)
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to publish data to sensord")
+		return err
+	}
+	srv.logger.Debugf("start publisher streaming")
+
 	for {
 		select {
 		case evt := <-evt_ch:
@@ -310,7 +315,9 @@ func (srv *metathingsSensorService) PublishOnce(stm sensord_pb.SensordService_Pu
 	err := stm.Send(&pub_reqs)
 	if err != nil {
 		quit <- err
+		return
 	}
+	srv.logger.WithField("data", data).Debugf("publish data")
 }
 
 func NewSensorService(opt opt_helper.Option) (*metathingsSensorService, error) {

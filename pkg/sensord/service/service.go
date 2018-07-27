@@ -103,6 +103,30 @@ type metathingsSensordService struct {
 	hub hub.Hub
 }
 
+func (srv *metathingsSensordService) AuthFuncOverride(ctx context.Context, fullMethodName string) (context.Context, error) {
+	token_str, err := srv.GetTokenFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	token, err := srv.tk_vdr.Validate(token_str)
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to validate token via identityd")
+		return nil, err
+	}
+
+	ctx = context.WithValue(ctx, "token", token_str)
+	ctx = context.WithValue(ctx, "credential", token)
+
+	srv.logger.WithFields(log.Fields{
+		"method":   fullMethodName,
+		"user_id":  token.User.Id,
+		"username": token.User.Name,
+	}).Debugf("validate token")
+
+	return ctx, nil
+}
+
 func (srv *metathingsSensordService) copySensor(snr storage.Sensor) *pb.Sensor {
 	s := &pb.Sensor{
 		Id:                      *snr.Id,
@@ -444,6 +468,11 @@ func (srv *metathingsSensordService) Publish(stm pb.SensordService_PublishServer
 	if err != nil {
 		srv.logger.WithError(err).WithField("application_credential_id", app_cred_id).Errorf("failed to list sensors with application credential id")
 		return status.Errorf(codes.Internal, err.Error())
+	}
+
+	if len(ss) == 0 {
+		srv.logger.WithField("application_credential_id", app_cred_id).Errorf("not registerd sensor")
+		return status.Errorf(codes.NotFound, ErrNotRegisteredSensor.Error())
 	}
 
 	snr_id := *ss[0].Id

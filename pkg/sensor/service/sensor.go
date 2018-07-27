@@ -90,6 +90,7 @@ func (mgr *SensorManager) initTriggers(drv driver.SensorDriver, snr_v *viper.Vip
 func (mgr *SensorManager) initTrigger(drv driver.SensorDriver, snr_v, tgr_v *viper.Viper) error {
 	var err error
 	name := tgr_v.GetString("name")
+
 	switch name {
 	case "period":
 		err = mgr.initPeriodTrigger(drv, snr_v, tgr_v)

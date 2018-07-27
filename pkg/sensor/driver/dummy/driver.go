@@ -51,13 +51,13 @@ func (drv *dummySensorDriver) Init(opt opt_helper.Option) error {
 
 	go func() {
 		for {
-			time.Sleep(time.Duration(30000*rand.Float32()) * time.Millisecond)
+			time.Sleep(time.Duration(15000*rand.Float32()) * time.Millisecond)
 			drv.mutex.Lock()
 			data := drv.data()
 			for _, cb := range drv.callbacks {
 				cb(data)
 			}
-			defer drv.mutex.Unlock()
+			drv.mutex.Unlock()
 		}
 	}()
 
