@@ -15,7 +15,7 @@ import (
 	"google.golang.org/grpc/status"
 
 	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
-	"github.com/nayotta/metathings/pkg/common/log"
+	log_helper "github.com/nayotta/metathings/pkg/common/log"
 	codec "github.com/nayotta/metathings/pkg/identityd/service/encode_decode"
 	pb "github.com/nayotta/metathings/pkg/proto/identityd"
 )
@@ -515,7 +515,7 @@ func (srv *metathingsIdentitydService) ValidateToken(ctx context.Context, _ *emp
 			"status_code": http_res.StatusCode,
 			"http_body":   http_body,
 		}).Errorf("unexpected status code")
-		return nil, status.Errorf(mapCode(http_res.StatusCode), http_body)
+		return nil, status.Errorf(grpc_helper.HttpStatusCode2GrpcStatusCode(http_res.StatusCode), http_body)
 	}
 
 	res, err := codec.DecodeValidateTokenResponse(http_res, http_body)
@@ -556,7 +556,7 @@ func (srv *metathingsIdentitydService) CreateApplicationCredential(ctx context.C
 
 	if http_res.StatusCode != 201 {
 		srv.logger.WithField("status_code", http_res.StatusCode).Errorf("unexpected status code")
-		return nil, status.Errorf(mapCode(http_res.StatusCode), http_body)
+		return nil, status.Errorf(grpc_helper.HttpStatusCode2GrpcStatusCode(http_res.StatusCode), http_body)
 	}
 
 	res, err := codec.DecodeCreateApplicationCredential(http_res, http_body)
@@ -590,7 +590,7 @@ func (srv *metathingsIdentitydService) DeleteApplicationCredential(ctx context.C
 			"status_code": http_res.StatusCode,
 			"http_body":   http_body,
 		}).Errorf("unexpected status code")
-		return nil, status.Errorf(mapCode(http_res.StatusCode), http_body)
+		return nil, status.Errorf(grpc_helper.HttpStatusCode2GrpcStatusCode(http_res.StatusCode), http_body)
 	}
 
 	return &empty.Empty{}, nil
@@ -617,7 +617,7 @@ func (srv *metathingsIdentitydService) GetApplicationCredential(ctx context.Cont
 			"status_code": http_res.StatusCode,
 			"http_body":   http_body,
 		}).Errorf("unexpected status code")
-		return nil, status.Errorf(mapCode(http_res.StatusCode), http_body)
+		return nil, status.Errorf(grpc_helper.HttpStatusCode2GrpcStatusCode(http_res.StatusCode), http_body)
 	}
 
 	res, err := codec.DecodeGetApplicationCredential(http_res, http_body)
@@ -649,7 +649,7 @@ func (srv *metathingsIdentitydService) ListApplicationCredentials(ctx context.Co
 			"status_code": http_res.StatusCode,
 			"http_body":   http_body,
 		}).Errorf("unexpected status code")
-		return nil, status.Errorf(mapCode(http_res.StatusCode), http_body)
+		return nil, status.Errorf(grpc_helper.HttpStatusCode2GrpcStatusCode(http_res.StatusCode), http_body)
 	}
 
 	res, err := codec.DecodeListApplicationCredential(http_res, http_body)

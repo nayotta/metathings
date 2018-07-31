@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"io"
+	"net/http"
 	"strings"
 
 	"github.com/grpc-ecosystem/go-grpc-middleware/util/metautils"
@@ -20,6 +21,23 @@ type MethodDescription struct {
 	Package string
 	Service string
 	Method  string
+}
+
+func HttpStatusCode2GrpcStatusCode(code int) codes.Code {
+	switch code {
+	case http.StatusBadRequest:
+		return codes.InvalidArgument
+	case http.StatusUnauthorized:
+		return codes.Unauthenticated
+	case http.StatusForbidden:
+		return codes.PermissionDenied
+	case http.StatusNotFound:
+		return codes.NotFound
+	case http.StatusConflict:
+		return codes.InvalidArgument
+	default:
+		return codes.Internal
+	}
 }
 
 func ParseMethodDescription(fullMethodName string) (*MethodDescription, error) {
