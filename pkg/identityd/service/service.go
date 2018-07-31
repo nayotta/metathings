@@ -1,4 +1,4 @@
-package metathings_identity_service
+package metathings_identityd_service
 
 import (
 	"context"

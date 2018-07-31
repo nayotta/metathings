@@ -1,4 +1,4 @@
-package metathings_core_service
+package metathings_cored_service
 
 import (
 	"context"

@@ -81,7 +81,7 @@ func runSensord() error {
 	)
 	if err != nil {
 		log.WithError(err).Errorf("failed to new sensor service")
-		return nil
+		return err
 	}
 
 	pb.RegisterSensordServiceServer(s, srv)

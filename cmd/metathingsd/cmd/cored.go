@@ -49,7 +49,7 @@ var (
 		}),
 		Run: func(cmd *cobra.Command, args []string) {
 			if err := runCored(); err != nil {
-				log.Fatalf("failed to run cored: %v", err)
+				log.WithError(err).Fatalf("failed to run cored")
 			}
 		},
 	}
