@@ -16,9 +16,9 @@ import (
 type _cameradOptions struct {
 	_rootOptions  `mapstructure:",squash"`
 	Listen        string
-	Storage       _storageOptions
-	ServiceConfig _serviceConfigOptions `mapstructure:"service_config"`
-	RtmpUrl       string                `mapstructure:"rtmp_url"`
+	Storage       cmd_helper.StorageOptions
+	ServiceConfig cmd_helper.ServiceConfigOptions `mapstructure:"service_config"`
+	RtmpUrl       string                          `mapstructure:"rtmp_url"`
 }
 
 var (

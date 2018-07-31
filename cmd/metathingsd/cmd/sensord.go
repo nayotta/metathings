@@ -9,6 +9,7 @@ import (
 	"google.golang.org/grpc"
 
 	cmd_helper "github.com/nayotta/metathings/pkg/common/cmd"
+	constant_helper "github.com/nayotta/metathings/pkg/common/constant"
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 	pb "github.com/nayotta/metathings/pkg/proto/sensord"
 	service "github.com/nayotta/metathings/pkg/sensord/service"
@@ -21,8 +22,8 @@ type _hubOptions struct {
 type _sensordOptions struct {
 	_rootOptions  `mapstructure:",squash"`
 	Listen        string
-	Storage       _storageOptions
-	ServiceConfig _serviceConfigOptions `mapstructure:"service_config"`
+	Storage       cmd_helper.StorageOptions
+	ServiceConfig cmd_helper.ServiceConfigOptions `mapstructure:"service_config"`
 	Hub           _hubOptions
 }
 
@@ -94,8 +95,8 @@ func init() {
 	sensord_opts = &_sensordOptions{}
 
 	sensordCmd.Flags().StringVarP(&sensord_opts.Listen, "listen", "l", "127.0.0.1:5003", "Metathings Sensor Service listening address")
-	sensordCmd.Flags().StringVar(&sensord_opts.ServiceConfig.Identityd.Address, "identityd-addr", "mt-api.nayotta.com", "MetaThings Identity Service Address")
-	sensordCmd.Flags().StringVar(&sensord_opts.ServiceConfig.Cored.Address, "cored-addr", "mt-api.nayotta.com", "MetaThings Core Service Address")
+	sensordCmd.Flags().StringVar(&sensord_opts.ServiceConfig.Identityd.Address, "identityd-addr", constant_helper.CONSTANT_METATHINGSD_DEFAULT_HOST, "MetaThings Identity Service Address")
+	sensordCmd.Flags().StringVar(&sensord_opts.ServiceConfig.Cored.Address, "cored-addr", constant_helper.CONSTANT_METATHINGSD_DEFAULT_HOST, "MetaThings Core Service Address")
 	sensordCmd.Flags().StringVar(&sensord_opts.Storage.Driver, "storage-driver", "sqlite3", "Storage Driver [sqlite3]")
 	sensordCmd.Flags().StringVar(&sensord_opts.Storage.Uri, "storage-uri", "", "Storage URI")
 

@@ -16,8 +16,8 @@ import (
 type _coredOptions struct {
 	_rootOptions  `mapstructure:",squash"`
 	Listen        string
-	Storage       _storageOptions
-	ServiceConfig _serviceConfigOptions `mapstructure:"service_config"`
+	Storage       cmd_helper.StorageOptions
+	ServiceConfig cmd_helper.ServiceConfigOptions `mapstructure:"service_config"`
 	Heartbeat     _heartbeatOptions
 }
 

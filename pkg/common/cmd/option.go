@@ -19,8 +19,14 @@ type ServiceConfigOption struct {
 
 type ServiceConfigOptions struct {
 	CoreAgentd  ServiceConfigOption `mapstructure:"core_agentd"`
+	Cored       ServiceConfigOption
 	Identityd   ServiceConfigOption
 	Metathingsd ServiceConfigOption
+}
+
+type StorageOptions struct {
+	Driver string
+	Uri    string
 }
 
 type EndpointOptions struct {
