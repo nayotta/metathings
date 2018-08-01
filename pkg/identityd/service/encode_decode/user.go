@@ -23,6 +23,10 @@ type userResponseBody struct {
 	User _User `json:"user"`
 }
 
+type usersResponseBody struct {
+	Users []_User `json:"users"`
+}
+
 func copyUser(usr _User) *pb.User {
 	pb_usr := &pb.User{
 		Id:               usr.Id,
@@ -46,6 +50,16 @@ func copyUser(usr _User) *pb.User {
 	return pb_usr
 }
 
+func copyUsers(usrs []_User) []*pb.User {
+	pb_usrs := []*pb.User{}
+
+	for _, usr := range usrs {
+		pb_usrs = append(pb_usrs, copyUser(usr))
+	}
+
+	return pb_usrs
+}
+
 func decodeUser(res gorequest.Response, body string) (*pb.User, error) {
 	b := userResponseBody{}
 	err := json.Unmarshal([]byte(body), &b)
@@ -56,4 +70,16 @@ func decodeUser(res gorequest.Response, body string) (*pb.User, error) {
 	user := copyUser(b.User)
 
 	return user, nil
+}
+
+func decodeUsers(res gorequest.Response, body string) ([]*pb.User, error) {
+	b := usersResponseBody{}
+	err := json.Unmarshal([]byte(body), &b)
+	if err != nil {
+		return nil, err
+	}
+
+	uesrs := copyUsers(b.Users)
+
+	return uesrs, nil
 }

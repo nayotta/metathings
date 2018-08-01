@@ -7,7 +7,7 @@ import (
 )
 
 func DecodeGetApplicationCredential(res gorequest.Response, body string) (*pb.GetApplicationCredentialResponse, error) {
-	app_cred, err := decodeApplicationCredential(req, body)
+	app_cred, err := decodeApplicationCredential(res, body)
 	if err != nil {
 		return nil, err
 	}

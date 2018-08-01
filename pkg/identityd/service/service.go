@@ -311,8 +311,8 @@ func (srv *metathingsIdentitydService) GetUser(ctx context.Context, req *pb.GetU
 	}
 
 	if http_res.StatusCode != 200 {
-		srv.logger.WithError(err).Errorf("failed to keystone get user")
-		return nil, status.Errorf(codes.Internal, errs[0].Error())
+		srv.logger.WithField("status_code", http_res.StatusCode).Errorf("unexpected status code")
+		return nil, status.Errorf(grpc_helper.HttpStatusCode2GrpcStatusCode(http_res.StatusCode), http_body)
 	}
 
 	res, err := codec.DecodeGetUser(http_res, http_body)
@@ -327,8 +327,52 @@ func (srv *metathingsIdentitydService) GetUser(ctx context.Context, req *pb.GetU
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#list-users
-func (srv *metathingsIdentitydService) ListUsers(context.Context, *pb.ListUsersRequest) (*pb.ListUsersResponse, error) {
-	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
+func (srv *metathingsIdentitydService) ListUsers(ctx context.Context, req *pb.ListUsersRequest) (*pb.ListUsersResponse, error) {
+	err := req.Validate()
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to validate request data")
+		return nil, status.Errorf(codes.InvalidArgument, err.Error())
+	}
+
+	url := srv.h.JoinURL("/v3/users")
+	http_req := gorequest.New().Get(url)
+
+	domain_id := req.GetDomainId()
+	if domain_id != nil {
+		http_req.Param("domain_id", domain_id.GetValue())
+	}
+	enabled := req.GetEnabled()
+	if enabled != nil {
+		if enabled.GetValue() == true {
+			http_req.Param("enabled", "true")
+		} else {
+			http_req.Param("enabled", "false")
+		}
+	}
+	name := req.GetName()
+	if name != nil {
+		http_req.Param("name", name.GetValue())
+	}
+
+	http_res, http_body, errs := http_req.End()
+	if len(errs) > 0 {
+		srv.logger.WithError(errs[0]).Errorf("failed to keystone list users")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+	if http_res.StatusCode != 200 {
+		srv.logger.WithField("status_code", http_res.StatusCode).Errorf("unexpected status code")
+		return nil, status.Errorf(grpc_helper.HttpStatusCode2GrpcStatusCode(http_res.StatusCode), http_body)
+	}
+
+	res, err := codec.DecodeListUsers(http_res, http_body)
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to decode list users response")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
+	srv.logger.Debugf("list user")
+
+	return res, nil
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#change-password-for-user
