@@ -264,8 +264,29 @@ func (srv *metathingsIdentitydService) CreateUser(ctx context.Context, req *pb.C
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#delete-user
-func (srv *metathingsIdentitydService) DeleteUser(context.Context, *pb.DeleteUserRequest) (*empty.Empty, error) {
-	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
+func (srv *metathingsIdentitydService) DeleteUser(ctx context.Context, req *pb.DeleteUserRequest) (*empty.Empty, error) {
+	err := req.Validate()
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to validate request data")
+		return nil, status.Errorf(codes.InvalidArgument, err.Error())
+	}
+
+	user_id := req.GetUserId().GetValue()
+	url := srv.h.JoinURL("/v3/users" + user_id)
+	http_res, http_body, errs := gorequest.New().Delete(url).End()
+	if len(errs) > 0 {
+		srv.logger.WithError(errs[0]).Errorf("failed to keystone delete user")
+		return nil, status.Errorf(codes.Internal, errs[0].Error())
+	}
+
+	if http_res.StatusCode != 204 {
+		srv.logger.WithField("status_code", http_res.StatusCode).Errorf("unexpected status code")
+		return nil, status.Errorf(grpc_helper.HttpStatusCode2GrpcStatusCode(http_res.StatusCode), http_body)
+	}
+
+	srv.logger.WithField("user_id", user_id).Infof("delete user")
+
+	return &empty.Empty{}, nil
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#update-user
