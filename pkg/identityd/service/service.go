@@ -272,7 +272,7 @@ func (srv *metathingsIdentitydService) DeleteUser(ctx context.Context, req *pb.D
 	}
 
 	user_id := req.GetUserId().GetValue()
-	url := srv.h.JoinURL("/v3/users" + user_id)
+	url := srv.h.JoinURL("/v3/users/" + user_id)
 	http_res, http_body, errs := gorequest.New().Delete(url).End()
 	if len(errs) > 0 {
 		srv.logger.WithError(errs[0]).Errorf("failed to keystone delete user")
@@ -295,8 +295,35 @@ func (srv *metathingsIdentitydService) PatchUser(context.Context, *pb.PatchUserR
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#show-user-details
-func (srv *metathingsIdentitydService) GetUser(context.Context, *pb.GetUserRequest) (*pb.GetUserResponse, error) {
-	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
+func (srv *metathingsIdentitydService) GetUser(ctx context.Context, req *pb.GetUserRequest) (*pb.GetUserResponse, error) {
+	err := req.Validate()
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to validate request data")
+		return nil, status.Errorf(codes.InvalidArgument, err.Error())
+	}
+
+	user_id := req.GetUserId().GetValue()
+	url := srv.h.JoinURL("/v3/users/" + user_id)
+	http_res, http_body, errs := gorequest.New().Get(url).End()
+	if len(errs) > 0 {
+		srv.logger.WithError(errs[0]).Errorf("failed to keystone get user")
+		return nil, status.Errorf(codes.Internal, errs[0].Error())
+	}
+
+	if http_res.StatusCode != 200 {
+		srv.logger.WithError(err).Errorf("failed to keystone get user")
+		return nil, status.Errorf(codes.Internal, errs[0].Error())
+	}
+
+	res, err := codec.DecodeGetUser(http_res, http_body)
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to decode get user response")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
+	srv.logger.WithField("user_id", user_id).Debugf("get user")
+
+	return res, nil
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#list-users
