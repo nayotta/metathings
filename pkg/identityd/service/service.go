@@ -225,8 +225,42 @@ func (srv *metathingsIdentitydService) ListProjectsForUser(context.Context, *pb.
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#create-user
-func (srv *metathingsIdentitydService) CreateUser(context.Context, *pb.CreateUserRequest) (*pb.CreateUserResponse, error) {
-	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
+func (srv *metathingsIdentitydService) CreateUser(ctx context.Context, req *pb.CreateUserRequest) (*pb.CreateUserResponse, error) {
+	err := req.Validate()
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to validate request data")
+		return nil, status.Errorf(codes.InvalidArgument, err.Error())
+	}
+
+	body, err := codec.EncodeCreateUser(ctx, req)
+	if err != nil {
+		return nil, encodeError(err)
+	}
+
+	url := srv.h.JoinURL("/v3/users")
+	http_res, http_body, errs := gorequest.New().Post(url).Send(body).End()
+	if len(errs) > 0 {
+		srv.logger.WithError(errs[0]).Errorf("failed to keystone create user")
+		return nil, status.Errorf(codes.Internal, errs[0].Error())
+	}
+
+	if http_res.StatusCode != 201 {
+		srv.logger.WithField("status_code", http_res.StatusCode).Errorf("unexpected status code")
+		return nil, status.Errorf(grpc_helper.HttpStatusCode2GrpcStatusCode(http_res.StatusCode), http_body)
+	}
+
+	res, err := codec.DecodeCreateUser(http_res, http_body)
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to decode create user response")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
+	srv.logger.WithFields(log.Fields{
+		"user_id":   res.User.Id,
+		"user_name": res.User.Name,
+	}).Infof("create user")
+
+	return res, nil
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#delete-user
@@ -424,17 +458,19 @@ func (srv *metathingsIdentitydService) ListRolesForUserOnProject(context.Context
 // application credential authorization
 // https://developer.openstack.org/api-ref/identity/v3/index.html#authenticating-with-an-application-credential
 func (srv *metathingsIdentitydService) IssueToken(ctx context.Context, req *pb.IssueTokenRequest) (*pb.IssueTokenResponse, error) {
+	err := req.Validate()
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to validate request data")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
 	body, err := codec.EncodeIssueTokenRequest(ctx, req)
 	if err != nil {
-		switch err {
-		case codec.Unimplemented:
-			return nil, status.Errorf(codes.Unimplemented, "unimplement")
-		default:
-			return nil, status.Errorf(codes.Internal, err.Error())
-		}
+		return nil, encodeError(err)
 	}
+
 	url := srv.h.JoinURL("/v3/auth/tokens")
-	http_res, http_body, errs := gorequest.New().Post(url).Query("nocatalog=1").Send(&body).End()
+	http_res, http_body, errs := gorequest.New().Post(url).Query("nocatalog=1").Send(body).End()
 	if len(errs) > 0 {
 		srv.logger.WithField("error", errs[0]).Errorf("failed to keystone issue token")
 		return nil, status.Errorf(codes.Internal, errs[0].Error())
@@ -548,7 +584,7 @@ func (srv *metathingsIdentitydService) CreateApplicationCredential(ctx context.C
 
 	user_id := req.GetUserId().GetValue()
 	url := srv.h.JoinURL("/v3/users/" + user_id + "/application_credentials")
-	http_res, http_body, errs := gorequest.New().Post(url).Send(&body).End()
+	http_res, http_body, errs := gorequest.New().Post(url).Send(body).End()
 	if len(errs) > 0 {
 		srv.logger.WithError(errs[0]).Errorf("failed to keystone create application credential")
 		return nil, status.Errorf(codes.Internal, errs[0].Error())
@@ -564,6 +600,12 @@ func (srv *metathingsIdentitydService) CreateApplicationCredential(ctx context.C
 		srv.logger.WithError(err).Errorf("failed to decode create application credential response")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
+
+	srv.logger.WithFields(log.Fields{
+		"user_id":                     user_id,
+		"application_credential_id":   res.ApplicationCredential.Id,
+		"application_credential_name": res.ApplicationCredential.Name,
+	}).Infof("create application credential")
 
 	return res, nil
 }

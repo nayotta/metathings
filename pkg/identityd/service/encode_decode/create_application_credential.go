@@ -68,15 +68,11 @@ func EncodeCreateApplicationCredential(ctx context.Context, req *pb.CreateApplic
 	return body, nil
 }
 
-func DecodeCreateApplicationCredential(req gorequest.Response, body string) (*pb.CreateApplicationCredentialResponse, error) {
-	app_cred, err := decodeApplicationCredential(req, body)
+func DecodeCreateApplicationCredential(res gorequest.Response, body string) (*pb.CreateApplicationCredentialResponse, error) {
+	app_cred, err := decodeApplicationCredential(res, body)
 	if err != nil {
 		return nil, err
 	}
 
-	res := &pb.CreateApplicationCredentialResponse{
-		ApplicationCredential: app_cred,
-	}
-
-	return res, nil
+	return &pb.CreateApplicationCredentialResponse{ApplicationCredential: app_cred}, nil
 }
