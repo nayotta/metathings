@@ -478,8 +478,49 @@ func (srv *metathingsIdentitydService) GetRole(context.Context, *pb.GetRoleReque
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#list-roles
-func (srv *metathingsIdentitydService) ListRoles(context.Context, *pb.ListRolesRequest) (*pb.ListRolesResponse, error) {
-	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
+func (srv *metathingsIdentitydService) ListRoles(ctx context.Context, req *pb.ListRolesRequest) (*pb.ListRolesResponse, error) {
+	err := req.Validate()
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to validate request data")
+		return nil, status.Errorf(codes.InvalidArgument, err.Error())
+	}
+
+	token, _ := srv.getValidatedTokenFromContext(ctx)
+	url := srv.h.JoinURL("/v3/roles")
+	http_req := gorequest.New().
+		Get(url).
+		Set("X-Auth-Token", token)
+
+	name := req.GetName()
+	if name != nil {
+		http_req.Query(fmt.Sprintf("name=%v", name.GetValue()))
+	}
+
+	domain_id := req.GetDomainId()
+	if domain_id != nil {
+		http_req.Query(fmt.Sprintf("domain_id=%v", domain_id.GetValue()))
+	}
+
+	http_res, http_body, errs := http_req.End()
+	if len(errs) > 0 {
+		srv.logger.WithError(errs[0]).Errorf("failed to keystone get roles")
+		return nil, status.Errorf(codes.Internal, errs[0].Error())
+	}
+
+	if http_res.StatusCode != 200 {
+		srv.logger.WithField("status_code", http_res.StatusCode).Errorf("unexpected status code")
+		return nil, status.Errorf(grpc_helper.HttpStatusCode2GrpcStatusCode(http_res.StatusCode), http_body)
+	}
+
+	res, err := codec.DecodeListRoles(http_res, http_body)
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to decode list roles")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
+	srv.logger.Debugf("list roles")
+
+	return res, nil
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#assign-role-to-group-on-domain
