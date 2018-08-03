@@ -7,6 +7,8 @@ PROTO_FILES := $(shell ls *.proto)
 
 all:
 	$(PROTOC) $(GRPC_FLAGS) \
+	--descriptor_set_out=service.protoset \
+	--include_imports \
 	--go_out=plugins=grpc:. \
 	--govalidators_out=. \
 	$(PROTO_FILES)
