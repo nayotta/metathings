@@ -14,9 +14,6 @@ type _User struct {
 	Enabled          bool   `json:"enabled"`
 	DomainId         string `json:"domain_id"`
 	DefaultProjectId string `json:"default_project_id"`
-	Nickname         string `json:"nickname,ommitempty"`
-	Email            string `json:"email,ommitempty"`
-	Phone            string `json:"phone,ommitempty"`
 }
 
 type userResponseBody struct {
@@ -35,16 +32,6 @@ func copyUser(usr _User) *pb.User {
 		DomainId:         usr.DomainId,
 		Enabled:          usr.Enabled,
 		Extra:            map[string]string{},
-	}
-
-	if usr.Nickname != "" {
-		pb_usr.Extra["nickname"] = usr.Nickname
-	}
-	if usr.Email != "" {
-		pb_usr.Extra["email"] = usr.Email
-	}
-	if usr.Phone != "" {
-		pb_usr.Extra["phone"] = usr.Phone
 	}
 
 	return pb_usr

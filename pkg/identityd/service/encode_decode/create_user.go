@@ -14,9 +14,6 @@ type createUserRequestBody struct {
 		Enabled          bool   `json:"enabled"`
 		DomainId         string `json:"domain_id"`
 		DefaultProjectId string `json:"default_project_id"`
-		Nickname         string `json:"nickname,ommitempty"`
-		Email            string `json:"email,ommitempty"`
-		Phone            string `json:"phone,ommitempty"`
 	} `json:"user"`
 }
 
@@ -36,24 +33,6 @@ func EncodeCreateUser(ctx context.Context, req *pb.CreateUserRequest) (res inter
 		body.User.Enabled = enabled.GetValue()
 	} else {
 		body.User.Enabled = true
-	}
-
-	extra := req.GetExtra()
-	if extra != nil {
-		nickname, ok := extra["nickname"]
-		if ok {
-			body.User.Nickname = nickname.GetValue()
-		}
-
-		email, ok := extra["email"]
-		if ok {
-			body.User.Email = email.GetValue()
-		}
-
-		phone, ok := extra["phone"]
-		if ok {
-			body.User.Phone = phone.GetValue()
-		}
 	}
 
 	return body, nil

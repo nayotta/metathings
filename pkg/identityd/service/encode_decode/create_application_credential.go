@@ -16,12 +16,12 @@ type _createApplicationCredentialRequestBody_role struct {
 
 type createApplicationCredentialRequestBody struct {
 	ApplicationCredential struct {
-		Name         string
-		Secret       *string                                        `json:"secret,ommitempty"`
-		Description  *string                                        `json:"description,ommitempty"`
-		ExpiresAt    *string                                        `json:"expires_at,ommitempty"`
-		Roles        []_createApplicationCredentialRequestBody_role `json:"roles,ommitempty"`
-		Unrestricted *bool                                          `json:"unrestricted,ommitempty"`
+		Name         string                                         `json:"name"`
+		Secret       *string                                        `json:"secret,omitempty"`
+		Description  *string                                        `json:"description,omitempty"`
+		ExpiresAt    *string                                        `json:"expires_at,omitempty"`
+		Roles        []_createApplicationCredentialRequestBody_role `json:"roles,omitempty"`
+		Unrestricted *bool                                          `json:"unrestricted,omitempty"`
 	} `json:"application_credential"`
 }
 
