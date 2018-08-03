@@ -5,5 +5,6 @@ import (
 )
 
 var (
-	Unauthenticated = errors.New("unauthenticated")
+	Unauthenticated               = errors.New("unauthenticated")
+	ErrNotValidatedTokenInContext = errors.New("not validated token in context")
 )

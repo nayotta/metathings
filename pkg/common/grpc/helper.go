@@ -3,6 +3,7 @@ package grpc_helper
 import (
 	"context"
 	"errors"
+	"fmt"
 	"io"
 	"net/http"
 	"strings"
@@ -69,7 +70,7 @@ func AuthFromMD(ctx context.Context, expectedScheme string, headerAuthorize ...s
 
 	val := metautils.ExtractIncoming(ctx).Get(authorize)
 	if val == "" {
-		return "", status.Errorf(codes.Unauthenticated, "Request unauthenticated with "+expectedScheme)
+		return "", status.Errorf(codes.Unauthenticated, fmt.Sprintf("request unauthenticated with %s, got empty string", expectedScheme))
 	}
 
 	splits := strings.SplitN(val, " ", 2)
@@ -77,7 +78,7 @@ func AuthFromMD(ctx context.Context, expectedScheme string, headerAuthorize ...s
 		return "", status.Errorf(codes.Unauthenticated, "Bad authorization string")
 	}
 	if strings.ToLower(splits[0]) != strings.ToLower(expectedScheme) {
-		return "", status.Errorf(codes.Unauthenticated, "Request unauthenticated with "+expectedScheme)
+		return "", status.Errorf(codes.Unauthenticated, fmt.Sprintf("request unauthenticated with %s, but got %s", expectedScheme, val))
 	}
 	return splits[1], nil
 }

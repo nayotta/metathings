@@ -2,6 +2,7 @@ package metathings_identityd_service
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/url"
 	"path"
@@ -82,17 +83,29 @@ func (srv *metathingsIdentitydService) ignoreAuthMethods() []string {
 func (srv *metathingsIdentitydService) validateTokenViaHTTP(token, subject_token string) (gorequest.Response, string, error) {
 	url := srv.h.JoinURL("/v3/auth/tokens")
 
-	http_res, http_body, errs := gorequest.New().Get(url).Set("X-Auth-Token", token).Set("X-Subject-Token", token).Query("nocatalog=1").End()
+	http_res, http_body, errs := gorequest.New().
+		Get(url).
+		Set("X-Auth-Token", token).
+		Set("X-Subject-Token", token).
+		Query("nocatalog=1").End()
 
 	if len(errs) > 0 {
 		return nil, "", errs[0]
 	}
 
-	if http_res.StatusCode != 201 {
-		return nil, "", status.Errorf(codes.Unauthenticated, fmt.Sprintf("%v", http_body))
+	if http_res.StatusCode != 200 {
+		return nil, "", status.Errorf(codes.Unauthenticated, fmt.Sprintf("%v %v", http_res.StatusCode, http_body))
 	}
 
 	return http_res, http_body, nil
+}
+
+func (srv *metathingsIdentitydService) getValidatedTokenFromContext(ctx context.Context) (string, error) {
+	token, ok := ctx.Value("token").(string)
+	if !ok {
+		return "", errors.New("not validated token in context")
+	}
+	return token, nil
 }
 
 func (srv *metathingsIdentitydService) AuthFuncOverride(ctx context.Context, fullMethodName string) (context.Context, error) {
@@ -110,7 +123,7 @@ func (srv *metathingsIdentitydService) AuthFuncOverride(ctx context.Context, ful
 
 	subject_token, err := srv.GetSubjectTokenFromContext(ctx)
 	if err != nil {
-		return nil, err
+		subject_token = token
 	}
 
 	http_res, http_body, err := srv.validateTokenViaHTTP(token, subject_token)
@@ -130,7 +143,7 @@ func (srv *metathingsIdentitydService) AuthFuncOverride(ctx context.Context, ful
 		return nil, err
 	}
 
-	ctx = context.WithValue(ctx, "token", token)
+	ctx = context.WithValue(ctx, "token", subject_token)
 	ctx = context.WithValue(ctx, "credential", cred.Token)
 
 	srv.logger.WithFields(log.Fields{
@@ -232,13 +245,18 @@ func (srv *metathingsIdentitydService) CreateUser(ctx context.Context, req *pb.C
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 
+	token, _ := srv.getValidatedTokenFromContext(ctx)
 	body, err := codec.EncodeCreateUser(ctx, req)
 	if err != nil {
 		return nil, encodeError(err)
 	}
 
 	url := srv.h.JoinURL("/v3/users")
-	http_res, http_body, errs := gorequest.New().Post(url).Send(body).End()
+	http_res, http_body, errs := gorequest.New().
+		Post(url).
+		Set("X-Auth-Token", token).
+		Send(body).
+		End()
 	if len(errs) > 0 {
 		srv.logger.WithError(errs[0]).Errorf("failed to keystone create user")
 		return nil, status.Errorf(codes.Internal, errs[0].Error())
@@ -271,9 +289,12 @@ func (srv *metathingsIdentitydService) DeleteUser(ctx context.Context, req *pb.D
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 
+	token, _ := srv.getValidatedTokenFromContext(ctx)
 	user_id := req.GetUserId().GetValue()
 	url := srv.h.JoinURL("/v3/users/" + user_id)
-	http_res, http_body, errs := gorequest.New().Delete(url).End()
+	http_res, http_body, errs := gorequest.New().
+		Delete(url).
+		Set("X-Auth-Token", token).End()
 	if len(errs) > 0 {
 		srv.logger.WithError(errs[0]).Errorf("failed to keystone delete user")
 		return nil, status.Errorf(codes.Internal, errs[0].Error())
@@ -302,9 +323,12 @@ func (srv *metathingsIdentitydService) GetUser(ctx context.Context, req *pb.GetU
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 
+	token, _ := srv.getValidatedTokenFromContext(ctx)
 	user_id := req.GetUserId().GetValue()
 	url := srv.h.JoinURL("/v3/users/" + user_id)
-	http_res, http_body, errs := gorequest.New().Get(url).End()
+	http_res, http_body, errs := gorequest.New().
+		Get(url).
+		Set("X-Auth-Token", token).End()
 	if len(errs) > 0 {
 		srv.logger.WithError(errs[0]).Errorf("failed to keystone get user")
 		return nil, status.Errorf(codes.Internal, errs[0].Error())
@@ -334,8 +358,11 @@ func (srv *metathingsIdentitydService) ListUsers(ctx context.Context, req *pb.Li
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 
+	token, _ := srv.getValidatedTokenFromContext(ctx)
 	url := srv.h.JoinURL("/v3/users")
-	http_req := gorequest.New().Get(url)
+	http_req := gorequest.New().
+		Get(url).
+		Set("X-Auth-Token", token)
 
 	domain_id := req.GetDomainId()
 	if domain_id != nil {
@@ -516,8 +543,39 @@ func (srv *metathingsIdentitydService) ListRolesForGroupOnProject(context.Contex
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#assign-role-to-user-on-project
-func (srv *metathingsIdentitydService) AddRoleToUserOnProject(context.Context, *pb.AddRoleToUserOnProjectRequest) (*empty.Empty, error) {
-	return nil, grpc.Errorf(codes.Unimplemented, "unimplement")
+func (srv *metathingsIdentitydService) AddRoleToUserOnProject(ctx context.Context, req *pb.AddRoleToUserOnProjectRequest) (*empty.Empty, error) {
+	err := req.Validate()
+	if err != nil {
+		srv.logger.WithError(err).Errorf("failed to validate request data")
+		return nil, status.Errorf(codes.InvalidArgument, err.Error())
+	}
+
+	token, _ := srv.getValidatedTokenFromContext(ctx)
+	project_id := req.GetProjectId().GetValue()
+	user_id := req.GetUserId().GetValue()
+	role_id := req.GetRoleId().GetValue()
+
+	url := srv.h.JoinURL(fmt.Sprintf("/v3/projects/%v/users/%v/roles/%v", project_id, user_id, role_id))
+	http_res, http_body, errs := gorequest.New().
+		Put(url).
+		Set("X-Auth-Token", token).End()
+	if len(errs) > 0 {
+		srv.logger.WithError(errs[0]).Errorf("failed to keystone add role to user on project")
+		return nil, status.Errorf(codes.Internal, errs[0].Error())
+	}
+
+	if http_res.StatusCode != 204 {
+		srv.logger.WithField("status_code", http_res.StatusCode).Errorf("unexpected status code")
+		return nil, status.Errorf(grpc_helper.HttpStatusCode2GrpcStatusCode(http_res.StatusCode), http_body)
+	}
+
+	srv.logger.WithFields(log.Fields{
+		"project_id": project_id,
+		"user_id":    user_id,
+		"role_id":    role_id,
+	}).Infof("add role to user on project")
+
+	return &empty.Empty{}, nil
 }
 
 // https://developer.openstack.org/api-ref/identity/v3/index.html#unassign-role-from-user-on-project
@@ -562,7 +620,10 @@ func (srv *metathingsIdentitydService) IssueToken(ctx context.Context, req *pb.I
 	}
 
 	url := srv.h.JoinURL("/v3/auth/tokens")
-	http_res, http_body, errs := gorequest.New().Post(url).Query("nocatalog=1").Send(body).End()
+	http_res, http_body, errs := gorequest.New().
+		Post(url).
+		Query("nocatalog=1").
+		Send(body).End()
 	if len(errs) > 0 {
 		srv.logger.WithField("error", errs[0]).Errorf("failed to keystone issue token")
 		return nil, status.Errorf(codes.Internal, errs[0].Error())
@@ -606,7 +667,10 @@ func (srv *metathingsIdentitydService) CheckToken(ctx context.Context, _ *empty.
 	}
 
 	url := srv.h.JoinURL("/v3/auth/tokens")
-	http_res, _, errs := gorequest.New().Head(url).Set("X-Auth-Token", token).Set("X-Subject-Token", token).End()
+	http_res, _, errs := gorequest.New().
+		Head(url).
+		Set("X-Auth-Token", token).
+		Set("X-Subject-Token", token).End()
 	if len(errs) > 0 {
 		return nil, status.Errorf(codes.Internal, errs[0].Error())
 	}
@@ -632,7 +696,10 @@ func (srv *metathingsIdentitydService) ValidateToken(ctx context.Context, _ *emp
 	srv.logger.WithFields(log.Fields{"token": token, "sub_token": sub_token}).Debugf("validating token")
 
 	url := srv.h.JoinURL("/v3/auth/tokens")
-	http_res, http_body, errs := gorequest.New().Get(url).Set("X-Auth-Token", token).Set("X-Subject-Token", sub_token).End()
+	http_res, http_body, errs := gorequest.New().
+		Get(url).
+		Set("X-Auth-Token", token).
+		Set("X-Subject-Token", sub_token).End()
 	if len(errs) > 0 {
 		srv.logger.WithField("error", errs[0]).Errorf("failed to validate token via http")
 		return nil, status.Errorf(codes.Internal, errs[0].Error())
@@ -664,6 +731,7 @@ func (srv *metathingsIdentitydService) CreateApplicationCredential(ctx context.C
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 
+	token, _ := srv.getValidatedTokenFromContext(ctx)
 	body, err := codec.EncodeCreateApplicationCredential(ctx, req)
 	if err != nil {
 		switch err {
@@ -676,7 +744,10 @@ func (srv *metathingsIdentitydService) CreateApplicationCredential(ctx context.C
 
 	user_id := req.GetUserId().GetValue()
 	url := srv.h.JoinURL("/v3/users/" + user_id + "/application_credentials")
-	http_res, http_body, errs := gorequest.New().Post(url).Send(body).End()
+	http_res, http_body, errs := gorequest.New().
+		Post(url).
+		Set("X-Auth-Token", token).
+		Send(body).End()
 	if len(errs) > 0 {
 		srv.logger.WithError(errs[0]).Errorf("failed to keystone create application credential")
 		return nil, status.Errorf(codes.Internal, errs[0].Error())
@@ -708,11 +779,14 @@ func (srv *metathingsIdentitydService) DeleteApplicationCredential(ctx context.C
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 
+	token, _ := srv.getValidatedTokenFromContext(ctx)
 	user_id := req.GetUserId().GetValue()
 	app_cred_id := req.GetApplicationCredentialId().GetValue()
 	url := srv.h.JoinURL("/v3/users/" + user_id + "/application_credentials/" + app_cred_id)
 
-	http_res, http_body, errs := gorequest.New().Delete(url).End()
+	http_res, http_body, errs := gorequest.New().
+		Delete(url).
+		Set("X-Auth-Token", token).End()
 
 	if len(errs) > 0 {
 		srv.logger.WithError(errs[0]).Errorf("failed to delete application credential via http")
@@ -736,11 +810,14 @@ func (srv *metathingsIdentitydService) GetApplicationCredential(ctx context.Cont
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 
+	token, _ := srv.getValidatedTokenFromContext(ctx)
 	user_id := req.GetUserId().GetValue()
 	app_cred_id := req.GetApplicationCredentialId().GetValue()
 	url := srv.h.JoinURL("/v3/users/" + user_id + "/application_credentials/" + app_cred_id)
 
-	http_res, http_body, errs := gorequest.New().Get(url).End()
+	http_res, http_body, errs := gorequest.New().
+		Get(url).
+		Set("X-Auth-Token", token).End()
 	if len(errs) > 0 {
 		srv.logger.WithError(errs[0]).Errorf("failed to get application credential via http")
 		return nil, status.Errorf(codes.Internal, errs[0].Error())
@@ -769,10 +846,13 @@ func (srv *metathingsIdentitydService) ListApplicationCredentials(ctx context.Co
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 
+	token, _ := srv.getValidatedTokenFromContext(ctx)
 	user_id := req.GetUserId().GetValue()
 	url := srv.h.JoinURL("/v3/users/" + user_id + "/application_credentials")
 
-	http_res, http_body, errs := gorequest.New().Get(url).End()
+	http_res, http_body, errs := gorequest.New().
+		Get(url).
+		Set("X-Auth-Token", token).End()
 	if len(errs) > 0 {
 		srv.logger.WithError(errs[0]).Errorf("failed to list application credential via http")
 		return nil, status.Errorf(codes.Internal, errs[0].Error())
