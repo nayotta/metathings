@@ -9,7 +9,8 @@ services:
     volumes:
       - ./etc/envoy.front.yaml:/etc/envoy.front.yaml
     networks:
-      - metathingsmesh
+      - metathings-frontend
+      - metathings-backend
     expose:
       - "21733"
       - "8001"
@@ -29,7 +30,7 @@ services:
       - .:/go/src/github.com/nayotta/metathings
       - ./etc/identityd.yaml:/etc/metathings/identityd.yaml
     networks:
-      - metathingsmesh
+      - metathings-backend
     expose:
       - "5000"
     restart: on-failure
@@ -46,7 +47,7 @@ services:
       - .:/go/src/github.com/nayotta/metathings
       - ./etc/cored.yaml:/etc/metathings/cored.yaml
     networks:
-      - metathingsmesh
+      - metathings-backend
     expose:
       - "5001"
     restart: on-failure
@@ -63,7 +64,7 @@ services:
       - .:/go/src/github.com/nayotta/metathings
       - ./etc/camerad.yaml:/etc/metathings/camerad.yaml
     networks:
-      - metathingsmesh
+      - metathings-backend
     expose:
       - "5002"
     restart: on-failure
@@ -80,10 +81,15 @@ services:
       - .:/go/src/github.com/nayotta/metathings
       - ./etc/sensord.yaml:/etc/metathings/sensord.yaml
     networks:
-      - metathingsmesh
+      - metathings-backend
     expose:
       - "5003"
     restart: on-failure
 
 networks:
-  metathingsmesh:
+  metathings-frontend:
+    external:
+      name: metathings-frontend
+  metathings-backend:
+    external:
+      name: metathings-backend
