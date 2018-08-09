@@ -2,7 +2,6 @@ package metathings_sensord_service
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/golang/protobuf/ptypes/empty"
 	log "github.com/sirupsen/logrus"
@@ -371,10 +370,6 @@ func (srv *metathingsSensordService) ListForUser(ctx context.Context, req *pb.Li
 	return res, nil
 }
 
-func (srv *metathingsSensordService) sensor_path(id string) string {
-	return fmt.Sprintf("/metathings/sensord/sensors/%v", id)
-}
-
 func (srv *metathingsSensordService) Subscribe(stm pb.SensordService_SubscribeServer) error {
 	quit := make(chan interface{})
 
@@ -401,7 +396,8 @@ func (srv *metathingsSensordService) Subscribe(stm pb.SensordService_SubscribeSe
 						continue
 					}
 
-					sub, err := srv.hub.Subscriber(srv.sensor_path(snr_id))
+					subscriber_opt := opt_helper.NewOption("sensor_id", snr_id)
+					sub, err := srv.hub.Subscriber(subscriber_opt)
 					if err != nil {
 						srv.logger.WithField("snr_id", snr_id).Errorf("failed to get subscribler")
 						continue
@@ -455,6 +451,15 @@ func (srv *metathingsSensordService) Subscribe(stm pb.SensordService_SubscribeSe
 	return nil
 }
 
+func (srv *metathingsSensordService) publisher_option(snr storage.Sensor) opt_helper.Option {
+	return opt_helper.NewOption(
+		"sensor_id", *snr.Id,
+		"core_id", *snr.CoreId,
+		"entity_name", *snr.EntityName,
+		"owner_id", *snr.OwnerId,
+	)
+}
+
 func (srv *metathingsSensordService) Publish(stm pb.SensordService_PublishServer) error {
 	ctx := stm.Context()
 	cred := context_helper.Credential(ctx)
@@ -475,9 +480,8 @@ func (srv *metathingsSensordService) Publish(stm pb.SensordService_PublishServer
 		return status.Errorf(codes.NotFound, ErrNotRegisteredSensor.Error())
 	}
 
-	snr_id := *ss[0].Id
-	path := srv.sensor_path(snr_id)
-	publisher, err := srv.hub.Publisher(path)
+	snr := ss[0]
+	publisher, err := srv.hub.Publisher(srv.publisher_option(snr))
 	if err != nil {
 		srv.logger.WithError(err).WithField("application_credential_id", app_cred_id).Errorf("failed to get publisher")
 		return status.Errorf(codes.Internal, err.Error())
@@ -487,14 +491,14 @@ func (srv *metathingsSensordService) Publish(stm pb.SensordService_PublishServer
 	go func() {
 		defer func() {
 			srv.hub.Close(publisher)
-			srv.logger.WithField("snr_id", snr_id).Debugf("close publisher")
+			srv.logger.WithField("snr_id", *snr.Id).Debugf("close publisher")
 			quit <- nil
-			srv.logger.WithField("snr_id", snr_id).Debugf("send quit signal to publisher")
+			srv.logger.WithField("snr_id", *snr.Id).Debugf("send quit signal to publisher")
 		}()
 		for {
 			reqs, err := stm.Recv()
 			if err != nil {
-				grpc_helper.HandleGRPCError(srv.logger.WithField("snr_id", snr_id), err, "failed to recv data from publisher")
+				grpc_helper.HandleGRPCError(srv.logger.WithField("snr_id", *snr.Id), err, "failed to recv data from publisher")
 				return
 			}
 
@@ -504,7 +508,7 @@ func (srv *metathingsSensordService) Publish(stm pb.SensordService_PublishServer
 				case *pb.PublishRequest_Data:
 					dat := req.GetData()
 					dat.ArrivedAt = &now
-					dat.SensorId = snr_id
+					dat.SensorId = *snr.Id
 
 					if err = publisher.Publish(dat); err != nil {
 						srv.logger.WithError(err).Warningf("failed to publish data to hub")
@@ -516,7 +520,7 @@ func (srv *metathingsSensordService) Publish(stm pb.SensordService_PublishServer
 	}()
 
 	<-quit
-	srv.logger.WithField("snr_id", snr_id).Infof("publish done")
+	srv.logger.WithField("snr_id", *snr.Id).Infof("publish done")
 
 	return nil
 }

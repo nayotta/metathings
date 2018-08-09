@@ -20,8 +20,8 @@ type SubPub interface {
 }
 
 type Hub interface {
-	Subscriber(string) (Subscriber, error)
-	Publisher(string) (Publisher, error)
+	Subscriber(opt_helper.Option) (Subscriber, error)
+	Publisher(opt_helper.Option) (Publisher, error)
 	Close(SubPub) error
 }
 
