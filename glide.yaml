@@ -52,6 +52,8 @@ import:
 - package: periph.io/x/periph
   version: v3.0.0
 - package: github.com/go-daq/smbus
+- package: github.com/confluentinc/confluent-kafka-go
+  version: ~0.11.4
 testImport:
 - package: github.com/stretchr/testify
   version: ~1.2.2

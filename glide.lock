@@ -1,8 +1,12 @@
-hash: 273f0c130cd61d713a6c9ca0a163913cd47125a2929e7191584b5dcf19001634
-updated: 2018-07-11T18:17:37.041242+08:00
+hash: 22ddd305a6d37b86c157b71b12426e9d654633addf11ddd01034b46afa490ac9
+updated: 2018-08-10T18:00:46.431901+08:00
 imports:
 - name: github.com/cbroglie/mustache
   version: eb931a9d20042e51d8a3a9ad5a9ba9bc8282c564
+- name: github.com/confluentinc/confluent-kafka-go
+  version: 5e4d04e05fc319ce5996a867aafef29059f26862
+  subpackages:
+  - kafka
 - name: github.com/fsnotify/fsnotify
   version: c2828203cd70a50dcccfb2761f8b1f8ceef9a8e9
 - name: github.com/go-daq/smbus
@@ -74,7 +78,7 @@ imports:
 - name: github.com/sigurn/utils
   version: f19e41f79f8f006116f682c1af454591bc278ad4
 - name: github.com/sirupsen/logrus
-  version: c155da19408a8799da419ed3eeb0cb5db0ad5dbc
+  version: 3e01752db0189b9157070a0e1668a620f9a85da2
 - name: github.com/spf13/afero
   version: 787d034dfe70e44075ccc060d346146ef53270ad
   subpackages:
