@@ -19,7 +19,27 @@ type kafkaHub struct {
 }
 
 func symbol(opt opt_helper.Option) string {
-	return fmt.Sprintf("sensor.%v.core.%v.entity.%v.user.%v", opt.GetString("sensor_id"), opt.GetString("core_id"), opt.GetString("entity_name"), opt.GetString("owner_id"))
+	sensor_id := opt.GetString("sensor_id")
+	if sensor_id == "" {
+		sensor_id = "*"
+	}
+
+	core_id := opt.GetString("core_id")
+	if core_id == "" {
+		core_id = "*"
+	}
+
+	entity_name := opt.GetString("entity_name")
+	if entity_name == "" {
+		entity_name = "*"
+	}
+
+	owner_id := opt.GetString("owner_id")
+	if owner_id == "" {
+		owner_id = "*"
+	}
+
+	return fmt.Sprintf("sensor.%v.core.%v.entity.%v.user.%v", sensor_id, core_id, entity_name, owner_id)
 }
 
 func (self *kafkaHub) Subscriber(opt opt_helper.Option) (hub.Subscriber, error) {
@@ -34,23 +54,46 @@ func (self *kafkaHub) Close(sp hub.SubPub) error {
 	panic("unimplemented")
 }
 
-type kafkaSubscriber struct{}
+type kafkaSubscriber struct {
+	logger   log.FieldLogger
+	id       uint64
+	opt      opt_helper.Option
+	consumer *kafka.Consumer
+}
 
 func (self *kafkaSubscriber) Subscribe() (*sensord_pb.SensorData, error) {
-	panic("unimplemented")
+	for {
+		ev := <-self.consumer.Events()
+		switch e := ev.(type) {
+		case kafka.AssignedPartitions:
+			self.consumer.Assign(e.Partitions)
+		case kafka.RevokedPartitions:
+			self.consumer.Unassign()
+		case kafka.Error:
+			self.logger.WithError(e).Errorf("failed to subscribe from kafka")
+			return nil, hub.ErrUnsubscribable
+		case *kafka.Message:
+			var data sensord_pb.SensorData
+			err := proto.Unmarshal(e.Value, &data)
+			if err != nil {
+				return nil, err
+			}
+			return &data, nil
+		}
+	}
 }
 
 func (self *kafkaSubscriber) Id() uint64 {
-	panic("unimplemented")
+	return self.id
 }
 
 func (self *kafkaSubscriber) Symbol() string {
-	panic("unimplemented")
+	return symbol(self.opt)
 }
 
 type kafkaPublisher struct {
+	logger   log.FieldLogger
 	id       uint64
-	sym      string
 	opt      opt_helper.Option
 	producer *kafka.Producer
 }
@@ -75,11 +118,11 @@ func (self *kafkaPublisher) Publish(dat *sensord_pb.SensorData) error {
 }
 
 func (self *kafkaPublisher) Id() uint64 {
-	panic("unimplemented")
+	return self.id
 }
 
 func (self *kafkaPublisher) Symbol() string {
-	panic("unimplemented")
+	return symbol(self.opt)
 }
 
 func NewHub(opt opt_helper.Option) (hub.Hub, error) {
