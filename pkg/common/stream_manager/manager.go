@@ -13,7 +13,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	helper "github.com/nayotta/metathings/pkg/common"
+	id_helper "github.com/nayotta/metathings/pkg/common/id"
 	cored_pb "github.com/nayotta/metathings/pkg/proto/cored"
 )
 
@@ -158,7 +158,7 @@ func (mgr *streamManager) UnaryCall(core_id string, req *cored_pb.UnaryCallReque
 		return nil, NotFound
 	}
 
-	sess_id := helper.NewId()
+	sess_id := id_helper.NewId()
 	ch := make(chan *cored_pb.StreamResponse)
 	mgr.sessions[sess_id] = ch
 
@@ -200,7 +200,7 @@ func (mgr *streamManager) StreamCall(core_id string, req *cored_pb.StreamCallReq
 		return nil, nil, NotFound
 	}
 
-	sess_id := helper.NewId()
+	sess_id := id_helper.NewId()
 	ch := make(chan *cored_pb.StreamResponse)
 	notity := make(chan interface{})
 	mgr.sessions[sess_id] = ch

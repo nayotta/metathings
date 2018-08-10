@@ -48,6 +48,10 @@ func (self *defaultHub) Subscriber(opt opt_helper.Option) (hub.Subscriber, error
 		sym: sym,
 		id:  id,
 		ch:  ch,
+		q:   make(chan interface{}, 1),
+	}
+	sub.cls_cb = func() error {
+		return self.closeSub(sub)
 	}
 
 	return sub, nil
@@ -75,19 +79,12 @@ func (self *defaultHub) Publisher(opt opt_helper.Option) (hub.Publisher, error) 
 		id:  id,
 		ch:  ch,
 	}
+	pub.cls_cb = func() error {
+		return self.closePub(pub)
+	}
 	self.pub_counters[sym]++
 
 	return pub, nil
-}
-
-func (self *defaultHub) Close(sp hub.SubPub) error {
-	switch sp.(type) {
-	case hub.Subscriber:
-		return self.closeSub(sp)
-	case hub.Publisher:
-		return self.closePub(sp)
-	}
-	return nil
 }
 
 func (self *defaultHub) closeSub(sp hub.SubPub) error {
@@ -167,17 +164,26 @@ func (self *defaultHub) transfer(sym string, ch chan *sensord_pb.SensorData) {
 }
 
 type subscriber struct {
-	id  uint64
-	sym string
-	ch  chan *sensord_pb.SensorData
+	id     uint64
+	sym    string
+	ch     chan *sensord_pb.SensorData
+	cls_cb func() error
+	q      chan interface{}
 }
 
 func (self *subscriber) Subscribe() (*sensord_pb.SensorData, error) {
-	dat, ok := <-self.ch
-	if !ok {
-		return nil, hub.ErrUnsubscribable
+	var dat *sensord_pb.SensorData
+	var ok bool
+	select {
+	case dat, ok = <-self.ch:
+		if !ok {
+			return nil, hub.ErrUnsubscribable
+		}
+		return dat, nil
+	case <-self.q:
+		return nil, hub.Terminated
 	}
-	return dat, nil
+
 }
 
 func (self *subscriber) Id() uint64 {
@@ -188,10 +194,16 @@ func (self *subscriber) Symbol() string {
 	return self.sym
 }
 
+func (self *subscriber) Close() error {
+	self.q <- nil
+	return self.cls_cb()
+}
+
 type publisher struct {
-	id  uint64
-	sym string
-	ch  chan *sensord_pb.SensorData
+	id     uint64
+	sym    string
+	ch     chan *sensord_pb.SensorData
+	cls_cb func() error
 }
 
 func (self *publisher) Publish(dat *sensord_pb.SensorData) error {
@@ -205,6 +217,10 @@ func (self *publisher) Id() uint64 {
 
 func (self *publisher) Symbol() string {
 	return self.sym
+}
+
+func (self *publisher) Close() error {
+	return self.cls_cb()
 }
 
 func NewHub(opt opt_helper.Option) (hub.Hub, error) {

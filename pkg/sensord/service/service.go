@@ -8,11 +8,11 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"github.com/nayotta/metathings/pkg/common"
 	app_cred_mgr "github.com/nayotta/metathings/pkg/common/application_credential_manager"
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
 	context_helper "github.com/nayotta/metathings/pkg/common/context"
 	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
+	id_helper "github.com/nayotta/metathings/pkg/common/id"
 	log_helper "github.com/nayotta/metathings/pkg/common/log"
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 	protobuf_helper "github.com/nayotta/metathings/pkg/common/protobuf"
@@ -161,7 +161,7 @@ func (srv *metathingsSensordService) Create(ctx context.Context, req *pb.CreateR
 	}
 
 	cred := context_helper.Credential(ctx)
-	snr_id := common.NewId()
+	snr_id := id_helper.NewId()
 	var name_str string
 	if name := req.GetName(); name != nil {
 		name_str = name.GetValue()
@@ -406,7 +406,7 @@ func (srv *metathingsSensordService) Subscribe(stm pb.SensordService_SubscribeSe
 					subs[snr_id] = sub
 					go func(stm pb.SensordService_SubscribeServer, sub hub.Subscriber) {
 						defer func() {
-							srv.hub.Close(sub)
+							sub.Close()
 							delete(subs, snr_id)
 						}()
 						for {
@@ -439,7 +439,7 @@ func (srv *metathingsSensordService) Subscribe(stm pb.SensordService_SubscribeSe
 					if sub, ok = subs[snr_id]; !ok {
 						srv.logger.WithField("snr_id", snr_id).Errorf("subscribing sensor not found")
 					}
-					srv.hub.Close(sub)
+					sub.Close()
 					srv.logger.WithField("snr_id", snr_id).Debugf("unsubscrible sensor by sensor id")
 				}
 			}
@@ -490,7 +490,7 @@ func (srv *metathingsSensordService) Publish(stm pb.SensordService_PublishServer
 
 	go func() {
 		defer func() {
-			srv.hub.Close(publisher)
+			publisher.Close()
 			srv.logger.WithField("snr_id", *snr.Id).Debugf("close publisher")
 			quit <- nil
 			srv.logger.WithField("snr_id", *snr.Id).Debugf("send quit signal to publisher")

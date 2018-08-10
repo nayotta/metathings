@@ -10,11 +10,11 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"github.com/nayotta/metathings/pkg/common"
 	app_cred_mgr "github.com/nayotta/metathings/pkg/common/application_credential_manager"
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
 	context_helper "github.com/nayotta/metathings/pkg/common/context"
 	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
+	id_helper "github.com/nayotta/metathings/pkg/common/id"
 	log_helper "github.com/nayotta/metathings/pkg/common/log"
 	protobuf_helper "github.com/nayotta/metathings/pkg/common/protobuf"
 	state_helper "github.com/nayotta/metathings/pkg/common/state"
@@ -216,7 +216,7 @@ func (srv *metathingsCoredService) CreateCore(ctx context.Context, req *pb.Creat
 
 	cred := context_helper.Credential(ctx)
 
-	core_id := common.NewId()
+	core_id := id_helper.NewId()
 
 	var name_str string
 	name := req.GetName()
@@ -391,7 +391,7 @@ func (srv *metathingsCoredService) CreateEntity(ctx context.Context, req *pb.Cre
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 
-	entity_id := common.NewId()
+	entity_id := id_helper.NewId()
 
 	var name_str string
 	name := req.GetName()

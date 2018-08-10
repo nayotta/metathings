@@ -15,11 +15,11 @@ import (
 
 	state_helper "github.com/nayotta/metathings/pkg/camera/state"
 	storage "github.com/nayotta/metathings/pkg/camerad/storage"
-	"github.com/nayotta/metathings/pkg/common"
 	app_cred_mgr "github.com/nayotta/metathings/pkg/common/application_credential_manager"
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
 	context_helper "github.com/nayotta/metathings/pkg/common/context"
 	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
+	id_helper "github.com/nayotta/metathings/pkg/common/id"
 	log_helper "github.com/nayotta/metathings/pkg/common/log"
 	token_helper "github.com/nayotta/metathings/pkg/common/token"
 	camera_pb "github.com/nayotta/metathings/pkg/proto/camera"
@@ -172,7 +172,7 @@ func (srv *metathingsCameradService) Create(ctx context.Context, req *pb.CreateR
 	}
 
 	cred := context_helper.Credential(ctx)
-	cam_id := common.NewId()
+	cam_id := id_helper.NewId()
 	var name_str string
 	if name := req.GetName(); name != nil {
 		name_str = name.GetValue()

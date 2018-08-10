@@ -12,17 +12,19 @@ var (
 	ErrUnsubscribable = errors.New("unsubscribable")
 	ErrSubPubNotFound = errors.New("not found")
 	ErrUnexpected     = errors.New("unexpected")
+
+	Terminated = errors.New("terminated")
 )
 
 type SubPub interface {
 	Id() uint64
 	Symbol() string
+	Close() error
 }
 
 type Hub interface {
 	Subscriber(opt_helper.Option) (Subscriber, error)
 	Publisher(opt_helper.Option) (Publisher, error)
-	Close(SubPub) error
 }
 
 type Subscriber interface {
