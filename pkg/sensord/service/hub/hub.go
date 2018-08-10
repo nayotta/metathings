@@ -16,7 +16,7 @@ var (
 
 type SubPub interface {
 	Id() uint64
-	Path() string
+	Symbol() string
 }
 
 type Hub interface {

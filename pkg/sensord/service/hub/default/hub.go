@@ -1,11 +1,13 @@
 package default_hub
 
 import (
+	"fmt"
 	"math/rand"
 	"sync"
 
 	log "github.com/sirupsen/logrus"
 
+	id_helper "github.com/nayotta/metathings/pkg/common/id"
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 	sensord_pb "github.com/nayotta/metathings/pkg/proto/sensord"
 	"github.com/nayotta/metathings/pkg/sensord/service/hub"
@@ -20,32 +22,32 @@ type defaultHub struct {
 	pub_counters map[string]uint64
 }
 
-func path(opt opt_helper.Option) string {
-	return opt.GetString("sensor_id")
+func symbol(opt opt_helper.Option) string {
+	return fmt.Sprintf("sensor.%v", opt.GetString("sensor_id"))
 }
 
 func (self *defaultHub) Subscriber(opt opt_helper.Option) (hub.Subscriber, error) {
 	var ok bool
 	var id uint64
 	var m map[uint64]chan *sensord_pb.SensorData
-	path := path(opt)
+	sym := symbol(opt)
 
 	self.glock.Lock()
 	defer self.glock.Unlock()
 
-	if m, ok = self.subs[path]; !ok {
+	if m, ok = self.subs[sym]; !ok {
 		m = make(map[uint64]chan *sensord_pb.SensorData)
-		self.subs[path] = m
+		self.subs[sym] = m
 	}
 
 	ch := make(chan *sensord_pb.SensorData)
-	id = rand.Uint64()
+	id = id_helper.NewUint64Id()
 	m[id] = ch
 
 	sub := &subscriber{
-		p:  path,
-		id: id,
-		ch: ch,
+		sym: sym,
+		id:  id,
+		ch:  ch,
 	}
 
 	return sub, nil
@@ -54,26 +56,26 @@ func (self *defaultHub) Subscriber(opt opt_helper.Option) (hub.Subscriber, error
 func (self *defaultHub) Publisher(opt opt_helper.Option) (hub.Publisher, error) {
 	var ok bool
 	var ch chan *sensord_pb.SensorData
-	path := path(opt)
+	sym := symbol(opt)
 
 	self.glock.Lock()
 	defer self.glock.Unlock()
 
-	if ch, ok = self.pubs[path]; !ok {
+	if ch, ok = self.pubs[sym]; !ok {
 		ch = make(chan *sensord_pb.SensorData)
-		self.pubs[path] = ch
-		self.pub_counters[path] = 0
-		go self.transfer(path, ch)
+		self.pubs[sym] = ch
+		self.pub_counters[sym] = 0
+		go self.transfer(sym, ch)
 	}
 
 	id := rand.Uint64()
 
 	pub := &publisher{
-		p:  path,
-		id: id,
-		ch: ch,
+		sym: sym,
+		id:  id,
+		ch:  ch,
 	}
-	self.pub_counters[path]++
+	self.pub_counters[sym]++
 
 	return pub, nil
 }
@@ -92,24 +94,24 @@ func (self *defaultHub) closeSub(sp hub.SubPub) error {
 	self.glock.Lock()
 	defer self.glock.Unlock()
 
-	p := sp.Path()
+	sym := sp.Symbol()
 	id := sp.Id()
 
-	subs, ok := self.subs[p]
+	subs, ok := self.subs[sym]
 	if !ok {
-		self.logger.WithFields(log.Fields{"path": p, "id": id}).Warningf("subscriber not found")
+		self.logger.WithFields(log.Fields{"sym": sym, "id": id}).Warningf("subscriber not found")
 		return hub.ErrSubPubNotFound
 	}
 
 	ch, ok := subs[id]
 	if !ok {
-		self.logger.WithFields(log.Fields{"path": p, "id": id}).Warningf("subscriber not found")
+		self.logger.WithFields(log.Fields{"sym": sym, "id": id}).Warningf("subscriber not found")
 		return hub.ErrSubPubNotFound
 	}
 
 	close(ch)
-	delete(self.subs[p], id)
-	self.logger.WithFields(log.Fields{"path": p, "id": id}).Debugf("close subscriber")
+	delete(self.subs[sym], id)
+	self.logger.WithFields(log.Fields{"sym": sym, "id": id}).Debugf("close subscriber")
 	return nil
 }
 
@@ -117,45 +119,45 @@ func (self *defaultHub) closePub(sp hub.SubPub) error {
 	self.glock.Lock()
 	defer self.glock.Unlock()
 
-	p := sp.Path()
+	sym := sp.Symbol()
 
-	ch, ok := self.pubs[p]
+	ch, ok := self.pubs[sym]
 	if !ok {
 		return hub.ErrSubPubNotFound
 	}
 
-	if _, ok := self.pub_counters[p]; !ok {
-		self.pub_counters[p] = 0
+	if _, ok := self.pub_counters[sym]; !ok {
+		self.pub_counters[sym] = 0
 		close(ch)
-		self.logger.WithField("path", p).Warningf("close channel with unexpected situation")
+		self.logger.WithField("sym", sym).Warningf("close channel with unexpected situation")
 		return hub.ErrUnexpected
 	}
 
-	self.pub_counters[p]--
-	if self.pub_counters[p] < 0 {
-		self.pub_counters[p] = 0
-		self.logger.WithField("path", p).Warningf("reset counter to 0")
+	self.pub_counters[sym]--
+	if self.pub_counters[sym] < 0 {
+		self.pub_counters[sym] = 0
+		self.logger.WithField("sym", sym).Warningf("reset counter to 0")
 	}
 
-	if self.pub_counters[p] == 0 {
+	if self.pub_counters[sym] == 0 {
 		close(ch)
-		delete(self.pubs, p)
-		self.logger.WithField("path", p).Debugf("close publisher")
+		delete(self.pubs, sym)
+		self.logger.WithField("sym", sym).Debugf("close publisher")
 	}
 
 	return nil
 }
 
-func (self *defaultHub) transfer(path string, ch chan *sensord_pb.SensorData) {
+func (self *defaultHub) transfer(sym string, ch chan *sensord_pb.SensorData) {
 	for {
 		dat, ok := <-ch
 		if !ok {
-			self.logger.WithField("path", path).Debugf("failed to recv data from channel, maybe closed")
+			self.logger.WithField("sym", sym).Debugf("failed to recv data from channel, maybe closed")
 			return
 		}
 
 		go func(dat *sensord_pb.SensorData) {
-			subs := self.subs[path]
+			subs := self.subs[sym]
 			for id := range subs {
 				ch := subs[id]
 				ch <- dat
@@ -165,9 +167,9 @@ func (self *defaultHub) transfer(path string, ch chan *sensord_pb.SensorData) {
 }
 
 type subscriber struct {
-	id uint64
-	p  string
-	ch chan *sensord_pb.SensorData
+	id  uint64
+	sym string
+	ch  chan *sensord_pb.SensorData
 }
 
 func (self *subscriber) Subscribe() (*sensord_pb.SensorData, error) {
@@ -182,14 +184,14 @@ func (self *subscriber) Id() uint64 {
 	return self.id
 }
 
-func (self *subscriber) Path() string {
-	return self.p
+func (self *subscriber) Symbol() string {
+	return self.sym
 }
 
 type publisher struct {
-	id uint64
-	p  string
-	ch chan *sensord_pb.SensorData
+	id  uint64
+	sym string
+	ch  chan *sensord_pb.SensorData
 }
 
 func (self *publisher) Publish(dat *sensord_pb.SensorData) error {
@@ -201,8 +203,8 @@ func (self *publisher) Id() uint64 {
 	return self.id
 }
 
-func (self *publisher) Path() string {
-	return self.p
+func (self *publisher) Symbol() string {
+	return self.sym
 }
 
 func NewHub(opt opt_helper.Option) (hub.Hub, error) {
