@@ -48,10 +48,7 @@ func symbol(opt opt_helper.Option) string {
 func (self *kafkaHub) Subscriber(opt opt_helper.Option) (hub.Subscriber, error) {
 	sub_id := id_helper.NewUint64Id()
 	brokers := self.opt.GetStrings("brokers")
-	group_id := self.opt.GetString("group_id")
-	if group_id == "" {
-		group_id = fmt.Sprintf("group.sensord.%v", sub_id)
-	}
+	group_id := fmt.Sprintf("group.sensord.%v", sub_id)
 	cfg := &kafka.ConfigMap{
 		"bootstrap.servers":               strings.Join(brokers, ","),
 		"group.id":                        group_id,
