@@ -2,18 +2,21 @@ package kafka_hub
 
 import (
 	"fmt"
+	"strings"
 	"sync"
 
 	"github.com/confluentinc/confluent-kafka-go/kafka"
 	"github.com/gogo/protobuf/proto"
 	log "github.com/sirupsen/logrus"
 
+	id_helper "github.com/nayotta/metathings/pkg/common/id"
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 	sensord_pb "github.com/nayotta/metathings/pkg/proto/sensord"
 	"github.com/nayotta/metathings/pkg/sensord/service/hub"
 )
 
 type kafkaHub struct {
+	opt    opt_helper.Option
 	logger log.FieldLogger
 	glock  *sync.Mutex
 }
@@ -43,15 +46,53 @@ func symbol(opt opt_helper.Option) string {
 }
 
 func (self *kafkaHub) Subscriber(opt opt_helper.Option) (hub.Subscriber, error) {
-	panic("unimplemented")
+	sub_id := id_helper.NewUint64Id()
+	brokers := self.opt.GetStrings("brokers")
+	group_id := self.opt.GetString("group_id")
+	if group_id == "" {
+		group_id = fmt.Sprintf("group.sensord.%v", sub_id)
+	}
+	cfg := &kafka.ConfigMap{
+		"bootstrap.servers":               strings.Join(brokers, ","),
+		"group.id":                        group_id,
+		"go.events.channel.enable":        true,
+		"go.application.rebalance.enable": true,
+		"default.topic.config":            kafka.ConfigMap{"auto.offset.reset": "latest"},
+	}
+	consumer, err := kafka.NewConsumer(cfg)
+	if err != nil {
+		return nil, err
+	}
+
+	sub := &kafkaSubscriber{
+		logger:   self.logger,
+		id:       sub_id,
+		opt:      opt,
+		consumer: consumer,
+	}
+
+	return sub, nil
 }
 
 func (self *kafkaHub) Publisher(opt opt_helper.Option) (hub.Publisher, error) {
-	panic("unimplemented")
-}
+	pub_id := id_helper.NewUint64Id()
+	brokers := self.opt.GetStrings("brokers")
+	cfg := &kafka.ConfigMap{
+		"bootstrap.servers": strings.Join(brokers, ","),
+	}
+	producer, err := kafka.NewProducer(cfg)
+	if err != nil {
+		return nil, err
+	}
 
-func (self *kafkaHub) Close(sp hub.SubPub) error {
-	panic("unimplemented")
+	pub := &kafkaPublisher{
+		logger:   self.logger,
+		id:       pub_id,
+		opt:      opt,
+		producer: producer,
+	}
+
+	return pub, nil
 }
 
 type kafkaSubscriber struct {
@@ -91,6 +132,15 @@ func (self *kafkaSubscriber) Symbol() string {
 	return symbol(self.opt)
 }
 
+func (self *kafkaSubscriber) Close() error {
+	err := self.consumer.Close()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 type kafkaPublisher struct {
 	logger   log.FieldLogger
 	id       uint64
@@ -125,8 +175,15 @@ func (self *kafkaPublisher) Symbol() string {
 	return symbol(self.opt)
 }
 
+func (self *kafkaPublisher) Close() error {
+	self.producer.Close()
+
+	return nil
+}
+
 func NewHub(opt opt_helper.Option) (hub.Hub, error) {
 	return &kafkaHub{
+		opt:    opt,
 		glock:  new(sync.Mutex),
 		logger: opt.Get("logger").(log.FieldLogger).WithFields(log.Fields{"#module": "hub", "#driver": "kafka"}),
 	}, nil
