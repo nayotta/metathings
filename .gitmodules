@@ -1,0 +1,3 @@
+[submodule "thrid_party/kafka"]
+	path = thrid_party/kafka
+	url = https://github.com/nayotta/kafka-docker.git
