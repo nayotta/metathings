@@ -18,4 +18,5 @@ RUN apt update && \
     ./configure && \
     make && \
     make install && \
+    ldconfig && \
     go get -u -v github.com/confluentinc/confluent-kafka-go/kafka
