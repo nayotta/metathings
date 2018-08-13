@@ -22,6 +22,7 @@ import (
 	state_helper "github.com/nayotta/metathings/pkg/sensor/state"
 	"github.com/nayotta/metathings/pkg/sensord/service/hub"
 	_ "github.com/nayotta/metathings/pkg/sensord/service/hub/default"
+	_ "github.com/nayotta/metathings/pkg/sensord/service/hub/kafka"
 	storage "github.com/nayotta/metathings/pkg/sensord/storage"
 )
 

@@ -7,66 +7,66 @@ services:
       dockerfile: dockerfile/Dockerfile.frontd
     image: nayotta/metathings-frontd
     volumes:
-      - ./etc/envoy.front.yaml:/etc/envoy.front.yaml
+    - ./etc/envoy.front.yaml:/etc/envoy.front.yaml
     networks:
-      - metathings-frontend
-      - metathings-backend
+    - metathings-frontend
+    - metathings-backend
     expose:
-      - "21733"
-      - "8001"
+    - "21733"
+    - "8001"
     ports:
-      - "21733:21733"
-      - "8001:8001"
+    - "21733:21733"
+    - "8001:8001"
     restart: on-failure
 
   identityd:
     environment:
-      - MTD_STAGE=dev
+    - MTD_STAGE=dev
     build:
       context: .
       dockerfile: dockerfile/Dockerfile.identityd.dev
     image: nayotta/metathings-identityd-development
     volumes:
-      - .:/go/src/github.com/nayotta/metathings
-      - ./etc/identityd.yaml:/etc/metathings/identityd.yaml
+    - .:/go/src/github.com/nayotta/metathings
+    - ./etc/identityd.yaml:/etc/metathings/identityd.yaml
     networks:
-      - metathings-backend
+    - metathings-backend
     expose:
-      - "5000"
+    - "5000"
     restart: on-failure
 
   cored:
     environment:
-      - MTD_STAGE=dev
+    - MTD_STAGE=dev
     build:
       context: .
       dockerfile: dockerfile/Dockerfile.cored.dev
     image: nayotta/metathings-cored-development
     volumes:
-      - ./data/storage:/var/metathings/storage
-      - .:/go/src/github.com/nayotta/metathings
-      - ./etc/cored.yaml:/etc/metathings/cored.yaml
+    - ./data/storage:/var/metathings/storage
+    - .:/go/src/github.com/nayotta/metathings
+    - ./etc/cored.yaml:/etc/metathings/cored.yaml
     networks:
-      - metathings-backend
+    - metathings-backend
     expose:
-      - "5001"
+    - "5001"
     restart: on-failure
 
   camerad:
     environment:
-      - MTD_STAGE=dev
+    - MTD_STAGE=dev
     build:
       context: .
       dockerfile: dockerfile/Dockerfile.camerad.dev
     image: nayotta/metathings-camerad-development
     volumes:
-      - ./data/storage:/var/metathings/storage
-      - .:/go/src/github.com/nayotta/metathings
-      - ./etc/camerad.yaml:/etc/metathings/camerad.yaml
+    - ./data/storage:/var/metathings/storage
+    - .:/go/src/github.com/nayotta/metathings
+    - ./etc/camerad.yaml:/etc/metathings/camerad.yaml
     networks:
-      - metathings-backend
+    - metathings-backend
     expose:
-      - "5002"
+    - "5002"
     restart: on-failure
 
   sensord:
@@ -77,13 +77,14 @@ services:
       dockerfile: dockerfile/Dockerfile.sensord.dev
     image: nayotta/metathings-sensord-development
     volumes:
-      - ./data/storage:/var/metathings/storage
-      - .:/go/src/github.com/nayotta/metathings
-      - ./etc/sensord.yaml:/etc/metathings/sensord.yaml
+    - ./data/storage:/var/metathings/storage
+    - .:/go/src/github.com/nayotta/metathings
+    - ./etc/sensord.yaml:/etc/metathings/sensord.yaml
     networks:
-      - metathings-backend
+    - metathings-backend
+    - metathings-kafka
     expose:
-      - "5003"
+    - "5003"
     restart: on-failure
 
 networks:
@@ -93,3 +94,6 @@ networks:
   metathings-backend:
     external:
       name: metathings-backend
+  metathings-kafka:
+    external:
+      name: metathings-kafka
