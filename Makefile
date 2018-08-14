@@ -17,6 +17,20 @@ all: \
 	metathings_bin \
 	metathingsd_bin
 
+build_agent: \
+	echo_plugins \
+	switcher_drivers \
+	switcher_plugins \
+	motor_drivers \
+	motor_plugins \
+	camera_drivers \
+	camera_plugins \
+	servo_drivers \
+	servo_plugins \
+	sensor_drivers \
+	sensor_plugins \
+	metathings_bin
+
 clean:
 	$(RM) -rf $(CLEAN_PATHS)
 
