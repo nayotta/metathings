@@ -371,85 +371,106 @@ func (srv *metathingsSensordService) ListForUser(ctx context.Context, req *pb.Li
 	return res, nil
 }
 
-func (srv *metathingsSensordService) Subscribe(stm pb.SensordService_SubscribeServer) error {
-	quit := make(chan interface{})
+func (srv *metathingsSensordService) subscribe(stm pb.SensordService_SubscribeServer, quit chan interface{}) {
+	defer func() {
+		quit <- nil
+		srv.logger.Debugf("send quit signal to subscribler")
+	}()
 
-	go func() {
-		defer func() {
-			quit <- nil
-			srv.logger.Debugf("send quit signal to subscribler")
-		}()
-		subs := make(map[string]hub.Subscriber)
-		for {
-			reqs, err := stm.Recv()
+	subs := make(map[string]hub.Subscriber)
+
+subscrible_loop:
+	for {
+		reqs, err := stm.Recv()
+		if err != nil {
+			grpc_helper.HandleGRPCError(srv.logger, err, "failed to recv data from subscriber")
+			return
+		}
+
+		for _, r := range reqs.Requests {
+			switch req := r.Payload.(type) {
+			case *pb.SubscribeRequest_SubscribeById:
+				err = srv.handle_subscribe_request_subscribe_by_id(stm, subs, req)
+			case *pb.SubscribeRequest_UnsubscribeById:
+				err = srv.handle_subscribe_request_unsubscribe_by_id(stm, subs, req)
+			}
+
 			if err != nil {
-				grpc_helper.HandleGRPCError(srv.logger, err, "failed to recv data from subscriber")
+				srv.logger.WithError(err).Errorf("failed to handle subscribe request")
+				break subscrible_loop
+			}
+		}
+	}
+
+	return
+}
+
+func (srv *metathingsSensordService) handle_subscribe_request_subscribe_by_id(stm pb.SensordService_SubscribeServer, subs map[string]hub.Subscriber, req *pb.SubscribeRequest_SubscribeById) error {
+	snr_id := req.SubscribeById.GetId().GetValue()
+	if _, ok := subs[snr_id]; ok {
+		srv.logger.WithField("snr_id", snr_id).Warningf("sensor already in subscribling")
+		return nil
+	}
+
+	subscriber_opt := opt_helper.NewOption("sensor_id", snr_id)
+	sub, err := srv.hub.Subscriber(subscriber_opt)
+	if err != nil {
+		srv.logger.WithField("snr_id", snr_id).Errorf("failed to get subscribler")
+		return nil
+	}
+
+	subs[snr_id] = sub
+	go func(stm pb.SensordService_SubscribeServer, sub hub.Subscriber) {
+		defer func() {
+			sub.Close()
+			delete(subs, snr_id)
+		}()
+		for {
+			dat, err := sub.Subscribe()
+			if err != nil {
+				srv.logger.WithError(err).Errorf("failed to subscribe data from subscriber")
 				return
 			}
 
-			for _, req := range reqs.Requests {
-				switch req.Payload.(type) {
-				case *pb.SubscribeRequest_SubscribeById:
-					sub_by_id := req.GetSubscribeById()
-					snr_id := sub_by_id.GetId().GetValue()
-					if _, ok := subs[snr_id]; ok {
-						srv.logger.WithField("snr_id", snr_id).Warningf("sensor already in subscribling")
-						continue
-					}
+			res := &pb.SubscribeResponses{
+				Responses: []*pb.SubscribeResponse{
+					&pb.SubscribeResponse{Data: dat},
+				},
+			}
 
-					subscriber_opt := opt_helper.NewOption("sensor_id", snr_id)
-					sub, err := srv.hub.Subscriber(subscriber_opt)
-					if err != nil {
-						srv.logger.WithField("snr_id", snr_id).Errorf("failed to get subscribler")
-						continue
-					}
-
-					subs[snr_id] = sub
-					go func(stm pb.SensordService_SubscribeServer, sub hub.Subscriber) {
-						defer func() {
-							sub.Close()
-							delete(subs, snr_id)
-						}()
-						for {
-							dat, err := sub.Subscribe()
-							if err != nil {
-								srv.logger.WithError(err).Errorf("failed to subscribe data from subscriber")
-								return
-							}
-
-							res := &pb.SubscribeResponses{
-								Responses: []*pb.SubscribeResponse{
-									&pb.SubscribeResponse{Data: dat},
-								},
-							}
-
-							err = stm.Send(res)
-							if err != nil {
-								srv.logger.WithError(err).Errorf("failed to send data to subscribe stream")
-								return
-							}
-						}
-					}(stm, sub)
-
-					srv.logger.WithField("snr_id", snr_id).Debugf("subscrible data by sensor id")
-				case *pb.SubscribeRequest_UnsubscribeById:
-					var ok bool
-					var sub hub.Subscriber
-					unsub_by_id := req.GetUnsubscribeById()
-					snr_id := unsub_by_id.GetId().GetValue()
-					if sub, ok = subs[snr_id]; !ok {
-						srv.logger.WithField("snr_id", snr_id).Errorf("subscribing sensor not found")
-					}
-					sub.Close()
-					srv.logger.WithField("snr_id", snr_id).Debugf("unsubscrible sensor by sensor id")
-				}
+			err = stm.Send(res)
+			if err != nil {
+				srv.logger.WithError(err).Errorf("failed to send data to subscribe stream")
+				return
 			}
 		}
-	}()
+	}(stm, sub)
+
+	srv.logger.WithField("snr_id", snr_id).Debugf("subscrible data by sensor id")
+	return nil
+}
+
+func (srv *metathingsSensordService) handle_subscribe_request_unsubscribe_by_id(stm pb.SensordService_SubscribeServer, subs map[string]hub.Subscriber, req *pb.SubscribeRequest_UnsubscribeById) error {
+	var sub hub.Subscriber
+	var ok bool
+	snr_id := req.UnsubscribeById.GetId().GetValue()
+	if sub, ok = subs[snr_id]; !ok {
+		srv.logger.WithField("snr_id", snr_id).Errorf("subscribing sensor not found")
+	}
+	sub.Close()
+
+	srv.logger.WithField("snr_id", snr_id).Debugf("unsubscrible sensor by sensor id")
+	return nil
+}
+
+func (srv *metathingsSensordService) Subscribe(stm pb.SensordService_SubscribeServer) error {
+	quit := make(chan interface{})
+
+	go srv.subscribe(stm, quit)
 
 	<-quit
-	srv.logger.Infof("subscribe done")
 
+	srv.logger.Infof("subscribe done")
 	return nil
 }
 
@@ -518,12 +539,11 @@ func (srv *metathingsSensordService) Publish(stm pb.SensordService_PublishServer
 				}
 			}
 		}
-
 	}()
 
 	<-quit
-	srv.logger.WithField("snr_id", *snr.Id).Infof("publish done")
 
+	srv.logger.WithField("snr_id", *snr.Id).Infof("publish done")
 	return nil
 }
 
