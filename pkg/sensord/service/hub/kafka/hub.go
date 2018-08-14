@@ -7,6 +7,7 @@ import (
 
 	"github.com/confluentinc/confluent-kafka-go/kafka"
 	"github.com/gogo/protobuf/proto"
+	"github.com/nayotta/viper"
 	log "github.com/sirupsen/logrus"
 
 	id_helper "github.com/nayotta/metathings/pkg/common/id"
@@ -15,8 +16,12 @@ import (
 	"github.com/nayotta/metathings/pkg/sensord/service/hub"
 )
 
+type option struct {
+	Brokers []string
+}
+
 type kafkaHub struct {
-	opt    opt_helper.Option
+	opt    option
 	logger log.FieldLogger
 	glock  *sync.Mutex
 }
@@ -47,7 +52,7 @@ func symbol(opt opt_helper.Option) string {
 
 func (self *kafkaHub) Subscriber(opt opt_helper.Option) (hub.Subscriber, error) {
 	sub_id := id_helper.NewUint64Id()
-	brokers := self.opt.GetStrings("brokers")
+	brokers := self.opt.Brokers
 	group_id := fmt.Sprintf("group.sensord.%v", sub_id)
 	cfg := &kafka.ConfigMap{
 		"bootstrap.servers":               strings.Join(brokers, ","),
@@ -68,14 +73,18 @@ func (self *kafkaHub) Subscriber(opt opt_helper.Option) (hub.Subscriber, error) 
 		consumer: consumer,
 	}
 
+	self.logger.WithFields(log.Fields{
+		"symbol": sub.Symbol(),
+	}).Debugf("create subscriber")
+
 	return sub, nil
 }
 
 func (self *kafkaHub) Publisher(opt opt_helper.Option) (hub.Publisher, error) {
 	pub_id := id_helper.NewUint64Id()
-	brokers := self.opt.GetStrings("brokers")
+	brokers := strings.Join(self.opt.Brokers, ",")
 	cfg := &kafka.ConfigMap{
-		"bootstrap.servers": strings.Join(brokers, ","),
+		"bootstrap.servers": brokers,
 	}
 	producer, err := kafka.NewProducer(cfg)
 	if err != nil {
@@ -87,7 +96,14 @@ func (self *kafkaHub) Publisher(opt opt_helper.Option) (hub.Publisher, error) {
 		id:       pub_id,
 		opt:      opt,
 		producer: producer,
+		quit:     make(chan interface{}),
 	}
+
+	go pub.loop()
+
+	self.logger.WithFields(log.Fields{
+		"symbol": pub.Symbol(),
+	}).Debugf("create publisher")
 
 	return pub, nil
 }
@@ -116,6 +132,7 @@ func (self *kafkaSubscriber) Subscribe() (*sensord_pb.SensorData, error) {
 			if err != nil {
 				return nil, err
 			}
+			self.logger.WithField("symbol", self.Symbol()).Debugf("subscribe data")
 			return &data, nil
 		}
 	}
@@ -143,6 +160,25 @@ type kafkaPublisher struct {
 	id       uint64
 	opt      opt_helper.Option
 	producer *kafka.Producer
+	quit     chan interface{}
+}
+
+func (self *kafkaPublisher) loop() {
+	defer close(self.quit)
+	for {
+		select {
+		case <-self.quit:
+			return
+		case e := <-self.producer.Events():
+			switch ev := e.(type) {
+			case *kafka.Message:
+				if ev.TopicPartition.Error != nil {
+					self.logger.WithError(ev.TopicPartition.Error).Debugf("failed to delivery message")
+				}
+			}
+
+		}
+	}
 }
 
 func (self *kafkaPublisher) Publish(dat *sensord_pb.SensorData) error {
@@ -151,7 +187,6 @@ func (self *kafkaPublisher) Publish(dat *sensord_pb.SensorData) error {
 	if err != nil {
 		return err
 	}
-
 	msg := &kafka.Message{
 		TopicPartition: kafka.TopicPartition{
 			Topic:     &topic,
@@ -160,6 +195,7 @@ func (self *kafkaPublisher) Publish(dat *sensord_pb.SensorData) error {
 		Value: val,
 	}
 	self.producer.ProduceChannel() <- msg
+	self.logger.WithField("symbol", topic).Debugf("publish data")
 
 	return nil
 }
@@ -173,17 +209,25 @@ func (self *kafkaPublisher) Symbol() string {
 }
 
 func (self *kafkaPublisher) Close() error {
+	self.quit <- nil
 	self.producer.Close()
 
 	return nil
 }
 
 func NewHub(opt opt_helper.Option) (hub.Hub, error) {
-	return &kafkaHub{
-		opt:    opt,
+	var opts option
+	err := opt.Get("options").(*viper.Viper).Unmarshal(&opts)
+	if err != nil {
+		return nil, err
+	}
+
+	hub := &kafkaHub{
+		opt:    opts,
 		glock:  new(sync.Mutex),
 		logger: opt.Get("logger").(log.FieldLogger).WithFields(log.Fields{"#module": "hub", "#driver": "kafka"}),
-	}, nil
+	}
+	return hub, nil
 }
 
 func init() {

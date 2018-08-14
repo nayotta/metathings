@@ -448,6 +448,7 @@ func (srv *metathingsSensordService) Subscribe(stm pb.SensordService_SubscribeSe
 	}()
 
 	<-quit
+	srv.logger.Infof("subscribe done")
 
 	return nil
 }
