@@ -6,7 +6,7 @@ import (
 	"sync"
 
 	"github.com/confluentinc/confluent-kafka-go/kafka"
-	"github.com/gogo/protobuf/proto"
+	"github.com/golang/protobuf/proto"
 	"github.com/nayotta/viper"
 	log "github.com/sirupsen/logrus"
 
@@ -14,6 +14,11 @@ import (
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 	sensord_pb "github.com/nayotta/metathings/pkg/proto/sensord"
 	"github.com/nayotta/metathings/pkg/sensord/service/hub"
+)
+
+const (
+	UUID_REGEX = "[0-9a-z]{32}"
+	NAME_REGEX = "[a-zA-Z0-9]+"
 )
 
 type option struct {
@@ -24,30 +29,6 @@ type kafkaHub struct {
 	opt    option
 	logger log.FieldLogger
 	glock  *sync.Mutex
-}
-
-func symbol(opt opt_helper.Option) string {
-	sensor_id := opt.GetString("sensor_id")
-	if sensor_id == "" {
-		sensor_id = "*"
-	}
-
-	core_id := opt.GetString("core_id")
-	if core_id == "" {
-		core_id = "*"
-	}
-
-	entity_name := opt.GetString("entity_name")
-	if entity_name == "" {
-		entity_name = "*"
-	}
-
-	owner_id := opt.GetString("owner_id")
-	if owner_id == "" {
-		owner_id = "*"
-	}
-
-	return fmt.Sprintf("sensor.%v.core.%v.entity.%v.user.%v", sensor_id, core_id, entity_name, owner_id)
 }
 
 func (self *kafkaHub) Subscriber(opt opt_helper.Option) (hub.Subscriber, error) {
@@ -71,6 +52,11 @@ func (self *kafkaHub) Subscriber(opt opt_helper.Option) (hub.Subscriber, error) 
 		id:       sub_id,
 		opt:      opt,
 		consumer: consumer,
+	}
+
+	err = consumer.SubscribeTopics([]string{sub.Symbol()}, nil)
+	if err != nil {
+		return nil, err
 	}
 
 	self.logger.WithFields(log.Fields{
@@ -143,7 +129,27 @@ func (self *kafkaSubscriber) Id() uint64 {
 }
 
 func (self *kafkaSubscriber) Symbol() string {
-	return symbol(self.opt)
+	sensor_id := self.opt.GetString("sensor_id")
+	if sensor_id == "" {
+		sensor_id = UUID_REGEX
+	}
+
+	core_id := self.opt.GetString("core_id")
+	if core_id == "" {
+		core_id = UUID_REGEX
+	}
+
+	entity_name := self.opt.GetString("entity_name")
+	if entity_name == "" {
+		entity_name = NAME_REGEX
+	}
+
+	owner_id := self.opt.GetString("owner_id")
+	if owner_id == "" {
+		owner_id = UUID_REGEX
+	}
+
+	return fmt.Sprintf("^sensor.%v.core.%v.entity.%v.user.%v$", sensor_id, core_id, entity_name, owner_id)
 }
 
 func (self *kafkaSubscriber) Close() error {
@@ -205,7 +211,11 @@ func (self *kafkaPublisher) Id() uint64 {
 }
 
 func (self *kafkaPublisher) Symbol() string {
-	return symbol(self.opt)
+	sensor_id := self.opt.GetString("sensor_id")
+	core_id := self.opt.GetString("core_id")
+	entity_name := self.opt.GetString("entity_name")
+	owner_id := self.opt.GetString("owner_id")
+	return fmt.Sprintf("sensor.%v.core.%v.entity.%v.user.%v", sensor_id, core_id, entity_name, owner_id)
 }
 
 func (self *kafkaPublisher) Close() error {
