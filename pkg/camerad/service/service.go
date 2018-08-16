@@ -699,9 +699,11 @@ func (srv *metathingsCameradService) Stop(ctx context.Context, req *pb.StopReque
 
 	go func() {
 		var err error
-		if err != nil {
-			srv.set_camera_state(cam_id, "running")
-		}
+		defer func() {
+			if err != nil {
+				srv.set_camera_state(cam_id, "running")
+			}
+		}()
 
 		cli, cfn, err := srv.cli_fty.NewCoredServiceClient()
 		if err != nil {
