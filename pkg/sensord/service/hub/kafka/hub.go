@@ -22,11 +22,22 @@ const (
 )
 
 type option struct {
-	Brokers []string
+	Brokers        []string
+	ProducerConfig map[string]string `json:"producer_config"`
+	ConsumerConfig map[string]string `json:"consumer_config"`
+}
+
+func default_option() *option {
+	opt := &option{
+		ProducerConfig: map[string]string{
+			"queue.buffering.max.ms": "100",
+		},
+	}
+	return opt
 }
 
 type kafkaHub struct {
-	opt    option
+	opt    *option
 	logger log.FieldLogger
 	glock  *sync.Mutex
 }
@@ -41,6 +52,9 @@ func (self *kafkaHub) Subscriber(opt opt_helper.Option) (hub.Subscriber, error) 
 		"go.events.channel.enable":        true,
 		"go.application.rebalance.enable": true,
 		"default.topic.config":            kafka.ConfigMap{"auto.offset.reset": "latest"},
+	}
+	for key, val := range self.opt.ConsumerConfig {
+		cfg.SetKey(key, val)
 	}
 	consumer, err := kafka.NewConsumer(cfg)
 	if err != nil {
@@ -71,6 +85,9 @@ func (self *kafkaHub) Publisher(opt opt_helper.Option) (hub.Publisher, error) {
 	brokers := strings.Join(self.opt.Brokers, ",")
 	cfg := &kafka.ConfigMap{
 		"bootstrap.servers": brokers,
+	}
+	for key, val := range self.opt.ProducerConfig {
+		cfg.SetKey(key, val)
 	}
 	producer, err := kafka.NewProducer(cfg)
 	if err != nil {
@@ -226,14 +243,14 @@ func (self *kafkaPublisher) Close() error {
 }
 
 func NewHub(opt opt_helper.Option) (hub.Hub, error) {
-	var opts option
-	err := opt.Get("options").(*viper.Viper).Unmarshal(&opts)
+	o := default_option()
+	err := opt.Get("options").(*viper.Viper).Unmarshal(o)
 	if err != nil {
 		return nil, err
 	}
 
 	hub := &kafkaHub{
-		opt:    opts,
+		opt:    o,
 		glock:  new(sync.Mutex),
 		logger: opt.Get("logger").(log.FieldLogger).WithFields(log.Fields{"#module": "hub", "#driver": "kafka"}),
 	}
