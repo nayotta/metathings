@@ -390,9 +390,17 @@ subscrible_loop:
 		for _, r := range reqs.Requests {
 			switch req := r.Payload.(type) {
 			case *pb.SubscribeRequest_SubscribeById:
-				err = srv.handle_subscribe_request_subscribe_by_id(stm, subs, req)
+				err = srv.handle_subscribe_by_id(stm, subs, req)
 			case *pb.SubscribeRequest_UnsubscribeById:
-				err = srv.handle_subscribe_request_unsubscribe_by_id(stm, subs, req)
+				err = srv.handle_unsubscribe_by_id(stm, subs, req)
+			case *pb.SubscribeRequest_SubscribeByUserId:
+				err = srv.handle_subscribe_by_user_id(stm, subs, req)
+			case *pb.SubscribeRequest_UnsubscribeByUserId:
+				err = srv.handle_unsubscribe_by_user_id(stm, subs, req)
+			case *pb.SubscribeRequest_SubscribeByCoreId:
+				err = srv.handle_subscribe_by_core_id(stm, subs, req)
+			case *pb.SubscribeRequest_UnsubscribeByCoreId:
+				err = srv.handle_unsubscribe_by_core_id(stm, subs, req)
 			}
 
 			if err != nil {
@@ -405,7 +413,7 @@ subscrible_loop:
 	return
 }
 
-func (srv *metathingsSensordService) handle_subscribe_request_subscribe_by_id(stm pb.SensordService_SubscribeServer, subs map[string]hub.Subscriber, req *pb.SubscribeRequest_SubscribeById) error {
+func (srv *metathingsSensordService) handle_subscribe_by_id(stm pb.SensordService_SubscribeServer, subs map[string]hub.Subscriber, req *pb.SubscribeRequest_SubscribeById) error {
 	snr_id := req.SubscribeById.GetId().GetValue()
 	if _, ok := subs[snr_id]; ok {
 		srv.logger.WithField("snr_id", snr_id).Warningf("sensor already in subscribling")
@@ -450,7 +458,7 @@ func (srv *metathingsSensordService) handle_subscribe_request_subscribe_by_id(st
 	return nil
 }
 
-func (srv *metathingsSensordService) handle_subscribe_request_unsubscribe_by_id(stm pb.SensordService_SubscribeServer, subs map[string]hub.Subscriber, req *pb.SubscribeRequest_UnsubscribeById) error {
+func (srv *metathingsSensordService) handle_unsubscribe_by_id(stm pb.SensordService_SubscribeServer, subs map[string]hub.Subscriber, req *pb.SubscribeRequest_UnsubscribeById) error {
 	var sub hub.Subscriber
 	var ok bool
 	snr_id := req.UnsubscribeById.GetId().GetValue()
@@ -461,6 +469,22 @@ func (srv *metathingsSensordService) handle_subscribe_request_unsubscribe_by_id(
 
 	srv.logger.WithField("snr_id", snr_id).Debugf("unsubscrible sensor by sensor id")
 	return nil
+}
+
+func (srv *metathingsSensordService) handle_subscribe_by_user_id(stm pb.SensordService_SubscribeServer, subs map[string]hub.Subscriber, req *pb.SubscribeRequest_SubscribeByUserId) error {
+	panic("unimplemented")
+}
+
+func (srv *metathingsSensordService) handle_unsubscribe_by_user_id(stm pb.SensordService_SubscribeServer, subs map[string]hub.Subscriber, req *pb.SubscribeRequest_UnsubscribeByUserId) error {
+	panic("unimplemented")
+}
+
+func (srv *metathingsSensordService) handle_subscribe_by_core_id(stm pb.SensordService_SubscribeServer, subs map[string]hub.Subscriber, req *pb.SubscribeRequest_SubscribeByCoreId) error {
+	panic("unimplemented")
+}
+
+func (srv *metathingsSensordService) handle_unsubscribe_by_core_id(stm pb.SensordService_SubscribeServer, subs map[string]hub.Subscriber, req *pb.SubscribeRequest_UnsubscribeByCoreId) error {
+	panic("unimplemented")
 }
 
 func (srv *metathingsSensordService) Subscribe(stm pb.SensordService_SubscribeServer) error {
