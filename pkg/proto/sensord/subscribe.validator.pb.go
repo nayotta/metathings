@@ -38,6 +38,50 @@ func (this *UnsubscribeByIdRequest) Validate() error {
 	}
 	return nil
 }
+func (this *SubscribeByUserIdRequest) Validate() error {
+	if nil == this.UserId {
+		return go_proto_validators.FieldError("UserId", fmt.Errorf("message must exist"))
+	}
+	if this.UserId != nil {
+		if err := go_proto_validators.CallValidatorIfExists(this.UserId); err != nil {
+			return go_proto_validators.FieldError("UserId", err)
+		}
+	}
+	return nil
+}
+func (this *UnsubscribeByUserIdRequest) Validate() error {
+	if nil == this.UserId {
+		return go_proto_validators.FieldError("UserId", fmt.Errorf("message must exist"))
+	}
+	if this.UserId != nil {
+		if err := go_proto_validators.CallValidatorIfExists(this.UserId); err != nil {
+			return go_proto_validators.FieldError("UserId", err)
+		}
+	}
+	return nil
+}
+func (this *SubscribeByCoreIdRequest) Validate() error {
+	if nil == this.CoreId {
+		return go_proto_validators.FieldError("CoreId", fmt.Errorf("message must exist"))
+	}
+	if this.CoreId != nil {
+		if err := go_proto_validators.CallValidatorIfExists(this.CoreId); err != nil {
+			return go_proto_validators.FieldError("CoreId", err)
+		}
+	}
+	return nil
+}
+func (this *UnsubscribeByCoreIdRequest) Validate() error {
+	if nil == this.CoreId {
+		return go_proto_validators.FieldError("CoreId", fmt.Errorf("message must exist"))
+	}
+	if this.CoreId != nil {
+		if err := go_proto_validators.CallValidatorIfExists(this.CoreId); err != nil {
+			return go_proto_validators.FieldError("CoreId", err)
+		}
+	}
+	return nil
+}
 func (this *SubscribeRequest) Validate() error {
 	if nil == this.Session {
 		return go_proto_validators.FieldError("Session", fmt.Errorf("message must exist"))
@@ -58,6 +102,34 @@ func (this *SubscribeRequest) Validate() error {
 		if oneOfNester.UnsubscribeById != nil {
 			if err := go_proto_validators.CallValidatorIfExists(oneOfNester.UnsubscribeById); err != nil {
 				return go_proto_validators.FieldError("UnsubscribeById", err)
+			}
+		}
+	}
+	if oneOfNester, ok := this.GetPayload().(*SubscribeRequest_SubscribeByUserId); ok {
+		if oneOfNester.SubscribeByUserId != nil {
+			if err := go_proto_validators.CallValidatorIfExists(oneOfNester.SubscribeByUserId); err != nil {
+				return go_proto_validators.FieldError("SubscribeByUserId", err)
+			}
+		}
+	}
+	if oneOfNester, ok := this.GetPayload().(*SubscribeRequest_UnsubscribeByUserId); ok {
+		if oneOfNester.UnsubscribeByUserId != nil {
+			if err := go_proto_validators.CallValidatorIfExists(oneOfNester.UnsubscribeByUserId); err != nil {
+				return go_proto_validators.FieldError("UnsubscribeByUserId", err)
+			}
+		}
+	}
+	if oneOfNester, ok := this.GetPayload().(*SubscribeRequest_SubscribeByCoreId); ok {
+		if oneOfNester.SubscribeByCoreId != nil {
+			if err := go_proto_validators.CallValidatorIfExists(oneOfNester.SubscribeByCoreId); err != nil {
+				return go_proto_validators.FieldError("SubscribeByCoreId", err)
+			}
+		}
+	}
+	if oneOfNester, ok := this.GetPayload().(*SubscribeRequest_UnsubscribeByCoreId); ok {
+		if oneOfNester.UnsubscribeByCoreId != nil {
+			if err := go_proto_validators.CallValidatorIfExists(oneOfNester.UnsubscribeByCoreId); err != nil {
+				return go_proto_validators.FieldError("UnsubscribeByCoreId", err)
 			}
 		}
 	}

@@ -18,11 +18,31 @@ message UnsubscribeByIdRequest {
 	google.protobuf.StringValue id = 1 [(validator.field) = {msg_exists: true}];
 }
 
+message SubscribeByUserIdRequest {
+	google.protobuf.StringValue user_id = 1 [(validator.field) = {msg_exists: true}];
+}
+
+message UnsubscribeByUserIdRequest {
+	google.protobuf.StringValue user_id = 1 [(validator.field) = {msg_exists: true}];
+}
+
+message SubscribeByCoreIdRequest {
+	google.protobuf.StringValue core_id = 1 [(validator.field) = {msg_exists: true}];
+}
+
+message UnsubscribeByCoreIdRequest {
+	google.protobuf.StringValue core_id = 1 [(validator.field) = {msg_exists: true}];
+}
+
 message SubscribeRequest {
 	google.protobuf.UInt64Value session = 1 [(validator.field) = {msg_exists: true}];
 	oneof payload {
 		SubscribeByIdRequest subscribe_by_id = 2;
 		UnsubscribeByIdRequest unsubscribe_by_id = 3;
+		SubscribeByUserIdRequest subscribe_by_user_id = 4;
+		UnsubscribeByUserIdRequest unsubscribe_by_user_id = 5;
+		SubscribeByCoreIdRequest subscribe_by_core_id = 6;
+		UnsubscribeByCoreIdRequest unsubscribe_by_core_id = 7;
 	}
 }
 

@@ -36,6 +36,10 @@ It has these top-level messages:
 	SensorData
 	SubscribeByIdRequest
 	UnsubscribeByIdRequest
+	SubscribeByUserIdRequest
+	UnsubscribeByUserIdRequest
+	SubscribeByCoreIdRequest
+	UnsubscribeByCoreIdRequest
 	SubscribeRequest
 	SubscribeRequests
 	SubscribeResponse

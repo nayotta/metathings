@@ -32,7 +32,7 @@ func (m *SubscribeByIdRequest) Reset()         { *m = SubscribeByIdRequest{} }
 func (m *SubscribeByIdRequest) String() string { return proto.CompactTextString(m) }
 func (*SubscribeByIdRequest) ProtoMessage()    {}
 func (*SubscribeByIdRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_subscribe_50771a9fa51516f1, []int{0}
+	return fileDescriptor_subscribe_e2a325e5161c8eff, []int{0}
 }
 func (m *SubscribeByIdRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_SubscribeByIdRequest.Unmarshal(m, b)
@@ -70,7 +70,7 @@ func (m *UnsubscribeByIdRequest) Reset()         { *m = UnsubscribeByIdRequest{}
 func (m *UnsubscribeByIdRequest) String() string { return proto.CompactTextString(m) }
 func (*UnsubscribeByIdRequest) ProtoMessage()    {}
 func (*UnsubscribeByIdRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_subscribe_50771a9fa51516f1, []int{1}
+	return fileDescriptor_subscribe_e2a325e5161c8eff, []int{1}
 }
 func (m *UnsubscribeByIdRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_UnsubscribeByIdRequest.Unmarshal(m, b)
@@ -97,11 +97,167 @@ func (m *UnsubscribeByIdRequest) GetId() *wrappers.StringValue {
 	return nil
 }
 
+type SubscribeByUserIdRequest struct {
+	UserId               *wrappers.StringValue `protobuf:"bytes,1,opt,name=user_id,json=userId" json:"user_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
+}
+
+func (m *SubscribeByUserIdRequest) Reset()         { *m = SubscribeByUserIdRequest{} }
+func (m *SubscribeByUserIdRequest) String() string { return proto.CompactTextString(m) }
+func (*SubscribeByUserIdRequest) ProtoMessage()    {}
+func (*SubscribeByUserIdRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_subscribe_e2a325e5161c8eff, []int{2}
+}
+func (m *SubscribeByUserIdRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_SubscribeByUserIdRequest.Unmarshal(m, b)
+}
+func (m *SubscribeByUserIdRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_SubscribeByUserIdRequest.Marshal(b, m, deterministic)
+}
+func (dst *SubscribeByUserIdRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_SubscribeByUserIdRequest.Merge(dst, src)
+}
+func (m *SubscribeByUserIdRequest) XXX_Size() int {
+	return xxx_messageInfo_SubscribeByUserIdRequest.Size(m)
+}
+func (m *SubscribeByUserIdRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_SubscribeByUserIdRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_SubscribeByUserIdRequest proto.InternalMessageInfo
+
+func (m *SubscribeByUserIdRequest) GetUserId() *wrappers.StringValue {
+	if m != nil {
+		return m.UserId
+	}
+	return nil
+}
+
+type UnsubscribeByUserIdRequest struct {
+	UserId               *wrappers.StringValue `protobuf:"bytes,1,opt,name=user_id,json=userId" json:"user_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
+}
+
+func (m *UnsubscribeByUserIdRequest) Reset()         { *m = UnsubscribeByUserIdRequest{} }
+func (m *UnsubscribeByUserIdRequest) String() string { return proto.CompactTextString(m) }
+func (*UnsubscribeByUserIdRequest) ProtoMessage()    {}
+func (*UnsubscribeByUserIdRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_subscribe_e2a325e5161c8eff, []int{3}
+}
+func (m *UnsubscribeByUserIdRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_UnsubscribeByUserIdRequest.Unmarshal(m, b)
+}
+func (m *UnsubscribeByUserIdRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_UnsubscribeByUserIdRequest.Marshal(b, m, deterministic)
+}
+func (dst *UnsubscribeByUserIdRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_UnsubscribeByUserIdRequest.Merge(dst, src)
+}
+func (m *UnsubscribeByUserIdRequest) XXX_Size() int {
+	return xxx_messageInfo_UnsubscribeByUserIdRequest.Size(m)
+}
+func (m *UnsubscribeByUserIdRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_UnsubscribeByUserIdRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_UnsubscribeByUserIdRequest proto.InternalMessageInfo
+
+func (m *UnsubscribeByUserIdRequest) GetUserId() *wrappers.StringValue {
+	if m != nil {
+		return m.UserId
+	}
+	return nil
+}
+
+type SubscribeByCoreIdRequest struct {
+	CoreId               *wrappers.StringValue `protobuf:"bytes,1,opt,name=core_id,json=coreId" json:"core_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
+}
+
+func (m *SubscribeByCoreIdRequest) Reset()         { *m = SubscribeByCoreIdRequest{} }
+func (m *SubscribeByCoreIdRequest) String() string { return proto.CompactTextString(m) }
+func (*SubscribeByCoreIdRequest) ProtoMessage()    {}
+func (*SubscribeByCoreIdRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_subscribe_e2a325e5161c8eff, []int{4}
+}
+func (m *SubscribeByCoreIdRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_SubscribeByCoreIdRequest.Unmarshal(m, b)
+}
+func (m *SubscribeByCoreIdRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_SubscribeByCoreIdRequest.Marshal(b, m, deterministic)
+}
+func (dst *SubscribeByCoreIdRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_SubscribeByCoreIdRequest.Merge(dst, src)
+}
+func (m *SubscribeByCoreIdRequest) XXX_Size() int {
+	return xxx_messageInfo_SubscribeByCoreIdRequest.Size(m)
+}
+func (m *SubscribeByCoreIdRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_SubscribeByCoreIdRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_SubscribeByCoreIdRequest proto.InternalMessageInfo
+
+func (m *SubscribeByCoreIdRequest) GetCoreId() *wrappers.StringValue {
+	if m != nil {
+		return m.CoreId
+	}
+	return nil
+}
+
+type UnsubscribeByCoreIdRequest struct {
+	CoreId               *wrappers.StringValue `protobuf:"bytes,1,opt,name=core_id,json=coreId" json:"core_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
+}
+
+func (m *UnsubscribeByCoreIdRequest) Reset()         { *m = UnsubscribeByCoreIdRequest{} }
+func (m *UnsubscribeByCoreIdRequest) String() string { return proto.CompactTextString(m) }
+func (*UnsubscribeByCoreIdRequest) ProtoMessage()    {}
+func (*UnsubscribeByCoreIdRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_subscribe_e2a325e5161c8eff, []int{5}
+}
+func (m *UnsubscribeByCoreIdRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_UnsubscribeByCoreIdRequest.Unmarshal(m, b)
+}
+func (m *UnsubscribeByCoreIdRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_UnsubscribeByCoreIdRequest.Marshal(b, m, deterministic)
+}
+func (dst *UnsubscribeByCoreIdRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_UnsubscribeByCoreIdRequest.Merge(dst, src)
+}
+func (m *UnsubscribeByCoreIdRequest) XXX_Size() int {
+	return xxx_messageInfo_UnsubscribeByCoreIdRequest.Size(m)
+}
+func (m *UnsubscribeByCoreIdRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_UnsubscribeByCoreIdRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_UnsubscribeByCoreIdRequest proto.InternalMessageInfo
+
+func (m *UnsubscribeByCoreIdRequest) GetCoreId() *wrappers.StringValue {
+	if m != nil {
+		return m.CoreId
+	}
+	return nil
+}
+
 type SubscribeRequest struct {
 	Session *wrappers.UInt64Value `protobuf:"bytes,1,opt,name=session" json:"session,omitempty"`
 	// Types that are valid to be assigned to Payload:
 	//	*SubscribeRequest_SubscribeById
 	//	*SubscribeRequest_UnsubscribeById
+	//	*SubscribeRequest_SubscribeByUserId
+	//	*SubscribeRequest_UnsubscribeByUserId
+	//	*SubscribeRequest_SubscribeByCoreId
+	//	*SubscribeRequest_UnsubscribeByCoreId
 	Payload              isSubscribeRequest_Payload `protobuf_oneof:"payload"`
 	XXX_NoUnkeyedLiteral struct{}                   `json:"-"`
 	XXX_unrecognized     []byte                     `json:"-"`
@@ -112,7 +268,7 @@ func (m *SubscribeRequest) Reset()         { *m = SubscribeRequest{} }
 func (m *SubscribeRequest) String() string { return proto.CompactTextString(m) }
 func (*SubscribeRequest) ProtoMessage()    {}
 func (*SubscribeRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_subscribe_50771a9fa51516f1, []int{2}
+	return fileDescriptor_subscribe_e2a325e5161c8eff, []int{6}
 }
 func (m *SubscribeRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_SubscribeRequest.Unmarshal(m, b)
@@ -142,9 +298,25 @@ type SubscribeRequest_SubscribeById struct {
 type SubscribeRequest_UnsubscribeById struct {
 	UnsubscribeById *UnsubscribeByIdRequest `protobuf:"bytes,3,opt,name=unsubscribe_by_id,json=unsubscribeById,oneof"`
 }
+type SubscribeRequest_SubscribeByUserId struct {
+	SubscribeByUserId *SubscribeByUserIdRequest `protobuf:"bytes,4,opt,name=subscribe_by_user_id,json=subscribeByUserId,oneof"`
+}
+type SubscribeRequest_UnsubscribeByUserId struct {
+	UnsubscribeByUserId *UnsubscribeByUserIdRequest `protobuf:"bytes,5,opt,name=unsubscribe_by_user_id,json=unsubscribeByUserId,oneof"`
+}
+type SubscribeRequest_SubscribeByCoreId struct {
+	SubscribeByCoreId *SubscribeByCoreIdRequest `protobuf:"bytes,6,opt,name=subscribe_by_core_id,json=subscribeByCoreId,oneof"`
+}
+type SubscribeRequest_UnsubscribeByCoreId struct {
+	UnsubscribeByCoreId *UnsubscribeByCoreIdRequest `protobuf:"bytes,7,opt,name=unsubscribe_by_core_id,json=unsubscribeByCoreId,oneof"`
+}
 
-func (*SubscribeRequest_SubscribeById) isSubscribeRequest_Payload()   {}
-func (*SubscribeRequest_UnsubscribeById) isSubscribeRequest_Payload() {}
+func (*SubscribeRequest_SubscribeById) isSubscribeRequest_Payload()       {}
+func (*SubscribeRequest_UnsubscribeById) isSubscribeRequest_Payload()     {}
+func (*SubscribeRequest_SubscribeByUserId) isSubscribeRequest_Payload()   {}
+func (*SubscribeRequest_UnsubscribeByUserId) isSubscribeRequest_Payload() {}
+func (*SubscribeRequest_SubscribeByCoreId) isSubscribeRequest_Payload()   {}
+func (*SubscribeRequest_UnsubscribeByCoreId) isSubscribeRequest_Payload() {}
 
 func (m *SubscribeRequest) GetPayload() isSubscribeRequest_Payload {
 	if m != nil {
@@ -174,11 +346,43 @@ func (m *SubscribeRequest) GetUnsubscribeById() *UnsubscribeByIdRequest {
 	return nil
 }
 
+func (m *SubscribeRequest) GetSubscribeByUserId() *SubscribeByUserIdRequest {
+	if x, ok := m.GetPayload().(*SubscribeRequest_SubscribeByUserId); ok {
+		return x.SubscribeByUserId
+	}
+	return nil
+}
+
+func (m *SubscribeRequest) GetUnsubscribeByUserId() *UnsubscribeByUserIdRequest {
+	if x, ok := m.GetPayload().(*SubscribeRequest_UnsubscribeByUserId); ok {
+		return x.UnsubscribeByUserId
+	}
+	return nil
+}
+
+func (m *SubscribeRequest) GetSubscribeByCoreId() *SubscribeByCoreIdRequest {
+	if x, ok := m.GetPayload().(*SubscribeRequest_SubscribeByCoreId); ok {
+		return x.SubscribeByCoreId
+	}
+	return nil
+}
+
+func (m *SubscribeRequest) GetUnsubscribeByCoreId() *UnsubscribeByCoreIdRequest {
+	if x, ok := m.GetPayload().(*SubscribeRequest_UnsubscribeByCoreId); ok {
+		return x.UnsubscribeByCoreId
+	}
+	return nil
+}
+
 // XXX_OneofFuncs is for the internal use of the proto package.
 func (*SubscribeRequest) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) error, func(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error), func(msg proto.Message) (n int), []interface{}) {
 	return _SubscribeRequest_OneofMarshaler, _SubscribeRequest_OneofUnmarshaler, _SubscribeRequest_OneofSizer, []interface{}{
 		(*SubscribeRequest_SubscribeById)(nil),
 		(*SubscribeRequest_UnsubscribeById)(nil),
+		(*SubscribeRequest_SubscribeByUserId)(nil),
+		(*SubscribeRequest_UnsubscribeByUserId)(nil),
+		(*SubscribeRequest_SubscribeByCoreId)(nil),
+		(*SubscribeRequest_UnsubscribeByCoreId)(nil),
 	}
 }
 
@@ -194,6 +398,26 @@ func _SubscribeRequest_OneofMarshaler(msg proto.Message, b *proto.Buffer) error 
 	case *SubscribeRequest_UnsubscribeById:
 		b.EncodeVarint(3<<3 | proto.WireBytes)
 		if err := b.EncodeMessage(x.UnsubscribeById); err != nil {
+			return err
+		}
+	case *SubscribeRequest_SubscribeByUserId:
+		b.EncodeVarint(4<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.SubscribeByUserId); err != nil {
+			return err
+		}
+	case *SubscribeRequest_UnsubscribeByUserId:
+		b.EncodeVarint(5<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.UnsubscribeByUserId); err != nil {
+			return err
+		}
+	case *SubscribeRequest_SubscribeByCoreId:
+		b.EncodeVarint(6<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.SubscribeByCoreId); err != nil {
+			return err
+		}
+	case *SubscribeRequest_UnsubscribeByCoreId:
+		b.EncodeVarint(7<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.UnsubscribeByCoreId); err != nil {
 			return err
 		}
 	case nil:
@@ -222,6 +446,38 @@ func _SubscribeRequest_OneofUnmarshaler(msg proto.Message, tag, wire int, b *pro
 		err := b.DecodeMessage(msg)
 		m.Payload = &SubscribeRequest_UnsubscribeById{msg}
 		return true, err
+	case 4: // payload.subscribe_by_user_id
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(SubscribeByUserIdRequest)
+		err := b.DecodeMessage(msg)
+		m.Payload = &SubscribeRequest_SubscribeByUserId{msg}
+		return true, err
+	case 5: // payload.unsubscribe_by_user_id
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(UnsubscribeByUserIdRequest)
+		err := b.DecodeMessage(msg)
+		m.Payload = &SubscribeRequest_UnsubscribeByUserId{msg}
+		return true, err
+	case 6: // payload.subscribe_by_core_id
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(SubscribeByCoreIdRequest)
+		err := b.DecodeMessage(msg)
+		m.Payload = &SubscribeRequest_SubscribeByCoreId{msg}
+		return true, err
+	case 7: // payload.unsubscribe_by_core_id
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(UnsubscribeByCoreIdRequest)
+		err := b.DecodeMessage(msg)
+		m.Payload = &SubscribeRequest_UnsubscribeByCoreId{msg}
+		return true, err
 	default:
 		return false, nil
 	}
@@ -238,6 +494,26 @@ func _SubscribeRequest_OneofSizer(msg proto.Message) (n int) {
 		n += s
 	case *SubscribeRequest_UnsubscribeById:
 		s := proto.Size(x.UnsubscribeById)
+		n += 1 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *SubscribeRequest_SubscribeByUserId:
+		s := proto.Size(x.SubscribeByUserId)
+		n += 1 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *SubscribeRequest_UnsubscribeByUserId:
+		s := proto.Size(x.UnsubscribeByUserId)
+		n += 1 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *SubscribeRequest_SubscribeByCoreId:
+		s := proto.Size(x.SubscribeByCoreId)
+		n += 1 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *SubscribeRequest_UnsubscribeByCoreId:
+		s := proto.Size(x.UnsubscribeByCoreId)
 		n += 1 // tag and wire
 		n += proto.SizeVarint(uint64(s))
 		n += s
@@ -259,7 +535,7 @@ func (m *SubscribeRequests) Reset()         { *m = SubscribeRequests{} }
 func (m *SubscribeRequests) String() string { return proto.CompactTextString(m) }
 func (*SubscribeRequests) ProtoMessage()    {}
 func (*SubscribeRequests) Descriptor() ([]byte, []int) {
-	return fileDescriptor_subscribe_50771a9fa51516f1, []int{3}
+	return fileDescriptor_subscribe_e2a325e5161c8eff, []int{7}
 }
 func (m *SubscribeRequests) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_SubscribeRequests.Unmarshal(m, b)
@@ -298,7 +574,7 @@ func (m *SubscribeResponse) Reset()         { *m = SubscribeResponse{} }
 func (m *SubscribeResponse) String() string { return proto.CompactTextString(m) }
 func (*SubscribeResponse) ProtoMessage()    {}
 func (*SubscribeResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_subscribe_50771a9fa51516f1, []int{4}
+	return fileDescriptor_subscribe_e2a325e5161c8eff, []int{8}
 }
 func (m *SubscribeResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_SubscribeResponse.Unmarshal(m, b)
@@ -343,7 +619,7 @@ func (m *SubscribeResponses) Reset()         { *m = SubscribeResponses{} }
 func (m *SubscribeResponses) String() string { return proto.CompactTextString(m) }
 func (*SubscribeResponses) ProtoMessage()    {}
 func (*SubscribeResponses) Descriptor() ([]byte, []int) {
-	return fileDescriptor_subscribe_50771a9fa51516f1, []int{5}
+	return fileDescriptor_subscribe_e2a325e5161c8eff, []int{9}
 }
 func (m *SubscribeResponses) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_SubscribeResponses.Unmarshal(m, b)
@@ -373,41 +649,52 @@ func (m *SubscribeResponses) GetResponses() []*SubscribeResponse {
 func init() {
 	proto.RegisterType((*SubscribeByIdRequest)(nil), "ai.metathings.service.sensord.SubscribeByIdRequest")
 	proto.RegisterType((*UnsubscribeByIdRequest)(nil), "ai.metathings.service.sensord.UnsubscribeByIdRequest")
+	proto.RegisterType((*SubscribeByUserIdRequest)(nil), "ai.metathings.service.sensord.SubscribeByUserIdRequest")
+	proto.RegisterType((*UnsubscribeByUserIdRequest)(nil), "ai.metathings.service.sensord.UnsubscribeByUserIdRequest")
+	proto.RegisterType((*SubscribeByCoreIdRequest)(nil), "ai.metathings.service.sensord.SubscribeByCoreIdRequest")
+	proto.RegisterType((*UnsubscribeByCoreIdRequest)(nil), "ai.metathings.service.sensord.UnsubscribeByCoreIdRequest")
 	proto.RegisterType((*SubscribeRequest)(nil), "ai.metathings.service.sensord.SubscribeRequest")
 	proto.RegisterType((*SubscribeRequests)(nil), "ai.metathings.service.sensord.SubscribeRequests")
 	proto.RegisterType((*SubscribeResponse)(nil), "ai.metathings.service.sensord.SubscribeResponse")
 	proto.RegisterType((*SubscribeResponses)(nil), "ai.metathings.service.sensord.SubscribeResponses")
 }
 
-func init() { proto.RegisterFile("subscribe.proto", fileDescriptor_subscribe_50771a9fa51516f1) }
+func init() { proto.RegisterFile("subscribe.proto", fileDescriptor_subscribe_e2a325e5161c8eff) }
 
-var fileDescriptor_subscribe_50771a9fa51516f1 = []byte{
-	// 418 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x52, 0x4d, 0x8f, 0xd3, 0x30,
-	0x10, 0xdd, 0x64, 0x57, 0xbb, 0xac, 0x17, 0xb4, 0xac, 0x85, 0x50, 0xb4, 0xe2, 0xa3, 0xca, 0x69,
-	0x39, 0xac, 0x8d, 0xda, 0xd2, 0x0b, 0x82, 0x43, 0xc5, 0xa1, 0x15, 0xa8, 0x87, 0x54, 0xe5, 0x86,
-	0x8a, 0x13, 0x9b, 0xd4, 0x6a, 0x6a, 0x07, 0x8f, 0xd3, 0x2a, 0x3f, 0x87, 0x5f, 0x86, 0xc4, 0x2f,
-	0x41, 0xca, 0x47, 0xdb, 0x94, 0x42, 0x7b, 0xe0, 0xe4, 0x19, 0x4d, 0xde, 0x7b, 0xf3, 0xde, 0x04,
-	0x5d, 0x43, 0x16, 0x42, 0x64, 0x64, 0x28, 0x48, 0x6a, 0xb4, 0xd5, 0xf8, 0x39, 0x93, 0x64, 0x21,
-	0x2c, 0xb3, 0x33, 0xa9, 0x62, 0x20, 0x20, 0xcc, 0x52, 0x46, 0x82, 0x80, 0x50, 0xa0, 0x0d, 0xbf,
-	0x7d, 0x11, 0x6b, 0x1d, 0x27, 0x82, 0x16, 0x1f, 0x87, 0xd9, 0x37, 0xba, 0x32, 0x2c, 0x4d, 0x85,
-	0x81, 0x12, 0x7e, 0xdb, 0x8b, 0xa5, 0x9d, 0x65, 0x21, 0x89, 0xf4, 0x82, 0x2e, 0x56, 0xd2, 0xce,
-	0xf5, 0x8a, 0xc6, 0xfa, 0xbe, 0x18, 0xde, 0x2f, 0x59, 0x22, 0x39, 0xb3, 0xda, 0x00, 0x5d, 0x97,
-	0x15, 0xee, 0xed, 0x16, 0x4e, 0xb1, 0x5c, 0x5b, 0xcb, 0xe8, 0x66, 0x0d, 0x9a, 0xce, 0xe3, 0x52,
-	0x92, 0x96, 0x8b, 0x54, 0x4f, 0x05, 0x7e, 0xb8, 0xdd, 0xf9, 0x9f, 0xd0, 0x93, 0x71, 0x6d, 0xaa,
-	0x9f, 0x0f, 0x79, 0x20, 0xbe, 0x67, 0x02, 0x2c, 0xee, 0x22, 0x57, 0x72, 0xcf, 0x69, 0x39, 0x77,
-	0x57, 0xed, 0x67, 0xa4, 0xf4, 0x41, 0x6a, 0x1f, 0x64, 0x6c, 0x8d, 0x54, 0xf1, 0x67, 0x96, 0x64,
-	0xa2, 0x7f, 0xfe, 0xeb, 0xe7, 0x4b, 0xb7, 0xe5, 0x04, 0xae, 0xe4, 0xfe, 0x08, 0x3d, 0x9d, 0x28,
-	0xf8, 0x7f, 0x7c, 0x3f, 0x5c, 0xf4, 0x78, 0xbd, 0x5e, 0x4d, 0xf5, 0x1e, 0x5d, 0x80, 0x00, 0x90,
-	0x5a, 0xfd, 0x95, 0x6f, 0x32, 0x54, 0xb6, 0xd7, 0x6d, 0xf2, 0xd5, 0x20, 0xfc, 0x65, 0xeb, 0x8e,
-	0xd3, 0x30, 0x9f, 0x4a, 0xee, 0xb9, 0x05, 0x4f, 0x87, 0xfc, 0xf3, 0x9c, 0x64, 0x5f, 0x50, 0x83,
-	0x93, 0xe0, 0x51, 0xc3, 0x30, 0x8e, 0xd0, 0x4d, 0xa6, 0x76, 0x05, 0x4e, 0x0b, 0x81, 0x37, 0x07,
-	0x04, 0xf6, 0x67, 0x37, 0x38, 0x09, 0xae, 0xb3, 0xe6, 0xa4, 0x7f, 0x89, 0x2e, 0x52, 0x96, 0x27,
-	0x9a, 0x71, 0xff, 0x2b, 0xba, 0xd9, 0x8d, 0x08, 0xf0, 0x47, 0xf4, 0xc0, 0x54, 0xb5, 0xe7, 0xb4,
-	0x4e, 0xef, 0xae, 0xda, 0xf4, 0x58, 0x73, 0x15, 0x47, 0xb0, 0x26, 0xf0, 0x93, 0x86, 0x02, 0xa4,
-	0x5a, 0x81, 0xc0, 0x5e, 0xf3, 0x0a, 0x67, 0x9b, 0x7c, 0xdf, 0xa1, 0x33, 0xce, 0x2c, 0xab, 0x42,
-	0x7d, 0x75, 0x48, 0xb7, 0x78, 0x3f, 0x30, 0xcb, 0x82, 0x02, 0xe6, 0x73, 0x84, 0xff, 0x50, 0x03,
-	0x3c, 0x42, 0x97, 0xa6, 0x6e, 0x2a, 0x47, 0xaf, 0x8f, 0x77, 0x54, 0x02, 0x83, 0x0d, 0x45, 0x78,
-	0x5e, 0xfc, 0x2b, 0x9d, 0xdf, 0x01, 0x00, 0x00, 0xff, 0xff, 0x30, 0x8d, 0x35, 0x74, 0xd3, 0x03,
-	0x00, 0x00,
+var fileDescriptor_subscribe_e2a325e5161c8eff = []byte{
+	// 535 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x93, 0x5f, 0x6f, 0xd3, 0x30,
+	0x14, 0xc5, 0xdb, 0xae, 0x6b, 0x99, 0x07, 0x1a, 0x35, 0xd3, 0x54, 0x55, 0xfc, 0xa9, 0xf2, 0x34,
+	0x1e, 0xe6, 0xa0, 0x6d, 0x0c, 0x21, 0x34, 0x1e, 0x0a, 0x0f, 0x9d, 0x40, 0x7b, 0xc8, 0x54, 0x24,
+	0x84, 0xd0, 0x70, 0x12, 0x93, 0x99, 0xb5, 0x71, 0xf0, 0xb5, 0x57, 0xf5, 0xc3, 0x22, 0x24, 0x3e,
+	0x09, 0xc2, 0x49, 0xda, 0x3a, 0x2d, 0x5b, 0x23, 0xf5, 0x29, 0x89, 0x6e, 0xee, 0xef, 0x9c, 0x23,
+	0x9d, 0x8b, 0x76, 0x40, 0xfb, 0x10, 0x48, 0xee, 0x33, 0x92, 0x48, 0xa1, 0x04, 0x7e, 0x42, 0x39,
+	0x19, 0x31, 0x45, 0xd5, 0x15, 0x8f, 0x23, 0x20, 0xc0, 0xe4, 0x0d, 0x0f, 0x18, 0x01, 0x16, 0x83,
+	0x90, 0x61, 0xe7, 0x69, 0x24, 0x44, 0x34, 0x64, 0xae, 0xf9, 0xd9, 0xd7, 0xdf, 0xdd, 0xb1, 0xa4,
+	0x49, 0xc2, 0x24, 0xa4, 0xeb, 0x9d, 0x93, 0x88, 0xab, 0x2b, 0xed, 0x93, 0x40, 0x8c, 0xdc, 0xd1,
+	0x98, 0xab, 0x6b, 0x31, 0x76, 0x23, 0x71, 0x60, 0x86, 0x07, 0x37, 0x74, 0xc8, 0x43, 0xaa, 0x84,
+	0x04, 0x77, 0xfa, 0x9a, 0xed, 0xbd, 0x99, 0xdb, 0x8b, 0xe9, 0x44, 0x28, 0x45, 0xdd, 0x99, 0x0d,
+	0x37, 0xb9, 0x8e, 0x52, 0x49, 0x37, 0x35, 0x92, 0x3d, 0xb2, 0xe5, 0xfb, 0xf3, 0x5f, 0xce, 0x47,
+	0xb4, 0x7b, 0x91, 0x87, 0xea, 0x4d, 0xce, 0x42, 0x8f, 0xfd, 0xd4, 0x0c, 0x14, 0x3e, 0x46, 0x35,
+	0x1e, 0xb6, 0xab, 0xdd, 0xea, 0xfe, 0xf6, 0xe1, 0x63, 0x92, 0xe6, 0x20, 0x79, 0x0e, 0x72, 0xa1,
+	0x24, 0x8f, 0xa3, 0x4f, 0x74, 0xa8, 0x59, 0xaf, 0xf1, 0xe7, 0xf7, 0xb3, 0x5a, 0xb7, 0xea, 0xd5,
+	0x78, 0xe8, 0x9c, 0xa3, 0xbd, 0x41, 0x0c, 0xeb, 0xe3, 0x7d, 0x46, 0xed, 0x39, 0x77, 0x03, 0x60,
+	0x72, 0x46, 0x3c, 0x45, 0x4d, 0x0d, 0x4c, 0x5e, 0x96, 0xc4, 0x36, 0xb4, 0xa1, 0x38, 0x5f, 0x50,
+	0xc7, 0xb2, 0xba, 0x56, 0xb8, 0xed, 0xfb, 0x9d, 0x90, 0xcc, 0x42, 0x07, 0x42, 0xb2, 0xd2, 0xe8,
+	0xc0, 0x50, 0x16, 0x7c, 0xaf, 0x15, 0xfe, 0x6b, 0x13, 0x3d, 0x9c, 0x1a, 0xcf, 0x99, 0x6f, 0x51,
+	0x13, 0x18, 0x00, 0x17, 0xf1, 0x7f, 0x99, 0x83, 0xb3, 0x58, 0x9d, 0x1c, 0xdb, 0xcc, 0x7c, 0x09,
+	0x7f, 0x9d, 0xbb, 0x9b, 0x4b, 0x7f, 0xf2, 0xcf, 0x5b, 0xcd, 0x70, 0x8e, 0xc8, 0xad, 0xe7, 0x43,
+	0x96, 0x15, 0xb3, 0x5f, 0xf1, 0x1e, 0x58, 0x05, 0xc3, 0x01, 0x6a, 0xe9, 0xb8, 0x28, 0xb0, 0x61,
+	0x04, 0x5e, 0xde, 0x21, 0xb0, 0xbc, 0xab, 0xfd, 0x8a, 0xb7, 0xa3, 0xed, 0x09, 0xfe, 0x81, 0x76,
+	0x2d, 0x89, 0xbc, 0x1c, 0x75, 0xa3, 0xf3, 0x6a, 0xf5, 0x20, 0x56, 0xcd, 0xfa, 0x15, 0xaf, 0xb5,
+	0x50, 0x41, 0x9c, 0xa0, 0xbd, 0x42, 0xa0, 0x5c, 0x6d, 0xd3, 0xa8, 0xbd, 0x2e, 0x93, 0xaa, 0xa8,
+	0xf7, 0x48, 0x2f, 0x4e, 0x17, 0xd2, 0xe5, 0x15, 0x6a, 0x94, 0x4d, 0x67, 0x95, 0xb1, 0x90, 0x2e,
+	0x9d, 0x2d, 0x49, 0x97, 0xab, 0x35, 0xcb, 0xa7, 0x2b, 0xea, 0xd9, 0xe9, 0xd2, 0x69, 0x6f, 0x0b,
+	0x35, 0x13, 0x3a, 0x19, 0x0a, 0x1a, 0x3a, 0xdf, 0x50, 0xab, 0x58, 0x6f, 0xc0, 0x1f, 0xd0, 0x3d,
+	0x99, 0xbd, 0xb7, 0xab, 0xdd, 0x8d, 0xfd, 0xed, 0x43, 0x77, 0xd5, 0xc4, 0x19, 0xc3, 0x9b, 0x02,
+	0x9c, 0xa1, 0xa5, 0x00, 0x89, 0x88, 0x81, 0xe1, 0xb6, 0x7d, 0x41, 0xf5, 0xd9, 0x6d, 0x9c, 0xa2,
+	0x7a, 0x48, 0x15, 0xcd, 0x0e, 0xe2, 0xf9, 0x5d, 0xba, 0xe6, 0xf9, 0x9e, 0x2a, 0xea, 0x99, 0x35,
+	0x27, 0x44, 0x78, 0x41, 0x0d, 0xf0, 0x39, 0xda, 0x92, 0xf9, 0x47, 0x96, 0xe8, 0xc5, 0xea, 0x89,
+	0xd2, 0x45, 0x6f, 0x86, 0xf0, 0x1b, 0xe6, 0xce, 0x8f, 0xfe, 0x06, 0x00, 0x00, 0xff, 0xff, 0x5d,
+	0x1b, 0xc0, 0xd1, 0xff, 0x06, 0x00, 0x00,
 }
