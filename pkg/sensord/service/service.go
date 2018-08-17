@@ -20,9 +20,8 @@ import (
 	sensor_pb "github.com/nayotta/metathings/pkg/proto/sensor"
 	pb "github.com/nayotta/metathings/pkg/proto/sensord"
 	state_helper "github.com/nayotta/metathings/pkg/sensor/state"
+	_ "github.com/nayotta/metathings/pkg/sensord/pubsub/kafka"
 	"github.com/nayotta/metathings/pkg/sensord/service/hub"
-	_ "github.com/nayotta/metathings/pkg/sensord/service/hub/default"
-	_ "github.com/nayotta/metathings/pkg/sensord/service/hub/kafka"
 	storage "github.com/nayotta/metathings/pkg/sensord/storage"
 )
 
