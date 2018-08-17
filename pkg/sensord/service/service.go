@@ -421,7 +421,7 @@ func (srv *metathingsSensordService) handle_subscribe_by_id(stm pb.SensordServic
 	}
 
 	subscriber_opt := opt_helper.NewOption("sensor_id", snr_id)
-	sub, err := srv.hub.Subscriber(subscriber_opt)
+	sub, err := srv.hub.NewSubscriber(subscriber_opt)
 	if err != nil {
 		srv.logger.WithField("snr_id", snr_id).Errorf("failed to get subscribler")
 		return nil
@@ -528,7 +528,7 @@ func (srv *metathingsSensordService) Publish(stm pb.SensordService_PublishServer
 	}
 
 	snr := ss[0]
-	publisher, err := srv.hub.Publisher(srv.publisher_option(snr))
+	publisher, err := srv.hub.NewPublisher(srv.publisher_option(snr))
 	if err != nil {
 		srv.logger.WithError(err).WithField("application_credential_id", app_cred_id).Errorf("failed to get publisher")
 		return status.Errorf(codes.Internal, err.Error())

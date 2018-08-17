@@ -26,7 +26,7 @@ func symbol(opt opt_helper.Option) string {
 	return fmt.Sprintf("sensor.%v", opt.GetString("sensor_id"))
 }
 
-func (self *defaultHub) Subscriber(opt opt_helper.Option) (hub.Subscriber, error) {
+func (self *defaultHub) NewSubscriber(opt opt_helper.Option) (hub.Subscriber, error) {
 	var ok bool
 	var id uint64
 	var m map[uint64]chan *sensord_pb.SensorData
@@ -57,7 +57,7 @@ func (self *defaultHub) Subscriber(opt opt_helper.Option) (hub.Subscriber, error
 	return sub, nil
 }
 
-func (self *defaultHub) Publisher(opt opt_helper.Option) (hub.Publisher, error) {
+func (self *defaultHub) NewPublisher(opt opt_helper.Option) (hub.Publisher, error) {
 	var ok bool
 	var ch chan *sensord_pb.SensorData
 	sym := symbol(opt)
@@ -85,6 +85,14 @@ func (self *defaultHub) Publisher(opt opt_helper.Option) (hub.Publisher, error) 
 	self.pub_counters[sym]++
 
 	return pub, nil
+}
+
+func (self *defaultHub) GetSubscriber(opt opt_helper.Option) (hub.Subscriber, error) {
+	panic("unimplemented")
+}
+
+func (self *defaultHub) GetPublisher(opt opt_helper.Option) (hub.Publisher, error) {
+	panic("unimplemented")
 }
 
 func (self *defaultHub) closeSub(sp hub.SubPub) error {

@@ -24,39 +24,39 @@ func (suite *defaultHubTestSuite) SetupTest() {
 }
 
 func (suite *defaultHubTestSuite) TestNewSubscriber() {
-	sub, err := suite.hub.Subscriber("/test")
+	sub, err := suite.hub.NewSubscriber(opt_helper.NewOption("sensor_id", "test"))
 	suite.Nil(err)
 	suite.NotEqual(0, sub.Id())
 }
 
 func (suite *defaultHubTestSuite) TestCloseSubscriber() {
-	sub, _ := suite.hub.Subscriber("/test")
-	err := suite.hub.Close(sub)
+	sub, _ := suite.hub.NewSubscriber(opt_helper.NewOption("sensor_id", "test"))
+	err := sub.Close()
 	suite.Nil(err)
 }
 
 func (suite *defaultHubTestSuite) TestNewPublisher() {
-	pub, err := suite.hub.Publisher("/test")
+	pub, err := suite.hub.NewPublisher(opt_helper.NewOption("sensor_id", "test"))
 	suite.Nil(err)
 	suite.NotEqual(0, pub.Id())
 }
 
 func (suite *defaultHubTestSuite) TestClosePublisher() {
-	pub, _ := suite.hub.Publisher("/test")
-	err := suite.hub.Close(pub)
+	pub, _ := suite.hub.NewPublisher(opt_helper.NewOption("sensor_id", "test"))
+	err := pub.Close()
 	suite.Nil(err)
 }
 
 func (suite *defaultHubTestSuite) TestPublishEmptyData() {
-	pub, _ := suite.hub.Publisher("/test")
+	pub, _ := suite.hub.NewPublisher(opt_helper.NewOption("sensor_id", "test"))
 	dat := &sensord_pb.SensorData{}
 	err := pub.Publish(dat)
 	suite.Nil(err)
 }
 
 func (suite *defaultHubTestSuite) TestSubscribeData() {
-	pub, _ := suite.hub.Publisher("/test")
-	sub, _ := suite.hub.Subscriber("/test")
+	pub, _ := suite.hub.NewPublisher(opt_helper.NewOption("sensor_id", "test"))
+	sub, _ := suite.hub.NewSubscriber(opt_helper.NewOption("sensor_id", "test"))
 	go func() {
 		pub.Publish(&sensord_pb.SensorData{
 			SensorId: "test",
@@ -70,9 +70,9 @@ func (suite *defaultHubTestSuite) TestSubscribeData() {
 func (suite *defaultHubTestSuite) Test1Pub2Sub() {
 	wg := new(sync.WaitGroup)
 
-	pub, _ := suite.hub.Publisher("/test")
-	sub0, _ := suite.hub.Subscriber("/test")
-	sub1, _ := suite.hub.Subscriber("/test")
+	pub, _ := suite.hub.NewPublisher(opt_helper.NewOption("sensor_id", "test"))
+	sub0, _ := suite.hub.NewSubscriber(opt_helper.NewOption("sensor_id", "test"))
+	sub1, _ := suite.hub.NewSubscriber(opt_helper.NewOption("sensor_id", "test"))
 
 	wg.Add(2)
 	go func() {

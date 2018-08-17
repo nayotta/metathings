@@ -42,7 +42,7 @@ type kafkaHub struct {
 	glock  *sync.Mutex
 }
 
-func (self *kafkaHub) Subscriber(opt opt_helper.Option) (hub.Subscriber, error) {
+func (self *kafkaHub) NewSubscriber(opt opt_helper.Option) (hub.Subscriber, error) {
 	sub_id := id_helper.NewUint64Id()
 	brokers := self.opt.Brokers
 	group_id := fmt.Sprintf("group.sensord.%v", sub_id)
@@ -80,7 +80,7 @@ func (self *kafkaHub) Subscriber(opt opt_helper.Option) (hub.Subscriber, error) 
 	return sub, nil
 }
 
-func (self *kafkaHub) Publisher(opt opt_helper.Option) (hub.Publisher, error) {
+func (self *kafkaHub) NewPublisher(opt opt_helper.Option) (hub.Publisher, error) {
 	pub_id := id_helper.NewUint64Id()
 	brokers := strings.Join(self.opt.Brokers, ",")
 	cfg := &kafka.ConfigMap{
@@ -109,6 +109,14 @@ func (self *kafkaHub) Publisher(opt opt_helper.Option) (hub.Publisher, error) {
 	}).Debugf("create publisher")
 
 	return pub, nil
+}
+
+func (self *kafkaHub) GetSubscriber(opt opt_helper.Option) (hub.Subscriber, error) {
+	panic("unimplemented")
+}
+
+func (self *kafkaHub) GetPublisher(opt opt_helper.Option) (hub.Publisher, error) {
+	panic("unimplemented")
 }
 
 type kafkaSubscriber struct {

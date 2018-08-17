@@ -23,8 +23,10 @@ type SubPub interface {
 }
 
 type Hub interface {
-	Subscriber(opt_helper.Option) (Subscriber, error)
-	Publisher(opt_helper.Option) (Publisher, error)
+	NewSubscriber(opt_helper.Option) (Subscriber, error)
+	NewPublisher(opt_helper.Option) (Publisher, error)
+	GetSubscriber(opt_helper.Option) (Subscriber, error)
+	GetPublisher(opt_helper.Option) (Publisher, error)
 }
 
 type Subscriber interface {
