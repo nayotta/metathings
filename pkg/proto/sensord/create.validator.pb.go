@@ -35,11 +35,8 @@ It has these top-level messages:
 	Sensor
 	SensorData
 	SubscribeByIdRequest
-	UnsubscribeByIdRequest
 	SubscribeByUserIdRequest
-	UnsubscribeByUserIdRequest
 	SubscribeByCoreIdRequest
-	UnsubscribeByCoreIdRequest
 	SubscribeRequest
 	SubscribeRequests
 	SubscribeResponse
