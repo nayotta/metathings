@@ -46,11 +46,51 @@ type kafkaPubSubManager struct {
 }
 
 func (self *kafkaPubSubManager) newPublisherManager(id uint64) (*kafkaPublisherManager, error) {
-	panic("unimplemented")
+	pub := &kafkaPublisherManager{
+		id:     id,
+		opt:    self.opt,
+		logger: self.logger.WithField("pub_mgr_id", id),
+		mlock:  &sync.Mutex{},
+		closed: false,
+	}
+	pub.close_callback = func() error {
+		self.glock.Lock()
+		defer self.glock.Unlock()
+
+		id := pub.Id()
+		if _, ok := self.pub_mgrs[id]; ok {
+			delete(self.pub_mgrs, id)
+		}
+
+		return nil
+	}
+	self.pub_mgrs[id] = pub
+
+	return pub, nil
 }
 
 func (self *kafkaPubSubManager) newSubscriberManager(id uint64) (*kafkaSubscriberManager, error) {
-	panic("unimplemented")
+	sub := &kafkaSubscriberManager{
+		id:     id,
+		opt:    self.opt,
+		logger: self.logger.WithField("sub_mgr_id", id),
+		mlock:  &sync.Mutex{},
+		closed: false,
+	}
+	sub.close_callback = func() error {
+		self.glock.Lock()
+		defer self.glock.Unlock()
+
+		id := sub.Id()
+		if _, ok := self.sub_mgrs[id]; ok {
+			delete(self.sub_mgrs, id)
+		}
+
+		return nil
+	}
+	self.sub_mgrs[id] = sub
+
+	return sub, nil
 }
 
 func (self *kafkaPubSubManager) GetPublisherManager(id uint64) (pubsub.PublisherManager, error) {
@@ -122,6 +162,7 @@ func (self *kafkaPubSubManager) ListSubscriberManagers() (map[uint64]pubsub.Subs
 }
 
 type kafkaPublisherManager struct {
+	id             uint64
 	opt            *option
 	logger         log.FieldLogger
 	mlock          *sync.Mutex
@@ -131,7 +172,14 @@ type kafkaPublisherManager struct {
 	pubs map[string]*kafkaPublisher
 }
 
+func (self *kafkaPublisherManager) Id() uint64 {
+	return self.id
+}
+
 func (self *kafkaPublisherManager) NewPublisher(opt opt_helper.Option) (pubsub.Publisher, error) {
+	self.mlock.Lock()
+	defer self.mlock.Unlock()
+
 	if _, ok := self.pubs[(&kafkaPublisher{opt: opt}).Symbol()]; ok {
 		return nil, pubsub.ErrExistedPublisher
 	}
@@ -173,11 +221,20 @@ func (self *kafkaPublisherManager) NewPublisher(opt opt_helper.Option) (pubsub.P
 }
 
 func (self *kafkaPublisherManager) GetPublisher(opt opt_helper.Option) (pubsub.Publisher, error) {
-	panic("unimplemented")
+	var pub *kafkaPublisher
+	var ok bool
+	sym := (&kafkaSubscriber{opt: opt}).Symbol()
+	if pub, ok = self.pubs[sym]; !ok {
+		return nil, pubsub.ErrNotFoundPublisher
+	}
+	return pub, nil
 }
 
 func (self *kafkaPublisherManager) Close() error {
 	var err error
+
+	self.mlock.Lock()
+	defer self.mlock.Unlock()
 
 	for _, pub := range self.pubs {
 		if err = pub.Close(); err != nil {
@@ -199,6 +256,7 @@ func (self *kafkaPublisherManager) Closed() bool {
 }
 
 type kafkaSubscriberManager struct {
+	id             uint64
 	opt            *option
 	logger         log.FieldLogger
 	mlock          *sync.Mutex
@@ -208,7 +266,14 @@ type kafkaSubscriberManager struct {
 	subs map[string]*kafkaSubscriber
 }
 
+func (self *kafkaSubscriberManager) Id() uint64 {
+	return self.id
+}
+
 func (self *kafkaSubscriberManager) NewSubscriber(opt opt_helper.Option) (pubsub.Subscriber, error) {
+	self.mlock.Lock()
+	defer self.mlock.Unlock()
+
 	if _, ok := self.subs[(&kafkaSubscriber{opt: opt}).Symbol()]; ok {
 		return nil, pubsub.ErrExistedSubscriber
 	}
@@ -260,11 +325,20 @@ func (self *kafkaSubscriberManager) NewSubscriber(opt opt_helper.Option) (pubsub
 }
 
 func (self *kafkaSubscriberManager) GetSubscriber(opt opt_helper.Option) (pubsub.Subscriber, error) {
-	panic("unimplemented")
+	var sub *kafkaSubscriber
+	var ok bool
+	sym := (&kafkaSubscriber{opt: opt}).Symbol()
+	if sub, ok = self.subs[sym]; !ok {
+		return nil, pubsub.ErrNotFoundSubscriber
+	}
+	return sub, nil
 }
 
 func (self *kafkaSubscriberManager) Close() error {
 	var err error
+
+	self.mlock.Lock()
+	defer self.mlock.Unlock()
 
 	for _, sub := range self.subs {
 		if err = sub.Close(); err != nil {
@@ -417,7 +491,7 @@ func NewManager(opt opt_helper.Option) (pubsub.PubSubManager, error) {
 
 	mgr := &kafkaPubSubManager{
 		opt:      o,
-		glock:    new(sync.Mutex),
+		glock:    &sync.Mutex{},
 		logger:   opt.Get("logger").(log.FieldLogger).WithFields(log.Fields{"#module": "pubsubmanager", "#driver": "kafka"}),
 		pub_mgrs: make(map[uint64]*kafkaPublisherManager),
 		sub_mgrs: make(map[uint64]*kafkaSubscriberManager),

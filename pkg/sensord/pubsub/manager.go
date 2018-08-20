@@ -13,6 +13,7 @@ type PubSubManager interface {
 }
 
 type PublisherManager interface {
+	Id() uint64
 	NewPublisher(opt_helper.Option) (Publisher, error)
 	GetPublisher(opt_helper.Option) (Publisher, error)
 	Close() error
@@ -20,6 +21,7 @@ type PublisherManager interface {
 }
 
 type SubscriberManager interface {
+	Id() uint64
 	NewSubscriber(opt_helper.Option) (Subscriber, error)
 	GetSubscriber(opt_helper.Option) (Subscriber, error)
 	Close() error
