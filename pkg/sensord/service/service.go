@@ -383,17 +383,23 @@ func (srv *metathingsSensordService) subscribe(stm pb.SensordService_SubscribeSe
 	defer close(dc)
 
 	go func() {
-		dat := <-dc
-		res := &pb.SubscribeResponses{
-			Responses: []*pb.SubscribeResponse{
-				&pb.SubscribeResponse{Data: dat},
-			},
-		}
+		for {
+			dat, ok := <-dc
+			if !ok {
+				return
+			}
 
-		err := stm.Send(res)
-		if err != nil {
-			srv.logger.WithError(err).Errorf("failed to send data to subscribe stream")
-			return
+			res := &pb.SubscribeResponses{
+				Responses: []*pb.SubscribeResponse{
+					&pb.SubscribeResponse{Data: dat},
+				},
+			}
+
+			err := stm.Send(res)
+			if err != nil {
+				srv.logger.WithError(err).Errorf("failed to send data to subscribe stream")
+				return
+			}
 		}
 	}()
 
@@ -431,7 +437,6 @@ func (srv *metathingsSensordService) handle_subscribe(opt opt_helper.Option, sub
 		if err != pubsub.ErrNotFoundSubscriber {
 			return err
 		}
-		return nil
 	}
 
 	sub, err := sub_mgr.NewSubscriber(opt)
@@ -447,7 +452,6 @@ func (srv *metathingsSensordService) handle_subscribe(opt opt_helper.Option, sub
 				srv.logger.WithError(err).Errorf("failed to subscribe data from subscriber")
 				return
 			}
-
 			dc <- dat
 		}
 	}(sub, dc)

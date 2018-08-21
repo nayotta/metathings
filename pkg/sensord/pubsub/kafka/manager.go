@@ -289,6 +289,8 @@ func (self *kafkaSubscriberManager) NewSubscriber(opt opt_helper.Option) (pubsub
 	cfg := &kafka.ConfigMap{
 		"bootstrap.servers":               strings.Join(brokers, ","),
 		"group.id":                        group_id,
+		"session.timeout.ms":              6000,
+		"socket.blocking.max.ms":          100,
 		"go.events.channel.enable":        true,
 		"go.application.rebalance.enable": true,
 		"default.topic.config":            kafka.ConfigMap{"auto.offset.reset": "latest"},
@@ -296,6 +298,7 @@ func (self *kafkaSubscriberManager) NewSubscriber(opt opt_helper.Option) (pubsub
 	for key, val := range self.opt.ConsumerConfig {
 		cfg.SetKey(key, val)
 	}
+	self.logger.WithField("config", cfg).Debugf("subscriber config")
 	consumer, err := kafka.NewConsumer(cfg)
 	if err != nil {
 		return nil, err
@@ -380,8 +383,10 @@ func (self *kafkaSubscriber) Subscribe() (*sensord_pb.SensorData, error) {
 		switch e := ev.(type) {
 		case kafka.AssignedPartitions:
 			self.consumer.Assign(e.Partitions)
+			self.logger.Debugf("assign partitions to consumer")
 		case kafka.RevokedPartitions:
 			self.consumer.Unassign()
+			self.logger.Debugf("unassign partitions form consumer")
 		case kafka.Error:
 			self.logger.WithError(e).Errorf("failed to subscribe from kafka")
 			return nil, pubsub.ErrUnsubscribable
