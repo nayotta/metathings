@@ -376,7 +376,7 @@ func (srv *metathingsSensordService) ListForUser(ctx context.Context, req *pb.Li
 func (srv *metathingsSensordService) subscribe(stm pb.SensordService_SubscribeServer, sub_mgr pubsub.SubscriberManager, quit chan interface{}) {
 	defer func() {
 		quit <- nil
-		srv.logger.Debugf("send quit signal to subscribler")
+		srv.logger.Debugf("send quit signal to subscriber")
 	}()
 
 	dc := make(chan *pb.SensorData)
@@ -397,7 +397,7 @@ func (srv *metathingsSensordService) subscribe(stm pb.SensordService_SubscribeSe
 		}
 	}()
 
-subscrible_loop:
+subscribe_loop:
 	for {
 		reqs, err := stm.Recv()
 		if err != nil {
@@ -417,7 +417,7 @@ subscrible_loop:
 
 			if err != nil {
 				srv.logger.WithError(err).Errorf("failed to handle subscribe request")
-				break subscrible_loop
+				break subscribe_loop
 			}
 		}
 	}
@@ -463,7 +463,7 @@ func (srv *metathingsSensordService) handle_subscribe_by_id(stm pb.SensordServic
 		return err
 	}
 
-	srv.logger.WithField("snr_id", snr_id).Debugf("subscrible data by sensor id")
+	srv.logger.WithField("snr_id", snr_id).Debugf("subscribe data by sensor id")
 	return nil
 }
 
