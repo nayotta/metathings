@@ -52,6 +52,7 @@ func (self *kafkaPubSubManager) newPublisherManager(id uint64) (*kafkaPublisherM
 		logger: self.logger.WithField("pub_mgr_id", id),
 		mlock:  &sync.Mutex{},
 		closed: false,
+		pubs:   make(map[string]*kafkaPublisher),
 	}
 	pub.close_callback = func() error {
 		self.glock.Lock()
@@ -76,6 +77,7 @@ func (self *kafkaPubSubManager) newSubscriberManager(id uint64) (*kafkaSubscribe
 		logger: self.logger.WithField("sub_mgr_id", id),
 		mlock:  &sync.Mutex{},
 		closed: false,
+		subs:   make(map[string]*kafkaSubscriber),
 	}
 	sub.close_callback = func() error {
 		self.glock.Lock()
@@ -204,6 +206,9 @@ func (self *kafkaPublisherManager) NewPublisher(opt opt_helper.Option) (pubsub.P
 	}
 	go pub.loop()
 	pub.close_callback = func() error {
+		self.mlock.Lock()
+		defer self.mlock.Unlock()
+
 		sym := pub.Symbol()
 		if _, ok := self.pubs[sym]; ok {
 			delete(self.pubs, sym)
@@ -302,6 +307,9 @@ func (self *kafkaSubscriberManager) NewSubscriber(opt opt_helper.Option) (pubsub
 		consumer: consumer,
 	}
 	sub.close_callback = func() error {
+		self.mlock.Lock()
+		defer self.mlock.Unlock()
+
 		sym := sub.Symbol()
 		if _, ok := self.subs[sym]; ok {
 			delete(self.subs, sym)
@@ -418,6 +426,7 @@ func (self *kafkaSubscriber) Close() error {
 	if err != nil {
 		return err
 	}
+	self.close_callback()
 
 	return nil
 }
@@ -431,7 +440,6 @@ type kafkaPublisher struct {
 }
 
 func (self *kafkaPublisher) loop() {
-	defer close(self.quit)
 	for {
 		select {
 		case <-self.quit:
@@ -477,7 +485,9 @@ func (self *kafkaPublisher) Symbol() string {
 
 func (self *kafkaPublisher) Close() error {
 	self.quit <- nil
+	defer close(self.quit)
 	self.producer.Close()
+	self.close_callback()
 
 	return nil
 }

@@ -98,11 +98,8 @@ func HandleGRPCError(logger log.FieldLogger, err error, format string, args ...i
 		return nil
 	}
 
-	stat, ok := status.FromError(err)
-	if ok {
-		if stat.Code() == codes.Canceled {
-			return nil
-		}
+	if status.Code(err) == codes.Canceled {
+		return nil
 	}
 
 	logger.WithError(err).Errorf(format, args...)

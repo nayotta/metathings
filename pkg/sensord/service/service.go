@@ -574,7 +574,7 @@ func (srv *metathingsSensordService) Publish(stm pb.SensordService_PublishServer
 
 	snr := ss[0]
 	pub_opt := srv.publisher_option(snr)
-	pub, err := pub_mgr.GetPublisher(pub_opt)
+	pub, err := pub_mgr.NewPublisher(pub_opt)
 	if err != nil {
 		srv.logger.WithField("application_credential_id", app_cred_id).WithError(err).Errorf("failed to get publisher")
 		return status.Errorf(codes.Internal, err.Error())

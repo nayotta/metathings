@@ -15,7 +15,7 @@ import (
 	service "github.com/nayotta/metathings/pkg/sensord/service"
 )
 
-type _hubOptions struct {
+type _psmgrOptions struct {
 	Name string
 }
 
@@ -24,7 +24,7 @@ type _sensordOptions struct {
 	Listen        string
 	Storage       cmd_helper.StorageOptions
 	ServiceConfig cmd_helper.ServiceConfigOptions `mapstructure:"service_config"`
-	Hub           _hubOptions
+	Psmgr         _psmgrOptions
 }
 
 var (
@@ -59,10 +59,10 @@ func runSensord() error {
 		return err
 	}
 
-	hub_v := cmd_helper.GetFromStage().Sub("hub")
-	hub_opts := opt_helper.NewOption(
-		"name", hub_v.GetString("name"),
-		"options", hub_v,
+	psmgr_v := cmd_helper.GetFromStage().Sub("psmgr")
+	psmgr_opts := opt_helper.NewOption(
+		"name", psmgr_v.GetString("name"),
+		"options", psmgr_v,
 	)
 
 	s := grpc.NewServer(
@@ -78,7 +78,7 @@ func runSensord() error {
 			sensord_opts.ApplicationCredential.Id,
 			sensord_opts.ApplicationCredential.Secret,
 		),
-		service.SetHub(hub_opts),
+		service.SetPubSubManager(psmgr_opts),
 	)
 	if err != nil {
 		log.WithError(err).Errorf("failed to new sensor service")
