@@ -54,7 +54,7 @@ func XXX_RegisterManager(name string, fn func(opt_helper.Option) (PubSubManager,
 func NewManager(opt opt_helper.Option) (PubSubManager, error) {
 	name := opt.GetString("name")
 	if mgr_fty, ok := mgrs[name]; !ok {
-		return nil, ErrUnregisterManagerName
+		return nil, ErrUnregisteredManagerName
 	} else {
 		return mgr_fty(opt)
 	}

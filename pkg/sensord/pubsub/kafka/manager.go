@@ -32,6 +32,10 @@ func default_option() *option {
 		ProducerConfig: map[string]string{
 			"queue.buffering.max.ms": "100",
 		},
+		ConsumerConfig: map[string]string{
+			// https://github.com/edenhill/librdkafka/blob/master/CONFIGURATION.md
+			"topic.metadata.refresh.interval.ms": "3000",
+		},
 	}
 	return opt
 }
@@ -40,6 +44,7 @@ type kafkaPubSubManager struct {
 	opt    *option
 	logger log.FieldLogger
 	glock  *sync.Mutex
+	wg     sync.WaitGroup
 
 	pub_mgrs map[uint64]*kafkaPublisherManager
 	sub_mgrs map[uint64]*kafkaSubscriberManager
@@ -67,6 +72,7 @@ func (self *kafkaPubSubManager) newPublisherManager(id uint64) (*kafkaPublisherM
 	}
 	self.pub_mgrs[id] = pub
 
+	self.logger.WithField("id", id).Debugf("new publisher manager")
 	return pub, nil
 }
 
@@ -92,6 +98,7 @@ func (self *kafkaPubSubManager) newSubscriberManager(id uint64) (*kafkaSubscribe
 	}
 	self.sub_mgrs[id] = sub
 
+	self.logger.WithField("id", id).Debugf("new subscriber manager")
 	return sub, nil
 }
 
@@ -170,6 +177,7 @@ type kafkaPublisherManager struct {
 	mlock          *sync.Mutex
 	close_callback func() error
 	closed         bool
+	wg             sync.WaitGroup
 
 	pubs map[string]*kafkaPublisher
 }
@@ -213,12 +221,16 @@ func (self *kafkaPublisherManager) NewPublisher(opt opt_helper.Option) (pubsub.P
 		if _, ok := self.pubs[sym]; ok {
 			delete(self.pubs, sym)
 		}
+		self.wg.Done()
+
 		return nil
 	}
+	self.wg.Add(1)
 
 	self.pubs[pub.Symbol()] = pub
 
 	self.logger.WithFields(log.Fields{
+		"config": cfg,
 		"symbol": pub.Symbol(),
 	}).Debugf("create publisher")
 
@@ -238,14 +250,10 @@ func (self *kafkaPublisherManager) GetPublisher(opt opt_helper.Option) (pubsub.P
 func (self *kafkaPublisherManager) Close() error {
 	var err error
 
+	self.wg.Wait()
+
 	self.mlock.Lock()
 	defer self.mlock.Unlock()
-
-	for _, pub := range self.pubs {
-		if err = pub.Close(); err != nil {
-			return err
-		}
-	}
 
 	if err = self.close_callback(); err != nil {
 		return err
@@ -253,6 +261,7 @@ func (self *kafkaPublisherManager) Close() error {
 
 	self.closed = true
 
+	self.logger.WithField("id", self.id).Debugf("publisher manager closed")
 	return nil
 }
 
@@ -267,6 +276,7 @@ type kafkaSubscriberManager struct {
 	mlock          *sync.Mutex
 	close_callback func() error
 	closed         bool
+	wg             sync.WaitGroup
 
 	subs map[string]*kafkaSubscriber
 }
@@ -298,7 +308,6 @@ func (self *kafkaSubscriberManager) NewSubscriber(opt opt_helper.Option) (pubsub
 	for key, val := range self.opt.ConsumerConfig {
 		cfg.SetKey(key, val)
 	}
-	self.logger.WithField("config", cfg).Debugf("subscriber config")
 	consumer, err := kafka.NewConsumer(cfg)
 	if err != nil {
 		return nil, err
@@ -317,8 +326,11 @@ func (self *kafkaSubscriberManager) NewSubscriber(opt opt_helper.Option) (pubsub
 		if _, ok := self.subs[sym]; ok {
 			delete(self.subs, sym)
 		}
+		self.wg.Done()
+
 		return nil
 	}
+	self.wg.Add(1)
 
 	err = consumer.SubscribeTopics([]string{sub.Symbol()}, nil)
 	if err != nil {
@@ -329,6 +341,7 @@ func (self *kafkaSubscriberManager) NewSubscriber(opt opt_helper.Option) (pubsub
 	self.subs[sub.Symbol()] = sub
 
 	self.logger.WithFields(log.Fields{
+		"config": cfg,
 		"symbol": sub.Symbol(),
 	}).Debugf("create subscriber")
 
@@ -348,14 +361,10 @@ func (self *kafkaSubscriberManager) GetSubscriber(opt opt_helper.Option) (pubsub
 func (self *kafkaSubscriberManager) Close() error {
 	var err error
 
+	self.wg.Wait()
+
 	self.mlock.Lock()
 	defer self.mlock.Unlock()
-
-	for _, sub := range self.subs {
-		if err = sub.Close(); err != nil {
-			return err
-		}
-	}
 
 	if err = self.close_callback(); err != nil {
 		return err
@@ -363,6 +372,7 @@ func (self *kafkaSubscriberManager) Close() error {
 
 	self.closed = true
 
+	self.logger.WithField("id", self.id).Debugf("subscriber manager closed")
 	return nil
 }
 
@@ -375,6 +385,8 @@ type kafkaSubscriber struct {
 	opt            opt_helper.Option
 	consumer       *kafka.Consumer
 	close_callback func() error
+
+	_symbol string
 }
 
 func (self *kafkaSubscriber) Subscribe() (*sensord_pb.SensorData, error) {
@@ -383,12 +395,12 @@ func (self *kafkaSubscriber) Subscribe() (*sensord_pb.SensorData, error) {
 		switch e := ev.(type) {
 		case kafka.AssignedPartitions:
 			self.consumer.Assign(e.Partitions)
-			self.logger.Debugf("assign partitions to consumer")
+			self.logger.WithField("symbol", self.Symbol()).Debugf("assign partitions to consumer")
 		case kafka.RevokedPartitions:
 			self.consumer.Unassign()
-			self.logger.Debugf("unassign partitions form consumer")
+			self.logger.WithField("symbol", self.Symbol()).Debugf("unassign partitions form consumer")
 		case kafka.Error:
-			self.logger.WithError(e).Errorf("failed to subscribe from kafka")
+			self.logger.WithField("symbol", self.Symbol()).WithError(e).Errorf("failed to subscribe from kafka")
 			return nil, pubsub.ErrUnsubscribable
 		case *kafka.Message:
 			var data sensord_pb.SensorData
@@ -398,32 +410,43 @@ func (self *kafkaSubscriber) Subscribe() (*sensord_pb.SensorData, error) {
 			}
 			self.logger.WithField("symbol", self.Symbol()).Debugf("subscribe data")
 			return &data, nil
+		case kafka.PartitionEOF:
+			self.logger.WithField("symbol", self.Symbol()).Debugf("partition eof")
+		case kafka.OffsetsCommitted:
+			self.logger.WithField("symbol", self.Symbol()).Debugf("offsets committed")
+		default:
+			self.logger.Debugln(ev)
+			return nil, pubsub.ErrUnsubscribable
 		}
 	}
 }
 
 func (self *kafkaSubscriber) Symbol() string {
-	sensor_id := self.opt.GetString("sensor_id")
-	if sensor_id == "" {
-		sensor_id = UUID_REGEX
+	if self._symbol == "" {
+		sensor_id := self.opt.GetString("sensor_id")
+		if sensor_id == "" {
+			sensor_id = UUID_REGEX
+		}
+
+		core_id := self.opt.GetString("core_id")
+		if core_id == "" {
+			core_id = UUID_REGEX
+		}
+
+		entity_name := self.opt.GetString("entity_name")
+		if entity_name == "" {
+			entity_name = NAME_REGEX
+		}
+
+		owner_id := self.opt.GetString("owner_id")
+		if owner_id == "" {
+			owner_id = UUID_REGEX
+		}
+
+		self._symbol = fmt.Sprintf("^sensor.%v.core.%v.entity.%v.user.%v$", sensor_id, core_id, entity_name, owner_id)
 	}
 
-	core_id := self.opt.GetString("core_id")
-	if core_id == "" {
-		core_id = UUID_REGEX
-	}
-
-	entity_name := self.opt.GetString("entity_name")
-	if entity_name == "" {
-		entity_name = NAME_REGEX
-	}
-
-	owner_id := self.opt.GetString("owner_id")
-	if owner_id == "" {
-		owner_id = UUID_REGEX
-	}
-
-	return fmt.Sprintf("^sensor.%v.core.%v.entity.%v.user.%v$", sensor_id, core_id, entity_name, owner_id)
+	return self._symbol
 }
 
 func (self *kafkaSubscriber) Close() error {
@@ -433,6 +456,7 @@ func (self *kafkaSubscriber) Close() error {
 	}
 	self.close_callback()
 
+	self.logger.WithField("symbol", self.Symbol()).Debugf("subscriber closed")
 	return nil
 }
 
@@ -494,6 +518,7 @@ func (self *kafkaPublisher) Close() error {
 	self.producer.Close()
 	self.close_callback()
 
+	self.logger.WithField("symbol", self.Symbol()).Debugf("publisher closed")
 	return nil
 }
 

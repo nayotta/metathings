@@ -384,10 +384,7 @@ func (srv *metathingsSensordService) subscribe(stm pb.SensordService_SubscribeSe
 
 	go func() {
 		for {
-			dat, ok := <-dc
-			if !ok {
-				return
-			}
+			dat := <-dc
 
 			res := &pb.SubscribeResponses{
 				Responses: []*pb.SubscribeResponse{
@@ -403,49 +400,55 @@ func (srv *metathingsSensordService) subscribe(stm pb.SensordService_SubscribeSe
 		}
 	}()
 
+	subs := []pubsub.Subscriber{}
+	var sub pubsub.Subscriber
 subscribe_loop:
 	for {
 		reqs, err := stm.Recv()
 		if err != nil {
 			grpc_helper.HandleGRPCError(srv.logger, err, "failed to recv data from subscriber")
+			for _, sub = range subs {
+				sub.Close()
+			}
 			return
 		}
 
 		for _, r := range reqs.Requests {
 			switch req := r.Payload.(type) {
 			case *pb.SubscribeRequest_SubscribeById:
-				err = srv.handle_subscribe_by_id(stm, sub_mgr, dc, req)
+				sub, err = srv.handle_subscribe_by_id(stm, sub_mgr, dc, req)
 			case *pb.SubscribeRequest_SubscribeByUserId:
-				err = srv.handle_subscribe_by_user_id(stm, sub_mgr, dc, req)
+				sub, err = srv.handle_subscribe_by_user_id(stm, sub_mgr, dc, req)
 			case *pb.SubscribeRequest_SubscribeByCoreId:
-				err = srv.handle_subscribe_by_core_id(stm, sub_mgr, dc, req)
+				sub, err = srv.handle_subscribe_by_core_id(stm, sub_mgr, dc, req)
 			}
 
 			if err != nil {
 				srv.logger.WithError(err).Errorf("failed to handle subscribe request")
 				break subscribe_loop
 			}
+
+			subs = append(subs, sub)
 		}
 	}
 
 	return
 }
 
-func (srv *metathingsSensordService) handle_subscribe(opt opt_helper.Option, sub_mgr pubsub.SubscriberManager, dc chan *pb.SensorData) error {
+func (srv *metathingsSensordService) handle_subscribe(opt opt_helper.Option, sub_mgr pubsub.SubscriberManager, dc chan *pb.SensorData) (pubsub.Subscriber, error) {
 	_, err := sub_mgr.GetSubscriber(opt)
 	if err != nil {
 		if err != pubsub.ErrNotFoundSubscriber {
-			return err
+			return nil, err
 		}
 	}
 
 	sub, err := sub_mgr.NewSubscriber(opt)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	go func(sub pubsub.Subscriber, dc chan *pb.SensorData) {
-		defer sub.Close()
 		for {
 			dat, err := sub.Subscribe()
 			if err != nil {
@@ -456,43 +459,43 @@ func (srv *metathingsSensordService) handle_subscribe(opt opt_helper.Option, sub
 		}
 	}(sub, dc)
 
-	return nil
+	return sub, nil
 }
 
-func (srv *metathingsSensordService) handle_subscribe_by_id(stm pb.SensordService_SubscribeServer, sub_mgr pubsub.SubscriberManager, dc chan *pb.SensorData, req *pb.SubscribeRequest_SubscribeById) error {
+func (srv *metathingsSensordService) handle_subscribe_by_id(stm pb.SensordService_SubscribeServer, sub_mgr pubsub.SubscriberManager, dc chan *pb.SensorData, req *pb.SubscribeRequest_SubscribeById) (pubsub.Subscriber, error) {
 	snr_id := req.SubscribeById.GetId().GetValue()
 	sub_opt := opt_helper.NewOption("sensor_id", snr_id)
-	err := srv.handle_subscribe(sub_opt, sub_mgr, dc)
+	sub, err := srv.handle_subscribe(sub_opt, sub_mgr, dc)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	srv.logger.WithField("snr_id", snr_id).Debugf("subscribe data by sensor id")
-	return nil
+	return sub, nil
 }
 
-func (srv *metathingsSensordService) handle_subscribe_by_user_id(stm pb.SensordService_SubscribeServer, sub_mgr pubsub.SubscriberManager, dc chan *pb.SensorData, req *pb.SubscribeRequest_SubscribeByUserId) error {
+func (srv *metathingsSensordService) handle_subscribe_by_user_id(stm pb.SensordService_SubscribeServer, sub_mgr pubsub.SubscriberManager, dc chan *pb.SensorData, req *pb.SubscribeRequest_SubscribeByUserId) (pubsub.Subscriber, error) {
 	usr_id := req.SubscribeByUserId.GetUserId().GetValue()
 	sub_opt := opt_helper.NewOption("owner_id", usr_id)
-	err := srv.handle_subscribe(sub_opt, sub_mgr, dc)
+	sub, err := srv.handle_subscribe(sub_opt, sub_mgr, dc)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	srv.logger.WithField("owner_id", usr_id).Debugf("subscribe data by owner id")
-	return nil
+	return sub, nil
 }
 
-func (srv *metathingsSensordService) handle_subscribe_by_core_id(stm pb.SensordService_SubscribeServer, sub_mgr pubsub.SubscriberManager, dc chan *pb.SensorData, req *pb.SubscribeRequest_SubscribeByCoreId) error {
+func (srv *metathingsSensordService) handle_subscribe_by_core_id(stm pb.SensordService_SubscribeServer, sub_mgr pubsub.SubscriberManager, dc chan *pb.SensorData, req *pb.SubscribeRequest_SubscribeByCoreId) (pubsub.Subscriber, error) {
 	core_id := req.SubscribeByCoreId.GetCoreId().GetValue()
 	sub_opt := opt_helper.NewOption("core_id", core_id)
-	err := srv.handle_subscribe(sub_opt, sub_mgr, dc)
+	sub, err := srv.handle_subscribe(sub_opt, sub_mgr, dc)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	srv.logger.WithField("core_id", core_id).Debugf("subscribe data by core id")
-	return nil
+	return sub, nil
 }
 
 func (srv *metathingsSensordService) Subscribe(stm pb.SensordService_SubscribeServer) error {
