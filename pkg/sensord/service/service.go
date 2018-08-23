@@ -535,6 +535,13 @@ func (srv *metathingsSensordService) publish(stm pb.SensordService_PublishServer
 			return
 		}
 
+		// TODO(Peer): find a better solution to ensure sensor is exist.
+		_, err = srv.storage.GetSensor(snr_id)
+		if err != nil {
+			srv.logger.WithField("sensor_id", snr_id).Debugf("sensor deleted, close publish stream")
+			return
+		}
+
 		now := protobuf_helper.Now()
 		for _, req := range reqs.Requests {
 			switch req.Payload.(type) {
