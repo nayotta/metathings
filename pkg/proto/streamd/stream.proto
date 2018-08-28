@@ -1,0 +1,60 @@
+syntax = "proto3";
+
+package ai.metathings.service.streamd;
+
+import "google/protobuf/wrappers.proto";
+
+enum StreamState {
+	STREAM_STATE_UNKNOWN = 0;
+	STREAM_STATE_RUNNING = 1;
+	STREAM_STATE_STARTING = 2;
+	STREAM_STATE_TERMINATING = 3;
+	STREAM_STATE_STOP = 4;
+}
+
+message Stream {
+	string id = 1;
+	string name = 2;
+	string owner_id = 3;
+	StreamState state = 4;
+	repeated Pod pods = 5;
+}
+
+enum PodType {
+	POD_TYPE_UNKNOWN = 0;
+	POD_TYPE_SOURCE = 1;
+	POD_TYPE_FILTER = 2;
+	POD_TYPE_SINK = 3;
+}
+
+message Pod {
+	PodType type = 1;
+	oneof component {
+		Source source = 2;
+		Filter filter = 3;
+		Sink sink = 4;
+	}
+}
+
+message Source {
+	string id = 1;
+	string name = 2;
+	string stream_id = 3;
+	repeated string downstreams = 4;
+	map<string, string> config = 5;
+}
+
+message Filter {
+	string id = 1;
+	string name = 2;
+	string stream_id = 3;
+	repeated string downstreams = 4;
+	map<string, string> config = 5;
+}
+
+message Sink {
+	string id = 1;
+	string name = 2;
+	string stream_id = 3;
+	map<string, string> config = 4;
+}

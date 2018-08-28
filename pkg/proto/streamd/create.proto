@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package ai.metathings.service.streamd;
+
+import "google/protobuf/wrappers.proto";
+
+import "github.com/mwitkow/go-proto-validators/validator.proto";
+
+import "stream.proto";
+
+message CreateRequest {
+	google.protobuf.StringValue name = 1;
+	repeated Pod pods = 2;
+}
+
+message CreateResponse {
+	Stream stream = 1;
+}
