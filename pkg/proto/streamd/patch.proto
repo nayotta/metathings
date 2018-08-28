@@ -8,11 +8,11 @@ import "github.com/mwitkow/go-proto-validators/validator.proto";
 
 import "stream.proto";
 
-message CreateRequest {
-	google.protobuf.StringValue name = 1;
-	repeated OpPod pods = 2;
+message PatchRequest {
+	google.protobuf.StringValue id = 1 [(validator.field) = {msg_exists: true}];
+	google.protobuf.StringValue name = 2;
 }
 
-message CreateResponse {
+message PatchResponse {
 	Stream stream = 1;
 }

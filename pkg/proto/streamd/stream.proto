@@ -27,11 +27,28 @@ enum PodType {
 	POD_TYPE_SINK = 3;
 }
 
+message PodConfigValue {
+	oneof value {
+		double double = 1;
+		float float = 2;
+		int64 int64 = 3;
+		uint64 uint64 = 4;
+		int32 int32 = 5;
+		uint32 uint32 = 6;
+		bool bool = 7;
+		string string = 8;
+	}
+}
+
+message PodConfig {
+	map<string, PodConfigValue> config = 1;
+}
+
 message Pod {
 	PodType type = 1;
 	oneof component {
 		Source source = 2;
-		Filter filter = 3;
+		Processor processor = 3;
 		Sink sink = 4;
 	}
 }
@@ -39,22 +56,60 @@ message Pod {
 message Source {
 	string id = 1;
 	string name = 2;
-	string stream_id = 3;
-	repeated string downstreams = 4;
-	map<string, string> config = 5;
+	string engine = 3;
+	string stream_id = 4;
+	repeated string next_pod_ids = 5;
+	PodConfig config = 6;
 }
 
-message Filter {
+message Processor {
 	string id = 1;
 	string name = 2;
-	string stream_id = 3;
-	repeated string downstreams = 4;
-	map<string, string> config = 5;
+	string engine = 3;
+	string stream_id = 4;
+	repeated string next_pod_ids = 5;
+	PodConfig config = 6;
 }
 
 message Sink {
 	string id = 1;
 	string name = 2;
-	string stream_id = 3;
-	map<string, string> config = 4;
+	string engine = 3;
+	string stream_id = 4;
+	PodConfig config = 5;
+}
+
+message OpPod {
+	PodType type = 1;
+	oneof pod {
+		OpSource source = 2;
+		OpProcessor processor = 3;
+		OpSink sink = 4;
+	}
+}
+
+message OpSource {
+	google.protobuf.StringValue id = 1;
+	google.protobuf.StringValue name = 2;
+	google.protobuf.StringValue engine = 3;
+	google.protobuf.StringValue stream_id = 4;
+	repeated google.protobuf.StringValue next_pod_ids = 5;
+	PodConfig config = 6;
+}
+
+message OpProcessor {
+	google.protobuf.StringValue id = 1;
+	google.protobuf.StringValue name = 2;
+	google.protobuf.StringValue engine = 3;
+	google.protobuf.StringValue stream_id = 4;
+	repeated google.protobuf.StringValue next_pod_ids = 5;
+	PodConfig config = 6;
+}
+
+message OpSink {
+	google.protobuf.StringValue id = 1;
+	google.protobuf.StringValue name = 2;
+	google.protobuf.StringValue engine = 3;
+	google.protobuf.StringValue stream_id = 4;
+	PodConfig config = 5;
 }
