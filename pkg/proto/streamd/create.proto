@@ -10,7 +10,7 @@ import "stream.proto";
 
 message CreateRequest {
 	google.protobuf.StringValue name = 1;
-	repeated OpPod pods = 2;
+	repeated OpPad pads = 2;
 }
 
 message CreateResponse {

@@ -10,6 +10,7 @@ It is generated from these files:
 	get.proto
 	list.proto
 	list_for_user.proto
+	patch.proto
 	service.proto
 	start.proto
 	stop.proto
@@ -25,15 +26,23 @@ It has these top-level messages:
 	ListResponse
 	ListForUserRequest
 	ListForUserResponse
+	PatchRequest
+	PatchResponse
 	StartRequest
 	StartResponse
 	StopRequest
 	StopResponse
 	Stream
-	Pod
+	PadConfigValue
+	PadConfig
+	Pad
 	Source
 	Filter
 	Sink
+	OpPad
+	OpSource
+	OpProcessor
+	OpSink
 */
 package streamd
 
@@ -55,10 +64,10 @@ func (this *CreateRequest) Validate() error {
 			return go_proto_validators.FieldError("Name", err)
 		}
 	}
-	for _, item := range this.Pods {
+	for _, item := range this.Pads {
 		if item != nil {
 			if err := go_proto_validators.CallValidatorIfExists(item); err != nil {
-				return go_proto_validators.FieldError("Pods", err)
+				return go_proto_validators.FieldError("Pads", err)
 			}
 		}
 	}

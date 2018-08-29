@@ -4,6 +4,7 @@ all:
 	$(MAKE) -C cored all
 	$(MAKE) -C camerad all
 	$(MAKE) -C sensord all
+	$(MAKE) -C streamd all
 	$(MAKE) -C core_agent all
 	$(MAKE) -C echo all
 	$(MAKE) -C switcher all

@@ -17,17 +17,17 @@ message Stream {
 	string name = 2;
 	string owner_id = 3;
 	StreamState state = 4;
-	repeated Pod pods = 5;
+	repeated Pad pads = 5;
 }
 
-enum PodType {
-	POD_TYPE_UNKNOWN = 0;
-	POD_TYPE_SOURCE = 1;
-	POD_TYPE_FILTER = 2;
-	POD_TYPE_SINK = 3;
+enum PadType {
+	PAD_TYPE_UNKNOWN = 0;
+	PAD_TYPE_SOURCE = 1;
+	PAD_TYPE_FILTER = 2;
+	PAD_TYPE_SINK = 3;
 }
 
-message PodConfigValue {
+message PadConfigValue {
 	oneof value {
 		double double = 1;
 		float float = 2;
@@ -40,15 +40,15 @@ message PodConfigValue {
 	}
 }
 
-message PodConfig {
-	map<string, PodConfigValue> config = 1;
+message PadConfig {
+	map<string, PadConfigValue> config = 1;
 }
 
-message Pod {
-	PodType type = 1;
+message Pad {
+	PadType type = 1;
 	oneof component {
 		Source source = 2;
-		Processor processor = 3;
+		Filter filter = 3;
 		Sink sink = 4;
 	}
 }
@@ -56,32 +56,32 @@ message Pod {
 message Source {
 	string id = 1;
 	string name = 2;
-	string engine = 3;
+	string processor = 3;
 	string stream_id = 4;
-	repeated string next_pod_ids = 5;
-	PodConfig config = 6;
+	repeated string next_pad_ids = 5;
+	PadConfig config = 6;
 }
 
-message Processor {
+message Filter {
 	string id = 1;
 	string name = 2;
-	string engine = 3;
+	string processor = 3;
 	string stream_id = 4;
-	repeated string next_pod_ids = 5;
-	PodConfig config = 6;
+	repeated string next_pad_ids = 5;
+	PadConfig config = 6;
 }
 
 message Sink {
 	string id = 1;
 	string name = 2;
-	string engine = 3;
+	string processor = 3;
 	string stream_id = 4;
-	PodConfig config = 5;
+	PadConfig config = 5;
 }
 
-message OpPod {
-	PodType type = 1;
-	oneof pod {
+message OpPad {
+	PadType type = 1;
+	oneof pad {
 		OpSource source = 2;
 		OpProcessor processor = 3;
 		OpSink sink = 4;
@@ -93,8 +93,8 @@ message OpSource {
 	google.protobuf.StringValue name = 2;
 	google.protobuf.StringValue engine = 3;
 	google.protobuf.StringValue stream_id = 4;
-	repeated google.protobuf.StringValue next_pod_ids = 5;
-	PodConfig config = 6;
+	repeated google.protobuf.StringValue next_pad_ids = 5;
+	PadConfig config = 6;
 }
 
 message OpProcessor {
@@ -102,8 +102,8 @@ message OpProcessor {
 	google.protobuf.StringValue name = 2;
 	google.protobuf.StringValue engine = 3;
 	google.protobuf.StringValue stream_id = 4;
-	repeated google.protobuf.StringValue next_pod_ids = 5;
-	PodConfig config = 6;
+	repeated google.protobuf.StringValue next_pad_ids = 5;
+	PadConfig config = 6;
 }
 
 message OpSink {
@@ -111,5 +111,5 @@ message OpSink {
 	google.protobuf.StringValue name = 2;
 	google.protobuf.StringValue engine = 3;
 	google.protobuf.StringValue stream_id = 4;
-	PodConfig config = 5;
+	PadConfig config = 5;
 }
