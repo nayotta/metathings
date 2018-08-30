@@ -15,16 +15,11 @@ import (
 	service "github.com/nayotta/metathings/pkg/sensord/service"
 )
 
-type _psmgrOptions struct {
-	Name string
-}
-
 type _sensordOptions struct {
 	_rootOptions  `mapstructure:",squash"`
 	Listen        string
 	Storage       cmd_helper.StorageOptions
 	ServiceConfig cmd_helper.ServiceConfigOptions `mapstructure:"service_config"`
-	Psmgr         _psmgrOptions
 }
 
 var (
@@ -59,7 +54,7 @@ func runSensord() error {
 		return err
 	}
 
-	psmgr_v := cmd_helper.GetFromStage().Sub("psmgr")
+	psmgr_v := cmd_helper.GetFromStage().Sub("pubsub_manager")
 	psmgr_opts := opt_helper.NewOption(
 		"name", psmgr_v.GetString("name"),
 		"options", psmgr_v,

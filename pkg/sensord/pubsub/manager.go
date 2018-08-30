@@ -47,7 +47,7 @@ var (
 	mgrs = make(map[string]func(opt_helper.Option) (PubSubManager, error))
 )
 
-func XXX_RegisterManager(name string, fn func(opt_helper.Option) (PubSubManager, error)) {
+func RegisterManager(name string, fn func(opt_helper.Option) (PubSubManager, error)) {
 	mgrs[name] = fn
 }
 

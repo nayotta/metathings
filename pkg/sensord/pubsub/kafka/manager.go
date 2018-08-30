@@ -541,5 +541,5 @@ func NewManager(opt opt_helper.Option) (pubsub.PubSubManager, error) {
 }
 
 func init() {
-	pubsub.XXX_RegisterManager("kafka", NewManager)
+	pubsub.RegisterManager("kafka", NewManager)
 }
