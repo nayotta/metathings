@@ -17,6 +17,7 @@ import (
 	sensor_pb "github.com/nayotta/metathings/pkg/proto/sensor"
 	sensord_pb "github.com/nayotta/metathings/pkg/proto/sensord"
 	servo_pb "github.com/nayotta/metathings/pkg/proto/servo"
+	streamd_pb "github.com/nayotta/metathings/pkg/proto/streamd"
 	switcher_pb "github.com/nayotta/metathings/pkg/proto/switcher"
 )
 
@@ -33,6 +34,7 @@ const (
 	CAMERA_CONFIG
 	SERVO_CONFIG
 	SENSOR_CONFIG
+	STREAMD_CONFIG
 )
 
 func parseAddress(addr string) string {
@@ -79,11 +81,7 @@ func (f *ClientFactory) NewCoredServiceClient(opts ...grpc.DialOption) (cored_pb
 		return nil, nil, err
 	}
 
-	closeFn := func() {
-		conn.Close()
-	}
-
-	return cored_pb.NewCoredServiceClient(conn), closeFn, nil
+	return cored_pb.NewCoredServiceClient(conn), func() { conn.Close() }, nil
 }
 
 func (f *ClientFactory) NewIdentitydServiceClient(opts ...grpc.DialOption) (identityd_pb.IdentitydServiceClient, CloseFn, error) {
@@ -92,11 +90,7 @@ func (f *ClientFactory) NewIdentitydServiceClient(opts ...grpc.DialOption) (iden
 		return nil, nil, err
 	}
 
-	closeFn := func() {
-		conn.Close()
-	}
-
-	return identityd_pb.NewIdentitydServiceClient(conn), closeFn, nil
+	return identityd_pb.NewIdentitydServiceClient(conn), func() { conn.Close() }, nil
 }
 
 func (f *ClientFactory) NewCoreAgentServiceClient(opts ...grpc.DialOption) (agent_pb.CoreAgentServiceClient, CloseFn, error) {
@@ -105,11 +99,7 @@ func (f *ClientFactory) NewCoreAgentServiceClient(opts ...grpc.DialOption) (agen
 		return nil, nil, err
 	}
 
-	closeFn := func() {
-		conn.Close()
-	}
-
-	return agent_pb.NewCoreAgentServiceClient(conn), closeFn, nil
+	return agent_pb.NewCoreAgentServiceClient(conn), func() { conn.Close() }, nil
 }
 
 func (f *ClientFactory) NewEchoServiceClient(opts ...grpc.DialOption) (echo_pb.EchoServiceClient, CloseFn, error) {
@@ -118,11 +108,7 @@ func (f *ClientFactory) NewEchoServiceClient(opts ...grpc.DialOption) (echo_pb.E
 		return nil, nil, err
 	}
 
-	closeFn := func() {
-		conn.Close()
-	}
-
-	return echo_pb.NewEchoServiceClient(conn), closeFn, nil
+	return echo_pb.NewEchoServiceClient(conn), func() { conn.Close() }, nil
 }
 
 func (f *ClientFactory) NewSwitcherServiceClient(opts ...grpc.DialOption) (switcher_pb.SwitcherServiceClient, CloseFn, error) {
@@ -131,11 +117,7 @@ func (f *ClientFactory) NewSwitcherServiceClient(opts ...grpc.DialOption) (switc
 		return nil, nil, err
 	}
 
-	closeFn := func() {
-		conn.Close()
-	}
-
-	return switcher_pb.NewSwitcherServiceClient(conn), closeFn, nil
+	return switcher_pb.NewSwitcherServiceClient(conn), func() { conn.Close() }, nil
 }
 
 func (f *ClientFactory) NewMotorServiceClient(opts ...grpc.DialOption) (motor_pb.MotorServiceClient, CloseFn, error) {
@@ -144,11 +126,7 @@ func (f *ClientFactory) NewMotorServiceClient(opts ...grpc.DialOption) (motor_pb
 		return nil, nil, err
 	}
 
-	closeFn := func() {
-		conn.Close()
-	}
-
-	return motor_pb.NewMotorServiceClient(conn), closeFn, nil
+	return motor_pb.NewMotorServiceClient(conn), func() { conn.Close() }, nil
 }
 
 func (f *ClientFactory) NewCameraServiceClient(opts ...grpc.DialOption) (camera_pb.CameraServiceClient, CloseFn, error) {
@@ -157,11 +135,7 @@ func (f *ClientFactory) NewCameraServiceClient(opts ...grpc.DialOption) (camera_
 		return nil, nil, err
 	}
 
-	closeFn := func() {
-		conn.Close()
-	}
-
-	return camera_pb.NewCameraServiceClient(conn), closeFn, nil
+	return camera_pb.NewCameraServiceClient(conn), func() { conn.Close() }, nil
 }
 
 func (f *ClientFactory) NewCameradServiceClient(opts ...grpc.DialOption) (camerad_pb.CameradServiceClient, CloseFn, error) {
@@ -170,11 +144,7 @@ func (f *ClientFactory) NewCameradServiceClient(opts ...grpc.DialOption) (camera
 		return nil, nil, err
 	}
 
-	closeFn := func() {
-		conn.Close()
-	}
-
-	return camerad_pb.NewCameradServiceClient(conn), closeFn, nil
+	return camerad_pb.NewCameradServiceClient(conn), func() { conn.Close() }, nil
 }
 
 func (f *ClientFactory) NewServoServiceClient(opts ...grpc.DialOption) (servo_pb.ServoServiceClient, CloseFn, error) {
@@ -183,11 +153,7 @@ func (f *ClientFactory) NewServoServiceClient(opts ...grpc.DialOption) (servo_pb
 		return nil, nil, err
 	}
 
-	closeFn := func() {
-		conn.Close()
-	}
-
-	return servo_pb.NewServoServiceClient(conn), closeFn, nil
+	return servo_pb.NewServoServiceClient(conn), func() { conn.Close() }, nil
 }
 
 func (f *ClientFactory) NewSensorServiceClient(opts ...grpc.DialOption) (sensor_pb.SensorServiceClient, CloseFn, error) {
@@ -196,11 +162,7 @@ func (f *ClientFactory) NewSensorServiceClient(opts ...grpc.DialOption) (sensor_
 		return nil, nil, err
 	}
 
-	closeFn := func() {
-		conn.Close()
-	}
-
-	return sensor_pb.NewSensorServiceClient(conn), closeFn, nil
+	return sensor_pb.NewSensorServiceClient(conn), func() { conn.Close() }, nil
 }
 
 func (f *ClientFactory) NewSensordServiceClient(opts ...grpc.DialOption) (sensord_pb.SensordServiceClient, CloseFn, error) {
@@ -209,11 +171,16 @@ func (f *ClientFactory) NewSensordServiceClient(opts ...grpc.DialOption) (sensor
 		return nil, nil, err
 	}
 
-	closeFn := func() {
-		conn.Close()
+	return sensord_pb.NewSensordServiceClient(conn), func() { conn.Close() }, nil
+}
+
+func (f *ClientFactory) NewStreamdServiceClient(opts ...grpc.DialOption) (streamd_pb.StreamdServiceClient, CloseFn, error) {
+	conn, err := f.NewConnection(STREAMD_CONFIG, opts...)
+	if err != nil {
+		return nil, nil, err
 	}
 
-	return sensord_pb.NewSensordServiceClient(conn), closeFn, nil
+	return streamd_pb.NewStreamdServiceClient(conn), func() { conn.Close() }, nil
 }
 
 func NewClientFactory(configs ServiceConfigs, optFn DialOptionFn) (*ClientFactory, error) {
