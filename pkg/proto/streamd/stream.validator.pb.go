@@ -15,90 +15,130 @@ var _ = fmt.Errorf
 var _ = math.Inf
 
 func (this *Stream) Validate() error {
-	for _, item := range this.Pads {
+	for _, item := range this.Sources {
 		if item != nil {
 			if err := go_proto_validators.CallValidatorIfExists(item); err != nil {
-				return go_proto_validators.FieldError("Pads", err)
+				return go_proto_validators.FieldError("Sources", err)
+			}
+		}
+	}
+	for _, item := range this.Groups {
+		if item != nil {
+			if err := go_proto_validators.CallValidatorIfExists(item); err != nil {
+				return go_proto_validators.FieldError("Groups", err)
 			}
 		}
 	}
 	return nil
 }
-func (this *PadConfigValue) Validate() error {
+func (this *Upstream) Validate() error {
 	return nil
 }
-func (this *PadConfig) Validate() error {
-	// Validation of proto3 map<> fields is unsupported.
+func (this *Input) Validate() error {
 	return nil
 }
-func (this *Pad) Validate() error {
-	if oneOfNester, ok := this.GetComponent().(*Pad_Source); ok {
-		if oneOfNester.Source != nil {
-			if err := go_proto_validators.CallValidatorIfExists(oneOfNester.Source); err != nil {
-				return go_proto_validators.FieldError("Source", err)
-			}
-		}
-	}
-	if oneOfNester, ok := this.GetComponent().(*Pad_Filter); ok {
-		if oneOfNester.Filter != nil {
-			if err := go_proto_validators.CallValidatorIfExists(oneOfNester.Filter); err != nil {
-				return go_proto_validators.FieldError("Filter", err)
-			}
-		}
-	}
-	if oneOfNester, ok := this.GetComponent().(*Pad_Sink); ok {
-		if oneOfNester.Sink != nil {
-			if err := go_proto_validators.CallValidatorIfExists(oneOfNester.Sink); err != nil {
-				return go_proto_validators.FieldError("Sink", err)
-			}
-		}
-	}
+func (this *Output) Validate() error {
 	return nil
 }
 func (this *Source) Validate() error {
-	if this.Config != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Config); err != nil {
-			return go_proto_validators.FieldError("Config", err)
+	if this.Upstream != nil {
+		if err := go_proto_validators.CallValidatorIfExists(this.Upstream); err != nil {
+			return go_proto_validators.FieldError("Upstream", err)
 		}
 	}
 	return nil
 }
-func (this *Filter) Validate() error {
-	if this.Config != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Config); err != nil {
-			return go_proto_validators.FieldError("Config", err)
+func (this *Group) Validate() error {
+	for _, item := range this.Inputs {
+		if item != nil {
+			if err := go_proto_validators.CallValidatorIfExists(item); err != nil {
+				return go_proto_validators.FieldError("Inputs", err)
+			}
+		}
+	}
+	for _, item := range this.Outputs {
+		if item != nil {
+			if err := go_proto_validators.CallValidatorIfExists(item); err != nil {
+				return go_proto_validators.FieldError("Outputs", err)
+			}
 		}
 	}
 	return nil
 }
-func (this *Sink) Validate() error {
-	if this.Config != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Config); err != nil {
-			return go_proto_validators.FieldError("Config", err)
+func (this *OpUpstream) Validate() error {
+	if this.Id != nil {
+		if err := go_proto_validators.CallValidatorIfExists(this.Id); err != nil {
+			return go_proto_validators.FieldError("Id", err)
+		}
+	}
+	if this.Name != nil {
+		if err := go_proto_validators.CallValidatorIfExists(this.Name); err != nil {
+			return go_proto_validators.FieldError("Name", err)
+		}
+	}
+	if this.Alias != nil {
+		if err := go_proto_validators.CallValidatorIfExists(this.Alias); err != nil {
+			return go_proto_validators.FieldError("Alias", err)
+		}
+	}
+	for _, item := range this.Targets {
+		if item != nil {
+			if err := go_proto_validators.CallValidatorIfExists(item); err != nil {
+				return go_proto_validators.FieldError("Targets", err)
+			}
 		}
 	}
 	return nil
 }
-func (this *OpPad) Validate() error {
-	if oneOfNester, ok := this.GetPad().(*OpPad_Source); ok {
-		if oneOfNester.Source != nil {
-			if err := go_proto_validators.CallValidatorIfExists(oneOfNester.Source); err != nil {
-				return go_proto_validators.FieldError("Source", err)
+func (this *OpInput) Validate() error {
+	if this.Id != nil {
+		if err := go_proto_validators.CallValidatorIfExists(this.Id); err != nil {
+			return go_proto_validators.FieldError("Id", err)
+		}
+	}
+	if this.Name != nil {
+		if err := go_proto_validators.CallValidatorIfExists(this.Name); err != nil {
+			return go_proto_validators.FieldError("Name", err)
+		}
+	}
+	if this.Alias != nil {
+		if err := go_proto_validators.CallValidatorIfExists(this.Alias); err != nil {
+			return go_proto_validators.FieldError("Alias", err)
+		}
+	}
+	if this.Symbol != nil {
+		if err := go_proto_validators.CallValidatorIfExists(this.Symbol); err != nil {
+			return go_proto_validators.FieldError("Symbol", err)
+		}
+	}
+	for _, item := range this.Targets {
+		if item != nil {
+			if err := go_proto_validators.CallValidatorIfExists(item); err != nil {
+				return go_proto_validators.FieldError("Targets", err)
 			}
 		}
 	}
-	if oneOfNester, ok := this.GetPad().(*OpPad_Processor); ok {
-		if oneOfNester.Processor != nil {
-			if err := go_proto_validators.CallValidatorIfExists(oneOfNester.Processor); err != nil {
-				return go_proto_validators.FieldError("Processor", err)
-			}
+	return nil
+}
+func (this *OpOutput) Validate() error {
+	if this.Id != nil {
+		if err := go_proto_validators.CallValidatorIfExists(this.Id); err != nil {
+			return go_proto_validators.FieldError("Id", err)
 		}
 	}
-	if oneOfNester, ok := this.GetPad().(*OpPad_Sink); ok {
-		if oneOfNester.Sink != nil {
-			if err := go_proto_validators.CallValidatorIfExists(oneOfNester.Sink); err != nil {
-				return go_proto_validators.FieldError("Sink", err)
-			}
+	if this.Name != nil {
+		if err := go_proto_validators.CallValidatorIfExists(this.Name); err != nil {
+			return go_proto_validators.FieldError("Name", err)
+		}
+	}
+	if this.Alias != nil {
+		if err := go_proto_validators.CallValidatorIfExists(this.Alias); err != nil {
+			return go_proto_validators.FieldError("Alias", err)
+		}
+	}
+	if this.Symbol != nil {
+		if err := go_proto_validators.CallValidatorIfExists(this.Symbol); err != nil {
+			return go_proto_validators.FieldError("Symbol", err)
 		}
 	}
 	return nil
@@ -109,94 +149,31 @@ func (this *OpSource) Validate() error {
 			return go_proto_validators.FieldError("Id", err)
 		}
 	}
-	if this.Name != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Name); err != nil {
-			return go_proto_validators.FieldError("Name", err)
-		}
-	}
-	if this.Engine != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Engine); err != nil {
-			return go_proto_validators.FieldError("Engine", err)
-		}
-	}
-	if this.StreamId != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.StreamId); err != nil {
-			return go_proto_validators.FieldError("StreamId", err)
-		}
-	}
-	for _, item := range this.NextPadIds {
-		if item != nil {
-			if err := go_proto_validators.CallValidatorIfExists(item); err != nil {
-				return go_proto_validators.FieldError("NextPadIds", err)
-			}
-		}
-	}
-	if this.Config != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Config); err != nil {
-			return go_proto_validators.FieldError("Config", err)
+	if this.Upstream != nil {
+		if err := go_proto_validators.CallValidatorIfExists(this.Upstream); err != nil {
+			return go_proto_validators.FieldError("Upstream", err)
 		}
 	}
 	return nil
 }
-func (this *OpProcessor) Validate() error {
+func (this *OpGroup) Validate() error {
 	if this.Id != nil {
 		if err := go_proto_validators.CallValidatorIfExists(this.Id); err != nil {
 			return go_proto_validators.FieldError("Id", err)
 		}
 	}
-	if this.Name != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Name); err != nil {
-			return go_proto_validators.FieldError("Name", err)
-		}
-	}
-	if this.Engine != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Engine); err != nil {
-			return go_proto_validators.FieldError("Engine", err)
-		}
-	}
-	if this.StreamId != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.StreamId); err != nil {
-			return go_proto_validators.FieldError("StreamId", err)
-		}
-	}
-	for _, item := range this.NextPadIds {
+	for _, item := range this.Inputs {
 		if item != nil {
 			if err := go_proto_validators.CallValidatorIfExists(item); err != nil {
-				return go_proto_validators.FieldError("NextPadIds", err)
+				return go_proto_validators.FieldError("Inputs", err)
 			}
 		}
 	}
-	if this.Config != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Config); err != nil {
-			return go_proto_validators.FieldError("Config", err)
-		}
-	}
-	return nil
-}
-func (this *OpSink) Validate() error {
-	if this.Id != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Id); err != nil {
-			return go_proto_validators.FieldError("Id", err)
-		}
-	}
-	if this.Name != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Name); err != nil {
-			return go_proto_validators.FieldError("Name", err)
-		}
-	}
-	if this.Engine != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Engine); err != nil {
-			return go_proto_validators.FieldError("Engine", err)
-		}
-	}
-	if this.StreamId != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.StreamId); err != nil {
-			return go_proto_validators.FieldError("StreamId", err)
-		}
-	}
-	if this.Config != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Config); err != nil {
-			return go_proto_validators.FieldError("Config", err)
+	for _, item := range this.Outputs {
+		if item != nil {
+			if err := go_proto_validators.CallValidatorIfExists(item); err != nil {
+				return go_proto_validators.FieldError("Outputs", err)
+			}
 		}
 	}
 	return nil

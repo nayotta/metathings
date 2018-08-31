@@ -48,36 +48,7 @@ func (x StreamState) String() string {
 	return proto.EnumName(StreamState_name, int32(x))
 }
 func (StreamState) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_stream_f2f22d85ebbfe175, []int{0}
-}
-
-type PadType int32
-
-const (
-	PadType_PAD_TYPE_UNKNOWN PadType = 0
-	PadType_PAD_TYPE_SOURCE  PadType = 1
-	PadType_PAD_TYPE_FILTER  PadType = 2
-	PadType_PAD_TYPE_SINK    PadType = 3
-)
-
-var PadType_name = map[int32]string{
-	0: "PAD_TYPE_UNKNOWN",
-	1: "PAD_TYPE_SOURCE",
-	2: "PAD_TYPE_FILTER",
-	3: "PAD_TYPE_SINK",
-}
-var PadType_value = map[string]int32{
-	"PAD_TYPE_UNKNOWN": 0,
-	"PAD_TYPE_SOURCE":  1,
-	"PAD_TYPE_FILTER":  2,
-	"PAD_TYPE_SINK":    3,
-}
-
-func (x PadType) String() string {
-	return proto.EnumName(PadType_name, int32(x))
-}
-func (PadType) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_stream_f2f22d85ebbfe175, []int{1}
+	return fileDescriptor_stream_334ebe3eaf9d7db1, []int{0}
 }
 
 type Stream struct {
@@ -85,7 +56,8 @@ type Stream struct {
 	Name                 string      `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
 	OwnerId              string      `protobuf:"bytes,3,opt,name=owner_id,json=ownerId" json:"owner_id,omitempty"`
 	State                StreamState `protobuf:"varint,4,opt,name=state,enum=ai.metathings.service.streamd.StreamState" json:"state,omitempty"`
-	Pads                 []*Pad      `protobuf:"bytes,5,rep,name=pads" json:"pads,omitempty"`
+	Sources              []*Source   `protobuf:"bytes,5,rep,name=sources" json:"sources,omitempty"`
+	Groups               []*Group    `protobuf:"bytes,6,rep,name=groups" json:"groups,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}    `json:"-"`
 	XXX_unrecognized     []byte      `json:"-"`
 	XXX_sizecache        int32       `json:"-"`
@@ -95,7 +67,7 @@ func (m *Stream) Reset()         { *m = Stream{} }
 func (m *Stream) String() string { return proto.CompactTextString(m) }
 func (*Stream) ProtoMessage()    {}
 func (*Stream) Descriptor() ([]byte, []int) {
-	return fileDescriptor_stream_f2f22d85ebbfe175, []int{0}
+	return fileDescriptor_stream_334ebe3eaf9d7db1, []int{0}
 }
 func (m *Stream) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Stream.Unmarshal(m, b)
@@ -143,544 +115,227 @@ func (m *Stream) GetState() StreamState {
 	return StreamState_STREAM_STATE_UNKNOWN
 }
 
-func (m *Stream) GetPads() []*Pad {
+func (m *Stream) GetSources() []*Source {
 	if m != nil {
-		return m.Pads
+		return m.Sources
 	}
 	return nil
 }
 
-type PadConfigValue struct {
-	// Types that are valid to be assigned to Value:
-	//	*PadConfigValue_Double
-	//	*PadConfigValue_Float
-	//	*PadConfigValue_Int64
-	//	*PadConfigValue_Uint64
-	//	*PadConfigValue_Int32
-	//	*PadConfigValue_Uint32
-	//	*PadConfigValue_Bool
-	//	*PadConfigValue_String_
-	Value                isPadConfigValue_Value `protobuf_oneof:"value"`
-	XXX_NoUnkeyedLiteral struct{}               `json:"-"`
-	XXX_unrecognized     []byte                 `json:"-"`
-	XXX_sizecache        int32                  `json:"-"`
-}
-
-func (m *PadConfigValue) Reset()         { *m = PadConfigValue{} }
-func (m *PadConfigValue) String() string { return proto.CompactTextString(m) }
-func (*PadConfigValue) ProtoMessage()    {}
-func (*PadConfigValue) Descriptor() ([]byte, []int) {
-	return fileDescriptor_stream_f2f22d85ebbfe175, []int{1}
-}
-func (m *PadConfigValue) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_PadConfigValue.Unmarshal(m, b)
-}
-func (m *PadConfigValue) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_PadConfigValue.Marshal(b, m, deterministic)
-}
-func (dst *PadConfigValue) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_PadConfigValue.Merge(dst, src)
-}
-func (m *PadConfigValue) XXX_Size() int {
-	return xxx_messageInfo_PadConfigValue.Size(m)
-}
-func (m *PadConfigValue) XXX_DiscardUnknown() {
-	xxx_messageInfo_PadConfigValue.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_PadConfigValue proto.InternalMessageInfo
-
-type isPadConfigValue_Value interface {
-	isPadConfigValue_Value()
-}
-
-type PadConfigValue_Double struct {
-	Double float64 `protobuf:"fixed64,1,opt,name=double,oneof"`
-}
-type PadConfigValue_Float struct {
-	Float float32 `protobuf:"fixed32,2,opt,name=float,oneof"`
-}
-type PadConfigValue_Int64 struct {
-	Int64 int64 `protobuf:"varint,3,opt,name=int64,oneof"`
-}
-type PadConfigValue_Uint64 struct {
-	Uint64 uint64 `protobuf:"varint,4,opt,name=uint64,oneof"`
-}
-type PadConfigValue_Int32 struct {
-	Int32 int32 `protobuf:"varint,5,opt,name=int32,oneof"`
-}
-type PadConfigValue_Uint32 struct {
-	Uint32 uint32 `protobuf:"varint,6,opt,name=uint32,oneof"`
-}
-type PadConfigValue_Bool struct {
-	Bool bool `protobuf:"varint,7,opt,name=bool,oneof"`
-}
-type PadConfigValue_String_ struct {
-	String_ string `protobuf:"bytes,8,opt,name=string,oneof"`
-}
-
-func (*PadConfigValue_Double) isPadConfigValue_Value()  {}
-func (*PadConfigValue_Float) isPadConfigValue_Value()   {}
-func (*PadConfigValue_Int64) isPadConfigValue_Value()   {}
-func (*PadConfigValue_Uint64) isPadConfigValue_Value()  {}
-func (*PadConfigValue_Int32) isPadConfigValue_Value()   {}
-func (*PadConfigValue_Uint32) isPadConfigValue_Value()  {}
-func (*PadConfigValue_Bool) isPadConfigValue_Value()    {}
-func (*PadConfigValue_String_) isPadConfigValue_Value() {}
-
-func (m *PadConfigValue) GetValue() isPadConfigValue_Value {
+func (m *Stream) GetGroups() []*Group {
 	if m != nil {
-		return m.Value
+		return m.Groups
 	}
 	return nil
 }
 
-func (m *PadConfigValue) GetDouble() float64 {
-	if x, ok := m.GetValue().(*PadConfigValue_Double); ok {
-		return x.Double
-	}
-	return 0
+type Upstream struct {
+	Id                   string   `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
+	Name                 string   `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
+	Alias                string   `protobuf:"bytes,3,opt,name=alias" json:"alias,omitempty"`
+	Targets              []string `protobuf:"bytes,4,rep,name=targets" json:"targets,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *PadConfigValue) GetFloat() float32 {
-	if x, ok := m.GetValue().(*PadConfigValue_Float); ok {
-		return x.Float
-	}
-	return 0
+func (m *Upstream) Reset()         { *m = Upstream{} }
+func (m *Upstream) String() string { return proto.CompactTextString(m) }
+func (*Upstream) ProtoMessage()    {}
+func (*Upstream) Descriptor() ([]byte, []int) {
+	return fileDescriptor_stream_334ebe3eaf9d7db1, []int{1}
+}
+func (m *Upstream) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Upstream.Unmarshal(m, b)
+}
+func (m *Upstream) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Upstream.Marshal(b, m, deterministic)
+}
+func (dst *Upstream) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Upstream.Merge(dst, src)
+}
+func (m *Upstream) XXX_Size() int {
+	return xxx_messageInfo_Upstream.Size(m)
+}
+func (m *Upstream) XXX_DiscardUnknown() {
+	xxx_messageInfo_Upstream.DiscardUnknown(m)
 }
 
-func (m *PadConfigValue) GetInt64() int64 {
-	if x, ok := m.GetValue().(*PadConfigValue_Int64); ok {
-		return x.Int64
-	}
-	return 0
-}
+var xxx_messageInfo_Upstream proto.InternalMessageInfo
 
-func (m *PadConfigValue) GetUint64() uint64 {
-	if x, ok := m.GetValue().(*PadConfigValue_Uint64); ok {
-		return x.Uint64
-	}
-	return 0
-}
-
-func (m *PadConfigValue) GetInt32() int32 {
-	if x, ok := m.GetValue().(*PadConfigValue_Int32); ok {
-		return x.Int32
-	}
-	return 0
-}
-
-func (m *PadConfigValue) GetUint32() uint32 {
-	if x, ok := m.GetValue().(*PadConfigValue_Uint32); ok {
-		return x.Uint32
-	}
-	return 0
-}
-
-func (m *PadConfigValue) GetBool() bool {
-	if x, ok := m.GetValue().(*PadConfigValue_Bool); ok {
-		return x.Bool
-	}
-	return false
-}
-
-func (m *PadConfigValue) GetString_() string {
-	if x, ok := m.GetValue().(*PadConfigValue_String_); ok {
-		return x.String_
+func (m *Upstream) GetId() string {
+	if m != nil {
+		return m.Id
 	}
 	return ""
 }
 
-// XXX_OneofFuncs is for the internal use of the proto package.
-func (*PadConfigValue) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) error, func(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error), func(msg proto.Message) (n int), []interface{}) {
-	return _PadConfigValue_OneofMarshaler, _PadConfigValue_OneofUnmarshaler, _PadConfigValue_OneofSizer, []interface{}{
-		(*PadConfigValue_Double)(nil),
-		(*PadConfigValue_Float)(nil),
-		(*PadConfigValue_Int64)(nil),
-		(*PadConfigValue_Uint64)(nil),
-		(*PadConfigValue_Int32)(nil),
-		(*PadConfigValue_Uint32)(nil),
-		(*PadConfigValue_Bool)(nil),
-		(*PadConfigValue_String_)(nil),
-	}
-}
-
-func _PadConfigValue_OneofMarshaler(msg proto.Message, b *proto.Buffer) error {
-	m := msg.(*PadConfigValue)
-	// value
-	switch x := m.Value.(type) {
-	case *PadConfigValue_Double:
-		b.EncodeVarint(1<<3 | proto.WireFixed64)
-		b.EncodeFixed64(math.Float64bits(x.Double))
-	case *PadConfigValue_Float:
-		b.EncodeVarint(2<<3 | proto.WireFixed32)
-		b.EncodeFixed32(uint64(math.Float32bits(x.Float)))
-	case *PadConfigValue_Int64:
-		b.EncodeVarint(3<<3 | proto.WireVarint)
-		b.EncodeVarint(uint64(x.Int64))
-	case *PadConfigValue_Uint64:
-		b.EncodeVarint(4<<3 | proto.WireVarint)
-		b.EncodeVarint(uint64(x.Uint64))
-	case *PadConfigValue_Int32:
-		b.EncodeVarint(5<<3 | proto.WireVarint)
-		b.EncodeVarint(uint64(x.Int32))
-	case *PadConfigValue_Uint32:
-		b.EncodeVarint(6<<3 | proto.WireVarint)
-		b.EncodeVarint(uint64(x.Uint32))
-	case *PadConfigValue_Bool:
-		t := uint64(0)
-		if x.Bool {
-			t = 1
-		}
-		b.EncodeVarint(7<<3 | proto.WireVarint)
-		b.EncodeVarint(t)
-	case *PadConfigValue_String_:
-		b.EncodeVarint(8<<3 | proto.WireBytes)
-		b.EncodeStringBytes(x.String_)
-	case nil:
-	default:
-		return fmt.Errorf("PadConfigValue.Value has unexpected type %T", x)
-	}
-	return nil
-}
-
-func _PadConfigValue_OneofUnmarshaler(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error) {
-	m := msg.(*PadConfigValue)
-	switch tag {
-	case 1: // value.double
-		if wire != proto.WireFixed64 {
-			return true, proto.ErrInternalBadWireType
-		}
-		x, err := b.DecodeFixed64()
-		m.Value = &PadConfigValue_Double{math.Float64frombits(x)}
-		return true, err
-	case 2: // value.float
-		if wire != proto.WireFixed32 {
-			return true, proto.ErrInternalBadWireType
-		}
-		x, err := b.DecodeFixed32()
-		m.Value = &PadConfigValue_Float{math.Float32frombits(uint32(x))}
-		return true, err
-	case 3: // value.int64
-		if wire != proto.WireVarint {
-			return true, proto.ErrInternalBadWireType
-		}
-		x, err := b.DecodeVarint()
-		m.Value = &PadConfigValue_Int64{int64(x)}
-		return true, err
-	case 4: // value.uint64
-		if wire != proto.WireVarint {
-			return true, proto.ErrInternalBadWireType
-		}
-		x, err := b.DecodeVarint()
-		m.Value = &PadConfigValue_Uint64{x}
-		return true, err
-	case 5: // value.int32
-		if wire != proto.WireVarint {
-			return true, proto.ErrInternalBadWireType
-		}
-		x, err := b.DecodeVarint()
-		m.Value = &PadConfigValue_Int32{int32(x)}
-		return true, err
-	case 6: // value.uint32
-		if wire != proto.WireVarint {
-			return true, proto.ErrInternalBadWireType
-		}
-		x, err := b.DecodeVarint()
-		m.Value = &PadConfigValue_Uint32{uint32(x)}
-		return true, err
-	case 7: // value.bool
-		if wire != proto.WireVarint {
-			return true, proto.ErrInternalBadWireType
-		}
-		x, err := b.DecodeVarint()
-		m.Value = &PadConfigValue_Bool{x != 0}
-		return true, err
-	case 8: // value.string
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		x, err := b.DecodeStringBytes()
-		m.Value = &PadConfigValue_String_{x}
-		return true, err
-	default:
-		return false, nil
-	}
-}
-
-func _PadConfigValue_OneofSizer(msg proto.Message) (n int) {
-	m := msg.(*PadConfigValue)
-	// value
-	switch x := m.Value.(type) {
-	case *PadConfigValue_Double:
-		n += 1 // tag and wire
-		n += 8
-	case *PadConfigValue_Float:
-		n += 1 // tag and wire
-		n += 4
-	case *PadConfigValue_Int64:
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(x.Int64))
-	case *PadConfigValue_Uint64:
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(x.Uint64))
-	case *PadConfigValue_Int32:
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(x.Int32))
-	case *PadConfigValue_Uint32:
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(x.Uint32))
-	case *PadConfigValue_Bool:
-		n += 1 // tag and wire
-		n += 1
-	case *PadConfigValue_String_:
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(len(x.String_)))
-		n += len(x.String_)
-	case nil:
-	default:
-		panic(fmt.Sprintf("proto: unexpected type %T in oneof", x))
-	}
-	return n
-}
-
-type PadConfig struct {
-	Config               map[string]*PadConfigValue `protobuf:"bytes,1,rep,name=config" json:"config,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
-	XXX_NoUnkeyedLiteral struct{}                   `json:"-"`
-	XXX_unrecognized     []byte                     `json:"-"`
-	XXX_sizecache        int32                      `json:"-"`
-}
-
-func (m *PadConfig) Reset()         { *m = PadConfig{} }
-func (m *PadConfig) String() string { return proto.CompactTextString(m) }
-func (*PadConfig) ProtoMessage()    {}
-func (*PadConfig) Descriptor() ([]byte, []int) {
-	return fileDescriptor_stream_f2f22d85ebbfe175, []int{2}
-}
-func (m *PadConfig) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_PadConfig.Unmarshal(m, b)
-}
-func (m *PadConfig) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_PadConfig.Marshal(b, m, deterministic)
-}
-func (dst *PadConfig) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_PadConfig.Merge(dst, src)
-}
-func (m *PadConfig) XXX_Size() int {
-	return xxx_messageInfo_PadConfig.Size(m)
-}
-func (m *PadConfig) XXX_DiscardUnknown() {
-	xxx_messageInfo_PadConfig.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_PadConfig proto.InternalMessageInfo
-
-func (m *PadConfig) GetConfig() map[string]*PadConfigValue {
+func (m *Upstream) GetName() string {
 	if m != nil {
-		return m.Config
+		return m.Name
 	}
-	return nil
+	return ""
 }
 
-type Pad struct {
-	Type PadType `protobuf:"varint,1,opt,name=type,enum=ai.metathings.service.streamd.PadType" json:"type,omitempty"`
-	// Types that are valid to be assigned to Component:
-	//	*Pad_Source
-	//	*Pad_Filter
-	//	*Pad_Sink
-	Component            isPad_Component `protobuf_oneof:"component"`
-	XXX_NoUnkeyedLiteral struct{}        `json:"-"`
-	XXX_unrecognized     []byte          `json:"-"`
-	XXX_sizecache        int32           `json:"-"`
-}
-
-func (m *Pad) Reset()         { *m = Pad{} }
-func (m *Pad) String() string { return proto.CompactTextString(m) }
-func (*Pad) ProtoMessage()    {}
-func (*Pad) Descriptor() ([]byte, []int) {
-	return fileDescriptor_stream_f2f22d85ebbfe175, []int{3}
-}
-func (m *Pad) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_Pad.Unmarshal(m, b)
-}
-func (m *Pad) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_Pad.Marshal(b, m, deterministic)
-}
-func (dst *Pad) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Pad.Merge(dst, src)
-}
-func (m *Pad) XXX_Size() int {
-	return xxx_messageInfo_Pad.Size(m)
-}
-func (m *Pad) XXX_DiscardUnknown() {
-	xxx_messageInfo_Pad.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_Pad proto.InternalMessageInfo
-
-type isPad_Component interface {
-	isPad_Component()
-}
-
-type Pad_Source struct {
-	Source *Source `protobuf:"bytes,2,opt,name=source,oneof"`
-}
-type Pad_Filter struct {
-	Filter *Filter `protobuf:"bytes,3,opt,name=filter,oneof"`
-}
-type Pad_Sink struct {
-	Sink *Sink `protobuf:"bytes,4,opt,name=sink,oneof"`
-}
-
-func (*Pad_Source) isPad_Component() {}
-func (*Pad_Filter) isPad_Component() {}
-func (*Pad_Sink) isPad_Component()   {}
-
-func (m *Pad) GetComponent() isPad_Component {
+func (m *Upstream) GetAlias() string {
 	if m != nil {
-		return m.Component
+		return m.Alias
 	}
-	return nil
+	return ""
 }
 
-func (m *Pad) GetType() PadType {
+func (m *Upstream) GetTargets() []string {
 	if m != nil {
-		return m.Type
-	}
-	return PadType_PAD_TYPE_UNKNOWN
-}
-
-func (m *Pad) GetSource() *Source {
-	if x, ok := m.GetComponent().(*Pad_Source); ok {
-		return x.Source
+		return m.Targets
 	}
 	return nil
 }
 
-func (m *Pad) GetFilter() *Filter {
-	if x, ok := m.GetComponent().(*Pad_Filter); ok {
-		return x.Filter
+type Input struct {
+	Id                   string   `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
+	Name                 string   `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
+	Alias                string   `protobuf:"bytes,3,opt,name=alias" json:"alias,omitempty"`
+	Symbol               string   `protobuf:"bytes,4,opt,name=symbol" json:"symbol,omitempty"`
+	Targets              []string `protobuf:"bytes,5,rep,name=targets" json:"targets,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *Input) Reset()         { *m = Input{} }
+func (m *Input) String() string { return proto.CompactTextString(m) }
+func (*Input) ProtoMessage()    {}
+func (*Input) Descriptor() ([]byte, []int) {
+	return fileDescriptor_stream_334ebe3eaf9d7db1, []int{2}
+}
+func (m *Input) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Input.Unmarshal(m, b)
+}
+func (m *Input) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Input.Marshal(b, m, deterministic)
+}
+func (dst *Input) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Input.Merge(dst, src)
+}
+func (m *Input) XXX_Size() int {
+	return xxx_messageInfo_Input.Size(m)
+}
+func (m *Input) XXX_DiscardUnknown() {
+	xxx_messageInfo_Input.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_Input proto.InternalMessageInfo
+
+func (m *Input) GetId() string {
+	if m != nil {
+		return m.Id
+	}
+	return ""
+}
+
+func (m *Input) GetName() string {
+	if m != nil {
+		return m.Name
+	}
+	return ""
+}
+
+func (m *Input) GetAlias() string {
+	if m != nil {
+		return m.Alias
+	}
+	return ""
+}
+
+func (m *Input) GetSymbol() string {
+	if m != nil {
+		return m.Symbol
+	}
+	return ""
+}
+
+func (m *Input) GetTargets() []string {
+	if m != nil {
+		return m.Targets
 	}
 	return nil
 }
 
-func (m *Pad) GetSink() *Sink {
-	if x, ok := m.GetComponent().(*Pad_Sink); ok {
-		return x.Sink
-	}
-	return nil
+type Output struct {
+	Id                   string   `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
+	Name                 string   `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
+	Alias                string   `protobuf:"bytes,3,opt,name=alias" json:"alias,omitempty"`
+	Symbol               string   `protobuf:"bytes,4,opt,name=symbol" json:"symbol,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
-// XXX_OneofFuncs is for the internal use of the proto package.
-func (*Pad) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) error, func(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error), func(msg proto.Message) (n int), []interface{}) {
-	return _Pad_OneofMarshaler, _Pad_OneofUnmarshaler, _Pad_OneofSizer, []interface{}{
-		(*Pad_Source)(nil),
-		(*Pad_Filter)(nil),
-		(*Pad_Sink)(nil),
-	}
+func (m *Output) Reset()         { *m = Output{} }
+func (m *Output) String() string { return proto.CompactTextString(m) }
+func (*Output) ProtoMessage()    {}
+func (*Output) Descriptor() ([]byte, []int) {
+	return fileDescriptor_stream_334ebe3eaf9d7db1, []int{3}
+}
+func (m *Output) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Output.Unmarshal(m, b)
+}
+func (m *Output) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Output.Marshal(b, m, deterministic)
+}
+func (dst *Output) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Output.Merge(dst, src)
+}
+func (m *Output) XXX_Size() int {
+	return xxx_messageInfo_Output.Size(m)
+}
+func (m *Output) XXX_DiscardUnknown() {
+	xxx_messageInfo_Output.DiscardUnknown(m)
 }
 
-func _Pad_OneofMarshaler(msg proto.Message, b *proto.Buffer) error {
-	m := msg.(*Pad)
-	// component
-	switch x := m.Component.(type) {
-	case *Pad_Source:
-		b.EncodeVarint(2<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Source); err != nil {
-			return err
-		}
-	case *Pad_Filter:
-		b.EncodeVarint(3<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Filter); err != nil {
-			return err
-		}
-	case *Pad_Sink:
-		b.EncodeVarint(4<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Sink); err != nil {
-			return err
-		}
-	case nil:
-	default:
-		return fmt.Errorf("Pad.Component has unexpected type %T", x)
+var xxx_messageInfo_Output proto.InternalMessageInfo
+
+func (m *Output) GetId() string {
+	if m != nil {
+		return m.Id
 	}
-	return nil
+	return ""
 }
 
-func _Pad_OneofUnmarshaler(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error) {
-	m := msg.(*Pad)
-	switch tag {
-	case 2: // component.source
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(Source)
-		err := b.DecodeMessage(msg)
-		m.Component = &Pad_Source{msg}
-		return true, err
-	case 3: // component.filter
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(Filter)
-		err := b.DecodeMessage(msg)
-		m.Component = &Pad_Filter{msg}
-		return true, err
-	case 4: // component.sink
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(Sink)
-		err := b.DecodeMessage(msg)
-		m.Component = &Pad_Sink{msg}
-		return true, err
-	default:
-		return false, nil
+func (m *Output) GetName() string {
+	if m != nil {
+		return m.Name
 	}
+	return ""
 }
 
-func _Pad_OneofSizer(msg proto.Message) (n int) {
-	m := msg.(*Pad)
-	// component
-	switch x := m.Component.(type) {
-	case *Pad_Source:
-		s := proto.Size(x.Source)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *Pad_Filter:
-		s := proto.Size(x.Filter)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *Pad_Sink:
-		s := proto.Size(x.Sink)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case nil:
-	default:
-		panic(fmt.Sprintf("proto: unexpected type %T in oneof", x))
+func (m *Output) GetAlias() string {
+	if m != nil {
+		return m.Alias
 	}
-	return n
+	return ""
+}
+
+func (m *Output) GetSymbol() string {
+	if m != nil {
+		return m.Symbol
+	}
+	return ""
 }
 
 type Source struct {
-	Id                   string     `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	Name                 string     `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
-	Processor            string     `protobuf:"bytes,3,opt,name=processor" json:"processor,omitempty"`
-	StreamId             string     `protobuf:"bytes,4,opt,name=stream_id,json=streamId" json:"stream_id,omitempty"`
-	NextPadIds           []string   `protobuf:"bytes,5,rep,name=next_pad_ids,json=nextPadIds" json:"next_pad_ids,omitempty"`
-	Config               *PadConfig `protobuf:"bytes,6,opt,name=config" json:"config,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}   `json:"-"`
-	XXX_unrecognized     []byte     `json:"-"`
-	XXX_sizecache        int32      `json:"-"`
+	Id                   string    `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
+	Upstream             *Upstream `protobuf:"bytes,2,opt,name=upstream" json:"upstream,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}  `json:"-"`
+	XXX_unrecognized     []byte    `json:"-"`
+	XXX_sizecache        int32     `json:"-"`
 }
 
 func (m *Source) Reset()         { *m = Source{} }
 func (m *Source) String() string { return proto.CompactTextString(m) }
 func (*Source) ProtoMessage()    {}
 func (*Source) Descriptor() ([]byte, []int) {
-	return fileDescriptor_stream_f2f22d85ebbfe175, []int{4}
+	return fileDescriptor_stream_334ebe3eaf9d7db1, []int{4}
 }
 func (m *Source) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Source.Unmarshal(m, b)
@@ -707,388 +362,274 @@ func (m *Source) GetId() string {
 	return ""
 }
 
-func (m *Source) GetName() string {
+func (m *Source) GetUpstream() *Upstream {
 	if m != nil {
-		return m.Name
-	}
-	return ""
-}
-
-func (m *Source) GetProcessor() string {
-	if m != nil {
-		return m.Processor
-	}
-	return ""
-}
-
-func (m *Source) GetStreamId() string {
-	if m != nil {
-		return m.StreamId
-	}
-	return ""
-}
-
-func (m *Source) GetNextPadIds() []string {
-	if m != nil {
-		return m.NextPadIds
+		return m.Upstream
 	}
 	return nil
 }
 
-func (m *Source) GetConfig() *PadConfig {
-	if m != nil {
-		return m.Config
-	}
-	return nil
+type Group struct {
+	Id                   string    `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
+	Inputs               []*Input  `protobuf:"bytes,2,rep,name=inputs" json:"inputs,omitempty"`
+	Outputs              []*Output `protobuf:"bytes,3,rep,name=outputs" json:"outputs,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}  `json:"-"`
+	XXX_unrecognized     []byte    `json:"-"`
+	XXX_sizecache        int32     `json:"-"`
 }
 
-type Filter struct {
-	Id                   string     `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	Name                 string     `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
-	Processor            string     `protobuf:"bytes,3,opt,name=processor" json:"processor,omitempty"`
-	StreamId             string     `protobuf:"bytes,4,opt,name=stream_id,json=streamId" json:"stream_id,omitempty"`
-	NextPadIds           []string   `protobuf:"bytes,5,rep,name=next_pad_ids,json=nextPadIds" json:"next_pad_ids,omitempty"`
-	Config               *PadConfig `protobuf:"bytes,6,opt,name=config" json:"config,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}   `json:"-"`
-	XXX_unrecognized     []byte     `json:"-"`
-	XXX_sizecache        int32      `json:"-"`
+func (m *Group) Reset()         { *m = Group{} }
+func (m *Group) String() string { return proto.CompactTextString(m) }
+func (*Group) ProtoMessage()    {}
+func (*Group) Descriptor() ([]byte, []int) {
+	return fileDescriptor_stream_334ebe3eaf9d7db1, []int{5}
+}
+func (m *Group) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Group.Unmarshal(m, b)
+}
+func (m *Group) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Group.Marshal(b, m, deterministic)
+}
+func (dst *Group) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Group.Merge(dst, src)
+}
+func (m *Group) XXX_Size() int {
+	return xxx_messageInfo_Group.Size(m)
+}
+func (m *Group) XXX_DiscardUnknown() {
+	xxx_messageInfo_Group.DiscardUnknown(m)
 }
 
-func (m *Filter) Reset()         { *m = Filter{} }
-func (m *Filter) String() string { return proto.CompactTextString(m) }
-func (*Filter) ProtoMessage()    {}
-func (*Filter) Descriptor() ([]byte, []int) {
-	return fileDescriptor_stream_f2f22d85ebbfe175, []int{5}
-}
-func (m *Filter) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_Filter.Unmarshal(m, b)
-}
-func (m *Filter) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_Filter.Marshal(b, m, deterministic)
-}
-func (dst *Filter) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Filter.Merge(dst, src)
-}
-func (m *Filter) XXX_Size() int {
-	return xxx_messageInfo_Filter.Size(m)
-}
-func (m *Filter) XXX_DiscardUnknown() {
-	xxx_messageInfo_Filter.DiscardUnknown(m)
-}
+var xxx_messageInfo_Group proto.InternalMessageInfo
 
-var xxx_messageInfo_Filter proto.InternalMessageInfo
-
-func (m *Filter) GetId() string {
+func (m *Group) GetId() string {
 	if m != nil {
 		return m.Id
 	}
 	return ""
 }
 
-func (m *Filter) GetName() string {
+func (m *Group) GetInputs() []*Input {
 	if m != nil {
-		return m.Name
-	}
-	return ""
-}
-
-func (m *Filter) GetProcessor() string {
-	if m != nil {
-		return m.Processor
-	}
-	return ""
-}
-
-func (m *Filter) GetStreamId() string {
-	if m != nil {
-		return m.StreamId
-	}
-	return ""
-}
-
-func (m *Filter) GetNextPadIds() []string {
-	if m != nil {
-		return m.NextPadIds
+		return m.Inputs
 	}
 	return nil
 }
 
-func (m *Filter) GetConfig() *PadConfig {
+func (m *Group) GetOutputs() []*Output {
 	if m != nil {
-		return m.Config
+		return m.Outputs
 	}
 	return nil
 }
 
-type Sink struct {
-	Id                   string     `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	Name                 string     `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
-	Processor            string     `protobuf:"bytes,3,opt,name=processor" json:"processor,omitempty"`
-	StreamId             string     `protobuf:"bytes,4,opt,name=stream_id,json=streamId" json:"stream_id,omitempty"`
-	Config               *PadConfig `protobuf:"bytes,5,opt,name=config" json:"config,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}   `json:"-"`
-	XXX_unrecognized     []byte     `json:"-"`
-	XXX_sizecache        int32      `json:"-"`
-}
-
-func (m *Sink) Reset()         { *m = Sink{} }
-func (m *Sink) String() string { return proto.CompactTextString(m) }
-func (*Sink) ProtoMessage()    {}
-func (*Sink) Descriptor() ([]byte, []int) {
-	return fileDescriptor_stream_f2f22d85ebbfe175, []int{6}
-}
-func (m *Sink) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_Sink.Unmarshal(m, b)
-}
-func (m *Sink) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_Sink.Marshal(b, m, deterministic)
-}
-func (dst *Sink) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Sink.Merge(dst, src)
-}
-func (m *Sink) XXX_Size() int {
-	return xxx_messageInfo_Sink.Size(m)
-}
-func (m *Sink) XXX_DiscardUnknown() {
-	xxx_messageInfo_Sink.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_Sink proto.InternalMessageInfo
-
-func (m *Sink) GetId() string {
-	if m != nil {
-		return m.Id
-	}
-	return ""
-}
-
-func (m *Sink) GetName() string {
-	if m != nil {
-		return m.Name
-	}
-	return ""
-}
-
-func (m *Sink) GetProcessor() string {
-	if m != nil {
-		return m.Processor
-	}
-	return ""
-}
-
-func (m *Sink) GetStreamId() string {
-	if m != nil {
-		return m.StreamId
-	}
-	return ""
-}
-
-func (m *Sink) GetConfig() *PadConfig {
-	if m != nil {
-		return m.Config
-	}
-	return nil
-}
-
-type OpPad struct {
-	Type PadType `protobuf:"varint,1,opt,name=type,enum=ai.metathings.service.streamd.PadType" json:"type,omitempty"`
-	// Types that are valid to be assigned to Pad:
-	//	*OpPad_Source
-	//	*OpPad_Processor
-	//	*OpPad_Sink
-	Pad                  isOpPad_Pad `protobuf_oneof:"pad"`
-	XXX_NoUnkeyedLiteral struct{}    `json:"-"`
-	XXX_unrecognized     []byte      `json:"-"`
-	XXX_sizecache        int32       `json:"-"`
-}
-
-func (m *OpPad) Reset()         { *m = OpPad{} }
-func (m *OpPad) String() string { return proto.CompactTextString(m) }
-func (*OpPad) ProtoMessage()    {}
-func (*OpPad) Descriptor() ([]byte, []int) {
-	return fileDescriptor_stream_f2f22d85ebbfe175, []int{7}
-}
-func (m *OpPad) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_OpPad.Unmarshal(m, b)
-}
-func (m *OpPad) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_OpPad.Marshal(b, m, deterministic)
-}
-func (dst *OpPad) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_OpPad.Merge(dst, src)
-}
-func (m *OpPad) XXX_Size() int {
-	return xxx_messageInfo_OpPad.Size(m)
-}
-func (m *OpPad) XXX_DiscardUnknown() {
-	xxx_messageInfo_OpPad.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_OpPad proto.InternalMessageInfo
-
-type isOpPad_Pad interface {
-	isOpPad_Pad()
-}
-
-type OpPad_Source struct {
-	Source *OpSource `protobuf:"bytes,2,opt,name=source,oneof"`
-}
-type OpPad_Processor struct {
-	Processor *OpProcessor `protobuf:"bytes,3,opt,name=processor,oneof"`
-}
-type OpPad_Sink struct {
-	Sink *OpSink `protobuf:"bytes,4,opt,name=sink,oneof"`
-}
-
-func (*OpPad_Source) isOpPad_Pad()    {}
-func (*OpPad_Processor) isOpPad_Pad() {}
-func (*OpPad_Sink) isOpPad_Pad()      {}
-
-func (m *OpPad) GetPad() isOpPad_Pad {
-	if m != nil {
-		return m.Pad
-	}
-	return nil
-}
-
-func (m *OpPad) GetType() PadType {
-	if m != nil {
-		return m.Type
-	}
-	return PadType_PAD_TYPE_UNKNOWN
-}
-
-func (m *OpPad) GetSource() *OpSource {
-	if x, ok := m.GetPad().(*OpPad_Source); ok {
-		return x.Source
-	}
-	return nil
-}
-
-func (m *OpPad) GetProcessor() *OpProcessor {
-	if x, ok := m.GetPad().(*OpPad_Processor); ok {
-		return x.Processor
-	}
-	return nil
-}
-
-func (m *OpPad) GetSink() *OpSink {
-	if x, ok := m.GetPad().(*OpPad_Sink); ok {
-		return x.Sink
-	}
-	return nil
-}
-
-// XXX_OneofFuncs is for the internal use of the proto package.
-func (*OpPad) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) error, func(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error), func(msg proto.Message) (n int), []interface{}) {
-	return _OpPad_OneofMarshaler, _OpPad_OneofUnmarshaler, _OpPad_OneofSizer, []interface{}{
-		(*OpPad_Source)(nil),
-		(*OpPad_Processor)(nil),
-		(*OpPad_Sink)(nil),
-	}
-}
-
-func _OpPad_OneofMarshaler(msg proto.Message, b *proto.Buffer) error {
-	m := msg.(*OpPad)
-	// pad
-	switch x := m.Pad.(type) {
-	case *OpPad_Source:
-		b.EncodeVarint(2<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Source); err != nil {
-			return err
-		}
-	case *OpPad_Processor:
-		b.EncodeVarint(3<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Processor); err != nil {
-			return err
-		}
-	case *OpPad_Sink:
-		b.EncodeVarint(4<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Sink); err != nil {
-			return err
-		}
-	case nil:
-	default:
-		return fmt.Errorf("OpPad.Pad has unexpected type %T", x)
-	}
-	return nil
-}
-
-func _OpPad_OneofUnmarshaler(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error) {
-	m := msg.(*OpPad)
-	switch tag {
-	case 2: // pad.source
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(OpSource)
-		err := b.DecodeMessage(msg)
-		m.Pad = &OpPad_Source{msg}
-		return true, err
-	case 3: // pad.processor
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(OpProcessor)
-		err := b.DecodeMessage(msg)
-		m.Pad = &OpPad_Processor{msg}
-		return true, err
-	case 4: // pad.sink
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(OpSink)
-		err := b.DecodeMessage(msg)
-		m.Pad = &OpPad_Sink{msg}
-		return true, err
-	default:
-		return false, nil
-	}
-}
-
-func _OpPad_OneofSizer(msg proto.Message) (n int) {
-	m := msg.(*OpPad)
-	// pad
-	switch x := m.Pad.(type) {
-	case *OpPad_Source:
-		s := proto.Size(x.Source)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *OpPad_Processor:
-		s := proto.Size(x.Processor)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *OpPad_Sink:
-		s := proto.Size(x.Sink)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case nil:
-	default:
-		panic(fmt.Sprintf("proto: unexpected type %T in oneof", x))
-	}
-	return n
-}
-
-type OpSource struct {
+type OpUpstream struct {
 	Id                   *wrappers.StringValue   `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
 	Name                 *wrappers.StringValue   `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
-	Engine               *wrappers.StringValue   `protobuf:"bytes,3,opt,name=engine" json:"engine,omitempty"`
-	StreamId             *wrappers.StringValue   `protobuf:"bytes,4,opt,name=stream_id,json=streamId" json:"stream_id,omitempty"`
-	NextPadIds           []*wrappers.StringValue `protobuf:"bytes,5,rep,name=next_pad_ids,json=nextPadIds" json:"next_pad_ids,omitempty"`
-	Config               *PadConfig              `protobuf:"bytes,6,opt,name=config" json:"config,omitempty"`
+	Alias                *wrappers.StringValue   `protobuf:"bytes,3,opt,name=alias" json:"alias,omitempty"`
+	Targets              []*wrappers.StringValue `protobuf:"bytes,4,rep,name=targets" json:"targets,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}                `json:"-"`
 	XXX_unrecognized     []byte                  `json:"-"`
 	XXX_sizecache        int32                   `json:"-"`
+}
+
+func (m *OpUpstream) Reset()         { *m = OpUpstream{} }
+func (m *OpUpstream) String() string { return proto.CompactTextString(m) }
+func (*OpUpstream) ProtoMessage()    {}
+func (*OpUpstream) Descriptor() ([]byte, []int) {
+	return fileDescriptor_stream_334ebe3eaf9d7db1, []int{6}
+}
+func (m *OpUpstream) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_OpUpstream.Unmarshal(m, b)
+}
+func (m *OpUpstream) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_OpUpstream.Marshal(b, m, deterministic)
+}
+func (dst *OpUpstream) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_OpUpstream.Merge(dst, src)
+}
+func (m *OpUpstream) XXX_Size() int {
+	return xxx_messageInfo_OpUpstream.Size(m)
+}
+func (m *OpUpstream) XXX_DiscardUnknown() {
+	xxx_messageInfo_OpUpstream.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_OpUpstream proto.InternalMessageInfo
+
+func (m *OpUpstream) GetId() *wrappers.StringValue {
+	if m != nil {
+		return m.Id
+	}
+	return nil
+}
+
+func (m *OpUpstream) GetName() *wrappers.StringValue {
+	if m != nil {
+		return m.Name
+	}
+	return nil
+}
+
+func (m *OpUpstream) GetAlias() *wrappers.StringValue {
+	if m != nil {
+		return m.Alias
+	}
+	return nil
+}
+
+func (m *OpUpstream) GetTargets() []*wrappers.StringValue {
+	if m != nil {
+		return m.Targets
+	}
+	return nil
+}
+
+type OpInput struct {
+	Id                   *wrappers.StringValue   `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
+	Name                 *wrappers.StringValue   `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
+	Alias                *wrappers.StringValue   `protobuf:"bytes,3,opt,name=alias" json:"alias,omitempty"`
+	Symbol               *wrappers.StringValue   `protobuf:"bytes,4,opt,name=symbol" json:"symbol,omitempty"`
+	Targets              []*wrappers.StringValue `protobuf:"bytes,5,rep,name=targets" json:"targets,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}                `json:"-"`
+	XXX_unrecognized     []byte                  `json:"-"`
+	XXX_sizecache        int32                   `json:"-"`
+}
+
+func (m *OpInput) Reset()         { *m = OpInput{} }
+func (m *OpInput) String() string { return proto.CompactTextString(m) }
+func (*OpInput) ProtoMessage()    {}
+func (*OpInput) Descriptor() ([]byte, []int) {
+	return fileDescriptor_stream_334ebe3eaf9d7db1, []int{7}
+}
+func (m *OpInput) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_OpInput.Unmarshal(m, b)
+}
+func (m *OpInput) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_OpInput.Marshal(b, m, deterministic)
+}
+func (dst *OpInput) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_OpInput.Merge(dst, src)
+}
+func (m *OpInput) XXX_Size() int {
+	return xxx_messageInfo_OpInput.Size(m)
+}
+func (m *OpInput) XXX_DiscardUnknown() {
+	xxx_messageInfo_OpInput.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_OpInput proto.InternalMessageInfo
+
+func (m *OpInput) GetId() *wrappers.StringValue {
+	if m != nil {
+		return m.Id
+	}
+	return nil
+}
+
+func (m *OpInput) GetName() *wrappers.StringValue {
+	if m != nil {
+		return m.Name
+	}
+	return nil
+}
+
+func (m *OpInput) GetAlias() *wrappers.StringValue {
+	if m != nil {
+		return m.Alias
+	}
+	return nil
+}
+
+func (m *OpInput) GetSymbol() *wrappers.StringValue {
+	if m != nil {
+		return m.Symbol
+	}
+	return nil
+}
+
+func (m *OpInput) GetTargets() []*wrappers.StringValue {
+	if m != nil {
+		return m.Targets
+	}
+	return nil
+}
+
+type OpOutput struct {
+	Id                   *wrappers.StringValue `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
+	Alias                *wrappers.StringValue `protobuf:"bytes,3,opt,name=alias" json:"alias,omitempty"`
+	Symbol               *wrappers.StringValue `protobuf:"bytes,4,opt,name=symbol" json:"symbol,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
+}
+
+func (m *OpOutput) Reset()         { *m = OpOutput{} }
+func (m *OpOutput) String() string { return proto.CompactTextString(m) }
+func (*OpOutput) ProtoMessage()    {}
+func (*OpOutput) Descriptor() ([]byte, []int) {
+	return fileDescriptor_stream_334ebe3eaf9d7db1, []int{8}
+}
+func (m *OpOutput) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_OpOutput.Unmarshal(m, b)
+}
+func (m *OpOutput) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_OpOutput.Marshal(b, m, deterministic)
+}
+func (dst *OpOutput) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_OpOutput.Merge(dst, src)
+}
+func (m *OpOutput) XXX_Size() int {
+	return xxx_messageInfo_OpOutput.Size(m)
+}
+func (m *OpOutput) XXX_DiscardUnknown() {
+	xxx_messageInfo_OpOutput.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_OpOutput proto.InternalMessageInfo
+
+func (m *OpOutput) GetId() *wrappers.StringValue {
+	if m != nil {
+		return m.Id
+	}
+	return nil
+}
+
+func (m *OpOutput) GetName() *wrappers.StringValue {
+	if m != nil {
+		return m.Name
+	}
+	return nil
+}
+
+func (m *OpOutput) GetAlias() *wrappers.StringValue {
+	if m != nil {
+		return m.Alias
+	}
+	return nil
+}
+
+func (m *OpOutput) GetSymbol() *wrappers.StringValue {
+	if m != nil {
+		return m.Symbol
+	}
+	return nil
+}
+
+type OpSource struct {
+	Id                   *wrappers.StringValue `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
+	Upstream             *OpUpstream           `protobuf:"bytes,2,opt,name=upstream" json:"upstream,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
 func (m *OpSource) Reset()         { *m = OpSource{} }
 func (m *OpSource) String() string { return proto.CompactTextString(m) }
 func (*OpSource) ProtoMessage()    {}
 func (*OpSource) Descriptor() ([]byte, []int) {
-	return fileDescriptor_stream_f2f22d85ebbfe175, []int{8}
+	return fileDescriptor_stream_334ebe3eaf9d7db1, []int{9}
 }
 func (m *OpSource) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_OpSource.Unmarshal(m, b)
@@ -1115,263 +656,122 @@ func (m *OpSource) GetId() *wrappers.StringValue {
 	return nil
 }
 
-func (m *OpSource) GetName() *wrappers.StringValue {
+func (m *OpSource) GetUpstream() *OpUpstream {
 	if m != nil {
-		return m.Name
+		return m.Upstream
 	}
 	return nil
 }
 
-func (m *OpSource) GetEngine() *wrappers.StringValue {
-	if m != nil {
-		return m.Engine
-	}
-	return nil
-}
-
-func (m *OpSource) GetStreamId() *wrappers.StringValue {
-	if m != nil {
-		return m.StreamId
-	}
-	return nil
-}
-
-func (m *OpSource) GetNextPadIds() []*wrappers.StringValue {
-	if m != nil {
-		return m.NextPadIds
-	}
-	return nil
-}
-
-func (m *OpSource) GetConfig() *PadConfig {
-	if m != nil {
-		return m.Config
-	}
-	return nil
-}
-
-type OpProcessor struct {
-	Id                   *wrappers.StringValue   `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	Name                 *wrappers.StringValue   `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
-	Engine               *wrappers.StringValue   `protobuf:"bytes,3,opt,name=engine" json:"engine,omitempty"`
-	StreamId             *wrappers.StringValue   `protobuf:"bytes,4,opt,name=stream_id,json=streamId" json:"stream_id,omitempty"`
-	NextPadIds           []*wrappers.StringValue `protobuf:"bytes,5,rep,name=next_pad_ids,json=nextPadIds" json:"next_pad_ids,omitempty"`
-	Config               *PadConfig              `protobuf:"bytes,6,opt,name=config" json:"config,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}                `json:"-"`
-	XXX_unrecognized     []byte                  `json:"-"`
-	XXX_sizecache        int32                   `json:"-"`
-}
-
-func (m *OpProcessor) Reset()         { *m = OpProcessor{} }
-func (m *OpProcessor) String() string { return proto.CompactTextString(m) }
-func (*OpProcessor) ProtoMessage()    {}
-func (*OpProcessor) Descriptor() ([]byte, []int) {
-	return fileDescriptor_stream_f2f22d85ebbfe175, []int{9}
-}
-func (m *OpProcessor) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_OpProcessor.Unmarshal(m, b)
-}
-func (m *OpProcessor) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_OpProcessor.Marshal(b, m, deterministic)
-}
-func (dst *OpProcessor) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_OpProcessor.Merge(dst, src)
-}
-func (m *OpProcessor) XXX_Size() int {
-	return xxx_messageInfo_OpProcessor.Size(m)
-}
-func (m *OpProcessor) XXX_DiscardUnknown() {
-	xxx_messageInfo_OpProcessor.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_OpProcessor proto.InternalMessageInfo
-
-func (m *OpProcessor) GetId() *wrappers.StringValue {
-	if m != nil {
-		return m.Id
-	}
-	return nil
-}
-
-func (m *OpProcessor) GetName() *wrappers.StringValue {
-	if m != nil {
-		return m.Name
-	}
-	return nil
-}
-
-func (m *OpProcessor) GetEngine() *wrappers.StringValue {
-	if m != nil {
-		return m.Engine
-	}
-	return nil
-}
-
-func (m *OpProcessor) GetStreamId() *wrappers.StringValue {
-	if m != nil {
-		return m.StreamId
-	}
-	return nil
-}
-
-func (m *OpProcessor) GetNextPadIds() []*wrappers.StringValue {
-	if m != nil {
-		return m.NextPadIds
-	}
-	return nil
-}
-
-func (m *OpProcessor) GetConfig() *PadConfig {
-	if m != nil {
-		return m.Config
-	}
-	return nil
-}
-
-type OpSink struct {
+type OpGroup struct {
 	Id                   *wrappers.StringValue `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
-	Engine               *wrappers.StringValue `protobuf:"bytes,3,opt,name=engine" json:"engine,omitempty"`
-	StreamId             *wrappers.StringValue `protobuf:"bytes,4,opt,name=stream_id,json=streamId" json:"stream_id,omitempty"`
-	Config               *PadConfig            `protobuf:"bytes,5,opt,name=config" json:"config,omitempty"`
+	Inputs               []*OpInput            `protobuf:"bytes,2,rep,name=inputs" json:"inputs,omitempty"`
+	Outputs              []*OpOutput           `protobuf:"bytes,3,rep,name=outputs" json:"outputs,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
 }
 
-func (m *OpSink) Reset()         { *m = OpSink{} }
-func (m *OpSink) String() string { return proto.CompactTextString(m) }
-func (*OpSink) ProtoMessage()    {}
-func (*OpSink) Descriptor() ([]byte, []int) {
-	return fileDescriptor_stream_f2f22d85ebbfe175, []int{10}
+func (m *OpGroup) Reset()         { *m = OpGroup{} }
+func (m *OpGroup) String() string { return proto.CompactTextString(m) }
+func (*OpGroup) ProtoMessage()    {}
+func (*OpGroup) Descriptor() ([]byte, []int) {
+	return fileDescriptor_stream_334ebe3eaf9d7db1, []int{10}
 }
-func (m *OpSink) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_OpSink.Unmarshal(m, b)
+func (m *OpGroup) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_OpGroup.Unmarshal(m, b)
 }
-func (m *OpSink) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_OpSink.Marshal(b, m, deterministic)
+func (m *OpGroup) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_OpGroup.Marshal(b, m, deterministic)
 }
-func (dst *OpSink) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_OpSink.Merge(dst, src)
+func (dst *OpGroup) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_OpGroup.Merge(dst, src)
 }
-func (m *OpSink) XXX_Size() int {
-	return xxx_messageInfo_OpSink.Size(m)
+func (m *OpGroup) XXX_Size() int {
+	return xxx_messageInfo_OpGroup.Size(m)
 }
-func (m *OpSink) XXX_DiscardUnknown() {
-	xxx_messageInfo_OpSink.DiscardUnknown(m)
+func (m *OpGroup) XXX_DiscardUnknown() {
+	xxx_messageInfo_OpGroup.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_OpSink proto.InternalMessageInfo
+var xxx_messageInfo_OpGroup proto.InternalMessageInfo
 
-func (m *OpSink) GetId() *wrappers.StringValue {
+func (m *OpGroup) GetId() *wrappers.StringValue {
 	if m != nil {
 		return m.Id
 	}
 	return nil
 }
 
-func (m *OpSink) GetName() *wrappers.StringValue {
+func (m *OpGroup) GetInputs() []*OpInput {
 	if m != nil {
-		return m.Name
+		return m.Inputs
 	}
 	return nil
 }
 
-func (m *OpSink) GetEngine() *wrappers.StringValue {
+func (m *OpGroup) GetOutputs() []*OpOutput {
 	if m != nil {
-		return m.Engine
-	}
-	return nil
-}
-
-func (m *OpSink) GetStreamId() *wrappers.StringValue {
-	if m != nil {
-		return m.StreamId
-	}
-	return nil
-}
-
-func (m *OpSink) GetConfig() *PadConfig {
-	if m != nil {
-		return m.Config
+		return m.Outputs
 	}
 	return nil
 }
 
 func init() {
 	proto.RegisterType((*Stream)(nil), "ai.metathings.service.streamd.Stream")
-	proto.RegisterType((*PadConfigValue)(nil), "ai.metathings.service.streamd.PadConfigValue")
-	proto.RegisterType((*PadConfig)(nil), "ai.metathings.service.streamd.PadConfig")
-	proto.RegisterMapType((map[string]*PadConfigValue)(nil), "ai.metathings.service.streamd.PadConfig.ConfigEntry")
-	proto.RegisterType((*Pad)(nil), "ai.metathings.service.streamd.Pad")
+	proto.RegisterType((*Upstream)(nil), "ai.metathings.service.streamd.Upstream")
+	proto.RegisterType((*Input)(nil), "ai.metathings.service.streamd.Input")
+	proto.RegisterType((*Output)(nil), "ai.metathings.service.streamd.Output")
 	proto.RegisterType((*Source)(nil), "ai.metathings.service.streamd.Source")
-	proto.RegisterType((*Filter)(nil), "ai.metathings.service.streamd.Filter")
-	proto.RegisterType((*Sink)(nil), "ai.metathings.service.streamd.Sink")
-	proto.RegisterType((*OpPad)(nil), "ai.metathings.service.streamd.OpPad")
+	proto.RegisterType((*Group)(nil), "ai.metathings.service.streamd.Group")
+	proto.RegisterType((*OpUpstream)(nil), "ai.metathings.service.streamd.OpUpstream")
+	proto.RegisterType((*OpInput)(nil), "ai.metathings.service.streamd.OpInput")
+	proto.RegisterType((*OpOutput)(nil), "ai.metathings.service.streamd.OpOutput")
 	proto.RegisterType((*OpSource)(nil), "ai.metathings.service.streamd.OpSource")
-	proto.RegisterType((*OpProcessor)(nil), "ai.metathings.service.streamd.OpProcessor")
-	proto.RegisterType((*OpSink)(nil), "ai.metathings.service.streamd.OpSink")
+	proto.RegisterType((*OpGroup)(nil), "ai.metathings.service.streamd.OpGroup")
 	proto.RegisterEnum("ai.metathings.service.streamd.StreamState", StreamState_name, StreamState_value)
-	proto.RegisterEnum("ai.metathings.service.streamd.PadType", PadType_name, PadType_value)
 }
 
-func init() { proto.RegisterFile("stream.proto", fileDescriptor_stream_f2f22d85ebbfe175) }
+func init() { proto.RegisterFile("stream.proto", fileDescriptor_stream_334ebe3eaf9d7db1) }
 
-var fileDescriptor_stream_f2f22d85ebbfe175 = []byte{
-	// 872 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xec, 0x56, 0xdb, 0x8e, 0xdb, 0x44,
-	0x18, 0xce, 0xf8, 0xb4, 0xc9, 0xef, 0x76, 0x71, 0x87, 0x2d, 0x72, 0xcb, 0x82, 0xa2, 0xa0, 0x42,
-	0xb4, 0x02, 0x17, 0x39, 0xab, 0x8a, 0x16, 0x09, 0x9a, 0x2e, 0x29, 0x1b, 0xda, 0x3a, 0xd6, 0xc4,
-	0x0b, 0x42, 0x42, 0x8a, 0x9c, 0x78, 0x92, 0x5a, 0x9b, 0xd8, 0x96, 0xed, 0xb4, 0xe4, 0x19, 0xb8,
-	0xe2, 0x86, 0x1b, 0x1e, 0x80, 0xe7, 0x40, 0x5c, 0xf2, 0x0c, 0x08, 0x1e, 0x05, 0xcd, 0x8c, 0x73,
-	0x2c, 0xaa, 0x57, 0xb4, 0xdc, 0xac, 0xb8, 0xca, 0xfc, 0x87, 0xef, 0x9f, 0xff, 0xf4, 0x79, 0x02,
-	0x57, 0xb2, 0x3c, 0xa5, 0xfe, 0xcc, 0x4a, 0xd2, 0x38, 0x8f, 0xf1, 0x3b, 0x7e, 0x68, 0xcd, 0x68,
-	0xee, 0xe7, 0x4f, 0xc3, 0x68, 0x92, 0x59, 0x19, 0x4d, 0x9f, 0x85, 0x23, 0x6a, 0x09, 0x9f, 0xe0,
-	0xe6, 0xbb, 0x93, 0x38, 0x9e, 0x4c, 0xe9, 0x6d, 0xee, 0x3c, 0x9c, 0x8f, 0x6f, 0x3f, 0x4f, 0xfd,
-	0x24, 0xa1, 0x69, 0x26, 0xe0, 0x8d, 0x5f, 0x11, 0x68, 0x7d, 0xee, 0x8b, 0xf7, 0x41, 0x0a, 0x03,
-	0x13, 0xd5, 0x51, 0xb3, 0x46, 0xa4, 0x30, 0xc0, 0x18, 0x94, 0xc8, 0x9f, 0x51, 0x53, 0xe2, 0x1a,
-	0x7e, 0xc6, 0x37, 0xa0, 0x1a, 0x3f, 0x8f, 0x68, 0x3a, 0x08, 0x03, 0x53, 0xe6, 0xfa, 0x3d, 0x2e,
-	0x77, 0x03, 0x7c, 0x1f, 0xd4, 0x2c, 0xf7, 0x73, 0x6a, 0x2a, 0x75, 0xd4, 0xdc, 0xb7, 0x8f, 0xac,
-	0x97, 0x26, 0x66, 0x89, 0x4b, 0xfb, 0x0c, 0x41, 0x04, 0x10, 0xdf, 0x01, 0x25, 0xf1, 0x83, 0xcc,
-	0x54, 0xeb, 0x72, 0x53, 0xb7, 0x1b, 0x25, 0x01, 0x5c, 0x3f, 0x20, 0xdc, 0xbf, 0xf1, 0x27, 0x82,
-	0x7d, 0xd7, 0x0f, 0x4e, 0xe2, 0x68, 0x1c, 0x4e, 0xbe, 0xf6, 0xa7, 0x73, 0x8a, 0x4d, 0xd0, 0x82,
-	0x78, 0x3e, 0x9c, 0x52, 0x5e, 0x0f, 0x3a, 0xad, 0x90, 0x42, 0xc6, 0x6f, 0x81, 0x3a, 0x9e, 0xc6,
-	0x7e, 0xce, 0xcb, 0x92, 0x4e, 0x2b, 0x44, 0x88, 0x4c, 0x1f, 0x46, 0xf9, 0x9d, 0x63, 0x5e, 0x96,
-	0xcc, 0xf4, 0x5c, 0x64, 0x91, 0xe6, 0xc2, 0xc0, 0xea, 0x52, 0x58, 0x24, 0x21, 0x17, 0x88, 0x96,
-	0x6d, 0xaa, 0x75, 0xd4, 0x54, 0x0b, 0x44, 0xcb, 0x5e, 0x22, 0x5a, 0xb6, 0xa9, 0xd5, 0x51, 0xf3,
-	0xea, 0x12, 0xd1, 0xb2, 0xf1, 0x01, 0x28, 0xc3, 0x38, 0x9e, 0x9a, 0x7b, 0x75, 0xd4, 0xac, 0x9e,
-	0x56, 0x08, 0x97, 0x98, 0x7f, 0x96, 0xa7, 0x61, 0x34, 0x31, 0xab, 0xac, 0xa3, 0xcc, 0x5f, 0xc8,
-	0x0f, 0xf6, 0x40, 0x7d, 0xc6, 0xca, 0x69, 0xfc, 0x86, 0xa0, 0xb6, 0xaa, 0x10, 0x3f, 0x06, 0x6d,
-	0xc4, 0x4f, 0x26, 0xe2, 0x9d, 0x3a, 0x2e, 0xef, 0x94, 0x40, 0x5a, 0xe2, 0xa7, 0x13, 0xe5, 0xe9,
-	0x82, 0x14, 0x31, 0x6e, 0x3e, 0x05, 0x7d, 0x43, 0x8d, 0x0d, 0x90, 0xcf, 0xe9, 0xa2, 0x58, 0x03,
-	0x76, 0xc4, 0x27, 0x45, 0x16, 0xbc, 0x63, 0xba, 0xfd, 0xd1, 0x45, 0x6f, 0xe3, 0x93, 0x20, 0x02,
-	0x7b, 0x4f, 0xfa, 0x04, 0x35, 0x7e, 0x90, 0x40, 0x76, 0xfd, 0x00, 0xdf, 0x03, 0x25, 0x5f, 0x24,
-	0x62, 0x34, 0xfb, 0xf6, 0xfb, 0xe5, 0xf1, 0xbc, 0x45, 0x42, 0x09, 0xc7, 0xe0, 0xcf, 0x41, 0xcb,
-	0xe2, 0x79, 0x3a, 0x5a, 0x66, 0x73, 0xab, 0x6c, 0xcd, 0xb8, 0x33, 0xef, 0x29, 0x3f, 0xb1, 0x00,
-	0xe3, 0x70, 0x9a, 0xd3, 0x94, 0x0f, 0xba, 0x3c, 0xc0, 0x43, 0xee, 0xcc, 0x02, 0x08, 0x18, 0xbe,
-	0x0b, 0x4a, 0x16, 0x46, 0xe7, 0x7c, 0x1d, 0x74, 0xfb, 0xbd, 0xb2, 0xfb, 0xc3, 0xe8, 0x9c, 0x4d,
-	0x9a, 0x41, 0x1e, 0xe8, 0x50, 0x1b, 0xc5, 0xb3, 0x24, 0x8e, 0x68, 0x94, 0x37, 0x7e, 0x67, 0xcc,
-	0x13, 0x39, 0x5d, 0x84, 0x79, 0x87, 0x50, 0x4b, 0xd2, 0x78, 0x44, 0xb3, 0x2c, 0x4e, 0x0b, 0xea,
-	0xad, 0x15, 0xf8, 0x6d, 0xa8, 0x89, 0x1b, 0x19, 0x31, 0x15, 0x6e, 0xad, 0x0a, 0x45, 0x37, 0xc0,
-	0x75, 0xb8, 0x12, 0xd1, 0xef, 0xf3, 0x41, 0xe2, 0x07, 0x83, 0xb0, 0xe0, 0x57, 0x8d, 0x00, 0xd3,
-	0xb9, 0x7e, 0xd0, 0x0d, 0x32, 0x7c, 0x7f, 0xb5, 0x51, 0x1a, 0xaf, 0xaa, 0x79, 0xd1, 0x19, 0x2f,
-	0xb7, 0x88, 0x57, 0x23, 0x5a, 0x75, 0x19, 0xaa, 0xf9, 0x05, 0x81, 0xc2, 0x26, 0xf7, 0x5f, 0xd7,
-	0xb2, 0xce, 0x54, 0xfd, 0x97, 0x99, 0xfe, 0x24, 0x81, 0xda, 0x4b, 0x5e, 0x95, 0x55, 0xed, 0x1d,
-	0x56, 0x7d, 0x50, 0x82, 0xee, 0x25, 0x2f, 0xf0, 0xea, 0xab, 0xdd, 0x2e, 0xe8, 0xa5, 0x4f, 0x40,
-	0x2f, 0x71, 0x97, 0x88, 0xd3, 0xca, 0x66, 0xcf, 0x3e, 0xdd, 0xa2, 0xd8, 0xad, 0xf2, 0x64, 0x36,
-	0x49, 0xa6, 0x82, 0x9c, 0xf8, 0x41, 0xe3, 0x0f, 0x09, 0xaa, 0xcb, 0x34, 0xf1, 0x87, 0xab, 0x31,
-	0xea, 0xf6, 0xa1, 0x25, 0x9e, 0x44, 0x6b, 0xf9, 0x24, 0xb2, 0xa7, 0x28, 0x8c, 0x8a, 0xcf, 0x15,
-	0x1b, 0xf2, 0xc7, 0x1b, 0x43, 0x2e, 0xf3, 0x17, 0x2b, 0x70, 0x0c, 0x1a, 0x8d, 0x26, 0x61, 0x44,
-	0x8b, 0xca, 0x5f, 0x8e, 0x29, 0x7c, 0xf1, 0xdd, 0xdd, 0xd5, 0x28, 0x03, 0xae, 0x17, 0xe7, 0xb3,
-	0x7f, 0x20, 0x41, 0x19, 0xfa, 0xf5, 0x52, 0xe4, 0x2f, 0x09, 0xf4, 0x8d, 0x01, 0xfe, 0xdf, 0xe2,
-	0xd7, 0xdf, 0xe2, 0x9f, 0x25, 0xd0, 0xc4, 0x72, 0x5f, 0xbe, 0xee, 0xbe, 0xf2, 0x97, 0xef, 0xe8,
-	0x47, 0x04, 0xfa, 0xc6, 0x9f, 0x48, 0x6c, 0xc2, 0x41, 0xdf, 0x23, 0x9d, 0xf6, 0x93, 0x41, 0xdf,
-	0x6b, 0x7b, 0x9d, 0xc1, 0x99, 0xf3, 0xc8, 0xe9, 0x7d, 0xe3, 0x18, 0x95, 0x17, 0x2c, 0xe4, 0xcc,
-	0x71, 0xba, 0xce, 0x97, 0x06, 0xc2, 0x37, 0xe0, 0xfa, 0x96, 0xa5, 0xef, 0xb5, 0x89, 0xc7, 0x4c,
-	0x12, 0x3e, 0x04, 0x73, 0xcb, 0xe4, 0x75, 0xc8, 0x93, 0xae, 0xd3, 0xe6, 0x56, 0x19, 0x5f, 0x87,
-	0x6b, 0x3b, 0xc0, 0x9e, 0x6b, 0x28, 0x47, 0xdf, 0xc1, 0x5e, 0xf1, 0x61, 0xc5, 0x07, 0x60, 0xb8,
-	0xed, 0x2f, 0x06, 0xde, 0xb7, 0xee, 0x66, 0x2a, 0x6f, 0xc2, 0x1b, 0x2b, 0x6d, 0xbf, 0x77, 0x46,
-	0x4e, 0x3a, 0x06, 0xda, 0x52, 0x3e, 0xec, 0x3e, 0xf6, 0x3a, 0xc4, 0x90, 0xf0, 0x35, 0xb8, 0xba,
-	0xf6, 0xec, 0x3a, 0x8f, 0x0c, 0x79, 0xa8, 0xf1, 0x9e, 0xb6, 0xfe, 0x0e, 0x00, 0x00, 0xff, 0xff,
-	0x32, 0xda, 0xe5, 0xff, 0x01, 0x0c, 0x00, 0x00,
+var fileDescriptor_stream_334ebe3eaf9d7db1 = []byte{
+	// 593 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xdc, 0x55, 0x5f, 0x8b, 0xd3, 0x4e,
+	0x14, 0xfd, 0x25, 0x6d, 0xd2, 0xee, 0xed, 0x8f, 0xa5, 0x0e, 0xbb, 0x32, 0x2b, 0xab, 0x94, 0xa0,
+	0x6e, 0x5d, 0x24, 0x2b, 0x55, 0xf6, 0x69, 0x51, 0x8b, 0x94, 0xa5, 0xc8, 0x26, 0x32, 0x4d, 0x15,
+	0x04, 0x2d, 0xe9, 0x76, 0x8c, 0x81, 0xb6, 0x09, 0x99, 0xc4, 0xc5, 0x27, 0x5f, 0x05, 0x9f, 0x7c,
+	0xf1, 0xc3, 0xf8, 0x39, 0x7c, 0xf0, 0xe3, 0xc8, 0xcc, 0x24, 0xa5, 0x69, 0xc5, 0xe9, 0x22, 0x82,
+	0xf8, 0xd6, 0xc9, 0xbd, 0xe7, 0xfe, 0x39, 0xf7, 0x1c, 0x0a, 0xff, 0xb3, 0x34, 0xa1, 0xfe, 0xcc,
+	0x8e, 0x93, 0x28, 0x8d, 0xd0, 0x75, 0x3f, 0xb4, 0x67, 0x34, 0xf5, 0xd3, 0xb7, 0xe1, 0x3c, 0x60,
+	0x36, 0xa3, 0xc9, 0xbb, 0xf0, 0x9c, 0xda, 0x32, 0x67, 0x72, 0xed, 0x46, 0x10, 0x45, 0xc1, 0x94,
+	0x1e, 0x89, 0xe4, 0x71, 0xf6, 0xe6, 0xe8, 0x22, 0xf1, 0xe3, 0x98, 0x26, 0x4c, 0xc2, 0xad, 0x8f,
+	0x3a, 0x98, 0x03, 0x91, 0x8b, 0xb6, 0x41, 0x0f, 0x27, 0x58, 0x6b, 0x69, 0xed, 0x2d, 0xa2, 0x87,
+	0x13, 0x84, 0xa0, 0x3a, 0xf7, 0x67, 0x14, 0xeb, 0xe2, 0x8b, 0xf8, 0x8d, 0xf6, 0xa0, 0x1e, 0x5d,
+	0xcc, 0x69, 0x32, 0x0a, 0x27, 0xb8, 0x22, 0xbe, 0xd7, 0xc4, 0xbb, 0x3f, 0x41, 0x8f, 0xc1, 0x60,
+	0xa9, 0x9f, 0x52, 0x5c, 0x6d, 0x69, 0xed, 0xed, 0xce, 0xa1, 0xfd, 0xcb, 0xc1, 0x6c, 0xd9, 0x74,
+	0xc0, 0x11, 0x44, 0x02, 0xd1, 0x23, 0xa8, 0xb1, 0x28, 0x4b, 0xce, 0x29, 0xc3, 0x46, 0xab, 0xd2,
+	0x6e, 0x74, 0x6e, 0xa9, 0x6a, 0x88, 0x6c, 0x52, 0xa0, 0xd0, 0x09, 0x98, 0x41, 0x12, 0x65, 0x31,
+	0xc3, 0xa6, 0xc0, 0xdf, 0x54, 0xe0, 0x4f, 0x79, 0x32, 0xc9, 0x31, 0xd6, 0x6b, 0xa8, 0x0f, 0x63,
+	0xb6, 0x39, 0x17, 0x3b, 0x60, 0xf8, 0xd3, 0xd0, 0x67, 0x39, 0x11, 0xf2, 0x81, 0x30, 0xd4, 0x52,
+	0x3f, 0x09, 0x68, 0xca, 0x70, 0xb5, 0x55, 0xe1, 0x04, 0xe5, 0x4f, 0x8b, 0x81, 0xd1, 0x9f, 0xc7,
+	0x59, 0xfa, 0x1b, 0xc5, 0xaf, 0x82, 0xc9, 0xde, 0xcf, 0xc6, 0xd1, 0x54, 0x90, 0xbc, 0x45, 0xf2,
+	0xd7, 0x72, 0x53, 0xa3, 0xdc, 0xf4, 0x25, 0x98, 0x6e, 0x96, 0xfe, 0x91, 0xae, 0xd6, 0x2b, 0x30,
+	0xe5, 0x05, 0xd6, 0x6a, 0x3f, 0x81, 0x7a, 0x96, 0x53, 0x29, 0xea, 0x37, 0x3a, 0x07, 0x8a, 0x53,
+	0x14, 0xcc, 0x93, 0x05, 0xd0, 0xfa, 0xa2, 0x81, 0x21, 0x2e, 0xb4, 0x56, 0xfe, 0x04, 0xcc, 0x90,
+	0x33, 0xc9, 0xb0, 0xbe, 0xd1, 0x9d, 0x05, 0xed, 0x24, 0xc7, 0x70, 0x99, 0x45, 0x82, 0x12, 0xbe,
+	0xe6, 0x26, 0x32, 0x93, 0x04, 0x92, 0x02, 0x65, 0x7d, 0xd7, 0x00, 0xdc, 0x78, 0xa1, 0x95, 0xbb,
+	0x8b, 0xe9, 0x1a, 0x9d, 0x7d, 0x5b, 0xfa, 0xcd, 0x2e, 0xfc, 0xc6, 0x75, 0x1e, 0xce, 0x83, 0xe7,
+	0xfe, 0x34, 0xa3, 0x62, 0xf6, 0x7b, 0x4b, 0xb4, 0xab, 0xf2, 0xe5, 0x51, 0x3a, 0xcb, 0x47, 0x51,
+	0x41, 0xf2, 0x93, 0x1d, 0x97, 0x55, 0xa8, 0x42, 0x2d, 0xe4, 0xf2, 0x49, 0x87, 0x9a, 0x1b, 0x4b,
+	0x99, 0xfe, 0x8d, 0x7b, 0x3d, 0x28, 0x49, 0x51, 0x05, 0x2a, 0xec, 0x71, 0x5c, 0xb6, 0xc7, 0xc6,
+	0x6c, 0x7c, 0xd3, 0xa0, 0xee, 0xc6, 0xb9, 0x7f, 0xfe, 0x19, 0x3a, 0xac, 0x0f, 0x7c, 0xab, 0xdc,
+	0xb9, 0x97, 0xdb, 0xaa, 0xb7, 0xe6, 0xeb, 0x3b, 0x2a, 0xef, 0xc4, 0x3f, 0x71, 0xf6, 0x57, 0x8d,
+	0xab, 0x4c, 0x7a, 0xfb, 0x72, 0x03, 0x3c, 0x5c, 0x71, 0xfe, 0x6d, 0x65, 0xfb, 0xb2, 0xf7, 0xbb,
+	0xab, 0xde, 0x3f, 0x50, 0x16, 0x58, 0x71, 0xff, 0xe1, 0x67, 0x0d, 0x1a, 0x4b, 0x7f, 0x5e, 0x08,
+	0xc3, 0xce, 0xc0, 0x23, 0xbd, 0xee, 0xd9, 0x68, 0xe0, 0x75, 0xbd, 0xde, 0x68, 0xe8, 0x3c, 0x75,
+	0xdc, 0x17, 0x4e, 0xf3, 0xbf, 0xb5, 0x08, 0x19, 0x3a, 0x4e, 0xdf, 0x39, 0x6d, 0x6a, 0x68, 0x0f,
+	0x76, 0x4b, 0x91, 0x81, 0xd7, 0x25, 0x1e, 0x0f, 0xe9, 0x68, 0x1f, 0x70, 0x29, 0xe4, 0xf5, 0xc8,
+	0x59, 0xdf, 0xe9, 0x8a, 0x68, 0x05, 0xed, 0xc2, 0x95, 0x15, 0xa0, 0xfb, 0xac, 0x59, 0x1d, 0x9b,
+	0x82, 0xb0, 0xfb, 0x3f, 0x02, 0x00, 0x00, 0xff, 0xff, 0xf6, 0x10, 0xe7, 0xf2, 0x1b, 0x08, 0x00,
+	0x00,
 }

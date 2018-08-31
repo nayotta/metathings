@@ -17,99 +17,72 @@ message Stream {
 	string name = 2;
 	string owner_id = 3;
 	StreamState state = 4;
-	repeated Pad pads = 5;
+	repeated Source sources = 5;
+	repeated Group groups = 6;
 }
 
-enum PadType {
-	PAD_TYPE_UNKNOWN = 0;
-	PAD_TYPE_SOURCE = 1;
-	PAD_TYPE_FILTER = 2;
-	PAD_TYPE_SINK = 3;
+message Upstream {
+	string id = 1;
+	string name = 2;
+	string alias = 3;
+	repeated string targets = 4;
 }
 
-message PadConfigValue {
-	oneof value {
-		double double = 1;
-		float float = 2;
-		int64 int64 = 3;
-		uint64 uint64 = 4;
-		int32 int32 = 5;
-		uint32 uint32 = 6;
-		bool bool = 7;
-		string string = 8;
-	}
+message Input {
+	string id = 1;
+	string name = 2;
+	string alias = 3;
+	string symbol = 4;
+	repeated string targets = 5;
 }
 
-message PadConfig {
-	map<string, PadConfigValue> config = 1;
-}
-
-message Pad {
-	PadType type = 1;
-	oneof component {
-		Source source = 2;
-		Filter filter = 3;
-		Sink sink = 4;
-	}
+message Output {
+	string id = 1;
+	string name = 2;
+	string alias = 3;
+	string symbol = 4;
 }
 
 message Source {
 	string id = 1;
-	string name = 2;
-	string processor = 3;
-	string stream_id = 4;
-	repeated string next_pad_ids = 5;
-	PadConfig config = 6;
+	Upstream upstream = 2;
 }
 
-message Filter {
+message Group {
 	string id = 1;
-	string name = 2;
-	string processor = 3;
-	string stream_id = 4;
-	repeated string next_pad_ids = 5;
-	PadConfig config = 6;
+	repeated Input inputs = 2;
+	repeated Output outputs = 3;
 }
 
-message Sink {
-	string id = 1;
-	string name = 2;
-	string processor = 3;
-	string stream_id = 4;
-	PadConfig config = 5;
+message OpUpstream {
+	google.protobuf.StringValue id = 1;
+	google.protobuf.StringValue name = 2;
+	google.protobuf.StringValue alias = 3;
+	repeated google.protobuf.StringValue targets = 4;
 }
 
-message OpPad {
-	PadType type = 1;
-	oneof pad {
-		OpSource source = 2;
-		OpProcessor processor = 3;
-		OpSink sink = 4;
-	}
+message OpInput {
+	google.protobuf.StringValue id = 1;
+	google.protobuf.StringValue name = 2;
+	google.protobuf.StringValue alias = 3;
+	google.protobuf.StringValue symbol = 4;
+	repeated google.protobuf.StringValue targets = 5;
+}
+
+message OpOutput {
+	google.protobuf.StringValue id = 1;
+	google.protobuf.StringValue name = 2;
+	google.protobuf.StringValue alias = 3;
+	google.protobuf.StringValue symbol = 4;
 }
 
 message OpSource {
 	google.protobuf.StringValue id = 1;
-	google.protobuf.StringValue name = 2;
-	google.protobuf.StringValue engine = 3;
-	google.protobuf.StringValue stream_id = 4;
-	repeated google.protobuf.StringValue next_pad_ids = 5;
-	PadConfig config = 6;
+	OpUpstream upstream = 2;
 }
 
-message OpProcessor {
+message OpGroup {
 	google.protobuf.StringValue id = 1;
-	google.protobuf.StringValue name = 2;
-	google.protobuf.StringValue engine = 3;
-	google.protobuf.StringValue stream_id = 4;
-	repeated google.protobuf.StringValue next_pad_ids = 5;
-	PadConfig config = 6;
-}
-
-message OpSink {
-	google.protobuf.StringValue id = 1;
-	google.protobuf.StringValue name = 2;
-	google.protobuf.StringValue engine = 3;
-	google.protobuf.StringValue stream_id = 4;
-	PadConfig config = 5;
+	repeated OpInput inputs = 2;
+	repeated OpOutput outputs = 3;
 }

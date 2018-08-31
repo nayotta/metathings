@@ -33,22 +33,22 @@ It has these top-level messages:
 	StopRequest
 	StopResponse
 	Stream
-	PadConfigValue
-	PadConfig
-	Pad
+	Upstream
+	Input
+	Output
 	Source
-	Filter
-	Sink
-	OpPad
+	Group
+	OpUpstream
+	OpInput
+	OpOutput
 	OpSource
-	OpProcessor
-	OpSink
+	OpGroup
 */
 package streamd
 
+import fmt "fmt"
 import go_proto_validators "github.com/mwitkow/go-proto-validators"
 import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
 import math "math"
 import _ "github.com/golang/protobuf/ptypes/wrappers"
 import _ "github.com/mwitkow/go-proto-validators"
@@ -59,15 +59,25 @@ var _ = fmt.Errorf
 var _ = math.Inf
 
 func (this *CreateRequest) Validate() error {
+	if nil == this.Name {
+		return go_proto_validators.FieldError("Name", fmt.Errorf("message must exist"))
+	}
 	if this.Name != nil {
 		if err := go_proto_validators.CallValidatorIfExists(this.Name); err != nil {
 			return go_proto_validators.FieldError("Name", err)
 		}
 	}
-	for _, item := range this.Pads {
+	for _, item := range this.Sources {
 		if item != nil {
 			if err := go_proto_validators.CallValidatorIfExists(item); err != nil {
-				return go_proto_validators.FieldError("Pads", err)
+				return go_proto_validators.FieldError("Sources", err)
+			}
+		}
+	}
+	for _, item := range this.Groups {
+		if item != nil {
+			if err := go_proto_validators.CallValidatorIfExists(item); err != nil {
+				return go_proto_validators.FieldError("Groups", err)
 			}
 		}
 	}
