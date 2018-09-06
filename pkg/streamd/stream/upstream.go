@@ -1,5 +1,11 @@
 package stream_manager
 
+import (
+	"time"
+
+	opt_helper "github.com/nayotta/metathings/pkg/common/option"
+)
+
 type UpstreamState int32
 
 const (
@@ -30,4 +36,43 @@ func RegisterUpstream(name string, fty UpstreamFactory) {
 	if _, ok := upstream_factorys[name]; !ok {
 		upstream_factorys[name] = fty
 	}
+}
+
+type UpstreamMetadata struct {
+	opt_helper.Option
+}
+
+func (self *UpstreamMetadata) SensorId() string {
+	return self.GetString("sensor_id")
+}
+
+func (self *UpstreamMetadata) SensorName() string {
+	return self.GetString("sensor_name")
+}
+
+func (self *UpstreamMetadata) CreatedAt() time.Time {
+	return *self.Get("created_at").(*time.Time)
+}
+
+func (self *UpstreamMetadata) ArrviedAt() time.Time {
+	return *self.Get("arrvied_at").(*time.Time)
+}
+
+type UpstreamData struct {
+	opt_helper.Option
+	metadata *UpstreamMetadata
+}
+
+func (self *UpstreamData) Metadata() *UpstreamMetadata {
+	return self.metadata
+}
+
+func NewUpstreamData(data map[string]interface{}, metadata map[string]interface{}) *UpstreamData {
+	usmd := &UpstreamMetadata{opt_helper.NewOptionMap(metadata)}
+	usd := &UpstreamData{
+		Option:   opt_helper.NewOptionMap(data),
+		metadata: usmd,
+	}
+
+	return usd
 }

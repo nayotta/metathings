@@ -55,8 +55,6 @@ func (srv *metathingsSensorService) copySensorConfig(cfg driver.SensorConfig) ma
 			snr_cfg[key] = &pb.SensorValue{Value: &pb.SensorValue_Int32{Int32: val.(int32)}}
 		case uint32:
 			snr_cfg[key] = &pb.SensorValue{Value: &pb.SensorValue_Uint32{Uint32: val.(uint32)}}
-		case bool:
-			snr_cfg[key] = &pb.SensorValue{Value: &pb.SensorValue_Bool{Bool: val.(bool)}}
 		case string:
 			snr_cfg[key] = &pb.SensorValue{Value: &pb.SensorValue_String_{String_: val.(string)}}
 		}
@@ -81,8 +79,6 @@ func (srv *metathingsSensorService) copySensorData(dat driver.SensorData) map[st
 			snr_dat[key] = &pb.SensorValue{Value: &pb.SensorValue_Int32{Int32: val.(int32)}}
 		case uint32:
 			snr_dat[key] = &pb.SensorValue{Value: &pb.SensorValue_Uint32{Uint32: val.(uint32)}}
-		case bool:
-			snr_dat[key] = &pb.SensorValue{Value: &pb.SensorValue_Bool{Bool: val.(bool)}}
 		case string:
 			snr_dat[key] = &pb.SensorValue{Value: &pb.SensorValue_String_{String_: val.(string)}}
 		}
@@ -173,8 +169,6 @@ func (srv *metathingsSensorService) Patch(ctx context.Context, req *pb.PatchRequ
 			cfg.Set(key, val.GetInt32())
 		case *pb.SensorValue_Uint32:
 			cfg.Set(key, val.GetUint32())
-		case *pb.SensorValue_Bool:
-			cfg.Set(key, val.GetBool())
 		case *pb.SensorValue_String_:
 			cfg.Set(key, val.GetString_())
 		}

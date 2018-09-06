@@ -14,6 +14,7 @@ const (
 type Input interface {
 	Emitter
 	Id() string
+	Symbol() string
 	Start() error
 	Stop() error
 	State() InputState

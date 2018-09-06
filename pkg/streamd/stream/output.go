@@ -14,6 +14,7 @@ const (
 type Output interface {
 	Emitter
 	Id() string
+	Symbol() string
 	Start() error
 	Stop() error
 	State() OutputState
