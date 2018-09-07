@@ -62,6 +62,10 @@ func (self *InputMetadata) ArrviedAt() time.Time {
 	return self.AsTime("arrvied_at")
 }
 
+func (self *InputMetadata) Data() StreamData {
+	return self.StreamData
+}
+
 type InputData struct {
 	StreamData
 	metadata *InputMetadata

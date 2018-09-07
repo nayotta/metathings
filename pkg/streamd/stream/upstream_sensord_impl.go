@@ -208,15 +208,29 @@ ret = (function() return %v end)()
 
 func (self *sensordUpstream) emit_upstream_data(target string, upstream_data *UpstreamData) error {
 	sym := self.opt.sym_tbl.Lookup(target)
-	input_data := UpstreamDataToInputData(upstream_data)
-	input_data.Metadata().Set("from", sym.String())
+
+	var codec goka.Codec
+	var msg interface{}
+
+	switch sym.Component() {
+	case COMPONENT_INPUT:
+		input_data := UpstreamDataToInputData(upstream_data)
+		input_data.Metadata().Set("from", sym.String())
+		msg = input_data
+		codec = new(InputDataCodec)
+	case COMPONENT_OUTPUT:
+		output_data := UpstreamDataToOutputData(upstream_data)
+		output_data.Metadata().Set("from", sym.String())
+		msg = output_data
+		codec = new(OutputDataCodec)
+	}
 
 	var emitter *goka.Emitter
 	var ok bool
 	var err error
 
 	if emitter, ok = self.emitters[sym.String()]; !ok {
-		emitter, err = goka.NewEmitter(self.opt.brokers, goka.Stream(sym.String()), new(InputDataCodec))
+		emitter, err = goka.NewEmitter(self.opt.brokers, goka.Stream(sym.String()), codec)
 		if err != nil {
 			return err
 		}
@@ -224,7 +238,7 @@ func (self *sensordUpstream) emit_upstream_data(target string, upstream_data *Up
 		self.emitters[sym.String()] = emitter
 	}
 
-	err = emitter.EmitSync("", input_data)
+	err = emitter.EmitSync("", msg)
 	if err != nil {
 		return err
 	}

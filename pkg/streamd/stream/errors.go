@@ -12,4 +12,7 @@ var (
 
 	// input errors
 	ErrInputDataCodec = errors.New("input data codec error")
+
+	// output errors
+	ErrOutputDataCodec = errors.New("output data codec error")
 )
