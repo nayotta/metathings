@@ -18,6 +18,7 @@ const (
 type Upstream interface {
 	Emitter
 	Id() string
+	Symbol() string
 	Start() error
 	Stop() error
 	State() UpstreamState

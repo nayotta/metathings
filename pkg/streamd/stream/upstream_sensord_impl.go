@@ -9,7 +9,6 @@ import (
 	gpb "github.com/golang/protobuf/ptypes/wrappers"
 	"github.com/lovoo/goka"
 	log "github.com/sirupsen/logrus"
-	lua "github.com/yuin/gopher-lua"
 
 	app_cred_mgr "github.com/nayotta/metathings/pkg/common/application_credential_manager"
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
@@ -20,8 +19,10 @@ import (
 )
 
 type sensordUpstreamOption struct {
-	id string
+	id    string
+	alias string
 
+	logger       log.FieldLogger
 	app_cred_mgr app_cred_mgr.ApplicationCredentialManager
 	cli_fty      *client_helper.ClientFactory
 	snr_id       string
@@ -37,6 +38,18 @@ func SetSensordUpstreamId(id string) UpstreamOption {
 	}
 }
 
+func SetSensordUpstreamAlias(alias string) UpstreamOption {
+	return func(o interface{}) {
+		o.(*sensordUpstreamOption).alias = alias
+	}
+}
+
+func SetSensordUpstreamLogger(logger log.FieldLogger) UpstreamOption {
+	return func(o interface{}) {
+		o.(*sensordUpstreamOption).logger = logger
+	}
+}
+
 func SetSensordUpstreamApplicationCredentialManager(app_cred_mgr app_cred_mgr.ApplicationCredentialManager) UpstreamOption {
 	return func(o interface{}) {
 		o.(*sensordUpstreamOption).app_cred_mgr = app_cred_mgr
@@ -49,25 +62,25 @@ func SetSensordUpstreamClientFactory(cli_fty *client_helper.ClientFactory) Upstr
 	}
 }
 
-func SetBrokers(brokers []string) UpstreamOption {
+func SetSensordUpstreamBrokers(brokers []string) UpstreamOption {
 	return func(o interface{}) {
 		o.(*sensordUpstreamOption).brokers = brokers
 	}
 }
 
-func SetTargets(targets []string) UpstreamOption {
+func SetSensordUpstreamTargets(targets []string) UpstreamOption {
 	return func(o interface{}) {
 		o.(*sensordUpstreamOption).targets = targets
 	}
 }
 
-func SetFilters(filters map[string]string) UpstreamOption {
+func SetSensordUpstreamFilters(filters map[string]string) UpstreamOption {
 	return func(o interface{}) {
 		o.(*sensordUpstreamOption).filters = filters
 	}
 }
 
-func SetSymbolTable(sym_tbl SymbolTable) UpstreamOption {
+func SetSensordUpstreamSymbolTable(sym_tbl SymbolTable) UpstreamOption {
 	return func(o interface{}) {
 		o.(*sensordUpstreamOption).sym_tbl = sym_tbl
 	}
@@ -85,6 +98,11 @@ type sensordUpstream struct {
 
 func (self *sensordUpstream) Id() string {
 	return self.opt.id
+}
+
+func (self *sensordUpstream) Symbol() string {
+	sym := NewSymbol(self.Id(), COMPONENT_UPSTREAM, self.opt.alias)
+	return sym.String()
 }
 
 func (self *sensordUpstream) Start() error {
@@ -162,7 +180,7 @@ func (self *sensordUpstream) start(cli sensord_pb.SensordServiceClient, cfn clie
 		for _, sub_res := range sub_ress.Responses {
 			upstm_dat := enc_sensord_upstream_data(sub_res.Data)
 			for target, filter := range self.opt.filters {
-				ok, err := filter_upstream_data(filter, upstm_dat)
+				ok, err := self.filter_upstream_data(filter, upstm_dat)
 				if err != nil {
 					self.logger.WithError(err).WithField("sensor_id", self.opt.snr_id).Warningf("failed to filter upstream data")
 
@@ -177,33 +195,16 @@ func (self *sensordUpstream) start(cli sensord_pb.SensordServiceClient, cfn clie
 }
 
 // TODO(Peer): dont compile filter every time
-func filter_upstream_data(filter string, upstream_data *UpstreamData) (bool, error) {
-	L := lua.NewState()
-	defer L.Close()
-
-	mdt := L.NewTable()
-	md := upstream_data.Metadata()
-	for _, k := range md.Keys() {
-		mdt.RawSet(lua.LString(k), lua.LString(md.AsString(k)))
-	}
-	L.SetGlobal("metadata", mdt)
-	for _, k := range upstream_data.Keys() {
-		L.SetGlobal(k, lua.LString(upstream_data.AsString(k)))
-	}
-
-	lua_str := fmt.Sprintf(`
-ret = (function() return %v end)()
-`, filter)
-
-	ctx, cancel := context.WithTimeout(context.Background(), 200*time.Millisecond)
+func (self *sensordUpstream) filter_upstream_data(filter string, upstream_data *UpstreamData) (bool, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 50*time.Millisecond)
 	defer cancel()
-	L.SetContext(ctx)
-	err := L.DoString(lua_str)
-	if err != nil {
-		return false, err
-	}
 
-	return L.GetGlobal("ret") == lua.LTrue, nil
+	eng := NewLuaEngine()
+	defer eng.Close()
+
+	eng.SetContext(ctx)
+	return eng.Filter(filter, upstream_data.Metadata().Data(), upstream_data.Data())
+
 }
 
 func (self *sensordUpstream) emit_upstream_data(target string, upstream_data *UpstreamData) error {
@@ -215,12 +216,12 @@ func (self *sensordUpstream) emit_upstream_data(target string, upstream_data *Up
 	switch sym.Component() {
 	case COMPONENT_INPUT:
 		input_data := UpstreamDataToInputData(upstream_data)
-		input_data.Metadata().Set("from", sym.String())
+		input_data.Metadata().Set("from", self.Symbol())
 		msg = input_data
 		codec = new(InputDataCodec)
 	case COMPONENT_OUTPUT:
 		output_data := UpstreamDataToOutputData(upstream_data)
-		output_data.Metadata().Set("from", sym.String())
+		output_data.Metadata().Set("from", self.Symbol())
 		msg = output_data
 		codec = new(OutputDataCodec)
 	}
@@ -323,6 +324,7 @@ func newSensordUpstream(os ...UpstreamOption) (Upstream, error) {
 	snrd_upstm := &sensordUpstream{
 		Emitter:  NewEmitter(),
 		slck:     &sync.Mutex{},
+		logger:   opt.logger,
 		state:    UPSTREAM_STATE_STOP,
 		opt:      opt,
 		emitters: map[string]*goka.Emitter{},
