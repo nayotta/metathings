@@ -2,10 +2,14 @@ package stream_manager
 
 import (
 	"context"
+	"fmt"
 	"sync"
+	"time"
 
 	gpb "github.com/golang/protobuf/ptypes/wrappers"
+	"github.com/lovoo/goka"
 	log "github.com/sirupsen/logrus"
+	lua "github.com/yuin/gopher-lua"
 
 	app_cred_mgr "github.com/nayotta/metathings/pkg/common/application_credential_manager"
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
@@ -23,6 +27,7 @@ type sensordUpstreamOption struct {
 	snr_id       string
 	brokers      []string
 	targets      []string
+	filters      map[string]string
 	sym_tbl      SymbolTable
 }
 
@@ -56,6 +61,12 @@ func SetTargets(targets []string) UpstreamOption {
 	}
 }
 
+func SetFilters(filters map[string]string) UpstreamOption {
+	return func(o interface{}) {
+		o.(*sensordUpstreamOption).filters = filters
+	}
+}
+
 func SetSymbolTable(sym_tbl SymbolTable) UpstreamOption {
 	return func(o interface{}) {
 		o.(*sensordUpstreamOption).sym_tbl = sym_tbl
@@ -64,11 +75,12 @@ func SetSymbolTable(sym_tbl SymbolTable) UpstreamOption {
 
 type sensordUpstream struct {
 	Emitter
-	slck   *sync.Mutex
-	logger log.FieldLogger
-	state  UpstreamState
-	opt    sensordUpstreamOption
-	cfn    client_helper.CloseFn
+	slck     *sync.Mutex
+	logger   log.FieldLogger
+	state    UpstreamState
+	opt      sensordUpstreamOption
+	cfn      client_helper.CloseFn
+	emitters map[string]*goka.Emitter
 }
 
 func (self *sensordUpstream) Id() string {
@@ -148,49 +160,113 @@ func (self *sensordUpstream) start(cli sensord_pb.SensordServiceClient, cfn clie
 		}
 
 		for _, sub_res := range sub_ress.Responses {
-			usd := enc_sensord_upstream_data(sub_res.Data)
-			log.WithField("data", usd).Infof("recv data")
+			upstm_dat := enc_sensord_upstream_data(sub_res.Data)
+			for target, filter := range self.opt.filters {
+				ok, err := filter_upstream_data(filter, upstm_dat)
+				if err != nil {
+					self.logger.WithError(err).WithField("sensor_id", self.opt.snr_id).Warningf("failed to filter upstream data")
+
+				} else if ok {
+					if err = self.emit_upstream_data(target, upstm_dat); err != nil {
+						self.logger.WithError(err).WithField("sensor_id", self.opt.snr_id).Warningf("failed to emit upstream data")
+					}
+				}
+			}
 		}
 	}
+}
+
+// TODO(Peer): dont compile filter every time
+func filter_upstream_data(filter string, upstream_data *UpstreamData) (bool, error) {
+	L := lua.NewState()
+	defer L.Close()
+
+	mdt := L.NewTable()
+	md := upstream_data.Metadata()
+	for _, k := range md.Keys() {
+		mdt.RawSet(lua.LString(k), lua.LString(md.AsString(k)))
+	}
+	L.SetGlobal("metadata", mdt)
+	for _, k := range upstream_data.Keys() {
+		L.SetGlobal(k, lua.LString(upstream_data.AsString(k)))
+	}
+
+	lua_str := fmt.Sprintf(`
+ret = (function() return %v end)()
+`, filter)
+
+	ctx, cancel := context.WithTimeout(context.Background(), 200*time.Millisecond)
+	defer cancel()
+	L.SetContext(ctx)
+	err := L.DoString(lua_str)
+	if err != nil {
+		return false, err
+	}
+
+	return L.GetGlobal("ret") == lua.LTrue, nil
+}
+
+func (self *sensordUpstream) emit_upstream_data(target string, upstream_data *UpstreamData) error {
+	sym := self.opt.sym_tbl.Lookup(target)
+	input_data := UpstreamDataToInputData(upstream_data)
+	input_data.Metadata().Set("from", sym.String())
+
+	var emitter *goka.Emitter
+	var ok bool
+	var err error
+
+	if emitter, ok = self.emitters[sym.String()]; !ok {
+		emitter, err = goka.NewEmitter(self.opt.brokers, goka.Stream(sym.String()), new(InputDataCodec))
+		if err != nil {
+			return err
+		}
+
+		self.emitters[sym.String()] = emitter
+	}
+
+	err = emitter.EmitSync("", input_data)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func enc_sensord_upstream_data(snr_dat *sensord_pb.SensorData) *UpstreamData {
 	md := map[string]interface{}{}
 	md["sensor_id"] = snr_dat.SensorId
 	md["sensor_name"] = snr_dat.Data["$sensor.name"].GetString_()
-	md["created_at"] = protobuf_helper.ToTime(*snr_dat.CreatedAt)
-	md["arrvied_at"] = protobuf_helper.ToTime(*snr_dat.ArrivedAt)
+	md["created_at"] = fmt.Sprint(protobuf_helper.ToTime(*snr_dat.CreatedAt).UnixNano())
+	md["arrvied_at"] = fmt.Sprint(protobuf_helper.ToTime(*snr_dat.ArrivedAt).UnixNano())
 
 	d := map[string]interface{}{}
 	for k, v := range snr_dat.Data {
 		if len(k) > 0 && k[0] != '$' {
-			d[k] = dec_sensordData_value(v)
+			d[k] = dec_sensord_data_value(v)
 		}
 	}
 
 	return NewUpstreamData(d, md)
 }
 
-func dec_sensordData_value(v *sensor_pb.SensorValue) interface{} {
+func dec_sensord_data_value(v *sensor_pb.SensorValue) string {
 	switch v.Value.(type) {
 	case *sensor_pb.SensorValue_Double:
-		return v.GetDouble()
+		return fmt.Sprint(v.GetDouble())
 	case *sensor_pb.SensorValue_Float:
-		return v.GetFloat()
+		return fmt.Sprint(v.GetFloat())
 	case *sensor_pb.SensorValue_Int64:
-		return v.GetInt64()
+		return fmt.Sprint(v.GetInt64())
 	case *sensor_pb.SensorValue_Uint64:
-		return v.GetUint64()
+		return fmt.Sprint(v.GetUint64())
 	case *sensor_pb.SensorValue_Int32:
-		return v.GetInt32()
+		return fmt.Sprint(v.GetInt32())
 	case *sensor_pb.SensorValue_Uint32:
-		return v.GetUint32()
-	case *sensor_pb.SensorValue_Bool:
-		return v.GetBool()
+		return fmt.Sprint(v.GetUint32())
 	case *sensor_pb.SensorValue_String_:
 		return v.GetString_()
 	default:
-		panic("unimplemented")
+		return ""
 	}
 }
 
@@ -204,6 +280,10 @@ func (self *sensordUpstream) Stop() error {
 
 	self.state = UPSTREAM_STATE_TERMINATING
 	self.cfn()
+
+	for _, emitter := range self.emitters {
+		emitter.Finish()
+	}
 
 	self.logger.WithField("sensor_id", self.opt.snr_id).Debugf("upstream terminating")
 	return nil
@@ -227,10 +307,11 @@ func newSensordUpstream(os ...UpstreamOption) (Upstream, error) {
 	}
 
 	snrd_upstm := &sensordUpstream{
-		Emitter: NewEmitter(),
-		slck:    &sync.Mutex{},
-		state:   UPSTREAM_STATE_STOP,
-		opt:     opt,
+		Emitter:  NewEmitter(),
+		slck:     &sync.Mutex{},
+		state:    UPSTREAM_STATE_STOP,
+		opt:      opt,
+		emitters: map[string]*goka.Emitter{},
 	}
 	return snrd_upstm, nil
 }

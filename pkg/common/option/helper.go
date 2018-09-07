@@ -18,6 +18,7 @@ type Option interface {
 	GetFloat32(string) float32
 	GetFloat64(string) float64
 	GetBool(string) bool
+	Data() map[string]interface{}
 }
 
 func NewOptionMap(o ...map[string]interface{}) Option {
@@ -158,6 +159,10 @@ func (o option) GetBool(k string) bool {
 		return false
 	}
 	return v.(bool)
+}
+
+func (o option) Data() map[string]interface{} {
+	return o
 }
 
 func Copy(x Option) Option {

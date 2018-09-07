@@ -2,8 +2,6 @@ package stream_manager
 
 import (
 	"time"
-
-	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 )
 
 type UpstreamState int32
@@ -39,27 +37,31 @@ func RegisterUpstream(name string, fty UpstreamFactory) {
 }
 
 type UpstreamMetadata struct {
-	opt_helper.Option
+	StreamData
 }
 
 func (self *UpstreamMetadata) SensorId() string {
-	return self.GetString("sensor_id")
+	return self.AsString("sensor_id")
 }
 
 func (self *UpstreamMetadata) SensorName() string {
-	return self.GetString("sensor_name")
+	return self.AsString("sensor_name")
 }
 
 func (self *UpstreamMetadata) CreatedAt() time.Time {
-	return *self.Get("created_at").(*time.Time)
+	return self.AsTime("created_at")
 }
 
 func (self *UpstreamMetadata) ArrviedAt() time.Time {
-	return *self.Get("arrvied_at").(*time.Time)
+	return self.AsTime("arrvied_at")
+}
+
+func (self *UpstreamMetadata) Data() StreamData {
+	return self.StreamData
 }
 
 type UpstreamData struct {
-	opt_helper.Option
+	StreamData
 	metadata *UpstreamMetadata
 }
 
@@ -67,11 +69,15 @@ func (self *UpstreamData) Metadata() *UpstreamMetadata {
 	return self.metadata
 }
 
+func (self *UpstreamData) Data() StreamData {
+	return self.StreamData
+}
+
 func NewUpstreamData(data map[string]interface{}, metadata map[string]interface{}) *UpstreamData {
-	usmd := &UpstreamMetadata{opt_helper.NewOptionMap(metadata)}
+	usmd := &UpstreamMetadata{NewStreamData(metadata)}
 	usd := &UpstreamData{
-		Option:   opt_helper.NewOptionMap(data),
-		metadata: usmd,
+		StreamData: NewStreamData(data),
+		metadata:   usmd,
 	}
 
 	return usd

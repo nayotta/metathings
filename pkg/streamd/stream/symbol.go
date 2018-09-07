@@ -1,6 +1,13 @@
 package stream_manager
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
+
+const (
+	SYMBOL_PREFIX = "metathings.streamd"
+)
 
 type Symbol interface {
 	Id() string
@@ -19,7 +26,7 @@ func (self *symbol) Id() string        { return self.id }
 func (self *symbol) Component() string { return self.component }
 func (self *symbol) Alias() string     { return self.alias }
 func (self *symbol) String() string {
-	return fmt.Sprintf("metathings.streamd.%v.%v.%v", self.component, self.id, self.alias)
+	return fmt.Sprintf("%v.%v.%v.%v", SYMBOL_PREFIX, self.component, self.id, self.alias)
 }
 
 func NewSymbol(id, component, alias string) Symbol {
@@ -28,6 +35,19 @@ func NewSymbol(id, component, alias string) Symbol {
 		component: component,
 		alias:     alias,
 	}
+}
+
+func FromString(x string) (Symbol, error) {
+	if !strings.HasPrefix(x, SYMBOL_PREFIX) {
+		return nil, ErrBadSymbolString
+	}
+
+	buf := strings.Split(x[len(SYMBOL_PREFIX)+1:], ".")
+	if len(buf) != 3 {
+		return nil, ErrBadSymbolString
+	}
+
+	return NewSymbol(buf[0], buf[1], buf[2]), nil
 }
 
 type SymbolTable interface {
