@@ -113,7 +113,6 @@ func (self *sensordUpstream) Start() error {
 	}
 
 	self.state = UPSTREAM_STATE_STARTING
-	self.Emit(START_EVENT, nil)
 
 	cli, cfn, err := self.opt.cli_fty.NewSensordServiceClient()
 	if err != nil {
@@ -168,6 +167,7 @@ func (self *sensordUpstream) start(cli sensord_pb.SensordServiceClient, cfn clie
 
 	self.slck.Lock()
 	self.state = UPSTREAM_STATE_RUNNING
+	self.Emit(START_EVENT, nil)
 	self.slck.Unlock()
 
 	for {

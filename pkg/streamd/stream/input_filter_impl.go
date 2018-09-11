@@ -87,22 +87,20 @@ func (self *filterInput) Symbol() string {
 	return sym.String()
 }
 
-func (self *filterInput) filter() func(goka.Context, interface{}) {
-	return func(ctx goka.Context, msg interface{}) {
-		ip_dat, ok := msg.(*InputData)
-		if !ok {
-			self.logger.Warningf("failed to convert message to InputData")
-			return
-		}
+func (self *filterInput) filter(ctx goka.Context, msg interface{}) {
+	ip_dat, ok := msg.(*InputData)
+	if !ok {
+		self.logger.Warningf("failed to convert message to InputData")
+		return
+	}
 
-		for target, filter := range self.opt.filters {
-			ok, err := self.filter_input_data(filter, ip_dat)
-			if err != nil {
-				self.logger.WithError(err).Warningf("failed to filter input data")
-			} else if ok {
-				if err = self.emit_input_data(target, ip_dat); err != nil {
-					self.logger.WithError(err).Warningf("failed to emit input data")
-				}
+	for target, filter := range self.opt.filters {
+		ok, err := self.filter_input_data(filter, ip_dat)
+		if err != nil {
+			self.logger.WithError(err).Warningf("failed to filter input data")
+		} else if ok {
+			if err = self.emit_input_data(target, ip_dat); err != nil {
+				self.logger.WithError(err).Warningf("failed to emit input data")
 			}
 		}
 	}
@@ -166,7 +164,6 @@ func (self *filterInput) Start() error {
 	}
 
 	self.state = INPUT_STATE_STARTING
-
 	go self.start()
 
 	return nil
@@ -177,7 +174,7 @@ func (self *filterInput) start() {
 	defer self.slck.Unlock()
 
 	group_graph := goka.DefineGroup(FILTER_INPUT_GROUP,
-		goka.Input(goka.Stream(self.Symbol()), new(InputDataCodec), self.filter()),
+		goka.Input(goka.Stream(self.Symbol()), new(InputDataCodec), self.filter),
 	)
 
 	processor, err := goka.NewProcessor(self.opt.brokers, group_graph)
@@ -195,11 +192,11 @@ func (self *filterInput) start() {
 		return
 	}
 
-	self.Emit(START_EVENT, nil)
 	self.goka_group_graph = group_graph
 	self.goka_processor = processor
 
 	self.state = INPUT_STATE_RUNNING
+	self.Emit(START_EVENT, nil)
 }
 
 func (self *filterInput) Stop() error {
@@ -224,6 +221,7 @@ func (self *filterInput) stop() {
 	self.stop_fn()
 
 	self.state = INPUT_STATE_STOP
+	self.Emit(STOP_EVENT, nil)
 }
 
 func (self *filterInput) State() InputState {

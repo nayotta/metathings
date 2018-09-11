@@ -23,8 +23,8 @@ type Stream interface {
 type StreamOption func(interface{})
 
 type StreamManager interface {
-	NewStream(opts ...StreamOption) Stream
-	GetStream(id string) Stream
+	NewStream(opts ...StreamOption) (Stream, error)
+	GetStream(id string) (Stream, error)
 }
 
 type StreamManagerFactory func() (StreamManager, error)

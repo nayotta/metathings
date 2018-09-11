@@ -15,4 +15,7 @@ var (
 
 	// output errors
 	ErrOutputDataCodec = errors.New("output data codec error")
+
+	// engine errors
+	ErrUnexpectedResultType = errors.New("unexpected result type")
 )
