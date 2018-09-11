@@ -32,6 +32,7 @@ It has these top-level messages:
 	StartResponse
 	StopRequest
 	StopResponse
+	ConfigValue
 	Stream
 	Upstream
 	Input

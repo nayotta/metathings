@@ -20,14 +20,15 @@ type Stream interface {
 	Close()
 }
 
-type StreamOption func(interface{})
+type StreamManagerOption func(interface{})
+type NewStreamOption func(interface{})
 
 type StreamManager interface {
-	NewStream(opts ...StreamOption) (Stream, error)
+	NewStream(opts ...NewStreamOption) (Stream, error)
 	GetStream(id string) (Stream, error)
 }
 
-type StreamManagerFactory func() (StreamManager, error)
+type StreamManagerFactory func(...StreamManagerOption) (StreamManager, error)
 
 var stream_manager_factorys = make(map[string]StreamManagerFactory)
 

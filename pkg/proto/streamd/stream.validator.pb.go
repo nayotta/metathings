@@ -14,6 +14,9 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
+func (this *ConfigValue) Validate() error {
+	return nil
+}
 func (this *Stream) Validate() error {
 	for _, item := range this.Sources {
 		if item != nil {
@@ -32,12 +35,15 @@ func (this *Stream) Validate() error {
 	return nil
 }
 func (this *Upstream) Validate() error {
+	// Validation of proto3 map<> fields is unsupported.
 	return nil
 }
 func (this *Input) Validate() error {
+	// Validation of proto3 map<> fields is unsupported.
 	return nil
 }
 func (this *Output) Validate() error {
+	// Validation of proto3 map<> fields is unsupported.
 	return nil
 }
 func (this *Source) Validate() error {
@@ -88,6 +94,7 @@ func (this *OpUpstream) Validate() error {
 			}
 		}
 	}
+	// Validation of proto3 map<> fields is unsupported.
 	return nil
 }
 func (this *OpInput) Validate() error {
@@ -106,11 +113,6 @@ func (this *OpInput) Validate() error {
 			return go_proto_validators.FieldError("Alias", err)
 		}
 	}
-	if this.Symbol != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Symbol); err != nil {
-			return go_proto_validators.FieldError("Symbol", err)
-		}
-	}
 	for _, item := range this.Targets {
 		if item != nil {
 			if err := go_proto_validators.CallValidatorIfExists(item); err != nil {
@@ -118,6 +120,7 @@ func (this *OpInput) Validate() error {
 			}
 		}
 	}
+	// Validation of proto3 map<> fields is unsupported.
 	return nil
 }
 func (this *OpOutput) Validate() error {
@@ -136,11 +139,7 @@ func (this *OpOutput) Validate() error {
 			return go_proto_validators.FieldError("Alias", err)
 		}
 	}
-	if this.Symbol != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Symbol); err != nil {
-			return go_proto_validators.FieldError("Symbol", err)
-		}
-	}
+	// Validation of proto3 map<> fields is unsupported.
 	return nil
 }
 func (this *OpSource) Validate() error {
