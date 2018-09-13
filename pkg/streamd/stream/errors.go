@@ -6,15 +6,30 @@ var (
 	// symbol errors
 	ErrBadSymbolString = errors.New("bad symbol string")
 
+	// stream manager errors
+	ErrUnregisteredStreamManagerFactory = errors.New("unregistered stream manager factory")
+
 	// stream errors
-	ErrUnstartable  = errors.New("unstartable")
-	ErrUnterminable = errors.New("unterminable")
+	ErrUnregisteredStreamFactory = errors.New("unregistered stream factory")
+	ErrUnstartable               = errors.New("unstartable")
+	ErrUnterminable              = errors.New("unterminable")
+
+	// upstream errors
+	ErrUnregisteredUpstreamFactory = errors.New("unregistered upstream factory")
+
+	// source errors
+	ErrUnregisteredSourceFactory = errors.New("unregistered source factory")
 
 	// input errors
-	ErrInputDataCodec = errors.New("input data codec error")
+	ErrUnregisteredInputFactory = errors.New("unregistered input factory")
+	ErrInputDataCodec           = errors.New("input data codec error")
 
 	// output errors
-	ErrOutputDataCodec = errors.New("output data codec error")
+	ErrUnregisteredOutputFactory = errors.New("unregistered output factory")
+	ErrOutputDataCodec           = errors.New("output data codec error")
+
+	// group errors
+	ErrUnregisteredGroupFactory = errors.New("unregistered group factory")
 
 	// engine errors
 	ErrUnexpectedResultType = errors.New("unexpected result type")
