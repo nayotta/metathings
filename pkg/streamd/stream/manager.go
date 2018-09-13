@@ -1,39 +1,32 @@
 package stream_manager
 
-type StreamState int32
-
-const (
-	STREAM_STATE_UNKNOWN StreamState = iota
-	STREAM_STATE_RUNNING
-	STREAM_STATE_STARTING
-	STREAM_STATE_TERMINATING
-	STREAM_STATE_STOP
-	STREAM_STATE_OVERFLOW
-)
-
-type Stream interface {
-	Emitter
-	Id() string
-	Start() error
-	Stop() error
-	State() StreamState
-	Close()
-}
-
-type StreamManagerOption func(interface{})
-type NewStreamOption func(interface{})
-
 type StreamManager interface {
-	NewStream(opts ...NewStreamOption) (Stream, error)
+	NewStream(opt StreamOption, extra map[string]interface{}) (Stream, error)
 	GetStream(id string) (Stream, error)
 }
 
-type StreamManagerFactory func(...StreamManagerOption) (StreamManager, error)
+type StreamManagerFactory interface {
+	Set(key string, val interface{}) StreamManagerFactory
+	New() (StreamManager, error)
+}
 
-var stream_manager_factorys = make(map[string]StreamManagerFactory)
+var new_stream_manager_factories = make(map[string]func() StreamManagerFactory)
 
-func RegisterStreamManager(name string, fty StreamManagerFactory) {
-	if _, ok := stream_manager_factorys[name]; !ok {
-		stream_manager_factorys[name] = fty
+func RegisterStreamManagerFactory(name string, fn func() StreamManagerFactory) {
+	if _, ok := new_stream_manager_factories[name]; !ok {
+		new_stream_manager_factories[name] = fn
 	}
+}
+
+func NewStreamManagerFactory(name string) (StreamManagerFactory, error) {
+	new_fn, ok := new_stream_manager_factories[name]
+	if !ok {
+		return nil, ErrUnregisteredStreamManagerFactory
+	}
+	return new_fn(), nil
+}
+
+func NewDefaultStreamManagerFactory() StreamManagerFactory {
+	fty, _ := NewStreamManagerFactory("default")
+	return fty
 }

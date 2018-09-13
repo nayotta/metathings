@@ -26,16 +26,25 @@ type Output interface {
 	Close()
 }
 
-type OutputOption func(interface{})
+type OutputFactory interface {
+	Set(key string, val interface{}) OutputFactory
+	New() (Output, error)
+}
 
-type OutputFactory func(opts ...OutputOption) (Output, error)
+var new_output_factories = make(map[string]func() OutputFactory)
 
-var output_factorys = make(map[string]OutputFactory)
-
-func RegisterOutput(name string, fty OutputFactory) {
-	if _, ok := output_factorys[name]; !ok {
-		output_factorys[name] = fty
+func RegisterOutputFactory(name string, fn func() OutputFactory) {
+	if _, ok := new_output_factories[name]; !ok {
+		new_output_factories[name] = fn
 	}
+}
+
+func NewOutputFactory(name string) (OutputFactory, error) {
+	new_fn, ok := new_output_factories[name]
+	if !ok {
+		return nil, ErrUnregisteredOutputFactory
+	}
+	return new_fn(), nil
 }
 
 type OutputMetadata struct {

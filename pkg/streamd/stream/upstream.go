@@ -25,16 +25,25 @@ type Upstream interface {
 	Close()
 }
 
-type UpstreamOption func(interface{})
+type UpstreamFactory interface {
+	Set(key string, val interface{}) UpstreamFactory
+	New() (Upstream, error)
+}
 
-type UpstreamFactory func(opts ...UpstreamOption) (Upstream, error)
+var new_upstream_factorys = make(map[string]func() UpstreamFactory)
 
-var upstream_factorys = make(map[string]UpstreamFactory)
-
-func RegisterUpstream(name string, fty UpstreamFactory) {
-	if _, ok := upstream_factorys[name]; !ok {
-		upstream_factorys[name] = fty
+func RegisterUpstreamFactory(name string, fn func() UpstreamFactory) {
+	if _, ok := new_upstream_factorys[name]; !ok {
+		new_upstream_factorys[name] = fn
 	}
+}
+
+func NewUpstreamFactory(name string) (UpstreamFactory, error) {
+	new_fn, ok := new_upstream_factorys[name]
+	if !ok {
+		return nil, ErrUnregisteredUpstreamFactory
+	}
+	return new_fn(), nil
 }
 
 type UpstreamMetadata struct {

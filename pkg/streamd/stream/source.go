@@ -1,18 +1,32 @@
 package stream_manager
 
-type Source struct {
+type Source interface {
+	Id() string
+	Upstream() Upstream
 }
 
-func (self *Source) Upstream() Upstream {
-	panic("unimplemented")
+type SourceFactory interface {
+	Set(key string, val interface{}) SourceFactory
+	New() (Source, error)
 }
 
-func (self *Source) Id() string {
-	panic("unimplemented")
+var new_source_factories = make(map[string]func() SourceFactory)
+
+func RegisterSourceFactory(name string, fn func() SourceFactory) {
+	if _, ok := new_source_factories[name]; !ok {
+		new_source_factories[name] = fn
+	}
 }
 
-type SourceOption func(o interface{})
+func NewSourceFactory(name string) (SourceFactory, error) {
+	new_fn, ok := new_source_factories[name]
+	if !ok {
+		return nil, ErrUnregisteredSourceFactory
+	}
+	return new_fn(), nil
+}
 
-func NewSource(opts ...SourceOption) (*Source, error) {
-	panic("unimplemented")
+func NewDefaultSourceFactory() SourceFactory {
+	fty, _ := NewSourceFactory("default")
+	return fty
 }

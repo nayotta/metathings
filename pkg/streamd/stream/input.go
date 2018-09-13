@@ -26,16 +26,25 @@ type Input interface {
 	Close()
 }
 
-type InputOption func(interface{})
+type InputFactory interface {
+	Set(key string, val interface{}) InputFactory
+	New() (Input, error)
+}
 
-type InputFactory func(opts ...InputOption) (Input, error)
+var new_input_factories = make(map[string]func() InputFactory)
 
-var input_factorys = make(map[string]InputFactory)
-
-func RegisterInput(name string, fty InputFactory) {
-	if _, ok := input_factorys[name]; !ok {
-		input_factorys[name] = fty
+func RegisterInputFactory(name string, fn func() InputFactory) {
+	if _, ok := new_input_factories[name]; !ok {
+		new_input_factories[name] = fn
 	}
+}
+
+func NewInputFactory(name string) (InputFactory, error) {
+	new_fn, ok := new_input_factories[name]
+	if !ok {
+		return nil, ErrUnregisteredInputFactory
+	}
+	return new_fn(), nil
 }
 
 type InputMetadata struct {
