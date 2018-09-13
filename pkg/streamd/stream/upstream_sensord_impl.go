@@ -32,66 +32,12 @@ type sensordUpstreamOption struct {
 	sym_tbl      SymbolTable
 }
 
-func SetSensordUpstreamId(id string) UpstreamOption {
-	return func(o interface{}) {
-		o.(*sensordUpstreamOption).id = id
-	}
-}
-
-func SetSensordUpstreamAlias(alias string) UpstreamOption {
-	return func(o interface{}) {
-		o.(*sensordUpstreamOption).alias = alias
-	}
-}
-
-func SetSensordUpstreamLogger(logger log.FieldLogger) UpstreamOption {
-	return func(o interface{}) {
-		o.(*sensordUpstreamOption).logger = logger
-	}
-}
-
-func SetSensordUpstreamApplicationCredentialManager(app_cred_mgr app_cred_mgr.ApplicationCredentialManager) UpstreamOption {
-	return func(o interface{}) {
-		o.(*sensordUpstreamOption).app_cred_mgr = app_cred_mgr
-	}
-}
-
-func SetSensordUpstreamClientFactory(cli_fty *client_helper.ClientFactory) UpstreamOption {
-	return func(o interface{}) {
-		o.(*sensordUpstreamOption).cli_fty = cli_fty
-	}
-}
-
-func SetSensordUpstreamBrokers(brokers []string) UpstreamOption {
-	return func(o interface{}) {
-		o.(*sensordUpstreamOption).brokers = brokers
-	}
-}
-
-func SetSensordUpstreamTargets(targets []string) UpstreamOption {
-	return func(o interface{}) {
-		o.(*sensordUpstreamOption).targets = targets
-	}
-}
-
-func SetSensordUpstreamFilters(filters map[string]string) UpstreamOption {
-	return func(o interface{}) {
-		o.(*sensordUpstreamOption).filters = filters
-	}
-}
-
-func SetSensordUpstreamSymbolTable(sym_tbl SymbolTable) UpstreamOption {
-	return func(o interface{}) {
-		o.(*sensordUpstreamOption).sym_tbl = sym_tbl
-	}
-}
-
 type sensordUpstream struct {
 	Emitter
 	slck     *sync.Mutex
 	logger   log.FieldLogger
 	state    UpstreamState
-	opt      sensordUpstreamOption
+	opt      *sensordUpstreamOption
 	cfn      client_helper.CloseFn
 	emitters map[string]*goka.Emitter
 }
@@ -315,23 +261,51 @@ func (self *sensordUpstream) Close() {
 	panic("unimplemented")
 }
 
-func newSensordUpstream(os ...UpstreamOption) (Upstream, error) {
-	opt := sensordUpstreamOption{}
-	for _, o := range os {
-		o(&opt)
+type sensordUpstreamFactory struct {
+	opt *sensordUpstreamOption
+}
+
+func (self *sensordUpstreamFactory) Set(key string, val interface{}) UpstreamFactory {
+	switch key {
+	case "logger":
+		self.opt.logger = val.(log.FieldLogger)
+	case "application_credential_manager":
+		self.opt.app_cred_mgr = val.(app_cred_mgr.ApplicationCredentialManager)
+	case "client_factory":
+		self.opt.cli_fty = val.(*client_helper.ClientFactory)
+	case "symbol_table":
+		self.opt.sym_tbl = val.(SymbolTable)
+	case "option":
+		opt := val.(*UpstreamOption)
+		self.opt.id = opt.id
+		self.opt.alias = opt.alias
+		self.opt.snr_id = opt.config["sensor_id"]
+		self.opt.brokers = split_and_trim(opt.config["brokers"])
+		self.opt.targets = split_and_trim(opt.config["targets"])
+		self.opt.filters = group_by_prefix(opt.config, "filter.")
 	}
 
-	snrd_upstm := &sensordUpstream{
-		Emitter:  NewEmitter(),
-		slck:     &sync.Mutex{},
-		logger:   opt.logger,
+	return self
+}
+
+func (self *sensordUpstreamFactory) New() (Upstream, error) {
+	opt := self.opt
+	upstream := &sensordUpstream{
+		Emitter: NewEmitter(),
+		slck:    &sync.Mutex{},
+		logger: opt.logger.WithFields(log.Fields{
+			"id":         self.opt.id,
+			"#component": "upstream:sensord",
+		}),
 		state:    UPSTREAM_STATE_STOP,
 		opt:      opt,
 		emitters: map[string]*goka.Emitter{},
 	}
-	return snrd_upstm, nil
+	return upstream, nil
 }
 
 func init() {
-	RegisterUpstream("sensord", newSensordUpstream)
+	RegisterUpstreamFactory("sensord", func() UpstreamFactory {
+		return &sensordUpstreamFactory{opt: &sensordUpstreamOption{}}
+	})
 }

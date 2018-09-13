@@ -24,54 +24,12 @@ type filterInputOption struct {
 	sym_tbl SymbolTable
 }
 
-func SetFilterInputId(id string) InputOption {
-	return func(o interface{}) {
-		o.(*filterInputOption).id = id
-	}
-}
-
-func SetFilterInputAlias(alias string) InputOption {
-	return func(o interface{}) {
-		o.(*filterInputOption).alias = alias
-	}
-}
-
-func SetFilterInputLogger(logger log.FieldLogger) InputOption {
-	return func(o interface{}) {
-		o.(*filterInputOption).logger = logger
-	}
-}
-
-func SetFilterInputBrokers(brokers []string) InputOption {
-	return func(o interface{}) {
-		o.(*filterInputOption).brokers = brokers
-	}
-}
-
-func SetFilterInputTargets(targets []string) InputOption {
-	return func(o interface{}) {
-		o.(*filterInputOption).targets = targets
-	}
-}
-
-func SetFilterInputFilters(filters map[string]string) InputOption {
-	return func(o interface{}) {
-		o.(*filterInputOption).filters = filters
-	}
-}
-
-func SetFilterInputSymbolTable(sym_tbl SymbolTable) InputOption {
-	return func(o interface{}) {
-		o.(*filterInputOption).sym_tbl = sym_tbl
-	}
-}
-
 type filterInput struct {
 	Emitter
 	slck             *sync.Mutex
 	logger           log.FieldLogger
 	state            InputState
-	opt              filterInputOption
+	opt              *filterInputOption
 	emitters         map[string]*goka.Emitter
 	stop_fn          func()
 	goka_group_graph *goka.GroupGraph
@@ -235,24 +193,47 @@ func (self *filterInput) Close() {
 	panic("unimplemented")
 }
 
-func newFilterInput(os ...InputOption) (Input, error) {
-	opt := filterInputOption{}
-	for _, o := range os {
-		o(&opt)
+type filterInputFactory struct {
+	opt *filterInputOption
+}
+
+func (self *filterInputFactory) Set(key string, val interface{}) InputFactory {
+	switch key {
+	case "logger":
+		self.opt.logger = val.(log.FieldLogger)
+	case "symbol_table":
+		self.opt.sym_tbl = val.(SymbolTable)
+	case "option":
+		opt := val.(*InputOption)
+		self.opt.id = opt.id
+		self.opt.alias = opt.alias
+		self.opt.brokers = split_and_trim(opt.config["brokers"])
+		self.opt.targets = split_and_trim(opt.config["targets"])
+		self.opt.filters = group_by_prefix(opt.config, "filter.")
 	}
 
-	ftr_ip := &filterInput{
-		Emitter:  NewEmitter(),
-		slck:     &sync.Mutex{},
-		logger:   opt.logger,
+	return self
+}
+
+func (self *filterInputFactory) New() (Input, error) {
+	input := &filterInput{
+		Emitter: NewEmitter(),
+		slck:    &sync.Mutex{},
+		logger: self.opt.logger.WithFields(log.Fields{
+			"id":         self.opt.id,
+			"#component": "input:filter",
+		}),
 		state:    INPUT_STATE_STOP,
-		opt:      opt,
+		opt:      self.opt,
 		emitters: map[string]*goka.Emitter{},
 	}
 
-	return ftr_ip, nil
+	return input, nil
+
 }
 
 func init() {
-	RegisterInput("filter", newFilterInput)
+	RegisterInputFactory("filter", func() InputFactory {
+		return &filterInputFactory{opt: &filterInputOption{}}
+	})
 }

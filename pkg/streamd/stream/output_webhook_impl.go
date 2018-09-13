@@ -26,48 +26,12 @@ type webhookOutputOption struct {
 	webhook_url           string
 }
 
-func SetWebhookOutputId(id string) OutputOption {
-	return func(o interface{}) {
-		o.(*webhookOutputOption).id = id
-	}
-}
-
-func SetWebhookOutputAlias(alias string) OutputOption {
-	return func(o interface{}) {
-		o.(*webhookOutputOption).alias = alias
-	}
-}
-
-func SetWebhookOutputLogger(logger log.FieldLogger) OutputOption {
-	return func(o interface{}) {
-		o.(*webhookOutputOption).logger = logger
-	}
-}
-
-func SetWebhookOutputBrokers(brokers []string) OutputOption {
-	return func(o interface{}) {
-		o.(*webhookOutputOption).brokers = brokers
-	}
-}
-
-func SetWebhookOutputLuanchScript(luanch_script string) OutputOption {
-	return func(o interface{}) {
-		o.(*webhookOutputOption).luanch_script = luanch_script
-	}
-}
-
-func SetWebhookOutputWebhookBodyTemplate(webhook_body_template string) OutputOption {
-	return func(o interface{}) {
-		o.(*webhookOutputOption).webhook_body_template = webhook_body_template
-	}
-}
-
 type webhookOutput struct {
 	Emitter
 	slck             *sync.Mutex
 	logger           log.FieldLogger
 	state            OutputState
-	opt              webhookOutputOption
+	opt              *webhookOutputOption
 	stop_fn          func()
 	goka_group_graph *goka.GroupGraph
 	goka_processor   *goka.Processor
@@ -204,23 +168,46 @@ func (self *webhookOutput) Close() {
 	panic("unimplemented")
 }
 
-func newWebhookOutput(os ...OutputOption) (Output, error) {
-	opt := webhookOutputOption{}
-	for _, o := range os {
-		o(&opt)
+type webhookOutputFactory struct {
+	opt *webhookOutputOption
+}
+
+func (self *webhookOutputFactory) Set(key string, val interface{}) OutputFactory {
+	switch key {
+	case "logger":
+		self.opt.logger = val.(log.FieldLogger)
+	case "option":
+		opt := val.(*OutputOption)
+		self.opt.id = opt.id
+		self.opt.alias = opt.alias
+		self.opt.brokers = split_and_trim(opt.config["brokers"])
+		self.opt.luanch_script = opt.config["luanch_script"]
+		self.opt.webhook_body_template = opt.config["webhook_body_template"]
+		self.opt.webhook_url = opt.config["webhook_url"]
 	}
 
-	wh_op := &webhookOutput{
+	return self
+}
+
+func (self *webhookOutputFactory) New() (Output, error) {
+	output := &webhookOutput{
 		Emitter: NewEmitter(),
 		slck:    &sync.Mutex{},
-		logger:  opt.logger,
-		state:   OUTPUT_STATE_STOP,
-		opt:     opt,
+		logger: self.opt.logger.WithFields(log.Fields{
+			"id":         self.opt.id,
+			"#component": "output:webhook",
+		}),
+		state: OUTPUT_STATE_STOP,
+		opt:   self.opt,
 	}
 
-	return wh_op, nil
+	return output, nil
 }
 
 func init() {
-	RegisterOutput("webhook", newWebhookOutput)
+	RegisterOutputFactory("webhook", func() OutputFactory {
+		return &webhookOutputFactory{
+			opt: &webhookOutputOption{},
+		}
+	})
 }
