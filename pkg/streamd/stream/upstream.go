@@ -30,16 +30,16 @@ type UpstreamFactory interface {
 	New() (Upstream, error)
 }
 
-var new_upstream_factorys = make(map[string]func() UpstreamFactory)
+var new_upstream_factories = make(map[string]func() UpstreamFactory)
 
 func RegisterUpstreamFactory(name string, fn func() UpstreamFactory) {
-	if _, ok := new_upstream_factorys[name]; !ok {
-		new_upstream_factorys[name] = fn
+	if _, ok := new_upstream_factories[name]; !ok {
+		new_upstream_factories[name] = fn
 	}
 }
 
 func NewUpstreamFactory(name string) (UpstreamFactory, error) {
-	new_fn, ok := new_upstream_factorys[name]
+	new_fn, ok := new_upstream_factories[name]
 	if !ok {
 		return nil, ErrUnregisteredUpstreamFactory
 	}

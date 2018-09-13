@@ -3,48 +3,53 @@ package stream_manager
 import (
 	"fmt"
 
+	log "github.com/sirupsen/logrus"
+
+	app_cred_mgr "github.com/nayotta/metathings/pkg/common/application_credential_manager"
+	client_helper "github.com/nayotta/metathings/pkg/common/client"
 	pb "github.com/nayotta/metathings/pkg/proto/streamd"
 )
 
-type upstreamOption struct {
+type UpstreamOption struct {
 	id     string
 	name   string
 	alias  string
 	config map[string]string
 }
 
-type sourceOption struct {
+type SourceOption struct {
 	id       string
-	upstream *upstreamOption
+	upstream *UpstreamOption
 }
 
-type inputOption struct {
+type InputOption struct {
 	id     string
 	name   string
 	alias  string
 	config map[string]string
 }
 
-type outputOption struct {
+type OutputOption struct {
 	id     string
 	name   string
 	alias  string
 	config map[string]string
 }
 
-type groupOption struct {
+type GroupOption struct {
 	id      string
-	inputs  []*inputOption
-	outputs []*outputOption
+	inputs  []*InputOption
+	outputs []*OutputOption
 }
 
-type streamOption struct {
+type StreamOption struct {
+	id      string
 	name    string
-	sources []*sourceOption
-	groups  []*groupOption
+	sources []*SourceOption
+	groups  []*GroupOption
 }
 
-func SetNewStreamOption(req *pb.CreateRequest) NewStreamOption {
+func PbCreateRequestToStreamOption(req *pb.CreateRequest) *StreamOption {
 	configToMap := func(x map[string]*pb.ConfigValue) map[string]string {
 		y := map[string]string{}
 
@@ -64,8 +69,8 @@ func SetNewStreamOption(req *pb.CreateRequest) NewStreamOption {
 		return y
 	}
 
-	newUpstreamOption := func(x *pb.OpUpstream) *upstreamOption {
-		return &upstreamOption{
+	newUpstreamOption := func(x *pb.OpUpstream) *UpstreamOption {
+		return &UpstreamOption{
 			id:     x.GetId().GetValue(),
 			name:   x.GetName().GetValue(),
 			alias:  x.GetAlias().GetValue(),
@@ -73,15 +78,15 @@ func SetNewStreamOption(req *pb.CreateRequest) NewStreamOption {
 		}
 	}
 
-	newSourceOption := func(x *pb.OpSource) *sourceOption {
-		return &sourceOption{
+	newSourceOption := func(x *pb.OpSource) *SourceOption {
+		return &SourceOption{
 			id:       x.GetId().GetValue(),
 			upstream: newUpstreamOption(x.GetUpstream()),
 		}
 	}
 
-	newInputOption := func(x *pb.OpInput) *inputOption {
-		return &inputOption{
+	newInputOption := func(x *pb.OpInput) *InputOption {
+		return &InputOption{
 			id:     x.GetId().GetValue(),
 			name:   x.GetName().GetValue(),
 			alias:  x.GetAlias().GetValue(),
@@ -89,8 +94,8 @@ func SetNewStreamOption(req *pb.CreateRequest) NewStreamOption {
 		}
 	}
 
-	newOutputOption := func(x *pb.OpOutput) *outputOption {
-		return &outputOption{
+	newOutputOption := func(x *pb.OpOutput) *OutputOption {
+		return &OutputOption{
 			id:     x.GetId().GetValue(),
 			name:   x.GetName().GetValue(),
 			alias:  x.GetAlias().GetValue(),
@@ -98,11 +103,11 @@ func SetNewStreamOption(req *pb.CreateRequest) NewStreamOption {
 		}
 	}
 
-	newGroupOption := func(x *pb.OpGroup) *groupOption {
-		y := &groupOption{
+	newGroupOption := func(x *pb.OpGroup) *GroupOption {
+		y := &GroupOption{
 			id:      x.GetId().GetValue(),
-			inputs:  []*inputOption{},
-			outputs: []*outputOption{},
+			inputs:  []*InputOption{},
+			outputs: []*OutputOption{},
 		}
 
 		for _, input := range x.GetInputs() {
@@ -116,44 +121,100 @@ func SetNewStreamOption(req *pb.CreateRequest) NewStreamOption {
 		return y
 	}
 
-	setSources := func(o *streamOption) {
-		o.sources = []*sourceOption{}
+	newSources := func(x []*pb.OpSource) []*SourceOption {
+		sources := []*SourceOption{}
 
 		for _, source := range req.GetSources() {
-			o.sources = append(o.sources, newSourceOption(source))
+			sources = append(sources, newSourceOption(source))
 		}
+
+		return sources
 	}
 
-	setGroups := func(o *streamOption) {
-		o.groups = []*groupOption{}
+	newGroups := func(x []*pb.OpGroup) []*GroupOption {
+		groups := []*GroupOption{}
 
 		for _, group := range req.GetGroups() {
-			o.groups = append(o.groups, newGroupOption(group))
+			groups = append(groups, newGroupOption(group))
 		}
+
+		return groups
 	}
 
-	return func(x interface{}) {
-		o := x.(*streamOption)
-		o.name = req.GetName().GetValue()
-		setSources(o)
-		setGroups(o)
+	opt := &StreamOption{
+		id:      req.GetId().GetValue(),
+		name:    req.GetName().GetValue(),
+		sources: newSources(req.GetSources()),
+		groups:  newGroups(req.GetGroups()),
 	}
+
+	return opt
 }
 
-type streamManagerImpl struct{}
+type streamManagerImplOption struct {
+	logger       log.FieldLogger
+	app_cred_mgr app_cred_mgr.ApplicationCredentialManager
+	cli_fty      *client_helper.ClientFactory
+}
 
-func (self *streamManagerImpl) NewStream(opts ...NewStreamOption) (Stream, error) {
-	panic("unimplemented")
+type streamManagerImpl struct {
+	logger  log.FieldLogger
+	opt     *streamManagerImplOption
+	streams map[string]Stream
+}
+
+func (self *streamManagerImpl) NewStream(opt StreamOption, extra map[string]interface{}) (Stream, error) {
+	fty := NewDefaultStreamFactory()
+	stm, err := fty.Set("option", opt).
+		Set("application_credential", extra["application_credential"]).
+		Set("client_factory", extra["client_factory"]).
+		Set("logger", extra["logger"]).
+		New()
+	if err != nil {
+		self.logger.WithError(err).Debugf("failed to new stream")
+		return nil, err
+	}
+
+	self.streams[stm.Id()] = stm
+
+	return stm, nil
 }
 
 func (self *streamManagerImpl) GetStream(id string) (Stream, error) {
-	panic("unimplemented")
+	stm, ok := self.streams[id]
+	if !ok {
+		return nil, ErrStreamNotFound
+	}
+	return stm, nil
 }
 
-func newStreamManagerImpl(opts ...StreamManagerOption) (StreamManager, error) {
-	panic("unimplemented")
+type streamManagerImplFactory struct {
+	opt *streamManagerImplOption
+}
+
+func (self *streamManagerImplFactory) Set(key string, val interface{}) StreamManagerFactory {
+	switch key {
+	case "logger":
+		self.opt.logger = val.(log.FieldLogger)
+	case "application_credential_manager":
+		self.opt.app_cred_mgr = val.(app_cred_mgr.ApplicationCredentialManager)
+	case "client_factory":
+		self.opt.cli_fty = val.(*client_helper.ClientFactory)
+	}
+
+	return self
+}
+
+func (self *streamManagerImplFactory) New() (StreamManager, error) {
+	return &streamManagerImpl{
+		opt: self.opt,
+		logger: self.opt.logger.WithFields(log.Fields{
+			"#component": "stream_manager:default",
+		}),
+		streams: map[string]Stream{},
+	}, nil
 }
 
 func init() {
-	RegisterStreamManager("default", newStreamManagerImpl)
+	RegisterStreamManagerFactory("default", func() StreamManagerFactory { return &streamManagerImplFactory{opt: &streamManagerImplOption{}} })
 }

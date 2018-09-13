@@ -8,6 +8,7 @@ var (
 
 	// stream manager errors
 	ErrUnregisteredStreamManagerFactory = errors.New("unregistered stream manager factory")
+	ErrStreamNotFound                   = errors.New("stream not found")
 
 	// stream errors
 	ErrUnregisteredStreamFactory = errors.New("unregistered stream factory")

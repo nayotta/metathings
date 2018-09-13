@@ -226,8 +226,6 @@ type streamImplFactory struct {
 
 func (self *streamImplFactory) Set(key string, val interface{}) StreamFactory {
 	switch key {
-	case "symbol_table":
-		self.opt.sym_tbl = val.(SymbolTable)
 	case "application_credential_manager":
 		self.opt.app_cred_mgr = val.(app_cred_mgr.ApplicationCredentialManager)
 	case "client_factory":
@@ -246,12 +244,12 @@ func (self *streamImplFactory) Set(key string, val interface{}) StreamFactory {
 }
 
 func (self *streamImplFactory) New() (Stream, error) {
-	sym_tbl := self.make_symbol_table_by_stream_option()
+	self.opt.sym_tbl = self.make_symbol_table_by_stream_option()
 
 	sources := []Source{}
 	for _, src_opt := range self.opt.sources {
 		fty := NewDefaultSourceFactory()
-		source, err := fty.Set("symbol_table", sym_tbl).
+		source, err := fty.Set("symbol_table", self.opt.sym_tbl).
 			Set("application_credential_manager", self.opt.app_cred_mgr).
 			Set("client_factory", self.opt.cli_fty).
 			Set("logger", self.opt.logger).
@@ -283,7 +281,7 @@ func (self *streamImplFactory) New() (Stream, error) {
 		Emitter: NewEmitter(),
 		opt:     self.opt,
 		state:   STREAM_STATE_STOP,
-		sym_tbl: sym_tbl,
+		sym_tbl: self.opt.sym_tbl,
 		slck:    &sync.Mutex{},
 		logger: self.opt.logger.WithFields(log.Fields{
 			"id":         self.opt.id,

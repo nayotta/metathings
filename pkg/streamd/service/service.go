@@ -2,18 +2,25 @@ package metathings_streamd_service
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
 
 	"github.com/golang/protobuf/ptypes/empty"
 	log "github.com/sirupsen/logrus"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 
 	app_cred_mgr "github.com/nayotta/metathings/pkg/common/application_credential_manager"
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
+	context_helper "github.com/nayotta/metathings/pkg/common/context"
 	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
+	id_helper "github.com/nayotta/metathings/pkg/common/id"
 	log_helper "github.com/nayotta/metathings/pkg/common/log"
 	token_helper "github.com/nayotta/metathings/pkg/common/token"
 	pb "github.com/nayotta/metathings/pkg/proto/streamd"
 	state_helper "github.com/nayotta/metathings/pkg/streamd/state"
 	storage "github.com/nayotta/metathings/pkg/streamd/storage"
+	stream_manager "github.com/nayotta/metathings/pkg/streamd/stream"
 )
 
 type options struct {
@@ -81,6 +88,7 @@ type metathingsStreamdService struct {
 	opts          options
 	storage       storage.Storage
 	tk_vdr        token_helper.TokenValidator
+	stm_mgr       stream_manager.StreamManager
 }
 
 func (self *metathingsStreamdService) AuthFuncOverride(ctx context.Context, fullMethodName string) (context.Context, error) {
@@ -107,8 +115,151 @@ func (self *metathingsStreamdService) AuthFuncOverride(ctx context.Context, full
 	return ctx, nil
 }
 
-func (self *metathingsStreamdService) Create(context.Context, *pb.CreateRequest) (*pb.CreateResponse, error) {
+func (self *metathingsStreamdService) Create(ctx context.Context, req *pb.CreateRequest) (*pb.CreateResponse, error) {
+	err := req.Validate()
+	if err != nil {
+		self.logger.WithError(err).Errorf("failed to validate request data")
+		return nil, status.Errorf(codes.InvalidArgument, err.Error())
+	}
+
+	stm, err := self.parse_storage_stream(ctx, req)
+	if err != nil {
+		self.logger.WithError(err).Errorf("failed to parse request to storage stream")
+		return nil, status.Errorf(codes.InvalidArgument, err.Error())
+	}
+
+	_, err = self.storage.CreateStream(stm)
+	if err != nil {
+		self.logger.WithError(err).Errorf("failed to create stream in storage")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
 	panic("unimplemented")
+}
+
+func encode_config_to_json_string(x map[string]*pb.ConfigValue) (string, error) {
+	y := map[string]string{}
+	for k, v := range x {
+		switch v.GetValue().(type) {
+		case *pb.ConfigValue_Double:
+			y[k] = fmt.Sprintf("%v", v.GetDouble())
+		case *pb.ConfigValue_Int64:
+			y[k] = fmt.Sprintf("%v", v.GetInt64())
+		case *pb.ConfigValue_Uint64:
+			y[k] = fmt.Sprintf("%v", v.GetUint64())
+		case *pb.ConfigValue_String_:
+			y[k] = fmt.Sprintf("%v", v.GetString_())
+		}
+	}
+
+	buf, err := json.Marshal(y)
+	if err != nil {
+		return "", err
+	}
+
+	return string(buf), nil
+}
+
+func (self *metathingsStreamdService) parse_storage_stream(ctx context.Context, req *pb.CreateRequest) (storage.Stream, error) {
+	cred := context_helper.Credential(ctx)
+	stm_id := id_helper.NewId()
+	stm_name := req.GetName().GetValue()
+	stm_state := "stop"
+
+	sources := []storage.Source{}
+	for _, req_src := range req.GetSources() {
+		src_id := id_helper.NewId()
+		upstm_id := id_helper.NewId()
+		req_upstm := req_src.GetUpstream()
+		upstm_name := req_upstm.GetName().GetValue()
+		upstm_alias := req_upstm.GetAlias().GetValue()
+		upstm_config, err := encode_config_to_json_string(req_upstm.GetConfig())
+		if err != nil {
+			return storage.Stream{}, err
+		}
+
+		upstream := storage.Upstream{
+			Id:       &upstm_id,
+			SourceId: &src_id,
+			Name:     &upstm_name,
+			Alias:    &upstm_alias,
+			Config:   &upstm_config,
+		}
+
+		source := storage.Source{
+			Id:       &src_id,
+			StreamId: &stm_id,
+			Upstream: upstream,
+		}
+
+		sources = append(sources, source)
+	}
+
+	groups := []storage.Group{}
+	for _, req_grp := range req.GetGroups() {
+		grp_id := id_helper.NewId()
+
+		inputs := []storage.Input{}
+		for _, req_in := range req_grp.GetInputs() {
+			in_id := id_helper.NewId()
+			in_name := req_in.GetName().GetValue()
+			in_alias := req_in.GetAlias().GetValue()
+			in_config, err := encode_config_to_json_string(req_in.GetConfig())
+			if err != nil {
+				return storage.Stream{}, err
+			}
+
+			input := storage.Input{
+				Id:      &in_id,
+				GroupId: &grp_id,
+				Name:    &in_name,
+				Alias:   &in_alias,
+				Config:  &in_config,
+			}
+
+			inputs = append(inputs, input)
+		}
+
+		outputs := []storage.Output{}
+		for _, req_out := range req_grp.GetOutputs() {
+			out_id := id_helper.NewId()
+			out_name := req_out.GetName().GetValue()
+			out_alias := req_out.GetAlias().GetValue()
+			out_config, err := encode_config_to_json_string(req_out.GetConfig())
+			if err != nil {
+				return storage.Stream{}, nil
+			}
+
+			output := storage.Output{
+				Id:      &out_id,
+				GroupId: &grp_id,
+				Name:    &out_name,
+				Alias:   &out_alias,
+				Config:  &out_config,
+			}
+
+			outputs = append(outputs, output)
+		}
+
+		group := storage.Group{
+			Id:      &grp_id,
+			Inputs:  inputs,
+			Outputs: outputs,
+		}
+
+		groups = append(groups, group)
+	}
+
+	stm := storage.Stream{
+		Id:      &stm_id,
+		Name:    &stm_name,
+		OwnerId: &cred.User.Id,
+		State:   &stm_state,
+		Sources: sources,
+		Groups:  groups,
+	}
+
+	return stm, nil
 }
 
 func (self *metathingsStreamdService) Delete(context.Context, *pb.DeleteRequest) (*empty.Empty, error) {
@@ -174,6 +325,16 @@ func NewStreamdService(opt ...ServiceOptions) (*metathingsStreamdService, error)
 		return nil, err
 	}
 
+	stm_mgr_fty := stream_manager.NewDefaultStreamManagerFactory()
+	stm_mgr, err := stm_mgr_fty.Set("application_credential_manager", app_cred_mgr).
+		Set("client_factory", cli_fty).
+		Set("logger", logger).
+		New()
+	if err != nil {
+		logger.WithError(err).Errorf("failed to new stream manager")
+		return nil, err
+	}
+
 	tk_vdr := token_helper.NewTokenValidator(app_cred_mgr, cli_fty, logger)
 
 	srv := &metathingsStreamdService{
@@ -184,6 +345,7 @@ func NewStreamdService(opt ...ServiceOptions) (*metathingsStreamdService, error)
 		logger:        logger,
 		storage:       storage,
 		tk_vdr:        tk_vdr,
+		stm_mgr:       stm_mgr,
 	}
 
 	logger.Debugf("new streamd service")

@@ -27,19 +27,24 @@ type StreamFactory interface {
 	New() (Stream, error)
 }
 
-var new_stream_factorys = map[string]func() StreamFactory{}
+var new_stream_factories = map[string]func() StreamFactory{}
 
 func RegisterStreamFactory(name string, fn func() StreamFactory) {
-	if _, ok := new_stream_factorys[name]; !ok {
-		new_stream_factorys[name] = fn
+	if _, ok := new_stream_factories[name]; !ok {
+		new_stream_factories[name] = fn
 	}
 }
 
 func NewStreamFactory(name string) (StreamFactory, error) {
-	new_fn, ok := new_stream_factorys[name]
+	new_fn, ok := new_stream_factories[name]
 	if !ok {
 		return nil, ErrUnregisteredStreamFactory
 	}
 
 	return new_fn(), nil
+}
+
+func NewDefaultStreamFactory() StreamFactory {
+	fty, _ := NewStreamFactory("default")
+	return fty
 }

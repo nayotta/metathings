@@ -11,23 +11,63 @@ type Stream struct {
 	CreatedAt time.Time
 	UpdatedAt time.Time
 
-	Name    *string `gorm:"column:name"`
-	OwnerId *string `gorm:"column:owner_id"`
-	State   *string `gorm:"column:state"`
-	Pads    []Pad   `gorm:"-"`
+	Name    *string  `gorm:"column:name"`
+	OwnerId *string  `gorm:"column:owner_id"`
+	State   *string  `gorm:"column:state"`
+	Sources []Source `gorm:"-"`
+	Groups  []Group  `gorm:"-"`
 }
 
-type Pad struct {
+type Source struct {
 	Id        *string
 	CreatedAt time.Time
 	UpdatedAt time.Time
 
-	Name       *string `gorm:"column:name"`
-	Type       *string `gorm:"column:type"`
-	Processor  *string `gorm:"column:processor"`
-	StreamId   *string `gorm:"column:stream_id"`
-	NextPadIds *string `gorm:"column:next_pad_ids"`
-	Config     *string `gorm:"column:config"`
+	StreamId *string  `gorm:"column:stream_id"`
+	Upstream Upstream `gorm:"-"`
+}
+
+type Group struct {
+	Id        *string
+	CreatedAt time.Time
+	UpdatedAt time.Time
+
+	StreamId *string  `gorm:"column:stream_id"`
+	Inputs   []Input  `gorm:"-"`
+	Outputs  []Output `gorm:"-"`
+}
+
+type Upstream struct {
+	Id        *string
+	CreatedAt time.Time
+	UpdatedAt time.Time
+
+	SourceId *string `gorm:"column:source_id"`
+	Name     *string `gorm:"column:name"`
+	Alias    *string `gorm:"column:alias"`
+	Config   *string `gorm:"column:config"`
+}
+
+type Input struct {
+	Id        *string
+	CreatedAt time.Time
+	UpdatedAt time.Time
+
+	GroupId *string `gorm:"column:group_id"`
+	Name    *string `gorm:"column:name"`
+	Alias   *string `gorm:"column:alias"`
+	Config  *string `gorm:"column:config"`
+}
+
+type Output struct {
+	Id        *string
+	CreatedAt time.Time
+	UpdatedAt time.Time
+
+	GroupId *string `gorm:"column:group_id"`
+	Name    *string `gorm:"column:name"`
+	Alias   *string `gorm:"column:alias"`
+	Config  *string `gorm:"column:config"`
 }
 
 type Storage interface {
