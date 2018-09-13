@@ -60,6 +60,11 @@ var _ = fmt.Errorf
 var _ = math.Inf
 
 func (this *CreateRequest) Validate() error {
+	if this.Id != nil {
+		if err := go_proto_validators.CallValidatorIfExists(this.Id); err != nil {
+			return go_proto_validators.FieldError("Id", err)
+		}
+	}
 	if nil == this.Name {
 		return go_proto_validators.FieldError("Name", fmt.Errorf("message must exist"))
 	}
