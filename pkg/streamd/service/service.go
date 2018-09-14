@@ -402,8 +402,48 @@ func (self *metathingsStreamdService) Delete(ctx context.Context, req *pb.Delete
 	return &empty.Empty{}, nil
 }
 
-func (self *metathingsStreamdService) Start(context.Context, *pb.StartRequest) (*pb.StartResponse, error) {
-	panic("unimplemented")
+func (self *metathingsStreamdService) Start(ctx context.Context, req *pb.StartRequest) (*pb.StartResponse, error) {
+	err := req.Validate()
+	if err != nil {
+		self.logger.WithError(err).Errorf("failed to validate request data")
+		return nil, status.Errorf(codes.InvalidArgument, err.Error())
+	}
+
+	stm_id := req.GetId().GetValue()
+	stm, err := self.stm_mgr.GetStream(stm_id)
+	if err != nil {
+		self.logger.WithError(err).Errorf("failed to get stream from stream manager")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
+	stm.Once(stream_manager.START_EVENT, func(stream_manager.Event, interface{}) {
+		stm_state := "running"
+		_, err := self.storage.PatchStream(stm_id, storage.Stream{State: &stm_state})
+		if err != nil {
+			self.logger.WithError(err).Errorf("failed to patch stream state")
+			return
+		}
+		self.logger.WithField("id", stm_id).Infof("stream started")
+	})
+
+	err = stm.Start()
+	if err != nil {
+		self.logger.WithError(err).Errorf("failed to start stream")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
+	stm_state := "starting"
+	stm_s, err := self.storage.PatchStream(stm_id, storage.Stream{State: &stm_state})
+	if err != nil {
+		self.logger.WithError(err).Errorf("failed to patch stream state")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
+	res := &pb.StartResponse{Stream: self.copyStream(stm_s)}
+
+	self.logger.WithField("id", stm_id).Debugf("start stream")
+
+	return res, nil
 }
 
 func (self *metathingsStreamdService) Stop(context.Context, *pb.StopRequest) (*pb.StopResponse, error) {
