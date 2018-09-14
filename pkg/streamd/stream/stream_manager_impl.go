@@ -85,6 +85,18 @@ func (self *streamManagerImpl) GetStream(id string) (Stream, error) {
 	return stm, nil
 }
 
+func (self *streamManagerImpl) DeleteStream(id string) error {
+	stm, ok := self.streams[id]
+	if !ok {
+		return ErrStreamNotFound
+	}
+
+	stm.Close()
+	delete(self.streams, id)
+
+	return nil
+}
+
 type streamManagerImplFactory struct {
 	opt *streamManagerImplOption
 }

@@ -3,6 +3,7 @@ package stream_manager
 type StreamManager interface {
 	NewStream(opt *StreamOption, extra map[string]interface{}) (Stream, error)
 	GetStream(id string) (Stream, error)
+	DeleteStream(id string) error
 }
 
 type StreamManagerFactory interface {

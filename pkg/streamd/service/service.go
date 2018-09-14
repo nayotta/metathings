@@ -373,8 +373,33 @@ func (self *metathingsStreamdService) parse_storage_stream(ctx context.Context, 
 	return stm, nil
 }
 
-func (self *metathingsStreamdService) Delete(context.Context, *pb.DeleteRequest) (*empty.Empty, error) {
-	panic("unimplemented")
+func (self *metathingsStreamdService) Delete(ctx context.Context, req *pb.DeleteRequest) (*empty.Empty, error) {
+	err := req.Validate()
+	if err != nil {
+		self.logger.WithError(err).Errorf("failed to validate request data")
+		return nil, status.Errorf(codes.InvalidArgument, err.Error())
+	}
+
+	stm_id := req.GetId().GetValue()
+	stm, err := self.stm_mgr.GetStream(stm_id)
+	if stm.State() != stream_manager.STREAM_STATE_STOP {
+		self.logger.WithField("id", stm_id).Errorf("failed to delete stream cause state not in stop")
+		return nil, status.Errorf(codes.FailedPrecondition, "stream state not in stop")
+	}
+
+	err = self.stm_mgr.DeleteStream(stm_id)
+	if err != nil {
+		self.logger.WithError(err).WithField("id", stm_id).Errorf("failed to delete stream in stream manager")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
+	err = self.storage.DeleteStream(stm_id)
+	if err != nil {
+		self.logger.WithField("id", stm_id).Errorf("failed to delete stream in storage")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
+	return &empty.Empty{}, nil
 }
 
 func (self *metathingsStreamdService) Start(context.Context, *pb.StartRequest) (*pb.StartResponse, error) {

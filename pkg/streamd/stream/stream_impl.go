@@ -210,7 +210,7 @@ func (self *streamImpl) State() StreamState {
 }
 
 func (self *streamImpl) Close() {
-	panic("unimplemented")
+	self.logger.WithField("stream_id", self.opt.id).Debugf("close stream")
 }
 
 func (self *streamImpl) Sources() []Source {
