@@ -416,6 +416,7 @@ func (self *metathingsStreamdService) Start(ctx context.Context, req *pb.StartRe
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
+	// TODO(Peer): should be consider about starting timeout.
 	stm.Once(stream_manager.START_EVENT, func(stream_manager.Event, interface{}) {
 		stm_state := "running"
 		_, err := self.storage.PatchStream(stm_id, storage.Stream{State: &stm_state})
@@ -442,12 +443,50 @@ func (self *metathingsStreamdService) Start(ctx context.Context, req *pb.StartRe
 	res := &pb.StartResponse{Stream: self.copyStream(stm_s)}
 
 	self.logger.WithField("id", stm_id).Debugf("start stream")
-
 	return res, nil
 }
 
-func (self *metathingsStreamdService) Stop(context.Context, *pb.StopRequest) (*pb.StopResponse, error) {
-	panic("unimplemented")
+func (self *metathingsStreamdService) Stop(ctx context.Context, req *pb.StopRequest) (*pb.StopResponse, error) {
+	err := req.Validate()
+	if err != nil {
+		self.logger.WithError(err).Errorf("failed to validate request data")
+		return nil, status.Errorf(codes.InvalidArgument, err.Error())
+	}
+
+	stm_id := req.GetId().GetValue()
+	stm, err := self.stm_mgr.GetStream(stm_id)
+	if err != nil {
+		self.logger.WithError(err).Errorf("failed to get stream from stream manager")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
+	stm.Once(stream_manager.STOP_EVENT, func(stream_manager.Event, interface{}) {
+		stm_state := "stop"
+		_, err := self.storage.PatchStream(stm_id, storage.Stream{State: &stm_state})
+		if err != nil {
+			self.logger.WithError(err).Errorf("failed to patch stream state")
+			return
+		}
+		self.logger.WithField("id", stm_id).Infof("stream terminated")
+	})
+
+	err = stm.Stop()
+	if err != nil {
+		self.logger.WithError(err).Errorf("failed to stop stream")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
+	stm_state := "termianting"
+	stm_s, err := self.storage.PatchStream(stm_id, storage.Stream{State: &stm_state})
+	if err != nil {
+		self.logger.WithError(err).Errorf("failed to patch state")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
+	res := &pb.StopResponse{Stream: self.copyStream(stm_s)}
+
+	self.logger.WithField("id", stm_id).Debugf("stop stream")
+	return res, nil
 }
 
 func (self *metathingsStreamdService) Get(context.Context, *pb.GetRequest) (*pb.GetResponse, error) {
