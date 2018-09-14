@@ -275,30 +275,30 @@ func (self *sensordUpstreamFactory) Set(key string, val interface{}) UpstreamFac
 		self.opt.cli_fty = val.(*client_helper.ClientFactory)
 	case "symbol_table":
 		self.opt.sym_tbl = val.(SymbolTable)
+	case "brokers":
+		self.opt.brokers = val.([]string)
 	case "option":
 		opt := val.(*UpstreamOption)
-		self.opt.id = opt.id
-		self.opt.alias = opt.alias
-		self.opt.snr_id = opt.config["sensor_id"]
-		self.opt.brokers = split_and_trim(opt.config["brokers"])
-		self.opt.targets = split_and_trim(opt.config["targets"])
-		self.opt.filters = group_by_prefix(opt.config, "filter.")
+		self.opt.id = opt.Id
+		self.opt.alias = opt.Alias
+		self.opt.snr_id = opt.Config["sensor_id"]
+		self.opt.targets = split_and_trim(opt.Config["targets"])
+		self.opt.filters = group_by_prefix(opt.Config, "filter.")
 	}
 
 	return self
 }
 
 func (self *sensordUpstreamFactory) New() (Upstream, error) {
-	opt := self.opt
 	upstream := &sensordUpstream{
 		Emitter: NewEmitter(),
 		slck:    &sync.Mutex{},
-		logger: opt.logger.WithFields(log.Fields{
+		logger: self.opt.logger.WithFields(log.Fields{
 			"id":         self.opt.id,
 			"#component": "upstream:sensord",
 		}),
 		state:    UPSTREAM_STATE_STOP,
-		opt:      opt,
+		opt:      self.opt,
 		emitters: map[string]*goka.Emitter{},
 	}
 	return upstream, nil

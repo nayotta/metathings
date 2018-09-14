@@ -87,13 +87,6 @@ func (this *OpUpstream) Validate() error {
 			return go_proto_validators.FieldError("Alias", err)
 		}
 	}
-	for _, item := range this.Targets {
-		if item != nil {
-			if err := go_proto_validators.CallValidatorIfExists(item); err != nil {
-				return go_proto_validators.FieldError("Targets", err)
-			}
-		}
-	}
 	// Validation of proto3 map<> fields is unsupported.
 	return nil
 }
@@ -111,13 +104,6 @@ func (this *OpInput) Validate() error {
 	if this.Alias != nil {
 		if err := go_proto_validators.CallValidatorIfExists(this.Alias); err != nil {
 			return go_proto_validators.FieldError("Alias", err)
-		}
-	}
-	for _, item := range this.Targets {
-		if item != nil {
-			if err := go_proto_validators.CallValidatorIfExists(item); err != nil {
-				return go_proto_validators.FieldError("Targets", err)
-			}
 		}
 	}
 	// Validation of proto3 map<> fields is unsupported.

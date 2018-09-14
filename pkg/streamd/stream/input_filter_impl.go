@@ -203,13 +203,14 @@ func (self *filterInputFactory) Set(key string, val interface{}) InputFactory {
 		self.opt.logger = val.(log.FieldLogger)
 	case "symbol_table":
 		self.opt.sym_tbl = val.(SymbolTable)
+	case "brokers":
+		self.opt.brokers = val.([]string)
 	case "option":
 		opt := val.(*InputOption)
-		self.opt.id = opt.id
-		self.opt.alias = opt.alias
-		self.opt.brokers = split_and_trim(opt.config["brokers"])
-		self.opt.targets = split_and_trim(opt.config["targets"])
-		self.opt.filters = group_by_prefix(opt.config, "filter.")
+		self.opt.id = opt.Id
+		self.opt.alias = opt.Alias
+		self.opt.targets = split_and_trim(opt.Config["targets"])
+		self.opt.filters = group_by_prefix(opt.Config, "filter.")
 	}
 
 	return self

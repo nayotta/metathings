@@ -15,6 +15,7 @@ type sourceImplOption struct {
 	logger       log.FieldLogger
 	app_cred_mgr app_cred_mgr.ApplicationCredentialManager
 	cli_fty      *client_helper.ClientFactory
+	brokers      []string
 }
 
 type sourceImpl struct {
@@ -45,17 +46,19 @@ func (self *sourceImplFactory) Set(key string, val interface{}) SourceFactory {
 		self.opt.cli_fty = val.(*client_helper.ClientFactory)
 	case "symbol_table":
 		self.opt.sym_tbl = val.(SymbolTable)
+	case "brokers":
+		self.opt.brokers = val.([]string)
 	case "option":
 		opt := val.(*SourceOption)
-		self.opt.id = opt.id
-		self.opt.upstream = opt.upstream
+		self.opt.id = opt.Id
+		self.opt.upstream = opt.Upstream
 	}
 
 	return self
 }
 
 func (self *sourceImplFactory) New() (Source, error) {
-	fty, err := NewUpstreamFactory(self.opt.upstream.name)
+	fty, err := NewUpstreamFactory(self.opt.upstream.Name)
 	if err != nil {
 		return nil, err
 	}
@@ -64,6 +67,7 @@ func (self *sourceImplFactory) New() (Source, error) {
 		Set("application_credential_manager", self.opt.app_cred_mgr).
 		Set("client_factory", self.opt.cli_fty).
 		Set("symbol_table", self.opt.sym_tbl).
+		Set("brokers", self.opt.brokers).
 		Set("option", self.opt.upstream).
 		New()
 	if err != nil {

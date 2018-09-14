@@ -2,8 +2,6 @@ package metathings_streamd_service
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
 
 	"github.com/golang/protobuf/ptypes/empty"
 	log "github.com/sirupsen/logrus"
@@ -115,6 +113,97 @@ func (self *metathingsStreamdService) AuthFuncOverride(ctx context.Context, full
 	return ctx, nil
 }
 
+func (self *metathingsStreamdService) copyStream(x storage.Stream) *pb.Stream {
+	y := &pb.Stream{
+		Id:      *x.Id,
+		Name:    *x.Name,
+		OwnerId: *x.OwnerId,
+		State:   self.stream_st_psr.ToValue(*x.State),
+		Sources: self.copySources(x.Sources),
+		Groups:  self.copyGroups(x.Groups),
+	}
+	return y
+}
+
+func (self *metathingsStreamdService) copySources(xs []storage.Source) []*pb.Source {
+	ys := []*pb.Source{}
+	for _, x := range xs {
+		ys = append(ys, self.copySource(x))
+	}
+	return ys
+}
+
+func (self *metathingsStreamdService) copySource(x storage.Source) *pb.Source {
+	y := &pb.Source{
+		Id:       *x.Id,
+		Upstream: self.copyUpstream(x.Upstream),
+	}
+	return y
+}
+
+func (self *metathingsStreamdService) copyGroups(xs []storage.Group) []*pb.Group {
+	ys := []*pb.Group{}
+	for _, x := range xs {
+		ys = append(ys, self.copyGroup(x))
+	}
+	return ys
+}
+
+func (self *metathingsStreamdService) copyGroup(x storage.Group) *pb.Group {
+	y := &pb.Group{
+		Id:      *x.Id,
+		Inputs:  self.copyInputs(x.Inputs),
+		Outputs: self.copyOutputs(x.Outputs),
+	}
+	return y
+}
+
+func (self *metathingsStreamdService) copyUpstream(x storage.Upstream) *pb.Upstream {
+	y := &pb.Upstream{
+		Id:     *x.Id,
+		Name:   *x.Name,
+		Alias:  *x.Alias,
+		Config: must_decode_json_string_to_config(*x.Config),
+	}
+	return y
+}
+
+func (self *metathingsStreamdService) copyInputs(xs []storage.Input) []*pb.Input {
+	ys := []*pb.Input{}
+	for _, x := range xs {
+		ys = append(ys, self.copyInput(x))
+	}
+	return ys
+}
+
+func (self *metathingsStreamdService) copyInput(x storage.Input) *pb.Input {
+	y := &pb.Input{
+		Id:     *x.Id,
+		Name:   *x.Name,
+		Alias:  *x.Alias,
+		Config: must_decode_json_string_to_config(*x.Config),
+	}
+	return y
+}
+
+func (self *metathingsStreamdService) copyOutputs(xs []storage.Output) []*pb.Output {
+	ys := []*pb.Output{}
+	for _, x := range xs {
+		ys = append(ys, self.copyOutput(x))
+	}
+	return ys
+}
+
+func (self *metathingsStreamdService) copyOutput(x storage.Output) *pb.Output {
+	y := &pb.Output{
+		Id:     *x.Id,
+		Name:   *x.Name,
+		Alias:  *x.Alias,
+		Config: must_decode_json_string_to_config(*x.Config),
+	}
+	return y
+}
+
 func (self *metathingsStreamdService) Create(ctx context.Context, req *pb.CreateRequest) (*pb.CreateResponse, error) {
 	err := req.Validate()
 	if err != nil {
@@ -122,55 +211,77 @@ func (self *metathingsStreamdService) Create(ctx context.Context, req *pb.Create
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 
+	self.reinit_create_request(req)
 	stm, err := self.parse_storage_stream(ctx, req)
 	if err != nil {
 		self.logger.WithError(err).Errorf("failed to parse request to storage stream")
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 
-	_, err = self.storage.CreateStream(stm)
+	stm, err = self.storage.CreateStream(stm)
 	if err != nil {
 		self.logger.WithError(err).Errorf("failed to create stream in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
-	panic("unimplemented")
+	stm_opt := encode_create_request_to_stream_option(req)
+	extra := map[string]interface{}{
+		"application_credential_manager": self.app_cred_mgr,
+		"client_factory":                 self.cli_fty,
+		"logger":                         self.logger,
+	}
+
+	_, err = self.stm_mgr.NewStream(stm_opt, extra)
+	if err != nil {
+		self.logger.WithError(err).Errorf("failed to new stream")
+		self.storage.DeleteStream(*stm.Id)
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
+	res := &pb.CreateResponse{
+		Stream: self.copyStream(stm),
+	}
+
+	self.logger.WithFields(log.Fields{
+		"id":       *stm.Id,
+		"name":     *stm.Name,
+		"owner_id": *stm.OwnerId,
+		"state":    *stm.State,
+	})
+
+	return res, nil
 }
 
-func encode_config_to_json_string(x map[string]*pb.ConfigValue) (string, error) {
-	y := map[string]string{}
-	for k, v := range x {
-		switch v.GetValue().(type) {
-		case *pb.ConfigValue_Double:
-			y[k] = fmt.Sprintf("%v", v.GetDouble())
-		case *pb.ConfigValue_Int64:
-			y[k] = fmt.Sprintf("%v", v.GetInt64())
-		case *pb.ConfigValue_Uint64:
-			y[k] = fmt.Sprintf("%v", v.GetUint64())
-		case *pb.ConfigValue_String_:
-			y[k] = fmt.Sprintf("%v", v.GetString_())
+func (self *metathingsStreamdService) reinit_create_request(req *pb.CreateRequest) {
+	req.Id.Value = id_helper.NewId()
+
+	for _, src := range req.GetSources() {
+		src.Id.Value = id_helper.NewId()
+		src.Upstream.Id.Value = id_helper.NewId()
+	}
+
+	for _, grp := range req.GetGroups() {
+		grp.Id.Value = id_helper.NewId()
+		for _, in := range grp.GetInputs() {
+			in.Id.Value = id_helper.NewId()
+		}
+		for _, out := range grp.GetOutputs() {
+			out.Id.Value = id_helper.NewId()
 		}
 	}
-
-	buf, err := json.Marshal(y)
-	if err != nil {
-		return "", err
-	}
-
-	return string(buf), nil
 }
 
 func (self *metathingsStreamdService) parse_storage_stream(ctx context.Context, req *pb.CreateRequest) (storage.Stream, error) {
 	cred := context_helper.Credential(ctx)
-	stm_id := id_helper.NewId()
+	stm_id := req.GetId().GetValue()
 	stm_name := req.GetName().GetValue()
 	stm_state := "stop"
 
 	sources := []storage.Source{}
 	for _, req_src := range req.GetSources() {
-		src_id := id_helper.NewId()
-		upstm_id := id_helper.NewId()
+		src_id := req_src.GetId().GetValue()
 		req_upstm := req_src.GetUpstream()
+		upstm_id := req_upstm.GetId().GetValue()
 		upstm_name := req_upstm.GetName().GetValue()
 		upstm_alias := req_upstm.GetAlias().GetValue()
 		upstm_config, err := encode_config_to_json_string(req_upstm.GetConfig())
@@ -197,11 +308,11 @@ func (self *metathingsStreamdService) parse_storage_stream(ctx context.Context, 
 
 	groups := []storage.Group{}
 	for _, req_grp := range req.GetGroups() {
-		grp_id := id_helper.NewId()
+		grp_id := req_grp.GetId().GetValue()
 
 		inputs := []storage.Input{}
 		for _, req_in := range req_grp.GetInputs() {
-			in_id := id_helper.NewId()
+			in_id := req_in.GetId().GetValue()
 			in_name := req_in.GetName().GetValue()
 			in_alias := req_in.GetAlias().GetValue()
 			in_config, err := encode_config_to_json_string(req_in.GetConfig())
@@ -222,7 +333,7 @@ func (self *metathingsStreamdService) parse_storage_stream(ctx context.Context, 
 
 		outputs := []storage.Output{}
 		for _, req_out := range req_grp.GetOutputs() {
-			out_id := id_helper.NewId()
+			out_id := req_out.GetId().GetValue()
 			out_name := req_out.GetName().GetValue()
 			out_alias := req_out.GetAlias().GetValue()
 			out_config, err := encode_config_to_json_string(req_out.GetConfig())

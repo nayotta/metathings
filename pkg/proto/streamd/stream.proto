@@ -7,9 +7,7 @@ import "google/protobuf/wrappers.proto";
 message ConfigValue {
 	oneof value {
 		double double = 1;
-		int64 int64 = 2;
-		uint64 uint64 = 3;
-		string string = 4;
+		string string = 2;
 	}
 }
 
@@ -34,8 +32,7 @@ message Upstream {
 	string id = 1;
 	string name = 2;
 	string alias = 3;
-	repeated string targets = 4;
-	map<string, ConfigValue> config = 5;
+	map<string, ConfigValue> config = 4;
 }
 
 message Input {
@@ -43,8 +40,7 @@ message Input {
 	string name = 2;
 	string alias = 3;
 	string symbol = 4;
-	repeated string targets = 5;
-	map<string, ConfigValue> config = 6;
+	map<string, ConfigValue> config = 5;
 }
 
 message Output {
@@ -70,16 +66,14 @@ message OpUpstream {
 	google.protobuf.StringValue id = 1;
 	google.protobuf.StringValue name = 2;
 	google.protobuf.StringValue alias = 3;
-	repeated google.protobuf.StringValue targets = 4;
-	map<string, ConfigValue> config = 5;
+	map<string, ConfigValue> config = 4;
 }
 
 message OpInput {
 	google.protobuf.StringValue id = 1;
 	google.protobuf.StringValue name = 2;
 	google.protobuf.StringValue alias = 3;
-	repeated google.protobuf.StringValue targets = 4;
-	map<string, ConfigValue> config = 5;
+	map<string, ConfigValue> config = 4;
 }
 
 message OpOutput {

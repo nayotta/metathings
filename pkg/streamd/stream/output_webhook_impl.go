@@ -176,14 +176,15 @@ func (self *webhookOutputFactory) Set(key string, val interface{}) OutputFactory
 	switch key {
 	case "logger":
 		self.opt.logger = val.(log.FieldLogger)
+	case "brokers":
+		self.opt.brokers = val.([]string)
 	case "option":
 		opt := val.(*OutputOption)
-		self.opt.id = opt.id
-		self.opt.alias = opt.alias
-		self.opt.brokers = split_and_trim(opt.config["brokers"])
-		self.opt.luanch_script = opt.config["luanch_script"]
-		self.opt.webhook_body_template = opt.config["webhook_body_template"]
-		self.opt.webhook_url = opt.config["webhook_url"]
+		self.opt.id = opt.Id
+		self.opt.alias = opt.Alias
+		self.opt.luanch_script = opt.Config["luanch_script"]
+		self.opt.webhook_body_template = opt.Config["webhook_body_template"]
+		self.opt.webhook_url = opt.Config["webhook_url"]
 	}
 
 	return self

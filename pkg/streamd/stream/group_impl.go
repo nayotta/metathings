@@ -11,6 +11,7 @@ type groupImplOption struct {
 
 	sym_tbl SymbolTable
 	logger  log.FieldLogger
+	brokers []string
 }
 
 type groupImpl struct {
@@ -42,11 +43,13 @@ func (self *groupImplFactory) Set(key string, val interface{}) GroupFactory {
 		self.opt.logger = val.(log.FieldLogger)
 	case "symbol_table":
 		self.opt.sym_tbl = val.(SymbolTable)
+	case "brokers":
+		self.opt.brokers = val.([]string)
 	case "option":
 		opt := val.(*GroupOption)
-		self.opt.id = opt.id
-		self.opt.inputs = opt.inputs
-		self.opt.outputs = opt.outputs
+		self.opt.id = opt.Id
+		self.opt.inputs = opt.Inputs
+		self.opt.outputs = opt.Outputs
 	}
 
 	return self
@@ -55,13 +58,14 @@ func (self *groupImplFactory) Set(key string, val interface{}) GroupFactory {
 func (self *groupImplFactory) New() (Group, error) {
 	inputs := []Input{}
 	for _, in_opt := range self.opt.inputs {
-		fty, err := NewInputFactory(in_opt.name)
+		fty, err := NewInputFactory(in_opt.Name)
 		if err != nil {
 			return nil, err
 		}
 
 		input, err := fty.Set("logger", self.opt.logger).
 			Set("symbol_table", self.opt.sym_tbl).
+			Set("brokers", self.opt.brokers).
 			Set("option", in_opt).
 			New()
 		if err != nil {
@@ -73,13 +77,14 @@ func (self *groupImplFactory) New() (Group, error) {
 
 	outputs := []Output{}
 	for _, out_opt := range self.opt.outputs {
-		fty, err := NewOutputFactory(out_opt.name)
+		fty, err := NewOutputFactory(out_opt.Name)
 		if err != nil {
 			return nil, err
 		}
 
 		output, err := fty.Set("logger", self.opt.logger).
 			Set("symbol_table", self.opt.sym_tbl).
+			Set("brokers", self.opt.brokers).
 			Set("option", out_opt).
 			New()
 		if err != nil {

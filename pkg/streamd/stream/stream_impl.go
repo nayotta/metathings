@@ -19,6 +19,7 @@ type streamImplOption struct {
 	logger       log.FieldLogger
 	app_cred_mgr app_cred_mgr.ApplicationCredentialManager
 	cli_fty      *client_helper.ClientFactory
+	brokers      []string
 }
 
 type streamImpl struct {
@@ -232,12 +233,14 @@ func (self *streamImplFactory) Set(key string, val interface{}) StreamFactory {
 		self.opt.cli_fty = val.(*client_helper.ClientFactory)
 	case "logger":
 		self.opt.logger = val.(log.FieldLogger)
+	case "brokers":
+		self.opt.brokers = val.([]string)
 	case "option":
 		opt := val.(*StreamOption)
-		self.opt.id = opt.id
-		self.opt.name = opt.name
-		self.opt.sources = opt.sources
-		self.opt.groups = opt.groups
+		self.opt.id = opt.Id
+		self.opt.name = opt.Name
+		self.opt.sources = opt.Sources
+		self.opt.groups = opt.Groups
 	}
 
 	return self
@@ -253,6 +256,7 @@ func (self *streamImplFactory) New() (Stream, error) {
 			Set("application_credential_manager", self.opt.app_cred_mgr).
 			Set("client_factory", self.opt.cli_fty).
 			Set("logger", self.opt.logger).
+			Set("brokers", self.opt.brokers).
 			Set("option", src_opt).
 			New()
 		if err != nil {
@@ -268,6 +272,7 @@ func (self *streamImplFactory) New() (Stream, error) {
 		group, err := fty.
 			Set("logger", self.opt.logger).
 			Set("symbol_table", self.opt.sym_tbl).
+			Set("brokers", self.opt.brokers).
 			Set("option", grp_opt).
 			New()
 		if err != nil {
@@ -297,17 +302,17 @@ func (self *streamImplFactory) New() (Stream, error) {
 func (self *streamImplFactory) make_symbol_table_by_stream_option() SymbolTable {
 	syms := []Symbol{}
 	for _, src := range self.opt.sources {
-		us := src.upstream
-		syms = append(syms, NewSymbol(us.id, COMPONENT_UPSTREAM, us.alias))
+		us := src.Upstream
+		syms = append(syms, NewSymbol(us.Id, COMPONENT_UPSTREAM, us.Alias))
 	}
 
 	for _, grp := range self.opt.groups {
-		for _, in := range grp.inputs {
-			syms = append(syms, NewSymbol(in.id, COMPONENT_INPUT, in.alias))
+		for _, in := range grp.Inputs {
+			syms = append(syms, NewSymbol(in.Id, COMPONENT_INPUT, in.Alias))
 		}
 
-		for _, out := range grp.outputs {
-			syms = append(syms, NewSymbol(out.id, COMPONENT_OUTPUT, out.alias))
+		for _, out := range grp.Outputs {
+			syms = append(syms, NewSymbol(out.Id, COMPONENT_OUTPUT, out.Alias))
 		}
 	}
 	sym_tbl := NewSymbolTable(syms)
