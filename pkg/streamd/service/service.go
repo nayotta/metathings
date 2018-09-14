@@ -113,6 +113,14 @@ func (self *metathingsStreamdService) AuthFuncOverride(ctx context.Context, full
 	return ctx, nil
 }
 
+func (self *metathingsStreamdService) copyStreams(xs []storage.Stream) []*pb.Stream {
+	ys := []*pb.Stream{}
+	for _, x := range xs {
+		ys = append(ys, self.copyStream(x))
+	}
+	return ys
+}
+
 func (self *metathingsStreamdService) copyStream(x storage.Stream) *pb.Stream {
 	y := &pb.Stream{
 		Id:      *x.Id,
@@ -509,8 +517,43 @@ func (self *metathingsStreamdService) Get(ctx context.Context, req *pb.GetReques
 	return res, nil
 }
 
-func (self *metathingsStreamdService) List(context.Context, *pb.ListRequest) (*pb.ListResponse, error) {
-	panic("unimplemented")
+func (self *metathingsStreamdService) List(ctx context.Context, req *pb.ListRequest) (*pb.ListResponse, error) {
+	err := req.Validate()
+	if err != nil {
+		self.logger.WithError(err).Errorf("failed to validate request data")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
+	stm := storage.Stream{}
+
+	name := req.GetName()
+	if name != nil {
+		stm.Name = &name.Value
+	}
+
+	ownerId := req.GetOwnerId()
+	if ownerId != nil {
+		stm.OwnerId = &ownerId.Value
+	}
+
+	state := req.GetState()
+	if state != pb.StreamState_STREAM_STATE_UNKNOWN {
+		state_str := self.stream_st_psr.ToString(state)
+		stm.State = &state_str
+	}
+
+	stms, err := self.storage.ListStreams(stm)
+	if err != nil {
+		self.logger.WithError(err).Errorf("failed to list stream from storage")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
+	res := &pb.ListResponse{
+		Streams: self.copyStreams(stms),
+	}
+
+	self.logger.Debugf("list streams")
+	return res, nil
 }
 
 func (self *metathingsStreamdService) ListForUser(context.Context, *pb.ListForUserRequest) (*pb.ListForUserResponse, error) {
