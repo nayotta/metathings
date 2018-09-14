@@ -556,8 +556,42 @@ func (self *metathingsStreamdService) List(ctx context.Context, req *pb.ListRequ
 	return res, nil
 }
 
-func (self *metathingsStreamdService) ListForUser(context.Context, *pb.ListForUserRequest) (*pb.ListForUserResponse, error) {
-	panic("unimplemented")
+func (self *metathingsStreamdService) ListForUser(ctx context.Context, req *pb.ListForUserRequest) (*pb.ListForUserResponse, error) {
+	err := req.Validate()
+	if err != nil {
+		self.logger.WithError(err).Errorf("failed to validate request data")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
+	cred := context_helper.Credential(ctx)
+
+	stm := storage.Stream{
+		OwnerId: &cred.User.Id,
+	}
+
+	name := req.GetName()
+	if name != nil {
+		stm.Name = &name.Value
+	}
+
+	state := req.GetState()
+	if state != pb.StreamState_STREAM_STATE_UNKNOWN {
+		state_str := self.stream_st_psr.ToString(state)
+		stm.State = &state_str
+	}
+
+	stms, err := self.storage.ListStreams(stm)
+	if err != nil {
+		self.logger.WithError(err).Errorf("failed to list stream from storage")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
+	res := &pb.ListForUserResponse{
+		Streams: self.copyStreams(stms),
+	}
+
+	self.logger.Debugf("list stream for user")
+	return res, nil
 }
 
 func NewStreamdService(opt ...ServiceOptions) (*metathingsStreamdService, error) {
