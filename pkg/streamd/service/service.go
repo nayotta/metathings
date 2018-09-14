@@ -489,8 +489,24 @@ func (self *metathingsStreamdService) Stop(ctx context.Context, req *pb.StopRequ
 	return res, nil
 }
 
-func (self *metathingsStreamdService) Get(context.Context, *pb.GetRequest) (*pb.GetResponse, error) {
-	panic("unimplemented")
+func (self *metathingsStreamdService) Get(ctx context.Context, req *pb.GetRequest) (*pb.GetResponse, error) {
+	err := req.Validate()
+	if err != nil {
+		self.logger.WithError(err).Errorf("failed to validate request data")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
+	stm_id := req.GetId().GetValue()
+	stm, err := self.storage.GetStream(stm_id)
+	if err != nil {
+		self.logger.WithError(err).Errorf("failed to get stream from storage")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
+	res := &pb.GetResponse{Stream: self.copyStream(stm)}
+
+	self.logger.WithField("id", stm_id).Debugf("get stream")
+	return res, nil
 }
 
 func (self *metathingsStreamdService) List(context.Context, *pb.ListRequest) (*pb.ListResponse, error) {
