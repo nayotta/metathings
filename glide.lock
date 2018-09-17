@@ -1,12 +1,28 @@
 hash: 22ddd305a6d37b86c157b71b12426e9d654633addf11ddd01034b46afa490ac9
-updated: 2018-08-10T18:00:46.431901+08:00
+updated: 2018-09-17T10:58:23.15826+08:00
 imports:
+- name: github.com/bsm/sarama-cluster
+  version: c618e605e15c0d7535f6c96ff8efbb0dba4fd66c
 - name: github.com/cbroglie/mustache
   version: eb931a9d20042e51d8a3a9ad5a9ba9bc8282c564
 - name: github.com/confluentinc/confluent-kafka-go
   version: 5e4d04e05fc319ce5996a867aafef29059f26862
   subpackages:
   - kafka
+- name: github.com/davecgh/go-spew
+  version: 346938d642f2ec3594ed81d874461961cd0faa76
+  subpackages:
+  - spew
+- name: github.com/db7/kazoo-go
+  version: ef4f7dc0b6f69bb0478d216f3491fa2508de2940
+- name: github.com/eapache/go-resiliency
+  version: ea41b0fad31007accc7f806884dcdf3da98b79ce
+  subpackages:
+  - breaker
+- name: github.com/eapache/go-xerial-snappy
+  version: 776d5712da21bc4762676d614db1d8a64f4238b0
+- name: github.com/eapache/queue
+  version: 093482f3f8ce946c05bcba64badd2c82369e084d
 - name: github.com/fsnotify/fsnotify
   version: c2828203cd70a50dcccfb2761f8b1f8ceef9a8e9
 - name: github.com/go-daq/smbus
@@ -26,6 +42,8 @@ imports:
   - ptypes/empty
   - ptypes/timestamp
   - ptypes/wrappers
+- name: github.com/golang/snappy
+  version: 2e65f85255dbc3072edf28d6b5b8efc472979f5a
 - name: github.com/grpc-ecosystem/go-grpc-middleware
   version: c250d6563d4d4c20252cd865923440e829844f4e
   subpackages:
@@ -53,6 +71,13 @@ imports:
   version: 2aeb6a910c2b94f2d5eb53d9895d80e27264ec41
   subpackages:
   - reflectx
+- name: github.com/lovoo/goka
+  version: 4ff4aeaf8b5b303e11d12f200d58ca9d3cc98e56
+  subpackages:
+  - kafka
+  - logger
+  - multierr
+  - storage
 - name: github.com/magiconair/properties
   version: c2353362d570a7bfa228149c62842019201cfb71
 - name: github.com/mattn/go-sqlite3
@@ -69,10 +94,22 @@ imports:
   version: a578a48e8d6ca8b01a3b18314c43c6716bb5f5a3
 - name: github.com/pelletier/go-toml
   version: c01d1270ff3e442a8a57cddc1c92dc1138598194
+- name: github.com/pierrec/lz4
+  version: 1f6e18d34f6790fc0afea6f13a5fe3d9ab1770af
+  subpackages:
+  - internal/xxh32
 - name: github.com/pkg/errors
   version: 645ef00459ed84a119197bfb8d8205042c6df63d
+- name: github.com/rcrowley/go-metrics
+  version: e2704e165165ec55d062f5919b4b29494e9fa790
+- name: github.com/samuel/go-zookeeper
+  version: c4fab1ac1bec58281ad0667dc3f0907a9476ac47
+  subpackages:
+  - zk
 - name: github.com/satori/go.uuid
   version: f58768cc1a7a7e77a3bd49e98cdd21419399b6a3
+- name: github.com/Shopify/sarama
+  version: a6144ae922fd99dd0ea5046c8137acfb7fab0914
 - name: github.com/sigurn/crc8
   version: e55481d6f45c5a8f040343bace9013571dae103e
 - name: github.com/sigurn/utils
@@ -93,6 +130,27 @@ imports:
   version: 583c0c0531f06d5278b7d917446061adc344b5cd
 - name: github.com/stianeikeland/go-rpio
   version: 3abdd2207d33843c1c3fbea540bdf07990075c03
+- name: github.com/syndtr/goleveldb
+  version: ae2bd5eed72d46b28834ec3f60db3a3ebedd8dbd
+  subpackages:
+  - leveldb
+  - leveldb/cache
+  - leveldb/comparer
+  - leveldb/errors
+  - leveldb/filter
+  - leveldb/iterator
+  - leveldb/journal
+  - leveldb/memdb
+  - leveldb/opt
+  - leveldb/storage
+  - leveldb/table
+  - leveldb/util
+- name: github.com/yuin/gopher-lua
+  version: ed65620d4bd7093055e0e305bf0fdadcc0026acb
+  subpackages:
+  - ast
+  - parse
+  - pm
 - name: gobot.io/x/gobot
   version: c1d0e3ce485df0b45076d1d93b7d9240b770d5fc
   subpackages:
@@ -116,6 +174,10 @@ imports:
   - lex/httplex
   - publicsuffix
   - trace
+- name: golang.org/x/sync
+  version: 1d60e4601c6fd243af51cc01ddf169918a5407ca
+  subpackages:
+  - errgroup
 - name: golang.org/x/sys
   version: 2281fa97ef7b0c26324634d5a22f04babdac8713
   subpackages:
@@ -175,17 +237,16 @@ imports:
   - host/fs
   - host/sysfs
 testImports:
-- name: github.com/davecgh/go-spew
-  version: 346938d642f2ec3594ed81d874461961cd0faa76
-  subpackages:
-  - spew
 - name: github.com/pmezard/go-difflib
   version: 792786c7400a136282c1664665ae0a8db921c6c2
   subpackages:
   - difflib
+- name: github.com/stretchr/objx
+  version: 477a77ecc69700c7cdeb1fa9e129548e1c1c393c
 - name: github.com/stretchr/testify
   version: f35b8ab0b5a2cef36673838d662e249dd9c94686
   subpackages:
   - assert
+  - mock
   - require
   - suite

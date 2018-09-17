@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/golang/protobuf/ptypes/empty"
+	"github.com/nayotta/viper"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -30,6 +31,7 @@ type options struct {
 	application_credential_secret string
 	storage_driver                string
 	storage_uri                   string
+	stm_mgr                       *viper.Viper
 }
 
 type ServiceOptions func(*options)
@@ -73,6 +75,12 @@ func SetStorage(driver, uri string) ServiceOptions {
 	return func(o *options) {
 		o.storage_driver = driver
 		o.storage_uri = uri
+	}
+}
+
+func SetStreamManager(v *viper.Viper) ServiceOptions {
+	return func(o *options) {
+		o.stm_mgr = v
 	}
 }
 
@@ -633,10 +641,20 @@ func NewStreamdService(opt ...ServiceOptions) (*metathingsStreamdService, error)
 		return nil, err
 	}
 
+	var stm_mgr_opt struct {
+		Brokers []string
+	}
+	err = opts.stm_mgr.Unmarshal(&stm_mgr_opt)
+	if err != nil {
+		logger.WithError(err).Errorf("failed to parse stream manager options")
+		return nil, err
+	}
+
 	stm_mgr_fty := stream_manager.NewDefaultStreamManagerFactory()
 	stm_mgr, err := stm_mgr_fty.Set("application_credential_manager", app_cred_mgr).
 		Set("client_factory", cli_fty).
 		Set("logger", logger).
+		Set("brokers", stm_mgr_opt.Brokers).
 		New()
 	if err != nil {
 		logger.WithError(err).Errorf("failed to new stream manager")

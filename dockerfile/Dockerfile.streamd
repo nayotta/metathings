@@ -1,0 +1,5 @@
+FROM nayotta/metathingsd
+
+COPY ./etc/streamd.yaml /etc/metathings/streamd.yaml
+COPY ./script/streamd_start.sh /usr/local/sbin/streamd_start.sh
+CMD /usr/local/sbin/streamda_start.sh

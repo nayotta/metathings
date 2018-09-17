@@ -78,8 +78,26 @@ services:
     - ./data/storage:/var/metathings/storage
     networks:
     - metathings-backend
+    - metathings-kafka
     expose:
     - "5003"
+    restart: on-failure
+
+  streamd:
+    environment:
+    - MTD_STAGE=debug
+    build:
+      context: .
+      dockerfile: dockerfile/Dockerfile.streamd
+    image: nayotta/streamd
+    volumes:
+    - ./etc/streamd.yaml:/etc/metathings/streamd.yaml
+    - ./data/storage:/var/metathings/storage
+    networks:
+    - metathings-backend
+    - metathings-kafka
+    expose:
+    - "5004"
     restart: on-failure
 
 networks:

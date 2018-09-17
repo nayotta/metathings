@@ -71,7 +71,7 @@ services:
 
   sensord:
     environment:
-      - MTD_STAGE=dev
+    - MTD_STAGE=dev
     build:
       context: .
       dockerfile: dockerfile/Dockerfile.sensord.dev
@@ -85,6 +85,24 @@ services:
     - metathings-kafka
     expose:
     - "5003"
+    restart: on-failure
+
+  streamd:
+    environment:
+    - MTD_STAGE=dev
+    build:
+      context: .
+      dockerfile: dockerfile/Dockerfile.streamd.dev
+    image: nayotta/metathings-streamd-development
+    volumes:
+    - ./data/storage:/var/metathings/storage
+    - .:/go/src/github.com/nayotta/metathings
+    - ./etc/streamd.yaml:/etc/metathings/streamd.yaml
+    networks:
+    - metathings-backend
+    - metathings-kafka
+    expose:
+    - "5004"
     restart: on-failure
 
 networks:
