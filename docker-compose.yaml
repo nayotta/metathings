@@ -107,3 +107,6 @@ networks:
   metathings-backend:
     external:
       name: metathings-backend
+  metathings-kafka:
+    external:
+      name: metathings-kafka
