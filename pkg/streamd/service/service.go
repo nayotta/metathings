@@ -602,6 +602,10 @@ func (self *metathingsStreamdService) ListForUser(ctx context.Context, req *pb.L
 	return res, nil
 }
 
+func (self *metathingsStreamdService) Patch(context.Context, *pb.PatchRequest) (*pb.PatchResponse, error) {
+	panic("unimplemented")
+}
+
 func NewStreamdService(opt ...ServiceOptions) (*metathingsStreamdService, error) {
 	opts := defaultServiceOptions
 	for _, o := range opt {
