@@ -1,5 +1,5 @@
-hash: 22ddd305a6d37b86c157b71b12426e9d654633addf11ddd01034b46afa490ac9
-updated: 2018-09-17T10:58:23.15826+08:00
+hash: 14791a5f6c8eae63e3a992463fd3669f596a381a9bc5114fc567dfc588b193c8
+updated: 2018-09-17T14:38:21.137956+08:00
 imports:
 - name: github.com/bsm/sarama-cluster
   version: c618e605e15c0d7535f6c96ff8efbb0dba4fd66c
@@ -28,12 +28,12 @@ imports:
 - name: github.com/go-daq/smbus
   version: 15ef727fb3205992e78eb887b88a90f952874459
 - name: github.com/gogo/protobuf
-  version: 1adfc126b41513cc696b209667c8656ea7aac67c
+  version: 636bf0302bc95575d69441b25a2603156ffdddf1
   subpackages:
   - proto
   - protoc-gen-gogo/descriptor
 - name: github.com/golang/protobuf
-  version: b4deda0973fb4c70b50d226b1af49f3da59f5265
+  version: aa810b61a9c79d51363740d207bb46cf8e620ed5
   subpackages:
   - proto
   - ptypes
@@ -67,6 +67,10 @@ imports:
   - json/token
 - name: github.com/inconshreveable/mousetrap
   version: 76626ae9c91c4f2a10f34cad8ce83ea42c93bb75
+- name: github.com/jinzhu/gorm
+  version: 6ed508ec6a4ecb3531899a69cbc746ccf65a4166
+- name: github.com/jinzhu/inflection
+  version: 04140366298a54a039076d798123ffa108fff46c
 - name: github.com/jmoiron/sqlx
   version: 2aeb6a910c2b94f2d5eb53d9895d80e27264ec41
   subpackages:
@@ -81,7 +85,7 @@ imports:
 - name: github.com/magiconair/properties
   version: c2353362d570a7bfa228149c62842019201cfb71
 - name: github.com/mattn/go-sqlite3
-  version: 323a32be5a2421b8c7087225079c6c900ec397cd
+  version: 25ecb14adfc7543176f7d85291ec7dba82c6f7e4
 - name: github.com/mitchellh/mapstructure
   version: 00c29f56e2386353d58c599509e8dc3801b0d716
 - name: github.com/moul/http2curl
@@ -89,7 +93,7 @@ imports:
 - name: github.com/mwitkow/go-proto-validators
   version: 0950a79900071e9f3f5979b78078c599376422fd
 - name: github.com/nayotta/viper
-  version: 019fa2bda1e56d898bc2744f700e07bf2fff79de
+  version: b5e8006cbee93ec955a89ab31e0e3ce3204f3736
 - name: github.com/parnurzeal/gorequest
   version: a578a48e8d6ca8b01a3b18314c43c6716bb5f5a3
 - name: github.com/pelletier/go-toml
@@ -152,7 +156,7 @@ imports:
   - parse
   - pm
 - name: gobot.io/x/gobot
-  version: c1d0e3ce485df0b45076d1d93b7d9240b770d5fc
+  version: ed531980b4efe72c4fd9e768171855de3af2d718
   subpackages:
   - drivers/gpio
   - drivers/i2c
@@ -195,20 +199,23 @@ imports:
   subpackages:
   - googleapis/rpc/status
 - name: google.golang.org/grpc
-  version: 7a6a684ca69eb4cae85ad0a484f2e531598c047b
+  version: 8dea3dc473e90c8179e519d91302d0597c0ca1d1
   subpackages:
   - balancer
   - balancer/base
   - balancer/roundrobin
-  - channelz
   - codes
   - connectivity
   - credentials
   - encoding
   - encoding/proto
-  - grpclb/grpc_lb_v1/messages
   - grpclog
   - internal
+  - internal/backoff
+  - internal/channelz
+  - internal/envconfig
+  - internal/grpcrand
+  - internal/transport
   - keepalive
   - metadata
   - naming
@@ -219,7 +226,6 @@ imports:
   - stats
   - status
   - tap
-  - transport
 - name: gopkg.in/yaml.v2
   version: 5420a8b6744d3b0345ab293f6fcba19c978f1183
 - name: periph.io/x/periph

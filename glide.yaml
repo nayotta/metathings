@@ -2,8 +2,17 @@ package: github.com/nayotta/metathings
 import:
 - package: github.com/cbroglie/mustache
   version: ~1.0.1
+- package: github.com/confluentinc/confluent-kafka-go
+  version: ~0.11.4
+  subpackages:
+  - kafka
+- package: github.com/go-daq/smbus
+- package: github.com/gogo/protobuf
+  version: ~1.1.1
+  subpackages:
+  - proto
 - package: github.com/golang/protobuf
-  version: ~1.1.0
+  version: ~1.2.0
   subpackages:
   - proto
   - ptypes
@@ -16,49 +25,46 @@ import:
   subpackages:
   - auth
   - util/metautils
+- package: github.com/jinzhu/gorm
+  version: ~1.9.1
 - package: github.com/jmoiron/sqlx
+- package: github.com/lovoo/goka
+  version: ~0.1.0
 - package: github.com/mattn/go-sqlite3
-  version: ~1.7.0
+  version: ~1.9.0
 - package: github.com/mwitkow/go-proto-validators
 - package: github.com/nayotta/viper
-  version: master
+  version: ~1.0.2
 - package: github.com/parnurzeal/gorequest
   version: ~0.2.15
 - package: github.com/satori/go.uuid
   version: ~1.2.0
 - package: github.com/sirupsen/logrus
-  version: ~1.0.5
+  version: ~1.0.6
 - package: github.com/spf13/cast
   version: ~1.2.0
 - package: github.com/spf13/cobra
   version: ~0.0.3
 - package: github.com/stianeikeland/go-rpio
   version: ~4.1.0
+- package: github.com/yuin/gopher-lua
 - package: gobot.io/x/gobot
-  version: ~1.11.0
+  version: ~1.12.0
   subpackages:
   - drivers/gpio
   - platforms/raspi
-- package: golang.org/x/net
-  subpackages:
-  - context
+- package: golang.org/x/net/context
 - package: google.golang.org/grpc
-  version: ~1.12.2
+  version: ~1.15.0
   subpackages:
   - codes
   - keepalive
   - metadata
   - status
-- package: periph.io/x/periph
-  version: v3.0.0
-- package: github.com/go-daq/smbus
-- package: github.com/confluentinc/confluent-kafka-go
-  version: ~0.11.4
-- package: github.com/lovoo/goka
-  version: ~0.1.0
 testImport:
 - package: github.com/stretchr/testify
   version: ~1.2.2
   subpackages:
   - assert
+  - mock
   - suite
