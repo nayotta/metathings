@@ -10,7 +10,6 @@ import (
 
 	cmd_helper "github.com/nayotta/metathings/pkg/common/cmd"
 	constant_helper "github.com/nayotta/metathings/pkg/common/constant"
-	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 	pb "github.com/nayotta/metathings/pkg/proto/streamd"
 	service "github.com/nayotta/metathings/pkg/streamd/service"
 )
@@ -54,10 +53,6 @@ func runStreamd() error {
 		return err
 	}
 
-	stmmgr_opts := opt_helper.NewOption(
-		"options", cmd_helper.GetFromStage().Sub("stream_manager"),
-	)
-
 	s := grpc.NewServer(
 		grpc.UnaryInterceptor(grpc_auth.UnaryServerInterceptor(nil)),
 		grpc.StreamInterceptor(grpc_auth.StreamServerInterceptor(nil)),
@@ -71,7 +66,7 @@ func runStreamd() error {
 			streamd_opts.ApplicationCredential.Id,
 			streamd_opts.ApplicationCredential.Secret,
 		),
-		service.SetStreamManager(stmmgr_opts),
+		service.SetStreamManager(cmd_helper.GetFromStage().Sub("stream_manager")),
 	)
 	if err != nil {
 		log.WithError(err).Errorf("failed to new stream service")
