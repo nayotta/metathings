@@ -2,6 +2,7 @@ package metathings_streamd_storage
 
 import (
 	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -82,7 +83,7 @@ func (self *storageImpl) tx_create_output(tx *gorm.DB, output Output) {
 
 func (self *storageImpl) get_stream(stm_id string) (Stream, error) {
 	var stm Stream
-	err := self.db.First(&stm, "id = ?", stm_id).Error
+	err := self.db.Where("id = ?", stm_id).First(&stm).Error
 	if err != nil {
 		return stm, err
 	}
@@ -102,7 +103,7 @@ func (self *storageImpl) get_stream(stm_id string) (Stream, error) {
 
 func (self *storageImpl) get_sources_by_stream_id(stm_id string) ([]Source, error) {
 	var srcs_t []struct{ Id *string }
-	err := self.db.Model(Source{}).Select("id").Where("stream_id = ?", stm_id).Find(&srcs_t).Error
+	err := self.db.Model(&Source{}).Select("id").Where("stream_id = ?", stm_id).Find(&srcs_t).Error
 	if err != nil {
 		return nil, err
 	}
@@ -120,12 +121,34 @@ func (self *storageImpl) get_sources_by_stream_id(stm_id string) ([]Source, erro
 }
 
 func (self *storageImpl) get_source(src_id string) (Source, error) {
-	panic("unimplemented")
+	upstream, err := self.get_upstream_by_source_id(src_id)
+	if err != nil {
+		return Source{}, err
+	}
+
+	var source Source
+	err = self.db.Where("id = ?", src_id).First(&source).Error
+	if err != nil {
+		return Source{}, err
+	}
+
+	source.Upstream = upstream
+
+	return source, nil
+}
+
+func (self *storageImpl) get_upstream_by_source_id(src_id string) (Upstream, error) {
+	var upstream Upstream
+	err := self.db.Where("source_id = ?", src_id).First(&upstream).Error
+	if err != nil {
+		return Upstream{}, err
+	}
+	return upstream, nil
 }
 
 func (self *storageImpl) get_groups_by_stream_id(stm_id string) ([]Group, error) {
 	var grps_t []struct{ Id *string }
-	err := self.db.Model(Group{}).Select("id").Where("stream_id = ?", stm_id).Find(&grps_t).Error
+	err := self.db.Model(&Group{}).Select("id").Where("stream_id = ?", stm_id).Find(&grps_t).Error
 	if err != nil {
 		return nil, err
 	}
@@ -143,7 +166,48 @@ func (self *storageImpl) get_groups_by_stream_id(stm_id string) ([]Group, error)
 }
 
 func (self *storageImpl) get_group(grp_id string) (Group, error) {
-	panic("unimplemented")
+	inputs, err := self.get_inputs_by_group_id(grp_id)
+	if err != nil {
+		return Group{}, err
+	}
+
+	outputs, err := self.get_outputs_by_group_id(grp_id)
+	if err != nil {
+		return Group{}, err
+	}
+
+	var group Group
+
+	err = self.db.Where("id = ?", grp_id).First(&group).Error
+	if err != nil {
+		return Group{}, err
+	}
+
+	group.Inputs = inputs
+	group.Outputs = outputs
+
+	return group, nil
+}
+
+func (self *storageImpl) get_inputs_by_group_id(grp_id string) ([]Input, error) {
+	var inputs []Input
+	err := self.db.Where("group_id = ?", grp_id).Find(&inputs).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return inputs, nil
+
+}
+
+func (self *storageImpl) get_outputs_by_group_id(grp_id string) ([]Output, error) {
+	var outputs []Output
+	err := self.db.Where("group_id = ?", grp_id).Find(&outputs).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return outputs, nil
 }
 
 func (self *storageImpl) DeleteStream(stm_id string) error {
@@ -213,7 +277,7 @@ func (self *storageImpl) PatchStream(stm_id string, stm Stream) (Stream, error) 
 		s.State = stm.State
 	}
 
-	err := self.db.Model(Stream{}).Where("id = ?", stm_id).Updates(s).Error
+	err := self.db.Model(&Stream{}).Where("id = ?", stm_id).Updates(s).Error
 	if err != nil {
 		return Stream{}, err
 	}
@@ -271,7 +335,7 @@ func (self *storageImpl) ListStreamsForUser(owner_id string, stm Stream) ([]Stre
 	return streams, nil
 }
 
-func newStorageImpl(driver, uri string, logger log.FieldLogger) (Storage, error) {
+func newStorageImpl(driver, uri string, logger log.FieldLogger) (*storageImpl, error) {
 	db, err := gorm.Open(driver, uri)
 	if err != nil {
 		return nil, err
