@@ -43,7 +43,6 @@ type Upstream struct {
 	UpdatedAt time.Time
 
 	SourceId *string `gorm:"column:source_id"`
-	State    *string `gorm:"column:state"`
 	Name     *string `gorm:"column:name"`
 	Alias    *string `gorm:"column:alias"`
 	Config   *string `gorm:"column:config"`
@@ -55,7 +54,6 @@ type Input struct {
 	UpdatedAt time.Time
 
 	GroupId *string `gorm:"column:group_id"`
-	State   *string `gorm:"column:state"`
 	Name    *string `gorm:"column:name"`
 	Alias   *string `gorm:"column:alias"`
 	Config  *string `gorm:"column:config"`
@@ -67,7 +65,6 @@ type Output struct {
 	UpdatedAt time.Time
 
 	GroupId *string `gorm:"column:group_id"`
-	State   *string `gorm:"column:state"`
 	Name    *string `gorm:"column:name"`
 	Alias   *string `gorm:"column:alias"`
 	Config  *string `gorm:"column:config"`

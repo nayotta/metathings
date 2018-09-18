@@ -102,8 +102,8 @@ func (self *storageImpl) get_stream(stm_id string) (Stream, error) {
 }
 
 func (self *storageImpl) get_sources_by_stream_id(stm_id string) ([]Source, error) {
-	var srcs_t []struct{ Id *string }
-	err := self.db.Model(&Source{}).Select("id").Where("stream_id = ?", stm_id).Find(&srcs_t).Error
+	var srcs_t []Source
+	err := self.db.Select("id").Where("stream_id = ?", stm_id).Find(&srcs_t).Error
 	if err != nil {
 		return nil, err
 	}
@@ -147,8 +147,8 @@ func (self *storageImpl) get_upstream_by_source_id(src_id string) (Upstream, err
 }
 
 func (self *storageImpl) get_groups_by_stream_id(stm_id string) ([]Group, error) {
-	var grps_t []struct{ Id *string }
-	err := self.db.Model(&Group{}).Select("id").Where("stream_id = ?", stm_id).Find(&grps_t).Error
+	var grps_t []Group
+	err := self.db.Select("id").Where("stream_id = ?", stm_id).Find(&grps_t).Error
 	if err != nil {
 		return nil, err
 	}
@@ -227,6 +227,7 @@ func (self *storageImpl) DeleteStream(stm_id string) error {
 }
 
 func (self *storageImpl) tx_delete_stream(tx *gorm.DB, stm Stream) {
+	tx.Delete(Stream{}, "id = ?", *stm.Id)
 	self.tx_delete_sources(tx, stm.Sources)
 	self.tx_delete_groups(tx, stm.Groups)
 }
@@ -300,7 +301,7 @@ func (self *storageImpl) GetStream(stm_id string) (Stream, error) {
 }
 
 func (self *storageImpl) list_streams(stm Stream) ([]Stream, error) {
-	var stms_t []struct{ Id *string }
+	var stms_t []Stream
 	err := self.db.Select("id").Find(&stms_t, stm).Error
 	if err != nil {
 		return nil, err
