@@ -86,7 +86,7 @@ func (self *webhookOutput) luanch_output_data(output_data *OutputData) (StreamDa
 }
 
 func (self *webhookOutput) render_webhook_body(data StreamData) (string, error) {
-	return mustache.Render(self.opt.luanch_script, data.Data())
+	return mustache.Render(self.opt.webhook_body_template, data.Data())
 }
 
 func (self *webhookOutput) start() {

@@ -310,6 +310,54 @@ func (self *storageImplTestSuite) TestDeleteStream() {
 	err = self.storage.db.Model(&Stream{}).Count(&count).Error
 	self.Nil(err)
 	self.Equal(1, count)
+
+	err = self.storage.db.Model(&Source{}).Count(&count).Error
+	self.Nil(err)
+	self.Equal(1, count)
+
+	err = self.storage.db.Model(&Group{}).Count(&count).Error
+	self.Nil(err)
+	self.Equal(1, count)
+
+	err = self.storage.db.Model(&Upstream{}).Count(&count).Error
+	self.Nil(err)
+	self.Equal(1, count)
+
+	err = self.storage.db.Model(&Input{}).Count(&count).Error
+	self.Nil(err)
+	self.Equal(1, count)
+
+	err = self.storage.db.Model(&Output{}).Count(&count).Error
+	self.Nil(err)
+	self.Equal(1, count)
+
+	err = self.storage.DeleteStream(*self.stream1.Id)
+	self.Nil(err)
+
+	err = self.storage.db.Model(&Stream{}).Count(&count).Error
+	self.Nil(err)
+	self.Equal(0, count)
+
+	err = self.storage.db.Model(&Source{}).Count(&count).Error
+	self.Nil(err)
+	self.Equal(0, count)
+
+	err = self.storage.db.Model(&Group{}).Count(&count).Error
+	self.Nil(err)
+	self.Equal(0, count)
+
+	err = self.storage.db.Model(&Upstream{}).Count(&count).Error
+	self.Nil(err)
+	self.Equal(0, count)
+
+	err = self.storage.db.Model(&Input{}).Count(&count).Error
+	self.Nil(err)
+	self.Equal(0, count)
+
+	err = self.storage.db.Model(&Output{}).Count(&count).Error
+	self.Nil(err)
+	self.Equal(0, count)
+
 }
 
 func (self *storageImplTestSuite) TestPatchStream() {

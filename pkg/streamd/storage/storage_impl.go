@@ -24,6 +24,7 @@ func (self *storageImpl) CreateStream(stm Stream) (Stream, error) {
 		return Stream{}, err
 	}
 
+	self.logger.WithField("id", *stm.Id).Debugf("create stream")
 	return stm, nil
 }
 
@@ -223,6 +224,7 @@ func (self *storageImpl) DeleteStream(stm_id string) error {
 		return err
 	}
 
+	self.logger.WithField("id", stm_id).Debugf("delete stream")
 	return nil
 }
 
@@ -249,8 +251,8 @@ func (self *storageImpl) tx_delete_source(tx *gorm.DB, source Source) {
 	tx.Delete(Source{}, "id = ?", *source.Id)
 }
 
-func (self *storageImpl) tx_delete_upstream_by_source_id(tx *gorm.DB, upstm_id string) {
-	tx.Delete(Upstream{}, "upstream_id = ?", upstm_id)
+func (self *storageImpl) tx_delete_upstream_by_source_id(tx *gorm.DB, src_id string) {
+	tx.Delete(Upstream{}, "source_id = ?", src_id)
 }
 
 func (self *storageImpl) tx_delete_group(tx *gorm.DB, group Group) {
@@ -288,6 +290,7 @@ func (self *storageImpl) PatchStream(stm_id string, stm Stream) (Stream, error) 
 		return Stream{}, err
 	}
 
+	self.logger.WithField("id", stm_id).Debugf("patch stream")
 	return stm, nil
 }
 
@@ -324,6 +327,8 @@ func (self *storageImpl) ListStreams(stm Stream) ([]Stream, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	self.logger.Debugf("list streams")
 	return streams, nil
 }
 
@@ -333,6 +338,8 @@ func (self *storageImpl) ListStreamsForUser(owner_id string, stm Stream) ([]Stre
 	if err != nil {
 		return nil, err
 	}
+
+	self.logger.Debugf("list streams for user")
 	return streams, nil
 }
 
@@ -341,6 +348,8 @@ func newStorageImpl(driver, uri string, logger log.FieldLogger) (*storageImpl, e
 	if err != nil {
 		return nil, err
 	}
+
+	db = db.Debug()
 
 	db.AutoMigrate(&Stream{})
 	db.AutoMigrate(&Source{})

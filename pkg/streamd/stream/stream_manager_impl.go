@@ -62,10 +62,10 @@ type streamManagerImpl struct {
 func (self *streamManagerImpl) NewStream(opt *StreamOption, extra map[string]interface{}) (Stream, error) {
 	fty := NewDefaultStreamFactory()
 	stm, err := fty.Set("option", opt).
-		Set("application_credential", extra["application_credential"]).
+		Set("application_credential_manager", extra["application_credential_manager"]).
 		Set("client_factory", extra["client_factory"]).
 		Set("logger", extra["logger"]).
-		Set("brokers", extra["brokers"]).
+		Set("brokers", self.opt.brokers).
 		New()
 	if err != nil {
 		self.logger.WithError(err).Debugf("failed to new stream")

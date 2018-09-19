@@ -258,7 +258,14 @@ func (self *sensordUpstream) State() UpstreamState {
 }
 
 func (self *sensordUpstream) Close() {
-	panic("unimplemented")
+	self.slck.Lock()
+	defer self.slck.Unlock()
+
+	for _, emitter := range self.emitters {
+		emitter.Finish()
+	}
+
+	self.logger.WithField("sensor_id", self.opt.snr_id).Debugf("upstream closed")
 }
 
 type sensordUpstreamFactory struct {

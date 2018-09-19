@@ -263,26 +263,25 @@ func (self *metathingsStreamdService) Create(ctx context.Context, req *pb.Create
 		"name":     *stm.Name,
 		"owner_id": *stm.OwnerId,
 		"state":    *stm.State,
-	})
-
+	}).Infof("create stream")
 	return res, nil
 }
 
 func (self *metathingsStreamdService) reinit_create_request(req *pb.CreateRequest) {
-	req.Id.Value = id_helper.NewId()
+	req.Id = client_helper.NewString(id_helper.NewId())
 
 	for _, src := range req.GetSources() {
-		src.Id.Value = id_helper.NewId()
-		src.Upstream.Id.Value = id_helper.NewId()
+		src.Id = client_helper.NewString(id_helper.NewId())
+		src.Upstream.Id = client_helper.NewString(id_helper.NewId())
 	}
 
 	for _, grp := range req.GetGroups() {
-		grp.Id.Value = id_helper.NewId()
+		grp.Id = client_helper.NewString(id_helper.NewId())
 		for _, in := range grp.GetInputs() {
-			in.Id.Value = id_helper.NewId()
+			in.Id = client_helper.NewString(id_helper.NewId())
 		}
 		for _, out := range grp.GetOutputs() {
-			out.Id.Value = id_helper.NewId()
+			out.Id = client_helper.NewString(id_helper.NewId())
 		}
 	}
 }
@@ -369,9 +368,10 @@ func (self *metathingsStreamdService) parse_storage_stream(ctx context.Context, 
 		}
 
 		group := storage.Group{
-			Id:      &grp_id,
-			Inputs:  inputs,
-			Outputs: outputs,
+			Id:       &grp_id,
+			StreamId: &stm_id,
+			Inputs:   inputs,
+			Outputs:  outputs,
 		}
 
 		groups = append(groups, group)
@@ -415,6 +415,7 @@ func (self *metathingsStreamdService) Delete(ctx context.Context, req *pb.Delete
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
+	self.logger.WithField("id", stm_id).Infof("delete stream")
 	return &empty.Empty{}, nil
 }
 

@@ -40,7 +40,7 @@ var (
 			streamd_opts.Stage = cmd_helper.GetStageFromEnv()
 		}),
 		Run: func(cmd *cobra.Command, args []string) {
-			if err := runCamerad(); err != nil {
+			if err := runStreamd(); err != nil {
 				log.WithError(err).Fatalf("failed to run streamd")
 			}
 		},
