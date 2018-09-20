@@ -120,7 +120,7 @@ func (self *OutputDataCodec) Encode(value interface{}) ([]byte, error) {
 		return nil, ErrOutputDataCodec
 	}
 
-	mtd := val.Metadata().Data()
+	mtd := val.Metadata().Data().Data()
 	d := val.Data().Data()
 	d["#metadata"] = mtd
 

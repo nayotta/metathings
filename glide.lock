@@ -93,7 +93,7 @@ imports:
 - name: github.com/mwitkow/go-proto-validators
   version: 0950a79900071e9f3f5979b78078c599376422fd
 - name: github.com/nayotta/viper
-  version: b5e8006cbee93ec955a89ab31e0e3ce3204f3736
+  version: 019fa2bda1e56d898bc2744f700e07bf2fff79de
 - name: github.com/parnurzeal/gorequest
   version: a578a48e8d6ca8b01a3b18314c43c6716bb5f5a3
 - name: github.com/pelletier/go-toml

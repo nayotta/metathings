@@ -99,7 +99,7 @@ func (self *streamImpl) start() {
 			defer self.slck.Unlock()
 			self.state = STREAM_STATE_RUNNING
 			self.logger.Debugf("stream is running")
-		case <-time.After(10 * time.Second):
+		case <-time.After(1200 * time.Second):
 			self.slck.Lock()
 			defer self.slck.Unlock()
 			self.logger.Warningf("stream start timeout")
@@ -134,6 +134,11 @@ func (self *streamImpl) _internal_stop(cb func(wg *sync.WaitGroup)) {
 
 	wg := sync.WaitGroup{}
 
+	self.logger.WithFields(log.Fields{
+		"sources": len(self.Sources()),
+		"groups":  len(self.Groups()),
+	}).Debugf("summary")
+
 	for _, source := range self.Sources() {
 		upstream := source.Upstream()
 		upstream.Once(STOP_EVENT, func(Event, interface{}) {
@@ -141,6 +146,7 @@ func (self *streamImpl) _internal_stop(cb func(wg *sync.WaitGroup)) {
 		})
 		wg.Add(1)
 		upstream.Stop()
+		self.logger.WithField("upstream_id", upstream.Id()).Debugf("try to stop upstream")
 	}
 
 	for _, group := range self.Groups() {
@@ -150,6 +156,7 @@ func (self *streamImpl) _internal_stop(cb func(wg *sync.WaitGroup)) {
 			})
 			wg.Add(1)
 			input.Stop()
+			self.logger.WithField("input_id", input.Id()).Debugf("try to stop input")
 		}
 
 		for _, output := range group.Outputs() {
@@ -158,6 +165,7 @@ func (self *streamImpl) _internal_stop(cb func(wg *sync.WaitGroup)) {
 			})
 			wg.Add(1)
 			output.Stop()
+			self.logger.WithField("output_id", output.Id()).Debugf("try to stop output")
 		}
 	}
 

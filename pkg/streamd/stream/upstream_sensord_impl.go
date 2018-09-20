@@ -69,6 +69,7 @@ func (self *sensordUpstream) Start() error {
 	self.cfn = cfn
 
 	go self.start(cli, cfn)
+	self.logger.Debugf("upstream.sensord starting")
 
 	return nil
 }
@@ -81,7 +82,7 @@ func (self *sensordUpstream) start(cli sensord_pb.SensordServiceClient, cfn clie
 		self.state = UPSTREAM_STATE_STOP
 		self.Emit(STOP_EVENT, nil)
 
-		self.logger.WithField("sensor_id", self.opt.snr_id).Infof("upstream terminated")
+		self.logger.WithField("sensor_id", self.opt.snr_id).Infof("upstream.sensord terminated")
 	}()
 
 	ctx := context.Background()
@@ -110,6 +111,9 @@ func (self *sensordUpstream) start(cli sensord_pb.SensordServiceClient, cfn clie
 		self.logger.WithError(err).WithField("sensor_id", self.opt.snr_id).Errorf("failed to subscribe sesnor data")
 		return
 	}
+	self.logger.WithFields(log.Fields{
+		"sensor_id": self.opt.snr_id,
+	}).Debugf("upstream.sensord started")
 
 	self.slck.Lock()
 	self.state = UPSTREAM_STATE_RUNNING
@@ -122,14 +126,18 @@ func (self *sensordUpstream) start(cli sensord_pb.SensordServiceClient, cfn clie
 			self.logger.WithError(err).WithField("sensor_id", self.opt.snr_id).Errorf("failed to recv data from stream")
 			return
 		}
+		self.logger.WithFields(log.Fields{
+			"upstream_id": self.Id(),
+			"sensor_id":   self.opt.snr_id,
+		}).Debugf("receive data from sensord")
 
 		for _, sub_res := range sub_ress.Responses {
+			self.logger.Debugf("%v", sub_res.Data)
 			upstm_dat := enc_sensord_upstream_data(sub_res.Data)
 			for target, filter := range self.opt.filters {
 				ok, err := self.filter_upstream_data(filter, upstm_dat)
 				if err != nil {
 					self.logger.WithError(err).WithField("sensor_id", self.opt.snr_id).Warningf("failed to filter upstream data")
-
 				} else if ok {
 					if err = self.emit_upstream_data(target, upstm_dat); err != nil {
 						self.logger.WithError(err).WithField("sensor_id", self.opt.snr_id).Warningf("failed to emit upstream data")
@@ -145,7 +153,7 @@ func (self *sensordUpstream) filter_upstream_data(filter string, upstream_data *
 	ctx, cancel := context.WithTimeout(context.Background(), 50*time.Millisecond)
 	defer cancel()
 
-	eng := NewLuaEngine()
+	eng := NewLuaEngine(self.opt.logger)
 	defer eng.Close()
 
 	eng.SetContext(ctx)
@@ -181,14 +189,19 @@ func (self *sensordUpstream) emit_upstream_data(target string, upstream_data *Up
 		if err != nil {
 			return err
 		}
-
 		self.emitters[sym.String()] = emitter
+
+		self.logger.WithFields(log.Fields{
+			"brokers": self.opt.brokers,
+			"symbol":  sym.String(),
+		}).Debugf("create goka emitter")
 	}
 
-	err = emitter.EmitSync("", msg)
+	err = emitter.EmitSync("upstream.sensord", msg)
 	if err != nil {
 		return err
 	}
+	self.logger.WithField("symbol", sym.String()).Debugf("emit upstream data")
 
 	return nil
 }
@@ -246,7 +259,7 @@ func (self *sensordUpstream) Stop() error {
 		emitter.Finish()
 	}
 
-	self.logger.WithField("sensor_id", self.opt.snr_id).Debugf("upstream terminating")
+	self.logger.WithField("sensor_id", self.opt.snr_id).Debugf("upstream.sensord terminating")
 	return nil
 }
 

@@ -34,7 +34,7 @@ import:
   version: ~1.9.0
 - package: github.com/mwitkow/go-proto-validators
 - package: github.com/nayotta/viper
-  version: ~1.0.2
+  version: master
 - package: github.com/parnurzeal/gorequest
   version: ~0.2.15
 - package: github.com/satori/go.uuid

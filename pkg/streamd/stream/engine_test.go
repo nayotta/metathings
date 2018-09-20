@@ -3,6 +3,7 @@ package stream_manager
 import (
 	"testing"
 
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -22,7 +23,7 @@ type testLuaEngineSuite struct {
 }
 
 func (self *testLuaEngineSuite) SetupTest() {
-	self.engine = NewLuaEngine()
+	self.engine = NewLuaEngine(logrus.New())
 
 	self.filter_bad = "x x x"
 	self.metadata0 = NewStreamData(map[string]interface{}{

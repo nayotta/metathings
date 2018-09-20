@@ -4,11 +4,13 @@ import (
 	"context"
 	"fmt"
 
+	log "github.com/sirupsen/logrus"
 	lua "github.com/yuin/gopher-lua"
 )
 
 type LuaEngine struct {
-	ls *lua.LState
+	logger log.FieldLogger
+	ls     *lua.LState
 }
 
 func (self *LuaEngine) Close() {
@@ -22,7 +24,7 @@ func (self *LuaEngine) SetContext(ctx context.Context) {
 func (self *LuaEngine) Filter(filter string, metadata StreamData, data StreamData) (bool, error) {
 	luanch_str := fmt.Sprintf(`
 function luanch(metadata, data)
-  return { ok = %v }
+  return { ok = (%v) }
 end
 `, filter)
 
@@ -36,8 +38,10 @@ end
 		return false, ErrUnexpectedResultType
 	}
 
-	return lv_result.(*lua.LTable).RawGetString("ok") == lua.LTrue, nil
+	result := lv_result.(*lua.LTable).RawGetString("ok") == lua.LTrue
 
+	self.logger.WithField("result", result).Debugf("engine.Filter")
+	return result, nil
 }
 
 func (self LuaEngine) Luanch(luanch_str string, metadata StreamData, data StreamData) (StreamData, error) {
@@ -52,6 +56,8 @@ func (self LuaEngine) Luanch(luanch_str string, metadata StreamData, data Stream
 	}
 
 	result := self.ltable_to_streamdata(lv_result)
+
+	self.logger.WithField("result", result.Data()).Debugf("engine.Luanch")
 	return result, nil
 }
 
@@ -64,6 +70,12 @@ func (self LuaEngine) luanch(luanch_str string, metadata StreamData, data Stream
 
 result = luanch(metadata, data)
 `, luanch_str)
+
+	self.logger.WithFields(log.Fields{
+		"script":   lua_str,
+		"metadata": metadata.Data(),
+		"data":     data.Data(),
+	}).Debugf("luanch lua engine")
 
 	err := self.ls.DoString(lua_str)
 	if err != nil {
@@ -105,8 +117,9 @@ func (self *LuaEngine) ltable_to_streamdata(val lua.LValue) StreamData {
 	return sd
 }
 
-func NewLuaEngine() *LuaEngine {
+func NewLuaEngine(logger log.FieldLogger) *LuaEngine {
 	return &LuaEngine{
-		ls: lua.NewState(),
+		logger: logger.WithField("#module", "lua_engine"),
+		ls:     lua.NewState(),
 	}
 }

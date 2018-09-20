@@ -52,6 +52,7 @@ func (self *webhookOutput) luancher(ctx goka.Context, msg interface{}) {
 		self.logger.Warningf("failed to convert message to OutputData")
 		return
 	}
+	self.logger.WithField("from", op_dat.Metadata().AsString("from")).Debugf("receive data")
 
 	dat, err := self.luanch_output_data(op_dat)
 	if err != nil {
@@ -78,7 +79,7 @@ func (self *webhookOutput) luanch_output_data(output_data *OutputData) (StreamDa
 	ctx, cancel := context.WithTimeout(context.Background(), 50*time.Millisecond)
 	defer cancel()
 
-	eng := NewLuaEngine()
+	eng := NewLuaEngine(self.opt.logger)
 	defer eng.Close()
 
 	eng.SetContext(ctx)
@@ -106,17 +107,21 @@ func (self *webhookOutput) start() {
 	ctx, stop_fn := context.WithCancel(context.Background())
 	self.stop_fn = stop_fn
 
-	err = processor.Run(ctx)
-	if err != nil {
-		self.state = OUTPUT_STATE_STOP
-		return
-	}
-
 	self.goka_group_graph = group_graph
 	self.goka_processor = processor
 
-	self.state = OUTPUT_STATE_RUNNING
-	self.Emit(START_EVENT, nil)
+	go func() {
+		self.state = OUTPUT_STATE_RUNNING
+		self.Emit(START_EVENT, nil)
+		self.logger.Debugf("output.webhook started")
+
+		err = processor.Run(ctx)
+		if err != nil {
+			self.logger.WithError(err).Warningf("output.webhook failed, force stop")
+			go self.stop()
+			return
+		}
+	}()
 }
 
 func (self *webhookOutput) Start() error {
@@ -129,6 +134,7 @@ func (self *webhookOutput) Start() error {
 
 	self.state = OUTPUT_STATE_STARTING
 	go self.start()
+	self.logger.Debugf("output.webhook starting")
 
 	return nil
 }
@@ -143,6 +149,7 @@ func (self *webhookOutput) Stop() error {
 
 	self.state = OUTPUT_STATE_TERMINATING
 	go self.stop()
+	self.logger.Debugf("output.webhook terminating")
 
 	return nil
 }
@@ -155,6 +162,7 @@ func (self *webhookOutput) stop() {
 
 	self.state = OUTPUT_STATE_STOP
 	self.Emit(STOP_EVENT, nil)
+	self.logger.Debugf("output.webhook terminated")
 }
 
 func (self *webhookOutput) State() OutputState {

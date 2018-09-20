@@ -34,8 +34,11 @@ var (
 				return
 			}
 
-			cmd_helper.UnmarshalConfig(streamd_opts)
-			root_opts = &streamd_opts._rootOptions
+			opts_t := &_streamdOptions{}
+			cmd_helper.UnmarshalConfig(opts_t)
+			cmd_helper.InitServiceConfigOptions(&opts_t.ServiceConfig, &streamd_opts.ServiceConfig)
+			root_opts = &opts_t._rootOptions
+			streamd_opts = opts_t
 			streamd_opts.Service = "streamd"
 			streamd_opts.Stage = cmd_helper.GetStageFromEnv()
 		}),
@@ -59,6 +62,7 @@ func runStreamd() error {
 	)
 	srv, err := service.NewStreamdService(
 		service.SetLogLevel(streamd_opts.Log.Level),
+		service.SetMetathingsdAddr(streamd_opts.ServiceConfig.Metathingsd.Address),
 		service.SetIdentitydAddr(streamd_opts.ServiceConfig.Identityd.Address),
 		service.SetCoredAddr(streamd_opts.ServiceConfig.Cored.Address),
 		service.SetStorage(streamd_opts.Storage.Driver, streamd_opts.Storage.Uri),
@@ -85,6 +89,8 @@ func init() {
 	streamdCmd.Flags().StringVarP(&streamd_opts.Listen, "listen", "l", "127.0.0.1:5004", "Metathings Stream Service listening address")
 	streamdCmd.Flags().StringVar(&streamd_opts.ServiceConfig.Identityd.Address, "identityd-addr", constant_helper.CONSTANT_METATHINGSD_DEFAULT_HOST, "MetaThings Identity Service Address")
 	streamdCmd.Flags().StringVar(&streamd_opts.ServiceConfig.Cored.Address, "cored-addr", constant_helper.CONSTANT_METATHINGSD_DEFAULT_HOST, "MetaThings Core Service Address")
+	streamdCmd.Flags().StringVar(&streamd_opts.ServiceConfig.Sensord.Address, "sensord-addr", constant_helper.CONSTANT_METATHINGSD_DEFAULT_HOST, "MetaThings Sensor Service Address")
+	streamdCmd.Flags().StringVar(&streamd_opts.ServiceConfig.Metathingsd.Address, "metathingsd-addr", constant_helper.CONSTANT_METATHINGSD_DEFAULT_HOST, "MetaThings Service Address")
 	streamdCmd.Flags().StringVar(&streamd_opts.Storage.Driver, "storage-driver", "sqlite3", "Storage Driver [sqlite3]")
 	streamdCmd.Flags().StringVar(&streamd_opts.Storage.Uri, "storage-uri", "", "Storage URI")
 

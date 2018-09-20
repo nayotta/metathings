@@ -51,6 +51,7 @@ func (self *filterInput) filter(ctx goka.Context, msg interface{}) {
 		self.logger.Warningf("failed to convert message to InputData")
 		return
 	}
+	self.logger.WithField("from", ip_dat.Metadata().AsString("from")).Debugf("receive data")
 
 	for target, filter := range self.opt.filters {
 		ok, err := self.filter_input_data(filter, ip_dat)
@@ -68,7 +69,7 @@ func (self *filterInput) filter_input_data(filter string, input_data *InputData)
 	ctx, cancel := context.WithTimeout(context.Background(), 50*time.Millisecond)
 	defer cancel()
 
-	eng := NewLuaEngine()
+	eng := NewLuaEngine(self.opt.logger)
 	defer eng.Close()
 
 	eng.SetContext(ctx)
@@ -76,12 +77,12 @@ func (self *filterInput) filter_input_data(filter string, input_data *InputData)
 }
 
 func (self *filterInput) emit_input_data(target string, input_data *InputData) error {
-	tgr_sym := self.opt.sym_tbl.Lookup(target)
+	sym := self.opt.sym_tbl.Lookup(target)
 
 	var codec goka.Codec
 	var msg interface{}
 
-	switch tgr_sym.Component() {
+	switch sym.Component() {
 	case COMPONENT_INPUT:
 		input_data.Metadata().Set("from", self.Symbol())
 		msg = input_data
@@ -89,6 +90,7 @@ func (self *filterInput) emit_input_data(target string, input_data *InputData) e
 	case COMPONENT_OUTPUT:
 		output_data := InputDataToOutputData(input_data)
 		output_data.Metadata().Set("from", self.Symbol())
+		msg = output_data
 		codec = new(OutputDataCodec)
 	}
 
@@ -96,19 +98,24 @@ func (self *filterInput) emit_input_data(target string, input_data *InputData) e
 	var ok bool
 	var err error
 
-	if emitter, ok = self.emitters[tgr_sym.String()]; !ok {
-		emitter, err = goka.NewEmitter(self.opt.brokers, goka.Stream(tgr_sym.String()), codec)
+	if emitter, ok = self.emitters[sym.String()]; !ok {
+		emitter, err = goka.NewEmitter(self.opt.brokers, goka.Stream(sym.String()), codec)
 		if err != nil {
 			return err
 		}
+		self.emitters[sym.String()] = emitter
 
-		self.emitters[tgr_sym.String()] = emitter
+		self.logger.WithFields(log.Fields{
+			"brokers": self.opt.brokers,
+			"symbol":  sym.String(),
+		}).Debugf("create goka emitter")
 	}
 
-	err = emitter.EmitSync("", msg)
+	err = emitter.EmitSync("input.filter", msg)
 	if err != nil {
 		return err
 	}
+	self.logger.WithField("symbol", sym.String()).Debugf("emit input data")
 
 	return nil
 }
@@ -123,6 +130,7 @@ func (self *filterInput) Start() error {
 
 	self.state = INPUT_STATE_STARTING
 	go self.start()
+	self.logger.Debugf("input.filter starting")
 
 	return nil
 }
@@ -144,17 +152,20 @@ func (self *filterInput) start() {
 	ctx, stop_fn := context.WithCancel(context.Background())
 	self.stop_fn = stop_fn
 
-	err = processor.Run(ctx)
-	if err != nil {
-		self.state = INPUT_STATE_STOP
-		return
-	}
-
 	self.goka_group_graph = group_graph
 	self.goka_processor = processor
 
-	self.state = INPUT_STATE_RUNNING
-	self.Emit(START_EVENT, nil)
+	go func() {
+		self.state = INPUT_STATE_RUNNING
+		self.Emit(START_EVENT, nil)
+		self.logger.Debugf("input.filter started")
+
+		err = processor.Run(ctx)
+		if err != nil {
+			self.logger.WithError(err).Warningf("input.filter failed, force stop")
+			go self.stop()
+		}
+	}()
 }
 
 func (self *filterInput) Stop() error {
@@ -168,6 +179,7 @@ func (self *filterInput) Stop() error {
 	self.state = INPUT_STATE_TERMINATING
 
 	go self.stop()
+	self.logger.Debugf("input.filter terminating")
 
 	return nil
 }
@@ -180,6 +192,7 @@ func (self *filterInput) stop() {
 
 	self.state = INPUT_STATE_STOP
 	self.Emit(STOP_EVENT, nil)
+	self.logger.Debugf("input.filter terminated")
 }
 
 func (self *filterInput) State() InputState {

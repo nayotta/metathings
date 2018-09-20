@@ -3,11 +3,14 @@ package stream_manager
 import "strings"
 
 func split_and_trim(x string) []string {
-	y := []string{}
+	ys := []string{}
 	for _, t := range strings.Split(x, ",") {
-		y = append(y, strings.Trim(t, " "))
+		y := strings.Trim(t, " ")
+		if y != "" {
+			ys = append(ys, y)
+		}
 	}
-	return y
+	return ys
 }
 
 func group_by_prefix(x map[string]string, prefix string) map[string]string {
@@ -15,7 +18,7 @@ func group_by_prefix(x map[string]string, prefix string) map[string]string {
 
 	for k, v := range x {
 		if strings.HasPrefix(k, prefix) {
-			y[strings.Trim(k, prefix)] = v
+			y[k[len(prefix):]] = v
 		}
 	}
 

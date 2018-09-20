@@ -27,6 +27,7 @@ type options struct {
 	metathingsd_addr              string
 	identityd_addr                string
 	cored_addr                    string
+	sensord_addr                  string
 	application_credential_id     string
 	application_credential_secret string
 	storage_driver                string
@@ -493,7 +494,7 @@ func (self *metathingsStreamdService) Stop(ctx context.Context, req *pb.StopRequ
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
-	stm_state := "termianting"
+	stm_state := "terminating"
 	stm_s, err := self.storage.PatchStream(stm_id, storage.Stream{State: &stm_state})
 	if err != nil {
 		self.logger.WithError(err).Errorf("failed to patch state")
