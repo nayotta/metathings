@@ -303,6 +303,7 @@ func (self *storageImpl) GetStream(stm_id string) (Stream, error) {
 	return stm, nil
 }
 
+// TODO(Peer): poor performance
 func (self *storageImpl) list_streams(stm Stream) ([]Stream, error) {
 	var stms_t []Stream
 	err := self.db.Select("id").Find(&stms_t, stm).Error
