@@ -385,10 +385,19 @@ func (self *metathingsStreamdService) Delete(ctx context.Context, req *pb.Delete
 	}
 
 	stm_id := req.GetId().GetValue()
-	stm, err := self.stm_mgr.GetStream(stm_id)
-	if stm.State() != stream_manager.STREAM_STATE_STOP {
-		self.logger.WithField("id", stm_id).Errorf("failed to delete stream cause state not in stop")
-		return nil, status.Errorf(codes.FailedPrecondition, "stream state not in stop")
+
+	stm, err := self.storage.GetStream(stm_id)
+	if err != nil {
+		self.logger.WithError(err).WithField("id", stm_id).Errorf("failed to get stream from storage")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
+	if *stm.State != "stop" {
+		self.logger.WithFields(log.Fields{
+			"id":    stm_id,
+			"state": *stm.State,
+		}).Warningf("failed to delete stream with wrong state")
+		return nil, status.Errorf(codes.FailedPrecondition, "invalid state to delete")
 	}
 
 	err = self.storage.DeleteStream(stm_id)
@@ -414,6 +423,14 @@ func (self *metathingsStreamdService) Start(ctx context.Context, req *pb.StartRe
 	if err != nil {
 		self.logger.WithError(err).Errorf("failed to get stream from storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
+	if *stm_s.State != "stop" {
+		self.logger.WithFields(log.Fields{
+			"id":    stm_id,
+			"state": *stm_s.State,
+		}).Debugf("invalid state to start")
+		return nil, status.Errorf(codes.FailedPrecondition, ErrUnstartable)
 	}
 
 	stm_opt := self.opt_codec.Encode(stm_s)
@@ -467,9 +484,24 @@ func (self *metathingsStreamdService) Stop(ctx context.Context, req *pb.StopRequ
 	}
 
 	stm_id := req.GetId().GetValue()
+
+	stm_s, err := self.storage.GetStream(stm_id)
+	if err != nil {
+		self.logger.WithError(err).WithField("id", stm_id).Errorf("failed to get stream from storage")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
+	if *stm_s.State != "running" {
+		self.logger.WithFields(log.Fields{
+			"id":    stm_id,
+			"state": *stm_s.State,
+		}).Debugf("invalid state to stop")
+		return nil, status.Errorf(codes.FailedPrecondition, ErrUnterminable)
+	}
+
 	stm, err := self.stm_mgr.GetStream(stm_id)
 	if err != nil {
-		self.logger.WithError(err).Errorf("failed to get stream from stream manager")
+		self.logger.WithError(err).WithField("id", stm_id).Errorf("failed to get stream from stream manager")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
@@ -495,7 +527,7 @@ func (self *metathingsStreamdService) Stop(ctx context.Context, req *pb.StopRequ
 	}
 
 	stm_state := "terminating"
-	stm_s, err := self.storage.PatchStream(stm_id, storage.Stream{State: &stm_state})
+	stm_s, err = self.storage.PatchStream(stm_id, storage.Stream{State: &stm_state})
 	if err != nil {
 		self.logger.WithError(err).Errorf("failed to patch state")
 		return nil, status.Errorf(codes.Internal, err.Error())
