@@ -98,8 +98,9 @@ func (self *streamImpl) start() {
 			self.slck.Lock()
 			defer self.slck.Unlock()
 			self.state = STREAM_STATE_RUNNING
-			self.logger.Debugf("stream is running")
-		case <-time.After(1200 * time.Second):
+			self.Emit(START_EVENT, nil)
+			self.logger.Debugf("stream started")
+		case <-time.After(30 * time.Second):
 			self.slck.Lock()
 			defer self.slck.Unlock()
 			self.logger.Warningf("stream start timeout")
@@ -200,8 +201,9 @@ func (self *streamImpl) stop() {
 			self.slck.Lock()
 			defer self.slck.Unlock()
 			self.state = STREAM_STATE_STOP
-			self.logger.Debugf("stream is terminated")
-		case <-time.After(10 * time.Second):
+			self.Emit(STOP_EVENT, nil)
+			self.logger.Debugf("stream terminated")
+		case <-time.After(30 * time.Second):
 			self.slck.Lock()
 			defer self.slck.Unlock()
 			self.logger.Warningf("stream terminate timeout")
