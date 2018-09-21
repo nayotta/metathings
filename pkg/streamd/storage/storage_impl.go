@@ -349,8 +349,6 @@ func newStorageImpl(driver, uri string, logger log.FieldLogger) (*storageImpl, e
 		return nil, err
 	}
 
-	db = db.Debug()
-
 	db.AutoMigrate(&Stream{})
 	db.AutoMigrate(&Source{})
 	db.AutoMigrate(&Group{})
