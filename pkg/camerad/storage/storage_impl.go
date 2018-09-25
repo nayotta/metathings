@@ -82,7 +82,7 @@ func (self *storageImpl) PatchCamera(cam_id string, cam Camera) (Camera, error) 
 		c.Framerate = cam.Framerate
 	}
 
-	err := self.db.Model(&Camera{}).Where("id = ?", cam_id).Patchs(c).Error
+	err := self.db.Model(&Camera{}).Where("id = ?", cam_id).Updates(c).Error
 	if err != nil {
 		return empty_camera, err
 	}
