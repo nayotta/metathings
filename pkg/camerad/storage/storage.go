@@ -7,23 +7,23 @@ import (
 )
 
 type Camera struct {
-	CreatedAt time.Time `db:"created_at"`
-	UpdatedAt time.Time `db:"updated_at"`
+	Id        *string
+	CreatedAt time.Time
+	UpdatedAt time.Time
 
-	Id                      *string
-	Name                    *string
-	CoreId                  *string `db:"core_id"`
-	EntityName              *string `db:"entity_name"`
-	OwnerId                 *string `db:"owner_id"`
-	ApplicationCredentialId *string `db:"application_credential_id"`
-	State                   *string
+	Name                    *string `gorm:"column:name"`
+	CoreId                  *string `gorm:"column:core_id"`
+	EntityName              *string `gorm:"column:entity_name"`
+	OwnerId                 *string `gorm:"column:owner_id"`
+	ApplicationCredentialId *string `gorm:"column:application_credential_id"`
+	State                   *string `gorm:"column:state"`
 
-	Url       *string
-	Device    *string
-	Width     *uint32
-	Height    *uint32
-	Bitrate   *uint32
-	Framerate *uint32
+	Url       *string `gorm:"column:url"`
+	Device    *string `gorm:"column:device"`
+	Width     *uint32 `gorm:"width"`
+	Height    *uint32 `gorm:"height"`
+	Bitrate   *uint32 `gorm:"bitrate"`
+	Framerate *uint32 `gorm:"framerate"`
 }
 
 type Storage interface {

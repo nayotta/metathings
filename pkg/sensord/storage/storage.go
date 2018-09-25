@@ -7,26 +7,27 @@ import (
 )
 
 type Sensor struct {
-	CreatedAt time.Time `db:"created_at"`
-	UpdatedAt time.Time `db:"updated_at"`
+	Id        *string
+	CreatedAt time.Time
+	UpdatedAt time.Time
 
-	Id                      *string
-	Name                    *string
-	CoreId                  *string `db:"core_id"`
-	EntityName              *string `db:"entity_name"`
-	OwnerId                 *string `db:"owner_id"`
-	ApplicationCredentialId *string `db:"application_credential_id"`
-	State                   *string
+	Name                    *string `gorm:"column:name"`
+	CoreId                  *string `gorm:"column:core_id"`
+	EntityName              *string `gorm:"column:entity_name"`
+	OwnerId                 *string `gorm:"column:owner_id"`
+	ApplicationCredentialId *string `gorm:"column:application_credential_id"`
+	State                   *string `gorm:"column:state"`
 
-	Tags []SensorTag `db:"-"`
+	Tags []SensorTag `gorm:"-"`
 }
 
 type SensorTag struct {
-	CreatedAt time.Time `db:"created_at"`
+	Id        *string
+	CreatedAt time.Time
+	UpdatedAt time.Time
 
-	Id       *string
-	SensorId *string `db:"sensor_id"`
-	Tag      *string
+	SensorId *string `gorm:"column:sensor_id"`
+	Tag      *string `gorm:"column:tag"`
 }
 
 type Storage interface {

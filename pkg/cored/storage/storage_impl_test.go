@@ -23,11 +23,11 @@ var (
 
 type storageImplTestSuite struct {
 	suite.Suite
-	s Storage
+	s *storageImpl
 }
 
 func (suite *storageImplTestSuite) SetupTest() {
-	suite.s, _ = NewStorage("sqlite3", ":memory:", logrus.New())
+	suite.s, _ = newStorageImpl("sqlite3", ":memory:", logrus.New())
 
 	c := Core{
 		Id:        &test_core_id,
@@ -126,6 +126,7 @@ func (suite *storageImplTestSuite) TestCreateEntity() {
 	e := Entity{
 		Id:          &id,
 		Name:        &name,
+		CoreId:      &test_core_id,
 		ServiceName: &service_name,
 		Endpoint:    &endpoint,
 		State:       &state,
@@ -134,6 +135,7 @@ func (suite *storageImplTestSuite) TestCreateEntity() {
 	suite.Empty(err)
 	suite.Equal(id, *ne.Id)
 	suite.Equal(name, *ne.Name)
+	suite.Equal(test_core_id, *ne.CoreId)
 	suite.Equal(service_name, *ne.ServiceName)
 	suite.Equal(endpoint, *ne.Endpoint)
 	suite.Equal(state, *ne.State)
