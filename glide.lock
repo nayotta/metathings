@@ -1,5 +1,5 @@
-hash: 14791a5f6c8eae63e3a992463fd3669f596a381a9bc5114fc567dfc588b193c8
-updated: 2018-09-17T14:38:21.137956+08:00
+hash: a929e332895265287e9dd95e579c6dee2b129680bb7d177686f1216f09433dd2
+updated: 2018-09-25T14:13:14.996374+08:00
 imports:
 - name: github.com/bsm/sarama-cluster
   version: c618e605e15c0d7535f6c96ff8efbb0dba4fd66c
@@ -69,12 +69,10 @@ imports:
   version: 76626ae9c91c4f2a10f34cad8ce83ea42c93bb75
 - name: github.com/jinzhu/gorm
   version: 6ed508ec6a4ecb3531899a69cbc746ccf65a4166
+  subpackages:
+  - dialects/sqlite
 - name: github.com/jinzhu/inflection
   version: 04140366298a54a039076d798123ffa108fff46c
-- name: github.com/jmoiron/sqlx
-  version: 2aeb6a910c2b94f2d5eb53d9895d80e27264ec41
-  subpackages:
-  - reflectx
 - name: github.com/lovoo/goka
   version: 4ff4aeaf8b5b303e11d12f200d58ca9d3cc98e56
   subpackages:
@@ -93,7 +91,7 @@ imports:
 - name: github.com/mwitkow/go-proto-validators
   version: 0950a79900071e9f3f5979b78078c599376422fd
 - name: github.com/nayotta/viper
-  version: 019fa2bda1e56d898bc2744f700e07bf2fff79de
+  version: b5e8006cbee93ec955a89ab31e0e3ce3204f3736
 - name: github.com/parnurzeal/gorequest
   version: a578a48e8d6ca8b01a3b18314c43c6716bb5f5a3
 - name: github.com/pelletier/go-toml
