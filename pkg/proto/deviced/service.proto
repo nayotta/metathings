@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package ai.metathings.service.deviced;
+option go_package = "deviced";
+
+import "google/protobuf/empty.proto";
+
+import "create_device.proto";
+import "delete_device.proto";
+import "patch_device.proto";
+import "get_device.proto";
+import "list_devices.proto";
+
+import "show_device.proto";
+import "heartbeat.proto";
+import "stream.proto";
+
+import "list_devices_for_user.proto";
+import "unary_call.proto";
+import "stream_call.proto";
+
+import "grant_device_to_group.proto";
+import "revoke_device_from_group.proto";
+import "grant_device_to_user.proto";
+import "revoke_device_from_user.proto";
+
+service DevicedService {
+	rpc CreateDevice(CreateDeviceRequest) returns (CreateDeviceResponse) {}
+	rpc DeleteDevice(DeleteDeviceRequest) returns (google.protobuf.Empty) {}
+	rpc PatchDevice(PatchDeviceRequest) returns (PatchDeviceResponse) {}
+	rpc GetDevice(GetDeviceRequest) returns (GetDeviceResponse) {}
+	rpc ListDevices(ListDevicesRequest) returns (ListDevicesResponse) {}
+
+	// internal device only
+	rpc ShowDevice(google.protobuf.Empty) returns (ShowDeviceResponse) {}
+	rpc Heartbeat(HeartbeatRequest) returns (google.protobuf.Empty) {}
+	rpc Stream(stream StreamResponse) returns (stream StreamRequest) {}
+
+	rpc ListDevicesForUser(ListDevicesForUserRequest) returns (ListDevicesForUserResponse) {}
+	rpc UnaryCall(UnaryCallRequest) returns (UnaryCallResponse) {}
+	rpc StreamCall(stream StreamCallRequest) returns (stream StreamCallResponse) {}
+
+	rpc GrantDeviceToGroup(GrantDeviceToGroupRequest) returns (google.protobuf.Empty) {}
+	rpc RevokeDeviceFromGroup(RevokeDeviceFromGroupRequest) returns (google.protobuf.Empty) {}
+	rpc GrantDeviceToUser(GrantDeviceToUserRequest) returns (google.protobuf.Empty) {}
+	rpc RevokeDeviceFromUser(RevokeDeviceFromUserRequest) returns (google.protobuf.Empty) {}
+}

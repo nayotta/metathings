@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package ai.metathings.service.deviced;
+
+import "google/protobuf/wrappers.proto";
+
+import "github.com/nayotta/metathings/pkg/proto/constant/state/module.proto";
+
+message Module {
+	string id = 1;
+	string device_id = 2;
+	string component_id = 3;
+	string name = 4;
+	string endpoint = 5;
+	ai.metathings.constant.state.ModuleState state = 6;
+}
+
+message OpModule {
+	google.protobuf.StringValue id = 1;
+	google.protobuf.StringValue device_id = 2;
+	google.protobuf.StringValue component_id = 3;
+	google.protobuf.StringValue name = 4;
+	google.protobuf.StringValue endpoint = 5;
+	ai.metathings.constant.state.ModuleState state = 6;
+}

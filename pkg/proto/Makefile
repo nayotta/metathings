@@ -1,6 +1,8 @@
 all:
 	$(MAKE) -C common all
+	$(MAKE) -C constant all
 	$(MAKE) -C identityd all
+	$(MAKE) -C deviced all
 	$(MAKE) -C cored all
 	$(MAKE) -C camerad all
 	$(MAKE) -C sensord all

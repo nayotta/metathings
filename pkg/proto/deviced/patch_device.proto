@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package ai.metathings.service.deviced;
+
+import "google/protobuf/wrappers.proto";
+
+import "github.com/mwitkow/go-proto-validators/validator.proto";
+
+import "device.proto";
+
+message PatchDeviceRequest {
+	google.protobuf.StringValue id = 1 [(validator.field) = {msg_exists: true}];
+	google.protobuf.StringValue name = 2;
+}
+
+message PatchDeviceResponse {
+	Device device = 1;
+}

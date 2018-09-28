@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+package ai.metathings.constant.state;
+
+enum DeviceState {
+	DEVICE_STATE_UNKNOWN = 0;
+	DEVICE_STATE_ONLINE = 1;
+	DEVICE_STATE_OFFLINE = 2;
+}

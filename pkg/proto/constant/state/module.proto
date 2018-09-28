@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+package ai.metathings.constant.state;
+
+enum ModuleState {
+	MODULE_STATE_UNKNOWN = 0;
+	MODULE_STATE_ONLINE = 1;
+	MODULE_STATE_OFFLINE = 2;
+}
