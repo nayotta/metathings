@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package ai.metathings.service.identityd2;
+
+import "google/protobuf/wrappers.proto";
+
+import "github.com/mwitkow/go-proto-validators/validator.proto";
+
+import "model.proto";
+
+message PatchRoleRequest {
+	reserved "domain", "name", "policies";
+	google.protobuf.StringValue id = 1 [(validator.field) = {msg_exists: true}];
+	google.protobuf.StringValue alias = 4;
+	google.protobuf.StringValue description = 5;
+	map<string, google.protobuf.StringValue> extra = 7;
+}
+
+message PatchRoleResponse {
+	Role role = 1;
+}

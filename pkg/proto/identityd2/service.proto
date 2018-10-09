@@ -1,0 +1,110 @@
+syntax = "proto3";
+
+package ai.metathings.service.identityd2;
+option go_package = "identityd2";
+
+import "google/protobuf/empty.proto";
+
+import "create_domain.proto";
+import "delete_domain.proto";
+import "get_domain.proto";
+import "list_domains.proto";
+
+import "get_policy.proto";
+import "list_policies.proto";
+import "list_policies_for_role.proto";
+
+import "create_role.proto";
+import "delete_role.proto";
+import "patch_role.proto";
+import "get_role.proto";
+import "list_roles.proto";
+import "add_policy_to_role.proto";
+import "remove_policy_from_role.proto";
+import "list_roles_for_entity.proto";
+
+import "create_entity.proto";
+import "delete_entity.proto";
+import "patch_entity.proto";
+import "get_entity.proto";
+import "list_entities.proto";
+import "show_entity.proto";
+import "add_role_to_entity.proto";
+import "remove_role_from_entity.proto";
+
+import "create_group.proto";
+import "delete_group.proto";
+import "patch_group.proto";
+import "get_group.proto";
+import "list_groups.proto";
+import "list_groups_for_entity.proto";
+import "show_groups.proto";
+import "add_role_to_group.proto";
+import "remove_role_from_group.proto";
+import "add_entity_to_group.proto";
+import "remove_entity_from_group.proto";
+
+import "create_credential.proto";
+import "delete_credential.proto";
+import "patch_credential.proto";
+import "get_credential.proto";
+import "list_credentials.proto";
+import "list_credentials_for_entity.proto";
+
+import "issue_token_by_credential.proto";
+import "issue_token_by_password.proto";
+import "revoke_token.proto";
+import "validate_token.proto";
+
+service IdentitydService {
+	rpc CreateDomain(CreateDomainRequest) returns (CreateDomainResponse) {}
+	rpc DeleteDomain(DeleteDomainRequest) returns (google.protobuf.Empty) {}
+	rpc GetDomain(GetDomainRequest) returns (GetDomainResponse) {}
+	rpc ListDomains(ListDomainsRequest) returns (ListDomainsResponse) {}
+
+	rpc GetPolicy(GetPolicyRequest) returns (GetPolicyResponse) {}
+	rpc ListPolicies(ListPoliciesRequest) returns (ListPoliciesResponse) {}
+	rpc ListPoliciesForRole(ListPoliciesForRoleRequest) returns (ListPoliciesForRoleResponse) {}
+
+	rpc CreateRole(CreateRoleRequest) returns (CreateRoleResponse) {}
+	rpc DeleteRole(DeleteRoleRequest) returns (google.protobuf.Empty) {}
+	rpc PatchRole(PatchRoleRequest) returns (PatchRoleResponse) {}
+	rpc GetRole(GetRoleRequest) returns (GetRoleResponse) {}
+	rpc ListRoles(ListRolesRequest) returns (ListRolesResponse) {}
+	rpc AddPolicyToRole(AddPolicyToRoleRequest) returns (google.protobuf.Empty) {}
+	rpc RemovePolicyFromRole(RemovePolicyFromRoleRequest) returns (google.protobuf.Empty) {}
+	rpc ListRolesForEntity(ListRolesForEntityRequest) returns (ListRolesForEntityResponse) {}
+
+	rpc CreateEntity(CreateEntityRequest) returns (CreateEntityResponse) {}
+	rpc DeleteEntity(DeleteEntityRequest) returns (google.protobuf.Empty) {}
+	rpc PatchEntity(PatchEntityRequest) returns (PatchEntityResponse) {}
+	rpc GetEntity(GetEntityRequest) returns (GetEntityResponse) {}
+	rpc ListEntities(ListEntitiesRequest) returns (ListEntitiesResponse) {}
+	rpc ShowEntity(google.protobuf.Empty) returns (ShowEntityResponse) {}
+	rpc AddRoleToEntity(AddRoleToEntityRequest) returns (google.protobuf.Empty) {}
+	rpc RemoveRoleFromEntity(RemoveRoleFromEntityRequest) returns (google.protobuf.Empty) {}
+
+	rpc CreateGroup(CreateGroupRequest) returns (CreateGroupResponse) {}
+	rpc DeleteGroup(DeleteGroupRequest) returns (google.protobuf.Empty) {}
+	rpc PatchGroup(PatchGroupRequest) returns (PatchGroupResponse) {}
+	rpc GetGroup(GetGroupRequest) returns (GetGroupResponse) {}
+	rpc ListGroups(ListGroupsRequest) returns (ListGroupsResponse) {}
+	rpc ListGroupsForEntity(ListGroupsForEntityRequest) returns (ListGroupsForEntityResponse) {}
+	rpc ShowGroups(google.protobuf.Empty) returns (ShowGroupsResponse) {}
+	rpc AddRoleToGroup(AddRoleToGroupRequest) returns (google.protobuf.Empty) {}
+	rpc RemoveRoleFromGroup(RemoveRoleFromGroupRequest) returns (google.protobuf.Empty) {}
+	rpc AddEntityToGroup(AddEntityToGroupRequest) returns (google.protobuf.Empty) {}
+	rpc RemoveEntityFromGroup(RemoveEntityFromGroupRequest) returns (google.protobuf.Empty) {}
+
+	rpc CreateCredential(CreateCredentialRequest) returns (CreateCredentialResponse) {}
+	rpc DeleteCredential(DeleteCredentialRequest) returns (google.protobuf.Empty) {}
+	rpc PatchCredential(PatchCredentialRequest) returns (PatchCredentialResponse) {}
+	rpc GetCredential(GetCredentialRequest) returns (GetCredentialResponse) {}
+	rpc ListCredentials(ListCredentialsRequest) returns (ListCredentialsResponse) {}
+	rpc ListCredentialsForEntity(ListCredentialsForEntityRequest) returns (ListCredentialsForEntityResponse) {}
+
+	rpc IssueTokenByCredential(IssueTokenByCredentialRequest) returns (IssueTokenByCredentialResponse) {}
+	rpc IssueTokenByPassword(IssueTokenByPasswordRequest) returns (IssueTokenByPasswordResponse) {}
+	rpc RevokeToken(RevokeTokenRequest) returns (google.protobuf.Empty) {}
+	rpc ValidateToken(ValidateTokenRequest) returns (google.protobuf.Empty) {}
+}

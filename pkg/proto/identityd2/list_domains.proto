@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package ai.metathings.service.identityd2;
+
+import "google/protobuf/wrappers.proto";
+
+import "model.proto";
+
+message ListDomainsRequest {
+	google.protobuf.StringValue id = 1;
+	google.protobuf.StringValue name = 2;
+	google.protobuf.StringValue alias = 3;
+	OpDomain parent = 4;
+	repeated OpDomain children = 5;
+}
+
+message ListDomainsResponse {
+	Domain domain = 1;
+}

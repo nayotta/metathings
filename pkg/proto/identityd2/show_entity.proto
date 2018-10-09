@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+package ai.metathings.service.identityd2;
+
+import "model.proto";
+
+message ShowEntityResponse {
+	Entity entity = 1;
+}
