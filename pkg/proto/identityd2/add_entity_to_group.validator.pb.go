@@ -25,6 +25,7 @@ It is generated from these files:
 	get_group.proto
 	get_policy.proto
 	get_role.proto
+	get_token_by_text.proto
 	group.proto
 	issue_token_by_credential.proto
 	issue_token_by_password.proto
@@ -40,6 +41,7 @@ It is generated from these files:
 	list_roles_for_entity.proto
 	model.proto
 	patch_credential.proto
+	patch_domain.proto
 	patch_entity.proto
 	patch_group.proto
 	patch_role.proto
@@ -85,6 +87,8 @@ It has these top-level messages:
 	GetPolicyResponse
 	GetRoleRequest
 	GetRoleResponse
+	GetTokenByTextRequest
+	GetTokenByTextResponse
 	IssueTokenByCredentialRequest
 	IssueTokenByCredentialResponse
 	IssueTokenByPasswordRequest
@@ -125,6 +129,8 @@ It has these top-level messages:
 	OpToken
 	PatchCredentialRequest
 	PatchCredentialResponse
+	PatchDomainRequest
+	PatchDomainResponse
 	PatchEntityRequest
 	PatchEntityResponse
 	PatchGroupRequest

@@ -7,6 +7,7 @@ import "google/protobuf/empty.proto";
 
 import "create_domain.proto";
 import "delete_domain.proto";
+import "patch_domain.proto";
 import "get_domain.proto";
 import "list_domains.proto";
 
@@ -55,10 +56,12 @@ import "issue_token_by_credential.proto";
 import "issue_token_by_password.proto";
 import "revoke_token.proto";
 import "validate_token.proto";
+import "get_token_by_text.proto";
 
 service IdentitydService {
 	rpc CreateDomain(CreateDomainRequest) returns (CreateDomainResponse) {}
 	rpc DeleteDomain(DeleteDomainRequest) returns (google.protobuf.Empty) {}
+	rpc PatchDomain(PatchDomainRequest) returns (PatchDomainResponse) {}
 	rpc GetDomain(GetDomainRequest) returns (GetDomainResponse) {}
 	rpc ListDomains(ListDomainsRequest) returns (ListDomainsResponse) {}
 
@@ -107,4 +110,5 @@ service IdentitydService {
 	rpc IssueTokenByPassword(IssueTokenByPasswordRequest) returns (IssueTokenByPasswordResponse) {}
 	rpc RevokeToken(RevokeTokenRequest) returns (google.protobuf.Empty) {}
 	rpc ValidateToken(ValidateTokenRequest) returns (google.protobuf.Empty) {}
+	rpc GetTokenByText(GetTokenByTextRequest) returns (GetTokenByTextResponse) {}
 }
