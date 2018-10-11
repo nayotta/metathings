@@ -81,10 +81,6 @@ func (self *MetathingsIdentitydService) ShowEntity(context.Context, *empty.Empty
 	panic("unimplemented")
 }
 
-func (self *MetathingsIdentitydService) CreateGroup(context.Context, *pb.CreateGroupRequest) (*pb.CreateGroupResponse, error) {
-	panic("unimplemented")
-}
-
 func (self *MetathingsIdentitydService) DeleteGroup(context.Context, *pb.DeleteGroupRequest) (*empty.Empty, error) {
 	panic("unimplemented")
 }

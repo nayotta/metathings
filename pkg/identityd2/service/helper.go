@@ -121,6 +121,37 @@ func copy_entity(x *storage.Entity) *pb.Entity {
 	return y
 }
 
+func copy_group(x *storage.Group) *pb.Group {
+	roles := []*pb.Role{}
+	for _, r := range x.Roles {
+		roles = append(roles, &pb.Role{
+			Id: *r.Id,
+		})
+	}
+
+	entities := []*pb.Entity{}
+	for _, e := range x.Entities {
+		entities = append(entities, &pb.Entity{
+			Id: *e.Id,
+		})
+	}
+
+	y := &pb.Group{
+		Id: *x.Id,
+		Domain: &pb.Domain{
+			Id: *x.DomainId,
+		},
+		Roles:       roles,
+		Entities:    entities,
+		Name:        *x.Name,
+		Alias:       *x.Alias,
+		Description: *x.Description,
+		Extra:       copy_extra(*x.Extra),
+	}
+
+	return y
+}
+
 func role_in_entity(ent *storage.Entity, role_id string) bool {
 	for _, r := range ent.Roles {
 		if *r.Id == role_id {
