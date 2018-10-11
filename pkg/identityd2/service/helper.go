@@ -120,3 +120,13 @@ func copy_entity(x *storage.Entity) *pb.Entity {
 
 	return y
 }
+
+func role_in_entity(ent *storage.Entity, role_id string) bool {
+	for _, r := range ent.Roles {
+		if *r.Id == role_id {
+			return true
+		}
+	}
+
+	return false
+}
