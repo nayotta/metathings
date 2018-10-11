@@ -29,14 +29,6 @@ func (self *MetathingsIdentitydService) PatchDomain(context.Context, *pb.PatchDo
 	panic("unimplemented")
 }
 
-func (self *MetathingsIdentitydService) GetDomain(context.Context, *pb.GetDomainRequest) (*pb.GetDomainResponse, error) {
-	panic("unimplemented")
-}
-
-func (self *MetathingsIdentitydService) ListDomains(context.Context, *pb.ListDomainsRequest) (*pb.ListDomainsResponse, error) {
-	panic("unimplemented")
-}
-
 func (self *MetathingsIdentitydService) GetPolicy(context.Context, *pb.GetPolicyRequest) (*pb.GetPolicyResponse, error) {
 	panic("unimplemented")
 }
@@ -62,10 +54,6 @@ func (self *MetathingsIdentitydService) GetRole(context.Context, *pb.GetRoleRequ
 }
 
 func (self *MetathingsIdentitydService) ListRoles(context.Context, *pb.ListRolesRequest) (*pb.ListRolesResponse, error) {
-	panic("unimplemented")
-}
-
-func (self *MetathingsIdentitydService) AddPolicyToRole(context.Context, *pb.AddPolicyToRoleRequest) (*empty.Empty, error) {
 	panic("unimplemented")
 }
 
