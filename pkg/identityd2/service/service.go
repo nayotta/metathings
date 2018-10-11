@@ -57,10 +57,6 @@ func (self *MetathingsIdentitydService) ListRoles(context.Context, *pb.ListRoles
 	panic("unimplemented")
 }
 
-func (self *MetathingsIdentitydService) RemovePolicyFromRole(context.Context, *pb.RemovePolicyFromRoleRequest) (*empty.Empty, error) {
-	panic("unimplemented")
-}
-
 func (self *MetathingsIdentitydService) ListRolesForEntity(context.Context, *pb.ListRolesForEntityRequest) (*pb.ListRolesForEntityResponse, error) {
 	panic("unimplemented")
 }

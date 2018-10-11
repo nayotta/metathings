@@ -157,6 +157,7 @@ type Storage interface {
 	PatchRole(id string, role *Role) (*Role, error)
 	GetRole(id string) (*Role, error)
 	ListRoles(*Role) ([]*Role, error)
+	GetPolicy(id string) (*Policy, error)
 	CreatePolicy(*Policy) (*Policy, error)
 	DeletePolicy(id string) error
 	ListPoliciesForEntity(id string) ([]*Policy, error)
