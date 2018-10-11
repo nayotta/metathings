@@ -4,10 +4,10 @@ import (
 	"context"
 
 	"github.com/golang/protobuf/ptypes/empty"
+	log "github.com/sirupsen/logrus"
 
 	storage "github.com/nayotta/metathings/pkg/identityd2/storage"
 	pb "github.com/nayotta/metathings/pkg/proto/identityd2"
-	log "github.com/sirupsen/logrus"
 )
 
 type MetathingsIdentitydServiceOption struct {
@@ -58,10 +58,6 @@ func (self *MetathingsIdentitydService) ListRoles(context.Context, *pb.ListRoles
 }
 
 func (self *MetathingsIdentitydService) ListRolesForEntity(context.Context, *pb.ListRolesForEntityRequest) (*pb.ListRolesForEntityResponse, error) {
-	panic("unimplemented")
-}
-
-func (self *MetathingsIdentitydService) CreateEntity(context.Context, *pb.CreateEntityRequest) (*pb.CreateEntityResponse, error) {
 	panic("unimplemented")
 }
 

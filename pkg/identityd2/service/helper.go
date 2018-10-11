@@ -3,9 +3,30 @@ package metathings_identityd2_service
 import (
 	"encoding/json"
 
+	"github.com/golang/protobuf/ptypes/wrappers"
+	"golang.org/x/crypto/bcrypt"
+
+	pb_helper "github.com/nayotta/metathings/pkg/common/protobuf"
 	storage "github.com/nayotta/metathings/pkg/identityd2/storage"
 	pb "github.com/nayotta/metathings/pkg/proto/identityd2"
 )
+
+func must_parse_extra(x map[string]*wrappers.StringValue) string {
+	var buf []byte
+	var err error
+
+	extra_map := pb_helper.ExtractStringMap(x)
+	if buf, err = json.Marshal(extra_map); err != nil {
+		return `{}`
+	}
+
+	return string(buf)
+}
+
+func must_parse_password(x string) string {
+	buf, _ := bcrypt.GenerateFromPassword([]byte(x), bcrypt.DefaultCost)
+	return string(buf)
+}
 
 func copy_extra(x string) map[string]string {
 	y := map[string]string{}
@@ -65,6 +86,36 @@ func copy_role(x *storage.Role) *pb.Role {
 		Description: *x.Description,
 		Policies:    copy_role_policies(x.Policies),
 		Extra:       copy_extra(*x.Extra),
+	}
+
+	return y
+}
+
+func copy_entity(x *storage.Entity) *pb.Entity {
+	groups := []*pb.Group{}
+	for _, g := range x.Groups {
+		groups = append(groups, &pb.Group{
+			Id: *g.Id,
+		})
+	}
+
+	roles := []*pb.Role{}
+	for _, r := range x.Roles {
+		roles = append(roles, &pb.Role{
+			Id: *r.Id,
+		})
+	}
+
+	y := &pb.Entity{
+		Id: *x.Id,
+		Domain: &pb.Domain{
+			Id: *x.DomainId,
+		},
+		Groups: []*pb.Group{},
+		Roles:  []*pb.Role{},
+		Name:   *x.Name,
+		Alias:  *x.Alias,
+		Extra:  copy_extra(*x.Extra),
 	}
 
 	return y

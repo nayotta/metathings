@@ -46,12 +46,11 @@ type Entity struct {
 	CreatedAt time.Time
 	UpdatedAt time.Time
 
-	DomainId    *string `gorm:"column:domain_id"`
-	Name        *string `gorm:"column:name"`
-	Alias       *string `gorm:"column:alias"`
-	Password    *string `gorm:"column:password"`
-	Description *string `gorm:"column:description"`
-	Extra       *string `gorm:"column:extra"`
+	DomainId *string `gorm:"column:domain_id"`
+	Name     *string `gorm:"column:name"`
+	Alias    *string `gorm:"column:alias"`
+	Password *string `gorm:"column:password"`
+	Extra    *string `gorm:"column:extra"`
 
 	Domain *Domain  `gorm:"-"`
 	Groups []*Group `gorm:"-"`
