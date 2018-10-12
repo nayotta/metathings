@@ -2,6 +2,7 @@ package metathings_identityd2_service
 
 import (
 	"encoding/json"
+	"math/rand"
 
 	"github.com/golang/protobuf/ptypes/wrappers"
 	"golang.org/x/crypto/bcrypt"
@@ -10,6 +11,21 @@ import (
 	storage "github.com/nayotta/metathings/pkg/identityd2/storage"
 	pb "github.com/nayotta/metathings/pkg/proto/identityd2"
 )
+
+const (
+	SECRET_LENGTH  = 32
+	SECRET_LETTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+)
+
+func generate_secret() string {
+	buf := make([]byte, SECRET_LENGTH)
+
+	for i := 0; i < SECRET_LENGTH; i++ {
+		buf[i] = SECRET_LETTERS[rand.Intn(len(SECRET_LETTERS))]
+	}
+
+	return string(buf)
+}
 
 func must_parse_extra(x map[string]*wrappers.StringValue) string {
 	var buf []byte
@@ -147,6 +163,34 @@ func copy_group(x *storage.Group) *pb.Group {
 		Alias:       *x.Alias,
 		Description: *x.Description,
 		Extra:       copy_extra(*x.Extra),
+	}
+
+	return y
+}
+
+func copy_credential(x *storage.Credential) *pb.Credential {
+	roles := []*pb.Role{}
+	for _, r := range x.Roles {
+		roles = append(roles, &pb.Role{
+			Id: *r.Id,
+		})
+	}
+
+	expires_at := pb_helper.FromTime(*x.ExpiresAt)
+
+	y := &pb.Credential{
+		Id: *x.Id,
+		Domain: &pb.Domain{
+			Id: *x.DomainId,
+		},
+		Roles: roles,
+		Entity: &pb.Entity{
+			Id: *x.EntityId,
+		},
+		Name:        *x.Name,
+		Alias:       *x.Alias,
+		Description: *x.Description,
+		ExpiresAt:   &expires_at,
 	}
 
 	return y
