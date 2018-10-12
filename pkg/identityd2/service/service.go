@@ -84,10 +84,6 @@ func (self *MetathingsIdentitydService) ShowEntity(context.Context, *empty.Empty
 	panic("unimplemented")
 }
 
-func (self *MetathingsIdentitydService) AddEntityToDomain(context.Context, *pb.AddEntityToDomainRequest) (*empty.Empty, error) {
-	panic("unimplemented")
-}
-
 func (self *MetathingsIdentitydService) RemoveEntityFromDomain(context.Context, *pb.RemoveEntityFromDomainRequest) (*empty.Empty, error) {
 	panic("unimplemented")
 }

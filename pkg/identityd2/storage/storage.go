@@ -156,6 +156,8 @@ type Storage interface {
 	PatchDomain(id string, domain *Domain) (*Domain, error)
 	GetDomain(id string) (*Domain, error)
 	ListDomains(*Domain) ([]*Domain, error)
+	AddEntityToDomain(domain_id, entity_id string) error
+	RemoveEntityFromDomain(domain_id, entity_id string) error
 
 	CreateRole(*Role) (*Role, error)
 	DeleteRole(id string) error
