@@ -13,8 +13,8 @@ import (
 	pb "github.com/nayotta/metathings/pkg/proto/identityd2"
 )
 
-func (self *MetathingsIdentitydService) RemoveEntityFromGroup(ctx context.Context, req *pb.RemoveEntityFromGroupRequest) (*empty.Empty, error) {
-	var g *storage.Group
+func (self *MetathingsIdentitydService) RemoveEntityFromDomain(ctx context.Context, req *pb.RemoveEntityFromDomainRequest) (*empty.Empty, error) {
+	var e *storage.Entity
 	var err error
 
 	if err = req.Validate(); err != nil {
@@ -22,13 +22,13 @@ func (self *MetathingsIdentitydService) RemoveEntityFromGroup(ctx context.Contex
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 
-	grp := req.GetGroup()
-	if grp == nil || grp.GetId() == nil || grp.GetId().GetValue() == "" {
-		err = errors.New("group.id is empty")
+	dom := req.GetDomain()
+	if dom == nil || dom.GetId() == nil || dom.GetId().GetValue() == "" {
+		err = errors.New("domain.id is empty")
 		self.logger.WithError(err).Errorf("failed to validate request data")
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
-	grp_id_str := grp.GetId().GetValue()
+	dom_id_str := dom.GetId().GetValue()
 
 	ent := req.GetEntity()
 	if ent == nil || ent.GetId() == nil || ent.GetId().GetValue() == "" {
@@ -38,26 +38,26 @@ func (self *MetathingsIdentitydService) RemoveEntityFromGroup(ctx context.Contex
 	}
 	ent_id_str := ent.GetId().GetValue()
 
-	if g, err = self.storage.GetGroup(grp_id_str); err != nil {
-		self.logger.WithError(err).Errorf("failed to get group in storage")
-		return nil, status.Errorf(codes.FailedPrecondition, err.Error())
-	}
-
-	if !entity_in_group(g, ent_id_str) {
-		err = errors.New("entity not in group")
+	if e, err = self.storage.GetEntity(dom_id_str); err != nil {
 		self.logger.WithError(err).Errorf("failed to get entity in storage")
 		return nil, status.Errorf(codes.FailedPrecondition, err.Error())
 	}
 
-	if err = self.storage.RemoveEntityFromGroup(ent_id_str, grp_id_str); err != nil {
-		self.logger.WithError(err).Errorf("failed to remove entity from group in storage")
+	if !domain_in_entity(e, dom_id_str) {
+		err = errors.New("domain not in entity")
+		self.logger.WithError(err).Errorf("failed to get domain in storage")
+		return nil, status.Errorf(codes.FailedPrecondition, err.Error())
+	}
+
+	if err = self.storage.RemoveEntityFromDomain(dom_id_str, ent_id_str); err != nil {
+		self.logger.WithError(err).Errorf("failed to remove entity from domain in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
 	self.logger.WithFields(log.Fields{
 		"entity_id": ent_id_str,
-		"group_id":  grp_id_str,
-	}).Infof("remove entity from group")
+		"domain_id": dom_id_str,
+	}).Infof("remove entity from domain")
 
 	return &empty.Empty{}, nil
 }
