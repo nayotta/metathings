@@ -44,6 +44,10 @@ func must_parse_password(x string) string {
 	return string(buf)
 }
 
+func validate_password(hash, passwd string) bool {
+	return bcrypt.CompareHashAndPassword([]byte(hash), []byte(passwd)) == nil
+}
+
 func copy_extra(x string) map[string]string {
 	y := map[string]string{}
 	if err := json.Unmarshal([]byte(x), &y); err != nil {
@@ -108,6 +112,13 @@ func copy_role(x *storage.Role) *pb.Role {
 }
 
 func copy_entity(x *storage.Entity) *pb.Entity {
+	domains := []*pb.Domain{}
+	for _, d := range x.Domains {
+		domains = append(domains, &pb.Domain{
+			Id: *d.Id,
+		})
+	}
+
 	groups := []*pb.Group{}
 	for _, g := range x.Groups {
 		groups = append(groups, &pb.Group{
@@ -123,15 +134,13 @@ func copy_entity(x *storage.Entity) *pb.Entity {
 	}
 
 	y := &pb.Entity{
-		Id: *x.Id,
-		Domain: &pb.Domain{
-			Id: *x.DomainId,
-		},
-		Groups: []*pb.Group{},
-		Roles:  []*pb.Role{},
-		Name:   *x.Name,
-		Alias:  *x.Alias,
-		Extra:  copy_extra(*x.Extra),
+		Id:      *x.Id,
+		Domains: domains,
+		Groups:  groups,
+		Roles:   roles,
+		Name:    *x.Name,
+		Alias:   *x.Alias,
+		Extra:   copy_extra(*x.Extra),
 	}
 
 	return y
@@ -196,6 +205,42 @@ func copy_credential(x *storage.Credential) *pb.Credential {
 	return y
 }
 
+func copy_token(x *storage.Token) *pb.Token {
+	issued_at := pb_helper.FromTime(*x.IssuedAt)
+	expires_at := pb_helper.FromTime(*x.ExpiresAt)
+
+	var roles []*pb.Role
+	for _, r := range x.Roles {
+		roles = append(roles, &pb.Role{
+			Id: *r.Id,
+		})
+	}
+
+	var credential *pb.Credential
+	if x.Credential != nil {
+		credential = &pb.Credential{
+			Id: *x.Credential.Id,
+		}
+	}
+
+	y := &pb.Token{
+		Id:        *x.Id,
+		IssuedAt:  &issued_at,
+		ExpiresAt: &expires_at,
+		Entity: &pb.Entity{
+			Id: *x.EntityId,
+		},
+		Roles: roles,
+		Domain: &pb.Domain{
+			Id: *x.DomainId,
+		},
+		Credential: credential,
+		Text:       *x.Text,
+	}
+
+	return y
+}
+
 func role_in_entity(ent *storage.Entity, role_id string) bool {
 	for _, r := range ent.Roles {
 		if *r.Id == role_id {
@@ -219,6 +264,16 @@ func entity_in_group(grp *storage.Group, ent_id string) bool {
 func role_in_group(grp *storage.Group, role_id string) bool {
 	for _, r := range grp.Roles {
 		if *r.Id == role_id {
+			return true
+		}
+	}
+
+	return false
+}
+
+func domain_in_entity(ent *storage.Entity, dom_id string) bool {
+	for _, d := range ent.Domains {
+		if *d.Id == dom_id {
 			return true
 		}
 	}

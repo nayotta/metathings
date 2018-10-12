@@ -59,7 +59,7 @@ message OpRole {
 
 message Entity {
 	string id = 1;
-	Domain domain = 2;
+	repeated Domain domains = 2;
 	repeated Group groups = 3;
 	repeated Role roles = 4;
 	string name = 5;
@@ -70,7 +70,7 @@ message Entity {
 
 message OpEntity {
 	google.protobuf.StringValue id = 1;
-	OpDomain domain = 2;
+	repeated OpDomain domains = 2;
 	repeated OpGroup groups = 3;
 	repeated OpRole roles = 4;
 	google.protobuf.StringValue name = 5;

@@ -46,15 +46,14 @@ type Entity struct {
 	CreatedAt time.Time
 	UpdatedAt time.Time
 
-	DomainId *string `gorm:"column:domain_id"`
 	Name     *string `gorm:"column:name"`
 	Alias    *string `gorm:"column:alias"`
 	Password *string `gorm:"column:password"`
 	Extra    *string `gorm:"column:extra"`
 
-	Domain *Domain  `gorm:"-"`
-	Groups []*Group `gorm:"-"`
-	Roles  []*Role  `gorm:"-"`
+	Domains []*Domain `gorm:"-"`
+	Groups  []*Group  `gorm:"-"`
+	Roles   []*Role   `gorm:"-"`
 }
 
 type EntityRoleMapping struct {
@@ -62,6 +61,13 @@ type EntityRoleMapping struct {
 
 	EntityId *string `gorm:"entity_id"`
 	RoleId   *string `gorm:"role_id"`
+}
+
+type EntityDomainMapping struct {
+	CreatedAt time.Time
+
+	EntityId *string `gorm:"entity_id"`
+	DomainId *string `gorm:"domain_id"`
 }
 
 type Group struct {
@@ -165,6 +171,7 @@ type Storage interface {
 	DeleteEntity(id string) error
 	PatchEntity(id string, entity *Entity) (*Entity, error)
 	GetEntity(id string) (*Entity, error)
+	GetEntityByName(name string) (*Entity, error)
 	ListEntities(*Entity) ([]*Entity, error)
 	AddRoleToEntity(entity_id, role_id string) error
 	RemoveRoleFromEntity(entity_id, role_id string) error

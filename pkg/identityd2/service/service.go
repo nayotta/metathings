@@ -2,6 +2,7 @@ package metathings_identityd2_service
 
 import (
 	"context"
+	"time"
 
 	"github.com/golang/protobuf/ptypes/empty"
 	log "github.com/sirupsen/logrus"
@@ -11,6 +12,8 @@ import (
 )
 
 type MetathingsIdentitydServiceOption struct {
+	TokenExpireInterval time.Duration
+
 	StorageDriver string
 	StorageUri    string
 }
@@ -126,10 +129,6 @@ func (self *MetathingsIdentitydService) ListCredentialsForEntity(context.Context
 }
 
 func (self *MetathingsIdentitydService) IssueTokenByCredential(context.Context, *pb.IssueTokenByCredentialRequest) (*pb.IssueTokenByCredentialResponse, error) {
-	panic("unimplemented")
-}
-
-func (self *MetathingsIdentitydService) IssueTokenByPassword(context.Context, *pb.IssueTokenByPasswordRequest) (*pb.IssueTokenByPasswordResponse, error) {
 	panic("unimplemented")
 }
 

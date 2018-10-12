@@ -2,7 +2,6 @@ package metathings_identityd2_service
 
 import (
 	"context"
-	"errors"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -25,20 +24,11 @@ func (self *MetathingsIdentitydService) CreateEntity(ctx context.Context, req *p
 		ent_id_str = req.GetId().GetValue()
 	}
 
-	dom_id := req.GetDomain().GetId()
-	if dom_id == nil || dom_id.GetValue() == "" {
-		err = errors.New("domain.id is empty")
-		self.logger.WithError(err).Errorf("failed to validate request data")
-		return nil, status.Errorf(codes.InvalidArgument, err.Error())
-	}
-	dom_id_str := dom_id.Value
-
 	extra_str := must_parse_extra(req.Extra)
 	pwd_str := must_parse_password(req.GetPassword().GetValue())
 
 	ent := &storage.Entity{
 		Id:       &ent_id_str,
-		DomainId: &dom_id_str,
 		Name:     &req.Name.Value,
 		Alias:    &req.Alias.Value,
 		Password: &pwd_str,

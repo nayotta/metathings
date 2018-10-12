@@ -146,9 +146,11 @@ func (this *OpRole) Validate() error {
 	return nil
 }
 func (this *Entity) Validate() error {
-	if this.Domain != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Domain); err != nil {
-			return go_proto_validators.FieldError("Domain", err)
+	for _, item := range this.Domains {
+		if item != nil {
+			if err := go_proto_validators.CallValidatorIfExists(item); err != nil {
+				return go_proto_validators.FieldError("Domains", err)
+			}
 		}
 	}
 	for _, item := range this.Groups {
@@ -174,9 +176,11 @@ func (this *OpEntity) Validate() error {
 			return go_proto_validators.FieldError("Id", err)
 		}
 	}
-	if this.Domain != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Domain); err != nil {
-			return go_proto_validators.FieldError("Domain", err)
+	for _, item := range this.Domains {
+		if item != nil {
+			if err := go_proto_validators.CallValidatorIfExists(item); err != nil {
+				return go_proto_validators.FieldError("Domains", err)
+			}
 		}
 	}
 	for _, item := range this.Groups {

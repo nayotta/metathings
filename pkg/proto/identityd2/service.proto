@@ -32,6 +32,8 @@ import "list_entities.proto";
 import "show_entity.proto";
 import "add_role_to_entity.proto";
 import "remove_role_from_entity.proto";
+import "add_entity_to_domain.proto";
+import "remove_entity_from_domain.proto";
 
 import "create_group.proto";
 import "delete_group.proto";
@@ -86,6 +88,8 @@ service IdentitydService {
 	rpc ShowEntity(google.protobuf.Empty) returns (ShowEntityResponse) {}
 	rpc AddRoleToEntity(AddRoleToEntityRequest) returns (google.protobuf.Empty) {}
 	rpc RemoveRoleFromEntity(RemoveRoleFromEntityRequest) returns (google.protobuf.Empty) {}
+	rpc AddEntityToDomain(AddEntityToDomainRequest) returns (google.protobuf.Empty) {}
+	rpc RemoveEntityFromDomain(RemoveEntityFromDomainRequest) returns (google.protobuf.Empty) {}
 
 	rpc CreateGroup(CreateGroupRequest) returns (CreateGroupResponse) {}
 	rpc DeleteGroup(DeleteGroupRequest) returns (google.protobuf.Empty) {}
