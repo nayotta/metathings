@@ -105,10 +105,6 @@ func (self *MetathingsIdentitydService) ShowGroups(context.Context, *empty.Empty
 	panic("unimplemented")
 }
 
-func (self *MetathingsIdentitydService) AddRoleToGroup(context.Context, *pb.AddRoleToGroupRequest) (*empty.Empty, error) {
-	panic("unimplemented")
-}
-
 func (self *MetathingsIdentitydService) RemoveRoleFromGroup(context.Context, *pb.RemoveRoleFromGroupRequest) (*empty.Empty, error) {
 	panic("unimplemented")
 }
