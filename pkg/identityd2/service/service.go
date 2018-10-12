@@ -105,10 +105,6 @@ func (self *MetathingsIdentitydService) ShowGroups(context.Context, *empty.Empty
 	panic("unimplemented")
 }
 
-func (self *MetathingsIdentitydService) RemoveEntityFromGroup(context.Context, *pb.RemoveEntityFromGroupRequest) (*empty.Empty, error) {
-	panic("unimplemented")
-}
-
 func (self *MetathingsIdentitydService) CreateCredential(context.Context, *pb.CreateCredentialRequest) (*pb.CreateCredentialResponse, error) {
 	panic("unimplemented")
 }
