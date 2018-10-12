@@ -30,6 +30,7 @@ It is generated from these files:
 	group.proto
 	issue_token_by_credential.proto
 	issue_token_by_password.proto
+	issue_token_by_token.proto
 	list_credentials.proto
 	list_credentials_for_entity.proto
 	list_domains.proto
@@ -96,6 +97,8 @@ It has these top-level messages:
 	IssueTokenByCredentialResponse
 	IssueTokenByPasswordRequest
 	IssueTokenByPasswordResponse
+	IssueTokenByTokenRequest
+	IssueTokenByTokenResponse
 	ListCredentialsRequest
 	ListCredentialsResponse
 	ListCredentialsForEntityRequest

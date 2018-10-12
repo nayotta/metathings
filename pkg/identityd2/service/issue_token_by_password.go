@@ -91,7 +91,7 @@ func (self *MetathingsIdentitydService) IssueTokenByPassword(ctx context.Context
 		EntityId:  ent_s.Id,
 		IssuedAt:  &now,
 		ExpiresAt: &expires_at,
-		Text:      &tkn_id_str, // token string is token id now.
+		Text:      &tkn_id_str, // token text is token id now.
 	}
 
 	if tkn, err = self.storage.CreateToken(tkn); err != nil {
