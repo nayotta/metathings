@@ -9,10 +9,12 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
+	storage "github.com/nayotta/metathings/pkg/identityd2/storage"
 	pb "github.com/nayotta/metathings/pkg/proto/identityd2"
 )
 
 func (self *MetathingsIdentitydService) RemoveRoleFromGroup(ctx context.Context, req *pb.RemoveRoleFromGroupRequest) (*empty.Empty, error) {
+	var g *storage.Group
 	var err error
 
 	if err = req.Validate(); err != nil {
@@ -35,6 +37,17 @@ func (self *MetathingsIdentitydService) RemoveRoleFromGroup(ctx context.Context,
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 	role_id_str := role.GetId().GetValue()
+
+	if g, err = self.storage.GetGroup(grp_id_str); err != nil {
+		self.logger.WithError(err).Errorf("failed to get group in storage")
+		return nil, status.Errorf(codes.FailedPrecondition, err.Error())
+	}
+
+	if !role_in_group(g, role_id_str) {
+		err = errors.New("role not in group")
+		self.logger.WithError(err).Errorf("failed to get role in storage")
+		return nil, status.Errorf(codes.FailedPrecondition, err.Error())
+	}
 
 	if err = self.storage.RemoveRoleFromGroup(grp_id_str, role_id_str); err != nil {
 		self.logger.WithError(err).Errorf("failed to remove role from group in storage")

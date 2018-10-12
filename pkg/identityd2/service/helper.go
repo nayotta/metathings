@@ -171,3 +171,13 @@ func entity_in_group(grp *storage.Group, ent_id string) bool {
 
 	return false
 }
+
+func role_in_group(grp *storage.Group, role_id string) bool {
+	for _, r := range grp.Roles {
+		if *r.Id == role_id {
+			return true
+		}
+	}
+
+	return false
+}
