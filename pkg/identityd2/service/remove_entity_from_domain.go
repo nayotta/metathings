@@ -18,14 +18,14 @@ func (self *MetathingsIdentitydService) RemoveEntityFromDomain(ctx context.Conte
 	var err error
 
 	if err = req.Validate(); err != nil {
-		self.logger.WithError(err).Errorf("failed to validate request data")
+		self.logger.WithError(err).Warningf("failed to validate request data")
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 
 	dom := req.GetDomain()
 	if dom == nil || dom.GetId() == nil || dom.GetId().GetValue() == "" {
 		err = errors.New("domain.id is empty")
-		self.logger.WithError(err).Errorf("failed to validate request data")
+		self.logger.WithError(err).Warningf("failed to validate request data")
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 	dom_id_str := dom.GetId().GetValue()
@@ -33,19 +33,19 @@ func (self *MetathingsIdentitydService) RemoveEntityFromDomain(ctx context.Conte
 	ent := req.GetEntity()
 	if ent == nil || ent.GetId() == nil || ent.GetId().GetValue() == "" {
 		err = errors.New("entity.id is empty")
-		self.logger.WithError(err).Errorf("failed to validate request data")
+		self.logger.WithError(err).Warningf("failed to validate request data")
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 	ent_id_str := ent.GetId().GetValue()
 
 	if e, err = self.storage.GetEntity(dom_id_str); err != nil {
-		self.logger.WithError(err).Errorf("failed to get entity in storage")
+		self.logger.WithError(err).Error("failed to get entity in storage")
 		return nil, status.Errorf(codes.FailedPrecondition, err.Error())
 	}
 
 	if !domain_in_entity(e, dom_id_str) {
 		err = errors.New("domain not in entity")
-		self.logger.WithError(err).Errorf("failed to get domain in storage")
+		self.logger.WithError(err).Warningf("failed to get domain in storage")
 		return nil, status.Errorf(codes.FailedPrecondition, err.Error())
 	}
 

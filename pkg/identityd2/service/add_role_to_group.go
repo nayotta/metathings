@@ -16,14 +16,14 @@ func (self *MetathingsIdentitydService) AddRoleToGroup(ctx context.Context, req 
 	var err error
 
 	if err = req.Validate(); err != nil {
-		self.logger.WithError(err).Errorf("failed to validate request data")
+		self.logger.WithError(err).Warningf("failed to validate request data")
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 
 	grp := req.GetGroup()
 	if grp == nil || grp.GetId() == nil || grp.GetId().GetValue() == "" {
 		err = errors.New("group.id is empty")
-		self.logger.WithError(err).Errorf("failed to validate request data")
+		self.logger.WithError(err).Warningf("failed to validate request data")
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 	grp_id_str := grp.GetId().GetValue()
@@ -31,7 +31,7 @@ func (self *MetathingsIdentitydService) AddRoleToGroup(ctx context.Context, req 
 	role := req.GetRole()
 	if role == nil || role.GetId() == nil || role.GetId().GetValue() == "" {
 		err = errors.New("role.id is empty")
-		self.logger.WithError(err).Errorf("failed to validate request data")
+		self.logger.WithError(err).Warningf("failed to validate request data")
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 	role_id_str := role.GetId().GetValue()

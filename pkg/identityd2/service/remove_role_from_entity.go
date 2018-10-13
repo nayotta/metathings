@@ -18,14 +18,14 @@ func (self *MetathingsIdentitydService) RemoveRoleFromEntity(ctx context.Context
 	var err error
 
 	if err = req.Validate(); err != nil {
-		self.logger.WithError(err).Errorf("failed to validate request data")
+		self.logger.WithError(err).Warningf("failed to validate request data")
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 
 	ent := req.GetEntity()
 	if ent == nil || ent.GetId() == nil || ent.GetId().GetValue() == "" {
 		err = errors.New("entity.id is empty")
-		self.logger.WithError(err).Errorf("failed to validate request data")
+		self.logger.WithError(err).Warningf("failed to validate request data")
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 	ent_id_str := ent.GetId().GetValue()
@@ -33,7 +33,7 @@ func (self *MetathingsIdentitydService) RemoveRoleFromEntity(ctx context.Context
 	role := req.GetRole()
 	if role == nil || role.GetId() == nil || role.GetId().GetValue() == "" {
 		err = errors.New("role.id is empty")
-		self.logger.WithError(err).Errorf("failed to validate request data")
+		self.logger.WithError(err).Warningf("failed to validate request data")
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 	role_id_str := role.GetId().GetValue()
@@ -45,7 +45,7 @@ func (self *MetathingsIdentitydService) RemoveRoleFromEntity(ctx context.Context
 
 	if !role_in_entity(e, role_id_str) {
 		err = errors.New("role not in entity")
-		self.logger.WithError(err).Errorf("failed to get role in storage")
+		self.logger.WithError(err).Warningf("failed to get role in storage")
 		return nil, status.Errorf(codes.FailedPrecondition, err.Error())
 	}
 

@@ -16,7 +16,7 @@ func (self *MetathingsIdentitydService) GetDomain(ctx context.Context, req *pb.G
 
 	err = req.Validate()
 	if err != nil {
-		self.logger.WithError(err).Errorf("failed to validate request data")
+		self.logger.WithError(err).Warningf("failed to validate request data")
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 

@@ -16,14 +16,14 @@ func (self *MetathingsIdentitydService) AddEntityToGroup(ctx context.Context, re
 	var err error
 
 	if err = req.Validate(); err != nil {
-		self.logger.WithError(err).Errorf("failed to validate request data")
+		self.logger.WithError(err).Warningf("failed to validate request data")
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 
 	grp := req.GetGroup()
 	if grp == nil || grp.GetId() == nil || grp.GetId().GetValue() == "" {
 		err = errors.New("group.id is empty")
-		self.logger.WithError(err).Errorf("failed to validate request data")
+		self.logger.WithError(err).Warningf("failed to validate request data")
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 	grp_id_str := grp.GetId().GetValue()
@@ -31,7 +31,7 @@ func (self *MetathingsIdentitydService) AddEntityToGroup(ctx context.Context, re
 	ent := req.GetEntity()
 	if ent == nil || ent.GetId() == nil || ent.GetId().GetValue() == "" {
 		err = errors.New("entity.id is empty")
-		self.logger.WithError(err).Errorf("failed to validate request data")
+		self.logger.WithError(err).Warningf("failed to validate request data")
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 	ent_id_str := ent.GetId().GetValue()

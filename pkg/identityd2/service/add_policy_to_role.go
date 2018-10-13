@@ -18,14 +18,14 @@ func (self *MetathingsIdentitydService) AddPolicyToRole(ctx context.Context, req
 	var err error
 
 	if err = req.Validate(); err != nil {
-		self.logger.WithError(err).Errorf("failed to validate request data")
+		self.logger.WithError(err).Warningf("failed to validate request data")
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 
 	role := req.GetRole()
 	if role == nil || role.GetId() == nil || role.GetId().GetValue() == "" {
 		err = errors.New("role.id is empty")
-		self.logger.WithError(err).Errorf("failed to validate request data")
+		self.logger.WithError(err).Warningf("failed to validate request data")
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 	role_id_str := role.GetId().GetValue()
@@ -33,14 +33,14 @@ func (self *MetathingsIdentitydService) AddPolicyToRole(ctx context.Context, req
 	policy := req.GetPolicy()
 	if policy == nil {
 		err = errors.New("policy is null")
-		self.logger.WithError(err).Errorf("failed to validate request data")
+		self.logger.WithError(err).Warningf("failed to validate request data")
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 
 	plc_rule := policy.GetRule()
 	if plc_rule == nil || plc_rule.GetValue() == "" {
 		err = errors.New("policy.rule is empty")
-		self.logger.WithError(err).Errorf("failed to validate request data")
+		self.logger.WithError(err).Warningf("failed to validate request data")
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 	plc_rule_str := plc_rule.GetValue()

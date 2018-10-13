@@ -29,7 +29,7 @@ func (self *MetathingsIdentitydService) ValidateToken(ctx context.Context, req *
 	tkn_txt_str := tkn_txt.GetValue()
 
 	if t, err = self.storage.GetTokenByText(tkn_txt_str); err != nil {
-		self.logger.WithError(err).Warningf("failed to get token by text in storage")
+		self.logger.WithError(err).Errorf("failed to get token by text in storage")
 		return nil, status.Errorf(codes.Unauthenticated, ErrUnauthenticated.Error())
 	}
 

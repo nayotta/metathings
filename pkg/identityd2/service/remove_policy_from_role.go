@@ -18,14 +18,14 @@ func (self *MetathingsIdentitydService) RemovePolicyFromRole(ctx context.Context
 	var err error
 
 	if err = req.Validate(); err != nil {
-		self.logger.WithError(err).Errorf("failed to validate request data")
+		self.logger.WithError(err).Warningf("failed to validate request data")
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 
 	policy := req.GetPolicy()
 	if policy == nil || policy.GetId() == nil || policy.GetId().GetValue() == "" {
 		err = errors.New("policy.id is empty")
-		self.logger.WithError(err).Errorf("failed to validate request data")
+		self.logger.WithError(err).Warningf("failed to validate request data")
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 	plc_id_str := policy.GetId().GetValue()
@@ -33,7 +33,7 @@ func (self *MetathingsIdentitydService) RemovePolicyFromRole(ctx context.Context
 	role := req.GetRole()
 	if role == nil || role.GetId() == nil || role.GetId().GetValue() == "" {
 		err = errors.New("role.id is empty")
-		self.logger.WithError(err).Errorf("failed to validate request data")
+		self.logger.WithError(err).Warningf("failed to validate request data")
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 	role_id_str := role.GetId().GetValue()
@@ -45,7 +45,7 @@ func (self *MetathingsIdentitydService) RemovePolicyFromRole(ctx context.Context
 
 	if *plc.RoleId != role_id_str {
 		err = errors.New("policy not in role")
-		self.logger.WithError(err).Errorf("failed to get policy in storage")
+		self.logger.WithError(err).Warningf("failed to get policy in storage")
 		return nil, status.Errorf(codes.FailedPrecondition, err.Error())
 	}
 

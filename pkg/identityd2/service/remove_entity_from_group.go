@@ -18,14 +18,14 @@ func (self *MetathingsIdentitydService) RemoveEntityFromGroup(ctx context.Contex
 	var err error
 
 	if err = req.Validate(); err != nil {
-		self.logger.WithError(err).Errorf("failed to validate request data")
+		self.logger.WithError(err).Warningf("failed to validate request data")
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 
 	grp := req.GetGroup()
 	if grp == nil || grp.GetId() == nil || grp.GetId().GetValue() == "" {
 		err = errors.New("group.id is empty")
-		self.logger.WithError(err).Errorf("failed to validate request data")
+		self.logger.WithError(err).Warningf("failed to validate request data")
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 	grp_id_str := grp.GetId().GetValue()
@@ -33,7 +33,7 @@ func (self *MetathingsIdentitydService) RemoveEntityFromGroup(ctx context.Contex
 	ent := req.GetEntity()
 	if ent == nil || ent.GetId() == nil || ent.GetId().GetValue() == "" {
 		err = errors.New("entity.id is empty")
-		self.logger.WithError(err).Errorf("failed to validate request data")
+		self.logger.WithError(err).Warningf("failed to validate request data")
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 	ent_id_str := ent.GetId().GetValue()
@@ -45,7 +45,7 @@ func (self *MetathingsIdentitydService) RemoveEntityFromGroup(ctx context.Contex
 
 	if !entity_in_group(g, ent_id_str) {
 		err = errors.New("entity not in group")
-		self.logger.WithError(err).Errorf("failed to get entity in storage")
+		self.logger.WithError(err).Warningf("failed to get entity in storage")
 		return nil, status.Errorf(codes.FailedPrecondition, err.Error())
 	}
 

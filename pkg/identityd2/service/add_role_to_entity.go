@@ -16,14 +16,14 @@ func (self *MetathingsIdentitydService) AddRoleToEntity(ctx context.Context, req
 	var err error
 
 	if err = req.Validate(); err != nil {
-		self.logger.WithError(err).Errorf("failed to validate request data")
+		self.logger.WithError(err).Warningf("failed to validate request data")
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 
 	ent := req.GetEntity()
 	if ent == nil || ent.GetId() == nil || ent.GetId().GetValue() == "" {
 		err = errors.New("entity.id is empty")
-		self.logger.WithError(err).Errorf("failed to validate request data")
+		self.logger.WithError(err).Warningf("failed to validate request data")
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 	ent_id_str := ent.GetId().GetValue()
@@ -31,7 +31,7 @@ func (self *MetathingsIdentitydService) AddRoleToEntity(ctx context.Context, req
 	role := req.GetRole()
 	if role == nil || role.GetId() == nil || role.GetId().GetValue() == "" {
 		err = errors.New("role.id is empty")
-		self.logger.WithError(err).Errorf("failed to validate request data")
+		self.logger.WithError(err).Warningf("failed to validate request data")
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 	role_id_str := role.GetId().GetValue()

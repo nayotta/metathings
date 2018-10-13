@@ -31,6 +31,10 @@ func must_parse_extra(x map[string]*wrappers.StringValue) string {
 	var buf []byte
 	var err error
 
+	if x == nil {
+		return `{}`
+	}
+
 	extra_map := pb_helper.ExtractStringMap(x)
 	if buf, err = json.Marshal(extra_map); err != nil {
 		return `{}`

@@ -59,12 +59,12 @@ func (self *MetathingsIdentitydService) IssueTokenByPassword(ctx context.Context
 
 	if ent_id != nil {
 		if ent_s, err = self.storage.GetEntity(ent_id.GetValue()); err != nil {
-			self.logger.WithError(err).Warningf("failed to find entity by id in storage")
+			self.logger.WithError(err).Errorf("failed to find entity by id in storage")
 			return nil, status.Errorf(codes.Unauthenticated, ErrUnauthenticated.Error())
 		}
 	} else {
 		if ent_s, err = self.storage.GetEntityByName(ent_name.GetValue()); err != nil {
-			self.logger.WithError(err).Warningf("failed to find entity by name in storage")
+			self.logger.WithError(err).Errorf("failed to find entity by name in storage")
 			return nil, status.Errorf(codes.Unauthenticated, ErrUnauthenticated.Error())
 		}
 	}

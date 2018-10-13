@@ -18,14 +18,14 @@ func (self *MetathingsIdentitydService) RemoveRoleFromGroup(ctx context.Context,
 	var err error
 
 	if err = req.Validate(); err != nil {
-		self.logger.WithError(err).Errorf("failed to validate request data")
+		self.logger.WithError(err).Warningf("failed to validate request data")
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 
 	grp := req.GetGroup()
 	if grp == nil || grp.GetId() == nil || grp.GetId().GetValue() == "" {
 		err = errors.New("group.id is empty")
-		self.logger.WithError(err).Errorf("failed to validate request data")
+		self.logger.WithError(err).Warningf("failed to validate request data")
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 	grp_id_str := grp.GetId().GetValue()
@@ -33,7 +33,7 @@ func (self *MetathingsIdentitydService) RemoveRoleFromGroup(ctx context.Context,
 	role := req.GetRole()
 	if role == nil || role.GetId() == nil || role.GetId().GetValue() == "" {
 		err = errors.New("role.id is empty")
-		self.logger.WithError(err).Errorf("failed to validate request data")
+		self.logger.WithError(err).Warningf("failed to validate request data")
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 	role_id_str := role.GetId().GetValue()
@@ -45,7 +45,7 @@ func (self *MetathingsIdentitydService) RemoveRoleFromGroup(ctx context.Context,
 
 	if !role_in_group(g, role_id_str) {
 		err = errors.New("role not in group")
-		self.logger.WithError(err).Errorf("failed to get role in storage")
+		self.logger.WithError(err).Warningf("failed to get role in storage")
 		return nil, status.Errorf(codes.FailedPrecondition, err.Error())
 	}
 

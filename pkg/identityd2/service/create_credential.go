@@ -18,7 +18,7 @@ func (self *MetathingsIdentitydService) CreateCredential(ctx context.Context, re
 	var err error
 
 	if err = req.Validate(); err != nil {
-		self.logger.WithError(err).Errorf("failed to validate request data")
+		self.logger.WithError(err).Warningf("failed to validate request data")
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 
@@ -30,7 +30,7 @@ func (self *MetathingsIdentitydService) CreateCredential(ctx context.Context, re
 	dom := req.GetDomain()
 	if dom.GetId() == nil || dom.GetId().GetValue() == "" {
 		err = errors.New("domain.id is empty")
-		self.logger.WithError(err).Errorf("failed to validate request data")
+		self.logger.WithError(err).Warningf("failed to validate request data")
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 	dom_id_str := dom.GetId().GetValue()
@@ -39,7 +39,7 @@ func (self *MetathingsIdentitydService) CreateCredential(ctx context.Context, re
 	for _, r := range req.GetRoles() {
 		if r.GetId() == nil || r.GetId().GetValue() == "" {
 			err = errors.New("role.id is empty")
-			self.logger.WithError(err).Errorf("failed to validate request data")
+			self.logger.WithError(err).Warningf("failed to validate request data")
 			return nil, status.Errorf(codes.InvalidArgument, err.Error())
 		}
 
@@ -51,7 +51,7 @@ func (self *MetathingsIdentitydService) CreateCredential(ctx context.Context, re
 	ent := req.GetEntity()
 	if ent.GetId() == nil || ent.GetId().GetValue() == "" {
 		err = errors.New("enity.id is empty")
-		self.logger.WithError(err).Errorf("failed to validate request data")
+		self.logger.WithError(err).Warningf("failed to validate request data")
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 	ent_id_str := ent.GetId().GetValue()

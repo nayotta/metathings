@@ -16,7 +16,7 @@ func (self *MetathingsIdentitydService) CreateGroup(ctx context.Context, req *pb
 	var err error
 
 	if err = req.Validate(); err != nil {
-		self.logger.WithError(err).Errorf("failed to validate request data")
+		self.logger.WithError(err).Warningf("failed to validate request data")
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 
@@ -28,7 +28,7 @@ func (self *MetathingsIdentitydService) CreateGroup(ctx context.Context, req *pb
 	dom := req.GetDomain()
 	if dom == nil || dom.GetId() == nil || dom.GetId().GetValue() == "" {
 		err = errors.New("domain.id is empty")
-		self.logger.WithError(err).Errorf("failed to validate request data")
+		self.logger.WithError(err).Warningf("failed to validate request data")
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 	dom_id_str := dom.GetId().GetValue()
