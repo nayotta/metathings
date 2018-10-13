@@ -59,7 +59,7 @@ import "issue_token_by_password.proto";
 import "issue_token_by_token.proto";
 import "revoke_token.proto";
 import "validate_token.proto";
-import "get_token_by_text.proto";
+import "check_token.proto";
 
 service IdentitydService {
 	rpc CreateDomain(CreateDomainRequest) returns (CreateDomainResponse) {}
@@ -115,6 +115,6 @@ service IdentitydService {
 	rpc IssueTokenByPassword(IssueTokenByPasswordRequest) returns (IssueTokenByPasswordResponse) {}
 	rpc IssueTokenByToken(IssueTokenByTokenRequest) returns (IssueTokenByTokenResponse) {}
 	rpc RevokeToken(RevokeTokenRequest) returns (google.protobuf.Empty) {}
-	rpc ValidateToken(ValidateTokenRequest) returns (google.protobuf.Empty) {}
-	rpc GetTokenByText(GetTokenByTextRequest) returns (GetTokenByTextResponse) {}
+	rpc ValidateToken(ValidateTokenRequest) returns (ValidateTokenResponse) {}
+	rpc CheckToken(CheckTokenRequest) returns (google.protobuf.Empty) {}
 }

@@ -6,10 +6,6 @@ import "github.com/mwitkow/go-proto-validators/validator.proto";
 
 import "model.proto";
 
-message ValidateTokenRequest {
+message CheckTokenRequest {
 	OpToken token = 1 [(validator.field) = {msg_exists: true}];
-}
-
-message ValidateTokenResponse {
-	Token token = 1;
 }

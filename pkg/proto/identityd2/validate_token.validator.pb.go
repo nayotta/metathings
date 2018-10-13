@@ -25,3 +25,11 @@ func (this *ValidateTokenRequest) Validate() error {
 	}
 	return nil
 }
+func (this *ValidateTokenResponse) Validate() error {
+	if this.Token != nil {
+		if err := go_proto_validators.CallValidatorIfExists(this.Token); err != nil {
+			return go_proto_validators.FieldError("Token", err)
+		}
+	}
+	return nil
+}

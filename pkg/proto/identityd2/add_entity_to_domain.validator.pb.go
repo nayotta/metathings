@@ -10,6 +10,7 @@ It is generated from these files:
 	add_policy_to_role.proto
 	add_role_to_entity.proto
 	add_role_to_group.proto
+	check_token.proto
 	create_credential.proto
 	create_domain.proto
 	create_entity.proto
@@ -26,7 +27,6 @@ It is generated from these files:
 	get_group.proto
 	get_policy.proto
 	get_role.proto
-	get_token_by_text.proto
 	group.proto
 	issue_token_by_credential.proto
 	issue_token_by_password.proto
@@ -64,6 +64,7 @@ It has these top-level messages:
 	AddPolicyToRoleRequest
 	AddRoleToEntityRequest
 	AddRoleToGroupRequest
+	CheckTokenRequest
 	CreateCredentialRequest
 	CreateCredentialResponse
 	CreateDomainRequest
@@ -91,8 +92,6 @@ It has these top-level messages:
 	GetPolicyResponse
 	GetRoleRequest
 	GetRoleResponse
-	GetTokenByTextRequest
-	GetTokenByTextResponse
 	IssueTokenByCredentialRequest
 	IssueTokenByCredentialResponse
 	IssueTokenByPasswordRequest
@@ -152,6 +151,7 @@ It has these top-level messages:
 	ShowEntityResponse
 	ShowGroupsResponse
 	ValidateTokenRequest
+	ValidateTokenResponse
 */
 package identityd2
 
