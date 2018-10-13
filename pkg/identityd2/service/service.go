@@ -140,10 +140,6 @@ func (self *MetathingsIdentitydService) RevokeToken(context.Context, *pb.RevokeT
 	panic("unimplemented")
 }
 
-func (self *MetathingsIdentitydService) ValidateToken(context.Context, *pb.ValidateTokenRequest) (*empty.Empty, error) {
-	panic("unimplemented")
-}
-
-func (self *MetathingsIdentitydService) GetTokenByText(context.Context, *pb.GetTokenByTextRequest) (*pb.GetTokenByTextResponse, error) {
+func (self *MetathingsIdentitydService) CheckToken(context.Context, *pb.CheckTokenRequest) (*empty.Empty, error) {
 	panic("unimplemented")
 }
