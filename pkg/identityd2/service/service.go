@@ -12,7 +12,7 @@ import (
 )
 
 type MetathingsIdentitydServiceOption struct {
-	TokenExpireInterval time.Duration
+	TokenExpire time.Duration
 
 	StorageDriver string
 	StorageUri    string
@@ -125,10 +125,6 @@ func (self *MetathingsIdentitydService) ListCredentials(context.Context, *pb.Lis
 }
 
 func (self *MetathingsIdentitydService) ListCredentialsForEntity(context.Context, *pb.ListCredentialsForEntityRequest) (*pb.ListCredentialsForEntityResponse, error) {
-	panic("unimplemented")
-}
-
-func (self *MetathingsIdentitydService) IssueTokenByCredential(context.Context, *pb.IssueTokenByCredentialRequest) (*pb.IssueTokenByCredentialResponse, error) {
 	panic("unimplemented")
 }
 

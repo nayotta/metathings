@@ -3,10 +3,12 @@ package metathings_identityd2_service
 import (
 	"encoding/json"
 	"math/rand"
+	"time"
 
 	"github.com/golang/protobuf/ptypes/wrappers"
 	"golang.org/x/crypto/bcrypt"
 
+	id_helper "github.com/nayotta/metathings/pkg/common/id"
 	pb_helper "github.com/nayotta/metathings/pkg/common/protobuf"
 	storage "github.com/nayotta/metathings/pkg/identityd2/storage"
 	pb "github.com/nayotta/metathings/pkg/proto/identityd2"
@@ -16,6 +18,22 @@ const (
 	SECRET_LENGTH  = 32
 	SECRET_LETTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 )
+
+func new_token(dom_id, ent_id, cred_id *string, expire time.Duration) *storage.Token {
+	id := id_helper.NewId()
+	now := time.Now()
+	expires_at := now.Add(expire)
+
+	return &storage.Token{
+		Id:           &id,
+		DomainId:     dom_id,
+		EntityId:     ent_id,
+		CredentialId: cred_id,
+		IssuedAt:     &now,
+		ExpiresAt:    &expires_at,
+		Text:         &id, // token text is token id now.
+	}
+}
 
 func generate_secret() string {
 	buf := make([]byte, SECRET_LENGTH)
