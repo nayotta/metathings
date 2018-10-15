@@ -175,6 +175,7 @@ type Storage interface {
 	GetEntity(id string) (*Entity, error)
 	GetEntityByName(name string) (*Entity, error)
 	ListEntities(*Entity) ([]*Entity, error)
+	ListEntitiesByDomainId(dom_id string) ([]*Entity, error)
 	AddRoleToEntity(entity_id, role_id string) error
 	RemoveRoleFromEntity(entity_id, role_id string) error
 

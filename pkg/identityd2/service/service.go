@@ -24,10 +24,6 @@ type MetathingsIdentitydService struct {
 	storage storage.Storage
 }
 
-func (self *MetathingsIdentitydService) DeleteDomain(context.Context, *pb.DeleteDomainRequest) (*empty.Empty, error) {
-	panic("unimplemented")
-}
-
 func (self *MetathingsIdentitydService) PatchDomain(context.Context, *pb.PatchDomainRequest) (*pb.PatchDomainResponse, error) {
 	panic("unimplemented")
 }
