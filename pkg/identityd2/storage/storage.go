@@ -198,6 +198,7 @@ type Storage interface {
 	DeleteToken(id string) error
 	GetTokenByText(text string) (*Token, error)
 	GetToken(id string) (*Token, error)
+	ListTokens(*Token) ([]*Token, error)
 }
 
 func NewStorage(driver, uri string, args ...interface{}) (Storage, error) {
