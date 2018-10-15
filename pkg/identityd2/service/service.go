@@ -64,10 +64,6 @@ func (self *MetathingsIdentitydService) ListRolesForEntity(context.Context, *pb.
 	panic("unimplemented")
 }
 
-func (self *MetathingsIdentitydService) DeleteEntity(context.Context, *pb.DeleteEntityRequest) (*empty.Empty, error) {
-	panic("unimplemented")
-}
-
 func (self *MetathingsIdentitydService) PatchEntity(context.Context, *pb.PatchEntityRequest) (*pb.PatchEntityResponse, error) {
 	panic("unimplemented")
 }
