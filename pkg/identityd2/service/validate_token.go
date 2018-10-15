@@ -37,7 +37,7 @@ func (self *MetathingsIdentitydService) ValidateToken(ctx context.Context, req *
 		Token: copy_token(t),
 	}
 
-	self.logger.WithField("token_text", tkn_txt_str).Infof("validate token")
+	self.logger.WithField("token_text", tkn_txt_str).Debugf("validate token")
 
 	return res, nil
 }

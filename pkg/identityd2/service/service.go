@@ -127,11 +127,3 @@ func (self *MetathingsIdentitydService) ListCredentials(context.Context, *pb.Lis
 func (self *MetathingsIdentitydService) ListCredentialsForEntity(context.Context, *pb.ListCredentialsForEntityRequest) (*pb.ListCredentialsForEntityResponse, error) {
 	panic("unimplemented")
 }
-
-func (self *MetathingsIdentitydService) RevokeToken(context.Context, *pb.RevokeTokenRequest) (*empty.Empty, error) {
-	panic("unimplemented")
-}
-
-func (self *MetathingsIdentitydService) CheckToken(context.Context, *pb.CheckTokenRequest) (*empty.Empty, error) {
-	panic("unimplemented")
-}
