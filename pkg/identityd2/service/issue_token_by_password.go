@@ -57,15 +57,13 @@ func (self *MetathingsIdentitydService) IssueTokenByPassword(ctx context.Context
 
 	if ent_id != nil {
 		if ent_s, err = self.storage.GetEntity(ent_id.GetValue()); err != nil {
-			err = ErrUnauthenticated
 			self.logger.WithError(err).Errorf("failed to find entity by id in storage")
-			return nil, status.Errorf(codes.Unauthenticated, err.Error())
+			return nil, status.Errorf(codes.Unauthenticated, ErrUnauthenticated.Error())
 		}
 	} else {
 		if ent_s, err = self.storage.GetEntityByName(ent_name.GetValue()); err != nil {
-			err = ErrUnauthenticated
 			self.logger.WithError(err).Errorf("failed to find entity by name in storage")
-			return nil, status.Errorf(codes.Unauthenticated, err.Error())
+			return nil, status.Errorf(codes.Unauthenticated, ErrUnauthenticated.Error())
 		}
 	}
 

@@ -15,8 +15,7 @@ import (
 )
 
 const (
-	SECRET_LENGTH  = 32
-	SECRET_LETTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+	NONEXPIRATION = 100 * 365 * 24 * time.Hour // 100 years
 )
 
 func new_token(dom_id, ent_id, cred_id *string, expire time.Duration) *storage.Token {
@@ -34,6 +33,11 @@ func new_token(dom_id, ent_id, cred_id *string, expire time.Duration) *storage.T
 		Text:         &id, // token text is token id now.
 	}
 }
+
+const (
+	SECRET_LENGTH  = 32
+	SECRET_LETTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+)
 
 func generate_secret() string {
 	buf := make([]byte, SECRET_LENGTH)

@@ -128,10 +128,6 @@ func (self *MetathingsIdentitydService) ListCredentialsForEntity(context.Context
 	panic("unimplemented")
 }
 
-func (self *MetathingsIdentitydService) IssueTokenByToken(context.Context, *pb.IssueTokenByTokenRequest) (*pb.IssueTokenByTokenResponse, error) {
-	panic("unimplemented")
-}
-
 func (self *MetathingsIdentitydService) RevokeToken(context.Context, *pb.RevokeTokenRequest) (*empty.Empty, error) {
 	panic("unimplemented")
 }
