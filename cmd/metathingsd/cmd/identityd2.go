@@ -1,19 +1,14 @@
 package cmd
 
 import (
-	"context"
-	"net"
 	"time"
 
-	"github.com/grpc-ecosystem/go-grpc-middleware/auth"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"go.uber.org/fx"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials"
 
+	cmd_contrib "github.com/nayotta/metathings/cmd/contrib"
 	cmd_helper "github.com/nayotta/metathings/pkg/common/cmd"
-	log_helper "github.com/nayotta/metathings/pkg/common/log"
 	service "github.com/nayotta/metathings/pkg/identityd2/service"
 	storage "github.com/nayotta/metathings/pkg/identityd2/storage"
 	pb "github.com/nayotta/metathings/pkg/proto/identityd2"
@@ -21,10 +16,15 @@ import (
 
 type Identityd2Option struct {
 	_rootOption `mapstructure:",squash"`
-	Listen      string
-	CertFile    string
-	KeyFile     string
-	Storage     cmd_helper.StorageOption
+	// expose detail for viper to unmarshal config file.
+	cmd_contrib.ListenOption              `mapstructure:",squash"`
+	cmd_contrib.TransportCredentialOption `mapstructure:",squash"`
+	cmd_contrib.StorageOption             `mapstructure:",squash"`
+	cmd_contrib.LoggerOption              `mapstructure:",squash"`
+}
+
+func NewIdentityd2Option() *Identityd2Option {
+	return &Identityd2Option{}
 }
 
 var (
@@ -40,12 +40,12 @@ var (
 				return
 			}
 
-			opt_t := &Identityd2Option{}
+			opt_t := NewIdentityd2Option()
 			cmd_helper.UnmarshalConfig(opt_t)
 			root_opt = &opt_t._rootOption
 
-			if opt_t.Listen == "" {
-				opt_t.Listen = identityd2_opt.Listen
+			if opt_t.GetListen() == "" {
+				opt_t.SetListen(identityd2_opt.GetListen())
 			}
 
 			if opt_t.Storage.Driver == "" {
@@ -56,16 +56,15 @@ var (
 				opt_t.Storage.Uri = identityd2_opt.Storage.Uri
 			}
 
-			if opt_t.CertFile == "" {
-				opt_t.CertFile = identityd2_opt.CertFile
+			if opt_t.GetCertFile() == "" {
+				opt_t.SetCertFile(identityd2_opt.GetCertFile())
 			}
 
-			if opt_t.KeyFile == "" {
-				opt_t.KeyFile = identityd2_opt.KeyFile
+			if opt_t.GetKeyFile() == "" {
+				opt_t.SetKeyFile(identityd2_opt.GetKeyFile())
 			}
 
 			identityd2_opt = opt_t
-
 			identityd2_opt.Service = "identityd2"
 			identityd2_opt.Stage = cmd_helper.GetStageFromEnv()
 		}),
@@ -73,68 +72,22 @@ var (
 	}
 )
 
-func GetIdentityd2Option() *Identityd2Option {
-	return identityd2_opt
+func GetIdentityd2Options() (
+	*Identityd2Option,
+	cmd_contrib.ListenOptioner,
+	cmd_contrib.TransportCredentialOptioner,
+	cmd_contrib.StorageOptioner,
+	cmd_contrib.LoggerOptioner,
+) {
+	return identityd2_opt,
+		identityd2_opt,
+		identityd2_opt,
+		identityd2_opt,
+		identityd2_opt
 }
 
-func NewListenter(opt *Identityd2Option) (net.Listener, error) {
-	return net.Listen("tcp", opt.Listen)
-}
-
-func NewCredentials(opt *Identityd2Option) (credentials.TransportCredentials, error) {
-	if opt.CertFile != "" && opt.KeyFile != "" {
-		return credentials.NewServerTLSFromFile(opt.CertFile, opt.KeyFile)
-	}
-	return nil, nil
-}
-
-func NewLogger(opt *Identityd2Option) (log.FieldLogger, error) {
-	return log_helper.NewLogger("identityd2", opt.Log.Level)
-}
-
-type NewGrpcServerParams struct {
-	fx.In
-
-	Opt   *Identityd2Option
-	Lis   net.Listener
-	Creds credentials.TransportCredentials
-}
-
-func NewGrpcServer(params NewGrpcServerParams, lc fx.Lifecycle, logger log.FieldLogger) *grpc.Server {
-
-	opts := []grpc.ServerOption{
-		grpc.UnaryInterceptor(grpc_auth.UnaryServerInterceptor(nil)),
-		grpc.StreamInterceptor(grpc_auth.StreamServerInterceptor(nil)),
-	}
-
-	if params.Creds != nil {
-		opts = append(opts, grpc.Creds(params.Creds))
-	}
-
-	s := grpc.NewServer(opts...)
-
-	lc.Append(fx.Hook{
-		OnStart: func(context.Context) error {
-			go s.Serve(params.Lis)
-			logger.Infof("metathings identityd2 service start")
-			return nil
-		},
-		OnStop: func(context.Context) error {
-			s.Stop()
-			logger.Infof("metathings identityd2 service stop")
-			return nil
-		},
-	})
-
-	return s
-}
-
-func NewStorage(opt *Identityd2Option, logger log.FieldLogger) (storage.Storage, error) {
-	return storage.NewStorage(opt.Storage.Driver, opt.Storage.Uri, "logger", logger)
-}
-
-func Register(server *grpc.Server, service *service.MetathingsIdentitydService) {
-	pb.RegisterIdentitydServiceServer(server, service)
+func NewStorage(opt cmd_contrib.StorageOptioner, logger log.FieldLogger) (storage.Storage, error) {
+	return storage.NewStorage(opt.GetDriver(), opt.GetUri(), "logger", logger)
 }
 
 func NewMetathingsIdentitydServiceOption(opt *Identityd2Option) *service.MetathingsIdentitydServiceOption {
@@ -146,17 +99,17 @@ func NewMetathingsIdentitydServiceOption(opt *Identityd2Option) *service.Metathi
 func runIdentityd2() error {
 	app := fx.New(
 		fx.Provide(
-			GetIdentityd2Option,
-			NewCredentials,
-			NewLogger,
-			NewListenter,
-			NewGrpcServer,
+			GetIdentityd2Options,
+			cmd_contrib.NewTransportCredentials,
+			cmd_contrib.NewLogger("identityd2"),
+			cmd_contrib.NewListener,
+			cmd_contrib.NewGrpcServer,
 			NewStorage,
 			NewMetathingsIdentitydServiceOption,
 			service.NewMetathingsIdentitydService,
 		),
 		fx.Invoke(
-			Register,
+			pb.RegisterIdentitydServiceServer,
 		),
 	)
 
@@ -171,15 +124,15 @@ func runIdentityd2() error {
 }
 
 func init() {
-	identityd2_opt = &Identityd2Option{}
+	identityd2_opt = NewIdentityd2Option()
 
 	flags := identityd2Cmd.Flags()
 
-	flags.StringVarP(&identityd2_opt.Listen, "listen", "l", "127.0.0.1:5000", "Metathings Identity2 Service listening address")
+	flags.StringVarP(identityd2_opt.GetListenP(), "listen", "l", "127.0.0.1:5000", "Metathings Identity2 Service listening address")
 	flags.StringVar(&identityd2_opt.Storage.Driver, "storage-driver", "sqlite3", "Metathings Identity2 Service Storage Driver")
 	flags.StringVar(&identityd2_opt.Storage.Uri, "storage-uri", "", "Metathings Identity2 Service Storage URI")
-	flags.StringVar(&identityd2_opt.CertFile, "cert-file", "certs/identityd2-server.crt", "Metathings Identity2 Service Credential File")
-	flags.StringVar(&identityd2_opt.KeyFile, "key-file", "certs/identityd2-server.key", "Metathings Identity2 Service Key File")
+	flags.StringVar(identityd2_opt.GetCertFileP(), "cert-file", "certs/identityd2-server.crt", "Metathings Identity2 Service Credential File")
+	flags.StringVar(identityd2_opt.GetKeyFileP(), "key-file", "certs/identityd2-server.key", "Metathings Identity2 Service Key File")
 
 	RootCmd.AddCommand(identityd2Cmd)
 }

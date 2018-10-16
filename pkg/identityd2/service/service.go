@@ -109,7 +109,7 @@ func NewMetathingsIdentitydService(
 	opt *MetathingsIdentitydServiceOption,
 	logger log.FieldLogger,
 	storage storage.Storage,
-) (*MetathingsIdentitydService, error) {
+) (pb.IdentitydServiceServer, error) {
 	return &MetathingsIdentitydService{
 		opt:     opt,
 		logger:  logger,
