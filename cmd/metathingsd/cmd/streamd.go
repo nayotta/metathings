@@ -17,7 +17,7 @@ import (
 type _streamdOptions struct {
 	_rootOptions  `mapstructure:",squash"`
 	Listen        string
-	Storage       cmd_helper.StorageOptions
+	Storage       cmd_helper.StorageOption
 	ServiceConfig cmd_helper.ServiceConfigOptions `mapstructure:"service_config"`
 }
 

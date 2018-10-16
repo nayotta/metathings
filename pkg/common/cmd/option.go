@@ -4,16 +4,16 @@ import (
 	constant_helper "github.com/nayotta/metathings/pkg/common/constant"
 )
 
-type LogOptions struct {
+type LogOption struct {
 	Level string
 }
 
-type ApplicationCredentialOptions struct {
+type ApplicationCredentialOption struct {
 	Id     string
 	Secret string
 }
 
-type TokenOptions struct {
+type TokenOption struct {
 	Token string
 }
 
@@ -31,12 +31,12 @@ type ServiceConfigOptions struct {
 	Metathingsd ServiceConfigOption
 }
 
-type StorageOptions struct {
+type StorageOption struct {
 	Driver string
 	Uri    string
 }
 
-type EndpointOptions struct {
+type EndpointOption struct {
 	Type string
 	Host string
 }
@@ -45,9 +45,9 @@ type RootOptions struct {
 	Config                string
 	Stage                 string
 	Verbose               bool
-	Log                   LogOptions
-	ApplicationCredential ApplicationCredentialOptions `mapstructure:"application_credential"`
-	ServiceConfig         ServiceConfigOptions         `mapstructure:"service_config"`
+	Log                   LogOption
+	ApplicationCredential ApplicationCredentialOption `mapstructure:"application_credential"`
+	ServiceConfig         ServiceConfigOptions        `mapstructure:"service_config"`
 }
 
 func InitServiceConfigOptions(dst, src *ServiceConfigOptions) {

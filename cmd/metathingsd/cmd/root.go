@@ -14,13 +14,22 @@ const (
 	METATHINGSD_PREFIX = "mtd"
 )
 
+// DEPRECATED(Peer): rename to _rootOption
 type _rootOptions struct {
 	cmd_helper.RootOptions `mapstructure:",squash"`
 	Service                string
 }
 
+type _rootOption struct {
+	cmd_helper.RootOptions `mapstructure:",squash"`
+	Service                string
+}
+
 var (
+	// DEPRECATED(Peer): rename to root_opt
 	root_opts *_rootOptions
+
+	root_opt *_rootOption
 )
 
 var (

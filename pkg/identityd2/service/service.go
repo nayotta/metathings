@@ -13,13 +13,10 @@ import (
 
 type MetathingsIdentitydServiceOption struct {
 	TokenExpire time.Duration
-
-	StorageDriver string
-	StorageUri    string
 }
 
 type MetathingsIdentitydService struct {
-	opt     MetathingsIdentitydServiceOption
+	opt     *MetathingsIdentitydServiceOption
 	logger  log.FieldLogger
 	storage storage.Storage
 }
@@ -92,6 +89,10 @@ func (self *MetathingsIdentitydService) ShowGroups(context.Context, *empty.Empty
 	panic("unimplemented")
 }
 
+func (self *MetathingsIdentitydService) PatchCredential(context.Context, *pb.PatchCredentialRequest) (*pb.PatchCredentialResponse, error) {
+	panic("unimplemented")
+}
+
 func (self *MetathingsIdentitydService) GetCredential(context.Context, *pb.GetCredentialRequest) (*pb.GetCredentialResponse, error) {
 	panic("unimplemented")
 }
@@ -102,4 +103,16 @@ func (self *MetathingsIdentitydService) ListCredentials(context.Context, *pb.Lis
 
 func (self *MetathingsIdentitydService) ListCredentialsForEntity(context.Context, *pb.ListCredentialsForEntityRequest) (*pb.ListCredentialsForEntityResponse, error) {
 	panic("unimplemented")
+}
+
+func NewMetathingsIdentitydService(
+	opt *MetathingsIdentitydServiceOption,
+	logger log.FieldLogger,
+	storage storage.Storage,
+) (*MetathingsIdentitydService, error) {
+	return &MetathingsIdentitydService{
+		opt:     opt,
+		logger:  logger,
+		storage: storage,
+	}, nil
 }

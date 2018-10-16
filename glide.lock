@@ -1,5 +1,5 @@
-hash: a929e332895265287e9dd95e579c6dee2b129680bb7d177686f1216f09433dd2
-updated: 2018-09-25T14:13:14.996374+08:00
+hash: 7dbfba9a22ef9370722852d19dfd537340edb8c2e6792c9f023c44cd5d3bf99d
+updated: 2018-10-15T16:16:52.056774+08:00
 imports:
 - name: github.com/bsm/sarama-cluster
   version: c618e605e15c0d7535f6c96ff8efbb0dba4fd66c
@@ -153,6 +153,8 @@ imports:
   - ast
   - parse
   - pm
+- name: go.uber.org/fx
+  version: 6244a3ed900ddd4deac96447f2c988d4722ad890
 - name: gobot.io/x/gobot
   version: ed531980b4efe72c4fd9e768171855de3af2d718
   subpackages:
@@ -164,6 +166,8 @@ imports:
 - name: golang.org/x/crypto
   version: d6449816ce06963d9d136eee5a56fca5b0616e7e
   subpackages:
+  - bcrypt
+  - blowfish
   - ssh/terminal
 - name: golang.org/x/net
   version: 500e7a4f953ddaf55d316b4d3adc516aa0379622

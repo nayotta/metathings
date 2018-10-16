@@ -52,7 +52,9 @@ import:
   subpackages:
   - drivers/gpio
   - platforms/raspi
-- package: golang.org/x/net/context
+- package: golang.org/x/net
+  subpackages:
+  - context
 - package: google.golang.org/grpc
   version: ~1.15.0
   subpackages:
@@ -60,6 +62,8 @@ import:
   - keepalive
   - metadata
   - status
+- package: go.uber.org/fx
+  version: ^1
 testImport:
 - package: github.com/stretchr/testify
   version: ~1.2.2
