@@ -6,8 +6,10 @@ import (
 	"github.com/golang/protobuf/ptypes/timestamp"
 )
 
+var timeNow = time.Now
+
 func Now() timestamp.Timestamp {
-	now := time.Now()
+	now := timeNow()
 	return FromTime(now)
 }
 

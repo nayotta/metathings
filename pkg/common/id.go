@@ -3,5 +3,6 @@ package common
 import uuid "github.com/satori/go.uuid"
 
 func NewId() string {
-	return uuid.NewV4().String()
+	uuid_ret, _ := uuid.NewV4()
+	return uuid_ret.String()
 }

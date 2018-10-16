@@ -5,5 +5,5 @@ package ai.metathings.state;
 enum EntityState {
 	ENTITY_STATE_UNKNOWN = 0;
 	ENTITY_STATE_ONLINE = 1;
-	ENTITY_STATE_OFFLIEN = 2;
+	ENTITY_STATE_OFFLINE = 2;
 }
