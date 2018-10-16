@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package ai.metathings.service.identityd2;
+
+import "google/protobuf/wrappers.proto";
+
+import "model.proto";
+
+message ListRolesRequest {
+	reserved "description", "policies", "extra";
+
+	google.protobuf.StringValue id = 1;
+	OpDomain domain = 2;
+	google.protobuf.StringValue name = 3;
+	google.protobuf.StringValue alias = 4;
+}
+
+message ListRolesResponse {
+	repeated Policy policies = 1;
+}

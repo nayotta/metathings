@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package ai.metathings.service.identityd2;
+
+import "google/protobuf/wrappers.proto";
+
+import "github.com/mwitkow/go-proto-validators/validator.proto";
+
+import "model.proto";
+
+message CreateGroupRequest {
+	reserved "roles", "entities";
+
+	google.protobuf.StringValue id = 1 [(validator.field) = {msg_exists: true}];
+	OpDomain domain = 2 [(validator.field) = {msg_exists: true}];
+	google.protobuf.StringValue name = 5 [(validator.field) = {msg_exists: true}];
+	google.protobuf.StringValue alias = 6 [(validator.field) = {msg_exists: true}];
+	google.protobuf.StringValue description = 7;
+	map<string, google.protobuf.StringValue> extra = 8;
+}
+
+message CreateGroupResponse {
+	Group group = 1;
+}

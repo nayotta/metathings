@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package ai.metathings.service.identityd2;
+
+import "google/protobuf/wrappers.proto";
+
+import "github.com/mwitkow/go-proto-validators/validator.proto";
+
+import "model.proto";
+
+message CreateEntityRequest {
+	google.protobuf.StringValue id = 1;
+	repeated OpDomain domains = 2;
+	repeated OpGroup groups = 3;
+	repeated OpRole roles = 4;
+	google.protobuf.StringValue name = 5 [(validator.field) = {msg_exists: true}];
+	google.protobuf.StringValue alias = 6 [(validator.field) = {msg_exists: true}];
+	google.protobuf.StringValue password = 7;
+	map<string, google.protobuf.StringValue> extra = 8;
+}
+
+message CreateEntityResponse {
+	Entity entity = 1;
+}

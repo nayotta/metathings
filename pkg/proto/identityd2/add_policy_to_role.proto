@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package ai.metathings.service.identityd2;
+
+import "github.com/mwitkow/go-proto-validators/validator.proto";
+
+import "model.proto";
+
+message AddPolicyToRoleRequest {
+	OpRole role = 1 [(validator.field) = {msg_exists: true}];
+	OpPolicy policy = 2 [(validator.field) = {msg_exists: true}];
+}

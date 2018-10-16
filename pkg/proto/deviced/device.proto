@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package ai.metathings.service.deviced;
+
+import "google/protobuf/wrappers.proto";
+
+import "github.com/nayotta/metathings/pkg/proto/constant/state/device.proto";
+import "github.com/nayotta/metathings/pkg/proto/constant/type/device.proto";
+
+import "module.proto";
+
+message Device {
+	string id = 1;
+	ai.metathings.constant.type.DeviceType type = 2;
+	string name = 3;
+	string project_id = 4;
+	repeated string owners = 5;
+	repeated string groups = 6;
+	ai.metathings.constant.state.DeviceState state = 7;
+	map<string, Module> modules = 8;
+}
+
+message OpDevice {
+	google.protobuf.StringValue id = 1;
+	ai.metathings.constant.type.DeviceType type = 2;
+	google.protobuf.StringValue name = 3;
+	google.protobuf.StringValue project_id = 4;
+	repeated google.protobuf.StringValue owners = 5;
+	repeated google.protobuf.StringValue groups = 6;
+	ai.metathings.constant.state.DeviceState state = 7;
+	map<string, OpModule> modules = 8;
+}

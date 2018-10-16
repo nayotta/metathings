@@ -1,0 +1,148 @@
+syntax = "proto3";
+
+package ai.metathings.service.identityd2;
+
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/timestamp.proto";
+
+message Domain {
+	string id = 1;
+	string name = 2;
+	string alias = 3;
+	Domain parent = 4;
+	repeated Domain children = 5;
+	map<string, string> extra = 6;
+}
+
+message OpDomain {
+	google.protobuf.StringValue id = 1;
+	google.protobuf.StringValue name = 2;
+	google.protobuf.StringValue alias = 3;
+	OpDomain parent = 4;
+	repeated OpDomain children = 5;
+	map<string, google.protobuf.StringValue> extra = 6;
+}
+
+message Policy {
+	string id = 1;
+	Role role = 2;
+	string rule = 3;
+	string description = 4;
+}
+
+message OpPolicy {
+	google.protobuf.StringValue id = 1;
+	OpRole role = 2;
+	google.protobuf.StringValue rule = 3;
+	google.protobuf.StringValue description = 4;
+}
+
+message Role {
+	string id = 1;
+	Domain domain = 2;
+	string name = 3;
+	string alias = 4;
+	string description = 5;
+	repeated Policy policies = 6;
+	map<string, string> extra = 7;
+}
+
+message OpRole {
+	google.protobuf.StringValue id = 1;
+	OpDomain domain = 2;
+	google.protobuf.StringValue name = 3;
+	google.protobuf.StringValue alias = 4;
+	google.protobuf.StringValue description = 5;
+	repeated OpPolicy policies = 6;
+	map<string, google.protobuf.StringValue> extra = 7;
+}
+
+message Entity {
+	string id = 1;
+	repeated Domain domains = 2;
+	repeated Group groups = 3;
+	repeated Role roles = 4;
+	string name = 5;
+	string alias = 6;
+	string password = 7;
+	map<string, string> extra = 8;
+}
+
+message OpEntity {
+	google.protobuf.StringValue id = 1;
+	repeated OpDomain domains = 2;
+	repeated OpGroup groups = 3;
+	repeated OpRole roles = 4;
+	google.protobuf.StringValue name = 5;
+	google.protobuf.StringValue alias = 6;
+	google.protobuf.StringValue password = 7;
+	map<string, google.protobuf.StringValue> extra = 8;
+}
+
+message Group {
+	string id = 1;
+	Domain domain = 2;
+	repeated Role roles = 3;
+	repeated Entity entities = 4;
+	string name = 5;
+	string alias = 6;
+	string description = 7;
+	map<string, string> extra = 8;
+}
+
+message OpGroup {
+	google.protobuf.StringValue id = 1;
+	OpDomain domain = 2;
+	repeated OpRole roles = 3;
+	repeated OpEntity entities = 4;
+	google.protobuf.StringValue name = 5;
+	google.protobuf.StringValue alias = 6;
+	google.protobuf.StringValue description = 7;
+	map<string, google.protobuf.StringValue> extra = 8;
+}
+
+message Credential {
+	string id = 1;
+	Domain domain = 2;
+	repeated Role roles = 3;
+	Entity entity = 4;
+	string name = 5;
+	string alias = 6;
+	string secret = 7;
+	string description = 8;
+	google.protobuf.Timestamp expires_at = 9;
+}
+
+message OpCredential {
+	google.protobuf.StringValue id = 1;
+	OpDomain domain = 2;
+	repeated OpRole roles = 3;
+	OpEntity entity = 4;
+	google.protobuf.StringValue name = 5;
+	google.protobuf.StringValue alias = 6;
+	google.protobuf.StringValue secret = 7;
+	google.protobuf.StringValue description = 8;
+	google.protobuf.Timestamp expires_at = 9;
+}
+
+message Token {
+	string id = 1;
+	google.protobuf.Timestamp issued_at = 2;
+	google.protobuf.Timestamp expires_at = 3;
+	Entity entity = 4;
+	repeated Role roles = 5;
+	Domain domain = 6;
+	Credential credential = 7;
+	string text = 8;
+}
+
+message OpToken {
+	google.protobuf.StringValue id = 1;
+	google.protobuf.Timestamp issued_at = 2;
+	google.protobuf.Timestamp expires_at = 3;
+	OpEntity entity = 4;
+	repeated OpRole roles = 5;
+	OpDomain domain = 6;
+	OpCredential credential = 7;
+	google.protobuf.StringValue text = 8;
+}

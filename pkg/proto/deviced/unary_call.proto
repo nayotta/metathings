@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package ai.metathings.service.deviced;
+
+import "google/protobuf/wrappers.proto";
+
+import "github.com/mwitkow/go-proto-validators/validator.proto";
+
+import "payload.proto";
+
+message UnaryCallRequest {
+	google.protobuf.StringValue device_id = 1;
+	UnaryCallRequestPayload payload = 2 [(validator.field) = {msg_exists: true}];
+}
+
+message UnaryCallResponse {
+	string device_id = 1;
+	UnaryCallResponsePayload payload = 2;
+}

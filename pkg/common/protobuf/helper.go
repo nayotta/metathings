@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/golang/protobuf/ptypes/timestamp"
+	"github.com/golang/protobuf/ptypes/wrappers"
 )
 
 func Now() timestamp.Timestamp {
@@ -20,4 +21,14 @@ func FromTime(t time.Time) timestamp.Timestamp {
 
 func ToTime(t timestamp.Timestamp) time.Time {
 	return time.Unix(t.Seconds, int64(t.Nanos))
+}
+
+func ExtractStringMap(xs map[string]*wrappers.StringValue) map[string]interface{} {
+	ys := make(map[string]interface{})
+
+	for k, v := range xs {
+		ys[k] = v.GetValue()
+	}
+
+	return ys
 }

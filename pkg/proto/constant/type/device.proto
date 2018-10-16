@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+package ai.metathings.constant.type;
+
+enum DeviceType {
+	DEVICE_TYPE_UNKNOWN = 0;
+	DEVICE_TYPE_SIMPLE = 1;
+	DEVICE_TYPE_ADVANCED = 2;
+}
