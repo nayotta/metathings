@@ -33,6 +33,34 @@ func (self *StorageImpl) get_domain(id string) (*Domain, error) {
 	return &dom, nil
 }
 
+func (self *StorageImpl) list_domains(dom *Domain) ([]*Domain, error) {
+	var err error
+	var doms []*Domain
+
+	d := &Domain{}
+	if dom.Id != nil {
+		d.Id = dom.Id
+	}
+	if dom.Name != nil {
+		d.Name = dom.Name
+	}
+	if dom.Alias != nil {
+		d.Alias = dom.Alias
+	}
+	if dom.ParentId != nil {
+		d.ParentId = dom.ParentId
+	}
+	if dom.Parent != nil && dom.Parent.Id != nil {
+		d.ParentId = dom.Parent.Id
+	}
+
+	if err = self.db.Find(&doms, d).Error; err != nil {
+		return nil, err
+	}
+
+	return doms, nil
+}
+
 func (self *StorageImpl) CreateDomain(dom *Domain) (*Domain, error) {
 	var err error
 
@@ -80,12 +108,37 @@ func (self *StorageImpl) GetDomain(id string) (*Domain, error) {
 	return dom, nil
 }
 
-func (self *StorageImpl) ListDomains(*Domain) ([]*Domain, error) {
-	panic("unimplemented")
+func (self *StorageImpl) ListDomains(dom *Domain) ([]*Domain, error) {
+	var doms []*Domain
+	var err error
+
+	if doms, err = self.list_domains(dom); err != nil {
+		self.logger.WithError(err).Debugf("failed to list domains")
+		return nil, err
+	}
+
+	self.logger.Debugf("list domains")
+
+	return doms, nil
 }
 
 func (self *StorageImpl) AddEntityToDomain(domain_id, entity_id string) error {
-	panic("unimplemented")
+	m := &EntityDomainMapping{
+		DomainId: &domain_id,
+		EntityId: &entity_id,
+	}
+
+	if err := self.db.Create(m).Error; err != nil {
+		self.logger.WithError(err).Debugf("failed to add entity to domain")
+		return err
+	}
+
+	self.logger.WithFields(log.Fields{
+		"entity_id": entity_id,
+		"domain_id": domain_id,
+	}).Debugf("add entity to domain")
+
+	return nil
 }
 
 func (self *StorageImpl) RemoveEntityFromDomain(domain_id, entity_id string) error {
