@@ -154,8 +154,44 @@ func (self *StorageImpl) RemoveEntityFromDomain(domain_id, entity_id string) err
 	return nil
 }
 
-func (self *StorageImpl) CreateRole(*Role) (*Role, error) {
-	panic("unimplemented")
+func (self *StorageImpl) get_role(id string) (*Role, error) {
+	var role *Role
+	var policies []*Policy
+	var err error
+
+	if err = self.db.First(&role, "id = ?", id).Error; err != nil {
+		return nil, err
+	}
+
+	role.Domain = &Domain{
+		Id: role.DomainId,
+	}
+
+	if err = self.db.Find(&policies, "role_id = ?", id).Error; err != nil {
+		return nil, err
+	}
+
+	role.Policies = policies
+
+	return role, nil
+}
+
+func (self *StorageImpl) CreateRole(role *Role) (*Role, error) {
+	var err error
+
+	if err = self.db.Create(role).Error; err != nil {
+		self.logger.WithError(err).Debugf("failed to create role")
+		return nil, err
+	}
+
+	if role, err = self.get_role(*role.Id); err != nil {
+		self.logger.WithError(err).Debugf("failed to get role")
+		return nil, err
+	}
+
+	self.logger.WithFields(log.Fields{}).Debugf("create role")
+
+	return role, nil
 }
 
 func (self *StorageImpl) DeleteRole(id string) error {
