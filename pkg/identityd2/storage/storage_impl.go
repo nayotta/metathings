@@ -457,7 +457,17 @@ func (self *StorageImpl) PatchEntity(id string, entity *Entity) (*Entity, error)
 }
 
 func (self *StorageImpl) GetEntity(id string) (*Entity, error) {
-	panic("unimplemented")
+	var ent *Entity
+	var err error
+
+	if ent, err = self.get_entity(id); err != nil {
+		self.logger.WithError(err).Debugf("failed to get entity")
+		return nil, err
+	}
+
+	self.logger.WithField("id", id).Debugf("get entity")
+
+	return ent, nil
 }
 
 func (self *StorageImpl) GetEntityByName(name string) (*Entity, error) {
