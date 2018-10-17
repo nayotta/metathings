@@ -282,12 +282,41 @@ func (self *StorageImpl) ListRoles(role *Role) ([]*Role, error) {
 	return roles, nil
 }
 
+func (self *StorageImpl) get_policy(id string) (*Policy, error) {
+	var plc *Policy
+	var err error
+
+	if err = self.db.First(&plc, "id = ?", id).Error; err != nil {
+		return nil, err
+	}
+
+	return plc, nil
+}
+
 func (self *StorageImpl) GetPolicy(id string) (*Policy, error) {
 	panic("unimplemented")
 }
 
-func (self *StorageImpl) CreatePolicy(*Policy) (*Policy, error) {
-	panic("unimplemented")
+func (self *StorageImpl) CreatePolicy(plc *Policy) (*Policy, error) {
+	var err error
+
+	if err = self.db.Create(plc).Error; err != nil {
+		self.logger.WithError(err).Debugf("failed to create policy")
+		return nil, err
+	}
+
+	if plc, err = self.get_policy(*plc.Id); err != nil {
+		self.logger.WithError(err).Debugf("failed to get policy")
+		return nil, err
+	}
+
+	self.logger.WithFields(log.Fields{
+		"id":      *plc.Id,
+		"role_id": *plc.RoleId,
+		"rule":    *plc.Rule,
+	}).Debugf("create policy")
+
+	return plc, err
 }
 
 func (self *StorageImpl) DeletePolicy(id string) error {
