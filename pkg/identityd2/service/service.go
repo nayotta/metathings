@@ -21,6 +21,13 @@ type MetathingsIdentitydService struct {
 	storage storage.Storage
 }
 
+func (self *MetathingsIdentitydService) AuthFuncOverride(ctx context.Context, fullMethodName string) (context.Context, error) {
+	self.logger.WithFields(log.Fields{
+		"method": fullMethodName,
+	}).Debugf("validate token")
+	return ctx, nil
+}
+
 func (self *MetathingsIdentitydService) PatchDomain(context.Context, *pb.PatchDomainRequest) (*pb.PatchDomainResponse, error) {
 	panic("unimplemented")
 }

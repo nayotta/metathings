@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"context"
 	"time"
 
 	log "github.com/sirupsen/logrus"
@@ -17,6 +18,7 @@ import (
 type Identityd2Option struct {
 	// expose detail for viper to unmarshal config file.
 	cmd_contrib.ServiceBaseOption `mapstructure:",squash"`
+	Init                          int
 }
 
 func NewIdentityd2Option() *Identityd2Option {
@@ -60,11 +62,25 @@ var (
 				opt_t.SetKeyFile(identityd2_opt.GetKeyFile())
 			}
 
+			opt_t.Init = identityd2_opt.Init
+
 			identityd2_opt = opt_t
 			identityd2_opt.SetServiceName("identityd2")
 			identityd2_opt.SetStage(cmd_helper.GetStageFromEnv())
 		}),
-		Run: cmd_helper.Run("identityd2", runIdentityd2),
+		Run: func(cmd *cobra.Command, args []string) {
+			var err error
+
+			if identityd2_opt.Init > 0 {
+				if err = initIdentityd2(); err != nil {
+					log.WithError(err).Fatalf("failed to init identityd2 service")
+				}
+			} else {
+				if err = runIdentityd2(); err != nil {
+					log.WithError(err).Fatalf("failed to run identityd2 service")
+				}
+			}
+		},
 	}
 )
 
@@ -90,6 +106,47 @@ func NewMetathingsIdentitydServiceOption(opt *Identityd2Option) *service.Metathi
 	return &service.MetathingsIdentitydServiceOption{
 		TokenExpire: 1 * time.Hour,
 	}
+}
+
+func initIdentityd2() error {
+	app := fx.New(
+		fx.Provide(
+			GetIdentityd2Options,
+			cmd_contrib.NewLogger("identityd2"),
+			NewIdentityd2Storage,
+		),
+		fx.Invoke(
+			func(lc fx.Lifecycle, stor storage.Storage, logger log.FieldLogger) {
+				lc.Append(fx.Hook{
+					OnStart: func(context.Context) error {
+						id_str := "default"
+						name_str := "default"
+						alias_str := "default"
+						parent_id_str := ""
+
+						dom := &storage.Domain{
+							Id:       &id_str,
+							Name:     &name_str,
+							Alias:    &alias_str,
+							ParentId: &parent_id_str,
+						}
+
+						if _, err := stor.CreateDomain(dom); err != nil {
+							return err
+						}
+
+						return nil
+					},
+				})
+			},
+		),
+	)
+
+	ctx := context.Background()
+	app.Start(ctx)
+	defer app.Stop(ctx)
+
+	return nil
 }
 
 func runIdentityd2() error {
@@ -128,6 +185,8 @@ func init() {
 	flags.StringVar(&identityd2_opt.Storage.Uri, "storage-uri", "", "Metathings Identity2 Service Storage URI")
 	flags.StringVar(identityd2_opt.GetCertFileP(), "cert-file", "certs/identityd2-server.crt", "Metathings Identity2 Service Credential File")
 	flags.StringVar(identityd2_opt.GetKeyFileP(), "key-file", "certs/identityd2-server.key", "Metathings Identity2 Service Key File")
+
+	flags.CountVar(&identityd2_opt.Init, "init", "Initial Metathings Identity2 Service")
 
 	RootCmd.AddCommand(identityd2Cmd)
 }

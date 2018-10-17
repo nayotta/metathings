@@ -95,13 +95,18 @@ func copy_domain_children(xs []*storage.Domain) []*pb.Domain {
 }
 
 func copy_domain(x *storage.Domain) *pb.Domain {
-	y := &pb.Domain{
-		Id:    *x.Id,
-		Name:  *x.Name,
-		Alias: *x.Alias,
-		Parent: &pb.Domain{
+	var parent *pb.Domain = nil
+	if x.Parent != nil {
+		parent = &pb.Domain{
 			Id: *x.Parent.Id,
-		},
+		}
+	}
+
+	y := &pb.Domain{
+		Id:       *x.Id,
+		Name:     *x.Name,
+		Alias:    *x.Alias,
+		Parent:   parent,
 		Children: copy_domain_children(x.Children),
 		Extra:    copy_extra(*x.Extra),
 	}

@@ -9,7 +9,7 @@ type Domain struct {
 
 	Name     *string `gorm:"column:name"`
 	Alias    *string `gorm:"column:alias"`
-	ParentId *string `gorm:"column:domain_id"`
+	ParentId *string `gorm:"column:parent_id"`
 	Extra    *string `gorm:"extra"`
 
 	Parent   *Domain   `gorm:"-"`

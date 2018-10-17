@@ -11,24 +11,83 @@ type StorageImpl struct {
 	logger log.FieldLogger
 }
 
-func (self *StorageImpl) CreateDomain(*Domain) (*Domain, error) {
-	panic("unimplemented")
+func (self *StorageImpl) get_domain(id string) (*Domain, error) {
+	var err error
+	var dom Domain
+
+	if err = self.db.First(&dom, "id = ?", id).Error; err != nil {
+		return nil, err
+	}
+
+	if dom.ParentId != nil && *dom.ParentId != "" {
+		dom.Parent = &Domain{
+			Id: dom.ParentId,
+		}
+	}
+
+	children := []*Domain{}
+	if err = self.db.Select("id").Where("parent_id = ?", id).Find(&children).Error; err != nil {
+		return nil, err
+	}
+
+	return &dom, nil
 }
+
+func (self *StorageImpl) CreateDomain(dom *Domain) (*Domain, error) {
+	var err error
+
+	if err = self.db.Create(dom).Error; err != nil {
+		self.logger.WithError(err).Debugf("failed to create domain")
+		return nil, err
+	}
+
+	if dom, err = self.get_domain(*dom.Id); err != nil {
+		self.logger.WithError(err).Debugf("failed to get domain")
+		return nil, err
+	}
+
+	self.logger.WithField("id", *dom.Id).Debugf("create domain")
+
+	return dom, nil
+}
+
 func (self *StorageImpl) DeleteDomain(id string) error {
-	panic("unimplemented")
+	if err := self.db.Delete(&Domain{}, "id = ?", id).Error; err != nil {
+		self.logger.WithError(err).Debugf("failed to delete domain")
+		return err
+	}
+
+	self.logger.WithField("id", id).Debugf("delete domain")
+
+	return nil
 }
+
 func (self *StorageImpl) PatchDomain(id string, domain *Domain) (*Domain, error) {
 	panic("unimplemented")
 }
+
 func (self *StorageImpl) GetDomain(id string) (*Domain, error) {
-	panic("unimplemented")
+	var err error
+	var dom *Domain
+
+	if dom, err = self.get_domain(id); err != nil {
+		self.logger.WithError(err).Debugf("failed to get domain")
+		return nil, err
+	}
+
+	self.logger.WithField("id", *dom.Id).Debugf("get domain")
+
+	return dom, nil
 }
+
 func (self *StorageImpl) ListDomains(*Domain) ([]*Domain, error) {
 	panic("unimplemented")
 }
+
 func (self *StorageImpl) AddEntityToDomain(domain_id, entity_id string) error {
 	panic("unimplemented")
 }
+
 func (self *StorageImpl) RemoveEntityFromDomain(domain_id, entity_id string) error {
 	panic("unimplemented")
 }
@@ -36,27 +95,35 @@ func (self *StorageImpl) RemoveEntityFromDomain(domain_id, entity_id string) err
 func (self *StorageImpl) CreateRole(*Role) (*Role, error) {
 	panic("unimplemented")
 }
+
 func (self *StorageImpl) DeleteRole(id string) error {
 	panic("unimplemented")
 }
+
 func (self *StorageImpl) PatchRole(id string, role *Role) (*Role, error) {
 	panic("unimplemented")
 }
+
 func (self *StorageImpl) GetRole(id string) (*Role, error) {
 	panic("unimplemented")
 }
+
 func (self *StorageImpl) ListRoles(*Role) ([]*Role, error) {
 	panic("unimplemented")
 }
+
 func (self *StorageImpl) GetPolicy(id string) (*Policy, error) {
 	panic("unimplemented")
 }
+
 func (self *StorageImpl) CreatePolicy(*Policy) (*Policy, error) {
 	panic("unimplemented")
 }
+
 func (self *StorageImpl) DeletePolicy(id string) error {
 	panic("unimplemented")
 }
+
 func (self *StorageImpl) ListPoliciesForEntity(id string) ([]*Policy, error) {
 	panic("unimplemented")
 }
@@ -64,27 +131,35 @@ func (self *StorageImpl) ListPoliciesForEntity(id string) ([]*Policy, error) {
 func (self *StorageImpl) CreateEntity(*Entity) (*Entity, error) {
 	panic("unimplemented")
 }
+
 func (self *StorageImpl) DeleteEntity(id string) error {
 	panic("unimplemented")
 }
+
 func (self *StorageImpl) PatchEntity(id string, entity *Entity) (*Entity, error) {
 	panic("unimplemented")
 }
+
 func (self *StorageImpl) GetEntity(id string) (*Entity, error) {
 	panic("unimplemented")
 }
+
 func (self *StorageImpl) GetEntityByName(name string) (*Entity, error) {
 	panic("unimplemented")
 }
+
 func (self *StorageImpl) ListEntities(*Entity) ([]*Entity, error) {
 	panic("unimplemented")
 }
+
 func (self *StorageImpl) ListEntitiesByDomainId(dom_id string) ([]*Entity, error) {
 	panic("unimplemented")
 }
+
 func (self *StorageImpl) AddRoleToEntity(entity_id, role_id string) error {
 	panic("unimplemented")
 }
+
 func (self *StorageImpl) RemoveRoleFromEntity(entity_id, role_id string) error {
 	panic("unimplemented")
 }
@@ -92,27 +167,35 @@ func (self *StorageImpl) RemoveRoleFromEntity(entity_id, role_id string) error {
 func (self *StorageImpl) CreateGroup(*Group) (*Group, error) {
 	panic("unimplemented")
 }
+
 func (self *StorageImpl) DeleteGroup(id string) error {
 	panic("unimplemented")
 }
+
 func (self *StorageImpl) PatchGroup(id string, group *Group) (*Group, error) {
 	panic("unimplemented")
 }
+
 func (self *StorageImpl) GetGroup(id string) (*Group, error) {
 	panic("unimplemented")
 }
+
 func (self *StorageImpl) ListGroups(*Group) ([]*Group, error) {
 	panic("unimplemented")
 }
+
 func (self *StorageImpl) AddRoleToGroup(group_id, role_id string) error {
 	panic("unimplemented")
 }
+
 func (self *StorageImpl) RemoveRoleFromGroup(group_id, role_id string) error {
 	panic("unimplemented")
 }
+
 func (self *StorageImpl) AddEntityToGroup(entity_id, group_id string) error {
 	panic("unimplemented")
 }
+
 func (self *StorageImpl) RemoveEntityFromGroup(entity_id, group_id string) error {
 	panic("unimplemented")
 }
@@ -120,15 +203,19 @@ func (self *StorageImpl) RemoveEntityFromGroup(entity_id, group_id string) error
 func (self *StorageImpl) CreateCredential(*Credential) (*Credential, error) {
 	panic("unimplemented")
 }
+
 func (self *StorageImpl) DeleteCredential(id string) error {
 	panic("unimplemented")
 }
+
 func (self *StorageImpl) PatchCredential(id string, credential *Credential) (*Credential, error) {
 	panic("unimplemented")
 }
+
 func (self *StorageImpl) GetCredential(id string) (*Credential, error) {
 	panic("unimplemented")
 }
+
 func (self *StorageImpl) ListCredentials(*Credential) ([]*Credential, error) {
 	panic("unimplemented")
 }
@@ -136,15 +223,19 @@ func (self *StorageImpl) ListCredentials(*Credential) ([]*Credential, error) {
 func (self *StorageImpl) CreateToken(*Token) (*Token, error) {
 	panic("unimplemented")
 }
+
 func (self *StorageImpl) DeleteToken(id string) error {
 	panic("unimplemented")
 }
+
 func (self *StorageImpl) GetTokenByText(text string) (*Token, error) {
 	panic("unimplemented")
 }
+
 func (self *StorageImpl) GetToken(id string) (*Token, error) {
 	panic("unimplemented")
 }
+
 func (self *StorageImpl) ListTokens(*Token) ([]*Token, error) {
 	panic("unimplemented")
 }
