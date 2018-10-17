@@ -35,7 +35,7 @@ func (self *StorageImpl) get_domain(id string) (*Domain, error) {
 
 func (self *StorageImpl) list_domains(dom *Domain) ([]*Domain, error) {
 	var err error
-	var doms []*Domain
+	var doms_t []*Domain
 
 	d := &Domain{}
 	if dom.Id != nil {
@@ -54,8 +54,16 @@ func (self *StorageImpl) list_domains(dom *Domain) ([]*Domain, error) {
 		d.ParentId = dom.Parent.Id
 	}
 
-	if err = self.db.Find(&doms, d).Error; err != nil {
+	if err = self.db.Select("id").Find(&doms_t, d).Error; err != nil {
 		return nil, err
+	}
+
+	doms := []*Domain{}
+	for _, d = range doms_t {
+		if d, err = self.get_domain(*d.Id); err != nil {
+			return nil, err
+		}
+		doms = append(doms, d)
 	}
 
 	return doms, nil
@@ -176,6 +184,39 @@ func (self *StorageImpl) get_role(id string) (*Role, error) {
 	return role, nil
 }
 
+func (self *StorageImpl) list_roles(role *Role) ([]*Role, error) {
+	var err error
+	var roles_t []*Role
+
+	r := &Role{}
+	if role.Id != nil {
+		r.Id = role.Id
+	}
+	if role.DomainId != nil {
+		r.DomainId = role.DomainId
+	}
+	if role.Name != nil {
+		r.Name = role.Name
+	}
+	if role.Alias != nil {
+		r.Alias = role.Alias
+	}
+
+	if err = self.db.Select("id").Find(&roles_t, r).Error; err != nil {
+		return nil, err
+	}
+
+	roles := []*Role{}
+	for _, r = range roles_t {
+		if r, err = self.get_role(*r.Id); err != nil {
+			return nil, err
+		}
+		roles = append(roles, r)
+	}
+
+	return roles, nil
+}
+
 func (self *StorageImpl) CreateRole(role *Role) (*Role, error) {
 	var err error
 
@@ -216,11 +257,29 @@ func (self *StorageImpl) PatchRole(id string, role *Role) (*Role, error) {
 }
 
 func (self *StorageImpl) GetRole(id string) (*Role, error) {
-	panic("unimplemented")
+	var role *Role
+	var err error
+
+	if role, err = self.get_role(id); err != nil {
+		self.logger.WithError(err).Debugf("failed to get role")
+		return nil, err
+	}
+
+	return role, nil
 }
 
-func (self *StorageImpl) ListRoles(*Role) ([]*Role, error) {
-	panic("unimplemented")
+func (self *StorageImpl) ListRoles(role *Role) ([]*Role, error) {
+	var roles []*Role
+	var err error
+
+	if roles, err = self.list_roles(role); err != nil {
+		self.logger.WithError(err).Debugf("failed to list roles")
+		return nil, err
+	}
+
+	self.logger.Debugf("list roles")
+
+	return roles, nil
 }
 
 func (self *StorageImpl) GetPolicy(id string) (*Policy, error) {
