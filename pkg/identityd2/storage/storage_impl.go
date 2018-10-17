@@ -440,7 +440,16 @@ func (self *StorageImpl) CreateEntity(ent *Entity) (*Entity, error) {
 }
 
 func (self *StorageImpl) DeleteEntity(id string) error {
-	panic("unimplemented")
+	var err error
+
+	if err = self.db.Delete(&Entity{}, "id = ?", id).Error; err != nil {
+		self.logger.WithField("id", id).Debugf("failed to delete entity")
+		return err
+	}
+
+	self.logger.WithField("id", id).Debugf("delete entity")
+
+	return nil
 }
 
 func (self *StorageImpl) PatchEntity(id string, entity *Entity) (*Entity, error) {
