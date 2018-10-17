@@ -294,7 +294,17 @@ func (self *StorageImpl) get_policy(id string) (*Policy, error) {
 }
 
 func (self *StorageImpl) GetPolicy(id string) (*Policy, error) {
-	panic("unimplemented")
+	var plc *Policy
+	var err error
+
+	if plc, err = self.get_policy(id); err != nil {
+		self.logger.WithError(err).Debugf("failed to get policy")
+		return nil, err
+	}
+
+	self.logger.WithField("id", id).Debugf("get policy")
+
+	return plc, nil
 }
 
 func (self *StorageImpl) CreatePolicy(plc *Policy) (*Policy, error) {
