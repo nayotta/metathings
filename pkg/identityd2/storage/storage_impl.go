@@ -330,7 +330,16 @@ func (self *StorageImpl) CreatePolicy(plc *Policy) (*Policy, error) {
 }
 
 func (self *StorageImpl) DeletePolicy(id string) error {
-	panic("unimplemented")
+	var err error
+
+	if err = self.db.Delete(&Policy{}, "id = ?", id).Error; err != nil {
+		self.logger.WithField("id", id).Debugf("failed to delete policy")
+		return err
+	}
+
+	self.logger.WithField("id", id).Debugf("delete policy")
+
+	return nil
 }
 
 func (self *StorageImpl) ListPoliciesForEntity(id string) ([]*Policy, error) {
