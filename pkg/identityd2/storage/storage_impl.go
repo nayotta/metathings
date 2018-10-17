@@ -195,7 +195,20 @@ func (self *StorageImpl) CreateRole(role *Role) (*Role, error) {
 }
 
 func (self *StorageImpl) DeleteRole(id string) error {
-	panic("unimplemented")
+	var err error
+
+	tx := self.db.Begin()
+	tx.Delete(&Policy{}, "role_id = ?", id)
+	tx.Delete(&Role{}, "id = ?", id)
+	if err = tx.Commit().Error; err != nil {
+		tx.Rollback()
+		self.logger.WithError(err).Debugf("failed to delete role")
+		return err
+	}
+
+	self.logger.WithField("id", id).Debugf("delete role")
+
+	return nil
 }
 
 func (self *StorageImpl) PatchRole(id string, role *Role) (*Role, error) {
