@@ -15,12 +15,8 @@ import (
 )
 
 type Identityd2Option struct {
-	_rootOption `mapstructure:",squash"`
 	// expose detail for viper to unmarshal config file.
-	cmd_contrib.ListenOption              `mapstructure:",squash"`
-	cmd_contrib.TransportCredentialOption `mapstructure:",squash"`
-	cmd_contrib.StorageOption             `mapstructure:",squash"`
-	cmd_contrib.LoggerOption              `mapstructure:",squash"`
+	cmd_contrib.ServiceBaseOption `mapstructure:",squash"`
 }
 
 func NewIdentityd2Option() *Identityd2Option {
@@ -36,13 +32,13 @@ var (
 		Use:   "identityd2",
 		Short: "Identity-NG Service Daemon",
 		PreRun: cmd_helper.DefaultPreRunHooks(func() {
-			if root_opts.Config == "" {
+			if base_opt.Config == "" {
 				return
 			}
 
 			opt_t := NewIdentityd2Option()
 			cmd_helper.UnmarshalConfig(opt_t)
-			root_opt = &opt_t._rootOption
+			base_opt = &opt_t.BaseOption
 
 			if opt_t.GetListen() == "" {
 				opt_t.SetListen(identityd2_opt.GetListen())
@@ -65,8 +61,8 @@ var (
 			}
 
 			identityd2_opt = opt_t
-			identityd2_opt.Service = "identityd2"
-			identityd2_opt.Stage = cmd_helper.GetStageFromEnv()
+			identityd2_opt.SetServiceName("identityd2")
+			identityd2_opt.SetStage(cmd_helper.GetStageFromEnv())
 		}),
 		Run: cmd_helper.Run("identityd2", runIdentityd2),
 	}
@@ -86,7 +82,7 @@ func GetIdentityd2Options() (
 		identityd2_opt
 }
 
-func NewStorage(opt cmd_contrib.StorageOptioner, logger log.FieldLogger) (storage.Storage, error) {
+func NewIdentityd2Storage(opt cmd_contrib.StorageOptioner, logger log.FieldLogger) (storage.Storage, error) {
 	return storage.NewStorage(opt.GetDriver(), opt.GetUri(), "logger", logger)
 }
 
@@ -104,7 +100,7 @@ func runIdentityd2() error {
 			cmd_contrib.NewLogger("identityd2"),
 			cmd_contrib.NewListener,
 			cmd_contrib.NewGrpcServer,
-			NewStorage,
+			NewIdentityd2Storage,
 			NewMetathingsIdentitydServiceOption,
 			service.NewMetathingsIdentitydService,
 		),
@@ -115,8 +111,7 @@ func runIdentityd2() error {
 
 	app.Run()
 
-	err := app.Err()
-	if err != nil {
+	if err := app.Err(); err != nil {
 		return err
 	}
 
