@@ -20,88 +20,49 @@ import (
 	context_helper "github.com/nayotta/metathings/pkg/common/context"
 	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
 	id_helper "github.com/nayotta/metathings/pkg/common/id"
-	log_helper "github.com/nayotta/metathings/pkg/common/log"
 	token_helper "github.com/nayotta/metathings/pkg/common/token"
 	camera_pb "github.com/nayotta/metathings/pkg/proto/camera"
 	pb "github.com/nayotta/metathings/pkg/proto/camerad"
 	cored_pb "github.com/nayotta/metathings/pkg/proto/cored"
 )
 
-type options struct {
-	logLevel                      string
-	metathingsd_addr              string
-	identityd_addr                string
-	cored_addr                    string
-	application_credential_id     string
-	application_credential_secret string
-	storage_driver                string
-	storage_uri                   string
-	rtmp_url                      string
+type MetathingsCameradServiceOption struct {
+	RtmpUrl string
 }
 
-var defaultServiceOptions = options{
-	logLevel: "info",
-}
-
-type ServiceOptions func(*options)
-
-func SetLogLevel(lvl string) ServiceOptions {
-	return func(o *options) {
-		o.logLevel = lvl
-	}
-}
-
-func SetMetathingsdAddr(addr string) ServiceOptions {
-	return func(o *options) {
-		o.metathingsd_addr = addr
-	}
-}
-
-func SetIdentitydAddr(addr string) ServiceOptions {
-	return func(o *options) {
-		o.identityd_addr = addr
-	}
-}
-
-func SetCoredAddr(addr string) ServiceOptions {
-	return func(o *options) {
-		o.cored_addr = addr
-	}
-}
-
-func SetApplicationCredential(id, secret string) ServiceOptions {
-	return func(o *options) {
-		o.application_credential_id = id
-		o.application_credential_secret = secret
-	}
-}
-
-func SetStorage(driver, uri string) ServiceOptions {
-	return func(o *options) {
-		o.storage_driver = driver
-		o.storage_uri = uri
-	}
-}
-
-func SetRtmpUrl(url string) ServiceOptions {
-	return func(o *options) {
-		o.rtmp_url = url
-	}
-}
-
-type metathingsCameradService struct {
+type MetathingsCameradService struct {
 	grpc_helper.AuthorizationTokenParser
 
 	cli_fty       *client_helper.ClientFactory
 	camera_st_psr state_helper.CameraStateParser
 	app_cred_mgr  app_cred_mgr.ApplicationCredentialManager
 	logger        log.FieldLogger
-	opts          options
+	opt           *MetathingsCameradServiceOption
 	storage       storage.Storage
 	tk_vdr        token_helper.TokenValidator
 }
 
-func (srv *metathingsCameradService) ContextWithToken(ctxs ...context.Context) context.Context {
+func NewMetathingsCameradService(
+	opt *MetathingsCameradServiceOption,
+	cli_fty *client_helper.ClientFactory,
+	camera_st_psr state_helper.CameraStateParser,
+	app_cred_mgr app_cred_mgr.ApplicationCredentialManager,
+	logger log.FieldLogger,
+	storage storage.Storage,
+	tk_vdr token_helper.TokenValidator,
+) (pb.CameradServiceServer, error) {
+	return &MetathingsCameradService{
+		opt:           opt,
+		cli_fty:       cli_fty,
+		camera_st_psr: camera_st_psr,
+		app_cred_mgr:  app_cred_mgr,
+		logger:        logger,
+		storage:       storage,
+		tk_vdr:        tk_vdr,
+	}, nil
+}
+
+func (srv *MetathingsCameradService) ContextWithToken(ctxs ...context.Context) context.Context {
 	ctx := context.Background()
 	if len(ctxs) > 0 {
 		ctx = ctxs[0]
@@ -111,7 +72,7 @@ func (srv *metathingsCameradService) ContextWithToken(ctxs ...context.Context) c
 	return ctx
 }
 
-func (srv *metathingsCameradService) AuthFuncOverride(ctx context.Context, fullMethodName string) (context.Context, error) {
+func (srv *MetathingsCameradService) AuthFuncOverride(ctx context.Context, fullMethodName string) (context.Context, error) {
 	token_str, err := srv.GetTokenFromContext(ctx)
 	if err != nil {
 		return nil, err
@@ -135,7 +96,7 @@ func (srv *metathingsCameradService) AuthFuncOverride(ctx context.Context, fullM
 	return ctx, nil
 }
 
-func (srv *metathingsCameradService) copyCamera(c storage.Camera) *pb.Camera {
+func (srv *MetathingsCameradService) copyCamera(c storage.Camera) *pb.Camera {
 	cfg := &camera_pb.CameraConfig{}
 	if c.Url != nil {
 		cfg.Url = *c.Url
@@ -165,7 +126,7 @@ func (srv *metathingsCameradService) copyCamera(c storage.Camera) *pb.Camera {
 	}
 }
 
-func (srv *metathingsCameradService) Create(ctx context.Context, req *pb.CreateRequest) (*pb.CreateResponse, error) {
+func (srv *MetathingsCameradService) Create(ctx context.Context, req *pb.CreateRequest) (*pb.CreateResponse, error) {
 	err := req.Validate()
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
@@ -284,7 +245,7 @@ func (srv *metathingsCameradService) Create(ctx context.Context, req *pb.CreateR
 	return res, nil
 }
 
-func (srv *metathingsCameradService) Delete(ctx context.Context, req *pb.DeleteRequest) (*empty.Empty, error) {
+func (srv *MetathingsCameradService) Delete(ctx context.Context, req *pb.DeleteRequest) (*empty.Empty, error) {
 	err := req.Validate()
 	if err != nil {
 		srv.logger.WithError(err).Errorf("failed to validate request data")
@@ -304,7 +265,7 @@ func (srv *metathingsCameradService) Delete(ctx context.Context, req *pb.DeleteR
 	return &empty.Empty{}, nil
 }
 
-func (srv *metathingsCameradService) Patch(ctx context.Context, req *pb.PatchRequest) (*pb.PatchResponse, error) {
+func (srv *MetathingsCameradService) Patch(ctx context.Context, req *pb.PatchRequest) (*pb.PatchResponse, error) {
 	err := req.Validate()
 	if err != nil {
 		srv.logger.WithError(err).Errorf("failed to validate request data")
@@ -369,7 +330,7 @@ func (srv *metathingsCameradService) Patch(ctx context.Context, req *pb.PatchReq
 	return res, nil
 }
 
-func (srv *metathingsCameradService) Get(ctx context.Context, req *pb.GetRequest) (*pb.GetResponse, error) {
+func (srv *MetathingsCameradService) Get(ctx context.Context, req *pb.GetRequest) (*pb.GetResponse, error) {
 	err := req.Validate()
 	if err != nil {
 		srv.logger.WithError(err).Errorf("failed to validate request data")
@@ -391,7 +352,7 @@ func (srv *metathingsCameradService) Get(ctx context.Context, req *pb.GetRequest
 	return res, nil
 }
 
-func (srv *metathingsCameradService) List(ctx context.Context, req *pb.ListRequest) (*pb.ListResponse, error) {
+func (srv *MetathingsCameradService) List(ctx context.Context, req *pb.ListRequest) (*pb.ListResponse, error) {
 	err := req.Validate()
 	if err != nil {
 		srv.logger.WithError(err).Errorf("failed to validate request data")
@@ -444,7 +405,7 @@ func (srv *metathingsCameradService) List(ctx context.Context, req *pb.ListReque
 	return res, nil
 }
 
-func (srv *metathingsCameradService) ListForUser(ctx context.Context, req *pb.ListForUserRequest) (*pb.ListForUserResponse, error) {
+func (srv *MetathingsCameradService) ListForUser(ctx context.Context, req *pb.ListForUserRequest) (*pb.ListForUserResponse, error) {
 	err := req.Validate()
 	if err != nil {
 		srv.logger.WithError(err).Errorf("failed to validate request data")
@@ -499,7 +460,7 @@ const (
 	LIVE_ID_LENGTH  = 128
 )
 
-func (srv *metathingsCameradService) newLiveId() string {
+func (srv *MetathingsCameradService) newLiveId() string {
 	buf := make([]byte, LIVE_ID_LENGTH)
 	for i := 0; i < LIVE_ID_LENGTH; i++ {
 		buf[i] = LIVE_ID_LETTERS[rand.Int31n(int32(len(LIVE_ID_LETTERS)))]
@@ -507,7 +468,7 @@ func (srv *metathingsCameradService) newLiveId() string {
 	return string(buf)
 }
 
-func (srv *metathingsCameradService) set_camera_state(cam_id string, state string) (storage.Camera, error) {
+func (srv *MetathingsCameradService) set_camera_state(cam_id string, state string) (storage.Camera, error) {
 	c, err := srv.storage.PatchCamera(cam_id, storage.Camera{State: &state})
 	if err != nil {
 		return storage.Camera{}, err
@@ -519,7 +480,7 @@ func (srv *metathingsCameradService) set_camera_state(cam_id string, state strin
 	return c, nil
 }
 
-func (srv *metathingsCameradService) sync_camera_state(cli cored_pb.CoredServiceClient, cam_id string, core_id string, entity_name string) (camera_pb.CameraState, error) {
+func (srv *MetathingsCameradService) sync_camera_state(cli cored_pb.CoredServiceClient, cam_id string, core_id string, entity_name string) (camera_pb.CameraState, error) {
 
 	call_req := client_helper.MustNewUnaryCallRequest(core_id, entity_name, "camera", "Show", &empty.Empty{})
 	call_res, err := cli.UnaryCall(srv.ContextWithToken(), call_req)
@@ -543,14 +504,14 @@ func (srv *metathingsCameradService) sync_camera_state(cli cored_pb.CoredService
 	return cam_st, nil
 }
 
-func (srv *metathingsCameradService) Start(ctx context.Context, req *pb.StartRequest) (*pb.StartResponse, error) {
+func (srv *MetathingsCameradService) Start(ctx context.Context, req *pb.StartRequest) (*pb.StartResponse, error) {
 	err := req.Validate()
 	if err != nil {
 		srv.logger.WithError(err).Errorf("failed to validate request data")
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 
-	live, err := url.Parse(srv.opts.rtmp_url)
+	live, err := url.Parse(srv.opt.RtmpUrl)
 	if err != nil {
 		srv.logger.WithError(err).Errorf("failed to parse rtmp address")
 		return nil, status.Errorf(codes.Internal, "bad rtmp address")
@@ -669,7 +630,7 @@ func (srv *metathingsCameradService) Start(ctx context.Context, req *pb.StartReq
 	return res, nil
 }
 
-func (srv *metathingsCameradService) Stop(ctx context.Context, req *pb.StopRequest) (*pb.StopResponse, error) {
+func (srv *MetathingsCameradService) Stop(ctx context.Context, req *pb.StopRequest) (*pb.StopResponse, error) {
 	err := req.Validate()
 	if err != nil {
 		srv.logger.WithError(err).Errorf("failed to validate request data")
@@ -750,7 +711,7 @@ func (srv *metathingsCameradService) Stop(ctx context.Context, req *pb.StopReque
 	return res, nil
 }
 
-func (srv *metathingsCameradService) Callback(ctx context.Context, req *pb.CallbackRequest) (*empty.Empty, error) {
+func (srv *MetathingsCameradService) Callback(ctx context.Context, req *pb.CallbackRequest) (*empty.Empty, error) {
 	pc := storage.Camera{}
 	updated := false
 
@@ -801,7 +762,7 @@ func (srv *metathingsCameradService) Callback(ctx context.Context, req *pb.Callb
 	return &empty.Empty{}, nil
 }
 
-func (srv *metathingsCameradService) ShowToEntity(ctx context.Context, req *empty.Empty) (*pb.ShowToEntityResponse, error) {
+func (srv *MetathingsCameradService) ShowToEntity(ctx context.Context, req *empty.Empty) (*pb.ShowToEntityResponse, error) {
 	cred := context_helper.Credential(ctx)
 	app_cred_id := cred.ApplicationCredential.Id
 
@@ -826,58 +787,4 @@ func (srv *metathingsCameradService) ShowToEntity(ctx context.Context, req *empt
 	srv.logger.WithField("application_credential_id", app_cred_id).Debugf("show to entity")
 
 	return res, nil
-}
-
-func NewCameradService(opt ...ServiceOptions) (*metathingsCameradService, error) {
-	opts := defaultServiceOptions
-	for _, o := range opt {
-		o(&opts)
-	}
-
-	logger, err := log_helper.NewLogger("camerad", opts.logLevel)
-	if err != nil {
-		log.WithError(err).Errorf("failed to new logger")
-		return nil, err
-	}
-
-	cli_fty_cfgs := client_helper.NewDefaultServiceConfigs(opts.metathingsd_addr)
-	cli_fty_cfgs[client_helper.CORED_CONFIG] = client_helper.ServiceConfig{Address: opts.cored_addr}
-	cli_fty_cfgs[client_helper.IDENTITYD_CONFIG] = client_helper.ServiceConfig{Address: opts.identityd_addr}
-	cli_fty, err := client_helper.NewClientFactory(
-		cli_fty_cfgs,
-		client_helper.WithInsecureOptionFunc(),
-	)
-	if err != nil {
-		log.WithError(err).Errorf("failed to new client factory")
-		return nil, err
-	}
-
-	storage, err := storage.NewStorage(opts.storage_driver, opts.storage_uri, logger)
-	if err != nil {
-		log.WithError(err).Errorf("failed to connect storage")
-		return nil, err
-	}
-
-	app_cred_mgr, err := app_cred_mgr.NewApplicationCredentialManager(
-		cli_fty,
-		opts.application_credential_id,
-		opts.application_credential_secret,
-	)
-	if err != nil {
-		log.WithError(err).Errorf("failed to new application credential manager")
-		return nil, err
-	}
-
-	tk_vdr := token_helper.NewTokenValidator(app_cred_mgr, cli_fty, logger)
-
-	srv := &metathingsCameradService{
-		cli_fty:       cli_fty,
-		camera_st_psr: state_helper.NewCameraStateParser(),
-		app_cred_mgr:  app_cred_mgr,
-		opts:          opts,
-		logger:        logger,
-		storage:       storage,
-		tk_vdr:        tk_vdr,
-	}
-	return srv, nil
 }

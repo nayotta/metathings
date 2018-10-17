@@ -1,5 +1,9 @@
 package cmd_contrib
 
+import (
+	cli_helper "github.com/nayotta/metathings/pkg/common/client"
+)
+
 type ServiceEndpointOptioner interface {
 	GetAddressP() *string
 	GetAddress() string
@@ -23,18 +27,30 @@ func (self *ServiceEndpointOption) SetAddress(addr string) {
 }
 
 type ServiceEndpointsOptioner interface {
-	GetServiceEndpoint(string) ServiceEndpointsOptioner
-	SetServiceEndpoint(string, ServiceEndpointOptioner)
+	GetServiceEndpoint(int) ServiceEndpointOptioner
+	SetServiceEndpoint(int, ServiceEndpointOptioner)
 }
 
 type ServiceEndpointsOption struct {
-	eps map[string]ServiceEndpointOptioner
+	eps map[int]ServiceEndpointOptioner
 }
 
-func (self *ServiceEndpointsOption) GetServiceEndpoint(name string) ServiceEndpointOptioner {
-	return self.eps[name]
+func (self *ServiceEndpointsOption) GetServiceEndpoint(srv int) ServiceEndpointOptioner {
+	return self.eps[srv]
 }
 
-func (self *ServiceEndpointsOption) SetServiceEndpoint(name string, ep ServiceEndpointOptioner) {
-	self.eps[name] = ep
+func (self *ServiceEndpointsOption) SetServiceEndpoint(srv int, ep ServiceEndpointOptioner) {
+	self.eps[srv] = ep
+}
+
+func CreateServiceEndpointsOption() ServiceEndpointsOption {
+	eps := make(map[int]ServiceEndpointOptioner)
+
+	for i := cli_helper.DEFAULT_CONFIG; i < cli_helper.OVERFLOW_CONFIG; i++ {
+		eps[i] = &ServiceEndpointOption{}
+	}
+
+	return ServiceEndpointsOption{
+		eps: eps,
+	}
 }

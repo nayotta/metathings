@@ -35,6 +35,7 @@ const (
 	SERVO_CONFIG
 	SENSOR_CONFIG
 	STREAMD_CONFIG
+	OVERFLOW_CONFIG
 )
 
 func parseAddress(addr string) string {

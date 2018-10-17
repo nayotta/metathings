@@ -7,6 +7,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 
+	cmd_contrib "github.com/nayotta/metathings/cmd/contrib"
 	cmd_helper "github.com/nayotta/metathings/pkg/common/cmd"
 )
 
@@ -20,16 +21,9 @@ type _rootOptions struct {
 	Service                string
 }
 
-type _rootOption struct {
-	cmd_helper.RootOptions `mapstructure:",squash"`
-	Service                string
-}
-
 var (
-	// DEPRECATED(Peer): rename to root_opt
 	root_opts *_rootOptions
-
-	root_opt *_rootOption
+	base_opt  *cmd_contrib.BaseOption
 )
 
 var (
@@ -40,8 +34,9 @@ var (
 )
 
 func initConfig() {
-	if root_opts.Config != "" {
-		viper.SetConfigFile(root_opts.Config)
+	cfg := base_opt.GetConfig()
+	if cfg != "" {
+		viper.SetConfigFile(cfg)
 		if err := viper.ReadInConfig(); err != nil {
 			log.WithError(err).Fatalf("failed to read config")
 		}
@@ -49,7 +44,7 @@ func initConfig() {
 }
 
 func init() {
-	root_opts = &_rootOptions{}
+	base_opt = &cmd_contrib.BaseOption{}
 
 	cobra.OnInitialize(initConfig)
 	viper.AutomaticEnv()
@@ -57,9 +52,9 @@ func init() {
 	viper.SetEnvKeyReplacer(strings.NewReplacer("-", "_"))
 	viper.BindEnv("stage")
 
-	RootCmd.PersistentFlags().StringVarP(&root_opts.Config, "config", "c", "", "Config file")
-	RootCmd.PersistentFlags().BoolVar(&root_opts.Verbose, "verbose", false, "Verbose mode")
-	RootCmd.PersistentFlags().StringVar(&root_opts.Log.Level, "log-level", "info", "Logging Level[debug, info, warn, error]")
-	RootCmd.PersistentFlags().StringVar(&root_opts.ApplicationCredential.Id, "application-credential-id", "", "MetaThings Application Credential ID")
-	RootCmd.PersistentFlags().StringVar(&root_opts.ApplicationCredential.Secret, "application-credential-secret", "", "MetaThings Application Credential Secret")
+	RootCmd.PersistentFlags().StringVarP(base_opt.GetConfigP(), "config", "c", "", "Config file")
+	RootCmd.PersistentFlags().BoolVar(base_opt.GetVerboseP(), "verbose", false, "Verbose mode")
+	RootCmd.PersistentFlags().StringVar(base_opt.GetLevelP(), "log-level", "info", "Logging Level[debug, info, warn, error]")
+	RootCmd.PersistentFlags().StringVar(base_opt.GetCredentialIdP(), "application-credential-id", "", "MetaThings Application Credential ID")
+	RootCmd.PersistentFlags().StringVar(base_opt.GetCredentialSecretP(), "application-credential-secret", "", "MetaThings Application Credential Secret")
 }
