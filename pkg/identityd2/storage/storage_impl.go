@@ -346,8 +346,97 @@ func (self *StorageImpl) ListPoliciesForEntity(id string) ([]*Policy, error) {
 	panic("unimplemented")
 }
 
-func (self *StorageImpl) CreateEntity(*Entity) (*Entity, error) {
-	panic("unimplemented")
+func (self *StorageImpl) list_domains_by_entity_id(id string) ([]*Domain, error) {
+	var err error
+
+	var ent_dom_maps []*EntityDomainMapping
+	if err = self.db.Find(&ent_dom_maps, "entity_id = ?", id).Error; err != nil {
+		return nil, err
+	}
+
+	var doms []*Domain
+	for _, m := range ent_dom_maps {
+		doms = append(doms, &Domain{
+			Id: m.DomainId,
+		})
+	}
+
+	return doms, nil
+}
+
+func (self *StorageImpl) list_groups_by_entity_id(id string) ([]*Group, error) {
+	var err error
+
+	var ent_grp_maps []*EntityGroupMapping
+	if err = self.db.Find(&ent_grp_maps, "entity_id = ?", id).Error; err != nil {
+		return nil, err
+	}
+
+	var grps []*Group
+	for _, m := range ent_grp_maps {
+		grps = append(grps, &Group{Id: m.GroupId})
+	}
+
+	return grps, nil
+}
+
+func (self *StorageImpl) list_roles_by_entity_id(id string) ([]*Role, error) {
+	var err error
+
+	var ent_role_maps []*EntityRoleMapping
+	if err = self.db.Find(&ent_role_maps, "entity_id = ?", id).Error; err != nil {
+		return nil, err
+	}
+
+	var roles []*Role
+	for _, m := range ent_role_maps {
+		roles = append(roles, &Role{Id: m.RoleId})
+	}
+
+	return roles, nil
+}
+
+func (self *StorageImpl) get_entity(id string) (*Entity, error) {
+	var ent *Entity
+	var err error
+
+	if err = self.db.First(&ent, "id = ?", id).Error; err != nil {
+		return nil, err
+	}
+
+	if ent.Domains, err = self.list_domains_by_entity_id(id); err != nil {
+		return nil, err
+	}
+
+	if ent.Groups, err = self.list_groups_by_entity_id(id); err != nil {
+		return nil, err
+	}
+
+	if ent.Roles, err = self.list_roles_by_entity_id(id); err != nil {
+		return nil, err
+	}
+
+	return ent, nil
+}
+
+func (self *StorageImpl) CreateEntity(ent *Entity) (*Entity, error) {
+	var err error
+
+	if err = self.db.Create(ent).Error; err != nil {
+		self.logger.WithError(err).Debugf("failed to create entity")
+		return nil, err
+	}
+
+	if ent, err = self.get_entity(*ent.Id); err != nil {
+		self.logger.WithError(err).Debugf("failed to get entity")
+		return nil, err
+	}
+
+	self.logger.WithFields(log.Fields{
+		"entity_id": *ent.Id,
+	}).Debugf("create entity")
+
+	return ent, nil
 }
 
 func (self *StorageImpl) DeleteEntity(id string) error {

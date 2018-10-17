@@ -90,7 +90,7 @@ type EntityGroupMapping struct {
 	CreatedAt time.Time
 
 	EntityId *string `gorm:"entity_id"`
-	RoleId   *string `gorm:"role_id"`
+	GroupId  *string `gorm:"group_id"`
 }
 
 type GroupRoleMapping struct {
