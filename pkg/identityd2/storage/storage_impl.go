@@ -142,7 +142,16 @@ func (self *StorageImpl) AddEntityToDomain(domain_id, entity_id string) error {
 }
 
 func (self *StorageImpl) RemoveEntityFromDomain(domain_id, entity_id string) error {
-	panic("unimplemented")
+	if err := self.db.Delete(&EntityDomainMapping{}, "domain_id = ? and entity_id = ?", domain_id, entity_id).Error; err != nil {
+		self.logger.WithError(err).Debugf("failed to remove entity from domain")
+	}
+
+	self.logger.WithFields(log.Fields{
+		"entity_id": entity_id,
+		"domain_id": domain_id,
+	}).Debugf("remove entity from domain")
+
+	return nil
 }
 
 func (self *StorageImpl) CreateRole(*Role) (*Role, error) {
