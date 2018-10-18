@@ -419,6 +419,36 @@ func (self *StorageImpl) get_entity(id string) (*Entity, error) {
 	return ent, nil
 }
 
+func (self *StorageImpl) list_entities(ent *Entity) ([]*Entity, error) {
+	var ents_t []*Entity
+	var err error
+
+	e := &Entity{}
+	if ent.Id != nil {
+		e.Id = ent.Id
+	}
+	if ent.Name != nil {
+		e.Name = ent.Name
+	}
+	if ent.Alias != nil {
+		e.Alias = ent.Alias
+	}
+
+	if err = self.db.Select("id").Find(&ents_t, e).Error; err != nil {
+		return nil, err
+	}
+
+	var ents []*Entity
+	for _, e := range ents_t {
+		if ent, err = self.get_entity(*e.Id); err != nil {
+			return nil, err
+		}
+		ents = append(ents, ent)
+	}
+
+	return ents, nil
+}
+
 func (self *StorageImpl) CreateEntity(ent *Entity) (*Entity, error) {
 	var err error
 
@@ -474,8 +504,18 @@ func (self *StorageImpl) GetEntityByName(name string) (*Entity, error) {
 	panic("unimplemented")
 }
 
-func (self *StorageImpl) ListEntities(*Entity) ([]*Entity, error) {
-	panic("unimplemented")
+func (self *StorageImpl) ListEntities(ent *Entity) ([]*Entity, error) {
+	var ents []*Entity
+	var err error
+
+	if ents, err = self.list_entities(ent); err != nil {
+		self.logger.WithError(err).Debugf("failed to list entities")
+		return nil, err
+	}
+
+	self.logger.Debugf("list entities")
+
+	return ents, nil
 }
 
 func (self *StorageImpl) ListEntitiesByDomainId(dom_id string) ([]*Entity, error) {
