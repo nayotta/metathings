@@ -518,8 +518,28 @@ func (self *StorageImpl) ListEntities(ent *Entity) ([]*Entity, error) {
 	return ents, nil
 }
 
-func (self *StorageImpl) ListEntitiesByDomainId(dom_id string) ([]*Entity, error) {
-	panic("unimplemented")
+func (self *StorageImpl) ListEntitiesByDomainId(id string) ([]*Entity, error) {
+	var ent_dom_maps []*EntityDomainMapping
+	var err error
+
+	if err = self.db.Find(&ent_dom_maps, "domain_id = ?", id).Error; err != nil {
+		self.logger.WithField("domain_id", id).WithError(err).Debugf("failed to list entity and domain mapping")
+		return nil, err
+	}
+
+	var ent *Entity
+	var ents []*Entity
+	for _, m := range ent_dom_maps {
+		if ent, err = self.get_entity(*m.EntityId); err != nil {
+			self.logger.WithField("entity_id", *m.EntityId).WithError(err).Debugf("failed to get entity")
+			return nil, err
+		}
+		ents = append(ents, ent)
+	}
+
+	self.logger.WithField("domain_id", id).Debugf("list entities by domain id")
+
+	return ents, nil
 }
 
 func (self *StorageImpl) AddRoleToEntity(entity_id, role_id string) error {
