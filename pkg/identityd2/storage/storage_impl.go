@@ -511,13 +511,63 @@ func (self *StorageImpl) RemoveRoleFromEntity(entity_id, role_id string) error {
 		return err
 	}
 
-	self.logger.WithFields(log.Fields{}).Debugf("remove role from entity")
+	self.logger.WithFields(log.Fields{
+		"entity_id": entity_id,
+		"role_id":   role_id,
+	}).Debugf("remove role from entity")
 
 	return nil
 }
 
-func (self *StorageImpl) CreateGroup(*Group) (*Group, error) {
-	panic("unimplemented")
+func (self *StorageImpl) get_group(id string) (*Group, error) {
+	var grp *Group
+	var err error
+
+	if err = self.db.First(&grp, "id = ?", id).Error; err != nil {
+		return nil, err
+	}
+
+	grp.Domain = &Domain{Id: grp.DomainId}
+
+	var ent_grp_maps []*EntityGroupMapping
+	if err = self.db.Find(&ent_grp_maps, "group_id = ?", id).Error; err != nil {
+		return nil, err
+	}
+	var entities []*Entity
+	for _, m := range ent_grp_maps {
+		entities = append(entities, &Entity{Id: m.EntityId})
+	}
+	grp.Entities = entities
+
+	var grp_role_maps []*GroupRoleMapping
+	if err = self.db.Find(&grp_role_maps, "group_id = ?", id).Error; err != nil {
+		return nil, err
+	}
+	var roles []*Role
+	for _, m := range grp_role_maps {
+		roles = append(roles, &Role{Id: m.RoleId})
+	}
+	grp.Roles = roles
+
+	return grp, nil
+}
+
+func (self *StorageImpl) CreateGroup(grp *Group) (*Group, error) {
+	var err error
+
+	if err = self.db.Create(grp).Error; err != nil {
+		self.logger.WithError(err).Debugf("failed to create group")
+		return nil, err
+	}
+
+	if grp, err = self.get_group(*grp.Id); err != nil {
+		self.logger.WithError(err).Debugf("failed to get group")
+		return nil, err
+	}
+
+	self.logger.WithField("id", *grp.Id).Debugf("create group")
+
+	return grp, nil
 }
 
 func (self *StorageImpl) DeleteGroup(id string) error {
