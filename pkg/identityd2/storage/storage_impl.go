@@ -504,7 +504,16 @@ func (self *StorageImpl) AddRoleToEntity(entity_id, role_id string) error {
 }
 
 func (self *StorageImpl) RemoveRoleFromEntity(entity_id, role_id string) error {
-	panic("unimplemented")
+	var err error
+
+	if err = self.db.Delete(&EntityRoleMapping{}, "entity_id = ? and role_id = ?", entity_id, role_id).Error; err != nil {
+		self.logger.WithError(err).Debugf("failed to remove role from entity")
+		return err
+	}
+
+	self.logger.WithFields(log.Fields{}).Debugf("remove role from entity")
+
+	return nil
 }
 
 func (self *StorageImpl) CreateGroup(*Group) (*Group, error) {
