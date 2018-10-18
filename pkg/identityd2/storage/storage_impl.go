@@ -571,7 +571,16 @@ func (self *StorageImpl) CreateGroup(grp *Group) (*Group, error) {
 }
 
 func (self *StorageImpl) DeleteGroup(id string) error {
-	panic("unimplemented")
+	var err error
+
+	if err = self.db.Delete(&Group{}, "id = ?", id).Error; err != nil {
+		self.logger.WithError(err).Debugf("failed to delete group")
+		return err
+	}
+
+	self.logger.WithField("id", id).Debugf("delete group")
+
+	return nil
 }
 
 func (self *StorageImpl) PatchGroup(id string, group *Group) (*Group, error) {
