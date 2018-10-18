@@ -206,7 +206,7 @@ func (self *StorageImpl) list_roles(role *Role) ([]*Role, error) {
 		return nil, err
 	}
 
-	roles := []*Role{}
+	var roles []*Role
 	for _, r = range roles_t {
 		if r, err = self.get_role(*r.Id); err != nil {
 			return nil, err
@@ -552,6 +552,39 @@ func (self *StorageImpl) get_group(id string) (*Group, error) {
 	return grp, nil
 }
 
+func (self *StorageImpl) list_groups(grp *Group) ([]*Group, error) {
+	var grps_t []*Group
+	var err error
+
+	g := &Group{}
+	if grp.Id != nil {
+		g.Id = grp.Id
+	}
+	if grp.DomainId != nil {
+		g.DomainId = grp.DomainId
+	}
+	if grp.Name != nil {
+		g.Name = grp.Name
+	}
+	if grp.Alias != nil {
+		g.Alias = grp.Alias
+	}
+
+	if err = self.db.Select("id").Find(&grps_t, g).Error; err != nil {
+		return nil, err
+	}
+
+	var grps []*Group
+	for _, g = range grps_t {
+		if g, err = self.get_group(*g.Id); err != nil {
+			return nil, err
+		}
+		grps = append(grps, g)
+	}
+
+	return grps, nil
+}
+
 func (self *StorageImpl) CreateGroup(grp *Group) (*Group, error) {
 	var err error
 
@@ -588,11 +621,31 @@ func (self *StorageImpl) PatchGroup(id string, group *Group) (*Group, error) {
 }
 
 func (self *StorageImpl) GetGroup(id string) (*Group, error) {
-	panic("unimplemented")
+	var grp *Group
+	var err error
+
+	if grp, err = self.get_group(id); err != nil {
+		self.logger.WithError(err).Debugf("failed to get group")
+		return nil, err
+	}
+
+	self.logger.WithField("id", id).Debugf("get group")
+
+	return grp, nil
 }
 
-func (self *StorageImpl) ListGroups(*Group) ([]*Group, error) {
-	panic("unimplemented")
+func (self *StorageImpl) ListGroups(grp *Group) ([]*Group, error) {
+	var grps []*Group
+	var err error
+
+	if grps, err = self.list_groups(grp); err != nil {
+		self.logger.WithError(err).Debugf("failed to list groups")
+		return nil, err
+	}
+
+	self.logger.Debugf("list groups")
+
+	return grps, nil
 }
 
 func (self *StorageImpl) AddRoleToGroup(group_id, role_id string) error {
