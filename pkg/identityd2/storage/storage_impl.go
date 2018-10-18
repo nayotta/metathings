@@ -775,7 +775,21 @@ func (self *StorageImpl) AddEntityToGroup(entity_id, group_id string) error {
 }
 
 func (self *StorageImpl) RemoveEntityFromGroup(entity_id, group_id string) error {
-	panic("unimplemented")
+	var err error
+
+	if err = self.db.Delete(&EntityGroupMapping{}, "entity_id = ? and group_id = ?", entity_id, group_id).Error; err != nil {
+		self.logger.WithFields(log.Fields{
+			"entity_id": entity_id,
+			"group_id":  group_id,
+		}).Debugf("failed to remove entity from group")
+	}
+
+	self.logger.WithFields(log.Fields{
+		"entity_id": entity_id,
+		"group_id":  group_id,
+	}).Debugf("remove entity from group")
+
+	return nil
 }
 
 func (self *StorageImpl) CreateCredential(*Credential) (*Credential, error) {
