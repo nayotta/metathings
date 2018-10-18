@@ -733,7 +733,22 @@ func (self *StorageImpl) AddRoleToGroup(group_id, role_id string) error {
 }
 
 func (self *StorageImpl) RemoveRoleFromGroup(group_id, role_id string) error {
-	panic("unimplemented")
+	var err error
+
+	if err = self.db.Delete(&GroupRoleMapping{}, "group_id = ? and role_id = ?", group_id, role_id).Error; err != nil {
+		self.logger.WithFields(log.Fields{
+			"group_id": group_id,
+			"role_id":  role_id,
+		}).WithError(err).Debugf("failed to remove role from group")
+		return err
+	}
+
+	self.logger.WithFields(log.Fields{
+		"group_id": group_id,
+		"role_id":  role_id,
+	}).Debugf("remove role from group")
+
+	return nil
 }
 
 func (self *StorageImpl) AddEntityToGroup(entity_id, group_id string) error {
