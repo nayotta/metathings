@@ -483,7 +483,24 @@ func (self *StorageImpl) ListEntitiesByDomainId(dom_id string) ([]*Entity, error
 }
 
 func (self *StorageImpl) AddRoleToEntity(entity_id, role_id string) error {
-	panic("unimplemented")
+	var err error
+
+	m := &EntityRoleMapping{
+		EntityId: &entity_id,
+		RoleId:   &role_id,
+	}
+
+	if err = self.db.Create(m).Error; err != nil {
+		self.logger.WithError(err).Debugf("failed to add role to entity")
+		return err
+	}
+
+	self.logger.WithFields(log.Fields{
+		"entity_id": entity_id,
+		"role_id":   role_id,
+	}).Debugf("add role to entity")
+
+	return nil
 }
 
 func (self *StorageImpl) RemoveRoleFromEntity(entity_id, role_id string) error {
