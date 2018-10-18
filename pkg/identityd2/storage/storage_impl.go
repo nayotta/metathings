@@ -709,7 +709,27 @@ func (self *StorageImpl) ListGroups(grp *Group) ([]*Group, error) {
 }
 
 func (self *StorageImpl) AddRoleToGroup(group_id, role_id string) error {
-	panic("unimplemented")
+	var err error
+
+	m := &GroupRoleMapping{
+		GroupId: &group_id,
+		RoleId:  &role_id,
+	}
+
+	if err = self.db.Create(m).Error; err != nil {
+		self.logger.WithFields(log.Fields{
+			"group_id": group_id,
+			"role_id":  role_id,
+		}).Debugf("failed to add role to group")
+		return err
+	}
+
+	self.logger.WithFields(log.Fields{
+		"group_id": group_id,
+		"role_id":  role_id,
+	}).Debugf("add role to group")
+
+	return nil
 }
 
 func (self *StorageImpl) RemoveRoleFromGroup(group_id, role_id string) error {
