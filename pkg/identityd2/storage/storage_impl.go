@@ -11,11 +11,22 @@ type StorageImpl struct {
 	logger log.FieldLogger
 }
 
+func (self *StorageImpl) list_view_children_domains_by_domain_id(id string) ([]*Domain, error) {
+	var doms []*Domain
+	var err error
+
+	if err = self.db.Select("id").Find(&doms, "parent_id = ?", id).Error; err != nil {
+		return nil, err
+	}
+
+	return doms, nil
+}
+
 func (self *StorageImpl) get_domain(id string) (*Domain, error) {
 	var err error
-	var dom Domain
+	var dom *Domain
 
-	if err = self.db.First(&dom, "id = ?", id).Error; err != nil {
+	if err = self.db.First(dom, "id = ?", id).Error; err != nil {
 		return nil, err
 	}
 
@@ -25,12 +36,11 @@ func (self *StorageImpl) get_domain(id string) (*Domain, error) {
 		}
 	}
 
-	children := []*Domain{}
-	if err = self.db.Select("id").Where("parent_id = ?", id).Find(&children).Error; err != nil {
+	if dom.Children, err = self.list_view_children_domains_by_domain_id(id); err != nil {
 		return nil, err
 	}
 
-	return &dom, nil
+	return dom, nil
 }
 
 func (self *StorageImpl) list_domains(dom *Domain) ([]*Domain, error) {
@@ -346,7 +356,7 @@ func (self *StorageImpl) ListPoliciesForEntity(id string) ([]*Policy, error) {
 	panic("unimplemented")
 }
 
-func (self *StorageImpl) list_domains_by_entity_id(id string) ([]*Domain, error) {
+func (self *StorageImpl) list_view_domains_by_entity_id(id string) ([]*Domain, error) {
 	var err error
 
 	var ent_dom_maps []*EntityDomainMapping
@@ -364,7 +374,7 @@ func (self *StorageImpl) list_domains_by_entity_id(id string) ([]*Domain, error)
 	return doms, nil
 }
 
-func (self *StorageImpl) list_groups_by_entity_id(id string) ([]*Group, error) {
+func (self *StorageImpl) list_view_groups_by_entity_id(id string) ([]*Group, error) {
 	var err error
 
 	var ent_grp_maps []*EntityGroupMapping
@@ -380,7 +390,7 @@ func (self *StorageImpl) list_groups_by_entity_id(id string) ([]*Group, error) {
 	return grps, nil
 }
 
-func (self *StorageImpl) list_roles_by_entity_id(id string) ([]*Role, error) {
+func (self *StorageImpl) list_view_roles_by_entity_id(id string) ([]*Role, error) {
 	var err error
 
 	var ent_role_maps []*EntityRoleMapping
@@ -404,15 +414,15 @@ func (self *StorageImpl) get_entity(id string) (*Entity, error) {
 		return nil, err
 	}
 
-	if ent.Domains, err = self.list_domains_by_entity_id(id); err != nil {
+	if ent.Domains, err = self.list_view_domains_by_entity_id(id); err != nil {
 		return nil, err
 	}
 
-	if ent.Groups, err = self.list_groups_by_entity_id(id); err != nil {
+	if ent.Groups, err = self.list_view_groups_by_entity_id(id); err != nil {
 		return nil, err
 	}
 
-	if ent.Roles, err = self.list_roles_by_entity_id(id); err != nil {
+	if ent.Roles, err = self.list_view_roles_by_entity_id(id); err != nil {
 		return nil, err
 	}
 
@@ -577,6 +587,44 @@ func (self *StorageImpl) RemoveRoleFromEntity(entity_id, role_id string) error {
 	}).Debugf("remove role from entity")
 
 	return nil
+}
+
+func (self *StorageImpl) list_view_all_roles_by_entity_id(id string) ([]*Role, error) {
+	var roles []*Role
+	var grps []*Group
+	var err error
+	role_ids_set := map[string]bool{}
+
+	if roles, err = self.list_view_roles_by_entity_id(id); err != nil {
+		return nil, err
+	}
+
+	if grps, err = self.list_view_groups_by_entity_id(id); err != nil {
+		return nil, err
+	}
+
+	var grp_role_maps []*GroupRoleMapping
+	var grps_str []string
+	for _, g := range grps {
+		grps_str = append(grps_str, *g.Id)
+	}
+	if err = self.db.Find(&grp_role_maps, "group_id in (?)", grps_str).Error; err != nil {
+		return nil, err
+	}
+
+	for _, r := range roles {
+		role_ids_set[*r.Id] = true
+	}
+	for _, m := range grp_role_maps {
+		role_ids_set[*m.GroupId] = true
+	}
+
+	roles = nil
+	for id, _ := range role_ids_set {
+		roles = append(roles, &Role{Id: &id})
+	}
+
+	return roles, nil
 }
 
 func (self *StorageImpl) get_group(id string) (*Group, error) {
@@ -792,8 +840,72 @@ func (self *StorageImpl) RemoveEntityFromGroup(entity_id, group_id string) error
 	return nil
 }
 
-func (self *StorageImpl) CreateCredential(*Credential) (*Credential, error) {
-	panic("unimplemented")
+func (self *StorageImpl) get_credential(id string) (*Credential, error) {
+	var ent_roles []*Role
+	var cred *Credential
+	var err error
+
+	if err = self.db.First(&cred, "id = ?", id).Error; err != nil {
+		return nil, err
+	}
+
+	var cred_role_maps []*CredentialRoleMapping
+	if err = self.db.Find(&cred_role_maps, "credential_id = ?", id).Error; err != nil {
+		return nil, err
+	}
+
+	if ent_roles, err = self.list_view_all_roles_by_entity_id(*cred.EntityId); err != nil {
+		return nil, err
+	}
+
+	if len(cred_role_maps) > 0 {
+		ent_roles_set := map[string]bool{}
+		for _, r := range ent_roles {
+			ent_roles_set[*r.Id] = true
+		}
+		for _, m := range cred_role_maps {
+			if _, ok := ent_roles_set[*m.RoleId]; ok {
+				cred.Roles = append(cred.Roles, &Role{Id: m.RoleId})
+			}
+		}
+
+	} else {
+		cred.Roles = ent_roles
+	}
+
+	return cred, nil
+}
+
+func (self *StorageImpl) CreateCredential(cred *Credential) (*Credential, error) {
+	var err error
+
+	tx := self.db.Begin()
+	tx.Create(cred)
+	if len(cred.Roles) > 0 {
+		var ms []*CredentialRoleMapping
+		for _, r := range cred.Roles {
+			ms = append(ms, &CredentialRoleMapping{
+				CredentialId: cred.Id,
+				RoleId:       r.Id,
+			})
+		}
+		tx.Create(ms)
+	}
+
+	if err = tx.Commit().Error; err != nil {
+		tx.Rollback()
+		self.logger.WithError(err).Debugf("failed to create credential")
+		return nil, err
+	}
+
+	if cred, err = self.get_credential(*cred.Id); err != nil {
+		self.logger.WithError(err).Debugf("failed to get credential")
+		return nil, err
+	}
+
+	self.logger.WithField("id", *cred.Id).Debugf("create credential")
+
+	return cred, nil
 }
 
 func (self *StorageImpl) DeleteCredential(id string) error {
