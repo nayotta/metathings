@@ -1027,6 +1027,31 @@ func (self *StorageImpl) get_token(id string) (*Token, error) {
 		return nil, err
 	}
 
+	if tkn, err = self.internal_get_token(tkn); err != nil {
+		return nil, err
+	}
+
+	return tkn, nil
+}
+
+func (self *StorageImpl) get_token_by_text(text string) (*Token, error) {
+	var tkn *Token
+	var err error
+
+	if err = self.db.First(&tkn, "text = ?", text).Error; err != nil {
+		return nil, err
+	}
+
+	if tkn, err = self.internal_get_token(tkn); err != nil {
+		return nil, err
+	}
+
+	return tkn, nil
+}
+
+func (self *StorageImpl) internal_get_token(tkn *Token) (*Token, error) {
+	var err error
+
 	tkn.Domain = &Domain{Id: tkn.DomainId}
 	tkn.Entity = &Entity{Id: tkn.EntityId}
 	tkn.Credential = &Credential{Id: tkn.CredentialId}
@@ -1069,7 +1094,17 @@ func (self *StorageImpl) DeleteToken(id string) error {
 }
 
 func (self *StorageImpl) GetTokenByText(text string) (*Token, error) {
-	panic("unimplemented")
+	var tkn *Token
+	var err error
+
+	if tkn, err = self.get_token_by_text(text); err != nil {
+		self.logger.WithError(err).Debugf("failed to get token by text")
+		return nil, err
+	}
+
+	self.logger.WithField("text", text).Debugf("get token by text")
+
+	return tkn, nil
 }
 
 func (self *StorageImpl) GetToken(id string) (*Token, error) {
