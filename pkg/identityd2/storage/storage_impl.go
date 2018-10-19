@@ -930,7 +930,17 @@ func (self *StorageImpl) PatchCredential(id string, credential *Credential) (*Cr
 }
 
 func (self *StorageImpl) GetCredential(id string) (*Credential, error) {
-	panic("unimplemented")
+	var cred *Credential
+	var err error
+
+	if cred, err = self.get_credential(id); err != nil {
+		self.logger.WithError(err).Debugf("failed to get credential")
+		return nil, err
+	}
+
+	self.logger.WithField("id", id).Debugf("get credential")
+
+	return cred, nil
 }
 
 func (self *StorageImpl) ListCredentials(*Credential) ([]*Credential, error) {
