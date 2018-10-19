@@ -1056,7 +1056,16 @@ func (self *StorageImpl) CreateToken(tkn *Token) (*Token, error) {
 }
 
 func (self *StorageImpl) DeleteToken(id string) error {
-	panic("unimplemented")
+	var err error
+
+	if err = self.db.Delete(&Token{}, "id = ?", id).Error; err != nil {
+		self.logger.WithError(err).Debugf("failed to delete token")
+		return err
+	}
+
+	self.logger.WithField("id", id).Debugf("delete token")
+
+	return nil
 }
 
 func (self *StorageImpl) GetTokenByText(text string) (*Token, error) {
@@ -1124,7 +1133,6 @@ func init_db(s *StorageImpl) error {
 		&EntityGroupMapping{},
 		&GroupRoleMapping{},
 		&CredentialRoleMapping{},
-		&TokenRoleMapping{},
 	)
 
 	return nil

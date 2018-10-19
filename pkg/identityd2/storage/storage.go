@@ -143,13 +143,6 @@ type Token struct {
 	Roles      []*Role     `gorm:"-"`
 }
 
-type TokenRoleMapping struct {
-	CreatedAt time.Time
-
-	TokenId *string `gorm:"column:token_id"`
-	RoleId  *string `gorm:"column:role_id"`
-}
-
 type Storage interface {
 	CreateDomain(*Domain) (*Domain, error)
 	DeleteDomain(id string) error
