@@ -909,7 +909,20 @@ func (self *StorageImpl) CreateCredential(cred *Credential) (*Credential, error)
 }
 
 func (self *StorageImpl) DeleteCredential(id string) error {
-	panic("unimplemented")
+	var err error
+
+	tx := self.db.Begin()
+	tx.Delete(&Credential{}, "id = ?", id)
+	tx.Delete(&CredentialRoleMapping{}, "credential_id = ?", id)
+	if err = tx.Commit().Error; err != nil {
+		tx.Rollback()
+		self.logger.WithError(err).Debugf("failed to delete credential")
+		return err
+	}
+
+	self.logger.WithField("id", id).Debugf("delete credential")
+
+	return nil
 }
 
 func (self *StorageImpl) PatchCredential(id string, credential *Credential) (*Credential, error) {
