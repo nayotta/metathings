@@ -1049,6 +1049,42 @@ func (self *StorageImpl) get_token_by_text(text string) (*Token, error) {
 	return tkn, nil
 }
 
+func (self *StorageImpl) list_tokens(tkn *Token) ([]*Token, error) {
+	var tkns_t []*Token
+	var tkns []*Token
+	var err error
+
+	t := &Token{}
+	if tkn.Id != nil {
+		t.Id = tkn.Id
+	}
+	if tkn.DomainId != nil {
+		t.DomainId = tkn.DomainId
+	}
+	if tkn.EntityId != nil {
+		t.EntityId = tkn.EntityId
+	}
+	if tkn.CredentialId != nil {
+		t.CredentialId = tkn.CredentialId
+	}
+	if tkn.Text != nil {
+		t.Text = tkn.Text
+	}
+
+	if err = self.db.Find(&tkns_t, t).Error; err != nil {
+		return nil, err
+	}
+
+	for _, t = range tkns_t {
+		if tkn, err = self.get_token(*t.Id); err != nil {
+			return nil, err
+		}
+		tkns = append(tkns, tkn)
+	}
+
+	return tkns, nil
+}
+
 func (self *StorageImpl) internal_get_token(tkn *Token) (*Token, error) {
 	var err error
 
@@ -1121,8 +1157,18 @@ func (self *StorageImpl) GetToken(id string) (*Token, error) {
 	return tkn, nil
 }
 
-func (self *StorageImpl) ListTokens(*Token) ([]*Token, error) {
-	panic("unimplemented")
+func (self *StorageImpl) ListTokens(tkn *Token) ([]*Token, error) {
+	var tkns []*Token
+	var err error
+
+	if tkns, err = self.list_tokens(tkn); err != nil {
+		self.logger.WithError(err).Debugf("failed to list tokens")
+		return nil, err
+	}
+
+	self.logger.Debugf("list tokens")
+
+	return tkns, nil
 }
 
 func init_args(s *StorageImpl, args ...interface{}) error {
