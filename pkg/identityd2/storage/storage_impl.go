@@ -1108,7 +1108,17 @@ func (self *StorageImpl) GetTokenByText(text string) (*Token, error) {
 }
 
 func (self *StorageImpl) GetToken(id string) (*Token, error) {
-	panic("unimplemented")
+	var tkn *Token
+	var err error
+
+	if tkn, err = self.get_token(id); err != nil {
+		self.logger.WithError(err).Debugf("failed to get token by id")
+		return nil, err
+	}
+
+	self.logger.WithField("id", id).Debugf("get token by id")
+
+	return tkn, nil
 }
 
 func (self *StorageImpl) ListTokens(*Token) ([]*Token, error) {
