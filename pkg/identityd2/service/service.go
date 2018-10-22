@@ -44,10 +44,6 @@ func (self *MetathingsIdentitydService) PatchRole(context.Context, *pb.PatchRole
 	panic("unimplemented")
 }
 
-func (self *MetathingsIdentitydService) GetRole(context.Context, *pb.GetRoleRequest) (*pb.GetRoleResponse, error) {
-	panic("unimplemented")
-}
-
 func (self *MetathingsIdentitydService) ListRoles(context.Context, *pb.ListRolesRequest) (*pb.ListRolesResponse, error) {
 	panic("unimplemented")
 }
