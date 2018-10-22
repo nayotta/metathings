@@ -968,7 +968,14 @@ func (self *StorageImpl) GetTokenByText(text string) (*Token, error) {
 }
 
 func (self *StorageImpl) GetToken(id string) (*Token, error) {
-	panic("unimplemented")
+	var tkn *Token
+	var err error
+
+	if err = self.db.First(&tkn, "id = ?", id).Error; err != nil {
+		return nil, err
+	}
+
+	return tkn, nil
 }
 
 func (self *StorageImpl) ListTokens(*Token) ([]*Token, error) {
