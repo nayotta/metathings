@@ -56,10 +56,6 @@ func (self *MetathingsIdentitydService) PatchEntity(context.Context, *pb.PatchEn
 	panic("unimplemented")
 }
 
-func (self *MetathingsIdentitydService) GetEntity(context.Context, *pb.GetEntityRequest) (*pb.GetEntityResponse, error) {
-	panic("unimplemented")
-}
-
 func (self *MetathingsIdentitydService) ListEntities(context.Context, *pb.ListEntitiesRequest) (*pb.ListEntitiesResponse, error) {
 	panic("unimplemented")
 }
@@ -69,10 +65,6 @@ func (self *MetathingsIdentitydService) ShowEntity(context.Context, *empty.Empty
 }
 
 func (self *MetathingsIdentitydService) PatchGroup(context.Context, *pb.PatchGroupRequest) (*pb.PatchGroupResponse, error) {
-	panic("unimplemented")
-}
-
-func (self *MetathingsIdentitydService) GetGroup(context.Context, *pb.GetGroupRequest) (*pb.GetGroupResponse, error) {
 	panic("unimplemented")
 }
 
