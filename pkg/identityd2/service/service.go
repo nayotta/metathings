@@ -84,10 +84,6 @@ func (self *MetathingsIdentitydService) PatchCredential(context.Context, *pb.Pat
 	panic("unimplemented")
 }
 
-func (self *MetathingsIdentitydService) GetCredential(context.Context, *pb.GetCredentialRequest) (*pb.GetCredentialResponse, error) {
-	panic("unimplemented")
-}
-
 func (self *MetathingsIdentitydService) ListCredentials(context.Context, *pb.ListCredentialsRequest) (*pb.ListCredentialsResponse, error) {
 	panic("unimplemented")
 }
