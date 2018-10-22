@@ -1,6 +1,7 @@
 package metathings_identityd2_storage
 
 import (
+	"errors"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	log "github.com/sirupsen/logrus"
@@ -924,8 +925,29 @@ func (self *StorageImpl) ListCredentials(*Credential) ([]*Credential, error) {
 	panic("unimplemented")
 }
 
-func (self *StorageImpl) CreateToken(*Token) (*Token, error) {
-	panic("unimplemented")
+func (self *StorageImpl) CreateToken(tkn *Token) (*Token, error) {
+	var err error
+
+	if self.db.NewRecord(*tkn) == false {
+		err = errors.New("failed to cteate token, token exist")
+		self.logger.WithError(err).Debugf("failed to create token")
+		return nil, err
+	}
+
+	if err = self.db.Create(tkn).Error; err != nil {
+		self.logger.WithError(err).Debugf("failed to create token")
+		return nil, err
+	}
+
+	if tkn, err = self.GetTokenByText(*tkn.Text); err != nil {
+		self.logger.WithError(err).Debugf("failed to get token")
+		return nil, err
+	}
+
+	self.logger.WithFields(log.Fields{
+		"token_text": *tkn.Text,
+	}).Debugf("create token")
+	return tkn, nil
 }
 
 func (self *StorageImpl) DeleteToken(id string) error {
