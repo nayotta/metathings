@@ -985,8 +985,32 @@ func (self *StorageImpl) GetToken(id string) (*Token, error) {
 	return tkn, nil
 }
 
-func (self *StorageImpl) ListTokens(*Token) ([]*Token, error) {
-	panic("unimplemented")
+func (self *StorageImpl) ListTokens(tkn *Token) ([]*Token, error) {
+	var tkns_t []*Token
+	var err error
+
+	t := &Token{}
+	if tkn.Id != nil {
+		t.Id = tkn.Id
+	}
+	if tkn.DomainId != nil {
+		t.DomainId = tkn.DomainId
+	}
+	if tkn.EntityId != nil {
+		t.EntityId = tkn.EntityId
+	}
+	if tkn.CredentialId != nil {
+		t.CredentialId = tkn.CredentialId
+	}
+	if tkn.Text != nil {
+		t.Text = tkn.Text
+	}
+
+	if err = self.db.Select("id").Find(&tkns_t, t).Error; err != nil {
+		return nil, err
+	}
+
+	return tkns_t, nil
 }
 
 func init_args(s *StorageImpl, args ...interface{}) error {
