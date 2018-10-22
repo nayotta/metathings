@@ -32,10 +32,6 @@ func (self *MetathingsIdentitydService) PatchDomain(context.Context, *pb.PatchDo
 	panic("unimplemented")
 }
 
-func (self *MetathingsIdentitydService) GetPolicy(context.Context, *pb.GetPolicyRequest) (*pb.GetPolicyResponse, error) {
-	panic("unimplemented")
-}
-
 func (self *MetathingsIdentitydService) ListPolicies(context.Context, *pb.ListPoliciesRequest) (*pb.ListPoliciesResponse, error) {
 	panic("unimplemented")
 }

@@ -272,6 +272,19 @@ func copy_token(x *storage.Token) *pb.Token {
 	return y
 }
 
+func copy_policy(x *storage.Policy) *pb.Policy {
+	y := &pb.Policy{
+		Id: *x.Id,
+		Role: &pb.Role{
+			Id: *x.RoleId,
+		},
+		Rule:        *x.Rule,
+		Description: *x.Description,
+	}
+
+	return y
+}
+
 func role_in_entity(ent *storage.Entity, role_id string) bool {
 	for _, r := range ent.Roles {
 		if *r.Id == role_id {
