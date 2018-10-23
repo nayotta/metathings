@@ -3,10 +3,12 @@
 
 package identityd2
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import _ "github.com/mwitkow/go-proto-validators"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	_ "github.com/mwitkow/go-proto-validators"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -20,8 +22,8 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type AddPolicyToRoleRequest struct {
-	Role                 *OpRole   `protobuf:"bytes,1,opt,name=role" json:"role,omitempty"`
-	Policy               *OpPolicy `protobuf:"bytes,2,opt,name=policy" json:"policy,omitempty"`
+	Role                 *OpRole   `protobuf:"bytes,1,opt,name=role,proto3" json:"role,omitempty"`
+	Policy               *OpPolicy `protobuf:"bytes,2,opt,name=policy,proto3" json:"policy,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}  `json:"-"`
 	XXX_unrecognized     []byte    `json:"-"`
 	XXX_sizecache        int32     `json:"-"`
@@ -31,16 +33,17 @@ func (m *AddPolicyToRoleRequest) Reset()         { *m = AddPolicyToRoleRequest{}
 func (m *AddPolicyToRoleRequest) String() string { return proto.CompactTextString(m) }
 func (*AddPolicyToRoleRequest) ProtoMessage()    {}
 func (*AddPolicyToRoleRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_add_policy_to_role_71b00498815544ec, []int{0}
+	return fileDescriptor_1629676b1185450f, []int{0}
 }
+
 func (m *AddPolicyToRoleRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_AddPolicyToRoleRequest.Unmarshal(m, b)
 }
 func (m *AddPolicyToRoleRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_AddPolicyToRoleRequest.Marshal(b, m, deterministic)
 }
-func (dst *AddPolicyToRoleRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_AddPolicyToRoleRequest.Merge(dst, src)
+func (m *AddPolicyToRoleRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_AddPolicyToRoleRequest.Merge(m, src)
 }
 func (m *AddPolicyToRoleRequest) XXX_Size() int {
 	return xxx_messageInfo_AddPolicyToRoleRequest.Size(m)
@@ -69,11 +72,9 @@ func init() {
 	proto.RegisterType((*AddPolicyToRoleRequest)(nil), "ai.metathings.service.identityd2.AddPolicyToRoleRequest")
 }
 
-func init() {
-	proto.RegisterFile("add_policy_to_role.proto", fileDescriptor_add_policy_to_role_71b00498815544ec)
-}
+func init() { proto.RegisterFile("add_policy_to_role.proto", fileDescriptor_1629676b1185450f) }
 
-var fileDescriptor_add_policy_to_role_71b00498815544ec = []byte{
+var fileDescriptor_1629676b1185450f = []byte{
 	// 218 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x8f, 0xb1, 0x4a, 0x03, 0x41,
 	0x10, 0x86, 0xd9, 0x20, 0x57, 0x6c, 0xba, 0x2b, 0xe4, 0x48, 0xe3, 0x61, 0x15, 0x84, 0xec, 0x41,

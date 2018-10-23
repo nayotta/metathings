@@ -3,11 +3,13 @@
 
 package identityd2
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import wrappers "github.com/golang/protobuf/ptypes/wrappers"
-import _ "github.com/mwitkow/go-proto-validators"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	wrappers "github.com/golang/protobuf/ptypes/wrappers"
+	_ "github.com/mwitkow/go-proto-validators"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -21,10 +23,10 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type PatchGroupRequest struct {
-	Id                   *wrappers.StringValue            `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	Alias                *wrappers.StringValue            `protobuf:"bytes,6,opt,name=alias" json:"alias,omitempty"`
-	Description          *wrappers.StringValue            `protobuf:"bytes,7,opt,name=description" json:"description,omitempty"`
-	Extra                map[string]*wrappers.StringValue `protobuf:"bytes,8,rep,name=extra" json:"extra,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	Id                   *wrappers.StringValue            `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Alias                *wrappers.StringValue            `protobuf:"bytes,6,opt,name=alias,proto3" json:"alias,omitempty"`
+	Description          *wrappers.StringValue            `protobuf:"bytes,7,opt,name=description,proto3" json:"description,omitempty"`
+	Extra                map[string]*wrappers.StringValue `protobuf:"bytes,8,rep,name=extra,proto3" json:"extra,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 	XXX_NoUnkeyedLiteral struct{}                         `json:"-"`
 	XXX_unrecognized     []byte                           `json:"-"`
 	XXX_sizecache        int32                            `json:"-"`
@@ -34,16 +36,17 @@ func (m *PatchGroupRequest) Reset()         { *m = PatchGroupRequest{} }
 func (m *PatchGroupRequest) String() string { return proto.CompactTextString(m) }
 func (*PatchGroupRequest) ProtoMessage()    {}
 func (*PatchGroupRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_patch_group_1e560c53dca72d30, []int{0}
+	return fileDescriptor_74f1cd4f90fa4471, []int{0}
 }
+
 func (m *PatchGroupRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_PatchGroupRequest.Unmarshal(m, b)
 }
 func (m *PatchGroupRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_PatchGroupRequest.Marshal(b, m, deterministic)
 }
-func (dst *PatchGroupRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_PatchGroupRequest.Merge(dst, src)
+func (m *PatchGroupRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PatchGroupRequest.Merge(m, src)
 }
 func (m *PatchGroupRequest) XXX_Size() int {
 	return xxx_messageInfo_PatchGroupRequest.Size(m)
@@ -83,7 +86,7 @@ func (m *PatchGroupRequest) GetExtra() map[string]*wrappers.StringValue {
 }
 
 type PatchGroupResponse struct {
-	Group                *Group   `protobuf:"bytes,1,opt,name=group" json:"group,omitempty"`
+	Group                *Group   `protobuf:"bytes,1,opt,name=group,proto3" json:"group,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -93,16 +96,17 @@ func (m *PatchGroupResponse) Reset()         { *m = PatchGroupResponse{} }
 func (m *PatchGroupResponse) String() string { return proto.CompactTextString(m) }
 func (*PatchGroupResponse) ProtoMessage()    {}
 func (*PatchGroupResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_patch_group_1e560c53dca72d30, []int{1}
+	return fileDescriptor_74f1cd4f90fa4471, []int{1}
 }
+
 func (m *PatchGroupResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_PatchGroupResponse.Unmarshal(m, b)
 }
 func (m *PatchGroupResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_PatchGroupResponse.Marshal(b, m, deterministic)
 }
-func (dst *PatchGroupResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_PatchGroupResponse.Merge(dst, src)
+func (m *PatchGroupResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PatchGroupResponse.Merge(m, src)
 }
 func (m *PatchGroupResponse) XXX_Size() int {
 	return xxx_messageInfo_PatchGroupResponse.Size(m)
@@ -126,9 +130,9 @@ func init() {
 	proto.RegisterType((*PatchGroupResponse)(nil), "ai.metathings.service.identityd2.PatchGroupResponse")
 }
 
-func init() { proto.RegisterFile("patch_group.proto", fileDescriptor_patch_group_1e560c53dca72d30) }
+func init() { proto.RegisterFile("patch_group.proto", fileDescriptor_74f1cd4f90fa4471) }
 
-var fileDescriptor_patch_group_1e560c53dca72d30 = []byte{
+var fileDescriptor_74f1cd4f90fa4471 = []byte{
 	// 360 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x92, 0x41, 0x6b, 0xdb, 0x30,
 	0x14, 0xc7, 0xb1, 0x33, 0x7b, 0x99, 0x7c, 0x59, 0x74, 0x32, 0x61, 0x6c, 0x26, 0x97, 0xe5, 0x12,

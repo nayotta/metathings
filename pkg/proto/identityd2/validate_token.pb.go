@@ -3,10 +3,12 @@
 
 package identityd2
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import _ "github.com/mwitkow/go-proto-validators"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	_ "github.com/mwitkow/go-proto-validators"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -20,7 +22,7 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type ValidateTokenRequest struct {
-	Token                *OpToken `protobuf:"bytes,1,opt,name=token" json:"token,omitempty"`
+	Token                *OpToken `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -30,16 +32,17 @@ func (m *ValidateTokenRequest) Reset()         { *m = ValidateTokenRequest{} }
 func (m *ValidateTokenRequest) String() string { return proto.CompactTextString(m) }
 func (*ValidateTokenRequest) ProtoMessage()    {}
 func (*ValidateTokenRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_validate_token_1378b859680631de, []int{0}
+	return fileDescriptor_2b5b3bf2c98d17ba, []int{0}
 }
+
 func (m *ValidateTokenRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ValidateTokenRequest.Unmarshal(m, b)
 }
 func (m *ValidateTokenRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_ValidateTokenRequest.Marshal(b, m, deterministic)
 }
-func (dst *ValidateTokenRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ValidateTokenRequest.Merge(dst, src)
+func (m *ValidateTokenRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ValidateTokenRequest.Merge(m, src)
 }
 func (m *ValidateTokenRequest) XXX_Size() int {
 	return xxx_messageInfo_ValidateTokenRequest.Size(m)
@@ -58,7 +61,7 @@ func (m *ValidateTokenRequest) GetToken() *OpToken {
 }
 
 type ValidateTokenResponse struct {
-	Token                *Token   `protobuf:"bytes,1,opt,name=token" json:"token,omitempty"`
+	Token                *Token   `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -68,16 +71,17 @@ func (m *ValidateTokenResponse) Reset()         { *m = ValidateTokenResponse{} }
 func (m *ValidateTokenResponse) String() string { return proto.CompactTextString(m) }
 func (*ValidateTokenResponse) ProtoMessage()    {}
 func (*ValidateTokenResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_validate_token_1378b859680631de, []int{1}
+	return fileDescriptor_2b5b3bf2c98d17ba, []int{1}
 }
+
 func (m *ValidateTokenResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ValidateTokenResponse.Unmarshal(m, b)
 }
 func (m *ValidateTokenResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_ValidateTokenResponse.Marshal(b, m, deterministic)
 }
-func (dst *ValidateTokenResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ValidateTokenResponse.Merge(dst, src)
+func (m *ValidateTokenResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ValidateTokenResponse.Merge(m, src)
 }
 func (m *ValidateTokenResponse) XXX_Size() int {
 	return xxx_messageInfo_ValidateTokenResponse.Size(m)
@@ -100,11 +104,9 @@ func init() {
 	proto.RegisterType((*ValidateTokenResponse)(nil), "ai.metathings.service.identityd2.ValidateTokenResponse")
 }
 
-func init() {
-	proto.RegisterFile("validate_token.proto", fileDescriptor_validate_token_1378b859680631de)
-}
+func init() { proto.RegisterFile("validate_token.proto", fileDescriptor_2b5b3bf2c98d17ba) }
 
-var fileDescriptor_validate_token_1378b859680631de = []byte{
+var fileDescriptor_2b5b3bf2c98d17ba = []byte{
 	// 206 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x12, 0x29, 0x4b, 0xcc, 0xc9,
 	0x4c, 0x49, 0x2c, 0x49, 0x8d, 0x2f, 0xc9, 0xcf, 0x4e, 0xcd, 0xd3, 0x2b, 0x28, 0xca, 0x2f, 0xc9,

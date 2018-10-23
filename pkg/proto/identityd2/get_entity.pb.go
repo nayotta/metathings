@@ -3,11 +3,13 @@
 
 package identityd2
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import wrappers "github.com/golang/protobuf/ptypes/wrappers"
-import _ "github.com/mwitkow/go-proto-validators"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	wrappers "github.com/golang/protobuf/ptypes/wrappers"
+	_ "github.com/mwitkow/go-proto-validators"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -21,7 +23,7 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type GetEntityRequest struct {
-	Id                   *wrappers.StringValue `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
+	Id                   *wrappers.StringValue `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -31,16 +33,17 @@ func (m *GetEntityRequest) Reset()         { *m = GetEntityRequest{} }
 func (m *GetEntityRequest) String() string { return proto.CompactTextString(m) }
 func (*GetEntityRequest) ProtoMessage()    {}
 func (*GetEntityRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_get_entity_26b5c8433694bb6f, []int{0}
+	return fileDescriptor_e1c9f97a060eb838, []int{0}
 }
+
 func (m *GetEntityRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_GetEntityRequest.Unmarshal(m, b)
 }
 func (m *GetEntityRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_GetEntityRequest.Marshal(b, m, deterministic)
 }
-func (dst *GetEntityRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_GetEntityRequest.Merge(dst, src)
+func (m *GetEntityRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetEntityRequest.Merge(m, src)
 }
 func (m *GetEntityRequest) XXX_Size() int {
 	return xxx_messageInfo_GetEntityRequest.Size(m)
@@ -59,7 +62,7 @@ func (m *GetEntityRequest) GetId() *wrappers.StringValue {
 }
 
 type GetEntityResponse struct {
-	Entity               *Entity  `protobuf:"bytes,1,opt,name=entity" json:"entity,omitempty"`
+	Entity               *Entity  `protobuf:"bytes,1,opt,name=entity,proto3" json:"entity,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -69,16 +72,17 @@ func (m *GetEntityResponse) Reset()         { *m = GetEntityResponse{} }
 func (m *GetEntityResponse) String() string { return proto.CompactTextString(m) }
 func (*GetEntityResponse) ProtoMessage()    {}
 func (*GetEntityResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_get_entity_26b5c8433694bb6f, []int{1}
+	return fileDescriptor_e1c9f97a060eb838, []int{1}
 }
+
 func (m *GetEntityResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_GetEntityResponse.Unmarshal(m, b)
 }
 func (m *GetEntityResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_GetEntityResponse.Marshal(b, m, deterministic)
 }
-func (dst *GetEntityResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_GetEntityResponse.Merge(dst, src)
+func (m *GetEntityResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetEntityResponse.Merge(m, src)
 }
 func (m *GetEntityResponse) XXX_Size() int {
 	return xxx_messageInfo_GetEntityResponse.Size(m)
@@ -101,9 +105,9 @@ func init() {
 	proto.RegisterType((*GetEntityResponse)(nil), "ai.metathings.service.identityd2.GetEntityResponse")
 }
 
-func init() { proto.RegisterFile("get_entity.proto", fileDescriptor_get_entity_26b5c8433694bb6f) }
+func init() { proto.RegisterFile("get_entity.proto", fileDescriptor_e1c9f97a060eb838) }
 
-var fileDescriptor_get_entity_26b5c8433694bb6f = []byte{
+var fileDescriptor_e1c9f97a060eb838 = []byte{
 	// 235 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x8f, 0x31, 0x4b, 0xc4, 0x40,
 	0x10, 0x85, 0x49, 0x8a, 0x14, 0x7b, 0xcd, 0x99, 0x4a, 0x0e, 0xd1, 0x70, 0xd5, 0x35, 0x37, 0x0b,

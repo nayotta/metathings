@@ -3,10 +3,12 @@
 
 package identityd2
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import wrappers "github.com/golang/protobuf/ptypes/wrappers"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	wrappers "github.com/golang/protobuf/ptypes/wrappers"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -20,8 +22,8 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type ListPoliciesRequest struct {
-	Id                   *wrappers.StringValue `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	Role                 *OpRole               `protobuf:"bytes,2,opt,name=role" json:"role,omitempty"`
+	Id                   *wrappers.StringValue `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Role                 *OpRole               `protobuf:"bytes,2,opt,name=role,proto3" json:"role,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -31,16 +33,17 @@ func (m *ListPoliciesRequest) Reset()         { *m = ListPoliciesRequest{} }
 func (m *ListPoliciesRequest) String() string { return proto.CompactTextString(m) }
 func (*ListPoliciesRequest) ProtoMessage()    {}
 func (*ListPoliciesRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_list_policies_e25ec2ef60e97a3a, []int{0}
+	return fileDescriptor_47ab29dc3ae3b701, []int{0}
 }
+
 func (m *ListPoliciesRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ListPoliciesRequest.Unmarshal(m, b)
 }
 func (m *ListPoliciesRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_ListPoliciesRequest.Marshal(b, m, deterministic)
 }
-func (dst *ListPoliciesRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ListPoliciesRequest.Merge(dst, src)
+func (m *ListPoliciesRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ListPoliciesRequest.Merge(m, src)
 }
 func (m *ListPoliciesRequest) XXX_Size() int {
 	return xxx_messageInfo_ListPoliciesRequest.Size(m)
@@ -66,7 +69,7 @@ func (m *ListPoliciesRequest) GetRole() *OpRole {
 }
 
 type ListPoliciesResponse struct {
-	Policies             []*Policy `protobuf:"bytes,1,rep,name=policies" json:"policies,omitempty"`
+	Policies             []*Policy `protobuf:"bytes,1,rep,name=policies,proto3" json:"policies,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}  `json:"-"`
 	XXX_unrecognized     []byte    `json:"-"`
 	XXX_sizecache        int32     `json:"-"`
@@ -76,16 +79,17 @@ func (m *ListPoliciesResponse) Reset()         { *m = ListPoliciesResponse{} }
 func (m *ListPoliciesResponse) String() string { return proto.CompactTextString(m) }
 func (*ListPoliciesResponse) ProtoMessage()    {}
 func (*ListPoliciesResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_list_policies_e25ec2ef60e97a3a, []int{1}
+	return fileDescriptor_47ab29dc3ae3b701, []int{1}
 }
+
 func (m *ListPoliciesResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ListPoliciesResponse.Unmarshal(m, b)
 }
 func (m *ListPoliciesResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_ListPoliciesResponse.Marshal(b, m, deterministic)
 }
-func (dst *ListPoliciesResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ListPoliciesResponse.Merge(dst, src)
+func (m *ListPoliciesResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ListPoliciesResponse.Merge(m, src)
 }
 func (m *ListPoliciesResponse) XXX_Size() int {
 	return xxx_messageInfo_ListPoliciesResponse.Size(m)
@@ -108,9 +112,9 @@ func init() {
 	proto.RegisterType((*ListPoliciesResponse)(nil), "ai.metathings.service.identityd2.ListPoliciesResponse")
 }
 
-func init() { proto.RegisterFile("list_policies.proto", fileDescriptor_list_policies_e25ec2ef60e97a3a) }
+func init() { proto.RegisterFile("list_policies.proto", fileDescriptor_47ab29dc3ae3b701) }
 
-var fileDescriptor_list_policies_e25ec2ef60e97a3a = []byte{
+var fileDescriptor_47ab29dc3ae3b701 = []byte{
 	// 236 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x90, 0x41, 0x4b, 0xc3, 0x40,
 	0x10, 0x85, 0x49, 0x2c, 0x22, 0x9b, 0x5b, 0xea, 0x21, 0x14, 0x91, 0xd0, 0x53, 0x0f, 0x32, 0x85,

@@ -3,11 +3,13 @@
 
 package identityd2
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import wrappers "github.com/golang/protobuf/ptypes/wrappers"
-import _ "github.com/mwitkow/go-proto-validators"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	wrappers "github.com/golang/protobuf/ptypes/wrappers"
+	_ "github.com/mwitkow/go-proto-validators"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -21,11 +23,11 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type ListCredentialsForEntityRequest struct {
-	Id                   *wrappers.StringValue `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	Domain               *OpDomain             `protobuf:"bytes,2,opt,name=domain" json:"domain,omitempty"`
-	Entity               *OpEntity             `protobuf:"bytes,4,opt,name=entity" json:"entity,omitempty"`
-	Name                 *wrappers.StringValue `protobuf:"bytes,5,opt,name=name" json:"name,omitempty"`
-	Alias                *wrappers.StringValue `protobuf:"bytes,6,opt,name=alias" json:"alias,omitempty"`
+	Id                   *wrappers.StringValue `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Domain               *OpDomain             `protobuf:"bytes,2,opt,name=domain,proto3" json:"domain,omitempty"`
+	Entity               *OpEntity             `protobuf:"bytes,4,opt,name=entity,proto3" json:"entity,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,5,opt,name=name,proto3" json:"name,omitempty"`
+	Alias                *wrappers.StringValue `protobuf:"bytes,6,opt,name=alias,proto3" json:"alias,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -35,16 +37,17 @@ func (m *ListCredentialsForEntityRequest) Reset()         { *m = ListCredentials
 func (m *ListCredentialsForEntityRequest) String() string { return proto.CompactTextString(m) }
 func (*ListCredentialsForEntityRequest) ProtoMessage()    {}
 func (*ListCredentialsForEntityRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_list_credentials_for_entity_131befdb102ebf77, []int{0}
+	return fileDescriptor_97760605265d9fcb, []int{0}
 }
+
 func (m *ListCredentialsForEntityRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ListCredentialsForEntityRequest.Unmarshal(m, b)
 }
 func (m *ListCredentialsForEntityRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_ListCredentialsForEntityRequest.Marshal(b, m, deterministic)
 }
-func (dst *ListCredentialsForEntityRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ListCredentialsForEntityRequest.Merge(dst, src)
+func (m *ListCredentialsForEntityRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ListCredentialsForEntityRequest.Merge(m, src)
 }
 func (m *ListCredentialsForEntityRequest) XXX_Size() int {
 	return xxx_messageInfo_ListCredentialsForEntityRequest.Size(m)
@@ -91,7 +94,7 @@ func (m *ListCredentialsForEntityRequest) GetAlias() *wrappers.StringValue {
 }
 
 type ListCredentialsForEntityResponse struct {
-	Credentials          []*Credential `protobuf:"bytes,1,rep,name=credentials" json:"credentials,omitempty"`
+	Credentials          []*Credential `protobuf:"bytes,1,rep,name=credentials,proto3" json:"credentials,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}      `json:"-"`
 	XXX_unrecognized     []byte        `json:"-"`
 	XXX_sizecache        int32         `json:"-"`
@@ -101,16 +104,17 @@ func (m *ListCredentialsForEntityResponse) Reset()         { *m = ListCredential
 func (m *ListCredentialsForEntityResponse) String() string { return proto.CompactTextString(m) }
 func (*ListCredentialsForEntityResponse) ProtoMessage()    {}
 func (*ListCredentialsForEntityResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_list_credentials_for_entity_131befdb102ebf77, []int{1}
+	return fileDescriptor_97760605265d9fcb, []int{1}
 }
+
 func (m *ListCredentialsForEntityResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ListCredentialsForEntityResponse.Unmarshal(m, b)
 }
 func (m *ListCredentialsForEntityResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_ListCredentialsForEntityResponse.Marshal(b, m, deterministic)
 }
-func (dst *ListCredentialsForEntityResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ListCredentialsForEntityResponse.Merge(dst, src)
+func (m *ListCredentialsForEntityResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ListCredentialsForEntityResponse.Merge(m, src)
 }
 func (m *ListCredentialsForEntityResponse) XXX_Size() int {
 	return xxx_messageInfo_ListCredentialsForEntityResponse.Size(m)
@@ -133,11 +137,9 @@ func init() {
 	proto.RegisterType((*ListCredentialsForEntityResponse)(nil), "ai.metathings.service.identityd2.ListCredentialsForEntityResponse")
 }
 
-func init() {
-	proto.RegisterFile("list_credentials_for_entity.proto", fileDescriptor_list_credentials_for_entity_131befdb102ebf77)
-}
+func init() { proto.RegisterFile("list_credentials_for_entity.proto", fileDescriptor_97760605265d9fcb) }
 
-var fileDescriptor_list_credentials_for_entity_131befdb102ebf77 = []byte{
+var fileDescriptor_97760605265d9fcb = []byte{
 	// 335 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x92, 0xcf, 0x4a, 0xc3, 0x40,
 	0x10, 0xc6, 0x69, 0x6c, 0x73, 0xd8, 0xdc, 0x72, 0x0a, 0x45, 0x34, 0xf6, 0x54, 0xa4, 0xdd, 0x48,

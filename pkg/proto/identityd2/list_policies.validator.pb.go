@@ -3,7 +3,7 @@
 
 package identityd2
 
-import go_proto_validators "github.com/mwitkow/go-proto-validators"
+import github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
@@ -16,13 +16,13 @@ var _ = math.Inf
 
 func (this *ListPoliciesRequest) Validate() error {
 	if this.Id != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Id); err != nil {
-			return go_proto_validators.FieldError("Id", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Id); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Id", err)
 		}
 	}
 	if this.Role != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Role); err != nil {
-			return go_proto_validators.FieldError("Role", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Role); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Role", err)
 		}
 	}
 	return nil
@@ -30,8 +30,8 @@ func (this *ListPoliciesRequest) Validate() error {
 func (this *ListPoliciesResponse) Validate() error {
 	for _, item := range this.Policies {
 		if item != nil {
-			if err := go_proto_validators.CallValidatorIfExists(item); err != nil {
-				return go_proto_validators.FieldError("Policies", err)
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("Policies", err)
 			}
 		}
 	}

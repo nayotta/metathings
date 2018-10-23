@@ -4,7 +4,7 @@
 package identityd2
 
 import fmt "fmt"
-import go_proto_validators "github.com/mwitkow/go-proto-validators"
+import github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
 import proto "github.com/golang/protobuf/proto"
 import math "math"
 import _ "github.com/mwitkow/go-proto-validators"
@@ -16,11 +16,11 @@ var _ = math.Inf
 
 func (this *DeleteRoleRequest) Validate() error {
 	if nil == this.Role {
-		return go_proto_validators.FieldError("Role", fmt.Errorf("message must exist"))
+		return github_com_mwitkow_go_proto_validators.FieldError("Role", fmt.Errorf("message must exist"))
 	}
 	if this.Role != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Role); err != nil {
-			return go_proto_validators.FieldError("Role", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Role); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Role", err)
 		}
 	}
 	return nil
