@@ -52,10 +52,6 @@ func (self *MetathingsIdentitydService) GetRole(context.Context, *pb.GetRoleRequ
 	panic("unimplemented")
 }
 
-func (self *MetathingsIdentitydService) ListRoles(context.Context, *pb.ListRolesRequest) (*pb.ListRolesResponse, error) {
-	panic("unimplemented")
-}
-
 func (self *MetathingsIdentitydService) ListRolesForEntity(context.Context, *pb.ListRolesForEntityRequest) (*pb.ListRolesForEntityResponse, error) {
 	panic("unimplemented")
 }
@@ -81,10 +77,6 @@ func (self *MetathingsIdentitydService) PatchGroup(context.Context, *pb.PatchGro
 }
 
 func (self *MetathingsIdentitydService) GetGroup(context.Context, *pb.GetGroupRequest) (*pb.GetGroupResponse, error) {
-	panic("unimplemented")
-}
-
-func (self *MetathingsIdentitydService) ListGroups(context.Context, *pb.ListGroupsRequest) (*pb.ListGroupsResponse, error) {
 	panic("unimplemented")
 }
 
