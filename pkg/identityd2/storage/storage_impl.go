@@ -910,11 +910,57 @@ func (self *StorageImpl) CreateCredential(cred *Credential) (*Credential, error)
 }
 
 func (self *StorageImpl) DeleteCredential(id string) error {
-	panic("unimplemented")
+	var err error
+
+	if err = self.db.Delete(&Credential{}, "id = ?", id).Error; err != nil {
+		self.logger.WithError(err).Debugf("failed to delete credential")
+		return err
+	}
+
+	self.logger.WithField("id", id).Debugf("delete credential")
+
+	return nil
 }
 
 func (self *StorageImpl) PatchCredential(id string, credential *Credential) (*Credential, error) {
-	panic("unimplemented")
+	var err error
+	var cred *Credential
+
+	tx := self.db.Begin()
+
+	if err = self.db.First(&cred, "id = ?", id).Error; err != nil {
+		return nil, err
+	}
+
+	if credential.DomainId != nil && credential.DomainId != cred.DomainId {
+		tx.Model(&cred).Update("DomainId", credential.DomainId)
+	}
+	if credential.EntityId!= nil && credential.EntityId != cred.EntityId {
+		tx.Model(&cred).Update("EntityId", credential.EntityId)
+	}
+	if credential.Name!= nil && credential.Name != cred.Name {
+		tx.Model(&cred).Update("Name", credential.Name)
+	}
+	if credential.Alias!= nil && credential.Alias != cred.Alias {
+		tx.Model(&cred).Update("Alias", credential.Alias)
+	}
+	if credential.Secret!= nil && credential.Secret != cred.Secret {
+		tx.Model(&cred).Update("Secret", credential.Secret)
+	}
+	if credential.Description!= nil && credential.Description != cred.Description {
+		tx.Model(&cred).Update("Description", credential.Description)
+	}
+	if credential.ExpiresAt!= nil && credential.ExpiresAt != cred.ExpiresAt {
+		tx.Model(&cred).Update("ExpiresAt", credential.ExpiresAt)
+	}
+
+	if err = tx.Commit().Error; err != nil {
+		tx.Rollback()
+		self.logger.WithError(err).Debugf("failed to patch credential")
+		return nil, err
+	}
+
+	return cred, nil
 }
 
 func (self *StorageImpl) GetCredential(id string) (*Credential, error) {
