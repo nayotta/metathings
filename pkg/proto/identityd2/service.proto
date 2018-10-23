@@ -11,17 +11,11 @@ import "patch_domain.proto";
 import "get_domain.proto";
 import "list_domains.proto";
 
-import "get_policy.proto";
-import "list_policies.proto";
-import "list_policies_for_role.proto";
-
 import "create_role.proto";
 import "delete_role.proto";
 import "patch_role.proto";
 import "get_role.proto";
 import "list_roles.proto";
-import "add_policy_to_role.proto";
-import "remove_policy_from_role.proto";
 import "list_roles_for_entity.proto";
 
 import "create_entity.proto";
@@ -68,17 +62,11 @@ service IdentitydService {
 	rpc GetDomain(GetDomainRequest) returns (GetDomainResponse) {}
 	rpc ListDomains(ListDomainsRequest) returns (ListDomainsResponse) {}
 
-	rpc GetPolicy(GetPolicyRequest) returns (GetPolicyResponse) {}
-	rpc ListPolicies(ListPoliciesRequest) returns (ListPoliciesResponse) {}
-	rpc ListPoliciesForRole(ListPoliciesForRoleRequest) returns (ListPoliciesForRoleResponse) {}
-
 	rpc CreateRole(CreateRoleRequest) returns (CreateRoleResponse) {}
 	rpc DeleteRole(DeleteRoleRequest) returns (google.protobuf.Empty) {}
 	rpc PatchRole(PatchRoleRequest) returns (PatchRoleResponse) {}
 	rpc GetRole(GetRoleRequest) returns (GetRoleResponse) {}
 	rpc ListRoles(ListRolesRequest) returns (ListRolesResponse) {}
-	rpc AddPolicyToRole(AddPolicyToRoleRequest) returns (google.protobuf.Empty) {}
-	rpc RemovePolicyFromRole(RemovePolicyFromRoleRequest) returns (google.protobuf.Empty) {}
 	rpc ListRolesForEntity(ListRolesForEntityRequest) returns (ListRolesForEntityResponse) {}
 
 	rpc CreateEntity(CreateEntityRequest) returns (CreateEntityResponse) {}

@@ -174,7 +174,6 @@ func (self *StorageImpl) RemoveEntityFromDomain(domain_id, entity_id string) err
 
 func (self *StorageImpl) get_role(id string) (*Role, error) {
 	var role *Role
-	var policies []*Policy
 	var err error
 
 	if err = self.db.First(&role, "id = ?", id).Error; err != nil {
@@ -184,12 +183,6 @@ func (self *StorageImpl) get_role(id string) (*Role, error) {
 	role.Domain = &Domain{
 		Id: role.DomainId,
 	}
-
-	if err = self.db.Find(&policies, "role_id = ?", id).Error; err != nil {
-		return nil, err
-	}
-
-	role.Policies = policies
 
 	return role, nil
 }
@@ -248,11 +241,7 @@ func (self *StorageImpl) CreateRole(role *Role) (*Role, error) {
 func (self *StorageImpl) DeleteRole(id string) error {
 	var err error
 
-	tx := self.db.Begin()
-	tx.Delete(&Policy{}, "role_id = ?", id)
-	tx.Delete(&Role{}, "id = ?", id)
-	if err = tx.Commit().Error; err != nil {
-		tx.Rollback()
+	if err = self.db.Delete(&Role{}, "id = ?", id).Error; err != nil {
 		self.logger.WithError(err).Debugf("failed to delete role")
 		return err
 	}
@@ -290,70 +279,6 @@ func (self *StorageImpl) ListRoles(role *Role) ([]*Role, error) {
 	self.logger.Debugf("list roles")
 
 	return roles, nil
-}
-
-func (self *StorageImpl) get_policy(id string) (*Policy, error) {
-	var plc *Policy
-	var err error
-
-	if err = self.db.First(&plc, "id = ?", id).Error; err != nil {
-		return nil, err
-	}
-
-	return plc, nil
-}
-
-func (self *StorageImpl) GetPolicy(id string) (*Policy, error) {
-	var plc *Policy
-	var err error
-
-	if plc, err = self.get_policy(id); err != nil {
-		self.logger.WithError(err).Debugf("failed to get policy")
-		return nil, err
-	}
-
-	self.logger.WithField("id", id).Debugf("get policy")
-
-	return plc, nil
-}
-
-func (self *StorageImpl) CreatePolicy(plc *Policy) (*Policy, error) {
-	var err error
-
-	if err = self.db.Create(plc).Error; err != nil {
-		self.logger.WithError(err).Debugf("failed to create policy")
-		return nil, err
-	}
-
-	if plc, err = self.get_policy(*plc.Id); err != nil {
-		self.logger.WithError(err).Debugf("failed to get policy")
-		return nil, err
-	}
-
-	self.logger.WithFields(log.Fields{
-		"id":      *plc.Id,
-		"role_id": *plc.RoleId,
-		"rule":    *plc.Rule,
-	}).Debugf("create policy")
-
-	return plc, err
-}
-
-func (self *StorageImpl) DeletePolicy(id string) error {
-	var err error
-
-	if err = self.db.Delete(&Policy{}, "id = ?", id).Error; err != nil {
-		self.logger.WithField("id", id).Debugf("failed to delete policy")
-		return err
-	}
-
-	self.logger.WithField("id", id).Debugf("delete policy")
-
-	return nil
-}
-
-func (self *StorageImpl) ListPoliciesForEntity(id string) ([]*Policy, error) {
-	panic("unimplemented")
 }
 
 func (self *StorageImpl) list_view_domains_by_entity_id(id string) ([]*Domain, error) {
@@ -1212,7 +1137,6 @@ func new_db(s *StorageImpl, driver, uri string) error {
 func init_db(s *StorageImpl) error {
 	s.db.AutoMigrate(
 		&Domain{},
-		&Policy{},
 		&Role{},
 		&Entity{},
 		&Group{},

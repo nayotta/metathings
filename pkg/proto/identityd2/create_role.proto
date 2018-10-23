@@ -9,15 +9,12 @@ import "github.com/mwitkow/go-proto-validators/validator.proto";
 import "model.proto";
 
 message CreateRoleRequest {
-	reserved "policies";
-
 	google.protobuf.StringValue id = 1;
 	OpDomain domain = 2 [(validator.field) = {msg_exists: true}];
 	google.protobuf.StringValue name = 3 [(validator.field) = {msg_exists: true}];
 	google.protobuf.StringValue alias = 4 [(validator.field) = {msg_exists: true}];
 	google.protobuf.StringValue description = 5;
-	map<string, google.protobuf.StringValue> extra = 7;
-
+	map<string, google.protobuf.StringValue> extra = 6;
 }
 
 message CreateRoleResponse {

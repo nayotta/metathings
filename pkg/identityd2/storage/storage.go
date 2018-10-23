@@ -16,16 +16,6 @@ type Domain struct {
 	Children []*Domain `gorm:"-"`
 }
 
-type Policy struct {
-	Id        *string
-	CreatedAt time.Time
-	UpdatedAt time.Time
-
-	RoleId      *string `gorm:"column:role_id"`
-	Rule        *string `gorm:"column:rule"`
-	Description *string `gorm:"column:description"`
-}
-
 type Role struct {
 	Id        *string
 	CreatedAt time.Time
@@ -37,8 +27,7 @@ type Role struct {
 	Description *string `gorm:"column:description"`
 	Extra       *string `gorm:"column:extra"`
 
-	Domain   *Domain   `gorm:"-"`
-	Policies []*Policy `gorm:"-"`
+	Domain *Domain `gorm:"-"`
 }
 
 type Entity struct {
@@ -157,10 +146,6 @@ type Storage interface {
 	PatchRole(id string, role *Role) (*Role, error)
 	GetRole(id string) (*Role, error)
 	ListRoles(*Role) ([]*Role, error)
-	GetPolicy(id string) (*Policy, error)
-	CreatePolicy(*Policy) (*Policy, error)
-	DeletePolicy(id string) error
-	ListPoliciesForEntity(id string) ([]*Policy, error)
 
 	CreateEntity(*Entity) (*Entity, error)
 	DeleteEntity(id string) error

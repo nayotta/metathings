@@ -7,7 +7,6 @@ Package identityd2 is a generated protocol buffer package.
 It is generated from these files:
 	add_entity_to_domain.proto
 	add_entity_to_group.proto
-	add_policy_to_role.proto
 	add_role_to_entity.proto
 	add_role_to_group.proto
 	check_token.proto
@@ -25,7 +24,6 @@ It is generated from these files:
 	get_domain.proto
 	get_entity.proto
 	get_group.proto
-	get_policy.proto
 	get_role.proto
 	group.proto
 	issue_token_by_credential.proto
@@ -37,8 +35,6 @@ It is generated from these files:
 	list_entities.proto
 	list_groups.proto
 	list_groups_for_entity.proto
-	list_policies.proto
-	list_policies_for_role.proto
 	list_roles.proto
 	list_roles_for_entity.proto
 	model.proto
@@ -49,7 +45,6 @@ It is generated from these files:
 	patch_role.proto
 	remove_entity_from_domain.proto
 	remove_entity_from_group.proto
-	remove_policy_from_role.proto
 	remove_role_from_entity.proto
 	remove_role_from_group.proto
 	revoke_token.proto
@@ -61,7 +56,6 @@ It is generated from these files:
 It has these top-level messages:
 	AddEntityToDomainRequest
 	AddEntityToGroupRequest
-	AddPolicyToRoleRequest
 	AddRoleToEntityRequest
 	AddRoleToGroupRequest
 	CheckTokenRequest
@@ -88,8 +82,6 @@ It has these top-level messages:
 	GetEntityResponse
 	GetGroupRequest
 	GetGroupResponse
-	GetPolicyRequest
-	GetPolicyResponse
 	GetRoleRequest
 	GetRoleResponse
 	IssueTokenByCredentialRequest
@@ -110,18 +102,12 @@ It has these top-level messages:
 	ListGroupsResponse
 	ListGroupsForEntityRequest
 	ListGroupsForEntityResponse
-	ListPoliciesRequest
-	ListPoliciesResponse
-	ListPoliciesForRoleRequest
-	ListPoliciesForRoleResponse
 	ListRolesRequest
 	ListRolesResponse
 	ListRolesForEntityRequest
 	ListRolesForEntityResponse
 	Domain
 	OpDomain
-	Policy
-	OpPolicy
 	Role
 	OpRole
 	Entity
@@ -144,7 +130,6 @@ It has these top-level messages:
 	PatchRoleResponse
 	RemoveEntityFromDomainRequest
 	RemoveEntityFromGroupRequest
-	RemovePolicyFromRoleRequest
 	RemoveRoleFromEntityRequest
 	RemoveRoleFromGroupRequest
 	RevokeTokenRequest

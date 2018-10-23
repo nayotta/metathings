@@ -9,9 +9,26 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
+	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
 	storage "github.com/nayotta/metathings/pkg/identityd2/storage"
 	pb "github.com/nayotta/metathings/pkg/proto/identityd2"
 )
+
+func (self *MetathingsIdentitydService) ValidateDeleteDomain(ctx context.Context, in interface{}) error {
+	return self.validate_chain(
+		[]interface{}{
+			func() (policy_helper.Validator, get_domainer) {
+				req := in.(*pb.DeleteDomainRequest)
+				return req, req
+			},
+		},
+		[]interface{}{ensure_get_domain_id},
+	)
+}
+
+func (self *MetathingsIdentitydService) AuthorizeDeleteDomain(ctx context.Context, in interface{}) error {
+	return self.enforce(ctx, in.(*pb.DeleteDomainRequest).GetDomain().GetId().GetValue(), "delete_domain")
+}
 
 func (self *MetathingsIdentitydService) DeleteDomain(ctx context.Context, req *pb.DeleteDomainRequest) (*empty.Empty, error) {
 	var dom_s *storage.Domain
@@ -22,17 +39,7 @@ func (self *MetathingsIdentitydService) DeleteDomain(ctx context.Context, req *p
 	var grps_s []*storage.Group
 	var err error
 
-	if err = req.Validate(); err != nil {
-		self.logger.WithError(err).Warningf("failed to validate request data")
-		return nil, status.Errorf(codes.InvalidArgument, err.Error())
-	}
-
-	dom := req.GetDomain()
-	if dom.GetId() == nil {
-		self.logger.WithError(err).Warningf("failed to validate request data")
-		return nil, status.Errorf(codes.InvalidArgument, err.Error())
-	}
-	dom_id_str := dom.GetId().GetValue()
+	dom_id_str := req.GetDomain().GetId().GetValue()
 
 	if dom_s, err = self.storage.GetDomain(dom_id_str); err != nil {
 		self.logger.WithError(err).Errorf("failed to get domain in storage")
