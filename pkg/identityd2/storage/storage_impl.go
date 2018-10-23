@@ -2,6 +2,7 @@ package metathings_identityd2_storage
 
 import (
 	"errors"
+
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	log "github.com/sirupsen/logrus"
@@ -877,6 +878,42 @@ func (self *StorageImpl) get_credential(id string) (*Credential, error) {
 	return cred, nil
 }
 
+func (self *StorageImpl) list_credential(cred *Credential) ([]*Credential, error) {
+	var err error
+	var creds_t []*Credential
+	var creds []*Credential
+
+	c := &Credential{}
+	if cred.Id != nil {
+		c.Id = cred.Id
+	}
+	if cred.DomainId != nil {
+		c.DomainId = cred.DomainId
+	}
+	if cred.EntityId != nil {
+		c.EntityId = cred.EntityId
+	}
+	if cred.Name != nil {
+		c.Name = cred.Name
+	}
+	if cred.Alias != nil {
+		c.Alias = cred.Alias
+	}
+
+	if err = self.db.Select("id").Find(&creds_t, c).Error; err != nil {
+		return nil, err
+	}
+
+	for _, c = range creds_t {
+		if c, err = self.get_credential(*c.Id); err != nil {
+			return nil, err
+		}
+		creds = append(creds, c)
+	}
+
+	return creds, nil
+}
+
 func (self *StorageImpl) CreateCredential(cred *Credential) (*Credential, error) {
 	var err error
 
@@ -966,11 +1003,29 @@ func (self *StorageImpl) PatchCredential(id string, credential *Credential) (*Cr
 }
 
 func (self *StorageImpl) GetCredential(id string) (*Credential, error) {
-	panic("unimplemented")
+	var cred *Credential
+	var err error
+
+	if cred, err = self.get_credential(id); err != nil {
+		self.logger.WithError(err).Debugf("failed to get get_credential")
+		return nil, err
+	}
+
+	return cred, nil
 }
 
-func (self *StorageImpl) ListCredentials(*Credential) ([]*Credential, error) {
-	panic("unimplemented")
+func (self *StorageImpl) ListCredentials(cred *Credential) ([]*Credential, error) {
+	var creds []*Credential
+	var err error
+
+	if creds, err = self.list_credential(cred); err != nil {
+		self.logger.WithError(err).Debugf("failed to list credentials")
+		return nil, err
+	}
+
+	self.logger.Debugf("list credentials")
+
+	return creds, nil
 }
 
 func (self *StorageImpl) CreateToken(tkn *Token) (*Token, error) {
