@@ -3,11 +3,9 @@
 
 package identityd2
 
-import (
-	fmt "fmt"
-	proto "github.com/golang/protobuf/proto"
-	math "math"
-)
+import proto "github.com/golang/protobuf/proto"
+import fmt "fmt"
+import math "math"
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -21,7 +19,7 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type ShowGroupsResponse struct {
-	Groups               []*Group `protobuf:"bytes,1,rep,name=groups,proto3" json:"groups,omitempty"`
+	Groups               []*Group `protobuf:"bytes,1,rep,name=groups" json:"groups,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -31,17 +29,16 @@ func (m *ShowGroupsResponse) Reset()         { *m = ShowGroupsResponse{} }
 func (m *ShowGroupsResponse) String() string { return proto.CompactTextString(m) }
 func (*ShowGroupsResponse) ProtoMessage()    {}
 func (*ShowGroupsResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_775e18fd48520bfe, []int{0}
+	return fileDescriptor_show_groups_9fdb047126847158, []int{0}
 }
-
 func (m *ShowGroupsResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ShowGroupsResponse.Unmarshal(m, b)
 }
 func (m *ShowGroupsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_ShowGroupsResponse.Marshal(b, m, deterministic)
 }
-func (m *ShowGroupsResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ShowGroupsResponse.Merge(m, src)
+func (dst *ShowGroupsResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ShowGroupsResponse.Merge(dst, src)
 }
 func (m *ShowGroupsResponse) XXX_Size() int {
 	return xxx_messageInfo_ShowGroupsResponse.Size(m)
@@ -63,9 +60,9 @@ func init() {
 	proto.RegisterType((*ShowGroupsResponse)(nil), "ai.metathings.service.identityd2.ShowGroupsResponse")
 }
 
-func init() { proto.RegisterFile("show_groups.proto", fileDescriptor_775e18fd48520bfe) }
+func init() { proto.RegisterFile("show_groups.proto", fileDescriptor_show_groups_9fdb047126847158) }
 
-var fileDescriptor_775e18fd48520bfe = []byte{
+var fileDescriptor_show_groups_9fdb047126847158 = []byte{
 	// 134 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x12, 0x2c, 0xce, 0xc8, 0x2f,
 	0x8f, 0x4f, 0x2f, 0xca, 0x2f, 0x2d, 0x28, 0xd6, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x52, 0x48,

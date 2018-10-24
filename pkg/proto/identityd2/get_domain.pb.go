@@ -3,12 +3,10 @@
 
 package identityd2
 
-import (
-	fmt "fmt"
-	proto "github.com/golang/protobuf/proto"
-	_ "github.com/mwitkow/go-proto-validators"
-	math "math"
-)
+import proto "github.com/golang/protobuf/proto"
+import fmt "fmt"
+import math "math"
+import _ "github.com/mwitkow/go-proto-validators"
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -22,7 +20,7 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type GetDomainRequest struct {
-	Domain               *OpDomain `protobuf:"bytes,1,opt,name=domain,proto3" json:"domain,omitempty"`
+	Domain               *OpDomain `protobuf:"bytes,1,opt,name=domain" json:"domain,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}  `json:"-"`
 	XXX_unrecognized     []byte    `json:"-"`
 	XXX_sizecache        int32     `json:"-"`
@@ -32,17 +30,16 @@ func (m *GetDomainRequest) Reset()         { *m = GetDomainRequest{} }
 func (m *GetDomainRequest) String() string { return proto.CompactTextString(m) }
 func (*GetDomainRequest) ProtoMessage()    {}
 func (*GetDomainRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_3a2d6a3c161bc055, []int{0}
+	return fileDescriptor_get_domain_43d2448f59c57a40, []int{0}
 }
-
 func (m *GetDomainRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_GetDomainRequest.Unmarshal(m, b)
 }
 func (m *GetDomainRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_GetDomainRequest.Marshal(b, m, deterministic)
 }
-func (m *GetDomainRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_GetDomainRequest.Merge(m, src)
+func (dst *GetDomainRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetDomainRequest.Merge(dst, src)
 }
 func (m *GetDomainRequest) XXX_Size() int {
 	return xxx_messageInfo_GetDomainRequest.Size(m)
@@ -61,7 +58,7 @@ func (m *GetDomainRequest) GetDomain() *OpDomain {
 }
 
 type GetDomainResponse struct {
-	Domain               *Domain  `protobuf:"bytes,1,opt,name=domain,proto3" json:"domain,omitempty"`
+	Domain               *Domain  `protobuf:"bytes,1,opt,name=domain" json:"domain,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -71,17 +68,16 @@ func (m *GetDomainResponse) Reset()         { *m = GetDomainResponse{} }
 func (m *GetDomainResponse) String() string { return proto.CompactTextString(m) }
 func (*GetDomainResponse) ProtoMessage()    {}
 func (*GetDomainResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_3a2d6a3c161bc055, []int{1}
+	return fileDescriptor_get_domain_43d2448f59c57a40, []int{1}
 }
-
 func (m *GetDomainResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_GetDomainResponse.Unmarshal(m, b)
 }
 func (m *GetDomainResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_GetDomainResponse.Marshal(b, m, deterministic)
 }
-func (m *GetDomainResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_GetDomainResponse.Merge(m, src)
+func (dst *GetDomainResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetDomainResponse.Merge(dst, src)
 }
 func (m *GetDomainResponse) XXX_Size() int {
 	return xxx_messageInfo_GetDomainResponse.Size(m)
@@ -104,9 +100,9 @@ func init() {
 	proto.RegisterType((*GetDomainResponse)(nil), "ai.metathings.service.identityd2.GetDomainResponse")
 }
 
-func init() { proto.RegisterFile("get_domain.proto", fileDescriptor_3a2d6a3c161bc055) }
+func init() { proto.RegisterFile("get_domain.proto", fileDescriptor_get_domain_43d2448f59c57a40) }
 
-var fileDescriptor_3a2d6a3c161bc055 = []byte{
+var fileDescriptor_get_domain_43d2448f59c57a40 = []byte{
 	// 207 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x12, 0x48, 0x4f, 0x2d, 0x89,
 	0x4f, 0xc9, 0xcf, 0x4d, 0xcc, 0xcc, 0xd3, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x52, 0x48, 0xcc,

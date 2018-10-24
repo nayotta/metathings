@@ -4,7 +4,7 @@
 package identityd2
 
 import fmt "fmt"
-import github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
+import go_proto_validators "github.com/mwitkow/go-proto-validators"
 import proto "github.com/golang/protobuf/proto"
 import math "math"
 import _ "github.com/mwitkow/go-proto-validators"
@@ -16,11 +16,11 @@ var _ = math.Inf
 
 func (this *DeleteGroupRequest) Validate() error {
 	if nil == this.Group {
-		return github_com_mwitkow_go_proto_validators.FieldError("Group", fmt.Errorf("message must exist"))
+		return go_proto_validators.FieldError("Group", fmt.Errorf("message must exist"))
 	}
 	if this.Group != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Group); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Group", err)
+		if err := go_proto_validators.CallValidatorIfExists(this.Group); err != nil {
+			return go_proto_validators.FieldError("Group", err)
 		}
 	}
 	return nil

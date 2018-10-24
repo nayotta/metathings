@@ -3,7 +3,7 @@
 
 package identityd2
 
-import github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
+import go_proto_validators "github.com/mwitkow/go-proto-validators"
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
@@ -16,32 +16,32 @@ var _ = math.Inf
 
 func (this *ListRolesRequest) Validate() error {
 	if this.Id != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Id); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Id", err)
+		if err := go_proto_validators.CallValidatorIfExists(this.Id); err != nil {
+			return go_proto_validators.FieldError("Id", err)
 		}
 	}
 	if this.Domain != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Domain); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Domain", err)
+		if err := go_proto_validators.CallValidatorIfExists(this.Domain); err != nil {
+			return go_proto_validators.FieldError("Domain", err)
 		}
 	}
 	if this.Name != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Name); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Name", err)
+		if err := go_proto_validators.CallValidatorIfExists(this.Name); err != nil {
+			return go_proto_validators.FieldError("Name", err)
 		}
 	}
 	if this.Alias != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Alias); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Alias", err)
+		if err := go_proto_validators.CallValidatorIfExists(this.Alias); err != nil {
+			return go_proto_validators.FieldError("Alias", err)
 		}
 	}
 	return nil
 }
 func (this *ListRolesResponse) Validate() error {
-	for _, item := range this.Roles {
+	for _, item := range this.Policies {
 		if item != nil {
-			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {
-				return github_com_mwitkow_go_proto_validators.FieldError("Roles", err)
+			if err := go_proto_validators.CallValidatorIfExists(item); err != nil {
+				return go_proto_validators.FieldError("Policies", err)
 			}
 		}
 	}

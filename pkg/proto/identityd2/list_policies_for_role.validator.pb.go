@@ -3,7 +3,7 @@
 
 package identityd2
 
-import github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
+import go_proto_validators "github.com/mwitkow/go-proto-validators"
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
@@ -16,8 +16,8 @@ var _ = math.Inf
 
 func (this *ListPoliciesForRoleRequest) Validate() error {
 	if this.Id != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Id); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Id", err)
+		if err := go_proto_validators.CallValidatorIfExists(this.Id); err != nil {
+			return go_proto_validators.FieldError("Id", err)
 		}
 	}
 	return nil
@@ -25,8 +25,8 @@ func (this *ListPoliciesForRoleRequest) Validate() error {
 func (this *ListPoliciesForRoleResponse) Validate() error {
 	for _, item := range this.Policies {
 		if item != nil {
-			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {
-				return github_com_mwitkow_go_proto_validators.FieldError("Policies", err)
+			if err := go_proto_validators.CallValidatorIfExists(item); err != nil {
+				return go_proto_validators.FieldError("Policies", err)
 			}
 		}
 	}

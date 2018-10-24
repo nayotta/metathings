@@ -3,13 +3,11 @@
 
 package identityd2
 
-import (
-	fmt "fmt"
-	proto "github.com/golang/protobuf/proto"
-	wrappers "github.com/golang/protobuf/ptypes/wrappers"
-	_ "github.com/mwitkow/go-proto-validators"
-	math "math"
-)
+import proto "github.com/golang/protobuf/proto"
+import fmt "fmt"
+import math "math"
+import wrappers "github.com/golang/protobuf/ptypes/wrappers"
+import _ "github.com/mwitkow/go-proto-validators"
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -23,9 +21,9 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type PatchDomainRequest struct {
-	Id                   *wrappers.StringValue            `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Alias                *wrappers.StringValue            `protobuf:"bytes,3,opt,name=alias,proto3" json:"alias,omitempty"`
-	Extra                map[string]*wrappers.StringValue `protobuf:"bytes,5,rep,name=extra,proto3" json:"extra,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	Id                   *wrappers.StringValue            `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
+	Alias                *wrappers.StringValue            `protobuf:"bytes,3,opt,name=alias" json:"alias,omitempty"`
+	Extra                map[string]*wrappers.StringValue `protobuf:"bytes,5,rep,name=extra" json:"extra,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	XXX_NoUnkeyedLiteral struct{}                         `json:"-"`
 	XXX_unrecognized     []byte                           `json:"-"`
 	XXX_sizecache        int32                            `json:"-"`
@@ -35,17 +33,16 @@ func (m *PatchDomainRequest) Reset()         { *m = PatchDomainRequest{} }
 func (m *PatchDomainRequest) String() string { return proto.CompactTextString(m) }
 func (*PatchDomainRequest) ProtoMessage()    {}
 func (*PatchDomainRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_a75587ce97538f9a, []int{0}
+	return fileDescriptor_patch_domain_94532b7087b3303b, []int{0}
 }
-
 func (m *PatchDomainRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_PatchDomainRequest.Unmarshal(m, b)
 }
 func (m *PatchDomainRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_PatchDomainRequest.Marshal(b, m, deterministic)
 }
-func (m *PatchDomainRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_PatchDomainRequest.Merge(m, src)
+func (dst *PatchDomainRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PatchDomainRequest.Merge(dst, src)
 }
 func (m *PatchDomainRequest) XXX_Size() int {
 	return xxx_messageInfo_PatchDomainRequest.Size(m)
@@ -78,7 +75,7 @@ func (m *PatchDomainRequest) GetExtra() map[string]*wrappers.StringValue {
 }
 
 type PatchDomainResponse struct {
-	Domain               *Domain  `protobuf:"bytes,1,opt,name=domain,proto3" json:"domain,omitempty"`
+	Domain               *Domain  `protobuf:"bytes,1,opt,name=domain" json:"domain,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -88,17 +85,16 @@ func (m *PatchDomainResponse) Reset()         { *m = PatchDomainResponse{} }
 func (m *PatchDomainResponse) String() string { return proto.CompactTextString(m) }
 func (*PatchDomainResponse) ProtoMessage()    {}
 func (*PatchDomainResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_a75587ce97538f9a, []int{1}
+	return fileDescriptor_patch_domain_94532b7087b3303b, []int{1}
 }
-
 func (m *PatchDomainResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_PatchDomainResponse.Unmarshal(m, b)
 }
 func (m *PatchDomainResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_PatchDomainResponse.Marshal(b, m, deterministic)
 }
-func (m *PatchDomainResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_PatchDomainResponse.Merge(m, src)
+func (dst *PatchDomainResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PatchDomainResponse.Merge(dst, src)
 }
 func (m *PatchDomainResponse) XXX_Size() int {
 	return xxx_messageInfo_PatchDomainResponse.Size(m)
@@ -122,9 +118,9 @@ func init() {
 	proto.RegisterType((*PatchDomainResponse)(nil), "ai.metathings.service.identityd2.PatchDomainResponse")
 }
 
-func init() { proto.RegisterFile("patch_domain.proto", fileDescriptor_a75587ce97538f9a) }
+func init() { proto.RegisterFile("patch_domain.proto", fileDescriptor_patch_domain_94532b7087b3303b) }
 
-var fileDescriptor_a75587ce97538f9a = []byte{
+var fileDescriptor_patch_domain_94532b7087b3303b = []byte{
 	// 328 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x91, 0x4f, 0x4b, 0xc3, 0x40,
 	0x10, 0xc5, 0x49, 0x6a, 0x03, 0x6e, 0x2f, 0xb2, 0x5e, 0x42, 0x11, 0x0d, 0x3d, 0xf5, 0xd2, 0x0d,

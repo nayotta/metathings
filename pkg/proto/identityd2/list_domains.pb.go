@@ -3,12 +3,10 @@
 
 package identityd2
 
-import (
-	fmt "fmt"
-	proto "github.com/golang/protobuf/proto"
-	wrappers "github.com/golang/protobuf/ptypes/wrappers"
-	math "math"
-)
+import proto "github.com/golang/protobuf/proto"
+import fmt "fmt"
+import math "math"
+import wrappers "github.com/golang/protobuf/ptypes/wrappers"
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -22,11 +20,11 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type ListDomainsRequest struct {
-	Id                   *wrappers.StringValue `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	Alias                *wrappers.StringValue `protobuf:"bytes,3,opt,name=alias,proto3" json:"alias,omitempty"`
-	Parent               *OpDomain             `protobuf:"bytes,4,opt,name=parent,proto3" json:"parent,omitempty"`
-	Children             []*OpDomain           `protobuf:"bytes,5,rep,name=children,proto3" json:"children,omitempty"`
+	Id                   *wrappers.StringValue `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
+	Alias                *wrappers.StringValue `protobuf:"bytes,3,opt,name=alias" json:"alias,omitempty"`
+	Parent               *OpDomain             `protobuf:"bytes,4,opt,name=parent" json:"parent,omitempty"`
+	Children             []*OpDomain           `protobuf:"bytes,5,rep,name=children" json:"children,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -36,17 +34,16 @@ func (m *ListDomainsRequest) Reset()         { *m = ListDomainsRequest{} }
 func (m *ListDomainsRequest) String() string { return proto.CompactTextString(m) }
 func (*ListDomainsRequest) ProtoMessage()    {}
 func (*ListDomainsRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_bfecf37b0212c1f1, []int{0}
+	return fileDescriptor_list_domains_d7e9f4ad19ff9827, []int{0}
 }
-
 func (m *ListDomainsRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ListDomainsRequest.Unmarshal(m, b)
 }
 func (m *ListDomainsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_ListDomainsRequest.Marshal(b, m, deterministic)
 }
-func (m *ListDomainsRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ListDomainsRequest.Merge(m, src)
+func (dst *ListDomainsRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ListDomainsRequest.Merge(dst, src)
 }
 func (m *ListDomainsRequest) XXX_Size() int {
 	return xxx_messageInfo_ListDomainsRequest.Size(m)
@@ -93,7 +90,7 @@ func (m *ListDomainsRequest) GetChildren() []*OpDomain {
 }
 
 type ListDomainsResponse struct {
-	Domain               *Domain  `protobuf:"bytes,1,opt,name=domain,proto3" json:"domain,omitempty"`
+	Domain               *Domain  `protobuf:"bytes,1,opt,name=domain" json:"domain,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -103,17 +100,16 @@ func (m *ListDomainsResponse) Reset()         { *m = ListDomainsResponse{} }
 func (m *ListDomainsResponse) String() string { return proto.CompactTextString(m) }
 func (*ListDomainsResponse) ProtoMessage()    {}
 func (*ListDomainsResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_bfecf37b0212c1f1, []int{1}
+	return fileDescriptor_list_domains_d7e9f4ad19ff9827, []int{1}
 }
-
 func (m *ListDomainsResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ListDomainsResponse.Unmarshal(m, b)
 }
 func (m *ListDomainsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_ListDomainsResponse.Marshal(b, m, deterministic)
 }
-func (m *ListDomainsResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ListDomainsResponse.Merge(m, src)
+func (dst *ListDomainsResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ListDomainsResponse.Merge(dst, src)
 }
 func (m *ListDomainsResponse) XXX_Size() int {
 	return xxx_messageInfo_ListDomainsResponse.Size(m)
@@ -136,9 +132,9 @@ func init() {
 	proto.RegisterType((*ListDomainsResponse)(nil), "ai.metathings.service.identityd2.ListDomainsResponse")
 }
 
-func init() { proto.RegisterFile("list_domains.proto", fileDescriptor_bfecf37b0212c1f1) }
+func init() { proto.RegisterFile("list_domains.proto", fileDescriptor_list_domains_d7e9f4ad19ff9827) }
 
-var fileDescriptor_bfecf37b0212c1f1 = []byte{
+var fileDescriptor_list_domains_d7e9f4ad19ff9827 = []byte{
 	// 262 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x91, 0xcf, 0x4a, 0x03, 0x31,
 	0x10, 0xc6, 0xe9, 0xf6, 0x0f, 0x92, 0xde, 0xe2, 0x25, 0x14, 0x91, 0xa5, 0xa7, 0x22, 0x92, 0xca,

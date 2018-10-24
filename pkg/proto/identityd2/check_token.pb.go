@@ -3,12 +3,10 @@
 
 package identityd2
 
-import (
-	fmt "fmt"
-	proto "github.com/golang/protobuf/proto"
-	_ "github.com/mwitkow/go-proto-validators"
-	math "math"
-)
+import proto "github.com/golang/protobuf/proto"
+import fmt "fmt"
+import math "math"
+import _ "github.com/mwitkow/go-proto-validators"
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -22,7 +20,7 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type CheckTokenRequest struct {
-	Token                *OpToken `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
+	Token                *OpToken `protobuf:"bytes,1,opt,name=token" json:"token,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -32,17 +30,16 @@ func (m *CheckTokenRequest) Reset()         { *m = CheckTokenRequest{} }
 func (m *CheckTokenRequest) String() string { return proto.CompactTextString(m) }
 func (*CheckTokenRequest) ProtoMessage()    {}
 func (*CheckTokenRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_976afa2dd153b305, []int{0}
+	return fileDescriptor_check_token_16ca5dfbe4d85926, []int{0}
 }
-
 func (m *CheckTokenRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_CheckTokenRequest.Unmarshal(m, b)
 }
 func (m *CheckTokenRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_CheckTokenRequest.Marshal(b, m, deterministic)
 }
-func (m *CheckTokenRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CheckTokenRequest.Merge(m, src)
+func (dst *CheckTokenRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CheckTokenRequest.Merge(dst, src)
 }
 func (m *CheckTokenRequest) XXX_Size() int {
 	return xxx_messageInfo_CheckTokenRequest.Size(m)
@@ -64,9 +61,9 @@ func init() {
 	proto.RegisterType((*CheckTokenRequest)(nil), "ai.metathings.service.identityd2.CheckTokenRequest")
 }
 
-func init() { proto.RegisterFile("check_token.proto", fileDescriptor_976afa2dd153b305) }
+func init() { proto.RegisterFile("check_token.proto", fileDescriptor_check_token_16ca5dfbe4d85926) }
 
-var fileDescriptor_976afa2dd153b305 = []byte{
+var fileDescriptor_check_token_16ca5dfbe4d85926 = []byte{
 	// 184 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x12, 0x4c, 0xce, 0x48, 0x4d,
 	0xce, 0x8e, 0x2f, 0xc9, 0xcf, 0x4e, 0xcd, 0xd3, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x52, 0x48,

@@ -3,12 +3,10 @@
 
 package identityd2
 
-import (
-	fmt "fmt"
-	proto "github.com/golang/protobuf/proto"
-	_ "github.com/mwitkow/go-proto-validators"
-	math "math"
-)
+import proto "github.com/golang/protobuf/proto"
+import fmt "fmt"
+import math "math"
+import _ "github.com/mwitkow/go-proto-validators"
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -22,8 +20,8 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type RemoveRoleFromEntityRequest struct {
-	Entity               *OpEntity `protobuf:"bytes,1,opt,name=entity,proto3" json:"entity,omitempty"`
-	Role                 *OpRole   `protobuf:"bytes,2,opt,name=role,proto3" json:"role,omitempty"`
+	Entity               *OpEntity `protobuf:"bytes,1,opt,name=entity" json:"entity,omitempty"`
+	Role                 *OpRole   `protobuf:"bytes,2,opt,name=role" json:"role,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}  `json:"-"`
 	XXX_unrecognized     []byte    `json:"-"`
 	XXX_sizecache        int32     `json:"-"`
@@ -33,17 +31,16 @@ func (m *RemoveRoleFromEntityRequest) Reset()         { *m = RemoveRoleFromEntit
 func (m *RemoveRoleFromEntityRequest) String() string { return proto.CompactTextString(m) }
 func (*RemoveRoleFromEntityRequest) ProtoMessage()    {}
 func (*RemoveRoleFromEntityRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_ea8c365c6f1bb53a, []int{0}
+	return fileDescriptor_remove_role_from_entity_263c38fd4883b8c7, []int{0}
 }
-
 func (m *RemoveRoleFromEntityRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_RemoveRoleFromEntityRequest.Unmarshal(m, b)
 }
 func (m *RemoveRoleFromEntityRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_RemoveRoleFromEntityRequest.Marshal(b, m, deterministic)
 }
-func (m *RemoveRoleFromEntityRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_RemoveRoleFromEntityRequest.Merge(m, src)
+func (dst *RemoveRoleFromEntityRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_RemoveRoleFromEntityRequest.Merge(dst, src)
 }
 func (m *RemoveRoleFromEntityRequest) XXX_Size() int {
 	return xxx_messageInfo_RemoveRoleFromEntityRequest.Size(m)
@@ -72,9 +69,11 @@ func init() {
 	proto.RegisterType((*RemoveRoleFromEntityRequest)(nil), "ai.metathings.service.identityd2.RemoveRoleFromEntityRequest")
 }
 
-func init() { proto.RegisterFile("remove_role_from_entity.proto", fileDescriptor_ea8c365c6f1bb53a) }
+func init() {
+	proto.RegisterFile("remove_role_from_entity.proto", fileDescriptor_remove_role_from_entity_263c38fd4883b8c7)
+}
 
-var fileDescriptor_ea8c365c6f1bb53a = []byte{
+var fileDescriptor_remove_role_from_entity_263c38fd4883b8c7 = []byte{
 	// 222 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x92, 0x2d, 0x4a, 0xcd, 0xcd,
 	0x2f, 0x4b, 0x8d, 0x2f, 0xca, 0xcf, 0x49, 0x8d, 0x4f, 0x2b, 0xca, 0xcf, 0x8d, 0x4f, 0xcd, 0x2b,

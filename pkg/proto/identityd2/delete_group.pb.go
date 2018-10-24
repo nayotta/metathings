@@ -3,12 +3,10 @@
 
 package identityd2
 
-import (
-	fmt "fmt"
-	proto "github.com/golang/protobuf/proto"
-	_ "github.com/mwitkow/go-proto-validators"
-	math "math"
-)
+import proto "github.com/golang/protobuf/proto"
+import fmt "fmt"
+import math "math"
+import _ "github.com/mwitkow/go-proto-validators"
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -22,7 +20,7 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type DeleteGroupRequest struct {
-	Group                *OpGroup `protobuf:"bytes,1,opt,name=group,proto3" json:"group,omitempty"`
+	Group                *OpGroup `protobuf:"bytes,1,opt,name=group" json:"group,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -32,17 +30,16 @@ func (m *DeleteGroupRequest) Reset()         { *m = DeleteGroupRequest{} }
 func (m *DeleteGroupRequest) String() string { return proto.CompactTextString(m) }
 func (*DeleteGroupRequest) ProtoMessage()    {}
 func (*DeleteGroupRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_a2d2818c2a690017, []int{0}
+	return fileDescriptor_delete_group_bcb0dc4e098c63c7, []int{0}
 }
-
 func (m *DeleteGroupRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_DeleteGroupRequest.Unmarshal(m, b)
 }
 func (m *DeleteGroupRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_DeleteGroupRequest.Marshal(b, m, deterministic)
 }
-func (m *DeleteGroupRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_DeleteGroupRequest.Merge(m, src)
+func (dst *DeleteGroupRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DeleteGroupRequest.Merge(dst, src)
 }
 func (m *DeleteGroupRequest) XXX_Size() int {
 	return xxx_messageInfo_DeleteGroupRequest.Size(m)
@@ -64,9 +61,9 @@ func init() {
 	proto.RegisterType((*DeleteGroupRequest)(nil), "ai.metathings.service.identityd2.DeleteGroupRequest")
 }
 
-func init() { proto.RegisterFile("delete_group.proto", fileDescriptor_a2d2818c2a690017) }
+func init() { proto.RegisterFile("delete_group.proto", fileDescriptor_delete_group_bcb0dc4e098c63c7) }
 
-var fileDescriptor_a2d2818c2a690017 = []byte{
+var fileDescriptor_delete_group_bcb0dc4e098c63c7 = []byte{
 	// 185 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x12, 0x4a, 0x49, 0xcd, 0x49,
 	0x2d, 0x49, 0x8d, 0x4f, 0x2f, 0xca, 0x2f, 0x2d, 0xd0, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x52,

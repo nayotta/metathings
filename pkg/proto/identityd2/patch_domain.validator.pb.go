@@ -4,7 +4,7 @@
 package identityd2
 
 import fmt "fmt"
-import github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
+import go_proto_validators "github.com/mwitkow/go-proto-validators"
 import proto "github.com/golang/protobuf/proto"
 import math "math"
 import _ "github.com/golang/protobuf/ptypes/wrappers"
@@ -17,16 +17,16 @@ var _ = math.Inf
 
 func (this *PatchDomainRequest) Validate() error {
 	if nil == this.Id {
-		return github_com_mwitkow_go_proto_validators.FieldError("Id", fmt.Errorf("message must exist"))
+		return go_proto_validators.FieldError("Id", fmt.Errorf("message must exist"))
 	}
 	if this.Id != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Id); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Id", err)
+		if err := go_proto_validators.CallValidatorIfExists(this.Id); err != nil {
+			return go_proto_validators.FieldError("Id", err)
 		}
 	}
 	if this.Alias != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Alias); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Alias", err)
+		if err := go_proto_validators.CallValidatorIfExists(this.Alias); err != nil {
+			return go_proto_validators.FieldError("Alias", err)
 		}
 	}
 	// Validation of proto3 map<> fields is unsupported.
@@ -34,8 +34,8 @@ func (this *PatchDomainRequest) Validate() error {
 }
 func (this *PatchDomainResponse) Validate() error {
 	if this.Domain != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Domain); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Domain", err)
+		if err := go_proto_validators.CallValidatorIfExists(this.Domain); err != nil {
+			return go_proto_validators.FieldError("Domain", err)
 		}
 	}
 	return nil

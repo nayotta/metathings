@@ -3,12 +3,10 @@
 
 package identityd2
 
-import (
-	fmt "fmt"
-	proto "github.com/golang/protobuf/proto"
-	_ "github.com/mwitkow/go-proto-validators"
-	math "math"
-)
+import proto "github.com/golang/protobuf/proto"
+import fmt "fmt"
+import math "math"
+import _ "github.com/mwitkow/go-proto-validators"
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -22,7 +20,7 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type IssueTokenByCredentialRequest struct {
-	Credential           *OpCredential `protobuf:"bytes,1,opt,name=credential,proto3" json:"credential,omitempty"`
+	Credential           *OpCredential `protobuf:"bytes,1,opt,name=credential" json:"credential,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}      `json:"-"`
 	XXX_unrecognized     []byte        `json:"-"`
 	XXX_sizecache        int32         `json:"-"`
@@ -32,17 +30,16 @@ func (m *IssueTokenByCredentialRequest) Reset()         { *m = IssueTokenByCrede
 func (m *IssueTokenByCredentialRequest) String() string { return proto.CompactTextString(m) }
 func (*IssueTokenByCredentialRequest) ProtoMessage()    {}
 func (*IssueTokenByCredentialRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_73e82e40d8b6fecc, []int{0}
+	return fileDescriptor_issue_token_by_credential_1be8cf07d6add179, []int{0}
 }
-
 func (m *IssueTokenByCredentialRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_IssueTokenByCredentialRequest.Unmarshal(m, b)
 }
 func (m *IssueTokenByCredentialRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_IssueTokenByCredentialRequest.Marshal(b, m, deterministic)
 }
-func (m *IssueTokenByCredentialRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_IssueTokenByCredentialRequest.Merge(m, src)
+func (dst *IssueTokenByCredentialRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_IssueTokenByCredentialRequest.Merge(dst, src)
 }
 func (m *IssueTokenByCredentialRequest) XXX_Size() int {
 	return xxx_messageInfo_IssueTokenByCredentialRequest.Size(m)
@@ -61,7 +58,7 @@ func (m *IssueTokenByCredentialRequest) GetCredential() *OpCredential {
 }
 
 type IssueTokenByCredentialResponse struct {
-	Token                *Token   `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
+	Token                *Token   `protobuf:"bytes,1,opt,name=token" json:"token,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -71,17 +68,16 @@ func (m *IssueTokenByCredentialResponse) Reset()         { *m = IssueTokenByCred
 func (m *IssueTokenByCredentialResponse) String() string { return proto.CompactTextString(m) }
 func (*IssueTokenByCredentialResponse) ProtoMessage()    {}
 func (*IssueTokenByCredentialResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_73e82e40d8b6fecc, []int{1}
+	return fileDescriptor_issue_token_by_credential_1be8cf07d6add179, []int{1}
 }
-
 func (m *IssueTokenByCredentialResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_IssueTokenByCredentialResponse.Unmarshal(m, b)
 }
 func (m *IssueTokenByCredentialResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_IssueTokenByCredentialResponse.Marshal(b, m, deterministic)
 }
-func (m *IssueTokenByCredentialResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_IssueTokenByCredentialResponse.Merge(m, src)
+func (dst *IssueTokenByCredentialResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_IssueTokenByCredentialResponse.Merge(dst, src)
 }
 func (m *IssueTokenByCredentialResponse) XXX_Size() int {
 	return xxx_messageInfo_IssueTokenByCredentialResponse.Size(m)
@@ -104,9 +100,11 @@ func init() {
 	proto.RegisterType((*IssueTokenByCredentialResponse)(nil), "ai.metathings.service.identityd2.IssueTokenByCredentialResponse")
 }
 
-func init() { proto.RegisterFile("issue_token_by_credential.proto", fileDescriptor_73e82e40d8b6fecc) }
+func init() {
+	proto.RegisterFile("issue_token_by_credential.proto", fileDescriptor_issue_token_by_credential_1be8cf07d6add179)
+}
 
-var fileDescriptor_73e82e40d8b6fecc = []byte{
+var fileDescriptor_issue_token_by_credential_1be8cf07d6add179 = []byte{
 	// 229 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x90, 0x31, 0x6b, 0xc3, 0x30,
 	0x10, 0x46, 0x71, 0xa1, 0x19, 0x94, 0xcd, 0x53, 0x09, 0xb4, 0x31, 0x59, 0xda, 0x25, 0x67, 0x48,

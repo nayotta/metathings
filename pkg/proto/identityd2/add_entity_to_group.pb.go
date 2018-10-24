@@ -3,12 +3,10 @@
 
 package identityd2
 
-import (
-	fmt "fmt"
-	proto "github.com/golang/protobuf/proto"
-	_ "github.com/mwitkow/go-proto-validators"
-	math "math"
-)
+import proto "github.com/golang/protobuf/proto"
+import fmt "fmt"
+import math "math"
+import _ "github.com/mwitkow/go-proto-validators"
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -22,8 +20,8 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type AddEntityToGroupRequest struct {
-	Group                *OpGroup  `protobuf:"bytes,1,opt,name=group,proto3" json:"group,omitempty"`
-	Entity               *OpEntity `protobuf:"bytes,2,opt,name=entity,proto3" json:"entity,omitempty"`
+	Group                *OpGroup  `protobuf:"bytes,1,opt,name=group" json:"group,omitempty"`
+	Entity               *OpEntity `protobuf:"bytes,2,opt,name=entity" json:"entity,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}  `json:"-"`
 	XXX_unrecognized     []byte    `json:"-"`
 	XXX_sizecache        int32     `json:"-"`
@@ -33,17 +31,16 @@ func (m *AddEntityToGroupRequest) Reset()         { *m = AddEntityToGroupRequest
 func (m *AddEntityToGroupRequest) String() string { return proto.CompactTextString(m) }
 func (*AddEntityToGroupRequest) ProtoMessage()    {}
 func (*AddEntityToGroupRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_570b12b86ccd47b9, []int{0}
+	return fileDescriptor_add_entity_to_group_7111a877b8385327, []int{0}
 }
-
 func (m *AddEntityToGroupRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_AddEntityToGroupRequest.Unmarshal(m, b)
 }
 func (m *AddEntityToGroupRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_AddEntityToGroupRequest.Marshal(b, m, deterministic)
 }
-func (m *AddEntityToGroupRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_AddEntityToGroupRequest.Merge(m, src)
+func (dst *AddEntityToGroupRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_AddEntityToGroupRequest.Merge(dst, src)
 }
 func (m *AddEntityToGroupRequest) XXX_Size() int {
 	return xxx_messageInfo_AddEntityToGroupRequest.Size(m)
@@ -72,9 +69,11 @@ func init() {
 	proto.RegisterType((*AddEntityToGroupRequest)(nil), "ai.metathings.service.identityd2.AddEntityToGroupRequest")
 }
 
-func init() { proto.RegisterFile("add_entity_to_group.proto", fileDescriptor_570b12b86ccd47b9) }
+func init() {
+	proto.RegisterFile("add_entity_to_group.proto", fileDescriptor_add_entity_to_group_7111a877b8385327)
+}
 
-var fileDescriptor_570b12b86ccd47b9 = []byte{
+var fileDescriptor_add_entity_to_group_7111a877b8385327 = []byte{
 	// 215 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x92, 0x4c, 0x4c, 0x49, 0x89,
 	0x4f, 0xcd, 0x2b, 0xc9, 0x2c, 0xa9, 0x8c, 0x2f, 0xc9, 0x8f, 0x4f, 0x2f, 0xca, 0x2f, 0x2d, 0xd0,

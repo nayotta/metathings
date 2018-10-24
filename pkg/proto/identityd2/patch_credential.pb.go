@@ -3,13 +3,11 @@
 
 package identityd2
 
-import (
-	fmt "fmt"
-	proto "github.com/golang/protobuf/proto"
-	wrappers "github.com/golang/protobuf/ptypes/wrappers"
-	_ "github.com/mwitkow/go-proto-validators"
-	math "math"
-)
+import proto "github.com/golang/protobuf/proto"
+import fmt "fmt"
+import math "math"
+import wrappers "github.com/golang/protobuf/ptypes/wrappers"
+import _ "github.com/mwitkow/go-proto-validators"
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -23,9 +21,9 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type PatchCredentialRequest struct {
-	Id                   *wrappers.StringValue `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Alias                *wrappers.StringValue `protobuf:"bytes,6,opt,name=alias,proto3" json:"alias,omitempty"`
-	Description          *wrappers.StringValue `protobuf:"bytes,8,opt,name=description,proto3" json:"description,omitempty"`
+	Id                   *wrappers.StringValue `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
+	Alias                *wrappers.StringValue `protobuf:"bytes,6,opt,name=alias" json:"alias,omitempty"`
+	Description          *wrappers.StringValue `protobuf:"bytes,8,opt,name=description" json:"description,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -35,17 +33,16 @@ func (m *PatchCredentialRequest) Reset()         { *m = PatchCredentialRequest{}
 func (m *PatchCredentialRequest) String() string { return proto.CompactTextString(m) }
 func (*PatchCredentialRequest) ProtoMessage()    {}
 func (*PatchCredentialRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_ed2cb3a75ddc78b6, []int{0}
+	return fileDescriptor_patch_credential_f72c16ab11d4b0a8, []int{0}
 }
-
 func (m *PatchCredentialRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_PatchCredentialRequest.Unmarshal(m, b)
 }
 func (m *PatchCredentialRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_PatchCredentialRequest.Marshal(b, m, deterministic)
 }
-func (m *PatchCredentialRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_PatchCredentialRequest.Merge(m, src)
+func (dst *PatchCredentialRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PatchCredentialRequest.Merge(dst, src)
 }
 func (m *PatchCredentialRequest) XXX_Size() int {
 	return xxx_messageInfo_PatchCredentialRequest.Size(m)
@@ -78,7 +75,7 @@ func (m *PatchCredentialRequest) GetDescription() *wrappers.StringValue {
 }
 
 type PatchCredentialResponse struct {
-	Credential           *Credential `protobuf:"bytes,1,opt,name=credential,proto3" json:"credential,omitempty"`
+	Credential           *Credential `protobuf:"bytes,1,opt,name=credential" json:"credential,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}    `json:"-"`
 	XXX_unrecognized     []byte      `json:"-"`
 	XXX_sizecache        int32       `json:"-"`
@@ -88,17 +85,16 @@ func (m *PatchCredentialResponse) Reset()         { *m = PatchCredentialResponse
 func (m *PatchCredentialResponse) String() string { return proto.CompactTextString(m) }
 func (*PatchCredentialResponse) ProtoMessage()    {}
 func (*PatchCredentialResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_ed2cb3a75ddc78b6, []int{1}
+	return fileDescriptor_patch_credential_f72c16ab11d4b0a8, []int{1}
 }
-
 func (m *PatchCredentialResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_PatchCredentialResponse.Unmarshal(m, b)
 }
 func (m *PatchCredentialResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_PatchCredentialResponse.Marshal(b, m, deterministic)
 }
-func (m *PatchCredentialResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_PatchCredentialResponse.Merge(m, src)
+func (dst *PatchCredentialResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PatchCredentialResponse.Merge(dst, src)
 }
 func (m *PatchCredentialResponse) XXX_Size() int {
 	return xxx_messageInfo_PatchCredentialResponse.Size(m)
@@ -121,9 +117,11 @@ func init() {
 	proto.RegisterType((*PatchCredentialResponse)(nil), "ai.metathings.service.identityd2.PatchCredentialResponse")
 }
 
-func init() { proto.RegisterFile("patch_credential.proto", fileDescriptor_ed2cb3a75ddc78b6) }
+func init() {
+	proto.RegisterFile("patch_credential.proto", fileDescriptor_patch_credential_f72c16ab11d4b0a8)
+}
 
-var fileDescriptor_ed2cb3a75ddc78b6 = []byte{
+var fileDescriptor_patch_credential_f72c16ab11d4b0a8 = []byte{
 	// 307 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x91, 0xc1, 0x4a, 0x03, 0x31,
 	0x10, 0x86, 0xd9, 0x62, 0x17, 0x49, 0x6f, 0x7b, 0xa8, 0xa5, 0x88, 0x96, 0x9e, 0x3c, 0xd8, 0x2c,

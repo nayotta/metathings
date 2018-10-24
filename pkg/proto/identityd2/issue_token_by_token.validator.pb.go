@@ -4,7 +4,7 @@
 package identityd2
 
 import fmt "fmt"
-import github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
+import go_proto_validators "github.com/mwitkow/go-proto-validators"
 import proto "github.com/golang/protobuf/proto"
 import math "math"
 import _ "github.com/mwitkow/go-proto-validators"
@@ -16,19 +16,19 @@ var _ = math.Inf
 
 func (this *IssueTokenByTokenRequest) Validate() error {
 	if nil == this.Token {
-		return github_com_mwitkow_go_proto_validators.FieldError("Token", fmt.Errorf("message must exist"))
+		return go_proto_validators.FieldError("Token", fmt.Errorf("message must exist"))
 	}
 	if this.Token != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Token); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Token", err)
+		if err := go_proto_validators.CallValidatorIfExists(this.Token); err != nil {
+			return go_proto_validators.FieldError("Token", err)
 		}
 	}
 	return nil
 }
 func (this *IssueTokenByTokenResponse) Validate() error {
 	if this.Token != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Token); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Token", err)
+		if err := go_proto_validators.CallValidatorIfExists(this.Token); err != nil {
+			return go_proto_validators.FieldError("Token", err)
 		}
 	}
 	return nil

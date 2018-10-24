@@ -16,5 +16,5 @@ message ListRolesRequest {
 }
 
 message ListRolesResponse {
-	repeated Role roles = 1;
+	repeated Policy policies = 1;
 }

@@ -3,12 +3,10 @@
 
 package identityd2
 
-import (
-	fmt "fmt"
-	proto "github.com/golang/protobuf/proto"
-	_ "github.com/mwitkow/go-proto-validators"
-	math "math"
-)
+import proto "github.com/golang/protobuf/proto"
+import fmt "fmt"
+import math "math"
+import _ "github.com/mwitkow/go-proto-validators"
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -22,8 +20,8 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type AddRoleToEntityRequest struct {
-	Entity               *OpEntity `protobuf:"bytes,1,opt,name=entity,proto3" json:"entity,omitempty"`
-	Role                 *OpRole   `protobuf:"bytes,2,opt,name=role,proto3" json:"role,omitempty"`
+	Entity               *OpEntity `protobuf:"bytes,1,opt,name=entity" json:"entity,omitempty"`
+	Role                 *OpRole   `protobuf:"bytes,2,opt,name=role" json:"role,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}  `json:"-"`
 	XXX_unrecognized     []byte    `json:"-"`
 	XXX_sizecache        int32     `json:"-"`
@@ -33,17 +31,16 @@ func (m *AddRoleToEntityRequest) Reset()         { *m = AddRoleToEntityRequest{}
 func (m *AddRoleToEntityRequest) String() string { return proto.CompactTextString(m) }
 func (*AddRoleToEntityRequest) ProtoMessage()    {}
 func (*AddRoleToEntityRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_deb9489bcc8c51ba, []int{0}
+	return fileDescriptor_add_role_to_entity_82d932657cecfb14, []int{0}
 }
-
 func (m *AddRoleToEntityRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_AddRoleToEntityRequest.Unmarshal(m, b)
 }
 func (m *AddRoleToEntityRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_AddRoleToEntityRequest.Marshal(b, m, deterministic)
 }
-func (m *AddRoleToEntityRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_AddRoleToEntityRequest.Merge(m, src)
+func (dst *AddRoleToEntityRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_AddRoleToEntityRequest.Merge(dst, src)
 }
 func (m *AddRoleToEntityRequest) XXX_Size() int {
 	return xxx_messageInfo_AddRoleToEntityRequest.Size(m)
@@ -72,9 +69,11 @@ func init() {
 	proto.RegisterType((*AddRoleToEntityRequest)(nil), "ai.metathings.service.identityd2.AddRoleToEntityRequest")
 }
 
-func init() { proto.RegisterFile("add_role_to_entity.proto", fileDescriptor_deb9489bcc8c51ba) }
+func init() {
+	proto.RegisterFile("add_role_to_entity.proto", fileDescriptor_add_role_to_entity_82d932657cecfb14)
+}
 
-var fileDescriptor_deb9489bcc8c51ba = []byte{
+var fileDescriptor_add_role_to_entity_82d932657cecfb14 = []byte{
 	// 215 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x92, 0x48, 0x4c, 0x49, 0x89,
 	0x2f, 0xca, 0xcf, 0x49, 0x8d, 0x2f, 0xc9, 0x8f, 0x4f, 0xcd, 0x2b, 0xc9, 0x2c, 0xa9, 0xd4, 0x2b,

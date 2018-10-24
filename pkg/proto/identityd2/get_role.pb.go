@@ -3,13 +3,11 @@
 
 package identityd2
 
-import (
-	fmt "fmt"
-	proto "github.com/golang/protobuf/proto"
-	wrappers "github.com/golang/protobuf/ptypes/wrappers"
-	_ "github.com/mwitkow/go-proto-validators"
-	math "math"
-)
+import proto "github.com/golang/protobuf/proto"
+import fmt "fmt"
+import math "math"
+import wrappers "github.com/golang/protobuf/ptypes/wrappers"
+import _ "github.com/mwitkow/go-proto-validators"
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -23,7 +21,7 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type GetRoleRequest struct {
-	Id                   *wrappers.StringValue `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id                   *wrappers.StringValue `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -33,17 +31,16 @@ func (m *GetRoleRequest) Reset()         { *m = GetRoleRequest{} }
 func (m *GetRoleRequest) String() string { return proto.CompactTextString(m) }
 func (*GetRoleRequest) ProtoMessage()    {}
 func (*GetRoleRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_afd8c6661b3b1920, []int{0}
+	return fileDescriptor_get_role_79de0b46b19b00d3, []int{0}
 }
-
 func (m *GetRoleRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_GetRoleRequest.Unmarshal(m, b)
 }
 func (m *GetRoleRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_GetRoleRequest.Marshal(b, m, deterministic)
 }
-func (m *GetRoleRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_GetRoleRequest.Merge(m, src)
+func (dst *GetRoleRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetRoleRequest.Merge(dst, src)
 }
 func (m *GetRoleRequest) XXX_Size() int {
 	return xxx_messageInfo_GetRoleRequest.Size(m)
@@ -62,7 +59,7 @@ func (m *GetRoleRequest) GetId() *wrappers.StringValue {
 }
 
 type GetRoleResponse struct {
-	Role                 *Role    `protobuf:"bytes,1,opt,name=role,proto3" json:"role,omitempty"`
+	Role                 *Role    `protobuf:"bytes,1,opt,name=role" json:"role,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -72,17 +69,16 @@ func (m *GetRoleResponse) Reset()         { *m = GetRoleResponse{} }
 func (m *GetRoleResponse) String() string { return proto.CompactTextString(m) }
 func (*GetRoleResponse) ProtoMessage()    {}
 func (*GetRoleResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_afd8c6661b3b1920, []int{1}
+	return fileDescriptor_get_role_79de0b46b19b00d3, []int{1}
 }
-
 func (m *GetRoleResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_GetRoleResponse.Unmarshal(m, b)
 }
 func (m *GetRoleResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_GetRoleResponse.Marshal(b, m, deterministic)
 }
-func (m *GetRoleResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_GetRoleResponse.Merge(m, src)
+func (dst *GetRoleResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetRoleResponse.Merge(dst, src)
 }
 func (m *GetRoleResponse) XXX_Size() int {
 	return xxx_messageInfo_GetRoleResponse.Size(m)
@@ -105,9 +101,9 @@ func init() {
 	proto.RegisterType((*GetRoleResponse)(nil), "ai.metathings.service.identityd2.GetRoleResponse")
 }
 
-func init() { proto.RegisterFile("get_role.proto", fileDescriptor_afd8c6661b3b1920) }
+func init() { proto.RegisterFile("get_role.proto", fileDescriptor_get_role_79de0b46b19b00d3) }
 
-var fileDescriptor_afd8c6661b3b1920 = []byte{
+var fileDescriptor_get_role_79de0b46b19b00d3 = []byte{
 	// 237 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x8f, 0xb1, 0x4a, 0xc4, 0x40,
 	0x10, 0x86, 0x49, 0x90, 0x2b, 0xf6, 0xe0, 0x84, 0x54, 0x72, 0x88, 0x86, 0x2b, 0xc4, 0xe6, 0x66,
