@@ -23,27 +23,12 @@ message OpDomain {
 	map<string, google.protobuf.StringValue> extra = 6;
 }
 
-message Policy {
-	string id = 1;
-	Role role = 2;
-	string rule = 3;
-	string description = 4;
-}
-
-message OpPolicy {
-	google.protobuf.StringValue id = 1;
-	OpRole role = 2;
-	google.protobuf.StringValue rule = 3;
-	google.protobuf.StringValue description = 4;
-}
-
 message Role {
 	string id = 1;
 	Domain domain = 2;
 	string name = 3;
 	string alias = 4;
 	string description = 5;
-	repeated Policy policies = 6;
 	map<string, string> extra = 7;
 }
 
@@ -53,8 +38,7 @@ message OpRole {
 	google.protobuf.StringValue name = 3;
 	google.protobuf.StringValue alias = 4;
 	google.protobuf.StringValue description = 5;
-	repeated OpPolicy policies = 6;
-	map<string, google.protobuf.StringValue> extra = 7;
+	map<string, google.protobuf.StringValue> extra = 6;
 }
 
 message Entity {

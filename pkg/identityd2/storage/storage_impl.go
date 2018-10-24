@@ -176,7 +176,6 @@ func (self *StorageImpl) RemoveEntityFromDomain(domain_id, entity_id string) err
 
 func (self *StorageImpl) get_role(id string) (*Role, error) {
 	var role *Role
-	var policies []*Policy
 	var err error
 
 	if err = self.db.First(&role, "id = ?", id).Error; err != nil {
@@ -186,12 +185,6 @@ func (self *StorageImpl) get_role(id string) (*Role, error) {
 	role.Domain = &Domain{
 		Id: role.DomainId,
 	}
-
-	if err = self.db.Find(&policies, "role_id = ?", id).Error; err != nil {
-		return nil, err
-	}
-
-	role.Policies = policies
 
 	return role, nil
 }
@@ -250,11 +243,7 @@ func (self *StorageImpl) CreateRole(role *Role) (*Role, error) {
 func (self *StorageImpl) DeleteRole(id string) error {
 	var err error
 
-	tx := self.db.Begin()
-	tx.Delete(&Policy{}, "role_id = ?", id)
-	tx.Delete(&Role{}, "id = ?", id)
-	if err = tx.Commit().Error; err != nil {
-		tx.Rollback()
+	if err = self.db.Delete(&Role{}, "id = ?", id).Error; err != nil {
 		self.logger.WithError(err).Debugf("failed to delete role")
 		return err
 	}
@@ -292,70 +281,6 @@ func (self *StorageImpl) ListRoles(role *Role) ([]*Role, error) {
 	self.logger.Debugf("list roles")
 
 	return roles, nil
-}
-
-func (self *StorageImpl) get_policy(id string) (*Policy, error) {
-	var plc *Policy
-	var err error
-
-	if err = self.db.First(&plc, "id = ?", id).Error; err != nil {
-		return nil, err
-	}
-
-	return plc, nil
-}
-
-func (self *StorageImpl) GetPolicy(id string) (*Policy, error) {
-	var plc *Policy
-	var err error
-
-	if plc, err = self.get_policy(id); err != nil {
-		self.logger.WithError(err).Debugf("failed to get policy")
-		return nil, err
-	}
-
-	self.logger.WithField("id", id).Debugf("get policy")
-
-	return plc, nil
-}
-
-func (self *StorageImpl) CreatePolicy(plc *Policy) (*Policy, error) {
-	var err error
-
-	if err = self.db.Create(plc).Error; err != nil {
-		self.logger.WithError(err).Debugf("failed to create policy")
-		return nil, err
-	}
-
-	if plc, err = self.get_policy(*plc.Id); err != nil {
-		self.logger.WithError(err).Debugf("failed to get policy")
-		return nil, err
-	}
-
-	self.logger.WithFields(log.Fields{
-		"id":      *plc.Id,
-		"role_id": *plc.RoleId,
-		"rule":    *plc.Rule,
-	}).Debugf("create policy")
-
-	return plc, err
-}
-
-func (self *StorageImpl) DeletePolicy(id string) error {
-	var err error
-
-	if err = self.db.Delete(&Policy{}, "id = ?", id).Error; err != nil {
-		self.logger.WithField("id", id).Debugf("failed to delete policy")
-		return err
-	}
-
-	self.logger.WithField("id", id).Debugf("delete policy")
-
-	return nil
-}
-
-func (self *StorageImpl) ListPoliciesForEntity(id string) ([]*Policy, error) {
-	panic("unimplemented")
 }
 
 func (self *StorageImpl) list_view_domains_by_entity_id(id string) ([]*Domain, error) {
@@ -843,7 +768,6 @@ func (self *StorageImpl) RemoveEntityFromGroup(entity_id, group_id string) error
 }
 
 func (self *StorageImpl) get_credential(id string) (*Credential, error) {
-	var ent_roles []*Role
 	var cred *Credential
 	var err error
 
@@ -851,8 +775,34 @@ func (self *StorageImpl) get_credential(id string) (*Credential, error) {
 		return nil, err
 	}
 
+	cred.Domain = &Domain{Id: cred.DomainId}
+	cred.Entity = &Entity{Id: cred.EntityId}
+
+	if cred.Roles, err = self.internal_list_view_credential_roles(cred); err != nil {
+		return nil, err
+	}
+
+	return cred, nil
+}
+
+func (self *StorageImpl) list_view_credential_roles(id string) ([]*Role, error) {
+	var cred *Credential
+	var err error
+
+	if err = self.db.Select("id", "entity_id").First(&cred, "id = ?", id).Error; err != nil {
+		return nil, err
+	}
+
+	return self.internal_list_view_credential_roles(cred)
+}
+
+func (self *StorageImpl) internal_list_view_credential_roles(cred *Credential) ([]*Role, error) {
+	var ent_roles []*Role
+	var roles []*Role
 	var cred_role_maps []*CredentialRoleMapping
-	if err = self.db.Find(&cred_role_maps, "credential_id = ?", id).Error; err != nil {
+	var err error
+
+	if err = self.db.Find(&cred_role_maps, "credential_id = ?", *cred.Id).Error; err != nil {
 		return nil, err
 	}
 
@@ -867,21 +817,20 @@ func (self *StorageImpl) get_credential(id string) (*Credential, error) {
 		}
 		for _, m := range cred_role_maps {
 			if _, ok := ent_roles_set[*m.RoleId]; ok {
-				cred.Roles = append(cred.Roles, &Role{Id: m.RoleId})
+				roles = append(roles, &Role{Id: m.RoleId})
 			}
 		}
-
 	} else {
-		cred.Roles = ent_roles
+		roles = ent_roles
 	}
 
-	return cred, nil
+	return roles, nil
 }
 
-func (self *StorageImpl) list_credential(cred *Credential) ([]*Credential, error) {
-	var err error
+func (self *StorageImpl) list_credentials(cred *Credential) ([]*Credential, error) {
 	var creds_t []*Credential
 	var creds []*Credential
+	var err error
 
 	c := &Credential{}
 	if cred.Id != nil {
@@ -891,7 +840,7 @@ func (self *StorageImpl) list_credential(cred *Credential) ([]*Credential, error
 		c.DomainId = cred.DomainId
 	}
 	if cred.EntityId != nil {
-		c.EntityId = cred.EntityId
+		c.DomainId = cred.DomainId
 	}
 	if cred.Name != nil {
 		c.Name = cred.Name
@@ -900,15 +849,16 @@ func (self *StorageImpl) list_credential(cred *Credential) ([]*Credential, error
 		c.Alias = cred.Alias
 	}
 
-	if err = self.db.Select("id").Find(&creds_t, c).Error; err != nil {
+	if err = self.db.Find(&creds_t, c).Error; err != nil {
 		return nil, err
 	}
 
 	for _, c = range creds_t {
-		if c, err = self.get_credential(*c.Id); err != nil {
+		if cred, err = self.get_credential(*c.Id); err != nil {
 			return nil, err
 		}
-		creds = append(creds, c)
+
+		creds = append(creds, cred)
 	}
 
 	return creds, nil
@@ -949,7 +899,11 @@ func (self *StorageImpl) CreateCredential(cred *Credential) (*Credential, error)
 func (self *StorageImpl) DeleteCredential(id string) error {
 	var err error
 
-	if err = self.db.Delete(&Credential{}, "id = ?", id).Error; err != nil {
+	tx := self.db.Begin()
+	tx.Delete(&Credential{}, "id = ?", id)
+	tx.Delete(&CredentialRoleMapping{}, "credential_id = ?", id)
+	if err = tx.Commit().Error; err != nil {
+		tx.Rollback()
 		self.logger.WithError(err).Debugf("failed to delete credential")
 		return err
 	}
@@ -1007,9 +961,11 @@ func (self *StorageImpl) GetCredential(id string) (*Credential, error) {
 	var err error
 
 	if cred, err = self.get_credential(id); err != nil {
-		self.logger.WithError(err).Debugf("failed to get get_credential")
+		self.logger.WithError(err).Debugf("failed to get credential")
 		return nil, err
 	}
+
+	self.logger.WithField("id", id).Debugf("get credential")
 
 	return cred, nil
 }
@@ -1018,7 +974,7 @@ func (self *StorageImpl) ListCredentials(cred *Credential) ([]*Credential, error
 	var creds []*Credential
 	var err error
 
-	if creds, err = self.list_credential(cred); err != nil {
+	if creds, err = self.list_credentials(cred); err != nil {
 		self.logger.WithError(err).Debugf("failed to list credentials")
 		return nil, err
 	}
@@ -1028,28 +984,100 @@ func (self *StorageImpl) ListCredentials(cred *Credential) ([]*Credential, error
 	return creds, nil
 }
 
-func (self *StorageImpl) CreateToken(tkn *Token) (*Token, error) {
+func (self *StorageImpl) get_token(id string) (*Token, error) {
+	var tkn *Token
 	var err error
 
-	if self.db.NewRecord(*tkn) == false {
-		err = errors.New("failed to cteate token, token exist")
-		self.logger.WithError(err).Debugf("failed to create token")
+	if err = self.db.First(&tkn, "id = ?", id).Error; err != nil {
 		return nil, err
 	}
+
+	if tkn, err = self.internal_get_token(tkn); err != nil {
+		return nil, err
+	}
+
+	return tkn, nil
+}
+
+func (self *StorageImpl) get_token_by_text(text string) (*Token, error) {
+	var tkn *Token
+	var err error
+
+	if err = self.db.First(&tkn, "text = ?", text).Error; err != nil {
+		return nil, err
+	}
+
+	if tkn, err = self.internal_get_token(tkn); err != nil {
+		return nil, err
+	}
+
+	return tkn, nil
+}
+
+func (self *StorageImpl) list_tokens(tkn *Token) ([]*Token, error) {
+	var tkns_t []*Token
+	var tkns []*Token
+	var err error
+
+	t := &Token{}
+	if tkn.Id != nil {
+		t.Id = tkn.Id
+	}
+	if tkn.DomainId != nil {
+		t.DomainId = tkn.DomainId
+	}
+	if tkn.EntityId != nil {
+		t.EntityId = tkn.EntityId
+	}
+	if tkn.CredentialId != nil {
+		t.CredentialId = tkn.CredentialId
+	}
+	if tkn.Text != nil {
+		t.Text = tkn.Text
+	}
+
+	if err = self.db.Find(&tkns_t, t).Error; err != nil {
+		return nil, err
+	}
+
+	for _, t = range tkns_t {
+		if tkn, err = self.get_token(*t.Id); err != nil {
+			return nil, err
+		}
+		tkns = append(tkns, tkn)
+	}
+
+	return tkns, nil
+}
+
+func (self *StorageImpl) internal_get_token(tkn *Token) (*Token, error) {
+	var err error
+
+	tkn.Domain = &Domain{Id: tkn.DomainId}
+	tkn.Entity = &Entity{Id: tkn.EntityId}
+	tkn.Credential = &Credential{Id: tkn.CredentialId}
+	if tkn.Roles, err = self.list_view_credential_roles(*tkn.CredentialId); err != nil {
+		return nil, err
+	}
+
+	return tkn, nil
+}
+
+func (self *StorageImpl) CreateToken(tkn *Token) (*Token, error) {
+	var err error
 
 	if err = self.db.Create(tkn).Error; err != nil {
 		self.logger.WithError(err).Debugf("failed to create token")
 		return nil, err
 	}
 
-	if tkn, err = self.GetTokenByText(*tkn.Text); err != nil {
-		self.logger.WithError(err).Debugf("failed to get token")
+	if tkn, err = self.get_token(*tkn.Id); err != nil {
+		self.logger.WithError(err).Debugf("failed to get token by id")
 		return nil, err
 	}
 
-	self.logger.WithFields(log.Fields{
-		"token_text": *tkn.Text,
-	}).Debugf("create token")
+	self.logger.WithField("id", *tkn.Id).Debugf("create token")
+
 	return tkn, nil
 }
 
@@ -1070,9 +1098,12 @@ func (self *StorageImpl) GetTokenByText(text string) (*Token, error) {
 	var tkn *Token
 	var err error
 
-	if err = self.db.First(&tkn, "Text = ?", text).Error; err != nil {
+	if tkn, err = self.get_token_by_text(text); err != nil {
+		self.logger.WithError(err).Debugf("failed to get token by text")
 		return nil, err
 	}
+
+	self.logger.WithField("text", text).Debugf("get token by text")
 
 	return tkn, nil
 }
@@ -1081,39 +1112,28 @@ func (self *StorageImpl) GetToken(id string) (*Token, error) {
 	var tkn *Token
 	var err error
 
-	if err = self.db.First(&tkn, "id = ?", id).Error; err != nil {
+	if tkn, err = self.get_token(id); err != nil {
+		self.logger.WithError(err).Debugf("failed to get token by id")
 		return nil, err
 	}
+
+	self.logger.WithField("id", id).Debugf("get token by id")
 
 	return tkn, nil
 }
 
 func (self *StorageImpl) ListTokens(tkn *Token) ([]*Token, error) {
-	var tkns_t []*Token
+	var tkns []*Token
 	var err error
 
-	t := &Token{}
-	if tkn.Id != nil {
-		t.Id = tkn.Id
-	}
-	if tkn.DomainId != nil {
-		t.DomainId = tkn.DomainId
-	}
-	if tkn.EntityId != nil {
-		t.EntityId = tkn.EntityId
-	}
-	if tkn.CredentialId != nil {
-		t.CredentialId = tkn.CredentialId
-	}
-	if tkn.Text != nil {
-		t.Text = tkn.Text
-	}
-
-	if err = self.db.Select("id").Find(&tkns_t, t).Error; err != nil {
+	if tkns, err = self.list_tokens(tkn); err != nil {
+		self.logger.WithError(err).Debugf("failed to list tokens")
 		return nil, err
 	}
 
-	return tkns_t, nil
+	self.logger.Debugf("list tokens")
+
+	return tkns, nil
 }
 
 func init_args(s *StorageImpl, args ...interface{}) error {
@@ -1157,7 +1177,6 @@ func new_db(s *StorageImpl, driver, uri string) error {
 func init_db(s *StorageImpl) error {
 	s.db.AutoMigrate(
 		&Domain{},
-		&Policy{},
 		&Role{},
 		&Entity{},
 		&Group{},
@@ -1169,7 +1188,6 @@ func init_db(s *StorageImpl) error {
 		&EntityGroupMapping{},
 		&GroupRoleMapping{},
 		&CredentialRoleMapping{},
-		&TokenRoleMapping{},
 	)
 
 	return nil

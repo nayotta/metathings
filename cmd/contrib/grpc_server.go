@@ -9,6 +9,8 @@ import (
 	"go.uber.org/fx"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
+
+	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
 )
 
 type NewGrpcServerParams struct {
@@ -21,7 +23,7 @@ type NewGrpcServerParams struct {
 func NewGrpcServer(params NewGrpcServerParams, lc fx.Lifecycle, logger log.FieldLogger) *grpc.Server {
 
 	opts := []grpc.ServerOption{
-		grpc.UnaryInterceptor(grpc_auth.UnaryServerInterceptor(nil)),
+		grpc_helper.UnaryServerInterceptor(),
 		grpc.StreamInterceptor(grpc_auth.StreamServerInterceptor(nil)),
 	}
 

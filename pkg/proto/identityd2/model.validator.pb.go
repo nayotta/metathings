@@ -62,48 +62,10 @@ func (this *OpDomain) Validate() error {
 	// Validation of proto3 map<> fields is unsupported.
 	return nil
 }
-func (this *Policy) Validate() error {
-	if this.Role != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Role); err != nil {
-			return go_proto_validators.FieldError("Role", err)
-		}
-	}
-	return nil
-}
-func (this *OpPolicy) Validate() error {
-	if this.Id != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Id); err != nil {
-			return go_proto_validators.FieldError("Id", err)
-		}
-	}
-	if this.Role != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Role); err != nil {
-			return go_proto_validators.FieldError("Role", err)
-		}
-	}
-	if this.Rule != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Rule); err != nil {
-			return go_proto_validators.FieldError("Rule", err)
-		}
-	}
-	if this.Description != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Description); err != nil {
-			return go_proto_validators.FieldError("Description", err)
-		}
-	}
-	return nil
-}
 func (this *Role) Validate() error {
 	if this.Domain != nil {
 		if err := go_proto_validators.CallValidatorIfExists(this.Domain); err != nil {
 			return go_proto_validators.FieldError("Domain", err)
-		}
-	}
-	for _, item := range this.Policies {
-		if item != nil {
-			if err := go_proto_validators.CallValidatorIfExists(item); err != nil {
-				return go_proto_validators.FieldError("Policies", err)
-			}
 		}
 	}
 	// Validation of proto3 map<> fields is unsupported.
@@ -133,13 +95,6 @@ func (this *OpRole) Validate() error {
 	if this.Description != nil {
 		if err := go_proto_validators.CallValidatorIfExists(this.Description); err != nil {
 			return go_proto_validators.FieldError("Description", err)
-		}
-	}
-	for _, item := range this.Policies {
-		if item != nil {
-			if err := go_proto_validators.CallValidatorIfExists(item); err != nil {
-				return go_proto_validators.FieldError("Policies", err)
-			}
 		}
 	}
 	// Validation of proto3 map<> fields is unsupported.

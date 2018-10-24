@@ -7,7 +7,7 @@ import "google/protobuf/wrappers.proto";
 import "model.proto";
 
 message ListRolesRequest {
-	reserved "description", "policies", "extra";
+	reserved "description", "extra";
 
 	google.protobuf.StringValue id = 1;
 	OpDomain domain = 2;
@@ -16,5 +16,5 @@ message ListRolesRequest {
 }
 
 message ListRolesResponse {
-	repeated Policy policies = 1;
+	repeated Role roles = 1;
 }

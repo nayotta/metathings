@@ -3,5 +3,6 @@ package metathings_identityd2_service
 import "errors"
 
 var (
-	ErrUnauthenticated = errors.New("unauthenticated")
+	ErrPermissionDenied = errors.New("permission denied")
+	ErrUnauthenticated  = errors.New("unauthenticated")
 )

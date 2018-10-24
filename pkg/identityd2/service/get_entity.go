@@ -11,8 +11,8 @@ import (
 	pb "github.com/nayotta/metathings/pkg/proto/identityd2"
 )
 
-func (self *MetathingsIdentitydService) GetCredential(ctx context.Context, req *pb.GetCredentialRequest) (*pb.GetCredentialResponse, error) {
-	var cred_s *storage.Credential
+func (self *MetathingsIdentitydService) GetEntity(ctx context.Context, req *pb.GetEntityRequest) (*pb.GetEntityResponse, error) {
+	var ent_s *storage.Entity
 	var err error
 
 	if err = req.Validate(); err != nil {
@@ -20,24 +20,24 @@ func (self *MetathingsIdentitydService) GetCredential(ctx context.Context, req *
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 
-	cred := req.GetCredential()
-	if cred.GetId() == nil {
-		err = errors.New("credential.id is empty")
+	ent := req.GetEntity()
+	if ent.GetId() == nil {
+		err = errors.New("entity.id is empty")
 		self.logger.WithError(err).Warningf("failed to validate request data")
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
-	id_str := cred.GetId().GetValue()
+	id_str := ent.GetId().GetValue()
 
-	if cred_s, err = self.storage.GetCredential(id_str); err != nil {
-		self.logger.WithError(err).Errorf("failed to get credential in storage")
+	if ent_s, err = self.storage.GetEntity(id_str); err != nil {
+		self.logger.WithError(err).Errorf("failed to get entity in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
-	res := &pb.GetCredentialResponse{
-		Credential: copy_credential(cred_s),
+	res := &pb.GetEntityResponse{
+		Entity: copy_entity(ent_s),
 	}
 
-	self.logger.WithField("id", id_str).Debugf("get credential")
+	self.logger.WithField("id", id_str).Debugf("get entity")
 
 	return res, nil
 }

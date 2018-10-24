@@ -7,7 +7,6 @@ import fmt "fmt"
 import go_proto_validators "github.com/mwitkow/go-proto-validators"
 import proto "github.com/golang/protobuf/proto"
 import math "math"
-import _ "github.com/golang/protobuf/ptypes/wrappers"
 import _ "github.com/mwitkow/go-proto-validators"
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -16,12 +15,12 @@ var _ = fmt.Errorf
 var _ = math.Inf
 
 func (this *GetCredentialRequest) Validate() error {
-	if nil == this.Id {
-		return go_proto_validators.FieldError("Id", fmt.Errorf("message must exist"))
+	if nil == this.Credential {
+		return go_proto_validators.FieldError("Credential", fmt.Errorf("message must exist"))
 	}
-	if this.Id != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Id); err != nil {
-			return go_proto_validators.FieldError("Id", err)
+	if this.Credential != nil {
+		if err := go_proto_validators.CallValidatorIfExists(this.Credential); err != nil {
+			return go_proto_validators.FieldError("Credential", err)
 		}
 	}
 	return nil

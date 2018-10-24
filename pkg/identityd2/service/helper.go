@@ -2,6 +2,7 @@ package metathings_identityd2_service
 
 import (
 	"encoding/json"
+	"errors"
 	"math/rand"
 	"time"
 
@@ -114,18 +115,6 @@ func copy_domain(x *storage.Domain) *pb.Domain {
 	return y
 }
 
-func copy_role_policies(xs []*storage.Policy) []*pb.Policy {
-	ys := []*pb.Policy{}
-
-	for _, x := range xs {
-		ys = append(ys, &pb.Policy{
-			Id: *x.Id,
-		})
-	}
-
-	return ys
-}
-
 func copy_role(x *storage.Role) *pb.Role {
 	y := &pb.Role{
 		Id: *x.Id,
@@ -135,7 +124,6 @@ func copy_role(x *storage.Role) *pb.Role {
 		Name:        *x.Name,
 		Alias:       *x.Alias,
 		Description: *x.Description,
-		Policies:    copy_role_policies(x.Policies),
 		Extra:       copy_extra(*x.Extra),
 	}
 
@@ -310,4 +298,15 @@ func domain_in_entity(ent *storage.Entity, dom_id string) bool {
 	}
 
 	return false
+}
+
+type get_domainer interface {
+	GetDomain() *pb.OpDomain
+}
+
+func ensure_get_domain_id(x get_domainer) error {
+	if x.GetDomain().GetId() == nil {
+		return errors.New("domain.id is empty")
+	}
+	return nil
 }

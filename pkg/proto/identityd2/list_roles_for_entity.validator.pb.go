@@ -38,10 +38,10 @@ func (this *ListRolesForEntityRequest) Validate() error {
 	return nil
 }
 func (this *ListRolesForEntityResponse) Validate() error {
-	for _, item := range this.Policies {
+	for _, item := range this.Roles {
 		if item != nil {
 			if err := go_proto_validators.CallValidatorIfExists(item); err != nil {
-				return go_proto_validators.FieldError("Policies", err)
+				return go_proto_validators.FieldError("Roles", err)
 			}
 		}
 	}

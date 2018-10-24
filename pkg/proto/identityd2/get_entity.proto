@@ -2,14 +2,12 @@ syntax = "proto3";
 
 package ai.metathings.service.identityd2;
 
-import "google/protobuf/wrappers.proto";
-
 import "github.com/mwitkow/go-proto-validators/validator.proto";
 
 import "model.proto";
 
 message GetEntityRequest {
-	google.protobuf.StringValue id = 1 [(validator.field) = {msg_exists: true}];
+	OpEntity entity = 1 [(validator.field) = {msg_exists: true}];
 }
 
 message GetEntityResponse {
