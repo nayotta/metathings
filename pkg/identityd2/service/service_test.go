@@ -92,11 +92,11 @@ func (self *metathingsIdentitydService_enforceTestSuite) Test_enforce_pass() {
 	self.enforcer.AssertCalled(self.T(), "Enforce", self.domain, self.groups, self.subject, self.object, self.action_pass)
 }
 
-// func (self *metathingsIdentitydService_enforceTestSuite) Test_enforce_nopass() {
-// 	err := self.service.enforce(self.ctx, self.object, self.action_nopass)
-// 	self.NotNil(err)
-// 	self.enforcer.AssertCalled(self.T(), "Enforce", self.domain, self.groups, self.subject, self.object, self.action_nopass)
-// }
+func (self *metathingsIdentitydService_enforceTestSuite) Test_enforce_nopass() {
+	err := self.service.enforce(self.ctx, self.object, self.action_nopass)
+	self.NotNil(err)
+	self.enforcer.AssertCalled(self.T(), "Enforce", self.domain, self.groups, self.subject, self.object, self.action_nopass)
+}
 
 func TestMetathingsIdentitydService_enforceTestSuite(t *testing.T) {
 	suite.Run(t, new(metathingsIdentitydService_enforceTestSuite))
