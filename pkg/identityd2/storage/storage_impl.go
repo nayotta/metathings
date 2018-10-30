@@ -978,6 +978,8 @@ func (self *StorageImpl) PatchCredential(id string, credential *Credential) (*Cr
 		tx.Model(&cred).Update("ExpiresAt", credential.ExpiresAt)
 	}
 
+	tx.Model(&cred).Update("UpdatedAt", time.Now())
+
 	if err = tx.Commit().Error; err != nil {
 		tx.Rollback()
 		self.logger.WithError(err).Debugf("failed to patch credential")
