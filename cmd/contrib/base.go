@@ -23,6 +23,14 @@ type ServiceBaseOption struct {
 	StorageOption             `mapstructure:",squash"`
 }
 
+func (self *ServiceBaseOption) GetStorage() StorageOptioner {
+	return &self.StorageOption
+}
+
+func (self *ServiceBaseOption) GetTransportCredential() TransportCredentialOptioner {
+	return &self.TransportCredentialOption
+}
+
 func CreateServiceBaseOption() ServiceBaseOption {
 	return ServiceBaseOption{
 		BaseOption: CreateBaseOption(),

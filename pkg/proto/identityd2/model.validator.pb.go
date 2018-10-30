@@ -344,6 +344,13 @@ func (this *Token) Validate() error {
 			return go_proto_validators.FieldError("Credential", err)
 		}
 	}
+	for _, item := range this.Groups {
+		if item != nil {
+			if err := go_proto_validators.CallValidatorIfExists(item); err != nil {
+				return go_proto_validators.FieldError("Groups", err)
+			}
+		}
+	}
 	return nil
 }
 func (this *OpToken) Validate() error {
@@ -387,6 +394,13 @@ func (this *OpToken) Validate() error {
 	if this.Text != nil {
 		if err := go_proto_validators.CallValidatorIfExists(this.Text); err != nil {
 			return go_proto_validators.FieldError("Text", err)
+		}
+	}
+	for _, item := range this.Groups {
+		if item != nil {
+			if err := go_proto_validators.CallValidatorIfExists(item); err != nil {
+				return go_proto_validators.FieldError("Groups", err)
+			}
 		}
 	}
 	return nil

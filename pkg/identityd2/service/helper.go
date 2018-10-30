@@ -242,6 +242,13 @@ func copy_token(x *storage.Token) *pb.Token {
 		}
 	}
 
+	var groups []*pb.Group
+	for _, g := range x.Groups {
+		groups = append(groups, &pb.Group{
+			Id: *g.Id,
+		})
+	}
+
 	y := &pb.Token{
 		Id:        *x.Id,
 		IssuedAt:  &issued_at,
@@ -249,7 +256,8 @@ func copy_token(x *storage.Token) *pb.Token {
 		Entity: &pb.Entity{
 			Id: *x.EntityId,
 		},
-		Roles: roles,
+		Roles:  roles,
+		Groups: groups,
 		Domain: &pb.Domain{
 			Id: *x.DomainId,
 		},

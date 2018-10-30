@@ -5,7 +5,6 @@ import (
 	"net"
 
 	"github.com/grpc-ecosystem/go-grpc-middleware/auth"
-	log "github.com/sirupsen/logrus"
 	"go.uber.org/fx"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
@@ -20,10 +19,10 @@ type NewGrpcServerParams struct {
 	Creds credentials.TransportCredentials
 }
 
-func NewGrpcServer(params NewGrpcServerParams, lc fx.Lifecycle, logger log.FieldLogger) *grpc.Server {
+func NewGrpcServer(params NewGrpcServerParams, lc fx.Lifecycle) *grpc.Server {
 
 	opts := []grpc.ServerOption{
-		grpc_helper.UnaryServerInterceptor(),
+		grpc.UnaryInterceptor(grpc_helper.UnaryServerInterceptor()),
 		grpc.StreamInterceptor(grpc_auth.StreamServerInterceptor(nil)),
 	}
 
@@ -36,12 +35,10 @@ func NewGrpcServer(params NewGrpcServerParams, lc fx.Lifecycle, logger log.Field
 	lc.Append(fx.Hook{
 		OnStart: func(context.Context) error {
 			go s.Serve(params.Lis)
-			logger.Infof("metathings identityd2 service start")
 			return nil
 		},
 		OnStop: func(context.Context) error {
 			s.Stop()
-			logger.Infof("metathings identityd2 service stop")
 			return nil
 		},
 	})

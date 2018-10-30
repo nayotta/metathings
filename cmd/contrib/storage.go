@@ -1,5 +1,9 @@
 package cmd_contrib
 
+type GetStorageOptioner interface {
+	GetStorage() StorageOptioner
+}
+
 type StorageOptioner interface {
 	GetDriverP() *string
 	GetDriver() string

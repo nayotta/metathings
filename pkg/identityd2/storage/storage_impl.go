@@ -1193,6 +1193,9 @@ func (self *StorageImpl) internal_get_token(tkn *Token) (*Token, error) {
 	if tkn.Roles, err = self.list_view_credential_roles(*tkn.CredentialId); err != nil {
 		return nil, err
 	}
+	if tkn.Groups, err = self.list_view_groups_by_entity_id(*tkn.EntityId); err != nil {
+		return nil, err
+	}
 
 	return tkn, nil
 }

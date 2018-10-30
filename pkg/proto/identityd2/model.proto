@@ -118,6 +118,7 @@ message Token {
 	Domain domain = 6;
 	Credential credential = 7;
 	string text = 8;
+	repeated Group groups = 9;
 }
 
 message OpToken {
@@ -129,4 +130,5 @@ message OpToken {
 	OpDomain domain = 6;
 	OpCredential credential = 7;
 	google.protobuf.StringValue text = 8;
+	repeated OpGroup groups = 9;
 }
