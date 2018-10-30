@@ -109,10 +109,6 @@ func (self *MetathingsIdentitydService) AuthFuncOverride(ctx context.Context, fu
 	return new_ctx, nil
 }
 
-func (self *MetathingsIdentitydService) PatchDomain(context.Context, *pb.PatchDomainRequest) (*pb.PatchDomainResponse, error) {
-	panic("unimplemented")
-}
-
 func (self *MetathingsIdentitydService) ListRolesForEntity(context.Context, *pb.ListRolesForEntityRequest) (*pb.ListRolesForEntityResponse, error) {
 	panic("unimplemented")
 }

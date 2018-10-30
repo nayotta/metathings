@@ -10,8 +10,8 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (self *MetathingsIdentitydService) PatchRole(ctx context.Context, req *pb.PatchRoleRequest) (*pb.PatchRoleResponse, error) {
-	var rol *storage.Role
+func (self *MetathingsIdentitydService) PatchDomain(ctx context.Context, req *pb.PatchDomainRequest) (*pb.PatchDomainResponse, error) {
+	var dom *storage.Domain
 	var err error
 
 	if err = req.Validate(); err != nil {
@@ -20,29 +20,26 @@ func (self *MetathingsIdentitydService) PatchRole(ctx context.Context, req *pb.P
 	}
 
 	if req.GetId() == nil || req.GetId().GetValue() == nil {
-		err = errors.New("role.id is empty")
+		err = errors.New("domain.id is empty")
 		self.logger.WithError(err).Warningf("failed to validate request data")
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 	id_str = req.GetId().GetValue()
 
 	if req.GetAlias() != nil && req.GetAlias().GetValue() != nil {
-		rol.Alias = req.GetAlias.GetValue()
-	}
-	if req.GetDescription() != nil && req.GetDescription().GetValue() != nil {
-		rol.Description = req.GetDescription().GetValue()
+		dom.Alias = req.GetAlias.GetValue()
 	}
 
-	if rol, err = self.storage.PatchGroup(id_str, rol); err != nil {
-		self.logger.WithError(err).Errorf("failed to patch role in storage")
+	if dom, err = self.storage.PatchDomain(id_str, dom); err != nil {
+		self.logger.WithError(err).Errorf("failed to patch domain in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
-	res := &pb.PatchRoleResponse{
-		Role: copy_role(role),
+	res := &pb.PatchDomainResponse{
+		Domain: copy_domain(dom),
 	}
 
-	self.logger.WithField("id", id_str).Debugf("patch role")
+	self.logger.WithField("id", id_str).Debugf("patch domain")
 
 	return res, nil
 }
