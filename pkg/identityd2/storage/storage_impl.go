@@ -287,7 +287,42 @@ func (self *StorageImpl) DeleteRole(id string) error {
 }
 
 func (self *StorageImpl) PatchRole(id string, role *Role) (*Role, error) {
-	panic("unimplemented")
+	var err error
+	var rol *Role
+
+	tx := self.db.Begin()
+
+	if err = self.db.First(&rol, "id = ?", id).Error; err != nil {
+		return nil, err
+	}
+
+	if role.DomainId != nil && rol.DomainId != role.DomainId {
+		tx.Model(&rol).Update("DomainId", role.DomainId)
+	}
+	if role.Name != nil && rol.Name != role.Name {
+		tx.Model(&rol).Update("Name", role.Name)
+	}
+	if role.Alias != nil && rol.Alias != role.Alias {
+		tx.Model(&rol).Update("Alia", role.Alias)
+	}
+	if role.Description != nil && rol.Description != role.Description {
+		tx.Model(&rol).Update("Description", role.Description)
+	}
+	if role.Extra != nil && rol.Extra != role.Extra {
+		tx.Model(&rol).Update("Extra", role.Extra)
+	}
+
+	tx.Model(&rol).Update("UpdatedAt", time.Now())
+
+	if err = tx.Commit().Error; err != nil {
+		tx.Rollback()
+		self.logger.WithError(err).Debugf("failed to patch role")
+		return nil, err
+	}
+
+	self.logger.WithField("id", id).Debugf("patch role")
+
+	return rol, nil
 }
 
 func (self *StorageImpl) GetRole(id string) (*Role, error) {
