@@ -134,10 +134,6 @@ func (self *MetathingsIdentitydService) ShowEntity(context.Context, *empty.Empty
 	panic("unimplemented")
 }
 
-func (self *MetathingsIdentitydService) PatchGroup(context.Context, *pb.PatchGroupRequest) (*pb.PatchGroupResponse, error) {
-	panic("unimplemented")
-}
-
 func (self *MetathingsIdentitydService) ListGroupsForEntity(context.Context, *pb.ListGroupsForEntityRequest) (*pb.ListGroupsForEntityResponse, error) {
 	panic("unimplemented")
 }
