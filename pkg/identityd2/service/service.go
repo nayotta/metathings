@@ -113,10 +113,6 @@ func (self *MetathingsIdentitydService) PatchDomain(context.Context, *pb.PatchDo
 	panic("unimplemented")
 }
 
-func (self *MetathingsIdentitydService) PatchRole(context.Context, *pb.PatchRoleRequest) (*pb.PatchRoleResponse, error) {
-	panic("unimplemented")
-}
-
 func (self *MetathingsIdentitydService) ListRolesForEntity(context.Context, *pb.ListRolesForEntityRequest) (*pb.ListRolesForEntityResponse, error) {
 	panic("unimplemented")
 }
