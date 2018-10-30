@@ -488,7 +488,39 @@ func (self *StorageImpl) DeleteEntity(id string) error {
 }
 
 func (self *StorageImpl) PatchEntity(id string, entity *Entity) (*Entity, error) {
-	panic("unimplemented")
+	var err error
+	var ent *Entity
+
+	tx := self.db.Begin()
+
+	if err = self.db.First(&ent, "id = ?", id).Error; err != nil {
+		return nil, err
+	}
+
+	if entity.Name != nil && ent.Name != entity.Name {
+		tx.Model(&ent).Update("Name", entity.Name)
+	}
+	if entity.Alias != nil && ent.Alias != entity.Name {
+		tx.Model(&ent).Update("Alias", entity.Alias)
+	}
+	if entity.Password != nil && ent.Password != entity.Password {
+		tx.Model(&ent).Update("Password", entity.Password)
+	}
+	if entity.Extra != nil && ent.Extra != entity.Extra {
+		tx.Model(&ent).Update("Extra", entity.Extra)
+	}
+
+	tx.Model(&ent).Update("UpdatedAt", time.Now())
+
+	if err = tx.Commit().Error; err != nil {
+		tx.Rollback()
+		self.logger.WithError(err).Debugf("failed to patch entity")
+		return nil, err
+	}
+
+	self.logger.WithField("id", id).Debugf("patch entity")
+
+	return ent, nil
 }
 
 func (self *StorageImpl) GetEntity(id string) (*Entity, error) {
