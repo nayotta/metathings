@@ -123,9 +123,11 @@ func initIdentityd2() error {
 		),
 	)
 
-	ctx := context.Background()
-	app.Start(ctx)
-	defer app.Stop(ctx)
+	app.Run()
+
+	if err := app.Err(); err != nil {
+		return err
+	}
 
 	return nil
 }

@@ -1,7 +1,10 @@
 package cmd
 
 import (
+	"bufio"
 	"io/ioutil"
+	"os"
+	"strings"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -16,7 +19,7 @@ import (
 type PolicydOption struct {
 	cmd_contrib.ServiceBaseOption `mapstructure:",squash"`
 	ModelFile                     string `mapstructure:"model_file"`
-	Init                          int
+	PolicyFile                    string `mapstructure:"policy_file"`
 }
 
 func NewPolicydOption() *PolicydOption {
@@ -45,8 +48,9 @@ var (
 			if opt_t.ModelFile == "" {
 				opt_t.ModelFile = policyd_opt.ModelFile
 			}
-
-			opt_t.Init = policyd_opt.Init
+			if opt_t.PolicyFile == "" {
+				opt_t.PolicyFile = policyd_opt.PolicyFile
+			}
 
 			policyd_opt = opt_t
 			policyd_opt.SetServiceName("policyd")
@@ -55,16 +59,9 @@ var (
 		Run: func(cmd *cobra.Command, args []string) {
 			var err error
 
-			if policyd_opt.Init > 0 {
-				if err = initPolicyd(); err != nil {
-					log.WithError(err).Fatalf("failed to init policyd service")
-				}
-			} else {
-				if err = runPolicyd(); err != nil {
-					log.WithError(err).Fatalf("failed to run policyd service")
-				}
+			if err = runPolicyd(); err != nil {
+				log.WithError(err).Fatalf("failed to run policyd service")
 			}
-
 		},
 	}
 )
@@ -91,15 +88,37 @@ func NewMetathingsPolicydServiceOption(opt *PolicydOption) (*service.MetathingsP
 		return nil, err
 	}
 
+	var polices []service.Policy
+	f, err := os.Open(opt.PolicyFile)
+	if err != nil {
+		return nil, err
+	}
+
+	scanner := bufio.NewScanner(f)
+	for scanner.Scan() {
+		line := strings.TrimSpace(scanner.Text())
+		if line == "" {
+			continue
+		}
+
+		if strings.HasPrefix(line, "#") {
+			continue
+		}
+
+		tokens := strings.Split(line, ",")
+		polices = append(polices, service.Policy{
+			Role:   strings.TrimSpace(tokens[0]),
+			Type:   strings.TrimSpace(tokens[1]),
+			Action: strings.TrimSpace(tokens[2]),
+		})
+	}
+
 	return &service.MetathingsPolicydServiceOption{
 		AdapterDriver: opt.GetStorage().GetDriver(),
 		AdapterUri:    opt.GetStorage().GetUri(),
 		ModelText:     string(buf),
+		Policies:      polices,
 	}, nil
-}
-
-func initPolicyd() error {
-	return nil
 }
 
 func runPolicyd() error {
@@ -114,7 +133,7 @@ func runPolicyd() error {
 			service.NewMetathingsPolicydService,
 		),
 		fx.Invoke(
-			pb.RegisterCasbinServer,
+			pb.RegisterPolicydServiceServer,
 		),
 	)
 
@@ -138,8 +157,8 @@ func init() {
 	flags.StringVar(policyd_opt.GetCertFileP(), "cert-file", "certs/policyd-server.crt", "Metathings Policy Service Credential File")
 	flags.StringVar(policyd_opt.GetKeyFileP(), "key-file", "certs/policyd-server.key", "Metathings Policy Service Key File")
 
-	flags.StringVar(&policyd_opt.ModelFile, "model-file", "", "Metathings Policy Model File")
-	flags.CountVar(&policyd_opt.Init, "init", "Initial Metathings Policy Service")
+	flags.StringVar(&policyd_opt.ModelFile, "model-file", "", "Metathings Policy Service Model File")
+	flags.StringVar(&policyd_opt.PolicyFile, "policy-file", "", "Metathings Policy Service Policy File")
 
 	RootCmd.AddCommand(policydCmd)
 }

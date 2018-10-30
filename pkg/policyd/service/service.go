@@ -7,10 +7,17 @@ import (
 	pb "github.com/nayotta/metathings/pkg/proto/policyd"
 )
 
+type Policy struct {
+	Role   string
+	Type   string
+	Action string
+}
+
 type MetathingsPolicydServiceOption struct {
 	AdapterDriver string
 	AdapterUri    string
 	ModelText     string
+	Policies      []Policy
 }
 
 type MetathingsPolicydService struct {
@@ -21,7 +28,7 @@ type MetathingsPolicydService struct {
 
 func NewMetathingsPolicydService(
 	opt *MetathingsPolicydServiceOption,
-) (pb.CasbinServer, error) {
+) (pb.PolicydServiceServer, error) {
 	ctx := context.Background()
 	srv := &MetathingsPolicydService{
 		Server: server.NewServer(),
