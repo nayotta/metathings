@@ -2,6 +2,10 @@ package cmd_contrib
 
 import "google.golang.org/grpc/credentials"
 
+type GetTransportCredentialOptioner interface {
+	GetTransportCredential() TransportCredentialOptioner
+}
+
 type TransportCredentialOptioner interface {
 	GetCertFileP() *string
 	GetCertFile() string

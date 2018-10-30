@@ -130,6 +130,7 @@ type Token struct {
 	Entity     *Entity     `gorm:"-"`
 	Credential *Credential `gorm:"-"`
 	Roles      []*Role     `gorm:"-"`
+	Groups     []*Group    `gorm:"-"`
 }
 
 type Storage interface {

@@ -1,6 +1,7 @@
 all:
 	$(MAKE) -C common all
 	$(MAKE) -C constant all
+	$(MAKE) -C policyd all
 	$(MAKE) -C identityd all
 	$(MAKE) -C deviced all
 	$(MAKE) -C cored all

@@ -42,26 +42,7 @@ var (
 			cmd_helper.UnmarshalConfig(opt_t)
 			base_opt = &opt_t.BaseOption
 
-			if opt_t.GetListen() == "" {
-				opt_t.SetListen(identityd2_opt.GetListen())
-			}
-
-			if opt_t.Storage.Driver == "" {
-				opt_t.Storage.Driver = identityd2_opt.Storage.Driver
-			}
-
-			if opt_t.Storage.Uri == "" {
-				opt_t.Storage.Uri = identityd2_opt.Storage.Uri
-			}
-
-			if opt_t.GetCertFile() == "" {
-				opt_t.SetCertFile(identityd2_opt.GetCertFile())
-			}
-
-			if opt_t.GetKeyFile() == "" {
-				opt_t.SetKeyFile(identityd2_opt.GetKeyFile())
-			}
-
+			init_cmd_option(opt_t, identityd2_opt)
 			opt_t.Init = identityd2_opt.Init
 
 			identityd2_opt = opt_t
@@ -181,8 +162,8 @@ func init() {
 	flags := identityd2Cmd.Flags()
 
 	flags.StringVarP(identityd2_opt.GetListenP(), "listen", "l", "127.0.0.1:5000", "Metathings Identity2 Service listening address")
-	flags.StringVar(&identityd2_opt.Storage.Driver, "storage-driver", "sqlite3", "Metathings Identity2 Service Storage Driver")
-	flags.StringVar(&identityd2_opt.Storage.Uri, "storage-uri", "", "Metathings Identity2 Service Storage URI")
+	flags.StringVar(identityd2_opt.GetStorage().GetDriverP(), "storage-driver", "sqlite3", "Metathings Identity2 Service Storage Driver")
+	flags.StringVar(identityd2_opt.GetStorage().GetUriP(), "storage-uri", "", "Metathings Identity2 Service Storage URI")
 	flags.StringVar(identityd2_opt.GetCertFileP(), "cert-file", "certs/identityd2-server.crt", "Metathings Identity2 Service Credential File")
 	flags.StringVar(identityd2_opt.GetKeyFileP(), "key-file", "certs/identityd2-server.key", "Metathings Identity2 Service Key File")
 

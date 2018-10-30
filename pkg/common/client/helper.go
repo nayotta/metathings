@@ -13,7 +13,9 @@ import (
 	cored_pb "github.com/nayotta/metathings/pkg/proto/cored"
 	echo_pb "github.com/nayotta/metathings/pkg/proto/echo"
 	identityd_pb "github.com/nayotta/metathings/pkg/proto/identityd"
+	identityd2_pb "github.com/nayotta/metathings/pkg/proto/identityd2"
 	motor_pb "github.com/nayotta/metathings/pkg/proto/motor"
+	policyd_pb "github.com/nayotta/metathings/pkg/proto/policyd"
 	sensor_pb "github.com/nayotta/metathings/pkg/proto/sensor"
 	sensord_pb "github.com/nayotta/metathings/pkg/proto/sensord"
 	servo_pb "github.com/nayotta/metathings/pkg/proto/servo"
@@ -23,6 +25,8 @@ import (
 
 const (
 	DEFAULT_CONFIG = iota
+	POLICYD_CONFIG
+	IDENTITYD2_CONFIG
 	IDENTITYD_CONFIG
 	CORED_CONFIG
 	CAMERAD_CONFIG
@@ -182,6 +186,24 @@ func (f *ClientFactory) NewStreamdServiceClient(opts ...grpc.DialOption) (stream
 	}
 
 	return streamd_pb.NewStreamdServiceClient(conn), func() { conn.Close() }, nil
+}
+
+func (f *ClientFactory) NewPolicydServiceClient(opts ...grpc.DialOption) (policyd_pb.PolicydServiceClient, CloseFn, error) {
+	conn, err := f.NewConnection(POLICYD_CONFIG, opts...)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return policyd_pb.NewPolicydServiceClient(conn), func() { conn.Close() }, nil
+}
+
+func (f *ClientFactory) NewIdentityd2ServiceClient(opts ...grpc.DialOption) (identityd2_pb.IdentitydServiceClient, CloseFn, error) {
+	conn, err := f.NewConnection(IDENTITYD2_CONFIG, opts...)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return identityd2_pb.NewIdentitydServiceClient(conn), func() { conn.Close() }, nil
 }
 
 func NewClientFactory(configs ServiceConfigs, optFn DialOptionFn) (*ClientFactory, error) {

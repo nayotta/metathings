@@ -38,15 +38,29 @@ var (
 )
 
 func (self *MetathingsIdentitydService) enforce(ctx context.Context, obj, act string) error {
+	var err error
+
 	tkn := ctx.Value("token").(*storage.Token)
-	if !self.enforcer.Enforce(*tkn.EntityId, *tkn.DomainId, obj, act) {
-		self.logger.WithFields(log.Fields{
-			"subject": *tkn.EntityId,
-			"domain":  *tkn.DomainId,
-			"object":  obj,
-			"action":  act,
-		}).Warningf("denied to do #action")
-		return status.Errorf(codes.PermissionDenied, ErrPermissionDenied.Error())
+
+	var groups []string
+	for _, g := range tkn.Groups {
+		groups = append(groups, *g.Id)
+	}
+
+	if err = self.enforcer.Enforce(*tkn.DomainId, groups, *tkn.EntityId, obj, act); err != nil {
+		if err == ErrPermissionDenied {
+			self.logger.WithFields(log.Fields{
+				"subject": *tkn.EntityId,
+				"domain":  *tkn.DomainId,
+				"groups":  groups,
+				"object":  obj,
+				"action":  act,
+			}).Warningf("denied to do #action")
+			return status.Errorf(codes.PermissionDenied, ErrPermissionDenied.Error())
+		} else {
+			self.logger.WithError(err).Errorf("failed to enforce")
+			return status.Errorf(codes.Internal, err.Error())
+		}
 	}
 	return nil
 }
