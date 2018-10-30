@@ -40,7 +40,7 @@ func (self *MetathingsIdentitydService) PatchGroup(ctx context.Context, req *pb.
 	}
 
 	res := &pb.PatchGroupResponse{
-		Group: copy_credential(grp),
+		Group: copy_group(grp),
 	}
 
 	self.logger.WithField("id", id_str).Debugf("patch group")
