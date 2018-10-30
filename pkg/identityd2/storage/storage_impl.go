@@ -752,7 +752,39 @@ func (self *StorageImpl) DeleteGroup(id string) error {
 }
 
 func (self *StorageImpl) PatchGroup(id string, group *Group) (*Group, error) {
-	panic("unimplemented")
+	var err error
+	var grp *Group
+
+	tx := self.db.Begin()
+
+	if err = self.db.First(&grp, "id = ?", id).Error; err != nil {
+		return nil, err
+	}
+
+	if group.DomainId != nil && grp.DomainId != group.DomainId {
+		tx.Model(&grp).Update("DomainId", group.DomainId)
+	}
+	if group.Alias != nil && grp.Alias != group.Alias {
+		tx.Model(&grp).Update("Alias", group.Alias)
+	}
+	if group.Description != nil && grp.Description != group.Description {
+		tx.Model(&grp).Update("Description", group.Description)
+	}
+	if group.Extra != nil && grp.Extra != group.Extra {
+		tx.Model(&grp).Update("Extra", group.Extra)
+	}
+
+	tx.Model(&grp).Update("UpdatedAt", time.Now())
+
+	if err = tx.Commit().Error; err != nil {
+		tx.Rollback()
+		self.logger.WithError(err).Debugf("failed to patch group")
+		return nil, err
+	}
+
+	self.logger.WithField("id", id).Debugf("patch group")
+
+	return grp, nil
 }
 
 func (self *StorageImpl) GetGroup(id string) (*Group, error) {
