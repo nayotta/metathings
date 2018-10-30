@@ -35,7 +35,7 @@ func (self *MetathingsIdentitydService) PatchCredential(ctx context.Context, req
 	}
 
 	if cred, err = self.storage.PatchCredential(id_str, cred); err != nil {
-		self.logger.WithError(err).Errorf("failed to get credential in storage")
+		self.logger.WithError(err).Errorf("failed to patch credential in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
