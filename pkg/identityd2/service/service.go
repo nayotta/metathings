@@ -138,23 +138,11 @@ func (self *MetathingsIdentitydService) PatchGroup(context.Context, *pb.PatchGro
 	panic("unimplemented")
 }
 
-func (self *MetathingsIdentitydService) ListGroups(context.Context, *pb.ListGroupsRequest) (*pb.ListGroupsResponse, error) {
-	panic("unimplemented")
-}
-
 func (self *MetathingsIdentitydService) ListGroupsForEntity(context.Context, *pb.ListGroupsForEntityRequest) (*pb.ListGroupsForEntityResponse, error) {
 	panic("unimplemented")
 }
 
 func (self *MetathingsIdentitydService) ShowGroups(context.Context, *empty.Empty) (*pb.ShowGroupsResponse, error) {
-	panic("unimplemented")
-}
-
-func (self *MetathingsIdentitydService) PatchCredential(context.Context, *pb.PatchCredentialRequest) (*pb.PatchCredentialResponse, error) {
-	panic("unimplemented")
-}
-
-func (self *MetathingsIdentitydService) ListCredentials(context.Context, *pb.ListCredentialsRequest) (*pb.ListCredentialsResponse, error) {
 	panic("unimplemented")
 }
 
