@@ -1,6 +1,7 @@
 package metathings_identityd2_storage
 
 import (
+	"time"
 	"errors"
 
 	"github.com/jinzhu/gorm"
@@ -111,7 +112,39 @@ func (self *StorageImpl) DeleteDomain(id string) error {
 }
 
 func (self *StorageImpl) PatchDomain(id string, domain *Domain) (*Domain, error) {
-	panic("unimplemented")
+	var err error
+	var dom *Domain
+
+	tx := self.db.Begin()
+
+	if err = self.db.First(&dom, "id = ?", id).Error; err != nil {
+		return nil, err
+	}
+
+	if domain.Name != nil && dom.Name != domain.Name {
+		tx.Model(&dom).Update("Name", domain.Name)
+	}
+	if domain.Alias != nil && dom.Alias != domain.Alias {
+		tx.Model(&dom).Update("Alias", domain.Alias)
+	}
+	if domain.ParentId != nil && dom.ParentId != domain.ParentId {
+		tx.Model(&dom).Update("ParentId", domain.ParentId)
+	}
+	if domain.Extra != nil && dom.Extra != domain.Extra {
+		tx.Model(&dom).Update("Extra", domain.Extra)
+	}
+
+	tx.Model(&dom).Update("UpdatedAt", time.Now())
+
+	if err = tx.Commit().Error; err != nil {
+		tx.Rollback()
+		self.logger.WithError(err).Debugf("failed to patch domain")
+		return nil, err
+	}
+
+	self.logger.WithField("id", id).Debugf("patch domain")
+
+	return dom, nil
 }
 
 func (self *StorageImpl) GetDomain(id string) (*Domain, error) {
