@@ -26,9 +26,9 @@ func (self *StorageImpl) list_view_children_domains_by_domain_id(id string) ([]*
 
 func (self *StorageImpl) get_domain(id string) (*Domain, error) {
 	var err error
-	var dom *Domain
+	var dom Domain
 
-	if err = self.db.First(dom, "id = ?", id).Error; err != nil {
+	if err = self.db.First(&dom, "id = ?", id).Error; err != nil {
 		return nil, err
 	}
 
@@ -42,7 +42,7 @@ func (self *StorageImpl) get_domain(id string) (*Domain, error) {
 		return nil, err
 	}
 
-	return dom, nil
+	return &dom, nil
 }
 
 func (self *StorageImpl) list_domains(dom *Domain) ([]*Domain, error) {
@@ -112,14 +112,13 @@ func (self *StorageImpl) DeleteDomain(id string) error {
 
 func (self *StorageImpl) PatchDomain(id string, domain *Domain) (*Domain, error) {
 	var err error
-	var dom *Domain
+	var dom Domain
 
 	tx := self.db.Begin()
 
-	if err = self.db.First(&dom, "id = ?", id).Error; err != nil {
+	if err = tx.First(&dom, "Id = ?", id).Error; err != nil {
 		return nil, err
 	}
-
 	if domain.Name != nil && dom.Name != domain.Name {
 		tx.Model(&dom).Update("Name", domain.Name)
 	}
@@ -143,7 +142,7 @@ func (self *StorageImpl) PatchDomain(id string, domain *Domain) (*Domain, error)
 
 	self.logger.WithField("id", id).Debugf("patch domain")
 
-	return dom, nil
+	return &dom, nil
 }
 
 func (self *StorageImpl) GetDomain(id string) (*Domain, error) {
