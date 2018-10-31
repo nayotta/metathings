@@ -25,7 +25,7 @@ func (self *MetathingsIdentitydService) ListGroups(ctx context.Context, req *pb.
 	}
 	if domain := req.GetDomain(); domain != nil {
 		if domainID := domain.GetId(); domainID != nil {
-			grp.DomainId = &domainID.Id.Value
+			grp.DomainId = &domainID.Value
 		}
 	}
 	if name := req.GetName(); name != nil {
@@ -35,15 +35,16 @@ func (self *MetathingsIdentitydService) ListGroups(ctx context.Context, req *pb.
 		grp.Alias = &alias.Value
 	}
 
-	if grps, err := self.storage.ListGroups(grp); err != nil {
+	grps, err := self.storage.ListGroups(grp)
+	if err != nil {
 		self.logger.WithError(err).Errorf("failed to list groups in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
-	res := &pb.GetGroupResponse{}
+	res := &pb.ListGroupsResponse{}
 
-	for grp = range grps {
-		res.Group = append(res.Group, copy_group(grp)),
+	for _, grp = range grps {
+		res.Groups = append(res.Groups, copy_group(grp))
 	}
 
 	return res, nil

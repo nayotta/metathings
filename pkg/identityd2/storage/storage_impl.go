@@ -2,7 +2,6 @@ package metathings_identityd2_storage
 
 import (
 	"time"
-	"errors"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"

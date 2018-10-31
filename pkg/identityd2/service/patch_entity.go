@@ -19,21 +19,21 @@ func (self *MetathingsIdentitydService) PatchEntity(ctx context.Context, req *pb
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 
-	if req.GetId() == nil || req.GetId().GetValue() == nil {
+	if req.GetId() == nil || req.GetId().GetValue() == "" {
 		err = errors.New("entity.id is empty")
 		self.logger.WithError(err).Warningf("failed to validate request data")
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
-	id_str = req.GetId().GetValue()
+	idStr := req.GetId().GetValue()
 
-	if req.GetAlias() != nil && req.GetAlias().GetValue() != nil {
-		ent.Alias = req.GetAlias.GetValue()
+	if req.GetAlias() != nil {
+		*ent.Alias = req.GetAlias().GetValue()
 	}
-	if req.GetDescription() != nil && req.GetDescription().GetValue() != nil {
-		ent.Description = req.GetDescription().GetValue()
+	if req.GetPassword() != nil {
+		*ent.Password = req.GetPassword().GetValue()
 	}
 
-	if ent, err = self.storage.PatchGroup(id_str, ent); err != nil {
+	if ent, err = self.storage.PatchEntity(idStr, ent); err != nil {
 		self.logger.WithError(err).Errorf("failed to patch entity in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
@@ -42,7 +42,7 @@ func (self *MetathingsIdentitydService) PatchEntity(ctx context.Context, req *pb
 		Entity: copy_entity(ent),
 	}
 
-	self.logger.WithField("id", id_str).Debugf("patch entity")
+	self.logger.WithField("id", idStr).Debugf("patch entity")
 
 	return res, nil
 }

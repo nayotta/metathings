@@ -20,21 +20,21 @@ func (self *MetathingsIdentitydService) PatchCredential(ctx context.Context, req
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 
-	if req.GetId() == nil || req.GetId().GetValue() == nil {
+	if req.GetId() == nil || req.GetId().GetValue() == "" {
 		err = errors.New("credential.id is empty")
 		self.logger.WithError(err).Warningf("failed to validate request data")
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
-	id_str = req.GetId().GetValue()
+	idStr := req.GetId().GetValue()
 
-	if req.GetAlias() != nil && req.GetAlias().GetValue() != nil {
-		cred.Alias = req.GetAlias.GetValue()
+	if req.GetAlias() != nil {
+		*cred.Alias = req.GetAlias().GetValue()
 	}
-	if req.GetDescription() != nil && req.GetDescription().GetValue() != nil {
-		cred.Description = req.GetDescription().GetValue()
+	if req.GetDescription() != nil {
+		*cred.Description = req.GetDescription().GetValue()
 	}
 
-	if cred, err = self.storage.PatchCredential(id_str, cred); err != nil {
+	if cred, err = self.storage.PatchCredential(idStr, cred); err != nil {
 		self.logger.WithError(err).Errorf("failed to patch credential in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
@@ -43,7 +43,7 @@ func (self *MetathingsIdentitydService) PatchCredential(ctx context.Context, req
 		Credential: copy_credential(cred),
 	}
 
-	self.logger.WithField("id", id_str).Debugf("patch credential")
+	self.logger.WithField("id", idStr).Debugf("patch credential")
 
 	return res, nil
 }

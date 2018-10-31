@@ -20,21 +20,21 @@ func (self *MetathingsIdentitydService) PatchGroup(ctx context.Context, req *pb.
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 
-	if req.GetId() == nil || req.GetId().GetValue() == nil {
+	if req.GetId() == nil || req.GetId().GetValue() == "" {
 		err = errors.New("group.id is empty")
 		self.logger.WithError(err).Warningf("failed to validate request data")
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
-	id_str = req.GetId().GetValue()
+	idStr := req.GetId().GetValue()
 
-	if req.GetAlias() != nil && req.GetAlias().GetValue() != nil {
-		grp.Alias = req.GetAlias.GetValue()
+	if req.GetAlias() != nil {
+		*grp.Alias = req.GetAlias().GetValue()
 	}
-	if req.GetDescription() != nil && req.GetDescription().GetValue() != nil {
-		grp.Description = req.GetDescription().GetValue()
+	if req.GetDescription() != nil {
+		*grp.Description = req.GetDescription().GetValue()
 	}
 
-	if grp, err = self.storage.PatchGroup(id_str, grp); err != nil {
+	if grp, err = self.storage.PatchGroup(idStr, grp); err != nil {
 		self.logger.WithError(err).Errorf("failed to patch group in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
@@ -43,7 +43,7 @@ func (self *MetathingsIdentitydService) PatchGroup(ctx context.Context, req *pb.
 		Group: copy_group(grp),
 	}
 
-	self.logger.WithField("id", id_str).Debugf("patch group")
+	self.logger.WithField("id", idStr).Debugf("patch group")
 
 	return res, nil
 }

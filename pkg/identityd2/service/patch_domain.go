@@ -19,18 +19,18 @@ func (self *MetathingsIdentitydService) PatchDomain(ctx context.Context, req *pb
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 
-	if req.GetId() == nil || req.GetId().GetValue() == nil {
+	if req.GetId() == nil || req.GetId().GetValue() == "" {
 		err = errors.New("domain.id is empty")
 		self.logger.WithError(err).Warningf("failed to validate request data")
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
-	id_str = req.GetId().GetValue()
+	idStr := req.GetId().GetValue()
 
-	if req.GetAlias() != nil && req.GetAlias().GetValue() != nil {
-		dom.Alias = req.GetAlias.GetValue()
+	if req.GetAlias() != nil {
+		*dom.Alias = req.GetAlias().GetValue()
 	}
 
-	if dom, err = self.storage.PatchDomain(id_str, dom); err != nil {
+	if dom, err = self.storage.PatchDomain(idStr, dom); err != nil {
 		self.logger.WithError(err).Errorf("failed to patch domain in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
@@ -39,7 +39,7 @@ func (self *MetathingsIdentitydService) PatchDomain(ctx context.Context, req *pb
 		Domain: copy_domain(dom),
 	}
 
-	self.logger.WithField("id", id_str).Debugf("patch domain")
+	self.logger.WithField("id", idStr).Debugf("patch domain")
 
 	return res, nil
 }

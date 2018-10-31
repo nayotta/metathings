@@ -21,34 +21,35 @@ func (self *MetathingsIdentitydService) ListCredentials(ctx context.Context, req
 	cred := &storage.Credential{}
 
 	if id := req.GetId(); id != nil {
-		cred.Id = id.Value
+		cred.Id = &id.Value
 	}
 	if domain := req.GetDomain(); domain != nil {
 		if domainID := domain.GetId(); domainID != nil {
-			cred.DomainId = domainID.Value
+			cred.DomainId = &domainID.Value
 		}
 	}
 	if entity := req.GetEntity(); entity != nil {
 		if entityID := entity.GetId(); entityID != nil {
-			cred.entityId = entityID.Value
+			cred.EntityId = &entityID.Value
 		}
 	}
 	if name := req.GetName(); name != nil {
-		cred.Name = name.Value
+		cred.Name = &name.Value
 	}
 	if alias := req.GetAlias(); alias != nil {
-		cred.Alias = alias.Value
+		cred.Alias = &alias.Value
 	}
 
-	if creds, err := self.storage.ListCredentials(cred); err != nil {
+	creds, err := self.storage.ListCredentials(cred)
+	if  err != nil {
 		self.logger.WithError(err).Errorf("failed to list credentials in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
 	res := &pb.ListCredentialsResponse{}
 
-	for cred = range creds {
-		res.creds = append(res.creds, copy_credential(cred)),
+	for _, cred = range creds {
+		res.Credentials= append(res.Credentials, copy_credential(cred))
 	}
 
 	return res, nil

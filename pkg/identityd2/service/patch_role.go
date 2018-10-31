@@ -19,30 +19,30 @@ func (self *MetathingsIdentitydService) PatchRole(ctx context.Context, req *pb.P
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 
-	if req.GetId() == nil || req.GetId().GetValue() == nil {
+	if req.GetId() == nil || req.GetId().GetValue() == "" {
 		err = errors.New("role.id is empty")
 		self.logger.WithError(err).Warningf("failed to validate request data")
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
-	id_str = req.GetId().GetValue()
+	idStr := req.GetId().GetValue()
 
-	if req.GetAlias() != nil && req.GetAlias().GetValue() != nil {
-		rol.Alias = req.GetAlias.GetValue()
+	if req.GetAlias() != nil {
+		*rol.Alias = req.GetAlias().GetValue()
 	}
-	if req.GetDescription() != nil && req.GetDescription().GetValue() != nil {
-		rol.Description = req.GetDescription().GetValue()
+	if req.GetDescription() != nil {
+		*rol.Description = req.GetDescription().GetValue()
 	}
 
-	if rol, err = self.storage.PatchRole(id_str, rol); err != nil {
+	if rol, err = self.storage.PatchRole(idStr, rol); err != nil {
 		self.logger.WithError(err).Errorf("failed to patch role in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
 	res := &pb.PatchRoleResponse{
-		Role: copy_role(role),
+		Role: copy_role(rol),
 	}
 
-	self.logger.WithField("id", id_str).Debugf("patch role")
+	self.logger.WithField("id", idStr).Debugf("patch role")
 
 	return res, nil
 }

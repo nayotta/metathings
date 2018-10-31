@@ -25,7 +25,7 @@ func (self *MetathingsIdentitydService) ListRoles(ctx context.Context, req *pb.L
 	}
 	if domain := req.GetDomain(); domain != nil {
 		if domainID := domain.GetId(); domainID != nil {
-			rol.DomainId = &domainID.Id.Value
+			rol.DomainId = &domainID.Value
 		}
 	}
 	if name := req.GetName(); name != nil {
@@ -35,15 +35,16 @@ func (self *MetathingsIdentitydService) ListRoles(ctx context.Context, req *pb.L
 		rol.Alias = &alias.Value
 	}
 
-	if rols, err := self.storage.ListRoles(rol); err != nil {
+	rols, err := self.storage.ListRoles(rol)
+	if err != nil {
 		self.logger.WithError(err).Errorf("failed to list roles in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
 	res := &pb.ListRolesResponse{}
 
-	for rol = range rols {
-		res.roles = append(res.roles, copy_role(rol)),
+	for _, rol = range rols {
+		res.Roles = append(res.Roles, copy_role(rol))
 	}
 
 	return res, nil
