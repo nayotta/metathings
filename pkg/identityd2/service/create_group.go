@@ -40,6 +40,11 @@ func (self *MetathingsIdentitydService) CreateGroup(ctx context.Context, req *pb
 
 	extra_str := must_parse_extra(req.Extra)
 
+	if err = self.enforcer.AddGroup(dom_id_str, id_str); err != nil {
+		self.logger.WithError(err).Errorf("failed to add group in enforcer")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
 	grp := &storage.Group{
 		Id:          &id_str,
 		DomainId:    &dom_id_str,
