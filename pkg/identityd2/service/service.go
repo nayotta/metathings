@@ -181,13 +181,15 @@ func (self *MetathingsIdentitydService) ListCredentialsForEntity(context.Context
 }
 
 func NewMetathingsIdentitydService(
+	enforcor policy.Enforcer,
 	opt *MetathingsIdentitydServiceOption,
 	logger log.FieldLogger,
 	storage storage.Storage,
 ) (pb.IdentitydServiceServer, error) {
 	return &MetathingsIdentitydService{
-		opt:     opt,
-		logger:  logger,
-		storage: storage,
+		opt:      opt,
+		logger:   logger,
+		storage:  storage,
+		enforcer: enforcor,
 	}, nil
 }

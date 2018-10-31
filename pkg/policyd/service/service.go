@@ -26,6 +26,38 @@ type MetathingsPolicydService struct {
 	opt *MetathingsPolicydServiceOption
 }
 
+func (self *MetathingsPolicydService) AddPresetPolicy(ctx context.Context, in *pb.PolicyRequest) (*pb.BoolReply, error) {
+	for _, p := range self.opt.Policies {
+		res, err := self.AddPolicy(ctx, &pb.PolicyRequest{
+			EnforcerHandler: in.EnforcerHandler,
+			Params:          []string{p.Role, in.Params[0], p.Type, p.Action},
+		})
+		if err != nil {
+			return nil, err
+		}
+		if !res.Res {
+			return &pb.BoolReply{Res: false}, nil
+		}
+	}
+
+	return &pb.BoolReply{Res: true}, nil
+}
+
+func (self *MetathingsPolicydService) RemovePresetPolicy(ctx context.Context, in *pb.PolicyRequest) (*pb.BoolReply, error) {
+	// TODO(Peer): RemoveFilteredNamedPolicy should better than RemovePolicy?
+	for _, p := range self.opt.Policies {
+		_, err := self.RemovePolicy(ctx, &pb.PolicyRequest{
+			EnforcerHandler: in.EnforcerHandler,
+			Params:          []string{p.Role, in.Params[0], p.Type, p.Action},
+		})
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return &pb.BoolReply{Res: true}, nil
+}
+
 func NewMetathingsPolicydService(
 	opt *MetathingsPolicydServiceOption,
 ) (pb.PolicydServiceServer, error) {

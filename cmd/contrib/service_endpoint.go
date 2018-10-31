@@ -1,7 +1,7 @@
 package cmd_contrib
 
 import (
-	cli_helper "github.com/nayotta/metathings/pkg/common/client"
+	client_helper "github.com/nayotta/metathings/pkg/common/client"
 )
 
 type ServiceEndpointOptioner interface {
@@ -27,30 +27,31 @@ func (self *ServiceEndpointOption) SetAddress(addr string) {
 }
 
 type ServiceEndpointsOptioner interface {
-	GetServiceEndpoint(int) ServiceEndpointOptioner
-	SetServiceEndpoint(int, ServiceEndpointOptioner)
+	GetServiceEndpoint(interface{}) ServiceEndpointOptioner
 }
 
 type ServiceEndpointsOption struct {
-	eps map[int]ServiceEndpointOptioner
+	ServiceEndpoint map[string]*ServiceEndpointOption `mapstructure:"service_endpoint"`
 }
 
-func (self *ServiceEndpointsOption) GetServiceEndpoint(srv int) ServiceEndpointOptioner {
-	return self.eps[srv]
-}
-
-func (self *ServiceEndpointsOption) SetServiceEndpoint(srv int, ep ServiceEndpointOptioner) {
-	self.eps[srv] = ep
+func (self *ServiceEndpointsOption) GetServiceEndpoint(srv interface{}) ServiceEndpointOptioner {
+	switch typ := srv.(type) {
+	case string:
+		return self.ServiceEndpoint[typ]
+	case client_helper.ClientType:
+		return self.ServiceEndpoint[typ.String()]
+	}
+	panic("unexpected type")
 }
 
 func CreateServiceEndpointsOption() ServiceEndpointsOption {
-	eps := make(map[int]ServiceEndpointOptioner)
+	eps := make(map[string]*ServiceEndpointOption)
 
-	for i := cli_helper.DEFAULT_CONFIG; i < cli_helper.OVERFLOW_CONFIG; i++ {
-		eps[i] = &ServiceEndpointOption{}
+	for i := int32(client_helper.DEFAULT_CONFIG); i < int32(client_helper.OVERFLOW_CONFIG); i++ {
+		eps[client_helper.ClientType(i).String()] = &ServiceEndpointOption{}
 	}
 
 	return ServiceEndpointsOption{
-		eps: eps,
+		ServiceEndpoint: eps,
 	}
 }

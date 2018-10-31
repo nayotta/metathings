@@ -112,6 +112,9 @@ func NewMetathingsPolicydServiceOption(opt *PolicydOption) (*service.MetathingsP
 			Action: strings.TrimSpace(tokens[2]),
 		})
 	}
+	if err = scanner.Err(); err != nil {
+		return nil, err
+	}
 
 	return &service.MetathingsPolicydServiceOption{
 		AdapterDriver: opt.GetStorage().GetDriver(),

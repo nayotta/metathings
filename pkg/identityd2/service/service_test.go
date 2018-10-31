@@ -15,8 +15,8 @@ type mock_enforcer struct {
 	mock.Mock
 }
 
-func (self *mock_enforcer) Enforce(domain, groups, subject, object, action interface{}) error {
-	self.Called(domain, groups, subject, object, action)
+func (self *mock_enforcer) Enforce(domain, group, subject, object, action interface{}) error {
+	self.Called(domain, group, subject, object, action)
 	if action.(string) == "pass" {
 		return nil
 	} else {
@@ -24,19 +24,27 @@ func (self *mock_enforcer) Enforce(domain, groups, subject, object, action inter
 	}
 }
 
-func (self *mock_enforcer) AddPolicy(domain, group, subject, object, action interface{}) error {
+func (self *mock_enforcer) AddGroup(domain, group string) error {
 	panic("unimplemented")
 }
 
-func (self *mock_enforcer) RemovePolicy(domain, group, subject, object, action interface{}) error {
+func (self *mock_enforcer) RemoveGroup(domain, group string) error {
 	panic("unimplemented")
 }
 
-func (self *mock_enforcer) AddSubjectToRole(domain, group, subject, role interface{}) error {
+func (self *mock_enforcer) AddSubjectToRole(domain, group, subject, role string) error {
 	panic("unimplemented")
 }
 
-func (self *mock_enforcer) RemoveSubjectFromRole(domain, group, subject, role interface{}) error {
+func (self *mock_enforcer) RemoveSubjectFromRole(domain, group, subject, role string) error {
+	panic("unimplemented")
+}
+
+func (self *mock_enforcer) AddObjectToKind(domain, group, object, kind string) error {
+	panic("unimplemented")
+}
+
+func (self *mock_enforcer) RemoveObjectFromKind(domain, group, object, kind string) error {
 	panic("unimplemented")
 }
 

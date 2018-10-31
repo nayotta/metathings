@@ -27,6 +27,8 @@ service PolicydService {
   rpc LoadPolicy (EmptyRequest) returns (EmptyReply) {}
   rpc SavePolicy (EmptyRequest) returns (EmptyReply) {}
 
+  rpc AddPresetPolicy(PolicyRequest) returns (BoolReply) {}
+  rpc RemovePresetPolicy(PolicyRequest) returns (BoolReply) {}
   rpc AddPolicy (PolicyRequest) returns (BoolReply) {}
   rpc AddNamedPolicy (PolicyRequest) returns (BoolReply) {}
   rpc RemovePolicy (PolicyRequest) returns (BoolReply) {}
