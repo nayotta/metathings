@@ -39,6 +39,10 @@ var (
 	testCredentialAlias      = "test-credential-alias"
 	testCredentialSecret     = "test-credential-secret"
 	testCredentialDecription = "test-credential-decription"
+
+	testTokenID           = "test-token-id"
+	testTokenCredentialID = "test-token-credentialid"
+	testTokenText         = "test-token-text"
 )
 
 type storageImplTestSuite struct {
@@ -86,6 +90,7 @@ func (suite *storageImplTestSuite) SetupTest() {
 
 	suite.s.CreateEntity(&ent)
 	suite.s.AddEntityToGroup(testEntityID, testGroupID)
+	suite.s.AddEntityToDomain(testDomainID, testEntityID)
 
 	rol := Role{
 		Id:          &testRoleID,
@@ -111,6 +116,19 @@ func (suite *storageImplTestSuite) SetupTest() {
 	}
 
 	suite.s.CreateCredential(&cred)
+
+	tkn := Token{
+		Id:           &testTokenID,
+		DomainId:     &testDomainID,
+		EntityId:     &testEntityID,
+		CredentialId: &testCredentialID,
+		Text:         &testTokenText,
+	}
+
+	_, err = suite.s.CreateToken(&tkn)
+	if err != nil {
+		fmt.Println("debug create token error")
+	}
 }
 
 func (suite *storageImplTestSuite) TestCreteDomain() {
@@ -401,6 +419,60 @@ func (suite *storageImplTestSuite) TestPatchEntity() {
 	ent, err = suite.s.PatchEntity(testEntityID, ent)
 	suite.Nil(err)
 	suite.Equal(testStr, *ent.Extra)
+}
+
+func (suite *storageImplTestSuite) TestGetEntity() {
+	ent, err := suite.s.GetEntity(testEntityID)
+	suite.Nil(err)
+	suite.Equal(testEntityName, *ent.Name)
+}
+
+func (suite *storageImplTestSuite) TestGetEntityByName() {
+	ent, err := suite.s.GetEntityByName(testEntityName)
+	suite.Nil(err)
+	suite.Equal(testEntityID, *ent.Id)
+}
+
+func (suite *storageImplTestSuite) TestListEntities() {
+	//list by Name
+	ent := &Entity{
+		Name: &testEntityName,
+	}
+	ents, err := suite.s.ListEntities(ent)
+	suite.Nil(err)
+	suite.Len(ents, 1)
+
+	//list by Alias
+	ent = &Entity{
+		Alias: &testEntityAlias,
+	}
+	ents, err = suite.s.ListEntities(ent)
+	suite.Nil(err)
+	suite.Len(ents, 1)
+
+	//list by Extra
+	ent = &Entity{
+		Extra: &testEntityExtra,
+	}
+	ents, err = suite.s.ListEntities(ent)
+	suite.Nil(err)
+	suite.Len(ents, 1)
+}
+
+func (suite *storageImplTestSuite) TestListEntitiesByDomainId() {
+	ents, err := suite.s.ListEntitiesByDomainId(testDomainID)
+	suite.Nil(err)
+	suite.Len(ents, 1)
+}
+
+func (suite *storageImplTestSuite) TestAddRoleToEntity() {
+	err := suite.s.AddRoleToEntity(testEntityID, testRoleID)
+	suite.Nil(err)
+}
+
+func (suite *storageImplTestSuite) TestRemoveRoleFromEntity() {
+	err := suite.s.RemoveRoleFromEntity(testEntityID, testRoleID)
+	suite.Nil(err)
 }
 
 func (suite *storageImplTestSuite) TestCreateGroup() {
@@ -697,22 +769,81 @@ func (suite *storageImplTestSuite) TestListCredentials() {
 	suite.Len(creds, 1)
 }
 
-/*
 func (suite *storageImplTestSuite) TestCreateToken() {
-	panic("unimplemented")
+	testStr := "test"
+	tkn := &Token{
+		Id:           &testStr,
+		DomainId:     &testDomainID,
+		EntityId:     &testEntityID,
+		CredentialId: &testCredentialID,
+		Text:         &testStr,
+	}
+
+	tknRet, err := suite.s.CreateToken(tkn)
+	if err != nil {
+		fmt.Println("create token error:", err.Error())
+	}
+	suite.Nil(err)
+	suite.Equal(testStr, *tknRet.Id)
+	suite.Equal(testDomainID, *tknRet.DomainId)
+	suite.Equal(testEntityID, *tknRet.EntityId)
+	suite.Equal(testCredentialID, *tknRet.CredentialId)
+	suite.Equal(testStr, *tknRet.Text)
 }
 
 func (suite *storageImplTestSuite) TestDeleteToken() {
-	panic("unimplemented")
+	err := suite.s.DeleteToken(testTokenID)
+	suite.Nil(err)
+	tkn, err := suite.s.GetToken(testTokenID)
+	suite.NotNil(err)
+	suite.Nil(tkn)
 }
 
 func (suite *storageImplTestSuite) TestGetToken() {
-	panic("unimplemented")
+	tkn, err := suite.s.GetToken(testTokenID)
+	suite.Nil(err)
+	suite.Equal(testTokenText, *tkn.Text)
+}
+
+func (suite *storageImplTestSuite) TestGetTokenByText() {
+	tkn, err := suite.s.GetTokenByText(testTokenText)
+	suite.Nil(err)
+	suite.Equal(testTokenID, *tkn.Id)
 }
 
 func (suite *storageImplTestSuite) TestListTokens() {
-	panic("unimplemented")
-}*/
+	//list by DomainId
+	tkn := &Token{
+		DomainId: &testDomainID,
+	}
+	tkns, err := suite.s.ListTokens(tkn)
+	suite.Nil(err)
+	suite.Len(tkns, 1)
+
+	//list by EntityId
+	tkn = &Token{
+		EntityId: &testEntityID,
+	}
+	tkns, err = suite.s.ListTokens(tkn)
+	suite.Nil(err)
+	suite.Len(tkns, 1)
+
+	//list by CredentialId
+	tkn = &Token{
+		CredentialId: &testCredentialID,
+	}
+	tkns, err = suite.s.ListTokens(tkn)
+	suite.Nil(err)
+	suite.Len(tkns, 1)
+
+	//list by Text
+	tkn = &Token{
+		Text: &testTokenText,
+	}
+	tkns, err = suite.s.ListTokens(tkn)
+	suite.Nil(err)
+	suite.Len(tkns, 1)
+}
 
 func TestStorageImplTestSuite(t *testing.T) {
 	suite.Run(t, new(storageImplTestSuite))

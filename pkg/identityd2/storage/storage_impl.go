@@ -422,6 +422,29 @@ func (self *StorageImpl) get_entity(id string) (*Entity, error) {
 	return &ent, nil
 }
 
+func (self *StorageImpl) get_entity_by_name(name string) (*Entity, error) {
+	var ent Entity
+	var err error
+
+	if err = self.db.First(&ent, "name = ?", name).Error; err != nil {
+		return nil, err
+	}
+
+	if ent.Domains, err = self.list_view_domains_by_entity_id(*ent.Id); err != nil {
+		return nil, err
+	}
+
+	if ent.Groups, err = self.list_view_groups_by_entity_id(*ent.Id); err != nil {
+		return nil, err
+	}
+
+	if ent.Roles, err = self.list_view_roles_by_entity_id(*ent.Id); err != nil {
+		return nil, err
+	}
+
+	return &ent, nil
+}
+
 func (self *StorageImpl) list_entities(ent *Entity) ([]*Entity, error) {
 	var ents_t []*Entity
 	var err error
@@ -521,6 +544,7 @@ func (self *StorageImpl) PatchEntity(id string, entity *Entity) (*Entity, error)
 	return &ent, nil
 }
 
+//todo remove password from return. zh
 func (self *StorageImpl) GetEntity(id string) (*Entity, error) {
 	var ent *Entity
 	var err error
@@ -536,7 +560,17 @@ func (self *StorageImpl) GetEntity(id string) (*Entity, error) {
 }
 
 func (self *StorageImpl) GetEntityByName(name string) (*Entity, error) {
-	panic("unimplemented")
+	var ent *Entity
+	var err error
+
+	if ent, err = self.get_entity_by_name(name); err != nil {
+		self.logger.WithError(err).Debugf("failed to get entity")
+		return nil, err
+	}
+
+	self.logger.WithField("name", name).Debugf("get entity by name")
+
+	return ent, nil
 }
 
 func (self *StorageImpl) ListEntities(ent *Entity) ([]*Entity, error) {
@@ -919,14 +953,14 @@ func (self *StorageImpl) get_credential(id string) (*Credential, error) {
 }
 
 func (self *StorageImpl) list_view_credential_roles(id string) ([]*Role, error) {
-	var cred *Credential
+	var cred Credential
 	var err error
 
-	if err = self.db.Select("id", "entity_id").First(&cred, "id = ?", id).Error; err != nil {
+	if err = self.db.Select("id, entity_id").First(&cred, "id = ?", id).Error; err != nil {
 		return nil, err
 	}
 
-	return self.internal_list_view_credential_roles(cred)
+	return self.internal_list_view_credential_roles(&cred)
 }
 
 func (self *StorageImpl) internal_list_view_credential_roles(cred *Credential) ([]*Role, error) {
@@ -1117,33 +1151,35 @@ func (self *StorageImpl) ListCredentials(cred *Credential) ([]*Credential, error
 }
 
 func (self *StorageImpl) get_token(id string) (*Token, error) {
-	var tkn *Token
+	var tkn Token
 	var err error
 
 	if err = self.db.First(&tkn, "id = ?", id).Error; err != nil {
 		return nil, err
 	}
 
-	if tkn, err = self.internal_get_token(tkn); err != nil {
+	tknRet, err := self.internal_get_token(&tkn)
+	if err != nil {
 		return nil, err
 	}
 
-	return tkn, nil
+	return tknRet, nil
 }
 
 func (self *StorageImpl) get_token_by_text(text string) (*Token, error) {
-	var tkn *Token
+	var tkn Token
 	var err error
 
 	if err = self.db.First(&tkn, "text = ?", text).Error; err != nil {
 		return nil, err
 	}
 
-	if tkn, err = self.internal_get_token(tkn); err != nil {
+	tknRet, err := self.internal_get_token(&tkn)
+	if err != nil {
 		return nil, err
 	}
 
-	return tkn, nil
+	return tknRet, nil
 }
 
 func (self *StorageImpl) list_tokens(tkn *Token) ([]*Token, error) {
