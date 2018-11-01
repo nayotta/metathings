@@ -15,6 +15,7 @@ var (
 	testDomainExtra = "test-domain-extra"
 
 	testGroupID          = "test-group-id"
+	testGroupDomainID    = "test-group-domainid"
 	testGroupName        = "test-group-name"
 	testGroupAlias       = "test-group-alias"
 	testGroupDescription = "test-group-decription"
@@ -66,7 +67,7 @@ func (suite *storageImplTestSuite) SetupTest() {
 
 	grp := Group{
 		Id:          &testGroupID,
-		DomainId:    &testDomainID,
+		DomainId:    &testGroupDomainID,
 		Name:        &testGroupName,
 		Alias:       &testGroupAlias,
 		Description: &testGroupDescription,
@@ -403,39 +404,150 @@ func (suite *storageImplTestSuite) TestPatchEntity() {
 }
 
 func (suite *storageImplTestSuite) TestCreateGroup() {
-	panic("unimplemented")
+	testStr := "test"
+	grp := &Group{
+		Id:          &testStr,
+		DomainId:    &testStr,
+		Name:        &testStr,
+		Alias:       &testStr,
+		Description: &testStr,
+		Extra:       &testStr,
+	}
+
+	grpRet, err := suite.s.CreateGroup(grp)
+	suite.Nil(err)
+	suite.Equal(testStr, *grpRet.Id)
+	suite.Equal(testStr, *grpRet.DomainId)
+	suite.Equal(testStr, *grpRet.Name)
+	suite.Equal(testStr, *grpRet.Alias)
+	suite.Equal(testStr, *grpRet.Description)
+	suite.Equal(testStr, *grpRet.Extra)
 }
 
 func (suite *storageImplTestSuite) TestDeleteGroup() {
-	panic("unimplemented")
+	err := suite.s.DeleteGroup(testGroupID)
+	suite.Nil(err)
+	grp, err := suite.s.GetGroup(testGroupID)
+	suite.NotNil(err)
+	suite.Nil(grp)
 }
 
 func (suite *storageImplTestSuite) TestPatchGroup() {
-	panic("unimplemented")
+	testStr := "test"
+
+	//DomainId
+	grp := &Group{
+		DomainId: &testStr,
+	}
+	grp, err := suite.s.PatchGroup(testGroupID, grp)
+	suite.Nil(err)
+	suite.Equal(testStr, *grp.DomainId)
+
+	//Name
+	grp = &Group{
+		Name: &testStr,
+	}
+	grp, err = suite.s.PatchGroup(testGroupID, grp)
+	suite.Nil(err)
+	suite.Equal(testStr, *grp.Name)
+
+	//Alias
+	grp = &Group{
+		Alias: &testStr,
+	}
+	grp, err = suite.s.PatchGroup(testGroupID, grp)
+	suite.Nil(err)
+	suite.Equal(testStr, *grp.Alias)
+
+	//Description
+	grp = &Group{
+		Description: &testStr,
+	}
+	grp, err = suite.s.PatchGroup(testGroupID, grp)
+	suite.Nil(err)
+	suite.Equal(testStr, *grp.Description)
+
+	//Extra
+	grp = &Group{
+		Extra: &testStr,
+	}
+	grp, err = suite.s.PatchGroup(testGroupID, grp)
+	suite.Nil(err)
+	suite.Equal(testStr, *grp.Extra)
 }
 
 func (suite *storageImplTestSuite) TestGetGroup() {
-	panic("unimplemented")
+	grp, err := suite.s.GetGroup(testGroupID)
+	suite.Nil(err)
+	suite.Equal(testGroupName, *grp.Name)
 }
 
 func (suite *storageImplTestSuite) TestListGroups() {
-	panic("unimplemented")
+	//list by DomainId
+	grp := &Group{
+		DomainId: &testGroupDomainID,
+	}
+	grps, err := suite.s.ListGroups(grp)
+	suite.Nil(err)
+	suite.Len(grps, 1)
+
+	//list by Name
+	grp = &Group{
+		Name: &testGroupName,
+	}
+	grps, err = suite.s.ListGroups(grp)
+	suite.Nil(err)
+	suite.Len(grps, 1)
+
+	//list by Alias
+	grp = &Group{
+		Alias: &testGroupAlias,
+	}
+	grps, err = suite.s.ListGroups(grp)
+	suite.Nil(err)
+	suite.Len(grps, 1)
+
+	//list by Description
+	grp = &Group{
+		Description: &testGroupDescription,
+	}
+	grps, err = suite.s.ListGroups(grp)
+	suite.Nil(err)
+	suite.Len(grps, 1)
+
+	//list by Extra
+	grp = &Group{
+		Extra: &testGroupExtra,
+	}
+	grps, err = suite.s.ListGroups(grp)
+	suite.Nil(err)
+	suite.Len(grps, 1)
 }
 
 func (suite *storageImplTestSuite) TestAddRoleToGroup() {
-	panic("unimplemented")
+	err := suite.s.AddRoleToGroup(testGroupID, testRoleID)
+	suite.Nil(err)
 }
 
 func (suite *storageImplTestSuite) TestRemoveRoleFromGroup() {
-	panic("unimplemented")
+	err := suite.s.AddRoleToGroup(testGroupID, testRoleID)
+	suite.Nil(err)
+
+	err = suite.s.RemoveRoleFromGroup(testGroupID, testRoleID)
+	suite.Nil(err)
 }
 
 func (suite *storageImplTestSuite) TestAddEntityToGroup() {
-	panic("unimplemented")
+	err := suite.s.AddEntityToGroup(testEntityID, testRoleID)
+	suite.Nil(err)
+
+	err = suite.s.RemoveEntityFromGroup(testGroupID, testRoleID)
+	suite.Nil(err)
 }
 
 func (suite *storageImplTestSuite) TestRemoveEntityFromGroup() {
-	panic("unimplemented")
+	err := suite.s.AddEntityToGroup(testEntityID, testRoleID)
+	suite.Nil(err)
 }
 
 func (suite *storageImplTestSuite) TestCreateCredential() {

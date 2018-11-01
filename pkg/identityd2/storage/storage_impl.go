@@ -653,10 +653,10 @@ func (self *StorageImpl) list_view_all_roles_by_entity_id(id string) ([]*Role, e
 }
 
 func (self *StorageImpl) get_group(id string) (*Group, error) {
-	var grp *Group
+	var grp Group
 	var err error
 
-	if err = self.db.First(&grp, "id = ?", id).Error; err != nil {
+	if err = self.db.First(&grp, "Id = ?", id).Error; err != nil {
 		return nil, err
 	}
 
@@ -682,7 +682,7 @@ func (self *StorageImpl) get_group(id string) (*Group, error) {
 	}
 	grp.Roles = roles
 
-	return grp, nil
+	return &grp, nil
 }
 
 func (self *StorageImpl) list_groups(grp *Group) ([]*Group, error) {
@@ -751,16 +751,19 @@ func (self *StorageImpl) DeleteGroup(id string) error {
 
 func (self *StorageImpl) PatchGroup(id string, group *Group) (*Group, error) {
 	var err error
-	var grp *Group
+	var grp Group
 
 	tx := self.db.Begin()
 
-	if err = self.db.First(&grp, "id = ?", id).Error; err != nil {
+	if err = tx.First(&grp, "id = ?", id).Error; err != nil {
 		return nil, err
 	}
 
 	if group.DomainId != nil && grp.DomainId != group.DomainId {
 		tx.Model(&grp).Update("DomainId", group.DomainId)
+	}
+	if group.Name != nil && grp.Name != group.Name {
+		tx.Model(&grp).Update("Name", group.Name)
 	}
 	if group.Alias != nil && grp.Alias != group.Alias {
 		tx.Model(&grp).Update("Alias", group.Alias)
@@ -782,7 +785,7 @@ func (self *StorageImpl) PatchGroup(id string, group *Group) (*Group, error) {
 
 	self.logger.WithField("id", id).Debugf("patch group")
 
-	return grp, nil
+	return &grp, nil
 }
 
 func (self *StorageImpl) GetGroup(id string) (*Group, error) {
