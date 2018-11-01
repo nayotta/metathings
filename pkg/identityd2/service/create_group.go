@@ -13,6 +13,7 @@ import (
 )
 
 func (self *MetathingsIdentitydService) CreateGroup(ctx context.Context, req *pb.CreateGroupRequest) (*pb.CreateGroupResponse, error) {
+	var dom_s *storage.Domain
 	var err error
 
 	if err = req.Validate(); err != nil {
@@ -40,7 +41,12 @@ func (self *MetathingsIdentitydService) CreateGroup(ctx context.Context, req *pb
 
 	extra_str := must_parse_extra(req.Extra)
 
-	if err = self.enforcer.AddGroup(dom_id_str, id_str); err != nil {
+	if dom_s, err = self.storage.GetDomain(dom_id_str); err != nil {
+		self.logger.WithError(err).Errorf("failed to get domain in storage")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
+	if err = self.enforcer.AddGroup(*dom_s.Name, req.Name.Value); err != nil {
 		self.logger.WithError(err).Errorf("failed to add group in enforcer")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}

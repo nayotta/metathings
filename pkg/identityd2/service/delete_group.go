@@ -15,6 +15,7 @@ import (
 
 func (self *MetathingsIdentitydService) DeleteGroup(ctx context.Context, req *pb.DeleteGroupRequest) (*empty.Empty, error) {
 	var grp_s *storage.Group
+	var dom_s *storage.Domain
 	var err error
 
 	if err = req.Validate(); err != nil {
@@ -35,7 +36,12 @@ func (self *MetathingsIdentitydService) DeleteGroup(ctx context.Context, req *pb
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
-	if err = self.enforcer.RemoveGroup(*grp_s.DomainId, grp_id_str); err != nil {
+	if dom_s, err = self.storage.GetDomain(*grp_s.DomainId); err != nil {
+		self.logger.WithError(err).Errorf("failed to get domain in storage")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
+	if err = self.enforcer.RemoveGroup(*dom_s.Name, *grp_s.Name); err != nil {
 		self.logger.WithError(err).Errorf("failed to remove group in enforcer")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
