@@ -340,6 +340,68 @@ func (suite *storageImplTestSuite) TestlistRoles() {
 	suite.Len(rols, 1)
 }
 
+func (suite *storageImplTestSuite) TestCreateEntity() {
+	testStr := "test"
+	ent := &Entity{
+		Id:			&testStr,
+		Name:		&testStr,
+		Alias:  	&testStr,
+		Password: 	&testStr,
+		Extra:		&testStr,
+	}
+	entRet, err := suite.s.CreateEntity(ent)
+	suite.Nil(err)
+	suite.Equal(testStr, *entRet.Id)
+	suite.Equal(testStr, *entRet.Name)
+	suite.Equal(testStr, *entRet.Alias)
+	suite.Equal(testStr, *entRet.Password)
+	suite.Equal(testStr, *entRet.Extra)
+}
+
+func (suite *storageImplTestSuite) TestDeleteEntity() {
+	err := suite.s.DeleteEntity(testEntityID)
+	suite.Nil(err)
+	ent, err := suite.s.GetEntity(testEntityID)
+	suite.NotNil(err)
+	suite.Nil(ent)
+}
+
+func (suite *storageImplTestSuite) TestPatchEntity() {
+	testStr := "test"
+
+	//Name
+	ent := &Entity{
+		Name: &testStr,
+	}
+	ent, err := suite.s.PatchEntity(testEntityID, ent)
+	suite.Nil(err)
+	suite.Equal(testStr, *ent.Name)
+
+	//Alias
+	ent = &Entity{
+		Alias: &testStr,
+	}
+	ent, err = suite.s.PatchEntity(testEntityID, ent)
+	suite.Nil(err)
+	suite.Equal(testStr, *ent.Alias)
+
+	//Password
+	ent = &Entity{
+		Password: &testStr,
+	}
+	ent, err = suite.s.PatchEntity(testEntityID, ent)
+	suite.Nil(err)
+	suite.Equal(testStr, *ent.Password)
+
+	//Extra
+	ent = &Entity{
+		Extra: &testStr,
+	}
+	ent, err = suite.s.PatchEntity(testEntityID, ent)
+	suite.Nil(err)
+	suite.Equal(testStr, *ent.Extra)
+}
+
 func TestStorageImplTestSuite(t *testing.T) {
 	suite.Run(t, new(storageImplTestSuite))
 }

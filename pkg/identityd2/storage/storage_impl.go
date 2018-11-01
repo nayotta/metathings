@@ -400,7 +400,7 @@ func (self *StorageImpl) list_view_roles_by_entity_id(id string) ([]*Role, error
 }
 
 func (self *StorageImpl) get_entity(id string) (*Entity, error) {
-	var ent *Entity
+	var ent Entity
 	var err error
 
 	if err = self.db.First(&ent, "id = ?", id).Error; err != nil {
@@ -419,7 +419,7 @@ func (self *StorageImpl) get_entity(id string) (*Entity, error) {
 		return nil, err
 	}
 
-	return ent, nil
+	return &ent, nil
 }
 
 func (self *StorageImpl) list_entities(ent *Entity) ([]*Entity, error) {
@@ -487,11 +487,11 @@ func (self *StorageImpl) DeleteEntity(id string) error {
 
 func (self *StorageImpl) PatchEntity(id string, entity *Entity) (*Entity, error) {
 	var err error
-	var ent *Entity
+	var ent Entity
 
 	tx := self.db.Begin()
 
-	if err = self.db.First(&ent, "id = ?", id).Error; err != nil {
+	if err = tx.First(&ent, "id = ?", id).Error; err != nil {
 		return nil, err
 	}
 
@@ -518,7 +518,7 @@ func (self *StorageImpl) PatchEntity(id string, entity *Entity) (*Entity, error)
 
 	self.logger.WithField("id", id).Debugf("patch entity")
 
-	return ent, nil
+	return &ent, nil
 }
 
 func (self *StorageImpl) GetEntity(id string) (*Entity, error) {
