@@ -551,25 +551,153 @@ func (suite *storageImplTestSuite) TestRemoveEntityFromGroup() {
 }
 
 func (suite *storageImplTestSuite) TestCreateCredential() {
-	panic("unimplemented")
+	testStr := "test"
+	cred := &Credential{
+		Id:          &testStr,
+		DomainId:    &testStr,
+		EntityId:    &testStr,
+		Name:        &testStr,
+		Alias:       &testStr,
+		Secret:      &testStr,
+		Description: &testStr,
+	}
+
+	credRet, err := suite.s.CreateCredential(cred)
+	suite.Nil(err)
+	suite.Equal(testStr, *credRet.Id)
+	suite.Equal(testStr, *credRet.DomainId)
+	suite.Equal(testStr, *credRet.EntityId)
+	suite.Equal(testStr, *credRet.Name)
+	suite.Equal(testStr, *credRet.Alias)
+	suite.Equal(testStr, *credRet.Secret)
+	suite.Equal(testStr, *credRet.Description)
 }
 
 func (suite *storageImplTestSuite) TestDeleteCredential() {
-	panic("unimplemented")
+	err := suite.s.DeleteCredential(testCredentialID)
+	suite.Nil(err)
+	cred, err := suite.s.GetCredential(testCredentialID)
+	suite.NotNil(err)
+	suite.Nil(cred)
 }
 
 func (suite *storageImplTestSuite) TestPatchCredential() {
-	panic("unimplemented")
+	testStr := "test"
+
+	//DomainId
+	cred := &Credential{
+		DomainId: &testStr,
+	}
+	cred, err := suite.s.PatchCredential(testCredentialID, cred)
+	suite.Nil(err)
+	suite.Equal(testStr, *cred.DomainId)
+
+	//EntityId
+	cred = &Credential{
+		EntityId: &testStr,
+	}
+	cred, err = suite.s.PatchCredential(testCredentialID, cred)
+	suite.Nil(err)
+	suite.Equal(testStr, *cred.EntityId)
+
+	//Name
+	cred = &Credential{
+		Name: &testStr,
+	}
+	cred, err = suite.s.PatchCredential(testCredentialID, cred)
+	suite.Nil(err)
+	suite.Equal(testStr, *cred.Name)
+
+	//Alias
+	cred = &Credential{
+		Alias: &testStr,
+	}
+	cred, err = suite.s.PatchCredential(testCredentialID, cred)
+	suite.Nil(err)
+	suite.Equal(testStr, *cred.Alias)
+
+	//Secret
+	cred = &Credential{
+		Secret: &testStr,
+	}
+	cred, err = suite.s.PatchCredential(testCredentialID, cred)
+	suite.Nil(err)
+	suite.Equal(testStr, *cred.Secret)
+
+	//Decription
+	cred = &Credential{
+		Description: &testStr,
+	}
+	cred, err = suite.s.PatchCredential(testCredentialID, cred)
+	suite.Nil(err)
+	suite.Equal(testStr, *cred.Description)
 }
 
 func (suite *storageImplTestSuite) TestGetCredential() {
-	panic("unimplemented")
+	cred, err := suite.s.GetCredential(testCredentialID)
+	suite.Nil(err)
+	suite.Equal(testCredentialName, *cred.Name)
 }
 
 func (suite *storageImplTestSuite) TestListCredentials() {
-	panic("unimplemented")
+	//list by DomainId
+	cred := &Credential{
+		DomainId: &testDomainID,
+	}
+	creds, err := suite.s.ListCredentials(cred)
+	suite.Nil(err)
+	suite.Len(creds, 1)
+
+	//list by EntityId
+	cred = &Credential{
+		EntityId: &testEntityID,
+	}
+	creds, err = suite.s.ListCredentials(cred)
+	suite.Nil(err)
+	suite.Len(creds, 1)
+
+	//list by Name
+	cred = &Credential{
+		Name: &testCredentialName,
+	}
+	creds, err = suite.s.ListCredentials(cred)
+	suite.Nil(err)
+	suite.Len(creds, 1)
+
+	//list by Alias
+	cred = &Credential{
+		Alias: &testCredentialAlias,
+	}
+	creds, err = suite.s.ListCredentials(cred)
+	suite.Nil(err)
+	suite.Len(creds, 1)
+
+	//list by Sectret
+	cred = &Credential{
+		Secret: &testCredentialSecret,
+	}
+	creds, err = suite.s.ListCredentials(cred)
+	suite.Nil(err)
+	suite.Len(creds, 1)
+
+	//list by Description
+	cred = &Credential{
+		Description: &testCredentialDecription,
+	}
+	creds, err = suite.s.ListCredentials(cred)
+	suite.Nil(err)
+	suite.Len(creds, 1)
+
+	//list by EntityId
+	cred = &Credential{
+		EntityId: &testEntityID,
+	}
+	creds, err = suite.s.ListCredentials(cred)
+	suite.Nil(err)
+	suite.Len(creds, 1)
 }
 
+/*
 func (suite *storageImplTestSuite) TestCreateToken() {
 	panic("unimplemented")
 }
@@ -584,7 +712,7 @@ func (suite *storageImplTestSuite) TestGetToken() {
 
 func (suite *storageImplTestSuite) TestListTokens() {
 	panic("unimplemented")
-}
+}*/
 
 func TestStorageImplTestSuite(t *testing.T) {
 	suite.Run(t, new(storageImplTestSuite))

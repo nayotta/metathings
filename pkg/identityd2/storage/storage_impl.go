@@ -901,7 +901,7 @@ func (self *StorageImpl) RemoveEntityFromGroup(entity_id, group_id string) error
 }
 
 func (self *StorageImpl) get_credential(id string) (*Credential, error) {
-	var cred *Credential
+	var cred Credential
 	var err error
 
 	if err = self.db.First(&cred, "id = ?", id).Error; err != nil {
@@ -911,11 +911,11 @@ func (self *StorageImpl) get_credential(id string) (*Credential, error) {
 	cred.Domain = &Domain{Id: cred.DomainId}
 	cred.Entity = &Entity{Id: cred.EntityId}
 
-	if cred.Roles, err = self.internal_list_view_credential_roles(cred); err != nil {
+	if cred.Roles, err = self.internal_list_view_credential_roles(&cred); err != nil {
 		return nil, err
 	}
 
-	return cred, nil
+	return &cred, nil
 }
 
 func (self *StorageImpl) list_view_credential_roles(id string) ([]*Role, error) {
@@ -1048,11 +1048,11 @@ func (self *StorageImpl) DeleteCredential(id string) error {
 
 func (self *StorageImpl) PatchCredential(id string, credential *Credential) (*Credential, error) {
 	var err error
-	var cred *Credential
+	var cred Credential
 
 	tx := self.db.Begin()
 
-	if err = self.db.First(&cred, "id = ?", id).Error; err != nil {
+	if err = tx.First(&cred, "id = ?", id).Error; err != nil {
 		return nil, err
 	}
 
@@ -1074,9 +1074,6 @@ func (self *StorageImpl) PatchCredential(id string, credential *Credential) (*Cr
 	if credential.Description != nil && credential.Description != cred.Description {
 		tx.Model(&cred).Update("Description", credential.Description)
 	}
-	if credential.ExpiresAt != nil && credential.ExpiresAt != cred.ExpiresAt {
-		tx.Model(&cred).Update("ExpiresAt", credential.ExpiresAt)
-	}
 
 	tx.Model(&cred).Update("UpdatedAt", time.Now())
 
@@ -1088,7 +1085,7 @@ func (self *StorageImpl) PatchCredential(id string, credential *Credential) (*Cr
 
 	self.logger.WithField("id", id).Debugf("patch credential")
 
-	return cred, nil
+	return &cred, nil
 }
 
 func (self *StorageImpl) GetCredential(id string) (*Credential, error) {
