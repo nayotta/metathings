@@ -54,7 +54,7 @@ func (suite *storageImplTestSuite) SetupTest() {
 	var err error
 	suite.s, err = NewStorageImpl("sqlite3", ":memory:", "logger", logrus.New())
 	if err != nil {
-		fmt.Println("err", err.Error())
+		fmt.Println("SetupTest newstorage error:", err.Error())
 	}
 
 	dom := Domain{
@@ -66,7 +66,7 @@ func (suite *storageImplTestSuite) SetupTest() {
 
 	_, err = suite.s.CreateDomain(&dom)
 	if err != nil {
-		fmt.Println("err create Domain")
+		fmt.Println("SetupTest create Domain error:", err.Error())
 	}
 
 	grp := Group{
@@ -127,7 +127,7 @@ func (suite *storageImplTestSuite) SetupTest() {
 
 	_, err = suite.s.CreateToken(&tkn)
 	if err != nil {
-		fmt.Println("debug create token error")
+		fmt.Println("SetupTest create token error:", err.Error())
 	}
 }
 
@@ -780,9 +780,6 @@ func (suite *storageImplTestSuite) TestCreateToken() {
 	}
 
 	tknRet, err := suite.s.CreateToken(tkn)
-	if err != nil {
-		fmt.Println("create token error:", err.Error())
-	}
 	suite.Nil(err)
 	suite.Equal(testStr, *tknRet.Id)
 	suite.Equal(testDomainID, *tknRet.DomainId)
