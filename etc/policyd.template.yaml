@@ -1,0 +1,12 @@
+dev:
+  listen: 127.0.0.1:4001
+  certfile: <cert-file-path>
+  keyfile: <key-file-path>
+  storage:
+    driver: sqlite3
+    uri: <storage-uri>
+  verbose: true
+  log:
+    level: info
+  model_file: <model-file-path>
+  policy_file: <policy-file-path>

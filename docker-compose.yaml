@@ -19,6 +19,21 @@ services:
     - "8001:8001"
     restart: on-failure
 
+  policyd:
+    environment:
+    - MTD_STAGE=debug
+    build:
+      context: .
+      dockerfile: dockerfile/Dockerfile.policyd
+    image: nayotta/policyd
+    volumes:
+    - ./etc/policyd.yaml:/etc/metathings/policyd.yaml
+    networks:
+    - metathings-policy
+    expose:
+    - "4001"
+    restart: on-failure
+
   identityd:
     environment:
     - MTD_STAGE=debug
@@ -110,3 +125,6 @@ networks:
   metathings-kafka:
     external:
       name: metathings-kafka
+  metathings-policy:
+    external:
+      name: metathings-policy

@@ -19,6 +19,22 @@ services:
     - "8001:8001"
     restart: on-failure
 
+  policyd:
+    environment:
+    - MTD_STAGE=debug
+    build:
+      context: .
+      dockerfile: dockerfile/Dockerfile.policyd.dev
+    image: nayotta/metathings-policyd-development
+    volumes:
+    - ./etc/policyd.yaml:/etc/metathings/policyd.yaml
+    networks:
+    - metathings-policy
+    expose:
+    - "4001"
+    restart: on-failure
+
+
   identityd:
     environment:
     - MTD_STAGE=dev
