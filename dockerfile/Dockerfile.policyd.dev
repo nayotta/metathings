@@ -1,4 +1,4 @@
-FROM nayotta/metathingsd
+FROM nayotta/metathings-development
 
 COPY ./etc/policyd.yaml /etc/metathings/policyd.yaml
 COPY ./script/policyd.dev_start.sh /usr/local/sbin/policyd.dev_start.sh

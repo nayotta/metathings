@@ -2,4 +2,4 @@
 
 set -e
 
-/usr/local/bin/metathingsd policyd -c /etc/metathings/policyd.yaml
+go run $GOPATH/src/github.com/nayotta/metathings/cmd/metathingsd/main.go policyd -c /etc/metathings/policyd.yaml

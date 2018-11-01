@@ -21,19 +21,24 @@ services:
 
   policyd:
     environment:
-    - MTD_STAGE=debug
+    - MTD_STAGE=dev
     build:
       context: .
       dockerfile: dockerfile/Dockerfile.policyd.dev
     image: nayotta/metathings-policyd-development
     volumes:
+    - .:/go/src/github.com/nayotta/metathings
+    - ./data/storage:/var/metathings/storage
     - ./etc/policyd.yaml:/etc/metathings/policyd.yaml
+    - ./etc/policyd-model.conf:/etc/metathings/policyd-model.conf
+    - ./etc/policyd-policy.csv:/etc/metathings/policyd-policy.csv
+    - ./cert/policyd-server.crt:/etc/metathings/cert/policyd-server.crt
+    - ./cert/policyd-server.key:/etc/metathings/cert/policyd-server.key
     networks:
     - metathings-policy
     expose:
     - "4001"
     restart: on-failure
-
 
   identityd:
     environment:
@@ -131,3 +136,6 @@ networks:
   metathings-kafka:
     external:
       name: metathings-kafka
+  metathings-policy:
+    external:
+      name: metathings-policy
