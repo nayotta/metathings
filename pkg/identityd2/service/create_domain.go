@@ -34,11 +34,18 @@ func (self *MetathingsIdentitydService) CreateDomain(ctx context.Context, req *p
 	}
 
 	extra_str := must_parse_extra(req.GetExtra())
+	name_str := req.Name.Value
+	alias_str := req.Alias.Value
+
+	if err = self.enforcer.AddObjectToKind(id, KIND_DOMAIN); err != nil {
+		self.logger.WithError(err).Errorf("failed to add domain to kind in enforcer")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
 
 	dom = &storage.Domain{
 		Id:       &id,
-		Name:     &req.Name.Value,
-		Alias:    &req.Alias.Value,
+		Name:     &name_str,
+		Alias:    &alias_str,
 		ParentId: &parent_id,
 		Extra:    &extra_str,
 	}

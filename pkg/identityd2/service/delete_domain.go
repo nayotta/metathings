@@ -87,6 +87,10 @@ func (self *MetathingsIdentitydService) DeleteDomain(ctx context.Context, req *p
 		return nil, status.Errorf(codes.FailedPrecondition, err.Error())
 	}
 
+	if err = self.enforcer.RemoveObjectFromKind(dom_id_str, KIND_DOMAIN); err != nil {
+		self.logger.WithError(err).Warningf("failed to remove domain from kind in enforcer")
+	}
+
 	if err = self.storage.DeleteDomain(dom_id_str); err != nil {
 		self.logger.WithError(err).Errorf("failed to delete domain in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())

@@ -28,6 +28,10 @@ func (self *MetathingsIdentitydService) DeleteEntity(ctx context.Context, req *p
 	}
 	ent_id_str := ent.GetId().GetValue()
 
+	if err = self.enforcer.RemoveObjectFromKind(ent_id_str, KIND_ENTITY); err != nil {
+		self.logger.WithError(err).Warningf("failed to remove entity from kind in enforcer")
+	}
+
 	if err = self.storage.DeleteEntity(ent_id_str); err != nil {
 		self.logger.WithError(err).Errorf("failed to delete entity in storage")
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())

@@ -2,6 +2,7 @@ package metathings_policyd_service
 
 import (
 	"context"
+	"errors"
 
 	server "github.com/nayotta/metathings/pkg/policyd/casbin-server/server"
 	pb "github.com/nayotta/metathings/pkg/proto/policyd"
@@ -9,7 +10,7 @@ import (
 
 type Policy struct {
 	Role   string
-	Type   string
+	Kind   string
 	Action string
 }
 
@@ -28,9 +29,16 @@ type MetathingsPolicydService struct {
 
 func (self *MetathingsPolicydService) AddPresetPolicy(ctx context.Context, in *pb.PolicyRequest) (*pb.BoolReply, error) {
 	for _, p := range self.opt.Policies {
+		if len(in.Params) != 2 {
+			return nil, errors.New("bad arguments")
+		}
+
+		dom := in.Params[0]
+		grp := in.Params[1]
+
 		res, err := self.AddPolicy(ctx, &pb.PolicyRequest{
 			EnforcerHandler: in.EnforcerHandler,
-			Params:          []string{p.Role, in.Params[0], p.Type, p.Action},
+			Params:          []string{p.Role, dom, grp, p.Kind, p.Action},
 		})
 		if err != nil {
 			return nil, err
@@ -46,9 +54,16 @@ func (self *MetathingsPolicydService) AddPresetPolicy(ctx context.Context, in *p
 func (self *MetathingsPolicydService) RemovePresetPolicy(ctx context.Context, in *pb.PolicyRequest) (*pb.BoolReply, error) {
 	// TODO(Peer): RemoveFilteredNamedPolicy should better than RemovePolicy?
 	for _, p := range self.opt.Policies {
+		if len(in.Params) != 2 {
+			return nil, errors.New("bad arguments")
+		}
+
+		dom := in.Params[0]
+		grp := in.Params[1]
+
 		_, err := self.RemovePolicy(ctx, &pb.PolicyRequest{
 			EnforcerHandler: in.EnforcerHandler,
-			Params:          []string{p.Role, in.Params[0], p.Type, p.Action},
+			Params:          []string{p.Role, dom, grp, p.Kind, p.Action},
 		})
 		if err != nil {
 			return nil, err

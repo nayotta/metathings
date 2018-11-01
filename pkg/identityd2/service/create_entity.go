@@ -27,6 +27,11 @@ func (self *MetathingsIdentitydService) CreateEntity(ctx context.Context, req *p
 	extra_str := must_parse_extra(req.Extra)
 	pwd_str := must_parse_password(req.GetPassword().GetValue())
 
+	if err = self.enforcer.AddObjectToKind(ent_id_str, KIND_ENTITY); err != nil {
+		self.logger.WithError(err).Errorf("failed to add entity to kind in enforcer")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
 	ent := &storage.Entity{
 		Id:       &ent_id_str,
 		Name:     &req.Name.Value,

@@ -32,19 +32,19 @@ func (self *mock_enforcer) RemoveGroup(domain, group string) error {
 	panic("unimplemented")
 }
 
-func (self *mock_enforcer) AddSubjectToRole(domain, group, subject, role string) error {
+func (self *mock_enforcer) AddSubjectToRole(subject, role string) error {
 	panic("unimplemented")
 }
 
-func (self *mock_enforcer) RemoveSubjectFromRole(domain, group, subject, role string) error {
+func (self *mock_enforcer) RemoveSubjectFromRole(subject, role string) error {
 	panic("unimplemented")
 }
 
-func (self *mock_enforcer) AddObjectToKind(domain, group, object, kind string) error {
+func (self *mock_enforcer) AddObjectToKind(object, kind string) error {
 	panic("unimplemented")
 }
 
-func (self *mock_enforcer) RemoveObjectFromKind(domain, group, object, kind string) error {
+func (self *mock_enforcer) RemoveObjectFromKind(object, kind string) error {
 	panic("unimplemented")
 }
 

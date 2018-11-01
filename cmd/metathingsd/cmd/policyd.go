@@ -108,7 +108,7 @@ func NewMetathingsPolicydServiceOption(opt *PolicydOption) (*service.MetathingsP
 		tokens := strings.Split(line, ",")
 		polices = append(polices, service.Policy{
 			Role:   strings.TrimSpace(tokens[0]),
-			Type:   strings.TrimSpace(tokens[1]),
+			Kind:   strings.TrimSpace(tokens[1]),
 			Action: strings.TrimSpace(tokens[2]),
 		})
 	}

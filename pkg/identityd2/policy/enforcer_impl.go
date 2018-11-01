@@ -8,10 +8,6 @@ import (
 	pb "github.com/nayotta/metathings/pkg/proto/policyd"
 )
 
-func join_domain_group(domain, group string) string {
-	return domain + "." + group
-}
-
 type CasbinEnforcer struct {
 	cli_fty *client_helper.ClientFactory
 }
@@ -47,6 +43,8 @@ func (self *CasbinEnforcer) Enforce(domain, group, subject, object, action inter
 		return err
 	}
 
+	grps = append(grps, UNGROUPED)
+
 	cli, cfn, err := self.cli_fty.NewPolicydServiceClient()
 	if err != nil {
 		return err
@@ -61,7 +59,7 @@ func (self *CasbinEnforcer) Enforce(domain, group, subject, object, action inter
 					for _, act := range acts {
 						reqs = append(reqs, &pb.EnforceRequest{
 							EnforcerHandler: 0,
-							Params:          []string{sub, join_domain_group(dom, grp), obj, act},
+							Params:          []string{sub, dom, grp, obj, act},
 						})
 					}
 				}
@@ -91,7 +89,7 @@ func (self *CasbinEnforcer) AddGroup(domain, group string) error {
 
 	req := &pb.PolicyRequest{
 		EnforcerHandler: 0,
-		Params:          []string{join_domain_group(domain, group)},
+		Params:          []string{domain, group},
 	}
 	if _, err = cli.AddPresetPolicy(context.Background(), req); err != nil {
 		return err
@@ -109,7 +107,7 @@ func (self *CasbinEnforcer) RemoveGroup(domain, group string) error {
 
 	req := &pb.PolicyRequest{
 		EnforcerHandler: 0,
-		Params:          []string{join_domain_group(domain, group)},
+		Params:          []string{domain, group},
 	}
 	if _, err = cli.RemovePresetPolicy(context.Background(), req); err != nil {
 		return err
@@ -118,7 +116,7 @@ func (self *CasbinEnforcer) RemoveGroup(domain, group string) error {
 	return nil
 }
 
-func (self *CasbinEnforcer) add_grouping_policy(domain, group, x, y string) error {
+func (self *CasbinEnforcer) add_grouping_policy(x, y string) error {
 	cli, cfn, err := self.cli_fty.NewPolicydServiceClient()
 	if err != nil {
 		return err
@@ -127,7 +125,7 @@ func (self *CasbinEnforcer) add_grouping_policy(domain, group, x, y string) erro
 
 	req := &pb.PolicyRequest{
 		EnforcerHandler: 0,
-		Params:          []string{x, y, join_domain_group(domain, group)},
+		Params:          []string{x, y},
 	}
 	if _, err = cli.AddGroupingPolicy(context.Background(), req); err != nil {
 		return err
@@ -136,7 +134,7 @@ func (self *CasbinEnforcer) add_grouping_policy(domain, group, x, y string) erro
 	return nil
 }
 
-func (self *CasbinEnforcer) remove_grouping_policy(domain, group, x, y string) error {
+func (self *CasbinEnforcer) remove_grouping_policy(x, y string) error {
 	cli, cfn, err := self.cli_fty.NewPolicydServiceClient()
 	if err != nil {
 		return err
@@ -145,7 +143,7 @@ func (self *CasbinEnforcer) remove_grouping_policy(domain, group, x, y string) e
 
 	req := &pb.PolicyRequest{
 		EnforcerHandler: 0,
-		Params:          []string{x, y, join_domain_group(domain, group)},
+		Params:          []string{x, y},
 	}
 	if _, err = cli.RemoveGroupingPolicy(context.Background(), req); err != nil {
 		return err
@@ -154,20 +152,20 @@ func (self *CasbinEnforcer) remove_grouping_policy(domain, group, x, y string) e
 	return nil
 }
 
-func (self *CasbinEnforcer) AddSubjectToRole(domain, group, subject, role string) error {
-	return self.add_grouping_policy(domain, group, subject, role)
+func (self *CasbinEnforcer) AddSubjectToRole(subject, role string) error {
+	return self.add_grouping_policy(subject, role)
 }
 
-func (self *CasbinEnforcer) RemoveSubjectFromRole(domain, group, subject, role string) error {
-	return self.remove_grouping_policy(domain, group, subject, role)
+func (self *CasbinEnforcer) RemoveSubjectFromRole(subject, role string) error {
+	return self.remove_grouping_policy(subject, role)
 }
 
-func (self *CasbinEnforcer) AddObjectToKind(domain, group, object, kind string) error {
-	return self.add_grouping_policy(domain, group, object, kind)
+func (self *CasbinEnforcer) AddObjectToKind(object, kind string) error {
+	return self.add_grouping_policy(object, kind)
 }
 
-func (self *CasbinEnforcer) RemoveObjectFromKind(domain, group, object, kind string) error {
-	return self.remove_grouping_policy(domain, group, object, kind)
+func (self *CasbinEnforcer) RemoveObjectFromKind(object, kind string) error {
+	return self.remove_grouping_policy(object, kind)
 }
 
 func NewEnforcer(cli_fty *client_helper.ClientFactory) Enforcer {

@@ -35,12 +35,19 @@ func (self *MetathingsIdentitydService) CreateRole(ctx context.Context, req *pb.
 
 	description := req.GetDescription().GetValue()
 	extra_str := must_parse_extra(req.GetExtra())
+	name_str := req.Name.Value
+	alias_str := req.Alias.Value
+
+	if err = self.enforcer.AddObjectToKind(id, KIND_ROLE); err != nil {
+		self.logger.WithError(err).Errorf("failed to add object to kind in enforcer")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
 
 	role = &storage.Role{
 		Id:          &id,
 		DomainId:    &dom_id,
-		Name:        &req.Name.Value,
-		Alias:       &req.Alias.Value,
+		Name:        &name_str,
+		Alias:       &alias_str,
 		Description: &description,
 		Extra:       &extra_str,
 	}

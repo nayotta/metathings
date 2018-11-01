@@ -9,10 +9,12 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
+	storage "github.com/nayotta/metathings/pkg/identityd2/storage"
 	pb "github.com/nayotta/metathings/pkg/proto/identityd2"
 )
 
 func (self *MetathingsIdentitydService) AddRoleToEntity(ctx context.Context, req *pb.AddRoleToEntityRequest) (*empty.Empty, error) {
+	var r *storage.Role
 	var err error
 
 	if err = req.Validate(); err != nil {
@@ -35,6 +37,16 @@ func (self *MetathingsIdentitydService) AddRoleToEntity(ctx context.Context, req
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 	role_id_str := role.GetId().GetValue()
+
+	if r, err = self.storage.GetRole(role_id_str); err != nil {
+		self.logger.WithError(err).Errorf("failed to get role in storage")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
+	if err = self.enforcer.AddSubjectToRole(ent_id_str, *r.Name); err != nil {
+		self.logger.WithError(err).Errorf("failed to add subject to role in enforcer")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
 
 	if err = self.storage.AddRoleToEntity(ent_id_str, role_id_str); err != nil {
 		self.logger.WithError(err).Errorf("failed to add role to entity in storage")

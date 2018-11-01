@@ -13,7 +13,6 @@ import (
 )
 
 func (self *MetathingsIdentitydService) CreateGroup(ctx context.Context, req *pb.CreateGroupRequest) (*pb.CreateGroupResponse, error) {
-	var dom_s *storage.Domain
 	var err error
 
 	if err = req.Validate(); err != nil {
@@ -40,22 +39,24 @@ func (self *MetathingsIdentitydService) CreateGroup(ctx context.Context, req *pb
 	}
 
 	extra_str := must_parse_extra(req.Extra)
+	name_str := req.Name.Value
+	alias_str := req.Alias.Value
 
-	if dom_s, err = self.storage.GetDomain(dom_id_str); err != nil {
-		self.logger.WithError(err).Errorf("failed to get domain in storage")
+	if err = self.enforcer.AddGroup(dom_id_str, id_str); err != nil {
+		self.logger.WithError(err).Errorf("failed to add group in enforcer")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
-	if err = self.enforcer.AddGroup(*dom_s.Name, req.Name.Value); err != nil {
-		self.logger.WithError(err).Errorf("failed to add group in enforcer")
+	if err = self.enforcer.AddObjectToKind(id_str, KIND_GROUP); err != nil {
+		self.logger.WithError(err).Errorf("failed to add group to kind in enforcer")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
 	grp := &storage.Group{
 		Id:          &id_str,
 		DomainId:    &dom_id_str,
-		Name:        &req.Name.Value,
-		Alias:       &req.Alias.Value,
+		Name:        &name_str,
+		Alias:       &alias_str,
 		Description: &desc_str,
 		Extra:       &extra_str,
 	}

@@ -88,6 +88,17 @@ func (self *MetathingsIdentitydService) is_ignore_method(md *grpc_helper.MethodD
 	return false
 }
 
+func (self *MetathingsIdentitydService) add_token_to_kind_in_enforcer(tkn_id string) error {
+	var err error
+
+	if err = self.enforcer.AddObjectToKind(tkn_id, KIND_TOKEN); err != nil {
+		self.logger.WithError(err).Errorf("failed to add token to kind in enforcer")
+		return status.Errorf(codes.Internal, err.Error())
+	}
+
+	return nil
+}
+
 func (self *MetathingsIdentitydService) AuthFuncOverride(ctx context.Context, fullMethodName string) (context.Context, error) {
 	var tkn *storage.Token
 	var tkn_txt string
