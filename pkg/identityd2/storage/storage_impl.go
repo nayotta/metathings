@@ -206,7 +206,7 @@ func (self *StorageImpl) RemoveEntityFromDomain(domain_id, entity_id string) err
 }
 
 func (self *StorageImpl) get_role(id string) (*Role, error) {
-	var role *Role
+	var role Role
 	var err error
 
 	if err = self.db.First(&role, "id = ?", id).Error; err != nil {
@@ -217,7 +217,7 @@ func (self *StorageImpl) get_role(id string) (*Role, error) {
 		Id: role.DomainId,
 	}
 
-	return role, nil
+	return &role, nil
 }
 
 func (self *StorageImpl) list_roles(role *Role) ([]*Role, error) {
@@ -286,11 +286,11 @@ func (self *StorageImpl) DeleteRole(id string) error {
 
 func (self *StorageImpl) PatchRole(id string, role *Role) (*Role, error) {
 	var err error
-	var rol *Role
+	var rol Role
 
 	tx := self.db.Begin()
 
-	if err = self.db.First(&rol, "id = ?", id).Error; err != nil {
+	if err = tx.First(&rol, "id = ?", id).Error; err != nil {
 		return nil, err
 	}
 
@@ -301,7 +301,7 @@ func (self *StorageImpl) PatchRole(id string, role *Role) (*Role, error) {
 		tx.Model(&rol).Update("Name", role.Name)
 	}
 	if role.Alias != nil && rol.Alias != role.Alias {
-		tx.Model(&rol).Update("Alia", role.Alias)
+		tx.Model(&rol).Update("Alias", role.Alias)
 	}
 	if role.Description != nil && rol.Description != role.Description {
 		tx.Model(&rol).Update("Description", role.Description)
@@ -320,7 +320,7 @@ func (self *StorageImpl) PatchRole(id string, role *Role) (*Role, error) {
 
 	self.logger.WithField("id", id).Debugf("patch role")
 
-	return rol, nil
+	return &rol, nil
 }
 
 func (self *StorageImpl) GetRole(id string) (*Role, error) {
