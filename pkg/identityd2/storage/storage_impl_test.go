@@ -78,7 +78,10 @@ func (suite *storageImplTestSuite) SetupTest() {
 		Extra:       &testGroupExtra,
 	}
 
-	suite.s.CreateGroup(&grp)
+	_, err = suite.s.CreateGroup(&grp)
+	if err != nil {
+		fmt.Println("SetupTest create Group error:", err.Error())
+	}
 
 	ent := Entity{
 		Id:       &testEntityID,
@@ -88,9 +91,20 @@ func (suite *storageImplTestSuite) SetupTest() {
 		Extra:    &testEntityExtra,
 	}
 
-	suite.s.CreateEntity(&ent)
-	suite.s.AddEntityToGroup(testEntityID, testGroupID)
-	suite.s.AddEntityToDomain(testDomainID, testEntityID)
+	_, err = suite.s.CreateEntity(&ent)
+	if err != nil {
+		fmt.Println("SetupTest create Entity error:", err.Error())
+	}
+
+	err = suite.s.AddEntityToGroup(testEntityID, testGroupID)
+	if err != nil {
+		fmt.Println("SetupTest add entity to group error:", err.Error())
+	}
+
+	err = suite.s.AddEntityToDomain(testDomainID, testEntityID)
+	if err != nil {
+		fmt.Println("SetupTest add entity to domain error:", err.Error())
+	}
 
 	rol := Role{
 		Id:          &testRoleID,
@@ -101,9 +115,20 @@ func (suite *storageImplTestSuite) SetupTest() {
 		Extra:       &testRoleExtra,
 	}
 
-	suite.s.CreateRole(&rol)
-	suite.s.AddRoleToEntity(testEntityID, testRoleID)
-	suite.s.AddRoleToGroup(testGroupID, testRoleID)
+	_, err = suite.s.CreateRole(&rol)
+	if err != nil {
+		fmt.Println("SetupTest create role error:", err.Error())
+	}
+
+	err = suite.s.AddRoleToEntity(testEntityID, testRoleID)
+	if err != nil {
+		fmt.Println("SetupTest add role to entity error:", err.Error())
+	}
+
+	err = suite.s.AddRoleToGroup(testGroupID, testRoleID)
+	if err != nil {
+		fmt.Println("SetupTest add role to group error:", err.Error())
+	}
 
 	cred := Credential{
 		Id:          &testCredentialID,
@@ -115,7 +140,10 @@ func (suite *storageImplTestSuite) SetupTest() {
 		Description: &testCredentialDecription,
 	}
 
-	suite.s.CreateCredential(&cred)
+	_, err = suite.s.CreateCredential(&cred)
+	if err != nil {
+		fmt.Println("SetupTest create credentia error:", err.Error())
+	}
 
 	tkn := Token{
 		Id:           &testTokenID,
