@@ -27,7 +27,7 @@ var (
 	testEntityExtra    = "test-entity-extra"
 
 	testRoleID          = "test-role-id"
-	testRoleDomainID	= "test-role-domainid"
+	testRoleDomainID    = "test-role-domainid"
 	testRoleName        = "test-role-name"
 	testRoleAlias       = "test-role-alias"
 	testRoleDescription = "test-role-description"
@@ -88,6 +88,7 @@ func (suite *storageImplTestSuite) SetupTest() {
 
 	rol := Role{
 		Id:          &testRoleID,
+		DomainId:    &testRoleDomainID,
 		Name:        &testRoleName,
 		Alias:       &testRoleAlias,
 		Description: &testRoleDescription,
@@ -137,7 +138,7 @@ func (suite *storageImplTestSuite) TestDeleteDomain() {
 
 func (suite *storageImplTestSuite) TestPatchDomainName() {
 	testStr := "test"
-	dom := &Domain {
+	dom := &Domain{
 		Name: &testStr,
 	}
 	dom, err := suite.s.PatchDomain(testDomainID, dom)
@@ -147,7 +148,7 @@ func (suite *storageImplTestSuite) TestPatchDomainName() {
 
 func (suite *storageImplTestSuite) TestPatchDomainAlias() {
 	testStr := "test"
-	dom := &Domain {
+	dom := &Domain{
 		Alias: &testStr,
 	}
 	dom, err := suite.s.PatchDomain(testDomainID, dom)
@@ -157,7 +158,7 @@ func (suite *storageImplTestSuite) TestPatchDomainAlias() {
 
 func (suite *storageImplTestSuite) TestPatchDomainParentId() {
 	testStr := "test"
-	dom := &Domain {
+	dom := &Domain{
 		ParentId: &testStr,
 	}
 	dom, err := suite.s.PatchDomain(testDomainID, dom)
@@ -167,7 +168,7 @@ func (suite *storageImplTestSuite) TestPatchDomainParentId() {
 
 func (suite *storageImplTestSuite) TestPatchDomainExtra() {
 	testStr := "test"
-	dom := &Domain {
+	dom := &Domain{
 		Extra: &testStr,
 	}
 	dom, err := suite.s.PatchDomain(testDomainID, dom)
@@ -183,24 +184,24 @@ func (suite *storageImplTestSuite) TestGetDomain() {
 
 func (suite *storageImplTestSuite) TestListDomains() {
 	//list by Name
-	dom := &Domain {
-		Name: 	&testDomainName,
+	dom := &Domain{
+		Name: &testDomainName,
 	}
 	doms, err := suite.s.ListDomains(dom)
 	suite.Nil(err)
 	suite.Len(doms, 1)
 
 	//list by Alias
-	dom = &Domain {
-		Alias: 	&testDomainAlias,
+	dom = &Domain{
+		Alias: &testDomainAlias,
 	}
 	doms, err = suite.s.ListDomains(dom)
 	suite.Nil(err)
 	suite.Len(doms, 1)
 
 	//list by Extra
-	dom = &Domain {
-		Extra: 	&testDomainExtra,
+	dom = &Domain{
+		Extra: &testDomainExtra,
 	}
 	doms, err = suite.s.ListDomains(dom)
 	suite.Nil(err)
@@ -222,12 +223,12 @@ func (suite *storageImplTestSuite) TestRemoveEntityFormDomain() {
 
 func (suite *storageImplTestSuite) TestCreateRole() {
 	testStr := "test"
-	rol := Role {
-		Id: 			&testStr,
-		DomainId: 		&testStr,
-		Name:			&testStr,
-		Alias:			&testStr,
-		Description:	&testStr,
+	rol := Role{
+		Id:          &testStr,
+		DomainId:    &testStr,
+		Name:        &testStr,
+		Alias:       &testStr,
+		Description: &testStr,
 	}
 
 	rolRet, err := suite.s.CreateRole(&rol)
@@ -251,7 +252,7 @@ func (suite *storageImplTestSuite) TestPatchRole() {
 	testStr := "test"
 
 	//DomainId
-	rol := &Role {
+	rol := &Role{
 		DomainId: &testStr,
 	}
 	rol, err := suite.s.PatchRole(testRoleID, rol)
@@ -259,7 +260,7 @@ func (suite *storageImplTestSuite) TestPatchRole() {
 	suite.Equal(testStr, *rol.DomainId)
 
 	//Name
-	rol = &Role {
+	rol = &Role{
 		Name: &testStr,
 	}
 	rol, err = suite.s.PatchRole(testRoleID, rol)
@@ -267,7 +268,7 @@ func (suite *storageImplTestSuite) TestPatchRole() {
 	suite.Equal(testStr, *rol.Name)
 
 	//Alias
-	rol = &Role {
+	rol = &Role{
 		Alias: &testStr,
 	}
 	rol, err = suite.s.PatchRole(testRoleID, rol)
@@ -275,7 +276,7 @@ func (suite *storageImplTestSuite) TestPatchRole() {
 	suite.Equal(testStr, *rol.Alias)
 
 	//Description
-	rol = &Role {
+	rol = &Role{
 		Description: &testStr,
 	}
 	rol, err = suite.s.PatchRole(testRoleID, rol)
@@ -283,7 +284,7 @@ func (suite *storageImplTestSuite) TestPatchRole() {
 	suite.Equal(testStr, *rol.Description)
 
 	//Extra
-	rol = &Role {
+	rol = &Role{
 		Extra: &testStr,
 	}
 	rol, err = suite.s.PatchRole(testRoleID, rol)
@@ -298,45 +299,43 @@ func (suite *storageImplTestSuite) TestGetRole() {
 }
 
 func (suite *storageImplTestSuite) TestlistRoles() {
-	var err error
-
 	//list by DomainId
-	rol := &Role {
+	rol := &Role{
 		DomainId: &testRoleDomainID,
 	}
-	rols, err :=  suite.s.ListRoles(rol)
+	rols, err := suite.s.ListRoles(rol)
 	suite.Nil(err)
 	suite.Len(rols, 1)
 
 	//list by Name
-	rol = &Role {
+	rol = &Role{
 		Name: &testRoleName,
 	}
-	rols, err =  suite.s.ListRoles(rol)
+	rols, err = suite.s.ListRoles(rol)
 	suite.Nil(err)
 	suite.Len(rols, 1)
 
 	//list by Alias
-	rol = &Role {
+	rol = &Role{
 		Alias: &testRoleAlias,
 	}
-	rols, err =  suite.s.ListRoles(rol)
+	rols, err = suite.s.ListRoles(rol)
 	suite.Nil(err)
 	suite.Len(rols, 1)
 
 	//list by Description
-	rol = &Role {
+	rol = &Role{
 		Description: &testRoleDescription,
 	}
-	rols, err =  suite.s.ListRoles(rol)
+	rols, err = suite.s.ListRoles(rol)
 	suite.Nil(err)
 	suite.Len(rols, 1)
 
 	//list by Extra
-	rol = &Role {
+	rol = &Role{
 		Extra: &testRoleExtra,
 	}
-	rols, err =  suite.s.ListRoles(rol)
+	rols, err = suite.s.ListRoles(rol)
 	suite.Nil(err)
 	suite.Len(rols, 1)
 }
