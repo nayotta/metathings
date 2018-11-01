@@ -186,6 +186,25 @@ func (suite *storageImplTestSuite) TestListDomains() {
 	doms, err := suite.s.ListDomains(dom)
 	suite.Nil(err)
 	suite.Len(doms, 1)
+
+	dom = &Domain {
+		Alias: 	&testDomainAlias,
+	}
+	doms, err = suite.s.ListDomains(dom)
+	suite.Nil(err)
+	suite.Len(doms, 1)
+
+	dom = &Domain {
+		Extra: 	&testDomainExtra,
+	}
+	doms, err = suite.s.ListDomains(dom)
+	suite.Nil(err)
+	suite.Len(doms, 1)
+}
+
+func (suite *storageImplTestSuite) TestAddEntityToDomain() {
+	err := suite.s.AddEntityToDomain(testDomainID, testEntityID)
+	suite.Nil(err)
 }
 
 func TestStorageImplTestSuite(t *testing.T) {
