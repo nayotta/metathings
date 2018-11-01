@@ -343,11 +343,11 @@ func (suite *storageImplTestSuite) TestlistRoles() {
 func (suite *storageImplTestSuite) TestCreateEntity() {
 	testStr := "test"
 	ent := &Entity{
-		Id:			&testStr,
-		Name:		&testStr,
-		Alias:  	&testStr,
-		Password: 	&testStr,
-		Extra:		&testStr,
+		Id:       &testStr,
+		Name:     &testStr,
+		Alias:    &testStr,
+		Password: &testStr,
+		Extra:    &testStr,
 	}
 	entRet, err := suite.s.CreateEntity(ent)
 	suite.Nil(err)
@@ -400,6 +400,78 @@ func (suite *storageImplTestSuite) TestPatchEntity() {
 	ent, err = suite.s.PatchEntity(testEntityID, ent)
 	suite.Nil(err)
 	suite.Equal(testStr, *ent.Extra)
+}
+
+func (suite *storageImplTestSuite) TestCreateGroup() {
+	panic("unimplemented")
+}
+
+func (suite *storageImplTestSuite) TestDeleteGroup() {
+	panic("unimplemented")
+}
+
+func (suite *storageImplTestSuite) TestPatchGroup() {
+	panic("unimplemented")
+}
+
+func (suite *storageImplTestSuite) TestGetGroup() {
+	panic("unimplemented")
+}
+
+func (suite *storageImplTestSuite) TestListGroups() {
+	panic("unimplemented")
+}
+
+func (suite *storageImplTestSuite) TestAddRoleToGroup() {
+	panic("unimplemented")
+}
+
+func (suite *storageImplTestSuite) TestRemoveRoleFromGroup() {
+	panic("unimplemented")
+}
+
+func (suite *storageImplTestSuite) TestAddEntityToGroup() {
+	panic("unimplemented")
+}
+
+func (suite *storageImplTestSuite) TestRemoveEntityFromGroup() {
+	panic("unimplemented")
+}
+
+func (suite *storageImplTestSuite) TestCreateCredential() {
+	panic("unimplemented")
+}
+
+func (suite *storageImplTestSuite) TestDeleteCredential() {
+	panic("unimplemented")
+}
+
+func (suite *storageImplTestSuite) TestPatchCredential() {
+	panic("unimplemented")
+}
+
+func (suite *storageImplTestSuite) TestGetCredential() {
+	panic("unimplemented")
+}
+
+func (suite *storageImplTestSuite) TestListCredentials() {
+	panic("unimplemented")
+}
+
+func (suite *storageImplTestSuite) TestCreateToken() {
+	panic("unimplemented")
+}
+
+func (suite *storageImplTestSuite) TestDeleteToken() {
+	panic("unimplemented")
+}
+
+func (suite *storageImplTestSuite) TestGetToken() {
+	panic("unimplemented")
+}
+
+func (suite *storageImplTestSuite) TestListTokens() {
+	panic("unimplemented")
 }
 
 func TestStorageImplTestSuite(t *testing.T) {
