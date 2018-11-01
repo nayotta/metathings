@@ -207,6 +207,14 @@ func (suite *storageImplTestSuite) TestAddEntityToDomain() {
 	suite.Nil(err)
 }
 
+func (suite *storageImplTestSuite) TestRemoveEntityFormDomain() {
+	err := suite.s.AddEntityToDomain(testDomainID, testEntityID)
+	suite.Nil(err)
+
+	err = suite.s.RemoveEntityFromDomain(testDomainID, testEntityID)
+	suite.Nil(err)
+}
+
 func TestStorageImplTestSuite(t *testing.T) {
 	suite.Run(t, new(storageImplTestSuite))
 }
