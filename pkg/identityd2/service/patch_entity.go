@@ -42,7 +42,7 @@ func (self *MetathingsIdentitydService) PatchEntity(ctx context.Context, req *pb
 		Entity: copy_entity(ent),
 	}
 
-	self.logger.WithField("id", idStr).Debugf("patch entity")
+	self.logger.WithField("id", idStr).Infof("patch entity")
 
 	return res, nil
 }

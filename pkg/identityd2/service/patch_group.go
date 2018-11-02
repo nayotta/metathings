@@ -43,7 +43,7 @@ func (self *MetathingsIdentitydService) PatchGroup(ctx context.Context, req *pb.
 		Group: copy_group(grp),
 	}
 
-	self.logger.WithField("id", idStr).Debugf("patch group")
+	self.logger.WithField("id", idStr).Infof("patch group")
 
 	return res, nil
 }

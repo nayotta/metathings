@@ -42,7 +42,7 @@ func (self *MetathingsIdentitydService) PatchRole(ctx context.Context, req *pb.P
 		Role: copy_role(rol),
 	}
 
-	self.logger.WithField("id", idStr).Debugf("patch role")
+	self.logger.WithField("id", idStr).Infof("patch role")
 
 	return res, nil
 }

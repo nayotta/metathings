@@ -47,5 +47,7 @@ func (self *MetathingsIdentitydService) ListRoles(ctx context.Context, req *pb.L
 		res.Roles = append(res.Roles, copy_role(rol))
 	}
 
+	self.logger.Debugf("list roles")
+
 	return res, nil
 }
