@@ -125,9 +125,6 @@ func (self *StorageImpl) PatchDomain(id string, domain *Domain) (*Domain, error)
 	if domain.Alias != nil && dom.Alias != domain.Alias {
 		tx.Model(&dom).Update("Alias", domain.Alias)
 	}
-	if domain.ParentId != nil && dom.ParentId != domain.ParentId {
-		tx.Model(&dom).Update("ParentId", domain.ParentId)
-	}
 	if domain.Extra != nil && dom.Extra != domain.Extra {
 		tx.Model(&dom).Update("Extra", domain.Extra)
 	}
@@ -292,9 +289,6 @@ func (self *StorageImpl) PatchRole(id string, role *Role) (*Role, error) {
 		return nil, err
 	}
 
-	if role.DomainId != nil && rol.DomainId != role.DomainId {
-		tx.Model(&rol).Update("DomainId", role.DomainId)
-	}
 	if role.Name != nil && rol.Name != role.Name {
 		tx.Model(&rol).Update("Name", role.Name)
 	}
@@ -787,9 +781,6 @@ func (self *StorageImpl) PatchGroup(id string, group *Group) (*Group, error) {
 		return nil, err
 	}
 
-	if group.DomainId != nil && grp.DomainId != group.DomainId {
-		tx.Model(&grp).Update("DomainId", group.DomainId)
-	}
 	if group.Name != nil && grp.Name != group.Name {
 		tx.Model(&grp).Update("Name", group.Name)
 	}
@@ -1082,12 +1073,6 @@ func (self *StorageImpl) PatchCredential(id string, credential *Credential) (*Cr
 		return nil, err
 	}
 
-	if credential.DomainId != nil && credential.DomainId != cred.DomainId {
-		tx.Model(&cred).Update("DomainId", credential.DomainId)
-	}
-	if credential.EntityId != nil && credential.EntityId != cred.EntityId {
-		tx.Model(&cred).Update("EntityId", credential.EntityId)
-	}
 	if credential.Name != nil && credential.Name != cred.Name {
 		tx.Model(&cred).Update("Name", credential.Name)
 	}
