@@ -29,13 +29,10 @@ services:
     volumes:
     - .:/go/src/github.com/nayotta/metathings
     - ./data/storage:/var/metathings/storage
-    - ./etc/policyd.yaml:/etc/metathings/policyd.yaml
-    - ./etc/policyd-model.conf:/etc/metathings/policyd-model.conf
-    - ./etc/policyd-policy.csv:/etc/metathings/policyd-policy.csv
-    - ./cert/policyd-server.crt:/etc/metathings/cert/policyd-server.crt
-    - ./cert/policyd-server.key:/etc/metathings/cert/policyd-server.key
+    - ./etc:/etc/metathings
+    - ./cert:/etc/metathings/cert
     networks:
-    - metathings-policy
+    - metathings-backend
     expose:
     - "4001"
     restart: on-failure
@@ -136,6 +133,3 @@ networks:
   metathings-kafka:
     external:
       name: metathings-kafka
-  metathings-policy:
-    external:
-      name: metathings-policy
