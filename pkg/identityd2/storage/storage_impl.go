@@ -119,7 +119,7 @@ func (self *StorageImpl) PatchDomain(id string, domain *Domain) (*Domain, error)
 	if err = tx.First(&dom, "Id = ?", id).Error; err != nil {
 		return nil, err
 	}
-	if domain.Name != nil && dom.Name != domain.Name {
+	if domain.Name != nil {
 		tx.Model(&dom).Update("Name", domain.Name)
 	}
 	if domain.Alias != nil && dom.Alias != domain.Alias {
