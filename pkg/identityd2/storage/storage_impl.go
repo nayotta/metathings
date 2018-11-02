@@ -1102,9 +1102,6 @@ func (self *StorageImpl) PatchCredential(id string, credential *Credential) (*Cr
 	if credential.Alias != nil && credential.Alias != cred.Alias {
 		tx.Model(&cred).Update("Alias", credential.Alias)
 	}
-	if credential.Secret != nil && credential.Secret != cred.Secret {
-		tx.Model(&cred).Update("Secret", credential.Secret)
-	}
 	if credential.Description != nil && credential.Description != cred.Description {
 		tx.Model(&cred).Update("Description", credential.Description)
 	}
