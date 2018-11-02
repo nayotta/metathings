@@ -8,8 +8,7 @@ import (
 )
 
 func NewId() string {
-	id, _ := uuid.NewV4()
-	return strings.Replace(id.String(), "-", "", -1)
+	return strings.Replace(uuid.NewV4().String(), "-", "", -1)
 }
 
 func NewUint64Id() uint64 {
