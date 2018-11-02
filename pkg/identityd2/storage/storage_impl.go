@@ -132,8 +132,6 @@ func (self *StorageImpl) PatchDomain(id string, domain *Domain) (*Domain, error)
 		tx.Model(&dom).Update("Extra", domain.Extra)
 	}
 
-	tx.Model(&dom).Update("UpdatedAt", time.Now())
-
 	if err = tx.Commit().Error; err != nil {
 		tx.Rollback()
 		self.logger.WithError(err).Debugf("failed to patch domain")
@@ -309,8 +307,6 @@ func (self *StorageImpl) PatchRole(id string, role *Role) (*Role, error) {
 	if role.Extra != nil && rol.Extra != role.Extra {
 		tx.Model(&rol).Update("Extra", role.Extra)
 	}
-
-	tx.Model(&rol).Update("UpdatedAt", time.Now())
 
 	if err = tx.Commit().Error; err != nil {
 		tx.Rollback()
@@ -530,8 +526,6 @@ func (self *StorageImpl) PatchEntity(id string, entity *Entity) (*Entity, error)
 	if entity.Extra != nil && ent.Extra != entity.Extra {
 		tx.Model(&ent).Update("Extra", entity.Extra)
 	}
-
-	tx.Model(&ent).Update("UpdatedAt", time.Now())
 
 	if err = tx.Commit().Error; err != nil {
 		tx.Rollback()
@@ -808,8 +802,6 @@ func (self *StorageImpl) PatchGroup(id string, group *Group) (*Group, error) {
 	if group.Extra != nil && grp.Extra != group.Extra {
 		tx.Model(&grp).Update("Extra", group.Extra)
 	}
-
-	tx.Model(&grp).Update("UpdatedAt", time.Now())
 
 	if err = tx.Commit().Error; err != nil {
 		tx.Rollback()
@@ -1105,8 +1097,6 @@ func (self *StorageImpl) PatchCredential(id string, credential *Credential) (*Cr
 	if credential.Description != nil && credential.Description != cred.Description {
 		tx.Model(&cred).Update("Description", credential.Description)
 	}
-
-	tx.Model(&cred).Update("UpdatedAt", time.Now())
 
 	if err = tx.Commit().Error; err != nil {
 		tx.Rollback()
