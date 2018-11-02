@@ -19,6 +19,7 @@ static_resources:
               routes:
               - match:
                   prefix: "/ai.metathings.service.policyd.PolicydService"
+                route:
                   cluster: policyd
               - match:
                   prefix: "/ai.metathings.service.identityd.IdentitydService"
