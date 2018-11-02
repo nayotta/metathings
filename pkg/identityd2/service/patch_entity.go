@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 
+	passwd_helper "github.com/nayotta/metathings/pkg/common/passwd"
 	storage "github.com/nayotta/metathings/pkg/identityd2/storage"
 	pb "github.com/nayotta/metathings/pkg/proto/identityd2"
 	"google.golang.org/grpc/codes"
@@ -30,7 +31,7 @@ func (self *MetathingsIdentitydService) PatchEntity(ctx context.Context, req *pb
 		*ent.Alias = req.GetAlias().GetValue()
 	}
 	if req.GetPassword() != nil {
-		*ent.Password = req.GetPassword().GetValue()
+		*ent.Password = passwd_helper.MustParsePassword(req.GetPassword().GetValue())
 	}
 
 	if ent, err = self.storage.PatchEntity(idStr, ent); err != nil {
