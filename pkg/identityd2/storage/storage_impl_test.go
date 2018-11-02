@@ -183,16 +183,6 @@ func (suite *storageImplTestSuite) TestDeleteDomain() {
 	suite.Nil(dom)
 }
 
-func (suite *storageImplTestSuite) TestPatchDomainName() {
-	testStr := "test"
-	dom := &Domain{
-		Name: &testStr,
-	}
-	dom, err := suite.s.PatchDomain(testDomainID, dom)
-	suite.Nil(err)
-	suite.Equal(testStr, *dom.Name)
-}
-
 func (suite *storageImplTestSuite) TestPatchDomainAlias() {
 	testStr := "test"
 	dom := &Domain{
@@ -201,16 +191,6 @@ func (suite *storageImplTestSuite) TestPatchDomainAlias() {
 	dom, err := suite.s.PatchDomain(testDomainID, dom)
 	suite.Nil(err)
 	suite.Equal(testStr, *dom.Alias)
-}
-
-func (suite *storageImplTestSuite) TestPatchDomainParentId() {
-	testStr := "test"
-	dom := &Domain{
-		ParentId: &testStr,
-	}
-	dom, err := suite.s.PatchDomain(testDomainID, dom)
-	suite.Nil(err)
-	suite.Equal(testStr, *dom.ParentId)
 }
 
 func (suite *storageImplTestSuite) TestPatchDomainExtra() {
@@ -296,23 +276,9 @@ func (suite *storageImplTestSuite) TestDeleteRole() {
 }
 
 func (suite *storageImplTestSuite) TestPatchRole() {
+	var err error
 	testStr := "test"
-
-	//DomainId
-	rol := &Role{
-		DomainId: &testStr,
-	}
-	rol, err := suite.s.PatchRole(testRoleID, rol)
-	suite.Nil(err)
-	suite.Equal(testStr, *rol.DomainId)
-
-	//Name
-	rol = &Role{
-		Name: &testStr,
-	}
-	rol, err = suite.s.PatchRole(testRoleID, rol)
-	suite.Nil(err)
-	suite.Equal(testStr, *rol.Name)
+	rol := &Role{}
 
 	//Alias
 	rol = &Role{
@@ -414,15 +380,9 @@ func (suite *storageImplTestSuite) TestDeleteEntity() {
 }
 
 func (suite *storageImplTestSuite) TestPatchEntity() {
+	var err error
 	testStr := "test"
-
-	//Name
-	ent := &Entity{
-		Name: &testStr,
-	}
-	ent, err := suite.s.PatchEntity(testEntityID, ent)
-	suite.Nil(err)
-	suite.Equal(testStr, *ent.Name)
+	ent := &Entity{}
 
 	//Alias
 	ent = &Entity{
@@ -533,23 +493,9 @@ func (suite *storageImplTestSuite) TestDeleteGroup() {
 }
 
 func (suite *storageImplTestSuite) TestPatchGroup() {
+	var err error
 	testStr := "test"
-
-	//DomainId
-	grp := &Group{
-		DomainId: &testStr,
-	}
-	grp, err := suite.s.PatchGroup(testGroupID, grp)
-	suite.Nil(err)
-	suite.Equal(testStr, *grp.DomainId)
-
-	//Name
-	grp = &Group{
-		Name: &testStr,
-	}
-	grp, err = suite.s.PatchGroup(testGroupID, grp)
-	suite.Nil(err)
-	suite.Equal(testStr, *grp.Name)
+	grp := &Group{}
 
 	//Alias
 	grp = &Group{
@@ -682,31 +628,9 @@ func (suite *storageImplTestSuite) TestDeleteCredential() {
 }
 
 func (suite *storageImplTestSuite) TestPatchCredential() {
+	var err error
 	testStr := "test"
-
-	//DomainId
-	cred := &Credential{
-		DomainId: &testStr,
-	}
-	cred, err := suite.s.PatchCredential(testCredentialID, cred)
-	suite.Nil(err)
-	suite.Equal(testStr, *cred.DomainId)
-
-	//EntityId
-	cred = &Credential{
-		EntityId: &testStr,
-	}
-	cred, err = suite.s.PatchCredential(testCredentialID, cred)
-	suite.Nil(err)
-	suite.Equal(testStr, *cred.EntityId)
-
-	//Name
-	cred = &Credential{
-		Name: &testStr,
-	}
-	cred, err = suite.s.PatchCredential(testCredentialID, cred)
-	suite.Nil(err)
-	suite.Equal(testStr, *cred.Name)
+	cred := &Credential{}
 
 	//Alias
 	cred = &Credential{
@@ -715,14 +639,6 @@ func (suite *storageImplTestSuite) TestPatchCredential() {
 	cred, err = suite.s.PatchCredential(testCredentialID, cred)
 	suite.Nil(err)
 	suite.Equal(testStr, *cred.Alias)
-
-	//Secret
-	cred = &Credential{
-		Secret: &testStr,
-	}
-	cred, err = suite.s.PatchCredential(testCredentialID, cred)
-	suite.Nil(err)
-	suite.Equal(testStr, *cred.Secret)
 
 	//Decription
 	cred = &Credential{

@@ -1,8 +1,6 @@
 package metathings_identityd2_storage
 
 import (
-	"time"
-
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	log "github.com/sirupsen/logrus"
@@ -119,9 +117,7 @@ func (self *StorageImpl) PatchDomain(id string, domain *Domain) (*Domain, error)
 	if err = tx.First(&dom, "Id = ?", id).Error; err != nil {
 		return nil, err
 	}
-	if domain.Name != nil && dom.Name != domain.Name {
-		tx.Model(&dom).Update("Name", domain.Name)
-	}
+
 	if domain.Alias != nil && dom.Alias != domain.Alias {
 		tx.Model(&dom).Update("Alias", domain.Alias)
 	}
@@ -289,9 +285,6 @@ func (self *StorageImpl) PatchRole(id string, role *Role) (*Role, error) {
 		return nil, err
 	}
 
-	if role.Name != nil && rol.Name != role.Name {
-		tx.Model(&rol).Update("Name", role.Name)
-	}
 	if role.Alias != nil && rol.Alias != role.Alias {
 		tx.Model(&rol).Update("Alias", role.Alias)
 	}
@@ -508,9 +501,6 @@ func (self *StorageImpl) PatchEntity(id string, entity *Entity) (*Entity, error)
 		return nil, err
 	}
 
-	if entity.Name != nil && ent.Name != entity.Name {
-		tx.Model(&ent).Update("Name", entity.Name)
-	}
 	if entity.Alias != nil && ent.Alias != entity.Name {
 		tx.Model(&ent).Update("Alias", entity.Alias)
 	}
@@ -781,9 +771,6 @@ func (self *StorageImpl) PatchGroup(id string, group *Group) (*Group, error) {
 		return nil, err
 	}
 
-	if group.Name != nil && grp.Name != group.Name {
-		tx.Model(&grp).Update("Name", group.Name)
-	}
 	if group.Alias != nil && grp.Alias != group.Alias {
 		tx.Model(&grp).Update("Alias", group.Alias)
 	}
@@ -1073,9 +1060,6 @@ func (self *StorageImpl) PatchCredential(id string, credential *Credential) (*Cr
 		return nil, err
 	}
 
-	if credential.Name != nil && credential.Name != cred.Name {
-		tx.Model(&cred).Update("Name", credential.Name)
-	}
 	if credential.Alias != nil && credential.Alias != cred.Alias {
 		tx.Model(&cred).Update("Alias", credential.Alias)
 	}
