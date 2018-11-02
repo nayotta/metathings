@@ -10,6 +10,7 @@ import (
 
 	cmd_contrib "github.com/nayotta/metathings/cmd/contrib"
 	cmd_helper "github.com/nayotta/metathings/pkg/common/cmd"
+	policy "github.com/nayotta/metathings/pkg/identityd2/policy"
 	service "github.com/nayotta/metathings/pkg/identityd2/service"
 	storage "github.com/nayotta/metathings/pkg/identityd2/storage"
 	pb "github.com/nayotta/metathings/pkg/proto/identityd2"
@@ -22,7 +23,9 @@ type Identityd2Option struct {
 }
 
 func NewIdentityd2Option() *Identityd2Option {
-	return &Identityd2Option{}
+	return &Identityd2Option{
+		ServiceBaseOption: cmd_contrib.CreateServiceBaseOption(),
+	}
 }
 
 var (
@@ -71,8 +74,10 @@ func GetIdentityd2Options() (
 	cmd_contrib.TransportCredentialOptioner,
 	cmd_contrib.StorageOptioner,
 	cmd_contrib.LoggerOptioner,
+	cmd_contrib.ServiceEndpointsOptioner,
 ) {
 	return identityd2_opt,
+		identityd2_opt,
 		identityd2_opt,
 		identityd2_opt,
 		identityd2_opt,
@@ -123,9 +128,11 @@ func initIdentityd2() error {
 		),
 	)
 
-	ctx := context.Background()
-	app.Start(ctx)
-	defer app.Stop(ctx)
+	app.Run()
+
+	if err := app.Err(); err != nil {
+		return err
+	}
 
 	return nil
 }
@@ -138,8 +145,10 @@ func runIdentityd2() error {
 			cmd_contrib.NewLogger("identityd2"),
 			cmd_contrib.NewListener,
 			cmd_contrib.NewGrpcServer,
+			cmd_contrib.NewClientFactory,
 			NewIdentityd2Storage,
 			NewMetathingsIdentitydServiceOption,
+			policy.NewEnforcer,
 			service.NewMetathingsIdentitydService,
 		),
 		fx.Invoke(

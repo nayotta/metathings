@@ -28,6 +28,10 @@ func (self *MetathingsIdentitydService) DeleteRole(ctx context.Context, req *pb.
 	}
 	role_id_str := role.GetId().GetValue()
 
+	if err = self.enforcer.RemoveObjectFromKind(role_id_str, KIND_ROLE); err != nil {
+		self.logger.WithError(err).Warningf("failed to remove role from kind in enforcer")
+	}
+
 	if err = self.storage.DeleteRole(role_id_str); err != nil {
 		self.logger.WithError(err).Errorf("failed to delete role in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())

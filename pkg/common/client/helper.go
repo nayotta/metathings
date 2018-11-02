@@ -23,8 +23,10 @@ import (
 	switcher_pb "github.com/nayotta/metathings/pkg/proto/switcher"
 )
 
+type ClientType int32
+
 const (
-	DEFAULT_CONFIG = iota
+	DEFAULT_CONFIG ClientType = iota
 	POLICYD_CONFIG
 	IDENTITYD2_CONFIG
 	IDENTITYD_CONFIG
@@ -42,6 +44,31 @@ const (
 	OVERFLOW_CONFIG
 )
 
+var (
+	client_type_names = []string{
+		"default",
+		"policyd",
+		"identityd2",
+		"identityd",
+		"cored",
+		"camerad",
+		"sensord",
+		"agent",
+		"echo",
+		"switcher",
+		"motor",
+		"camera",
+		"servo",
+		"sensor",
+		"streamd",
+		"overflow",
+	}
+)
+
+func (self ClientType) String() string {
+	return client_type_names[self]
+}
+
 func parseAddress(addr string) string {
 	if !strings.Contains(addr, ":") {
 		addr = fmt.Sprintf("%v:%v", addr, constant_helper.CONSTANT_METATHINGSD_DEFAULT_PORT)
@@ -50,7 +77,13 @@ func parseAddress(addr string) string {
 }
 
 type CloseFn func()
-type ServiceConfigs map[int]ServiceConfig
+
+type ServiceConfigs map[ClientType]ServiceConfig
+
+func (self ServiceConfigs) SetServiceConfig(typ ClientType, cfg ServiceConfig) {
+	self[typ] = cfg
+}
+
 type DialOptionFn func() []grpc.DialOption
 
 type ServiceConfig struct {
@@ -62,7 +95,7 @@ type ClientFactory struct {
 	configs             ServiceConfigs
 }
 
-func (f *ClientFactory) NewConnection(cfg_val int, opts ...grpc.DialOption) (*grpc.ClientConn, error) {
+func (f *ClientFactory) NewConnection(cfg_val ClientType, opts ...grpc.DialOption) (*grpc.ClientConn, error) {
 	if f.defaultDialOptionFn != nil {
 		opts = append(opts, f.defaultDialOptionFn()...)
 	}

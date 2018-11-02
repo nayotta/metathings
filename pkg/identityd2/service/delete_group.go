@@ -9,10 +9,12 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
+	storage "github.com/nayotta/metathings/pkg/identityd2/storage"
 	pb "github.com/nayotta/metathings/pkg/proto/identityd2"
 )
 
 func (self *MetathingsIdentitydService) DeleteGroup(ctx context.Context, req *pb.DeleteGroupRequest) (*empty.Empty, error) {
+	var grp_s *storage.Group
 	var err error
 
 	if err = req.Validate(); err != nil {
@@ -27,6 +29,20 @@ func (self *MetathingsIdentitydService) DeleteGroup(ctx context.Context, req *pb
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 	grp_id_str := grp.GetId().GetValue()
+
+	if grp_s, err = self.storage.GetGroup(grp_id_str); err != nil {
+		self.logger.WithError(err).Errorf("failed to get group in storage")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
+	dom_id_str := *grp_s.DomainId
+	if err = self.enforcer.RemoveGroup(dom_id_str, grp_id_str); err != nil {
+		self.logger.WithError(err).Warningf("failed to remove group in enforcer")
+	}
+
+	if err = self.enforcer.RemoveObjectFromKind(grp_id_str, KIND_GROUP); err != nil {
+		self.logger.WithError(err).Warningf("failed to remove group from kind in enforcer")
+	}
 
 	if err = self.storage.DeleteGroup(grp_id_str); err != nil {
 		self.logger.WithError(err).Errorf("failed to delete group in storage")

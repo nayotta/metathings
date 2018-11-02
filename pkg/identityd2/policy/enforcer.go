@@ -7,9 +7,11 @@ var (
 )
 
 type Enforcer interface {
-	Enforce(domain, groups, subject, object, action interface{}) error
-	AddPolicy(domain, group, subject, object, action interface{}) error
-	RemovePolicy(domain, group, subject, object, action interface{}) error
-	AddSubjectToRole(domain, group, subject, role interface{}) error
-	RemoveSubjectFromRole(domain, group, subject, role interface{}) error
+	Enforce(domain, group, subject, object, action interface{}) error
+	AddGroup(domain, group string) error
+	RemoveGroup(domain, group string) error
+	AddSubjectToRole(subject, role string) error
+	RemoveSubjectFromRole(subject, role string) error
+	AddObjectToKind(object, kind string) error
+	RemoveObjectFromKind(object, kind string) error
 }

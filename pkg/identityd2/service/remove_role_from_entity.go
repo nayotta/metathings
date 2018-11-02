@@ -15,6 +15,7 @@ import (
 
 func (self *MetathingsIdentitydService) RemoveRoleFromEntity(ctx context.Context, req *pb.RemoveRoleFromEntityRequest) (*empty.Empty, error) {
 	var e *storage.Entity
+	var r *storage.Role
 	var err error
 
 	if err = req.Validate(); err != nil {
@@ -47,6 +48,15 @@ func (self *MetathingsIdentitydService) RemoveRoleFromEntity(ctx context.Context
 		err = errors.New("role not in entity")
 		self.logger.WithError(err).Warningf("failed to get role in storage")
 		return nil, status.Errorf(codes.FailedPrecondition, err.Error())
+	}
+
+	if r, err = self.storage.GetRole(role_id_str); err != nil {
+		self.logger.WithError(err).Errorf("failed to get role in storage")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
+	if err = self.enforcer.RemoveSubjectFromRole(ent_id_str, *r.Name); err != nil {
+		self.logger.WithError(err).Warningf("failed to remove subject from role in enforcer")
 	}
 
 	if err = self.storage.RemoveRoleFromEntity(ent_id_str, role_id_str); err != nil {

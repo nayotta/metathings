@@ -18,6 +18,9 @@ static_resources:
               - "*"
               routes:
               - match:
+                  prefix: "/ai.metathings.service.policyd.PolicydService"
+                  cluster: policyd
+              - match:
                   prefix: "/ai.metathings.service.identityd.IdentitydService"
                 route:
                   cluster: identityd
@@ -45,6 +48,15 @@ static_resources:
           - name: envoy.router
             config: {}
   clusters:
+  - name: policyd
+    connect_timeout: 5s
+    type: strict_dns
+    lb_policy: round_robin
+    http2_protocol_options: {}
+    hosts:
+    - socket_address:
+        address: policyd
+        port_value: 4001
   - name: identityd
     connect_timeout: 5s
     type: strict_dns

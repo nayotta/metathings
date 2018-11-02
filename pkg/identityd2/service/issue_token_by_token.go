@@ -49,6 +49,11 @@ func (self *MetathingsIdentitydService) IssueTokenByToken(ctx context.Context, r
 	}
 
 	tkn := new_token(tkn_s.DomainId, tkn_s.EntityId, tkn_s.CredentialId, NONEXPIRATION)
+
+	if err = self.add_token_to_kind_in_enforcer(*tkn.Id); err != nil {
+		return nil, err
+	}
+
 	if tkn_s, err = self.storage.CreateToken(tkn); err != nil {
 		self.logger.WithError(err).Errorf("failed to create token in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())

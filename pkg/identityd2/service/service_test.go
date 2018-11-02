@@ -15,8 +15,8 @@ type mock_enforcer struct {
 	mock.Mock
 }
 
-func (self *mock_enforcer) Enforce(domain, groups, subject, object, action interface{}) error {
-	self.Called(domain, groups, subject, object, action)
+func (self *mock_enforcer) Enforce(domain, group, subject, object, action interface{}) error {
+	self.Called(domain, group, subject, object, action)
 	if action.(string) == "pass" {
 		return nil
 	} else {
@@ -24,19 +24,27 @@ func (self *mock_enforcer) Enforce(domain, groups, subject, object, action inter
 	}
 }
 
-func (self *mock_enforcer) AddPolicy(domain, group, subject, object, action interface{}) error {
+func (self *mock_enforcer) AddGroup(domain, group string) error {
 	panic("unimplemented")
 }
 
-func (self *mock_enforcer) RemovePolicy(domain, group, subject, object, action interface{}) error {
+func (self *mock_enforcer) RemoveGroup(domain, group string) error {
 	panic("unimplemented")
 }
 
-func (self *mock_enforcer) AddSubjectToRole(domain, group, subject, role interface{}) error {
+func (self *mock_enforcer) AddSubjectToRole(subject, role string) error {
 	panic("unimplemented")
 }
 
-func (self *mock_enforcer) RemoveSubjectFromRole(domain, group, subject, role interface{}) error {
+func (self *mock_enforcer) RemoveSubjectFromRole(subject, role string) error {
+	panic("unimplemented")
+}
+
+func (self *mock_enforcer) AddObjectToKind(object, kind string) error {
+	panic("unimplemented")
+}
+
+func (self *mock_enforcer) RemoveObjectFromKind(object, kind string) error {
 	panic("unimplemented")
 }
 
@@ -92,11 +100,11 @@ func (self *metathingsIdentitydService_enforceTestSuite) Test_enforce_pass() {
 	self.enforcer.AssertCalled(self.T(), "Enforce", self.domain, self.groups, self.subject, self.object, self.action_pass)
 }
 
-// func (self *metathingsIdentitydService_enforceTestSuite) Test_enforce_nopass() {
-// 	err := self.service.enforce(self.ctx, self.object, self.action_nopass)
-// 	self.NotNil(err)
-// 	self.enforcer.AssertCalled(self.T(), "Enforce", self.domain, self.groups, self.subject, self.object, self.action_nopass)
-// }
+func (self *metathingsIdentitydService_enforceTestSuite) Test_enforce_nopass() {
+	err := self.service.enforce(self.ctx, self.object, self.action_nopass)
+	self.NotNil(err)
+	self.enforcer.AssertCalled(self.T(), "Enforce", self.domain, self.groups, self.subject, self.object, self.action_nopass)
+}
 
 func TestMetathingsIdentitydService_enforceTestSuite(t *testing.T) {
 	suite.Run(t, new(metathingsIdentitydService_enforceTestSuite))
