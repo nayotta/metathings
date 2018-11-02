@@ -9,6 +9,7 @@ import (
 	"google.golang.org/grpc/status"
 
 	id_helper "github.com/nayotta/metathings/pkg/common/id"
+	passwd_helper "github.com/nayotta/metathings/pkg/common/passwd"
 	pb_helper "github.com/nayotta/metathings/pkg/common/protobuf"
 	storage "github.com/nayotta/metathings/pkg/identityd2/storage"
 	pb "github.com/nayotta/metathings/pkg/proto/identityd2"
@@ -65,7 +66,7 @@ func (self *MetathingsIdentitydService) CreateCredential(ctx context.Context, re
 	if req.GetSecret() != nil {
 		srt_str = req.GetSecret().GetValue()
 	}
-	srt_str = must_parse_password(srt_str)
+	srt_str = passwd_helper.MustParsePassword(srt_str)
 
 	desc_str := ""
 	if req.GetDescription() != nil {

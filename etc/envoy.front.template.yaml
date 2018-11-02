@@ -19,11 +19,12 @@ static_resources:
               routes:
               - match:
                   prefix: "/ai.metathings.service.policyd.PolicydService"
+                route:
                   cluster: policyd
               - match:
-                  prefix: "/ai.metathings.service.identityd.IdentitydService"
+                  prefix: "/ai.metathings.service.identityd2.IdentitydService"
                 route:
-                  cluster: identityd
+                  cluster: identityd2
               - match:
                   prefix: "/ai.metathings.service.cored.CoredService"
                 route:
@@ -57,14 +58,14 @@ static_resources:
     - socket_address:
         address: policyd
         port_value: 4001
-  - name: identityd
+  - name: identityd2
     connect_timeout: 5s
     type: strict_dns
     lb_policy: round_robin
     http2_protocol_options: {}
     hosts:
     - socket_address:
-        address: identityd
+        address: identityd2
         port_value: 5000
   - name: cored
     connect_timeout: 5s

@@ -17,7 +17,7 @@ func (self *StorageImpl) list_view_children_domains_by_domain_id(id string) ([]*
 	var doms []*Domain
 	var err error
 
-	if err = self.db.Select("id").Find(&doms, "parent_id = ?", id).Error; err != nil {
+	if err = self.db.Select("id").Where("parent_id = ?", id).Take(&doms).Error; err != nil {
 		return nil, err
 	}
 
@@ -1152,34 +1152,34 @@ func (self *StorageImpl) ListCredentials(cred *Credential) ([]*Credential, error
 
 func (self *StorageImpl) get_token(id string) (*Token, error) {
 	var tkn Token
+	var tknp *Token
 	var err error
 
 	if err = self.db.First(&tkn, "id = ?", id).Error; err != nil {
 		return nil, err
 	}
 
-	tknRet, err := self.internal_get_token(&tkn)
-	if err != nil {
+	if tknp, err = self.internal_get_token(&tkn); err != nil {
 		return nil, err
 	}
 
-	return tknRet, nil
+	return tknp, nil
 }
 
 func (self *StorageImpl) get_token_by_text(text string) (*Token, error) {
 	var tkn Token
+	var tknp *Token
 	var err error
 
 	if err = self.db.First(&tkn, "text = ?", text).Error; err != nil {
 		return nil, err
 	}
 
-	tknRet, err := self.internal_get_token(&tkn)
-	if err != nil {
+	if tknp, err = self.internal_get_token(&tkn); err != nil {
 		return nil, err
 	}
 
-	return tknRet, nil
+	return tknp, nil
 }
 
 func (self *StorageImpl) list_tokens(tkn *Token) ([]*Token, error) {
@@ -1223,10 +1223,18 @@ func (self *StorageImpl) internal_get_token(tkn *Token) (*Token, error) {
 
 	tkn.Domain = &Domain{Id: tkn.DomainId}
 	tkn.Entity = &Entity{Id: tkn.EntityId}
-	tkn.Credential = &Credential{Id: tkn.CredentialId}
-	if tkn.Roles, err = self.list_view_credential_roles(*tkn.CredentialId); err != nil {
-		return nil, err
+
+	if tkn.CredentialId != nil {
+		tkn.Credential = &Credential{Id: tkn.CredentialId}
+		if tkn.Roles, err = self.list_view_credential_roles(*tkn.CredentialId); err != nil {
+			return nil, err
+		}
+	} else {
+		if tkn.Roles, err = self.list_view_roles_by_entity_id(*tkn.EntityId); err != nil {
+			return nil, err
+		}
 	}
+
 	if tkn.Groups, err = self.list_view_groups_by_entity_id(*tkn.EntityId); err != nil {
 		return nil, err
 	}

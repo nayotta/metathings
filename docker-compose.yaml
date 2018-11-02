@@ -29,20 +29,20 @@ services:
     volumes:
     - ./etc/policyd.yaml:/etc/metathings/policyd.yaml
     networks:
-    - metathings-policy
+    - metathings-backend
     expose:
     - "4001"
     restart: on-failure
 
-  identityd:
+  identityd2:
     environment:
     - MTD_STAGE=debug
     build:
       context: .
-      dockerfile: dockerfile/Dockerfile.identityd
-    image: nayotta/identityd
+      dockerfile: dockerfile/Dockerfile.identityd2
+    image: nayotta/identityd2
     volumes:
-    - ./etc/identityd.yaml:/etc/metathings/identityd.yaml
+    - ./etc/identityd2.yaml:/etc/metathings/identityd2.yaml
     networks:
     - metathings-backend
     expose:
@@ -125,6 +125,3 @@ networks:
   metathings-kafka:
     external:
       name: metathings-kafka
-  metathings-policy:
-    external:
-      name: metathings-policy

@@ -29,27 +29,24 @@ services:
     volumes:
     - .:/go/src/github.com/nayotta/metathings
     - ./data/storage:/var/metathings/storage
-    - ./etc/policyd.yaml:/etc/metathings/policyd.yaml
-    - ./etc/policyd-model.conf:/etc/metathings/policyd-model.conf
-    - ./etc/policyd-policy.csv:/etc/metathings/policyd-policy.csv
-    - ./cert/policyd-server.crt:/etc/metathings/cert/policyd-server.crt
-    - ./cert/policyd-server.key:/etc/metathings/cert/policyd-server.key
+    - ./etc:/etc/metathings
     networks:
-    - metathings-policy
+    - metathings-backend
     expose:
     - "4001"
     restart: on-failure
 
-  identityd:
+  identityd2:
     environment:
     - MTD_STAGE=dev
     build:
       context: .
-      dockerfile: dockerfile/Dockerfile.identityd.dev
-    image: nayotta/metathings-identityd-development
+      dockerfile: dockerfile/Dockerfile.identityd2.dev
+    image: nayotta/metathings-identityd2-development
     volumes:
     - .:/go/src/github.com/nayotta/metathings
-    - ./etc/identityd.yaml:/etc/metathings/identityd.yaml
+    - ./data/storage:/var/metathings/storage
+    - ./etc:/etc/metathings
     networks:
     - metathings-backend
     expose:
@@ -136,6 +133,3 @@ networks:
   metathings-kafka:
     external:
       name: metathings-kafka
-  metathings-policy:
-    external:
-      name: metathings-policy

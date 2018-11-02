@@ -1,0 +1,5 @@
+FROM nayotta/metathings-development
+
+COPY ./etc/identityd2.yaml /etc/metathings/identityd2.yaml
+COPY ./script/identityd2.dev_start.sh /usr/local/sbin/identityd2.dev_start.sh
+CMD /usr/local/sbin/identityd2.dev_start.sh

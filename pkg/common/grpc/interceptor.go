@@ -10,10 +10,16 @@ import (
 
 func UnaryServerInterceptor() grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+		var cast_srv grpc_auth.ServiceAuthFuncOverride
 		var new_ctx context.Context
 		var err error
+		var ok bool
 
-		if new_ctx, err = info.Server.(grpc_auth.ServiceAuthFuncOverride).AuthFuncOverride(ctx, info.FullMethod); err != nil {
+		if cast_srv, ok = info.Server.(grpc_auth.ServiceAuthFuncOverride); !ok {
+			return handler(new_ctx, req)
+		}
+
+		if new_ctx, err = cast_srv.AuthFuncOverride(ctx, info.FullMethod); err != nil {
 			return nil, err
 		}
 
