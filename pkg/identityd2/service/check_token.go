@@ -23,7 +23,7 @@ func (self *MetathingsIdentitydService) CheckToken(ctx context.Context, req *pb.
 	}
 
 	tkn := req.GetToken()
-	if tkn.GetText() != nil {
+	if tkn.GetText() == nil {
 		err = errors.New("token.text is empty")
 		self.logger.WithError(err).Warningf("failed to validate request data")
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())

@@ -7,6 +7,7 @@ import (
 	"google.golang.org/grpc/status"
 
 	id_helper "github.com/nayotta/metathings/pkg/common/id"
+	passwd_helper "github.com/nayotta/metathings/pkg/common/passwd"
 	storage "github.com/nayotta/metathings/pkg/identityd2/storage"
 	pb "github.com/nayotta/metathings/pkg/proto/identityd2"
 )
@@ -25,7 +26,7 @@ func (self *MetathingsIdentitydService) CreateEntity(ctx context.Context, req *p
 	}
 
 	extra_str := must_parse_extra(req.Extra)
-	pwd_str := must_parse_password(req.GetPassword().GetValue())
+	pwd_str := passwd_helper.MustParsePassword(req.GetPassword().GetValue())
 
 	if err = self.enforcer.AddObjectToKind(ent_id_str, KIND_ENTITY); err != nil {
 		self.logger.WithError(err).Errorf("failed to add entity to kind in enforcer")

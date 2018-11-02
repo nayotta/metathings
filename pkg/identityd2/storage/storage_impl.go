@@ -15,7 +15,7 @@ func (self *StorageImpl) list_view_children_domains_by_domain_id(id string) ([]*
 	var doms []*Domain
 	var err error
 
-	if err = self.db.Select("id").Find(&doms, "parent_id = ?", id).Error; err != nil {
+	if err = self.db.Select("id").Where("parent_id = ?", id).Take(&doms).Error; err != nil {
 		return nil, err
 	}
 
@@ -24,9 +24,9 @@ func (self *StorageImpl) list_view_children_domains_by_domain_id(id string) ([]*
 
 func (self *StorageImpl) get_domain(id string) (*Domain, error) {
 	var err error
-	var dom *Domain
+	var dom Domain
 
-	if err = self.db.First(dom, "id = ?", id).Error; err != nil {
+	if err = self.db.First(&dom, "id = ?", id).Error; err != nil {
 		return nil, err
 	}
 
@@ -40,7 +40,7 @@ func (self *StorageImpl) get_domain(id string) (*Domain, error) {
 		return nil, err
 	}
 
-	return dom, nil
+	return &dom, nil
 }
 
 func (self *StorageImpl) list_domains(dom *Domain) ([]*Domain, error) {
@@ -173,7 +173,7 @@ func (self *StorageImpl) RemoveEntityFromDomain(domain_id, entity_id string) err
 }
 
 func (self *StorageImpl) get_role(id string) (*Role, error) {
-	var role *Role
+	var role Role
 	var err error
 
 	if err = self.db.First(&role, "id = ?", id).Error; err != nil {
@@ -184,7 +184,7 @@ func (self *StorageImpl) get_role(id string) (*Role, error) {
 		Id: role.DomainId,
 	}
 
-	return role, nil
+	return &role, nil
 }
 
 func (self *StorageImpl) list_roles(role *Role) ([]*Role, error) {
@@ -332,7 +332,7 @@ func (self *StorageImpl) list_view_roles_by_entity_id(id string) ([]*Role, error
 }
 
 func (self *StorageImpl) get_entity(id string) (*Entity, error) {
-	var ent *Entity
+	var ent Entity
 	var err error
 
 	if err = self.db.First(&ent, "id = ?", id).Error; err != nil {
@@ -351,7 +351,30 @@ func (self *StorageImpl) get_entity(id string) (*Entity, error) {
 		return nil, err
 	}
 
-	return ent, nil
+	return &ent, nil
+}
+
+func (self *StorageImpl) get_entity_by_name(name string) (*Entity, error) {
+	var ent Entity
+	var err error
+
+	if err = self.db.First(&ent, "name = ?", name).Error; err != nil {
+		return nil, err
+	}
+
+	if ent.Domains, err = self.list_view_domains_by_entity_id(*ent.Id); err != nil {
+		return nil, err
+	}
+
+	if ent.Groups, err = self.list_view_groups_by_entity_id(*ent.Id); err != nil {
+		return nil, err
+	}
+
+	if ent.Roles, err = self.list_view_roles_by_entity_id(*ent.Id); err != nil {
+		return nil, err
+	}
+
+	return &ent, nil
 }
 
 func (self *StorageImpl) list_entities(ent *Entity) ([]*Entity, error) {
@@ -436,7 +459,17 @@ func (self *StorageImpl) GetEntity(id string) (*Entity, error) {
 }
 
 func (self *StorageImpl) GetEntityByName(name string) (*Entity, error) {
-	panic("unimplemented")
+	var ent *Entity
+	var err error
+
+	if ent, err = self.get_entity_by_name(name); err != nil {
+		self.logger.WithError(err).Debugf("failed to get entity")
+		return nil, err
+	}
+
+	self.logger.WithField("name", name).Debugf("get entity by name")
+
+	return ent, nil
 }
 
 func (self *StorageImpl) ListEntities(ent *Entity) ([]*Entity, error) {
@@ -553,7 +586,7 @@ func (self *StorageImpl) list_view_all_roles_by_entity_id(id string) ([]*Role, e
 }
 
 func (self *StorageImpl) get_group(id string) (*Group, error) {
-	var grp *Group
+	var grp Group
 	var err error
 
 	if err = self.db.First(&grp, "id = ?", id).Error; err != nil {
@@ -582,7 +615,7 @@ func (self *StorageImpl) get_group(id string) (*Group, error) {
 	}
 	grp.Roles = roles
 
-	return grp, nil
+	return &grp, nil
 }
 
 func (self *StorageImpl) list_groups(grp *Group) ([]*Group, error) {
@@ -766,7 +799,7 @@ func (self *StorageImpl) RemoveEntityFromGroup(entity_id, group_id string) error
 }
 
 func (self *StorageImpl) get_credential(id string) (*Credential, error) {
-	var cred *Credential
+	var cred Credential
 	var err error
 
 	if err = self.db.First(&cred, "id = ?", id).Error; err != nil {
@@ -776,22 +809,22 @@ func (self *StorageImpl) get_credential(id string) (*Credential, error) {
 	cred.Domain = &Domain{Id: cred.DomainId}
 	cred.Entity = &Entity{Id: cred.EntityId}
 
-	if cred.Roles, err = self.internal_list_view_credential_roles(cred); err != nil {
+	if cred.Roles, err = self.internal_list_view_credential_roles(&cred); err != nil {
 		return nil, err
 	}
 
-	return cred, nil
+	return &cred, nil
 }
 
 func (self *StorageImpl) list_view_credential_roles(id string) ([]*Role, error) {
-	var cred *Credential
+	var cred Credential
 	var err error
 
 	if err = self.db.Select("id", "entity_id").First(&cred, "id = ?", id).Error; err != nil {
 		return nil, err
 	}
 
-	return self.internal_list_view_credential_roles(cred)
+	return self.internal_list_view_credential_roles(&cred)
 }
 
 func (self *StorageImpl) internal_list_view_credential_roles(cred *Credential) ([]*Role, error) {
@@ -945,33 +978,35 @@ func (self *StorageImpl) ListCredentials(cred *Credential) ([]*Credential, error
 }
 
 func (self *StorageImpl) get_token(id string) (*Token, error) {
-	var tkn *Token
+	var tkn Token
+	var tknp *Token
 	var err error
 
 	if err = self.db.First(&tkn, "id = ?", id).Error; err != nil {
 		return nil, err
 	}
 
-	if tkn, err = self.internal_get_token(tkn); err != nil {
+	if tknp, err = self.internal_get_token(&tkn); err != nil {
 		return nil, err
 	}
 
-	return tkn, nil
+	return tknp, nil
 }
 
 func (self *StorageImpl) get_token_by_text(text string) (*Token, error) {
-	var tkn *Token
+	var tkn Token
+	var tknp *Token
 	var err error
 
 	if err = self.db.First(&tkn, "text = ?", text).Error; err != nil {
 		return nil, err
 	}
 
-	if tkn, err = self.internal_get_token(tkn); err != nil {
+	if tknp, err = self.internal_get_token(&tkn); err != nil {
 		return nil, err
 	}
 
-	return tkn, nil
+	return tknp, nil
 }
 
 func (self *StorageImpl) list_tokens(tkn *Token) ([]*Token, error) {
@@ -1015,10 +1050,18 @@ func (self *StorageImpl) internal_get_token(tkn *Token) (*Token, error) {
 
 	tkn.Domain = &Domain{Id: tkn.DomainId}
 	tkn.Entity = &Entity{Id: tkn.EntityId}
-	tkn.Credential = &Credential{Id: tkn.CredentialId}
-	if tkn.Roles, err = self.list_view_credential_roles(*tkn.CredentialId); err != nil {
-		return nil, err
+
+	if tkn.CredentialId != nil {
+		tkn.Credential = &Credential{Id: tkn.CredentialId}
+		if tkn.Roles, err = self.list_view_credential_roles(*tkn.CredentialId); err != nil {
+			return nil, err
+		}
+	} else {
+		if tkn.Roles, err = self.list_view_roles_by_entity_id(*tkn.EntityId); err != nil {
+			return nil, err
+		}
 	}
+
 	if tkn.Groups, err = self.list_view_groups_by_entity_id(*tkn.EntityId); err != nil {
 		return nil, err
 	}

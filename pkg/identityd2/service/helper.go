@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/golang/protobuf/ptypes/wrappers"
-	"golang.org/x/crypto/bcrypt"
 
 	id_helper "github.com/nayotta/metathings/pkg/common/id"
 	pb_helper "github.com/nayotta/metathings/pkg/common/protobuf"
@@ -64,15 +63,6 @@ func must_parse_extra(x map[string]*wrappers.StringValue) string {
 	}
 
 	return string(buf)
-}
-
-func must_parse_password(x string) string {
-	buf, _ := bcrypt.GenerateFromPassword([]byte(x), bcrypt.DefaultCost)
-	return string(buf)
-}
-
-func validate_password(hash, passwd string) bool {
-	return bcrypt.CompareHashAndPassword([]byte(hash), []byte(passwd)) == nil
 }
 
 func copy_extra(x string) map[string]string {

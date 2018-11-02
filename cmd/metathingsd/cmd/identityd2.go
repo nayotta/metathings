@@ -10,6 +10,8 @@ import (
 
 	cmd_contrib "github.com/nayotta/metathings/cmd/contrib"
 	cmd_helper "github.com/nayotta/metathings/pkg/common/cmd"
+	id_helper "github.com/nayotta/metathings/pkg/common/id"
+	passwd_helper "github.com/nayotta/metathings/pkg/common/passwd"
 	policy "github.com/nayotta/metathings/pkg/identityd2/policy"
 	service "github.com/nayotta/metathings/pkg/identityd2/service"
 	storage "github.com/nayotta/metathings/pkg/identityd2/storage"
@@ -99,25 +101,82 @@ func initIdentityd2() error {
 		fx.Provide(
 			GetIdentityd2Options,
 			cmd_contrib.NewLogger("identityd2"),
+			cmd_contrib.NewClientFactory,
+			policy.NewEnforcer,
 			NewIdentityd2Storage,
 		),
 		fx.Invoke(
-			func(lc fx.Lifecycle, stor storage.Storage, logger log.FieldLogger) {
+			func(lc fx.Lifecycle, stor storage.Storage, enf policy.Enforcer, logger log.FieldLogger) {
 				lc.Append(fx.Hook{
 					OnStart: func(context.Context) error {
-						id_str := "default"
-						name_str := "default"
-						alias_str := "default"
-						parent_id_str := ""
+						var err error
+
+						dom_id_str := "default"
+						dom_name_str := "default"
+						dom_alias_str := "default"
+						dom_parent_id_str := ""
 
 						dom := &storage.Domain{
-							Id:       &id_str,
-							Name:     &name_str,
-							Alias:    &alias_str,
-							ParentId: &parent_id_str,
+							Id:       &dom_id_str,
+							Name:     &dom_name_str,
+							Alias:    &dom_alias_str,
+							ParentId: &dom_parent_id_str,
 						}
 
-						if _, err := stor.CreateDomain(dom); err != nil {
+						if _, err = stor.CreateDomain(dom); err != nil {
+							return err
+						}
+
+						if err = enf.AddGroup(dom_id_str, policy.UNGROUPED); err != nil {
+							return err
+						}
+
+						sysadmin_id_str := id_helper.NewId()
+						sysadmin_name_str := "sysadmin"
+						sysadmin_alias_str := "sysadmin"
+						sysadmin := &storage.Role{
+							Id:    &sysadmin_id_str,
+							Name:  &sysadmin_name_str,
+							Alias: &sysadmin_alias_str,
+						}
+
+						if _, err = stor.CreateRole(sysadmin); err != nil {
+							return err
+						}
+
+						if err = enf.AddObjectToKind(sysadmin_id_str, service.KIND_ROLE); err != nil {
+							return err
+						}
+
+						admin_id_str := id_helper.NewId()
+						admin_name_str := "admin"
+						admin_alias_str := "admin"
+						admin_passwd_str := passwd_helper.MustParsePassword("admin")
+
+						admin := &storage.Entity{
+							Id:       &admin_id_str,
+							Name:     &admin_name_str,
+							Alias:    &admin_alias_str,
+							Password: &admin_passwd_str,
+						}
+
+						if _, err = stor.CreateEntity(admin); err != nil {
+							return err
+						}
+
+						if err = enf.AddObjectToKind(admin_id_str, service.KIND_ENTITY); err != nil {
+							return err
+						}
+
+						if err = stor.AddRoleToEntity(admin_id_str, sysadmin_id_str); err != nil {
+							return err
+						}
+
+						if err = enf.AddSubjectToRole(admin_id_str, sysadmin_name_str); err != nil {
+							return err
+						}
+
+						if err = stor.AddEntityToDomain(dom_id_str, admin_id_str); err != nil {
 							return err
 						}
 
@@ -128,7 +187,9 @@ func initIdentityd2() error {
 		),
 	)
 
-	app.Run()
+	ctx := context.Background()
+	app.Start(ctx)
+	defer app.Stop(ctx)
 
 	if err := app.Err(); err != nil {
 		return err

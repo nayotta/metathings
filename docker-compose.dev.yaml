@@ -30,23 +30,23 @@ services:
     - .:/go/src/github.com/nayotta/metathings
     - ./data/storage:/var/metathings/storage
     - ./etc:/etc/metathings
-    - ./cert:/etc/metathings/cert
     networks:
     - metathings-backend
     expose:
     - "4001"
     restart: on-failure
 
-  identityd:
+  identityd2:
     environment:
     - MTD_STAGE=dev
     build:
       context: .
-      dockerfile: dockerfile/Dockerfile.identityd.dev
-    image: nayotta/metathings-identityd-development
+      dockerfile: dockerfile/Dockerfile.identityd2.dev
+    image: nayotta/metathings-identityd2-development
     volumes:
     - .:/go/src/github.com/nayotta/metathings
-    - ./etc/identityd.yaml:/etc/metathings/identityd.yaml
+    - ./data/storage:/var/metathings/storage
+    - ./etc:/etc/metathings
     networks:
     - metathings-backend
     expose:

@@ -7,6 +7,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
+	passwd_helper "github.com/nayotta/metathings/pkg/common/passwd"
 	storage "github.com/nayotta/metathings/pkg/identityd2/storage"
 	pb "github.com/nayotta/metathings/pkg/proto/identityd2"
 	log "github.com/sirupsen/logrus"
@@ -73,7 +74,7 @@ func (self *MetathingsIdentitydService) IssueTokenByPassword(ctx context.Context
 		return nil, status.Errorf(codes.Unauthenticated, err.Error())
 	}
 
-	if !validate_password(*ent_s.Password, ent_passwd_str) {
+	if !passwd_helper.ValidatePassword(*ent_s.Password, ent_passwd_str) {
 		err = ErrUnauthenticated
 		self.logger.WithError(err).Warningf("failed to validate password")
 		return nil, status.Errorf(codes.Unauthenticated, err.Error())
