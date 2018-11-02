@@ -52,5 +52,7 @@ func (self *MetathingsIdentitydService) ListCredentials(ctx context.Context, req
 		res.Credentials = append(res.Credentials, copy_credential(cred))
 	}
 
+	self.logger.Debugf("list credentials")
+
 	return res, nil
 }

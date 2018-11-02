@@ -39,7 +39,7 @@ func (self *MetathingsIdentitydService) PatchDomain(ctx context.Context, req *pb
 		Domain: copy_domain(dom),
 	}
 
-	self.logger.WithField("id", idStr).Debugf("patch domain")
+	self.logger.WithField("id", idStr).Infof("patch domain")
 
 	return res, nil
 }

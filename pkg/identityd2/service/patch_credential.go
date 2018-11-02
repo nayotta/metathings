@@ -43,7 +43,7 @@ func (self *MetathingsIdentitydService) PatchCredential(ctx context.Context, req
 		Credential: copy_credential(cred),
 	}
 
-	self.logger.WithField("id", idStr).Debugf("patch credential")
+	self.logger.WithField("id", idStr).Infof("patch credential")
 
 	return res, nil
 }

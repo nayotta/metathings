@@ -47,5 +47,7 @@ func (self *MetathingsIdentitydService) ListGroups(ctx context.Context, req *pb.
 		res.Groups = append(res.Groups, copy_group(grp))
 	}
 
+	self.logger.Debugf("list groups")
+
 	return res, nil
 }
