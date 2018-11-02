@@ -111,21 +111,20 @@ func (self *StorageImpl) DeleteDomain(id string) error {
 func (self *StorageImpl) PatchDomain(id string, domain *Domain) (*Domain, error) {
 	var err error
 	var dom Domain
+	var domNew Domain
 
-	tx := self.db.Begin()
-
-	if err = tx.First(&dom, "Id = ?", id).Error; err != nil {
+	if err = self.db.First(&dom, "Id = ?", id).Error; err != nil {
+		self.logger.WithError(err).Debugf("failed to find domain")
 		return nil, err
 	}
-	if domain.Alias != nil && dom.Alias != domain.Alias {
-		tx.Model(&dom).Update("Alias", domain.Alias)
+	if domain.Alias != nil {
+		domNew.Alias = domain.Alias
 	}
-	if domain.Extra != nil && dom.Extra != domain.Extra {
-		tx.Model(&dom).Update("Extra", domain.Extra)
+	if domain.Extra != nil {
+		domNew.Extra = domain.Extra
 	}
 
-	if err = tx.Commit().Error; err != nil {
-		tx.Rollback()
+	if err = self.db.Model(&dom).Update(domNew).Error; err != nil {
 		self.logger.WithError(err).Debugf("failed to patch domain")
 		return nil, err
 	}
@@ -277,25 +276,24 @@ func (self *StorageImpl) DeleteRole(id string) error {
 func (self *StorageImpl) PatchRole(id string, role *Role) (*Role, error) {
 	var err error
 	var rol Role
+	var rolNew Role
 
-	tx := self.db.Begin()
-
-	if err = tx.First(&rol, "id = ?", id).Error; err != nil {
+	if err = self.db.First(&rol, "id = ?", id).Error; err != nil {
+		self.logger.WithError(err).Debugf("failed to find group")
 		return nil, err
 	}
 
-	if role.Alias != nil && rol.Alias != role.Alias {
-		tx.Model(&rol).Update("Alias", role.Alias)
+	if role.Alias != nil {
+		rolNew.Alias = role.Alias
 	}
-	if role.Description != nil && rol.Description != role.Description {
-		tx.Model(&rol).Update("Description", role.Description)
+	if role.Description != nil {
+		rolNew.Description = role.Description
 	}
-	if role.Extra != nil && rol.Extra != role.Extra {
-		tx.Model(&rol).Update("Extra", role.Extra)
+	if role.Extra != nil {
+		rolNew.Extra = role.Extra
 	}
 
-	if err = tx.Commit().Error; err != nil {
-		tx.Rollback()
+	if err = self.db.Model(&rol).Update(rolNew).Error; err != nil {
 		self.logger.WithError(err).Debugf("failed to patch role")
 		return nil, err
 	}
@@ -493,25 +491,24 @@ func (self *StorageImpl) DeleteEntity(id string) error {
 func (self *StorageImpl) PatchEntity(id string, entity *Entity) (*Entity, error) {
 	var err error
 	var ent Entity
+	var entNew Entity
 
-	tx := self.db.Begin()
-
-	if err = tx.First(&ent, "id = ?", id).Error; err != nil {
+	if err = self.db.First(&ent, "id = ?", id).Error; err != nil {
+		self.logger.WithError(err).Debugf("failed to find entity")
 		return nil, err
 	}
 
-	if entity.Alias != nil && ent.Alias != entity.Name {
-		tx.Model(&ent).Update("Alias", entity.Alias)
+	if entity.Alias != nil {
+		entNew.Alias = entity.Alias
 	}
-	if entity.Password != nil && ent.Password != entity.Password {
-		tx.Model(&ent).Update("Password", entity.Password)
+	if entity.Password != nil {
+		entNew.Password = entity.Password
 	}
-	if entity.Extra != nil && ent.Extra != entity.Extra {
-		tx.Model(&ent).Update("Extra", entity.Extra)
+	if entity.Extra != nil {
+		entNew.Extra = entity.Extra
 	}
 
-	if err = tx.Commit().Error; err != nil {
-		tx.Rollback()
+	if err = self.db.Model(&ent).Update(entNew).Error; err != nil {
 		self.logger.WithError(err).Debugf("failed to patch entity")
 		return nil, err
 	}
@@ -763,25 +760,24 @@ func (self *StorageImpl) DeleteGroup(id string) error {
 func (self *StorageImpl) PatchGroup(id string, group *Group) (*Group, error) {
 	var err error
 	var grp Group
+	var grpNew Group
 
-	tx := self.db.Begin()
-
-	if err = tx.First(&grp, "id = ?", id).Error; err != nil {
+	if err = self.db.First(&grp, "id = ?", id).Error; err != nil {
+		self.logger.WithError(err).Debugf("failed to find group")
 		return nil, err
 	}
 
-	if group.Alias != nil && grp.Alias != group.Alias {
-		tx.Model(&grp).Update("Alias", group.Alias)
+	if group.Alias != nil {
+		grpNew.Alias = group.Alias
 	}
-	if group.Description != nil && grp.Description != group.Description {
-		tx.Model(&grp).Update("Description", group.Description)
+	if group.Description != nil {
+		grpNew.Description = group.Description
 	}
-	if group.Extra != nil && grp.Extra != group.Extra {
-		tx.Model(&grp).Update("Extra", group.Extra)
+	if group.Extra != nil {
+		grpNew.Extra = group.Extra
 	}
 
-	if err = tx.Commit().Error; err != nil {
-		tx.Rollback()
+	if err = self.db.Model(&grp).Update(grpNew).Error; err != nil {
 		self.logger.WithError(err).Debugf("failed to patch group")
 		return nil, err
 	}
@@ -1052,22 +1048,21 @@ func (self *StorageImpl) DeleteCredential(id string) error {
 func (self *StorageImpl) PatchCredential(id string, credential *Credential) (*Credential, error) {
 	var err error
 	var cred Credential
+	var credNew Credential
 
-	tx := self.db.Begin()
-
-	if err = tx.First(&cred, "id = ?", id).Error; err != nil {
+	if err = self.db.First(&cred, "id = ?", id).Error; err != nil {
+		self.logger.WithError(err).Debugf("failed to find credential")
 		return nil, err
 	}
 
-	if credential.Alias != nil && credential.Alias != cred.Alias {
-		tx.Model(&cred).Update("Alias", credential.Alias)
+	if credential.Alias != nil {
+		credNew.Alias = credential.Alias
 	}
-	if credential.Description != nil && credential.Description != cred.Description {
-		tx.Model(&cred).Update("Description", credential.Description)
+	if credential.Description != nil {
+		credNew.Description = credential.Description
 	}
 
-	if err = tx.Commit().Error; err != nil {
-		tx.Rollback()
+	if err = self.db.Model(&cred).Update(credNew).Error; err != nil {
 		self.logger.WithError(err).Debugf("failed to patch credential")
 		return nil, err
 	}

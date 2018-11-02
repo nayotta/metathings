@@ -183,22 +183,28 @@ func (suite *storageImplTestSuite) TestDeleteDomain() {
 	suite.Nil(dom)
 }
 
-func (suite *storageImplTestSuite) TestPatchDomainAlias() {
+func (suite *storageImplTestSuite) TestPatchDomain() {
+	var err error
 	testStr := "test"
-	dom := &Domain{
+	dom := &Domain{}
+
+	//Alias
+	dom = &Domain{
 		Alias: &testStr,
 	}
-	dom, err := suite.s.PatchDomain(testDomainID, dom)
+	_, err = suite.s.PatchDomain(testDomainID, dom)
+	suite.Nil(err)
+	dom, err = suite.s.GetDomain(testDomainID)
 	suite.Nil(err)
 	suite.Equal(testStr, *dom.Alias)
-}
 
-func (suite *storageImplTestSuite) TestPatchDomainExtra() {
-	testStr := "test"
-	dom := &Domain{
+	//Extra
+	dom = &Domain{
 		Extra: &testStr,
 	}
-	dom, err := suite.s.PatchDomain(testDomainID, dom)
+	dom, err = suite.s.PatchDomain(testDomainID, dom)
+	suite.Nil(err)
+	dom, err = suite.s.GetDomain(testDomainID)
 	suite.Nil(err)
 	suite.Equal(testStr, *dom.Extra)
 }
@@ -284,7 +290,9 @@ func (suite *storageImplTestSuite) TestPatchRole() {
 	rol = &Role{
 		Alias: &testStr,
 	}
-	rol, err = suite.s.PatchRole(testRoleID, rol)
+	_, err = suite.s.PatchRole(testRoleID, rol)
+	suite.Nil(err)
+	rol, err = suite.s.GetRole(testRoleID)
 	suite.Nil(err)
 	suite.Equal(testStr, *rol.Alias)
 
@@ -292,7 +300,9 @@ func (suite *storageImplTestSuite) TestPatchRole() {
 	rol = &Role{
 		Description: &testStr,
 	}
-	rol, err = suite.s.PatchRole(testRoleID, rol)
+	_, err = suite.s.PatchRole(testRoleID, rol)
+	suite.Nil(err)
+	rol, err = suite.s.GetRole(testRoleID)
 	suite.Nil(err)
 	suite.Equal(testStr, *rol.Description)
 
@@ -301,6 +311,8 @@ func (suite *storageImplTestSuite) TestPatchRole() {
 		Extra: &testStr,
 	}
 	rol, err = suite.s.PatchRole(testRoleID, rol)
+	suite.Nil(err)
+	rol, err = suite.s.GetRole(testRoleID)
 	suite.Nil(err)
 	suite.Equal(testStr, *rol.Extra)
 }
@@ -388,7 +400,9 @@ func (suite *storageImplTestSuite) TestPatchEntity() {
 	ent = &Entity{
 		Alias: &testStr,
 	}
-	ent, err = suite.s.PatchEntity(testEntityID, ent)
+	_, err = suite.s.PatchEntity(testEntityID, ent)
+	suite.Nil(err)
+	ent, err = suite.s.GetEntity(testEntityID)
 	suite.Nil(err)
 	suite.Equal(testStr, *ent.Alias)
 
@@ -396,7 +410,9 @@ func (suite *storageImplTestSuite) TestPatchEntity() {
 	ent = &Entity{
 		Password: &testStr,
 	}
-	ent, err = suite.s.PatchEntity(testEntityID, ent)
+	_, err = suite.s.PatchEntity(testEntityID, ent)
+	suite.Nil(err)
+	ent, err = suite.s.GetEntity(testEntityID)
 	suite.Nil(err)
 	suite.Equal(testStr, *ent.Password)
 
@@ -404,7 +420,9 @@ func (suite *storageImplTestSuite) TestPatchEntity() {
 	ent = &Entity{
 		Extra: &testStr,
 	}
-	ent, err = suite.s.PatchEntity(testEntityID, ent)
+	_, err = suite.s.PatchEntity(testEntityID, ent)
+	suite.Nil(err)
+	ent, err = suite.s.GetEntity(testEntityID)
 	suite.Nil(err)
 	suite.Equal(testStr, *ent.Extra)
 }
@@ -501,7 +519,9 @@ func (suite *storageImplTestSuite) TestPatchGroup() {
 	grp = &Group{
 		Alias: &testStr,
 	}
-	grp, err = suite.s.PatchGroup(testGroupID, grp)
+	_, err = suite.s.PatchGroup(testGroupID, grp)
+	suite.Nil(err)
+	grp, err = suite.s.GetGroup(testGroupID)
 	suite.Nil(err)
 	suite.Equal(testStr, *grp.Alias)
 
@@ -509,7 +529,9 @@ func (suite *storageImplTestSuite) TestPatchGroup() {
 	grp = &Group{
 		Description: &testStr,
 	}
-	grp, err = suite.s.PatchGroup(testGroupID, grp)
+	_, err = suite.s.PatchGroup(testGroupID, grp)
+	suite.Nil(err)
+	grp, err = suite.s.GetGroup(testGroupID)
 	suite.Nil(err)
 	suite.Equal(testStr, *grp.Description)
 
@@ -517,7 +539,9 @@ func (suite *storageImplTestSuite) TestPatchGroup() {
 	grp = &Group{
 		Extra: &testStr,
 	}
-	grp, err = suite.s.PatchGroup(testGroupID, grp)
+	_, err = suite.s.PatchGroup(testGroupID, grp)
+	suite.Nil(err)
+	grp, err = suite.s.GetGroup(testGroupID)
 	suite.Nil(err)
 	suite.Equal(testStr, *grp.Extra)
 }
@@ -636,7 +660,9 @@ func (suite *storageImplTestSuite) TestPatchCredential() {
 	cred = &Credential{
 		Alias: &testStr,
 	}
-	cred, err = suite.s.PatchCredential(testCredentialID, cred)
+	_, err = suite.s.PatchCredential(testCredentialID, cred)
+	suite.Nil(err)
+	cred, err = suite.s.GetCredential(testCredentialID)
 	suite.Nil(err)
 	suite.Equal(testStr, *cred.Alias)
 
@@ -644,7 +670,9 @@ func (suite *storageImplTestSuite) TestPatchCredential() {
 	cred = &Credential{
 		Description: &testStr,
 	}
-	cred, err = suite.s.PatchCredential(testCredentialID, cred)
+	_, err = suite.s.PatchCredential(testCredentialID, cred)
+	suite.Nil(err)
+	cred, err = suite.s.GetCredential(testCredentialID)
 	suite.Nil(err)
 	suite.Equal(testStr, *cred.Description)
 }
