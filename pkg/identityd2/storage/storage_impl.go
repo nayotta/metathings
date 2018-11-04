@@ -110,11 +110,11 @@ func (self *StorageImpl) DeleteDomain(id string) error {
 
 func (self *StorageImpl) PatchDomain(id string, domain *Domain) (*Domain, error) {
 	var err error
-	var dom Domain
+	var dom *Domain
 	var domNew Domain
 
-	if err = self.db.First(&dom, "Id = ?", id).Error; err != nil {
-		self.logger.WithError(err).Debugf("failed to find domain")
+	if dom, err = self.GetDomain(id); err != nil {
+		self.logger.WithError(err).Debugf("failed to get domain")
 		return nil, err
 	}
 	if domain.Alias != nil {
@@ -124,14 +124,14 @@ func (self *StorageImpl) PatchDomain(id string, domain *Domain) (*Domain, error)
 		domNew.Extra = domain.Extra
 	}
 
-	if err = self.db.Model(&dom).Update(domNew).Error; err != nil {
+	if err = self.db.Model(dom).Update(domNew).Error; err != nil {
 		self.logger.WithError(err).Debugf("failed to patch domain")
 		return nil, err
 	}
 
 	self.logger.WithField("id", id).Debugf("patch domain")
 
-	return &dom, nil
+	return dom, nil
 }
 
 func (self *StorageImpl) GetDomain(id string) (*Domain, error) {
@@ -275,11 +275,11 @@ func (self *StorageImpl) DeleteRole(id string) error {
 
 func (self *StorageImpl) PatchRole(id string, role *Role) (*Role, error) {
 	var err error
-	var rol Role
+	var rol *Role
 	var rolNew Role
 
-	if err = self.db.First(&rol, "id = ?", id).Error; err != nil {
-		self.logger.WithError(err).Debugf("failed to find group")
+	if rol, err = self.GetRole(id); err != nil {
+		self.logger.WithError(err).Debugf("failed to get role")
 		return nil, err
 	}
 
@@ -293,14 +293,14 @@ func (self *StorageImpl) PatchRole(id string, role *Role) (*Role, error) {
 		rolNew.Extra = role.Extra
 	}
 
-	if err = self.db.Model(&rol).Update(rolNew).Error; err != nil {
+	if err = self.db.Model(rol).Update(rolNew).Error; err != nil {
 		self.logger.WithError(err).Debugf("failed to patch role")
 		return nil, err
 	}
 
 	self.logger.WithField("id", id).Debugf("patch role")
 
-	return &rol, nil
+	return rol, nil
 }
 
 func (self *StorageImpl) GetRole(id string) (*Role, error) {
@@ -490,11 +490,11 @@ func (self *StorageImpl) DeleteEntity(id string) error {
 
 func (self *StorageImpl) PatchEntity(id string, entity *Entity) (*Entity, error) {
 	var err error
-	var ent Entity
+	var ent *Entity
 	var entNew Entity
 
-	if err = self.db.First(&ent, "id = ?", id).Error; err != nil {
-		self.logger.WithError(err).Debugf("failed to find entity")
+	if ent, err = self.GetEntity(id); err != nil {
+		self.logger.WithError(err).Debugf("failed to get entity")
 		return nil, err
 	}
 
@@ -508,14 +508,14 @@ func (self *StorageImpl) PatchEntity(id string, entity *Entity) (*Entity, error)
 		entNew.Extra = entity.Extra
 	}
 
-	if err = self.db.Model(&ent).Update(entNew).Error; err != nil {
+	if err = self.db.Model(ent).Update(entNew).Error; err != nil {
 		self.logger.WithError(err).Debugf("failed to patch entity")
 		return nil, err
 	}
 
 	self.logger.WithField("id", id).Debugf("patch entity")
 
-	return &ent, nil
+	return ent, nil
 }
 
 //todo remove password from return. zh
@@ -664,7 +664,7 @@ func (self *StorageImpl) get_group(id string) (*Group, error) {
 	var grp Group
 	var err error
 
-	if err = self.db.First(&grp, "Id = ?", id).Error; err != nil {
+	if err = self.db.First(&grp, "id = ?", id).Error; err != nil {
 		return nil, err
 	}
 
@@ -759,11 +759,11 @@ func (self *StorageImpl) DeleteGroup(id string) error {
 
 func (self *StorageImpl) PatchGroup(id string, group *Group) (*Group, error) {
 	var err error
-	var grp Group
+	var grp *Group
 	var grpNew Group
 
-	if err = self.db.First(&grp, "id = ?", id).Error; err != nil {
-		self.logger.WithError(err).Debugf("failed to find group")
+	if grp, err = self.GetGroup(id); err != nil {
+		self.logger.WithError(err).Debugf("failed to get group")
 		return nil, err
 	}
 
@@ -777,14 +777,14 @@ func (self *StorageImpl) PatchGroup(id string, group *Group) (*Group, error) {
 		grpNew.Extra = group.Extra
 	}
 
-	if err = self.db.Model(&grp).Update(grpNew).Error; err != nil {
+	if err = self.db.Model(grp).Update(grpNew).Error; err != nil {
 		self.logger.WithError(err).Debugf("failed to patch group")
 		return nil, err
 	}
 
 	self.logger.WithField("id", id).Debugf("patch group")
 
-	return &grp, nil
+	return grp, nil
 }
 
 func (self *StorageImpl) GetGroup(id string) (*Group, error) {
@@ -1047,11 +1047,11 @@ func (self *StorageImpl) DeleteCredential(id string) error {
 
 func (self *StorageImpl) PatchCredential(id string, credential *Credential) (*Credential, error) {
 	var err error
-	var cred Credential
+	var cred *Credential
 	var credNew Credential
 
-	if err = self.db.First(&cred, "id = ?", id).Error; err != nil {
-		self.logger.WithError(err).Debugf("failed to find credential")
+	if cred, err = self.GetCredential(id); err != nil {
+		self.logger.WithError(err).Debugf("failed to get credential")
 		return nil, err
 	}
 
@@ -1062,14 +1062,14 @@ func (self *StorageImpl) PatchCredential(id string, credential *Credential) (*Cr
 		credNew.Description = credential.Description
 	}
 
-	if err = self.db.Model(&cred).Update(credNew).Error; err != nil {
+	if err = self.db.Model(cred).Update(credNew).Error; err != nil {
 		self.logger.WithError(err).Debugf("failed to patch credential")
 		return nil, err
 	}
 
 	self.logger.WithField("id", id).Debugf("patch credential")
 
-	return &cred, nil
+	return cred, nil
 }
 
 func (self *StorageImpl) GetCredential(id string) (*Credential, error) {
