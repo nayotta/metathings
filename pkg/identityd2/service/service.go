@@ -5,14 +5,15 @@ import (
 	"time"
 
 	"github.com/golang/protobuf/ptypes/empty"
+	log "github.com/sirupsen/logrus"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
+
 	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
 	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
 	policy "github.com/nayotta/metathings/pkg/identityd2/policy"
 	storage "github.com/nayotta/metathings/pkg/identityd2/storage"
 	pb "github.com/nayotta/metathings/pkg/proto/identityd2"
-	log "github.com/sirupsen/logrus"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 type MetathingsIdentitydServiceOption struct {
