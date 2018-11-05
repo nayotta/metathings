@@ -129,6 +129,11 @@ func (self *StorageImpl) PatchDomain(id string, domain *Domain) (*Domain, error)
 		return nil, err
 	}
 
+	if dom, err = self.get_domain(id); err != nil {
+		self.logger.WithError(err).Debugf("failed to get domain view")
+		return nil, err
+	}
+
 	self.logger.WithField("id", id).Debugf("patch domain")
 
 	return dom, nil
@@ -295,6 +300,11 @@ func (self *StorageImpl) PatchRole(id string, role *Role) (*Role, error) {
 
 	if err = self.db.Model(rol).Update(rolNew).Error; err != nil {
 		self.logger.WithError(err).Debugf("failed to patch role")
+		return nil, err
+	}
+
+	if rol, err = self.get_role(id); err != nil {
+		self.logger.WithError(err).Debugf("failed to get role view")
 		return nil, err
 	}
 
@@ -510,6 +520,11 @@ func (self *StorageImpl) PatchEntity(id string, entity *Entity) (*Entity, error)
 
 	if err = self.db.Model(ent).Update(entNew).Error; err != nil {
 		self.logger.WithError(err).Debugf("failed to patch entity")
+		return nil, err
+	}
+
+	if ent, err = self.get_entity(id); err != nil {
+		self.logger.WithError(err).Debugf("failed to get entity view")
 		return nil, err
 	}
 
@@ -779,6 +794,11 @@ func (self *StorageImpl) PatchGroup(id string, group *Group) (*Group, error) {
 
 	if err = self.db.Model(grp).Update(grpNew).Error; err != nil {
 		self.logger.WithError(err).Debugf("failed to patch group")
+		return nil, err
+	}
+
+	if grp, err = self.get_group(id); err != nil {
+		self.logger.WithError(err).Debugf("failed to get group view")
 		return nil, err
 	}
 
@@ -1064,6 +1084,11 @@ func (self *StorageImpl) PatchCredential(id string, credential *Credential) (*Cr
 
 	if err = self.db.Model(cred).Update(credNew).Error; err != nil {
 		self.logger.WithError(err).Debugf("failed to patch credential")
+		return nil, err
+	}
+
+	if cred, err = self.get_credential(id); err != nil {
+		self.logger.WithError(err).Debugf("failed to get credential view")
 		return nil, err
 	}
 
