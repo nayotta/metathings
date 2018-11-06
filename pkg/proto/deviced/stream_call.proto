@@ -7,14 +7,14 @@ import "google/protobuf/any.proto";
 
 import "github.com/mwitkow/go-proto-validators/validator.proto";
 
-import "payload.proto";
+import "model.proto";
 
 message StreamCallRequest {
-	google.protobuf.StringValue device_id = 1;
-	StreamCallRequestPayload payload = 2;
+	OpDevice device = 1 [(validator.field) = {msg_exists: true}];
+	OpStreamCallValue value = 2 [(validator.field) = {msg_exists: true}];
 }
 
 message StreamCallResponse {
-	string device_id = 1;
-	StreamCallResponsePayload payload = 2;
+	Device device = 1;
+	StreamCallValue value = 2;
 }

@@ -6,14 +6,14 @@ import "google/protobuf/wrappers.proto";
 
 import "github.com/mwitkow/go-proto-validators/validator.proto";
 
-import "payload.proto";
+import "model.proto";
 
 message UnaryCallRequest {
-	google.protobuf.StringValue device_id = 1;
-	UnaryCallRequestPayload payload = 2 [(validator.field) = {msg_exists: true}];
+	OpDevice device = 1 [(validator.field) = {msg_exists: true}];
+	OpUnaryCallValue value = 2 [(validator.field) = {msg_exists: true}];
 }
 
 message UnaryCallResponse {
-	string device_id = 1;
-	UnaryCallResponsePayload payload = 2;
+	Device device = 1;
+	UnaryCallValue value = 2;
 }

@@ -2,19 +2,12 @@ syntax = "proto3";
 
 package ai.metathings.service.deviced;
 
-import "google/protobuf/wrappers.proto";
-
 import "github.com/mwitkow/go-proto-validators/validator.proto";
 
-import "github.com/nayotta/metathings/pkg/proto/constant/state/device.proto";
-import "device.proto";
+import "model.proto";
 
 message ListDevicesRequest {
-	google.protobuf.StringValue name = 1;
-	google.protobuf.StringValue project_id = 2;
-	repeated google.protobuf.StringValue owners = 3;
-	repeated google.protobuf.StringValue groups = 4;
-	ai.metathings.constant.state.DeviceState state = 5;
+	OpDevice device = 1;
 }
 
 message ListDevicesResponse {
