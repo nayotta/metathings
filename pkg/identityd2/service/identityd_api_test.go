@@ -444,16 +444,80 @@ func (suite *identifydTestSuite) TestEntity() {
 	suite.Equal(testEntityExtra["test"].GetValue(), extraMap["test"])
 
 	//TODO(zh) list need domainid
-	/*
-		//test list entities by name (create 2 above)
-		entListReq := &pb.ListEntitiesRequest{
-			Name: &wrappers.StringValue{
-				Value: testEntityName,
+
+	//test list entities by name (create 2 above)
+	entListReq := &pb.ListEntitiesRequest{
+		Name: &wrappers.StringValue{
+			Value: testEntityName,
+		},
+	}
+	entsRet, err := suite.s.ListEntities(suite.ctx, entListReq)
+	suite.Nil(err)
+	suite.Len(entsRet.GetEntities(), 2)
+
+	//test add role to entity
+	entAddRoleToEntityReq := &pb.AddRoleToEntityRequest{
+		Entity: &pb.OpEntity{
+			Id: &wrappers.StringValue{
+				Value: testEntityID,
 			},
-		}
-		entsRet, err := suite.s.ListEntities(suite.ctx, entListReq)
-		suite.Nil(err)
-		suite.Len(entsRet.GetEntities(), 2)*/
+		},
+		Role: &pb.OpRole{
+			Id: &wrappers.StringValue{
+				Value: defaultSysadminID,
+			},
+		},
+	}
+	_, err = suite.s.AddRoleToEntity(suite.ctx, entAddRoleToEntityReq)
+	suite.Nil(err)
+
+	//test remove role from entity
+	entRemoveRoleFromEntityReq := &pb.RemoveRoleFromEntityRequest{
+		Entity: &pb.OpEntity{
+			Id: &wrappers.StringValue{
+				Value: testEntityID,
+			},
+		},
+		Role: &pb.OpRole{
+			Id: &wrappers.StringValue{
+				Value: defaultSysadminID,
+			},
+		},
+	}
+	_, err = suite.s.RemoveRoleFromEntity(suite.ctx, entRemoveRoleFromEntityReq)
+	suite.Nil(err)
+
+	//test add Entity to domain
+	entAddEntityToDomainReq := &pb.AddEntityToDomainRequest{
+		Entity: &pb.OpEntity{
+			Id: &wrappers.StringValue{
+				Value: testEntityID,
+			},
+		},
+		Domain: &pb.OpDomain{
+			Id: &wrappers.StringValue{
+				Value: defaultDomainID,
+			},
+		},
+	}
+	_, err = suite.s.AddEntityToDomain(suite.ctx, entAddEntityToDomainReq)
+	suite.Nil(err)
+
+	//test remove entity from domain
+	entRemoveEntityFromDomainReq := &pb.RemoveEntityFromDomainRequest{
+		Entity: &pb.OpEntity{
+			Id: &wrappers.StringValue{
+				Value: testEntityID,
+			},
+		},
+		Domain: &pb.OpDomain{
+			Id: &wrappers.StringValue{
+				Value: defaultDomainID,
+			},
+		},
+	}
+	_, err = suite.s.RemoveEntityFromDomain(suite.ctx, entRemoveEntityFromDomainReq)
+	suite.Nil(err)
 
 	//test delete entity
 	entDeleteReq := &pb.DeleteEntityRequest{

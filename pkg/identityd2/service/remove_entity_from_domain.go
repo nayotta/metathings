@@ -38,7 +38,7 @@ func (self *MetathingsIdentitydService) RemoveEntityFromDomain(ctx context.Conte
 	}
 	ent_id_str := ent.GetId().GetValue()
 
-	if e, err = self.storage.GetEntity(dom_id_str); err != nil {
+	if e, err = self.storage.GetEntity(ent_id_str); err != nil {
 		self.logger.WithError(err).Error("failed to get entity in storage")
 		return nil, status.Errorf(codes.FailedPrecondition, err.Error())
 	}
