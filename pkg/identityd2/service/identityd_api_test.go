@@ -4,10 +4,13 @@ import (
 	"context"
 	"fmt"
 	"testing"
+	"time"
 
 	gomock "github.com/golang/mock/gomock"
+	timestamp "github.com/golang/protobuf/ptypes/timestamp"
 	wrappers "github.com/golang/protobuf/ptypes/wrappers"
 	id_helper "github.com/nayotta/metathings/pkg/common/id"
+	pb_helper "github.com/nayotta/metathings/pkg/common/protobuf"
 	passwd_helper "github.com/nayotta/metathings/pkg/common/passwd"
 	mock_enf "github.com/nayotta/metathings/pkg/identityd2/policy/mock"
 	storage "github.com/nayotta/metathings/pkg/identityd2/storage"
@@ -81,6 +84,13 @@ var (
 			Value: "test",
 		},
 	}
+
+	testCredentialID          = "test-credential-id"
+	testCredentialName        = "test-credential-name"
+	testCredentialAlias       = "test-credential-alias"
+	testCredentialDescription = "test-credential-description"
+	day, _                    = time.ParseDuration("24h")
+	testCredentialExpires     = time.Now().Add(day)
 )
 
 func (suite *identifydTestSuite) SetupTest() {
@@ -709,7 +719,7 @@ func (suite *identifydTestSuite) TestGroup() {
 		},
 		Group: &pb.OpGroup{
 			Id: &wrappers.StringValue{
-				Value:testGroupID,
+				Value: testGroupID,
 			},
 		},
 	}
@@ -741,6 +751,111 @@ func (suite *identifydTestSuite) TestGroup() {
 		},
 	}
 	_, err = suite.s.DeleteGroup(suite.ctx, grpDeleteReq)
+	suite.Nil(err)
+}
+
+func (suite *identifydTestSuite) TestCredential() {
+	testStr := "test"
+
+	//test create Credential(create 1st)
+	credCreateReq := &pb.CreateCredentialRequest{
+		Id: &wrappers.StringValue{
+			Value: testCredentialID,
+		},
+		Domain: &pb.OpDomain{
+			Id: &wrappers.StringValue{
+				Value: testDomainID,
+			},
+		},
+		Entity: &pb.OpEntity{
+			Id: &wrappers.StringValue{
+				Value: testEntityID,
+			},
+		},
+		Name: &wrappers.StringValue{
+			Value: testCredentialName,
+		},
+		Alias: &wrappers.StringValue{
+			Value: testCredentialAlias,
+		},
+		Description: &wrappers.StringValue{
+			Value: testCredentialDescription,
+		},
+		ExpiresAt: &timestamp.Timestamp{
+			Seconds: pb_helper.FromTime(testCredentialExpires).Seconds,
+			Nanos:   pb_helper.FromTime(testCredentialExpires).Nanos,
+		},
+	}
+	_, err := suite.s.CreateCredential(suite.ctx, credCreateReq)
+	suite.Nil(err)
+
+	//test create cred with no id(create 2st)
+	credCreateReq.Id = nil
+	_, err = suite.s.CreateCredential(suite.ctx, credCreateReq)
+	suite.Nil(err)
+
+	//test get credential
+	credGetReq := &pb.GetCredentialRequest{
+		Credential: &pb.OpCredential{
+			Id: &wrappers.StringValue{
+				Value: testCredentialID,
+			},
+		},
+	}
+	credGetRet, err := suite.s.GetCredential(suite.ctx, credGetReq)
+	suite.Nil(err)
+	suite.Equal(credGetRet.GetCredential().GetName(), testCredentialName)
+
+	//test patch credential alias
+	credPatchReq := &pb.PatchCredentialRequest{
+		Id: &wrappers.StringValue{
+			Value: testCredentialID,
+		},
+		Alias: &wrappers.StringValue{
+			Value: testStr,
+		},
+	}
+	credPatchRet, err := suite.s.PatchCredential(suite.ctx, credPatchReq)
+	suite.Nil(err)
+	suite.Equal(testStr, credPatchRet.GetCredential().GetAlias())
+
+	//test patch credential description
+	credPatchReq.Alias = nil
+	credPatchReq.Description = &wrappers.StringValue{
+		Value: testCredentialDescription,
+	}
+	credPatchRet, err = suite.s.PatchCredential(suite.ctx, credPatchReq)
+	suite.Nil(err)
+
+	//test list credentials by name (create 2 above)
+	credListReq := &pb.ListCredentialsRequest{
+		Name: &wrappers.StringValue{
+			Value: testCredentialName,
+		},
+	}
+	credsRet, err := suite.s.ListCredentials(suite.ctx, credListReq)
+	suite.Nil(err)
+	suite.Len(credsRet.GetCredentials(), 2)
+
+	//test list credential by alias (create 2 above, change 1, left 1)
+	credListReq = &pb.ListCredentialsRequest{
+		Alias: &wrappers.StringValue{
+			Value: testCredentialAlias,
+		},
+	}
+	credsRet, err = suite.s.ListCredentials(suite.ctx, credListReq)
+	suite.Nil(err)
+	suite.Len(credsRet.GetCredentials(), 1)
+
+	//test delete credential
+	credDeleteReq := &pb.DeleteCredentialRequest{
+		Credential: &pb.OpCredential{
+			Id: &wrappers.StringValue{
+				Value: testCredentialID,
+			},
+		},
+	}
+	_, err = suite.s.DeleteCredential(suite.ctx, credDeleteReq)
 	suite.Nil(err)
 }
 
