@@ -61,6 +61,16 @@ var (
 			Value: "test",
 		},
 	}
+
+	testEntityID       = "test-entity-id"
+	testEntityName     = "test-entity-name"
+	testEntityAlias    = "test-entity-alias"
+	testEntityPassword = "test-entity-password"
+	testEntityExtra    = map[string]*wrappers.StringValue{
+		"test": &wrappers.StringValue{
+			Value: "test",
+		},
+	}
 )
 
 func (suite *identifydTestSuite) SetupTest() {
@@ -242,7 +252,7 @@ func (suite *identifydTestSuite) TestDomain() {
 func (suite *identifydTestSuite) TestRole() {
 	testStr := "test"
 
-	//test create role
+	//test create role(create 1st)
 	rolCreateReq := &pb.CreateRoleRequest{
 		Id: &wrappers.StringValue{
 			Value: testRoleID,
@@ -270,7 +280,7 @@ func (suite *identifydTestSuite) TestRole() {
 	_, err := suite.s.CreateRole(suite.ctx, rolCreateReq)
 	suite.Nil(err)
 
-	//test create role with no id
+	//test create role with no id(create 2st)
 	rolCreateReq.Id = nil
 	_, err = suite.s.CreateRole(suite.ctx, rolCreateReq)
 	suite.Nil(err)
@@ -353,11 +363,107 @@ func (suite *identifydTestSuite) TestRole() {
 	rolDeleteReq := &pb.DeleteRoleRequest{
 		Role: &pb.OpRole{
 			Id: &wrappers.StringValue{
-				Value: defaultDomainID,
+				Value: testRoleID,
 			},
 		},
 	}
 	_, err = suite.s.DeleteRole(suite.ctx, rolDeleteReq)
+	suite.Nil(err)
+}
+
+func (suite *identifydTestSuite) TestEntity() {
+	testStr := "test"
+
+	//test create Entity(create 1st)
+	entCreateReq := &pb.CreateEntityRequest{
+		Id: &wrappers.StringValue{
+			Value: testEntityID,
+		},
+		Name: &wrappers.StringValue{
+			Value: testEntityName,
+		},
+		Alias: &wrappers.StringValue{
+			Value: testEntityAlias,
+		},
+		Password: &wrappers.StringValue{
+			Value: testEntityPassword,
+		},
+		Extra: map[string]*wrappers.StringValue{
+			"test": &wrappers.StringValue{
+				Value: "",
+			},
+		},
+	}
+	_, err := suite.s.CreateEntity(suite.ctx, entCreateReq)
+	suite.Nil(err)
+
+	//test create entity with no id(create 2st)
+	entCreateReq.Id = nil
+	_, err = suite.s.CreateEntity(suite.ctx, entCreateReq)
+	suite.Nil(err)
+
+	//test get entity
+	entGetReq := &pb.GetEntityRequest{
+		Entity: &pb.OpEntity{
+			Id: &wrappers.StringValue{
+				Value: testEntityID,
+			},
+		},
+	}
+	entGetRet, err := suite.s.GetEntity(suite.ctx, entGetReq)
+	suite.Nil(err)
+	suite.Equal(entGetRet.GetEntity().GetName(), testEntityName)
+
+	//test patch entity alias
+	entPatchReq := &pb.PatchEntityRequest{
+		Id: &wrappers.StringValue{
+			Value: testEntityID,
+		},
+		Alias: &wrappers.StringValue{
+			Value: testStr,
+		},
+	}
+	entPatchRet, err := suite.s.PatchEntity(suite.ctx, entPatchReq)
+	suite.Nil(err)
+	suite.Equal(testStr, entPatchRet.GetEntity().GetAlias())
+
+	//test patch entity Password(password no return)
+	entPatchReq.Alias = nil
+	entPatchReq.Password = &wrappers.StringValue{
+		Value: testEntityPassword,
+	}
+	entPatchRet, err = suite.s.PatchEntity(suite.ctx, entPatchReq)
+	suite.Nil(err)
+
+	//test patch entity Extra
+	entPatchReq.Password = nil
+	entPatchReq.Extra = testEntityExtra
+	entPatchRet, err = suite.s.PatchEntity(suite.ctx, entPatchReq)
+	extraMap := entPatchRet.GetEntity().GetExtra()
+	suite.Nil(err)
+	suite.Equal(testEntityExtra["test"].GetValue(), extraMap["test"])
+
+	//TODO(zh) list need domainid
+	/*
+		//test list entities by name (create 2 above)
+		entListReq := &pb.ListEntitiesRequest{
+			Name: &wrappers.StringValue{
+				Value: testEntityName,
+			},
+		}
+		entsRet, err := suite.s.ListEntities(suite.ctx, entListReq)
+		suite.Nil(err)
+		suite.Len(entsRet.GetEntities(), 2)*/
+
+	//test delete entity
+	entDeleteReq := &pb.DeleteEntityRequest{
+		Entity: &pb.OpEntity{
+			Id: &wrappers.StringValue{
+				Value: testEntityID,
+			},
+		},
+	}
+	_, err = suite.s.DeleteEntity(suite.ctx, entDeleteReq)
 	suite.Nil(err)
 }
 
