@@ -71,6 +71,16 @@ var (
 			Value: "test",
 		},
 	}
+
+	testGroupID         = "test-group-id"
+	testGroupName       = "test-group-name"
+	testGroupAlias      = "test-group-alias"
+	testGroupDescrition = "test-group-description"
+	testGroupExtra      = map[string]*wrappers.StringValue{
+		"test": &wrappers.StringValue{
+			Value: "test",
+		},
+	}
 )
 
 func (suite *identifydTestSuite) SetupTest() {
@@ -443,8 +453,6 @@ func (suite *identifydTestSuite) TestEntity() {
 	suite.Nil(err)
 	suite.Equal(testEntityExtra["test"].GetValue(), extraMap["test"])
 
-	//TODO(zh) list need domainid
-
 	//test list entities by name (create 2 above)
 	entListReq := &pb.ListEntitiesRequest{
 		Name: &wrappers.StringValue{
@@ -454,6 +462,16 @@ func (suite *identifydTestSuite) TestEntity() {
 	entsRet, err := suite.s.ListEntities(suite.ctx, entListReq)
 	suite.Nil(err)
 	suite.Len(entsRet.GetEntities(), 2)
+
+	//test list entities by alias (create 2 above, change 1, left 1)
+	entListReq = &pb.ListEntitiesRequest{
+		Alias: &wrappers.StringValue{
+			Value: testEntityAlias,
+		},
+	}
+	entsRet, err = suite.s.ListEntities(suite.ctx, entListReq)
+	suite.Nil(err)
+	suite.Len(entsRet.GetEntities(), 1)
 
 	//test add role to entity
 	entAddRoleToEntityReq := &pb.AddRoleToEntityRequest{
@@ -528,6 +546,201 @@ func (suite *identifydTestSuite) TestEntity() {
 		},
 	}
 	_, err = suite.s.DeleteEntity(suite.ctx, entDeleteReq)
+	suite.Nil(err)
+}
+
+func (suite *identifydTestSuite) TestGroup() {
+	testStr := "test"
+
+	//test create Group(create 1st)
+	grpCreateReq := &pb.CreateGroupRequest{
+		Id: &wrappers.StringValue{
+			Value: testGroupID,
+		},
+		Domain: &pb.OpDomain{
+			Id: &wrappers.StringValue{
+				Value: defaultDomainID,
+			},
+		},
+		Name: &wrappers.StringValue{
+			Value: testGroupName,
+		},
+		Alias: &wrappers.StringValue{
+			Value: testGroupAlias,
+		},
+		Description: &wrappers.StringValue{
+			Value: testGroupDescrition,
+		},
+		Extra: map[string]*wrappers.StringValue{
+			"test": &wrappers.StringValue{
+				Value: "",
+			},
+		},
+	}
+	_, err := suite.s.CreateGroup(suite.ctx, grpCreateReq)
+	suite.Nil(err)
+
+	//test create group with no id(create 2st)
+	grpCreateReq.Id = nil
+	_, err = suite.s.CreateGroup(suite.ctx, grpCreateReq)
+	suite.Nil(err)
+
+	//test get group
+	grpGetReq := &pb.GetGroupRequest{
+		Group: &pb.OpGroup{
+			Id: &wrappers.StringValue{
+				Value: testGroupID,
+			},
+		},
+	}
+	grpGetRet, err := suite.s.GetGroup(suite.ctx, grpGetReq)
+	suite.Nil(err)
+	suite.Equal(grpGetRet.GetGroup().GetName(), testGroupName)
+
+	//test patch group alias
+	grpPatchReq := &pb.PatchGroupRequest{
+		Id: &wrappers.StringValue{
+			Value: testGroupID,
+		},
+		Alias: &wrappers.StringValue{
+			Value: testStr,
+		},
+	}
+	grpPatchRet, err := suite.s.PatchGroup(suite.ctx, grpPatchReq)
+	suite.Nil(err)
+	suite.Equal(testStr, grpPatchRet.GetGroup().GetAlias())
+
+	//test patch group description
+	grpPatchReq.Alias = nil
+	grpPatchReq.Description = &wrappers.StringValue{
+		Value: testGroupDescrition,
+	}
+	grpPatchRet, err = suite.s.PatchGroup(suite.ctx, grpPatchReq)
+	suite.Nil(err)
+
+	//test patch group Extra
+	grpPatchReq.Description = nil
+	grpPatchReq.Extra = testGroupExtra
+	grpPatchRet, err = suite.s.PatchGroup(suite.ctx, grpPatchReq)
+	extraMap := grpPatchRet.GetGroup().GetExtra()
+	suite.Nil(err)
+	suite.Equal(testGroupExtra["test"].GetValue(), extraMap["test"])
+
+	//test list groups by name (create 2 above)
+	grpListReq := &pb.ListGroupsRequest{
+		Name: &wrappers.StringValue{
+			Value: testGroupName,
+		},
+	}
+	grpsRet, err := suite.s.ListGroups(suite.ctx, grpListReq)
+	suite.Nil(err)
+	suite.Len(grpsRet.GetGroups(), 2)
+
+	//test list groups by alias (create 2 above, change 1, left 1)
+	grpListReq = &pb.ListGroupsRequest{
+		Alias: &wrappers.StringValue{
+			Value: testGroupAlias,
+		},
+	}
+	grpsRet, err = suite.s.ListGroups(suite.ctx, grpListReq)
+	suite.Nil(err)
+	suite.Len(grpsRet.GetGroups(), 1)
+
+	//test add role to group
+	grpAddRoleToGroupReq := &pb.AddRoleToGroupRequest{
+		Group: &pb.OpGroup{
+			Id: &wrappers.StringValue{
+				Value: testGroupID,
+			},
+		},
+		Role: &pb.OpRole{
+			Id: &wrappers.StringValue{
+				Value: defaultSysadminID,
+			},
+		},
+	}
+	_, err = suite.s.AddRoleToGroup(suite.ctx, grpAddRoleToGroupReq)
+	suite.Nil(err)
+
+	//test remove role from group
+	grpRemoveRoleFromGroupReq := &pb.RemoveRoleFromGroupRequest{
+		Group: &pb.OpGroup{
+			Id: &wrappers.StringValue{
+				Value: testGroupID,
+			},
+		},
+		Role: &pb.OpRole{
+			Id: &wrappers.StringValue{
+				Value: defaultSysadminID,
+			},
+		},
+	}
+	_, err = suite.s.RemoveRoleFromGroup(suite.ctx, grpRemoveRoleFromGroupReq)
+	suite.Nil(err)
+
+	//test add Entity to group
+	///create Entity first
+	entCreateReq := &pb.CreateEntityRequest{
+		Id: &wrappers.StringValue{
+			Value: testEntityID,
+		},
+		Name: &wrappers.StringValue{
+			Value: testEntityName,
+		},
+		Alias: &wrappers.StringValue{
+			Value: testEntityAlias,
+		},
+		Password: &wrappers.StringValue{
+			Value: testEntityPassword,
+		},
+		Extra: map[string]*wrappers.StringValue{
+			"test": &wrappers.StringValue{
+				Value: "",
+			},
+		},
+	}
+	_, err = suite.s.CreateEntity(suite.ctx, entCreateReq)
+	suite.Nil(err)
+	grpAddEntityToGroupReq := &pb.AddEntityToGroupRequest{
+		Entity: &pb.OpEntity{
+			Id: &wrappers.StringValue{
+				Value: testEntityID,
+			},
+		},
+		Group: &pb.OpGroup{
+			Id: &wrappers.StringValue{
+				Value:testGroupID,
+			},
+		},
+	}
+	_, err = suite.s.AddEntityToGroup(suite.ctx, grpAddEntityToGroupReq)
+	suite.Nil(err)
+
+	//test remove entity from group
+	grpRemoveEntityFromGroupReq := &pb.RemoveEntityFromGroupRequest{
+		Entity: &pb.OpEntity{
+			Id: &wrappers.StringValue{
+				Value: testEntityID,
+			},
+		},
+		Group: &pb.OpGroup{
+			Id: &wrappers.StringValue{
+				Value: testGroupID,
+			},
+		},
+	}
+	_, err = suite.s.RemoveEntityFromGroup(suite.ctx, grpRemoveEntityFromGroupReq)
+	suite.Nil(err)
+
+	//test delete group
+	grpDeleteReq := &pb.DeleteGroupRequest{
+		Group: &pb.OpGroup{
+			Id: &wrappers.StringValue{
+				Value: testGroupID,
+			},
+		},
+	}
+	_, err = suite.s.DeleteGroup(suite.ctx, grpDeleteReq)
 	suite.Nil(err)
 }
 

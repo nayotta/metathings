@@ -12,7 +12,7 @@ import (
 )
 
 func (self *MetathingsIdentitydService) PatchGroup(ctx context.Context, req *pb.PatchGroupRequest) (*pb.PatchGroupResponse, error) {
-	var grp *storage.Group
+	var grp = &storage.Group{}
 	var err error
 
 	if err = req.Validate(); err != nil {
@@ -28,10 +28,16 @@ func (self *MetathingsIdentitydService) PatchGroup(ctx context.Context, req *pb.
 	idStr := req.GetId().GetValue()
 
 	if req.GetAlias() != nil {
-		*grp.Alias = req.GetAlias().GetValue()
+		aliasStr := req.GetAlias().GetValue()
+		grp.Alias = &aliasStr
 	}
 	if req.GetDescription() != nil {
-		*grp.Description = req.GetDescription().GetValue()
+		descriptionStr := req.GetDescription().GetValue()
+		grp.Description = &descriptionStr
+	}
+	if req.GetExtra() != nil {
+		extraStr := must_parse_extra(req.GetExtra())
+		grp.Extra = &extraStr
 	}
 
 	if grp, err = self.storage.PatchGroup(idStr, grp); err != nil {
