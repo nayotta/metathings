@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+package ai.metathings.constant.kind;
+
+enum DeviceKind {
+	DEVICE_KIND_UNKNOWN = 0;
+	DEVICE_KIND_SIMPLE = 1;
+	DEVICE_KIND_ADVANCED = 2;
+}
