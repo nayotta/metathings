@@ -6,6 +6,7 @@ import (
 	"google.golang.org/grpc/metadata"
 
 	identityd_pb "github.com/nayotta/metathings/pkg/proto/identityd"
+	identityd2_pb "github.com/nayotta/metathings/pkg/proto/identityd2"
 )
 
 func WithToken(ctx context.Context, token string) context.Context {
@@ -43,4 +44,8 @@ func Credential(ctx context.Context) (cred *identityd_pb.Token) {
 	}
 
 	return cred
+}
+
+func ExtractToken(ctx context.Context) *identityd2_pb.Token {
+	return ctx.Value("token").(*identityd2_pb.Token)
 }
