@@ -51,6 +51,16 @@ var (
 			Value: "test",
 		},
 	}
+
+	testRoleID          = "test-role-id"
+	testRoleName        = "test-role-name"
+	testRoleAlias       = "test-role-alias"
+	testRoleDescription = "test-role-description"
+	testRoleExtra       = map[string]*wrappers.StringValue{
+		"test": &wrappers.StringValue{
+			Value: "test",
+		},
+	}
 )
 
 func (suite *identifydTestSuite) SetupTest() {
@@ -226,6 +236,128 @@ func (suite *identifydTestSuite) TestDomain() {
 		},
 	}
 	_, err = suite.s.DeleteDomain(suite.ctx, domDeleteReq)
+	suite.Nil(err)
+}
+
+func (suite *identifydTestSuite) TestRole() {
+	testStr := "test"
+
+	//test create role
+	rolCreateReq := &pb.CreateRoleRequest{
+		Id: &wrappers.StringValue{
+			Value: testRoleID,
+		},
+		Domain: &pb.OpDomain{
+			Id: &wrappers.StringValue{
+				Value: defaultDomainID,
+			},
+		},
+		Name: &wrappers.StringValue{
+			Value: testRoleName,
+		},
+		Alias: &wrappers.StringValue{
+			Value: testRoleAlias,
+		},
+		Description: &wrappers.StringValue{
+			Value: testRoleDescription,
+		},
+		Extra: map[string]*wrappers.StringValue{
+			"test": &wrappers.StringValue{
+				Value: "",
+			},
+		},
+	}
+	_, err := suite.s.CreateRole(suite.ctx, rolCreateReq)
+	suite.Nil(err)
+
+	//test create role with no id
+	rolCreateReq.Id = nil
+	_, err = suite.s.CreateRole(suite.ctx, rolCreateReq)
+	suite.Nil(err)
+
+	//test get role
+	roleGetReq := &pb.GetRoleRequest{
+		Role: &pb.OpRole{
+			Id: &wrappers.StringValue{
+				Value: testRoleID,
+			},
+		},
+	}
+	rolGetRet, err := suite.s.GetRole(suite.ctx, roleGetReq)
+	suite.Nil(err)
+	suite.Equal(rolGetRet.GetRole().GetName(), testRoleName)
+
+	//test patch role alias
+	rolPatchReq := &pb.PatchRoleRequest{
+		Id: &wrappers.StringValue{
+			Value: testRoleID,
+		},
+		Alias: &wrappers.StringValue{
+			Value: testStr,
+		},
+	}
+	rolPatchRet, err := suite.s.PatchRole(suite.ctx, rolPatchReq)
+	suite.Nil(err)
+	suite.Equal(testStr, rolPatchRet.GetRole().GetAlias())
+
+	//test patch role Description
+	rolPatchReq.Alias = nil
+	rolPatchReq.Description = &wrappers.StringValue{
+		Value: testStr,
+	}
+	rolPatchRet, err = suite.s.PatchRole(suite.ctx, rolPatchReq)
+	suite.Nil(err)
+	suite.Equal(testStr, rolPatchRet.GetRole().GetDescription())
+
+	//test patch role Extra
+	rolPatchReq.Description = nil
+	rolPatchReq.Extra = testRoleExtra
+	rolPatchRet, err = suite.s.PatchRole(suite.ctx, rolPatchReq)
+	extraMap := rolPatchRet.GetRole().GetExtra()
+	suite.Nil(err)
+	suite.Equal(testRoleExtra["test"].GetValue(), extraMap["test"])
+
+	//test list roles by name (create 2 above)
+	rolListReq := &pb.ListRolesRequest{
+		Name: &wrappers.StringValue{
+			Value: testRoleName,
+		},
+	}
+	rolsRet, err := suite.s.ListRoles(suite.ctx, rolListReq)
+	suite.Nil(err)
+	suite.Len(rolsRet.GetRoles(), 2)
+
+	//test list roles by Alias (create 2 above, change 1, left 1)
+	rolListReq = &pb.ListRolesRequest{
+		Alias: &wrappers.StringValue{
+			Value: testRoleAlias,
+		},
+	}
+	rolsRet, err = suite.s.ListRoles(suite.ctx, rolListReq)
+	suite.Nil(err)
+	suite.Len(rolsRet.GetRoles(), 1)
+
+	//test list roles by domain (create 2 above)
+	rolListReq = &pb.ListRolesRequest{
+		Domain: &pb.OpDomain{
+			Id: &wrappers.StringValue{
+				Value: defaultDomainID,
+			},
+		},
+	}
+	rolsRet, err = suite.s.ListRoles(suite.ctx, rolListReq)
+	suite.Nil(err)
+	suite.Len(rolsRet.GetRoles(), 2)
+
+	//test delete role
+	rolDeleteReq := &pb.DeleteRoleRequest{
+		Role: &pb.OpRole{
+			Id: &wrappers.StringValue{
+				Value: defaultDomainID,
+			},
+		},
+	}
+	_, err = suite.s.DeleteRole(suite.ctx, rolDeleteReq)
 	suite.Nil(err)
 }
 
