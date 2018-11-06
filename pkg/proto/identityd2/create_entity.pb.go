@@ -3,11 +3,13 @@
 
 package identityd2
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import wrappers "github.com/golang/protobuf/ptypes/wrappers"
-import _ "github.com/mwitkow/go-proto-validators"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	wrappers "github.com/golang/protobuf/ptypes/wrappers"
+	_ "github.com/mwitkow/go-proto-validators"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -21,14 +23,14 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type CreateEntityRequest struct {
-	Id                   *wrappers.StringValue            `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	Domains              []*OpDomain                      `protobuf:"bytes,2,rep,name=domains" json:"domains,omitempty"`
-	Groups               []*OpGroup                       `protobuf:"bytes,3,rep,name=groups" json:"groups,omitempty"`
-	Roles                []*OpRole                        `protobuf:"bytes,4,rep,name=roles" json:"roles,omitempty"`
-	Name                 *wrappers.StringValue            `protobuf:"bytes,5,opt,name=name" json:"name,omitempty"`
-	Alias                *wrappers.StringValue            `protobuf:"bytes,6,opt,name=alias" json:"alias,omitempty"`
-	Password             *wrappers.StringValue            `protobuf:"bytes,7,opt,name=password" json:"password,omitempty"`
-	Extra                map[string]*wrappers.StringValue `protobuf:"bytes,8,rep,name=extra" json:"extra,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	Id                   *wrappers.StringValue            `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Domains              []*OpDomain                      `protobuf:"bytes,2,rep,name=domains,proto3" json:"domains,omitempty"`
+	Groups               []*OpGroup                       `protobuf:"bytes,3,rep,name=groups,proto3" json:"groups,omitempty"`
+	Roles                []*OpRole                        `protobuf:"bytes,4,rep,name=roles,proto3" json:"roles,omitempty"`
+	Name                 *wrappers.StringValue            `protobuf:"bytes,5,opt,name=name,proto3" json:"name,omitempty"`
+	Alias                *wrappers.StringValue            `protobuf:"bytes,6,opt,name=alias,proto3" json:"alias,omitempty"`
+	Password             *wrappers.StringValue            `protobuf:"bytes,7,opt,name=password,proto3" json:"password,omitempty"`
+	Extra                map[string]*wrappers.StringValue `protobuf:"bytes,8,rep,name=extra,proto3" json:"extra,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 	XXX_NoUnkeyedLiteral struct{}                         `json:"-"`
 	XXX_unrecognized     []byte                           `json:"-"`
 	XXX_sizecache        int32                            `json:"-"`
@@ -38,16 +40,17 @@ func (m *CreateEntityRequest) Reset()         { *m = CreateEntityRequest{} }
 func (m *CreateEntityRequest) String() string { return proto.CompactTextString(m) }
 func (*CreateEntityRequest) ProtoMessage()    {}
 func (*CreateEntityRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_create_entity_0c69c01dffef6b77, []int{0}
+	return fileDescriptor_7096d1c9da9b69b6, []int{0}
 }
+
 func (m *CreateEntityRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_CreateEntityRequest.Unmarshal(m, b)
 }
 func (m *CreateEntityRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_CreateEntityRequest.Marshal(b, m, deterministic)
 }
-func (dst *CreateEntityRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CreateEntityRequest.Merge(dst, src)
+func (m *CreateEntityRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CreateEntityRequest.Merge(m, src)
 }
 func (m *CreateEntityRequest) XXX_Size() int {
 	return xxx_messageInfo_CreateEntityRequest.Size(m)
@@ -115,7 +118,7 @@ func (m *CreateEntityRequest) GetExtra() map[string]*wrappers.StringValue {
 }
 
 type CreateEntityResponse struct {
-	Entity               *Entity  `protobuf:"bytes,1,opt,name=entity" json:"entity,omitempty"`
+	Entity               *Entity  `protobuf:"bytes,1,opt,name=entity,proto3" json:"entity,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -125,16 +128,17 @@ func (m *CreateEntityResponse) Reset()         { *m = CreateEntityResponse{} }
 func (m *CreateEntityResponse) String() string { return proto.CompactTextString(m) }
 func (*CreateEntityResponse) ProtoMessage()    {}
 func (*CreateEntityResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_create_entity_0c69c01dffef6b77, []int{1}
+	return fileDescriptor_7096d1c9da9b69b6, []int{1}
 }
+
 func (m *CreateEntityResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_CreateEntityResponse.Unmarshal(m, b)
 }
 func (m *CreateEntityResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_CreateEntityResponse.Marshal(b, m, deterministic)
 }
-func (dst *CreateEntityResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CreateEntityResponse.Merge(dst, src)
+func (m *CreateEntityResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CreateEntityResponse.Merge(m, src)
 }
 func (m *CreateEntityResponse) XXX_Size() int {
 	return xxx_messageInfo_CreateEntityResponse.Size(m)
@@ -158,9 +162,9 @@ func init() {
 	proto.RegisterType((*CreateEntityResponse)(nil), "ai.metathings.service.identityd2.CreateEntityResponse")
 }
 
-func init() { proto.RegisterFile("create_entity.proto", fileDescriptor_create_entity_0c69c01dffef6b77) }
+func init() { proto.RegisterFile("create_entity.proto", fileDescriptor_7096d1c9da9b69b6) }
 
-var fileDescriptor_create_entity_0c69c01dffef6b77 = []byte{
+var fileDescriptor_7096d1c9da9b69b6 = []byte{
 	// 409 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x92, 0x41, 0x8b, 0xd4, 0x30,
 	0x18, 0x86, 0x99, 0xce, 0xb4, 0xbb, 0x7e, 0x73, 0x91, 0xac, 0x87, 0x30, 0x88, 0x96, 0x3d, 0x8d,

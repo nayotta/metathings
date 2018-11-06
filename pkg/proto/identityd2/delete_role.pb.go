@@ -3,10 +3,12 @@
 
 package identityd2
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import _ "github.com/mwitkow/go-proto-validators"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	_ "github.com/mwitkow/go-proto-validators"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -20,7 +22,7 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type DeleteRoleRequest struct {
-	Role                 *OpRole  `protobuf:"bytes,1,opt,name=role" json:"role,omitempty"`
+	Role                 *OpRole  `protobuf:"bytes,1,opt,name=role,proto3" json:"role,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -30,16 +32,17 @@ func (m *DeleteRoleRequest) Reset()         { *m = DeleteRoleRequest{} }
 func (m *DeleteRoleRequest) String() string { return proto.CompactTextString(m) }
 func (*DeleteRoleRequest) ProtoMessage()    {}
 func (*DeleteRoleRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_delete_role_090c9e97ea3cfb7b, []int{0}
+	return fileDescriptor_1a89897a4ed4a653, []int{0}
 }
+
 func (m *DeleteRoleRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_DeleteRoleRequest.Unmarshal(m, b)
 }
 func (m *DeleteRoleRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_DeleteRoleRequest.Marshal(b, m, deterministic)
 }
-func (dst *DeleteRoleRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_DeleteRoleRequest.Merge(dst, src)
+func (m *DeleteRoleRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DeleteRoleRequest.Merge(m, src)
 }
 func (m *DeleteRoleRequest) XXX_Size() int {
 	return xxx_messageInfo_DeleteRoleRequest.Size(m)
@@ -61,9 +64,9 @@ func init() {
 	proto.RegisterType((*DeleteRoleRequest)(nil), "ai.metathings.service.identityd2.DeleteRoleRequest")
 }
 
-func init() { proto.RegisterFile("delete_role.proto", fileDescriptor_delete_role_090c9e97ea3cfb7b) }
+func init() { proto.RegisterFile("delete_role.proto", fileDescriptor_1a89897a4ed4a653) }
 
-var fileDescriptor_delete_role_090c9e97ea3cfb7b = []byte{
+var fileDescriptor_1a89897a4ed4a653 = []byte{
 	// 185 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x12, 0x4c, 0x49, 0xcd, 0x49,
 	0x2d, 0x49, 0x8d, 0x2f, 0xca, 0xcf, 0x49, 0xd5, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x52, 0x48,

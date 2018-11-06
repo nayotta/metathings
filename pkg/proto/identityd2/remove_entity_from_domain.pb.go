@@ -3,10 +3,12 @@
 
 package identityd2
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import _ "github.com/mwitkow/go-proto-validators"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	_ "github.com/mwitkow/go-proto-validators"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -20,8 +22,8 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type RemoveEntityFromDomainRequest struct {
-	Domain               *OpDomain `protobuf:"bytes,1,opt,name=domain" json:"domain,omitempty"`
-	Entity               *OpEntity `protobuf:"bytes,2,opt,name=entity" json:"entity,omitempty"`
+	Domain               *OpDomain `protobuf:"bytes,1,opt,name=domain,proto3" json:"domain,omitempty"`
+	Entity               *OpEntity `protobuf:"bytes,2,opt,name=entity,proto3" json:"entity,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}  `json:"-"`
 	XXX_unrecognized     []byte    `json:"-"`
 	XXX_sizecache        int32     `json:"-"`
@@ -31,16 +33,17 @@ func (m *RemoveEntityFromDomainRequest) Reset()         { *m = RemoveEntityFromD
 func (m *RemoveEntityFromDomainRequest) String() string { return proto.CompactTextString(m) }
 func (*RemoveEntityFromDomainRequest) ProtoMessage()    {}
 func (*RemoveEntityFromDomainRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_remove_entity_from_domain_ba1295687dbd47f6, []int{0}
+	return fileDescriptor_c802fdb451d3192f, []int{0}
 }
+
 func (m *RemoveEntityFromDomainRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_RemoveEntityFromDomainRequest.Unmarshal(m, b)
 }
 func (m *RemoveEntityFromDomainRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_RemoveEntityFromDomainRequest.Marshal(b, m, deterministic)
 }
-func (dst *RemoveEntityFromDomainRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_RemoveEntityFromDomainRequest.Merge(dst, src)
+func (m *RemoveEntityFromDomainRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_RemoveEntityFromDomainRequest.Merge(m, src)
 }
 func (m *RemoveEntityFromDomainRequest) XXX_Size() int {
 	return xxx_messageInfo_RemoveEntityFromDomainRequest.Size(m)
@@ -69,11 +72,9 @@ func init() {
 	proto.RegisterType((*RemoveEntityFromDomainRequest)(nil), "ai.metathings.service.identityd2.RemoveEntityFromDomainRequest")
 }
 
-func init() {
-	proto.RegisterFile("remove_entity_from_domain.proto", fileDescriptor_remove_entity_from_domain_ba1295687dbd47f6)
-}
+func init() { proto.RegisterFile("remove_entity_from_domain.proto", fileDescriptor_c802fdb451d3192f) }
 
-var fileDescriptor_remove_entity_from_domain_ba1295687dbd47f6 = []byte{
+var fileDescriptor_c802fdb451d3192f = []byte{
 	// 218 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x92, 0x2f, 0x4a, 0xcd, 0xcd,
 	0x2f, 0x4b, 0x8d, 0x4f, 0xcd, 0x2b, 0xc9, 0x2c, 0xa9, 0x8c, 0x4f, 0x2b, 0xca, 0xcf, 0x8d, 0x4f,

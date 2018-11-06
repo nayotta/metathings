@@ -3,10 +3,12 @@
 
 package identityd2
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import wrappers "github.com/golang/protobuf/ptypes/wrappers"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	wrappers "github.com/golang/protobuf/ptypes/wrappers"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -20,10 +22,10 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type ListRolesRequest struct {
-	Id                   *wrappers.StringValue `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	Domain               *OpDomain             `protobuf:"bytes,2,opt,name=domain" json:"domain,omitempty"`
-	Name                 *wrappers.StringValue `protobuf:"bytes,3,opt,name=name" json:"name,omitempty"`
-	Alias                *wrappers.StringValue `protobuf:"bytes,4,opt,name=alias" json:"alias,omitempty"`
+	Id                   *wrappers.StringValue `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Domain               *OpDomain             `protobuf:"bytes,2,opt,name=domain,proto3" json:"domain,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
+	Alias                *wrappers.StringValue `protobuf:"bytes,4,opt,name=alias,proto3" json:"alias,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -33,16 +35,17 @@ func (m *ListRolesRequest) Reset()         { *m = ListRolesRequest{} }
 func (m *ListRolesRequest) String() string { return proto.CompactTextString(m) }
 func (*ListRolesRequest) ProtoMessage()    {}
 func (*ListRolesRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_list_roles_bc8f4ae71a236429, []int{0}
+	return fileDescriptor_39632ff8fb9178eb, []int{0}
 }
+
 func (m *ListRolesRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ListRolesRequest.Unmarshal(m, b)
 }
 func (m *ListRolesRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_ListRolesRequest.Marshal(b, m, deterministic)
 }
-func (dst *ListRolesRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ListRolesRequest.Merge(dst, src)
+func (m *ListRolesRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ListRolesRequest.Merge(m, src)
 }
 func (m *ListRolesRequest) XXX_Size() int {
 	return xxx_messageInfo_ListRolesRequest.Size(m)
@@ -82,7 +85,7 @@ func (m *ListRolesRequest) GetAlias() *wrappers.StringValue {
 }
 
 type ListRolesResponse struct {
-	Roles                []*Role  `protobuf:"bytes,1,rep,name=roles" json:"roles,omitempty"`
+	Roles                []*Role  `protobuf:"bytes,1,rep,name=roles,proto3" json:"roles,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -92,16 +95,17 @@ func (m *ListRolesResponse) Reset()         { *m = ListRolesResponse{} }
 func (m *ListRolesResponse) String() string { return proto.CompactTextString(m) }
 func (*ListRolesResponse) ProtoMessage()    {}
 func (*ListRolesResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_list_roles_bc8f4ae71a236429, []int{1}
+	return fileDescriptor_39632ff8fb9178eb, []int{1}
 }
+
 func (m *ListRolesResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ListRolesResponse.Unmarshal(m, b)
 }
 func (m *ListRolesResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_ListRolesResponse.Marshal(b, m, deterministic)
 }
-func (dst *ListRolesResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ListRolesResponse.Merge(dst, src)
+func (m *ListRolesResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ListRolesResponse.Merge(m, src)
 }
 func (m *ListRolesResponse) XXX_Size() int {
 	return xxx_messageInfo_ListRolesResponse.Size(m)
@@ -124,9 +128,9 @@ func init() {
 	proto.RegisterType((*ListRolesResponse)(nil), "ai.metathings.service.identityd2.ListRolesResponse")
 }
 
-func init() { proto.RegisterFile("list_roles.proto", fileDescriptor_list_roles_bc8f4ae71a236429) }
+func init() { proto.RegisterFile("list_roles.proto", fileDescriptor_39632ff8fb9178eb) }
 
-var fileDescriptor_list_roles_bc8f4ae71a236429 = []byte{
+var fileDescriptor_39632ff8fb9178eb = []byte{
 	// 260 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x90, 0xcb, 0x4b, 0x03, 0x31,
 	0x10, 0xc6, 0xd9, 0x6d, 0xb7, 0x87, 0xec, 0xa5, 0xe6, 0x14, 0x8a, 0xc8, 0xd2, 0x83, 0x14, 0x91,

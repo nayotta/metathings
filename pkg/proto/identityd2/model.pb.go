@@ -3,11 +3,13 @@
 
 package identityd2
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import timestamp "github.com/golang/protobuf/ptypes/timestamp"
-import wrappers "github.com/golang/protobuf/ptypes/wrappers"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	timestamp "github.com/golang/protobuf/ptypes/timestamp"
+	wrappers "github.com/golang/protobuf/ptypes/wrappers"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -21,12 +23,12 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type Domain struct {
-	Id                   string            `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	Name                 string            `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
-	Alias                string            `protobuf:"bytes,3,opt,name=alias" json:"alias,omitempty"`
-	Parent               *Domain           `protobuf:"bytes,4,opt,name=parent" json:"parent,omitempty"`
-	Children             []*Domain         `protobuf:"bytes,5,rep,name=children" json:"children,omitempty"`
-	Extra                map[string]string `protobuf:"bytes,6,rep,name=extra" json:"extra,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	Id                   string            `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name                 string            `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Alias                string            `protobuf:"bytes,3,opt,name=alias,proto3" json:"alias,omitempty"`
+	Parent               *Domain           `protobuf:"bytes,4,opt,name=parent,proto3" json:"parent,omitempty"`
+	Children             []*Domain         `protobuf:"bytes,5,rep,name=children,proto3" json:"children,omitempty"`
+	Extra                map[string]string `protobuf:"bytes,6,rep,name=extra,proto3" json:"extra,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
 	XXX_unrecognized     []byte            `json:"-"`
 	XXX_sizecache        int32             `json:"-"`
@@ -36,16 +38,17 @@ func (m *Domain) Reset()         { *m = Domain{} }
 func (m *Domain) String() string { return proto.CompactTextString(m) }
 func (*Domain) ProtoMessage()    {}
 func (*Domain) Descriptor() ([]byte, []int) {
-	return fileDescriptor_model_c983b600f8bf4a69, []int{0}
+	return fileDescriptor_4c16552f9fdb66d8, []int{0}
 }
+
 func (m *Domain) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Domain.Unmarshal(m, b)
 }
 func (m *Domain) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Domain.Marshal(b, m, deterministic)
 }
-func (dst *Domain) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Domain.Merge(dst, src)
+func (m *Domain) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Domain.Merge(m, src)
 }
 func (m *Domain) XXX_Size() int {
 	return xxx_messageInfo_Domain.Size(m)
@@ -99,12 +102,12 @@ func (m *Domain) GetExtra() map[string]string {
 }
 
 type OpDomain struct {
-	Id                   *wrappers.StringValue            `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	Name                 *wrappers.StringValue            `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
-	Alias                *wrappers.StringValue            `protobuf:"bytes,3,opt,name=alias" json:"alias,omitempty"`
-	Parent               *OpDomain                        `protobuf:"bytes,4,opt,name=parent" json:"parent,omitempty"`
-	Children             []*OpDomain                      `protobuf:"bytes,5,rep,name=children" json:"children,omitempty"`
-	Extra                map[string]*wrappers.StringValue `protobuf:"bytes,6,rep,name=extra" json:"extra,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	Id                   *wrappers.StringValue            `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name                 *wrappers.StringValue            `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Alias                *wrappers.StringValue            `protobuf:"bytes,3,opt,name=alias,proto3" json:"alias,omitempty"`
+	Parent               *OpDomain                        `protobuf:"bytes,4,opt,name=parent,proto3" json:"parent,omitempty"`
+	Children             []*OpDomain                      `protobuf:"bytes,5,rep,name=children,proto3" json:"children,omitempty"`
+	Extra                map[string]*wrappers.StringValue `protobuf:"bytes,6,rep,name=extra,proto3" json:"extra,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 	XXX_NoUnkeyedLiteral struct{}                         `json:"-"`
 	XXX_unrecognized     []byte                           `json:"-"`
 	XXX_sizecache        int32                            `json:"-"`
@@ -114,16 +117,17 @@ func (m *OpDomain) Reset()         { *m = OpDomain{} }
 func (m *OpDomain) String() string { return proto.CompactTextString(m) }
 func (*OpDomain) ProtoMessage()    {}
 func (*OpDomain) Descriptor() ([]byte, []int) {
-	return fileDescriptor_model_c983b600f8bf4a69, []int{1}
+	return fileDescriptor_4c16552f9fdb66d8, []int{1}
 }
+
 func (m *OpDomain) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_OpDomain.Unmarshal(m, b)
 }
 func (m *OpDomain) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_OpDomain.Marshal(b, m, deterministic)
 }
-func (dst *OpDomain) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_OpDomain.Merge(dst, src)
+func (m *OpDomain) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_OpDomain.Merge(m, src)
 }
 func (m *OpDomain) XXX_Size() int {
 	return xxx_messageInfo_OpDomain.Size(m)
@@ -177,12 +181,12 @@ func (m *OpDomain) GetExtra() map[string]*wrappers.StringValue {
 }
 
 type Role struct {
-	Id                   string            `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	Domain               *Domain           `protobuf:"bytes,2,opt,name=domain" json:"domain,omitempty"`
-	Name                 string            `protobuf:"bytes,3,opt,name=name" json:"name,omitempty"`
-	Alias                string            `protobuf:"bytes,4,opt,name=alias" json:"alias,omitempty"`
-	Description          string            `protobuf:"bytes,5,opt,name=description" json:"description,omitempty"`
-	Extra                map[string]string `protobuf:"bytes,7,rep,name=extra" json:"extra,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	Id                   string            `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Domain               *Domain           `protobuf:"bytes,2,opt,name=domain,proto3" json:"domain,omitempty"`
+	Name                 string            `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
+	Alias                string            `protobuf:"bytes,4,opt,name=alias,proto3" json:"alias,omitempty"`
+	Description          string            `protobuf:"bytes,5,opt,name=description,proto3" json:"description,omitempty"`
+	Extra                map[string]string `protobuf:"bytes,7,rep,name=extra,proto3" json:"extra,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
 	XXX_unrecognized     []byte            `json:"-"`
 	XXX_sizecache        int32             `json:"-"`
@@ -192,16 +196,17 @@ func (m *Role) Reset()         { *m = Role{} }
 func (m *Role) String() string { return proto.CompactTextString(m) }
 func (*Role) ProtoMessage()    {}
 func (*Role) Descriptor() ([]byte, []int) {
-	return fileDescriptor_model_c983b600f8bf4a69, []int{2}
+	return fileDescriptor_4c16552f9fdb66d8, []int{2}
 }
+
 func (m *Role) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Role.Unmarshal(m, b)
 }
 func (m *Role) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Role.Marshal(b, m, deterministic)
 }
-func (dst *Role) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Role.Merge(dst, src)
+func (m *Role) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Role.Merge(m, src)
 }
 func (m *Role) XXX_Size() int {
 	return xxx_messageInfo_Role.Size(m)
@@ -255,12 +260,12 @@ func (m *Role) GetExtra() map[string]string {
 }
 
 type OpRole struct {
-	Id                   *wrappers.StringValue            `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	Domain               *OpDomain                        `protobuf:"bytes,2,opt,name=domain" json:"domain,omitempty"`
-	Name                 *wrappers.StringValue            `protobuf:"bytes,3,opt,name=name" json:"name,omitempty"`
-	Alias                *wrappers.StringValue            `protobuf:"bytes,4,opt,name=alias" json:"alias,omitempty"`
-	Description          *wrappers.StringValue            `protobuf:"bytes,5,opt,name=description" json:"description,omitempty"`
-	Extra                map[string]*wrappers.StringValue `protobuf:"bytes,6,rep,name=extra" json:"extra,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	Id                   *wrappers.StringValue            `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Domain               *OpDomain                        `protobuf:"bytes,2,opt,name=domain,proto3" json:"domain,omitempty"`
+	Name                 *wrappers.StringValue            `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
+	Alias                *wrappers.StringValue            `protobuf:"bytes,4,opt,name=alias,proto3" json:"alias,omitempty"`
+	Description          *wrappers.StringValue            `protobuf:"bytes,5,opt,name=description,proto3" json:"description,omitempty"`
+	Extra                map[string]*wrappers.StringValue `protobuf:"bytes,6,rep,name=extra,proto3" json:"extra,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 	XXX_NoUnkeyedLiteral struct{}                         `json:"-"`
 	XXX_unrecognized     []byte                           `json:"-"`
 	XXX_sizecache        int32                            `json:"-"`
@@ -270,16 +275,17 @@ func (m *OpRole) Reset()         { *m = OpRole{} }
 func (m *OpRole) String() string { return proto.CompactTextString(m) }
 func (*OpRole) ProtoMessage()    {}
 func (*OpRole) Descriptor() ([]byte, []int) {
-	return fileDescriptor_model_c983b600f8bf4a69, []int{3}
+	return fileDescriptor_4c16552f9fdb66d8, []int{3}
 }
+
 func (m *OpRole) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_OpRole.Unmarshal(m, b)
 }
 func (m *OpRole) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_OpRole.Marshal(b, m, deterministic)
 }
-func (dst *OpRole) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_OpRole.Merge(dst, src)
+func (m *OpRole) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_OpRole.Merge(m, src)
 }
 func (m *OpRole) XXX_Size() int {
 	return xxx_messageInfo_OpRole.Size(m)
@@ -333,14 +339,14 @@ func (m *OpRole) GetExtra() map[string]*wrappers.StringValue {
 }
 
 type Entity struct {
-	Id                   string            `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	Domains              []*Domain         `protobuf:"bytes,2,rep,name=domains" json:"domains,omitempty"`
-	Groups               []*Group          `protobuf:"bytes,3,rep,name=groups" json:"groups,omitempty"`
-	Roles                []*Role           `protobuf:"bytes,4,rep,name=roles" json:"roles,omitempty"`
-	Name                 string            `protobuf:"bytes,5,opt,name=name" json:"name,omitempty"`
-	Alias                string            `protobuf:"bytes,6,opt,name=alias" json:"alias,omitempty"`
-	Password             string            `protobuf:"bytes,7,opt,name=password" json:"password,omitempty"`
-	Extra                map[string]string `protobuf:"bytes,8,rep,name=extra" json:"extra,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	Id                   string            `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Domains              []*Domain         `protobuf:"bytes,2,rep,name=domains,proto3" json:"domains,omitempty"`
+	Groups               []*Group          `protobuf:"bytes,3,rep,name=groups,proto3" json:"groups,omitempty"`
+	Roles                []*Role           `protobuf:"bytes,4,rep,name=roles,proto3" json:"roles,omitempty"`
+	Name                 string            `protobuf:"bytes,5,opt,name=name,proto3" json:"name,omitempty"`
+	Alias                string            `protobuf:"bytes,6,opt,name=alias,proto3" json:"alias,omitempty"`
+	Password             string            `protobuf:"bytes,7,opt,name=password,proto3" json:"password,omitempty"`
+	Extra                map[string]string `protobuf:"bytes,8,rep,name=extra,proto3" json:"extra,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
 	XXX_unrecognized     []byte            `json:"-"`
 	XXX_sizecache        int32             `json:"-"`
@@ -350,16 +356,17 @@ func (m *Entity) Reset()         { *m = Entity{} }
 func (m *Entity) String() string { return proto.CompactTextString(m) }
 func (*Entity) ProtoMessage()    {}
 func (*Entity) Descriptor() ([]byte, []int) {
-	return fileDescriptor_model_c983b600f8bf4a69, []int{4}
+	return fileDescriptor_4c16552f9fdb66d8, []int{4}
 }
+
 func (m *Entity) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Entity.Unmarshal(m, b)
 }
 func (m *Entity) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Entity.Marshal(b, m, deterministic)
 }
-func (dst *Entity) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Entity.Merge(dst, src)
+func (m *Entity) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Entity.Merge(m, src)
 }
 func (m *Entity) XXX_Size() int {
 	return xxx_messageInfo_Entity.Size(m)
@@ -427,14 +434,14 @@ func (m *Entity) GetExtra() map[string]string {
 }
 
 type OpEntity struct {
-	Id                   *wrappers.StringValue            `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	Domains              []*OpDomain                      `protobuf:"bytes,2,rep,name=domains" json:"domains,omitempty"`
-	Groups               []*OpGroup                       `protobuf:"bytes,3,rep,name=groups" json:"groups,omitempty"`
-	Roles                []*OpRole                        `protobuf:"bytes,4,rep,name=roles" json:"roles,omitempty"`
-	Name                 *wrappers.StringValue            `protobuf:"bytes,5,opt,name=name" json:"name,omitempty"`
-	Alias                *wrappers.StringValue            `protobuf:"bytes,6,opt,name=alias" json:"alias,omitempty"`
-	Password             *wrappers.StringValue            `protobuf:"bytes,7,opt,name=password" json:"password,omitempty"`
-	Extra                map[string]*wrappers.StringValue `protobuf:"bytes,8,rep,name=extra" json:"extra,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	Id                   *wrappers.StringValue            `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Domains              []*OpDomain                      `protobuf:"bytes,2,rep,name=domains,proto3" json:"domains,omitempty"`
+	Groups               []*OpGroup                       `protobuf:"bytes,3,rep,name=groups,proto3" json:"groups,omitempty"`
+	Roles                []*OpRole                        `protobuf:"bytes,4,rep,name=roles,proto3" json:"roles,omitempty"`
+	Name                 *wrappers.StringValue            `protobuf:"bytes,5,opt,name=name,proto3" json:"name,omitempty"`
+	Alias                *wrappers.StringValue            `protobuf:"bytes,6,opt,name=alias,proto3" json:"alias,omitempty"`
+	Password             *wrappers.StringValue            `protobuf:"bytes,7,opt,name=password,proto3" json:"password,omitempty"`
+	Extra                map[string]*wrappers.StringValue `protobuf:"bytes,8,rep,name=extra,proto3" json:"extra,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 	XXX_NoUnkeyedLiteral struct{}                         `json:"-"`
 	XXX_unrecognized     []byte                           `json:"-"`
 	XXX_sizecache        int32                            `json:"-"`
@@ -444,16 +451,17 @@ func (m *OpEntity) Reset()         { *m = OpEntity{} }
 func (m *OpEntity) String() string { return proto.CompactTextString(m) }
 func (*OpEntity) ProtoMessage()    {}
 func (*OpEntity) Descriptor() ([]byte, []int) {
-	return fileDescriptor_model_c983b600f8bf4a69, []int{5}
+	return fileDescriptor_4c16552f9fdb66d8, []int{5}
 }
+
 func (m *OpEntity) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_OpEntity.Unmarshal(m, b)
 }
 func (m *OpEntity) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_OpEntity.Marshal(b, m, deterministic)
 }
-func (dst *OpEntity) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_OpEntity.Merge(dst, src)
+func (m *OpEntity) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_OpEntity.Merge(m, src)
 }
 func (m *OpEntity) XXX_Size() int {
 	return xxx_messageInfo_OpEntity.Size(m)
@@ -521,14 +529,14 @@ func (m *OpEntity) GetExtra() map[string]*wrappers.StringValue {
 }
 
 type Group struct {
-	Id                   string            `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	Domain               *Domain           `protobuf:"bytes,2,opt,name=domain" json:"domain,omitempty"`
-	Roles                []*Role           `protobuf:"bytes,3,rep,name=roles" json:"roles,omitempty"`
-	Entities             []*Entity         `protobuf:"bytes,4,rep,name=entities" json:"entities,omitempty"`
-	Name                 string            `protobuf:"bytes,5,opt,name=name" json:"name,omitempty"`
-	Alias                string            `protobuf:"bytes,6,opt,name=alias" json:"alias,omitempty"`
-	Description          string            `protobuf:"bytes,7,opt,name=description" json:"description,omitempty"`
-	Extra                map[string]string `protobuf:"bytes,8,rep,name=extra" json:"extra,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	Id                   string            `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Domain               *Domain           `protobuf:"bytes,2,opt,name=domain,proto3" json:"domain,omitempty"`
+	Roles                []*Role           `protobuf:"bytes,3,rep,name=roles,proto3" json:"roles,omitempty"`
+	Entities             []*Entity         `protobuf:"bytes,4,rep,name=entities,proto3" json:"entities,omitempty"`
+	Name                 string            `protobuf:"bytes,5,opt,name=name,proto3" json:"name,omitempty"`
+	Alias                string            `protobuf:"bytes,6,opt,name=alias,proto3" json:"alias,omitempty"`
+	Description          string            `protobuf:"bytes,7,opt,name=description,proto3" json:"description,omitempty"`
+	Extra                map[string]string `protobuf:"bytes,8,rep,name=extra,proto3" json:"extra,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
 	XXX_unrecognized     []byte            `json:"-"`
 	XXX_sizecache        int32             `json:"-"`
@@ -538,16 +546,17 @@ func (m *Group) Reset()         { *m = Group{} }
 func (m *Group) String() string { return proto.CompactTextString(m) }
 func (*Group) ProtoMessage()    {}
 func (*Group) Descriptor() ([]byte, []int) {
-	return fileDescriptor_model_c983b600f8bf4a69, []int{6}
+	return fileDescriptor_4c16552f9fdb66d8, []int{6}
 }
+
 func (m *Group) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Group.Unmarshal(m, b)
 }
 func (m *Group) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Group.Marshal(b, m, deterministic)
 }
-func (dst *Group) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Group.Merge(dst, src)
+func (m *Group) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Group.Merge(m, src)
 }
 func (m *Group) XXX_Size() int {
 	return xxx_messageInfo_Group.Size(m)
@@ -615,14 +624,14 @@ func (m *Group) GetExtra() map[string]string {
 }
 
 type OpGroup struct {
-	Id                   *wrappers.StringValue            `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	Domain               *OpDomain                        `protobuf:"bytes,2,opt,name=domain" json:"domain,omitempty"`
-	Roles                []*OpRole                        `protobuf:"bytes,3,rep,name=roles" json:"roles,omitempty"`
-	Entities             []*OpEntity                      `protobuf:"bytes,4,rep,name=entities" json:"entities,omitempty"`
-	Name                 *wrappers.StringValue            `protobuf:"bytes,5,opt,name=name" json:"name,omitempty"`
-	Alias                *wrappers.StringValue            `protobuf:"bytes,6,opt,name=alias" json:"alias,omitempty"`
-	Description          *wrappers.StringValue            `protobuf:"bytes,7,opt,name=description" json:"description,omitempty"`
-	Extra                map[string]*wrappers.StringValue `protobuf:"bytes,8,rep,name=extra" json:"extra,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	Id                   *wrappers.StringValue            `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Domain               *OpDomain                        `protobuf:"bytes,2,opt,name=domain,proto3" json:"domain,omitempty"`
+	Roles                []*OpRole                        `protobuf:"bytes,3,rep,name=roles,proto3" json:"roles,omitempty"`
+	Entities             []*OpEntity                      `protobuf:"bytes,4,rep,name=entities,proto3" json:"entities,omitempty"`
+	Name                 *wrappers.StringValue            `protobuf:"bytes,5,opt,name=name,proto3" json:"name,omitempty"`
+	Alias                *wrappers.StringValue            `protobuf:"bytes,6,opt,name=alias,proto3" json:"alias,omitempty"`
+	Description          *wrappers.StringValue            `protobuf:"bytes,7,opt,name=description,proto3" json:"description,omitempty"`
+	Extra                map[string]*wrappers.StringValue `protobuf:"bytes,8,rep,name=extra,proto3" json:"extra,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 	XXX_NoUnkeyedLiteral struct{}                         `json:"-"`
 	XXX_unrecognized     []byte                           `json:"-"`
 	XXX_sizecache        int32                            `json:"-"`
@@ -632,16 +641,17 @@ func (m *OpGroup) Reset()         { *m = OpGroup{} }
 func (m *OpGroup) String() string { return proto.CompactTextString(m) }
 func (*OpGroup) ProtoMessage()    {}
 func (*OpGroup) Descriptor() ([]byte, []int) {
-	return fileDescriptor_model_c983b600f8bf4a69, []int{7}
+	return fileDescriptor_4c16552f9fdb66d8, []int{7}
 }
+
 func (m *OpGroup) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_OpGroup.Unmarshal(m, b)
 }
 func (m *OpGroup) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_OpGroup.Marshal(b, m, deterministic)
 }
-func (dst *OpGroup) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_OpGroup.Merge(dst, src)
+func (m *OpGroup) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_OpGroup.Merge(m, src)
 }
 func (m *OpGroup) XXX_Size() int {
 	return xxx_messageInfo_OpGroup.Size(m)
@@ -709,15 +719,15 @@ func (m *OpGroup) GetExtra() map[string]*wrappers.StringValue {
 }
 
 type Credential struct {
-	Id                   string               `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	Domain               *Domain              `protobuf:"bytes,2,opt,name=domain" json:"domain,omitempty"`
-	Roles                []*Role              `protobuf:"bytes,3,rep,name=roles" json:"roles,omitempty"`
-	Entity               *Entity              `protobuf:"bytes,4,opt,name=entity" json:"entity,omitempty"`
-	Name                 string               `protobuf:"bytes,5,opt,name=name" json:"name,omitempty"`
-	Alias                string               `protobuf:"bytes,6,opt,name=alias" json:"alias,omitempty"`
-	Secret               string               `protobuf:"bytes,7,opt,name=secret" json:"secret,omitempty"`
-	Description          string               `protobuf:"bytes,8,opt,name=description" json:"description,omitempty"`
-	ExpiresAt            *timestamp.Timestamp `protobuf:"bytes,9,opt,name=expires_at,json=expiresAt" json:"expires_at,omitempty"`
+	Id                   string               `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Domain               *Domain              `protobuf:"bytes,2,opt,name=domain,proto3" json:"domain,omitempty"`
+	Roles                []*Role              `protobuf:"bytes,3,rep,name=roles,proto3" json:"roles,omitempty"`
+	Entity               *Entity              `protobuf:"bytes,4,opt,name=entity,proto3" json:"entity,omitempty"`
+	Name                 string               `protobuf:"bytes,5,opt,name=name,proto3" json:"name,omitempty"`
+	Alias                string               `protobuf:"bytes,6,opt,name=alias,proto3" json:"alias,omitempty"`
+	Secret               string               `protobuf:"bytes,7,opt,name=secret,proto3" json:"secret,omitempty"`
+	Description          string               `protobuf:"bytes,8,opt,name=description,proto3" json:"description,omitempty"`
+	ExpiresAt            *timestamp.Timestamp `protobuf:"bytes,9,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}             `json:"-"`
 	XXX_unrecognized     []byte               `json:"-"`
 	XXX_sizecache        int32                `json:"-"`
@@ -727,16 +737,17 @@ func (m *Credential) Reset()         { *m = Credential{} }
 func (m *Credential) String() string { return proto.CompactTextString(m) }
 func (*Credential) ProtoMessage()    {}
 func (*Credential) Descriptor() ([]byte, []int) {
-	return fileDescriptor_model_c983b600f8bf4a69, []int{8}
+	return fileDescriptor_4c16552f9fdb66d8, []int{8}
 }
+
 func (m *Credential) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Credential.Unmarshal(m, b)
 }
 func (m *Credential) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Credential.Marshal(b, m, deterministic)
 }
-func (dst *Credential) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Credential.Merge(dst, src)
+func (m *Credential) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Credential.Merge(m, src)
 }
 func (m *Credential) XXX_Size() int {
 	return xxx_messageInfo_Credential.Size(m)
@@ -811,15 +822,15 @@ func (m *Credential) GetExpiresAt() *timestamp.Timestamp {
 }
 
 type OpCredential struct {
-	Id                   *wrappers.StringValue `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	Domain               *OpDomain             `protobuf:"bytes,2,opt,name=domain" json:"domain,omitempty"`
-	Roles                []*OpRole             `protobuf:"bytes,3,rep,name=roles" json:"roles,omitempty"`
-	Entity               *OpEntity             `protobuf:"bytes,4,opt,name=entity" json:"entity,omitempty"`
-	Name                 *wrappers.StringValue `protobuf:"bytes,5,opt,name=name" json:"name,omitempty"`
-	Alias                *wrappers.StringValue `protobuf:"bytes,6,opt,name=alias" json:"alias,omitempty"`
-	Secret               *wrappers.StringValue `protobuf:"bytes,7,opt,name=secret" json:"secret,omitempty"`
-	Description          *wrappers.StringValue `protobuf:"bytes,8,opt,name=description" json:"description,omitempty"`
-	ExpiresAt            *timestamp.Timestamp  `protobuf:"bytes,9,opt,name=expires_at,json=expiresAt" json:"expires_at,omitempty"`
+	Id                   *wrappers.StringValue `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Domain               *OpDomain             `protobuf:"bytes,2,opt,name=domain,proto3" json:"domain,omitempty"`
+	Roles                []*OpRole             `protobuf:"bytes,3,rep,name=roles,proto3" json:"roles,omitempty"`
+	Entity               *OpEntity             `protobuf:"bytes,4,opt,name=entity,proto3" json:"entity,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,5,opt,name=name,proto3" json:"name,omitempty"`
+	Alias                *wrappers.StringValue `protobuf:"bytes,6,opt,name=alias,proto3" json:"alias,omitempty"`
+	Secret               *wrappers.StringValue `protobuf:"bytes,7,opt,name=secret,proto3" json:"secret,omitempty"`
+	Description          *wrappers.StringValue `protobuf:"bytes,8,opt,name=description,proto3" json:"description,omitempty"`
+	ExpiresAt            *timestamp.Timestamp  `protobuf:"bytes,9,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -829,16 +840,17 @@ func (m *OpCredential) Reset()         { *m = OpCredential{} }
 func (m *OpCredential) String() string { return proto.CompactTextString(m) }
 func (*OpCredential) ProtoMessage()    {}
 func (*OpCredential) Descriptor() ([]byte, []int) {
-	return fileDescriptor_model_c983b600f8bf4a69, []int{9}
+	return fileDescriptor_4c16552f9fdb66d8, []int{9}
 }
+
 func (m *OpCredential) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_OpCredential.Unmarshal(m, b)
 }
 func (m *OpCredential) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_OpCredential.Marshal(b, m, deterministic)
 }
-func (dst *OpCredential) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_OpCredential.Merge(dst, src)
+func (m *OpCredential) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_OpCredential.Merge(m, src)
 }
 func (m *OpCredential) XXX_Size() int {
 	return xxx_messageInfo_OpCredential.Size(m)
@@ -913,15 +925,15 @@ func (m *OpCredential) GetExpiresAt() *timestamp.Timestamp {
 }
 
 type Token struct {
-	Id                   string               `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	IssuedAt             *timestamp.Timestamp `protobuf:"bytes,2,opt,name=issued_at,json=issuedAt" json:"issued_at,omitempty"`
-	ExpiresAt            *timestamp.Timestamp `protobuf:"bytes,3,opt,name=expires_at,json=expiresAt" json:"expires_at,omitempty"`
-	Entity               *Entity              `protobuf:"bytes,4,opt,name=entity" json:"entity,omitempty"`
-	Roles                []*Role              `protobuf:"bytes,5,rep,name=roles" json:"roles,omitempty"`
-	Domain               *Domain              `protobuf:"bytes,6,opt,name=domain" json:"domain,omitempty"`
-	Credential           *Credential          `protobuf:"bytes,7,opt,name=credential" json:"credential,omitempty"`
-	Text                 string               `protobuf:"bytes,8,opt,name=text" json:"text,omitempty"`
-	Groups               []*Group             `protobuf:"bytes,9,rep,name=groups" json:"groups,omitempty"`
+	Id                   string               `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	IssuedAt             *timestamp.Timestamp `protobuf:"bytes,2,opt,name=issued_at,json=issuedAt,proto3" json:"issued_at,omitempty"`
+	ExpiresAt            *timestamp.Timestamp `protobuf:"bytes,3,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at,omitempty"`
+	Entity               *Entity              `protobuf:"bytes,4,opt,name=entity,proto3" json:"entity,omitempty"`
+	Roles                []*Role              `protobuf:"bytes,5,rep,name=roles,proto3" json:"roles,omitempty"`
+	Domain               *Domain              `protobuf:"bytes,6,opt,name=domain,proto3" json:"domain,omitempty"`
+	Credential           *Credential          `protobuf:"bytes,7,opt,name=credential,proto3" json:"credential,omitempty"`
+	Text                 string               `protobuf:"bytes,8,opt,name=text,proto3" json:"text,omitempty"`
+	Groups               []*Group             `protobuf:"bytes,9,rep,name=groups,proto3" json:"groups,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}             `json:"-"`
 	XXX_unrecognized     []byte               `json:"-"`
 	XXX_sizecache        int32                `json:"-"`
@@ -931,16 +943,17 @@ func (m *Token) Reset()         { *m = Token{} }
 func (m *Token) String() string { return proto.CompactTextString(m) }
 func (*Token) ProtoMessage()    {}
 func (*Token) Descriptor() ([]byte, []int) {
-	return fileDescriptor_model_c983b600f8bf4a69, []int{10}
+	return fileDescriptor_4c16552f9fdb66d8, []int{10}
 }
+
 func (m *Token) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Token.Unmarshal(m, b)
 }
 func (m *Token) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Token.Marshal(b, m, deterministic)
 }
-func (dst *Token) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Token.Merge(dst, src)
+func (m *Token) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Token.Merge(m, src)
 }
 func (m *Token) XXX_Size() int {
 	return xxx_messageInfo_Token.Size(m)
@@ -1015,15 +1028,15 @@ func (m *Token) GetGroups() []*Group {
 }
 
 type OpToken struct {
-	Id                   *wrappers.StringValue `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	IssuedAt             *timestamp.Timestamp  `protobuf:"bytes,2,opt,name=issued_at,json=issuedAt" json:"issued_at,omitempty"`
-	ExpiresAt            *timestamp.Timestamp  `protobuf:"bytes,3,opt,name=expires_at,json=expiresAt" json:"expires_at,omitempty"`
-	Entity               *OpEntity             `protobuf:"bytes,4,opt,name=entity" json:"entity,omitempty"`
-	Roles                []*OpRole             `protobuf:"bytes,5,rep,name=roles" json:"roles,omitempty"`
-	Domain               *OpDomain             `protobuf:"bytes,6,opt,name=domain" json:"domain,omitempty"`
-	Credential           *OpCredential         `protobuf:"bytes,7,opt,name=credential" json:"credential,omitempty"`
-	Text                 *wrappers.StringValue `protobuf:"bytes,8,opt,name=text" json:"text,omitempty"`
-	Groups               []*OpGroup            `protobuf:"bytes,9,rep,name=groups" json:"groups,omitempty"`
+	Id                   *wrappers.StringValue `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	IssuedAt             *timestamp.Timestamp  `protobuf:"bytes,2,opt,name=issued_at,json=issuedAt,proto3" json:"issued_at,omitempty"`
+	ExpiresAt            *timestamp.Timestamp  `protobuf:"bytes,3,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at,omitempty"`
+	Entity               *OpEntity             `protobuf:"bytes,4,opt,name=entity,proto3" json:"entity,omitempty"`
+	Roles                []*OpRole             `protobuf:"bytes,5,rep,name=roles,proto3" json:"roles,omitempty"`
+	Domain               *OpDomain             `protobuf:"bytes,6,opt,name=domain,proto3" json:"domain,omitempty"`
+	Credential           *OpCredential         `protobuf:"bytes,7,opt,name=credential,proto3" json:"credential,omitempty"`
+	Text                 *wrappers.StringValue `protobuf:"bytes,8,opt,name=text,proto3" json:"text,omitempty"`
+	Groups               []*OpGroup            `protobuf:"bytes,9,rep,name=groups,proto3" json:"groups,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -1033,16 +1046,17 @@ func (m *OpToken) Reset()         { *m = OpToken{} }
 func (m *OpToken) String() string { return proto.CompactTextString(m) }
 func (*OpToken) ProtoMessage()    {}
 func (*OpToken) Descriptor() ([]byte, []int) {
-	return fileDescriptor_model_c983b600f8bf4a69, []int{11}
+	return fileDescriptor_4c16552f9fdb66d8, []int{11}
 }
+
 func (m *OpToken) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_OpToken.Unmarshal(m, b)
 }
 func (m *OpToken) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_OpToken.Marshal(b, m, deterministic)
 }
-func (dst *OpToken) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_OpToken.Merge(dst, src)
+func (m *OpToken) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_OpToken.Merge(m, src)
 }
 func (m *OpToken) XXX_Size() int {
 	return xxx_messageInfo_OpToken.Size(m)
@@ -1139,9 +1153,9 @@ func init() {
 	proto.RegisterType((*OpToken)(nil), "ai.metathings.service.identityd2.OpToken")
 }
 
-func init() { proto.RegisterFile("model.proto", fileDescriptor_model_c983b600f8bf4a69) }
+func init() { proto.RegisterFile("model.proto", fileDescriptor_4c16552f9fdb66d8) }
 
-var fileDescriptor_model_c983b600f8bf4a69 = []byte{
+var fileDescriptor_4c16552f9fdb66d8 = []byte{
 	// 955 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xd4, 0x98, 0x4f, 0x8f, 0xdb, 0x44,
 	0x18, 0xc6, 0x15, 0xff, 0x4b, 0xf2, 0x06, 0x21, 0x64, 0x21, 0x64, 0x45, 0x08, 0xa2, 0x1c, 0x20,

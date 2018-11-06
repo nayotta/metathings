@@ -3,9 +3,11 @@
 
 package identityd2
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -19,7 +21,7 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type ShowEntityResponse struct {
-	Entity               *Entity  `protobuf:"bytes,1,opt,name=entity" json:"entity,omitempty"`
+	Entity               *Entity  `protobuf:"bytes,1,opt,name=entity,proto3" json:"entity,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -29,16 +31,17 @@ func (m *ShowEntityResponse) Reset()         { *m = ShowEntityResponse{} }
 func (m *ShowEntityResponse) String() string { return proto.CompactTextString(m) }
 func (*ShowEntityResponse) ProtoMessage()    {}
 func (*ShowEntityResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_show_entity_3587e538de455b29, []int{0}
+	return fileDescriptor_ff8f8f3029a320f2, []int{0}
 }
+
 func (m *ShowEntityResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ShowEntityResponse.Unmarshal(m, b)
 }
 func (m *ShowEntityResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_ShowEntityResponse.Marshal(b, m, deterministic)
 }
-func (dst *ShowEntityResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ShowEntityResponse.Merge(dst, src)
+func (m *ShowEntityResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ShowEntityResponse.Merge(m, src)
 }
 func (m *ShowEntityResponse) XXX_Size() int {
 	return xxx_messageInfo_ShowEntityResponse.Size(m)
@@ -60,9 +63,9 @@ func init() {
 	proto.RegisterType((*ShowEntityResponse)(nil), "ai.metathings.service.identityd2.ShowEntityResponse")
 }
 
-func init() { proto.RegisterFile("show_entity.proto", fileDescriptor_show_entity_3587e538de455b29) }
+func init() { proto.RegisterFile("show_entity.proto", fileDescriptor_ff8f8f3029a320f2) }
 
-var fileDescriptor_show_entity_3587e538de455b29 = []byte{
+var fileDescriptor_ff8f8f3029a320f2 = []byte{
 	// 129 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x12, 0x2c, 0xce, 0xc8, 0x2f,
 	0x8f, 0x4f, 0xcd, 0x2b, 0xc9, 0x2c, 0xa9, 0xd4, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x52, 0x48,

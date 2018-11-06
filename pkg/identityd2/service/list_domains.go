@@ -20,9 +20,30 @@ func (self *MetathingsIdentitydService) ListDomains(ctx context.Context, req *pb
 
 	dom := &storage.Domain{}
 
-	if id := req.GetId(); id != nil {
-		dom.Id = &id.Value
+	if req.GetId() != nil && req.GetId().GetValue() != "" {
+		idStr := req.GetId().GetValue()
+		dom.Id = &idStr
+	}
+	if req.GetName() != nil && req.GetName().GetValue() != "" {
+		nameStr := req.GetName().GetValue()
+		dom.Name = &nameStr
+	}
+	if req.GetAlias() != nil && req.GetAlias().GetValue() != "" {
+		aliasStr := req.GetAlias().GetValue()
+		dom.Alias = &aliasStr
 	}
 
-	panic("unimplemented")
+	doms, err := self.storage.ListDomains(dom)
+	if err != nil {
+		self.logger.WithError(err).Errorf("failed to list domains in storage")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
+	res := &pb.ListDomainsResponse{}
+
+	for _, dom = range doms {
+		res.Domains = append(res.Domains, copy_domain(dom))
+	}
+
+	return res, nil
 }
