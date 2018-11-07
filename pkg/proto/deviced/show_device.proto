@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package ai.metathings.service.deviced;
 
-import "device.proto";
+import "model.proto";
 
 message ShowDeviceResponse {
 	Device device = 1;

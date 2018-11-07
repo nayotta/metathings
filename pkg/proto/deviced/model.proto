@@ -1,0 +1,107 @@
+syntax = "proto3";
+
+package ai.metathings.service.deviced;
+option go_package = "deviced";
+
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/any.proto";
+
+import "github.com/nayotta/metathings/pkg/proto/identityd2/model.proto";
+import "github.com/nayotta/metathings/pkg/proto/constant/state/device.proto";
+import "github.com/nayotta/metathings/pkg/proto/constant/kind/device.proto";
+import "github.com/nayotta/metathings/pkg/proto/constant/state/module.proto";
+
+message Device {
+	string id = 1;
+	ai.metathings.service.identityd2.Entity entity = 19;
+	ai.metathings.constant.kind.DeviceKind kind = 2;
+	ai.metathings.constant.state.DeviceState state = 3;
+	string name = 4;
+	string alias = 5;
+	repeated Module modules = 6;
+}
+
+message OpDevice {
+	google.protobuf.StringValue id = 1;
+	ai.metathings.service.identityd2.Entity entity = 19;
+	ai.metathings.constant.kind.DeviceKind kind = 2;
+	ai.metathings.constant.state.DeviceState state = 3;
+	google.protobuf.StringValue name = 4;
+	google.protobuf.StringValue alias = 5;
+	repeated OpModule modules = 6;
+}
+
+message Module {
+	string id = 1;
+	ai.metathings.service.identityd2.Entity entity = 19;
+	ai.metathings.constant.state.ModuleState state = 2;
+	string device_id = 3;
+	string endpoint = 4;
+	string name = 5;
+	string alias = 6;
+}
+
+message OpModule {
+	google.protobuf.StringValue id = 1;
+	ai.metathings.service.identityd2.Entity entity = 19;
+	ai.metathings.constant.state.ModuleState state = 2;
+	google.protobuf.StringValue device_id = 3;
+	google.protobuf.StringValue endpoint = 4;
+	google.protobuf.StringValue name = 5;
+	google.protobuf.StringValue alias = 6;
+}
+
+message ErrorValue {
+	string name = 1;
+	string service_name = 2;
+	string method_name = 3;
+	string context = 4;
+}
+
+message OpUnaryCallValue {
+	google.protobuf.StringValue module_name = 1;
+	google.protobuf.StringValue component_name = 2;
+	google.protobuf.StringValue method_name = 3;
+	google.protobuf.Any value = 4;
+}
+
+message UnaryCallValue {
+	string module_name = 1;
+	string component_name = 2;
+	string method_name = 3;
+	google.protobuf.Any value = 4;
+}
+
+message OpStreamCallValue {
+	oneof union {
+		OpStreamCallConfig config = 1;
+		OpStreamCallData data = 2;
+	}
+}
+
+message StreamCallValue {
+	oneof union {
+		StreamCallConfig config = 1;
+		StreamCallData data = 2;
+	}
+}
+
+message OpStreamCallConfig {
+	google.protobuf.StringValue module_name = 1;
+	google.protobuf.StringValue component_name = 2;
+	google.protobuf.StringValue method_name = 3;
+}
+
+message StreamCallConfig {
+	string module_name = 1;
+	string component_name = 2;
+	string method_name = 3;
+}
+
+message OpStreamCallData {
+	google.protobuf.Any value = 1;
+}
+
+message StreamCallData {
+	google.protobuf.Any value = 1;
+}

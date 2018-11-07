@@ -234,8 +234,8 @@ func init() {
 	flags.StringVarP(identityd2_opt.GetListenP(), "listen", "l", "127.0.0.1:5000", "Metathings Identity2 Service listening address")
 	flags.StringVar(identityd2_opt.GetStorage().GetDriverP(), "storage-driver", "sqlite3", "Metathings Identity2 Service Storage Driver")
 	flags.StringVar(identityd2_opt.GetStorage().GetUriP(), "storage-uri", "", "Metathings Identity2 Service Storage URI")
-	flags.StringVar(identityd2_opt.GetCertFileP(), "cert-file", "certs/identityd2-server.crt", "Metathings Identity2 Service Credential File")
-	flags.StringVar(identityd2_opt.GetKeyFileP(), "key-file", "certs/identityd2-server.key", "Metathings Identity2 Service Key File")
+	flags.StringVar(identityd2_opt.GetCertFileP(), "cert-file", "certs/server.crt", "Metathings Identity2 Service Credential File")
+	flags.StringVar(identityd2_opt.GetKeyFileP(), "key-file", "certs/server.key", "Metathings Identity2 Service Key File")
 
 	flags.CountVar(&identityd2_opt.Init, "init", "Initial Metathings Identity2 Service")
 

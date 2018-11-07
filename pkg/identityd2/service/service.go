@@ -48,7 +48,7 @@ func (self *MetathingsIdentitydService) enforce(ctx context.Context, obj, act st
 	}
 
 	if err = self.enforcer.Enforce(*tkn.DomainId, groups, *tkn.EntityId, obj, act); err != nil {
-		if err == ErrPermissionDenied {
+		if err == policy.ErrPermissionDenied {
 			self.logger.WithFields(log.Fields{
 				"subject": *tkn.EntityId,
 				"domain":  *tkn.DomainId,
@@ -56,7 +56,7 @@ func (self *MetathingsIdentitydService) enforce(ctx context.Context, obj, act st
 				"object":  obj,
 				"action":  act,
 			}).Warningf("denied to do #action")
-			return status.Errorf(codes.PermissionDenied, ErrPermissionDenied.Error())
+			return status.Errorf(codes.PermissionDenied, err.Error())
 		} else {
 			self.logger.WithError(err).Errorf("failed to enforce")
 			return status.Errorf(codes.Internal, err.Error())

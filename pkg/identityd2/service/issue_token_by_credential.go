@@ -7,6 +7,8 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
+	passwd_helper "github.com/nayotta/metathings/pkg/common/passwd"
+	policy "github.com/nayotta/metathings/pkg/identityd2/policy"
 	storage "github.com/nayotta/metathings/pkg/identityd2/storage"
 	pb "github.com/nayotta/metathings/pkg/proto/identityd2"
 	log "github.com/sirupsen/logrus"
@@ -35,16 +37,32 @@ func (self *MetathingsIdentitydService) IssueTokenByCredential(ctx context.Conte
 	if cred_id == nil {
 		err = errors.New("credential.id is empty")
 		self.logger.WithError(err).Warningf("failed to validate request data")
+		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
+	cred_id_str := cred_id.GetValue()
 
-	if cred_s, err = self.storage.GetCredential(cred_id.GetValue()); err != nil {
+	cred_secret := cred.GetSecret()
+	if cred_secret == nil {
+		err = errors.New("crednetial.secret is empty")
+		self.logger.WithError(err).Warningf("failed to vlaidate request data")
+		return nil, status.Errorf(codes.InvalidArgument, err.Error())
+	}
+	cred_secret_str := cred_secret.GetValue()
+
+	if cred_s, err = self.storage.GetCredential(cred_id_str); err != nil {
 		self.logger.WithError(err).Errorf("failed to find credential by id in storage")
-		return nil, status.Errorf(codes.Unauthenticated, ErrUnauthenticated.Error())
+		return nil, status.Errorf(codes.Unauthenticated, policy.ErrUnauthenticated.Error())
 	}
 
-	if *cred_s.Domain.Id != dom_id_str {
-		err = ErrUnauthenticated
+	if !domain_in_credential(cred_s, dom_id_str) {
+		err = policy.ErrUnauthenticated
 		self.logger.WithError(err).Errorf("failed to match request domain id and credential domain id")
+		return nil, status.Errorf(codes.Unauthenticated, err.Error())
+	}
+
+	if !passwd_helper.ValidatePassword(*cred_s.Secret, cred_secret_str) {
+		err = policy.ErrUnauthenticated
+		self.logger.WithError(err).Warningf("failed to validate secret")
 		return nil, status.Errorf(codes.Unauthenticated, err.Error())
 	}
 

@@ -16,25 +16,33 @@ var _ = fmt.Errorf
 var _ = math.Inf
 
 func (this *UnaryCallRequest) Validate() error {
-	if this.DeviceId != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.DeviceId); err != nil {
-			return go_proto_validators.FieldError("DeviceId", err)
+	if nil == this.Device {
+		return go_proto_validators.FieldError("Device", fmt.Errorf("message must exist"))
+	}
+	if this.Device != nil {
+		if err := go_proto_validators.CallValidatorIfExists(this.Device); err != nil {
+			return go_proto_validators.FieldError("Device", err)
 		}
 	}
-	if nil == this.Payload {
-		return go_proto_validators.FieldError("Payload", fmt.Errorf("message must exist"))
+	if nil == this.Value {
+		return go_proto_validators.FieldError("Value", fmt.Errorf("message must exist"))
 	}
-	if this.Payload != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Payload); err != nil {
-			return go_proto_validators.FieldError("Payload", err)
+	if this.Value != nil {
+		if err := go_proto_validators.CallValidatorIfExists(this.Value); err != nil {
+			return go_proto_validators.FieldError("Value", err)
 		}
 	}
 	return nil
 }
 func (this *UnaryCallResponse) Validate() error {
-	if this.Payload != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Payload); err != nil {
-			return go_proto_validators.FieldError("Payload", err)
+	if this.Device != nil {
+		if err := go_proto_validators.CallValidatorIfExists(this.Device); err != nil {
+			return go_proto_validators.FieldError("Device", err)
+		}
+	}
+	if this.Value != nil {
+		if err := go_proto_validators.CallValidatorIfExists(this.Value); err != nil {
+			return go_proto_validators.FieldError("Value", err)
 		}
 	}
 	return nil

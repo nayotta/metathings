@@ -1,4 +1,4 @@
-package metathings_identityd2_service
+package metathings_identityd2_policy
 
 import "errors"
 
