@@ -12,13 +12,18 @@ type Connection interface {
 
 type ConnectionCenter interface {
 	BuildConnection(*storage.Device, pb.DevicedService_ConnectServer) (Connection, error)
+	UnaryCall(*storage.Device, *pb.OpUnaryCallValue) (*pb.UnaryCallValue, error)
 }
 
 type cc struct {
 }
 
 func (self *cc) BuildConnection(dev *storage.Device, stm pb.DevicedService_ConnectServer) (Connection, error) {
-	return nil, nil
+	panic("unimplemented")
+}
+
+func (self *cc) UnaryCall(*storage.Device, *pb.OpUnaryCallValue) (*pb.UnaryCallValue, error) {
+	panic("unimplemented")
 }
 
 func NewConnectionCenter() (ConnectionCenter, error) {
