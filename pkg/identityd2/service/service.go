@@ -135,23 +135,7 @@ func (self *MetathingsIdentitydService) AuthFuncOverride(ctx context.Context, fu
 	return new_ctx, nil
 }
 
-func (self *MetathingsIdentitydService) PatchDomain(context.Context, *pb.PatchDomainRequest) (*pb.PatchDomainResponse, error) {
-	panic("unimplemented")
-}
-
-func (self *MetathingsIdentitydService) PatchRole(context.Context, *pb.PatchRoleRequest) (*pb.PatchRoleResponse, error) {
-	panic("unimplemented")
-}
-
-func (self *MetathingsIdentitydService) ListRoles(context.Context, *pb.ListRolesRequest) (*pb.ListRolesResponse, error) {
-	panic("unimplemented")
-}
-
 func (self *MetathingsIdentitydService) ListRolesForEntity(context.Context, *pb.ListRolesForEntityRequest) (*pb.ListRolesForEntityResponse, error) {
-	panic("unimplemented")
-}
-
-func (self *MetathingsIdentitydService) PatchEntity(context.Context, *pb.PatchEntityRequest) (*pb.PatchEntityResponse, error) {
 	panic("unimplemented")
 }
 
@@ -163,27 +147,11 @@ func (self *MetathingsIdentitydService) ShowEntity(context.Context, *empty.Empty
 	panic("unimplemented")
 }
 
-func (self *MetathingsIdentitydService) PatchGroup(context.Context, *pb.PatchGroupRequest) (*pb.PatchGroupResponse, error) {
-	panic("unimplemented")
-}
-
-func (self *MetathingsIdentitydService) ListGroups(context.Context, *pb.ListGroupsRequest) (*pb.ListGroupsResponse, error) {
-	panic("unimplemented")
-}
-
 func (self *MetathingsIdentitydService) ListGroupsForEntity(context.Context, *pb.ListGroupsForEntityRequest) (*pb.ListGroupsForEntityResponse, error) {
 	panic("unimplemented")
 }
 
 func (self *MetathingsIdentitydService) ShowGroups(context.Context, *empty.Empty) (*pb.ShowGroupsResponse, error) {
-	panic("unimplemented")
-}
-
-func (self *MetathingsIdentitydService) PatchCredential(context.Context, *pb.PatchCredentialRequest) (*pb.PatchCredentialResponse, error) {
-	panic("unimplemented")
-}
-
-func (self *MetathingsIdentitydService) ListCredentials(context.Context, *pb.ListCredentialsRequest) (*pb.ListCredentialsResponse, error) {
 	panic("unimplemented")
 }
 
@@ -196,7 +164,7 @@ func NewMetathingsIdentitydService(
 	opt *MetathingsIdentitydServiceOption,
 	logger log.FieldLogger,
 	storage storage.Storage,
-) (pb.IdentitydServiceServer, error) {
+) (*MetathingsIdentitydService, error) {
 	return &MetathingsIdentitydService{
 		opt:      opt,
 		logger:   logger,
