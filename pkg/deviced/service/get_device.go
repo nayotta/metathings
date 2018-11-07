@@ -6,9 +6,26 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
+	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
 	storage "github.com/nayotta/metathings/pkg/deviced/storage"
 	pb "github.com/nayotta/metathings/pkg/proto/deviced"
 )
+
+func (self *MetathingsDevicedService) ValidateGetDevice(ctx context.Context, in interface{}) error {
+	return self.validate_chain(
+		[]interface{}{
+			func() (policy_helper.Validator, get_devicer) {
+				req := in.(*pb.GetDeviceRequest)
+				return req, req
+			},
+		},
+		[]interface{}{ensure_get_device_id},
+	)
+}
+
+func (self *MetathingsDevicedService) AuthorizeGetDevice(ctx context.Context, in interface{}) error {
+	return self.enforce(ctx, in.(*pb.GetDeviceRequest).GetDevice().GetId().GetValue(), "get_device")
+}
 
 func (self *MetathingsDevicedService) GetDevice(ctx context.Context, req *pb.GetDeviceRequest) (*pb.GetDeviceResponse, error) {
 	var dev_s *storage.Device

@@ -5,11 +5,16 @@ import (
 
 	"github.com/golang/protobuf/ptypes/empty"
 	log "github.com/sirupsen/logrus"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 
 	context_helper "github.com/nayotta/metathings/pkg/common/context"
 	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
+	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
 	token_helper "github.com/nayotta/metathings/pkg/common/token"
+	connection "github.com/nayotta/metathings/pkg/deviced/connection"
 	storage "github.com/nayotta/metathings/pkg/deviced/storage"
+	identityd_policy "github.com/nayotta/metathings/pkg/identityd2/policy"
 	pb "github.com/nayotta/metathings/pkg/proto/deviced"
 	identityd_pb "github.com/nayotta/metathings/pkg/proto/identityd2"
 )
@@ -20,10 +25,12 @@ type MetathingsDevicedServiceOption struct {
 type MetathingsDevicedService struct {
 	grpc_helper.AuthorizationTokenParser
 
-	storage storage.Storage
-	opt     *MetathingsDevicedServiceOption
-	logger  log.FieldLogger
-	vdr     token_helper.TokenValidator
+	opt      *MetathingsDevicedServiceOption
+	logger   log.FieldLogger
+	storage  storage.Storage
+	enforcer identityd_policy.Enforcer
+	vdr      token_helper.TokenValidator
+	cc       connection.ConnectionCenter
 }
 
 func (self *MetathingsDevicedService) get_device_by_context(ctx context.Context) (*storage.Device, error) {
@@ -38,6 +45,49 @@ func (self *MetathingsDevicedService) get_device_by_context(ctx context.Context)
 	}
 
 	return dev_s, nil
+}
+
+func (self *MetathingsDevicedService) enforce(ctx context.Context, obj, act string) error {
+	var err error
+
+	tkn := context_helper.ExtractToken(ctx)
+
+	var groups []string
+	for _, g := range tkn.Groups {
+		groups = append(groups, g.Id)
+	}
+
+	if err = self.enforcer.Enforce(tkn.Domain.Id, groups, tkn.Entity.Id, obj, act); err != nil {
+		if err == identityd_policy.ErrPermissionDenied {
+			self.logger.WithFields(log.Fields{
+				"subject": tkn.Entity.Id,
+				"domain":  tkn.Domain.Id,
+				"groups":  groups,
+				"object":  obj,
+				"action":  act,
+			}).Warningf("denied to do #action")
+			return status.Errorf(codes.PermissionDenied, err.Error())
+		} else {
+			self.logger.WithError(err).Errorf("failed to enforce")
+			return status.Errorf(codes.Internal, err.Error())
+		}
+	}
+
+	return nil
+}
+
+func (self *MetathingsDevicedService) validate_chain(providers []interface{}, invokers []interface{}) error {
+	default_invokers := []interface{}{policy_helper.ValidateValidator}
+	invokers = append(default_invokers, invokers...)
+	if err := policy_helper.ValidateChain(
+		providers,
+		invokers,
+	); err != nil {
+		self.logger.WithError(err).Warningf("failed to validate request data")
+		return status.Errorf(codes.InvalidArgument, err.Error())
+	}
+
+	return nil
 }
 
 func (self *MetathingsDevicedService) is_ignore_method(md *grpc_helper.MethodDescription) bool {
@@ -90,10 +140,6 @@ func (self *MetathingsDevicedService) PatchDevice(context.Context, *pb.PatchDevi
 }
 
 func (self *MetathingsDevicedService) ListDevices(context.Context, *pb.ListDevicesRequest) (*pb.ListDevicesResponse, error) {
-	panic("unimplemented")
-}
-
-func (self *MetathingsDevicedService) Connect(pb.DevicedService_ConnectServer) error {
 	panic("unimplemented")
 }
 
