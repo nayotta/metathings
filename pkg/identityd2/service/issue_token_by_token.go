@@ -7,6 +7,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
+	policy "github.com/nayotta/metathings/pkg/identityd2/policy"
 	storage "github.com/nayotta/metathings/pkg/identityd2/storage"
 	pb "github.com/nayotta/metathings/pkg/proto/identityd2"
 	log "github.com/sirupsen/logrus"
@@ -39,11 +40,11 @@ func (self *MetathingsIdentitydService) IssueTokenByToken(ctx context.Context, r
 
 	if tkn_s, err = self.storage.GetTokenByText(tkn_txt_str); err != nil {
 		self.logger.WithError(err).Warningf("failed to find token by text in storage")
-		return nil, status.Errorf(codes.Unauthenticated, ErrUnauthenticated.Error())
+		return nil, status.Errorf(codes.Unauthenticated, policy.ErrUnauthenticated.Error())
 	}
 
 	if *tkn_s.DomainId != dom_id_str {
-		err = ErrUnauthenticated
+		err = policy.ErrUnauthenticated
 		self.logger.WithError(err).Errorf("failed to match request domain id and token domain id")
 		return nil, status.Errorf(codes.Unauthenticated, err.Error())
 	}

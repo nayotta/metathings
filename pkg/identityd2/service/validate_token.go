@@ -7,6 +7,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
+	policy "github.com/nayotta/metathings/pkg/identityd2/policy"
 	storage "github.com/nayotta/metathings/pkg/identityd2/storage"
 	pb "github.com/nayotta/metathings/pkg/proto/identityd2"
 )
@@ -30,7 +31,7 @@ func (self *MetathingsIdentitydService) ValidateToken(ctx context.Context, req *
 
 	if t, err = self.storage.GetTokenByText(tkn_txt_str); err != nil {
 		self.logger.WithError(err).Errorf("failed to get token by text in storage")
-		return nil, status.Errorf(codes.Unauthenticated, ErrUnauthenticated.Error())
+		return nil, status.Errorf(codes.Unauthenticated, policy.ErrUnauthenticated.Error())
 	}
 
 	res := &pb.ValidateTokenResponse{

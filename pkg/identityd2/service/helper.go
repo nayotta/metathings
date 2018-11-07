@@ -298,6 +298,10 @@ func domain_in_entity(ent *storage.Entity, dom_id string) bool {
 	return false
 }
 
+func domain_in_credential(cred *storage.Credential, dom_id string) bool {
+	return *cred.Domain.Id == dom_id
+}
+
 type get_domainer interface {
 	GetDomain() *pb.OpDomain
 }

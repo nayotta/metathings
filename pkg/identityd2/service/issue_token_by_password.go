@@ -8,6 +8,7 @@ import (
 	"google.golang.org/grpc/status"
 
 	passwd_helper "github.com/nayotta/metathings/pkg/common/passwd"
+	policy "github.com/nayotta/metathings/pkg/identityd2/policy"
 	storage "github.com/nayotta/metathings/pkg/identityd2/storage"
 	pb "github.com/nayotta/metathings/pkg/proto/identityd2"
 	log "github.com/sirupsen/logrus"
@@ -59,23 +60,23 @@ func (self *MetathingsIdentitydService) IssueTokenByPassword(ctx context.Context
 	if ent_id != nil {
 		if ent_s, err = self.storage.GetEntity(ent_id.GetValue()); err != nil {
 			self.logger.WithError(err).Errorf("failed to find entity by id in storage")
-			return nil, status.Errorf(codes.Unauthenticated, ErrUnauthenticated.Error())
+			return nil, status.Errorf(codes.Unauthenticated, policy.ErrUnauthenticated.Error())
 		}
 	} else {
 		if ent_s, err = self.storage.GetEntityByName(ent_name.GetValue()); err != nil {
 			self.logger.WithError(err).Errorf("failed to find entity by name in storage")
-			return nil, status.Errorf(codes.Unauthenticated, ErrUnauthenticated.Error())
+			return nil, status.Errorf(codes.Unauthenticated, policy.ErrUnauthenticated.Error())
 		}
 	}
 
 	if !domain_in_entity(ent_s, dom_id_str) {
-		err = ErrUnauthenticated
+		err = policy.ErrUnauthenticated
 		self.logger.WithError(err).Warningf("failed to find domain in entity")
 		return nil, status.Errorf(codes.Unauthenticated, err.Error())
 	}
 
 	if !passwd_helper.ValidatePassword(*ent_s.Password, ent_passwd_str) {
-		err = ErrUnauthenticated
+		err = policy.ErrUnauthenticated
 		self.logger.WithError(err).Warningf("failed to validate password")
 		return nil, status.Errorf(codes.Unauthenticated, err.Error())
 	}
