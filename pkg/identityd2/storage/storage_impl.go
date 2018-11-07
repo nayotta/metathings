@@ -109,7 +109,34 @@ func (self *StorageImpl) DeleteDomain(id string) error {
 }
 
 func (self *StorageImpl) PatchDomain(id string, domain *Domain) (*Domain, error) {
-	panic("unimplemented")
+	var err error
+	var dom *Domain
+	var domNew Domain
+
+	if dom, err = self.GetDomain(id); err != nil {
+		self.logger.WithError(err).Debugf("failed to get domain")
+		return nil, err
+	}
+	if domain.Alias != nil {
+		domNew.Alias = domain.Alias
+	}
+	if domain.Extra != nil {
+		domNew.Extra = domain.Extra
+	}
+
+	if err = self.db.Model(dom).Update(domNew).Error; err != nil {
+		self.logger.WithError(err).Debugf("failed to patch domain")
+		return nil, err
+	}
+
+	if dom, err = self.get_domain(id); err != nil {
+		self.logger.WithError(err).Debugf("failed to get domain view")
+		return nil, err
+	}
+
+	self.logger.WithField("id", id).Debugf("patch domain")
+
+	return dom, nil
 }
 
 func (self *StorageImpl) GetDomain(id string) (*Domain, error) {
@@ -252,7 +279,38 @@ func (self *StorageImpl) DeleteRole(id string) error {
 }
 
 func (self *StorageImpl) PatchRole(id string, role *Role) (*Role, error) {
-	panic("unimplemented")
+	var err error
+	var rol *Role
+	var rolNew Role
+
+	if rol, err = self.GetRole(id); err != nil {
+		self.logger.WithError(err).Debugf("failed to get role")
+		return nil, err
+	}
+
+	if role.Alias != nil {
+		rolNew.Alias = role.Alias
+	}
+	if role.Description != nil {
+		rolNew.Description = role.Description
+	}
+	if role.Extra != nil {
+		rolNew.Extra = role.Extra
+	}
+
+	if err = self.db.Model(rol).Update(rolNew).Error; err != nil {
+		self.logger.WithError(err).Debugf("failed to patch role")
+		return nil, err
+	}
+
+	if rol, err = self.get_role(id); err != nil {
+		self.logger.WithError(err).Debugf("failed to get role view")
+		return nil, err
+	}
+
+	self.logger.WithField("id", id).Debugf("patch role")
+
+	return rol, nil
 }
 
 func (self *StorageImpl) GetRole(id string) (*Role, error) {
@@ -441,9 +499,41 @@ func (self *StorageImpl) DeleteEntity(id string) error {
 }
 
 func (self *StorageImpl) PatchEntity(id string, entity *Entity) (*Entity, error) {
-	panic("unimplemented")
+	var err error
+	var ent *Entity
+	var entNew Entity
+
+	if ent, err = self.GetEntity(id); err != nil {
+		self.logger.WithError(err).Debugf("failed to get entity")
+		return nil, err
+	}
+
+	if entity.Alias != nil {
+		entNew.Alias = entity.Alias
+	}
+	if entity.Password != nil {
+		entNew.Password = entity.Password
+	}
+	if entity.Extra != nil {
+		entNew.Extra = entity.Extra
+	}
+
+	if err = self.db.Model(ent).Update(entNew).Error; err != nil {
+		self.logger.WithError(err).Debugf("failed to patch entity")
+		return nil, err
+	}
+
+	if ent, err = self.get_entity(id); err != nil {
+		self.logger.WithError(err).Debugf("failed to get entity view")
+		return nil, err
+	}
+
+	self.logger.WithField("id", id).Debugf("patch entity")
+
+	return ent, nil
 }
 
+//todo remove password from return. zh
 func (self *StorageImpl) GetEntity(id string) (*Entity, error) {
 	var ent *Entity
 	var err error
@@ -683,7 +773,38 @@ func (self *StorageImpl) DeleteGroup(id string) error {
 }
 
 func (self *StorageImpl) PatchGroup(id string, group *Group) (*Group, error) {
-	panic("unimplemented")
+	var err error
+	var grp *Group
+	var grpNew Group
+
+	if grp, err = self.GetGroup(id); err != nil {
+		self.logger.WithError(err).Debugf("failed to get group")
+		return nil, err
+	}
+
+	if group.Alias != nil {
+		grpNew.Alias = group.Alias
+	}
+	if group.Description != nil {
+		grpNew.Description = group.Description
+	}
+	if group.Extra != nil {
+		grpNew.Extra = group.Extra
+	}
+
+	if err = self.db.Model(grp).Update(grpNew).Error; err != nil {
+		self.logger.WithError(err).Debugf("failed to patch group")
+		return nil, err
+	}
+
+	if grp, err = self.get_group(id); err != nil {
+		self.logger.WithError(err).Debugf("failed to get group view")
+		return nil, err
+	}
+
+	self.logger.WithField("id", id).Debugf("patch group")
+
+	return grp, nil
 }
 
 func (self *StorageImpl) GetGroup(id string) (*Group, error) {
@@ -820,7 +941,7 @@ func (self *StorageImpl) list_view_credential_roles(id string) ([]*Role, error) 
 	var cred Credential
 	var err error
 
-	if err = self.db.Select("id", "entity_id").First(&cred, "id = ?", id).Error; err != nil {
+	if err = self.db.Select("id, entity_id").First(&cred, "id = ?", id).Error; err != nil {
 		return nil, err
 	}
 
@@ -851,7 +972,6 @@ func (self *StorageImpl) internal_list_view_credential_roles(cred *Credential) (
 				roles = append(roles, &Role{Id: m.RoleId})
 			}
 		}
-
 	} else {
 		roles = ent_roles
 	}
@@ -946,7 +1066,35 @@ func (self *StorageImpl) DeleteCredential(id string) error {
 }
 
 func (self *StorageImpl) PatchCredential(id string, credential *Credential) (*Credential, error) {
-	panic("unimplemented")
+	var err error
+	var cred *Credential
+	var credNew Credential
+
+	if cred, err = self.GetCredential(id); err != nil {
+		self.logger.WithError(err).Debugf("failed to get credential")
+		return nil, err
+	}
+
+	if credential.Alias != nil {
+		credNew.Alias = credential.Alias
+	}
+	if credential.Description != nil {
+		credNew.Description = credential.Description
+	}
+
+	if err = self.db.Model(cred).Update(credNew).Error; err != nil {
+		self.logger.WithError(err).Debugf("failed to patch credential")
+		return nil, err
+	}
+
+	if cred, err = self.get_credential(id); err != nil {
+		self.logger.WithError(err).Debugf("failed to get credential view")
+		return nil, err
+	}
+
+	self.logger.WithField("id", id).Debugf("patch credential")
+
+	return cred, nil
 }
 
 func (self *StorageImpl) GetCredential(id string) (*Credential, error) {
