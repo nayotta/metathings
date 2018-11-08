@@ -10,8 +10,8 @@ import (
 	timestamp "github.com/golang/protobuf/ptypes/timestamp"
 	wrappers "github.com/golang/protobuf/ptypes/wrappers"
 	id_helper "github.com/nayotta/metathings/pkg/common/id"
-	pb_helper "github.com/nayotta/metathings/pkg/common/protobuf"
 	passwd_helper "github.com/nayotta/metathings/pkg/common/passwd"
+	pb_helper "github.com/nayotta/metathings/pkg/common/protobuf"
 	mock_enf "github.com/nayotta/metathings/pkg/identityd2/policy/mock"
 	storage "github.com/nayotta/metathings/pkg/identityd2/storage"
 	pb "github.com/nayotta/metathings/pkg/proto/identityd2"
@@ -111,7 +111,12 @@ func (suite *identifydTestSuite) SetupTest() {
 	newEnforcer.EXPECT().RemoveGroup(gomock.Any(), gomock.Any()).Return(nil).Times(9999)
 	newEnforcer.EXPECT().RemoveSubjectFromRole(gomock.Any(), gomock.Any()).Return(nil).Times(9999)
 
-	if suite.s, err = NewMetathingsIdentitydService(newEnforcer, nil, log.New(), newStorage); err != nil {
+	day, _ = time.ParseDuration("24h")
+	newOpt := &MetathingsIdentitydServiceOption{
+		TokenExpire: day,
+	}
+
+	if suite.s, err = NewMetathingsIdentitydService(newEnforcer, newOpt, log.New(), newStorage); err != nil {
 		fmt.Println("identity SetupTest NewService error:", err.Error())
 	}
 
@@ -856,6 +861,192 @@ func (suite *identifydTestSuite) TestCredential() {
 		},
 	}
 	_, err = suite.s.DeleteCredential(suite.ctx, credDeleteReq)
+	suite.Nil(err)
+}
+
+func (suite *identifydTestSuite) TestIssueTokenByCredential() {
+	//create Credential
+	credCreateReq := &pb.CreateCredentialRequest{
+		Id: &wrappers.StringValue{
+			Value: testCredentialID,
+		},
+		Domain: &pb.OpDomain{
+			Id: &wrappers.StringValue{
+				Value: testDomainID,
+			},
+		},
+		Entity: &pb.OpEntity{
+			Id: &wrappers.StringValue{
+				Value: testEntityID,
+			},
+		},
+		Name: &wrappers.StringValue{
+			Value: testCredentialName,
+		},
+		Alias: &wrappers.StringValue{
+			Value: testCredentialAlias,
+		},
+		Description: &wrappers.StringValue{
+			Value: testCredentialDescription,
+		},
+		ExpiresAt: &timestamp.Timestamp{
+			Seconds: pb_helper.FromTime(testCredentialExpires).Seconds,
+			Nanos:   pb_helper.FromTime(testCredentialExpires).Nanos,
+		},
+	}
+	credCreateRet, err := suite.s.CreateCredential(suite.ctx, credCreateReq)
+	suite.Nil(err)
+	credSecretStr := credCreateRet.GetCredential().GetSecret()
+
+	tknIssueTokenByCredentialReq := &pb.IssueTokenByCredentialRequest{
+		Credential: &pb.OpCredential{
+			Id: &wrappers.StringValue{
+				Value: testCredentialID,
+			},
+			Domain: &pb.OpDomain{
+				Id: &wrappers.StringValue{
+					Value: testDomainID,
+				},
+			},
+			Secret: &wrappers.StringValue{
+				Value: credSecretStr,
+			},
+		},
+	}
+	tknIssueTokenByCredentialRet, err := suite.s.IssueTokenByCredential(suite.ctx, tknIssueTokenByCredentialReq)
+	suite.Nil(err)
+	suite.NotNil(tknIssueTokenByCredentialRet)
+}
+
+func (suite *identifydTestSuite) TestIssueToken() {
+	//1st create Entity
+	entCreateReq := &pb.CreateEntityRequest{
+		Id: &wrappers.StringValue{
+			Value: testEntityID,
+		},
+		Name: &wrappers.StringValue{
+			Value: testEntityName,
+		},
+		Alias: &wrappers.StringValue{
+			Value: testEntityAlias,
+		},
+		Password: &wrappers.StringValue{
+			Value: testEntityPassword,
+		},
+		Extra: map[string]*wrappers.StringValue{
+			"test": &wrappers.StringValue{
+				Value: "",
+			},
+		},
+	}
+	_, err := suite.s.CreateEntity(suite.ctx, entCreateReq)
+	suite.Nil(err)
+
+	//2st add entity to default domain
+	entAddEntityToDomainReq := &pb.AddEntityToDomainRequest{
+		Entity: &pb.OpEntity{
+			Id: &wrappers.StringValue{
+				Value: testEntityID,
+			},
+		},
+		Domain: &pb.OpDomain{
+			Id: &wrappers.StringValue{
+				Value: defaultDomainID,
+			},
+		},
+	}
+	_, err = suite.s.AddEntityToDomain(suite.ctx, entAddEntityToDomainReq)
+	suite.Nil(err)
+
+	//test IssueTokenByPassword use entity id
+	tknIssueTokenByPasswordReq := &pb.IssueTokenByPasswordRequest{
+		Entity: &pb.OpEntity{
+			Id: &wrappers.StringValue{
+				Value: testEntityID,
+			},
+			Password: &wrappers.StringValue{
+				Value: testEntityPassword,
+			},
+		},
+	}
+	tknIssueTokenByPasswordReq.Entity.Domains = append(tknIssueTokenByPasswordReq.Entity.Domains, &pb.OpDomain{
+		Id: &wrappers.StringValue{
+			Value: defaultDomainID,
+		},
+	})
+
+	tknIssueTokenByPasswordRet, err := suite.s.IssueTokenByPassword(suite.ctx, tknIssueTokenByPasswordReq)
+	suite.Nil(err)
+	suite.NotNil(tknIssueTokenByPasswordRet)
+
+	//test IssueTokenByPassword use entity name
+	tknIssueTokenByPasswordReq.Entity.Id = nil
+	tknIssueTokenByPasswordReq.Entity.Name = &wrappers.StringValue{
+		Value: testEntityName,
+	}
+
+	tknIssueTokenByPasswordRet, err = suite.s.IssueTokenByPassword(suite.ctx, tknIssueTokenByPasswordReq)
+	suite.Nil(err)
+	suite.NotNil(tknIssueTokenByPasswordRet)
+
+	//test IssueTokenByToken
+	tkn := tknIssueTokenByPasswordRet.Token.Text
+	tknIssueTokenByTokenReq := &pb.IssueTokenByTokenRequest{
+		Token: &pb.OpToken{
+			Domain: &pb.OpDomain{
+				Id: &wrappers.StringValue{
+					Value: defaultDomainID,
+				},
+			},
+			Text: &wrappers.StringValue{
+				Value: tkn,
+			},
+		},
+	}
+	tknIssueTokenByTokenRet, err := suite.s.IssueTokenByToken(suite.ctx, tknIssueTokenByTokenReq)
+	suite.Nil(err)
+	suite.NotNil(tknIssueTokenByTokenRet)
+
+	//test validateToken
+	tkn = tknIssueTokenByTokenRet.Token.Text
+	tknValidateTokenReq := &pb.ValidateTokenRequest{
+		Token: &pb.OpToken{
+			Text: &wrappers.StringValue{
+				Value: tkn,
+			},
+		},
+	}
+	tknValidateTokenRet, err := suite.s.ValidateToken(suite.ctx, tknValidateTokenReq)
+	suite.Nil(err)
+	suite.NotNil(tknValidateTokenRet)
+
+	//test checktoken
+	tkn = tknIssueTokenByTokenRet.Token.Text
+	tknCheckTokenReq := &pb.CheckTokenRequest{
+		Token: &pb.OpToken{
+			Text: &wrappers.StringValue{
+				Value: tkn,
+			},
+			Domain: &pb.OpDomain{
+				Id: &wrappers.StringValue{
+					Value: defaultDomainID,
+				},
+			},
+		},
+	}
+	_, err = suite.s.CheckToken(suite.ctx, tknCheckTokenReq)
+	suite.Nil(err)
+
+	//test revoke token
+	tkn = tknIssueTokenByTokenRet.Token.Text
+	tknRevokeTokenReq := &pb.RevokeTokenRequest{
+		Token: &pb.OpToken{
+			Text: &wrappers.StringValue{
+				Value: tkn,
+			},
+		},
+	}
+	_, err = suite.s.RevokeToken(suite.ctx, tknRevokeTokenReq)
 	suite.Nil(err)
 }
 

@@ -207,6 +207,7 @@ func copy_credential(x *storage.Credential) *pb.Credential {
 		},
 		Name:        *x.Name,
 		Alias:       *x.Alias,
+		Secret:      *x.Secret,
 		Description: *x.Description,
 		ExpiresAt:   &expires_at,
 	}

@@ -4,11 +4,11 @@ import (
 	"context"
 	"testing"
 
+	log_helper "github.com/nayotta/metathings/pkg/common/log"
+	policy "github.com/nayotta/metathings/pkg/identityd2/policy"
+	storage "github.com/nayotta/metathings/pkg/identityd2/storage"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
-
-	log_helper "github.com/nayotta/metathings/pkg/common/log"
-	storage "github.com/nayotta/metathings/pkg/identityd2/storage"
 )
 
 type mock_enforcer struct {
@@ -20,7 +20,7 @@ func (self *mock_enforcer) Enforce(domain, group, subject, object, action interf
 	if action.(string) == "pass" {
 		return nil
 	} else {
-		return ErrPermissionDenied
+		return policy.ErrPermissionDenied
 	}
 }
 
@@ -75,7 +75,7 @@ func (self *metathingsIdentitydService_enforceTestSuite) SetupTest() {
 	self.action_nopass = "nopass"
 	self.enforcer = &mock_enforcer{}
 	self.enforcer.On("Enforce", self.domain, self.groups, self.subject, self.object, self.action_pass).Return(nil)
-	self.enforcer.On("Enforce", self.domain, self.groups, self.subject, self.object, self.action_nopass).Return(ErrPermissionDenied)
+	self.enforcer.On("Enforce", self.domain, self.groups, self.subject, self.object, self.action_nopass).Return(policy.ErrPermissionDenied)
 
 	logger, _ := log_helper.NewLogger("test", "debug")
 	self.service = &MetathingsIdentitydService{
