@@ -10,9 +10,14 @@ type Connection interface {
 	Wait() chan bool
 }
 
+type StreamConnection interface {
+	Connection
+}
+
 type ConnectionCenter interface {
 	BuildConnection(*storage.Device, pb.DevicedService_ConnectServer) (Connection, error)
 	UnaryCall(*storage.Device, *pb.OpUnaryCallValue) (*pb.UnaryCallValue, error)
+	StreamCall(pb.DevicedService_StreamCallServer) (StreamConnection, error)
 }
 
 type cc struct {
@@ -23,6 +28,10 @@ func (self *cc) BuildConnection(dev *storage.Device, stm pb.DevicedService_Conne
 }
 
 func (self *cc) UnaryCall(*storage.Device, *pb.OpUnaryCallValue) (*pb.UnaryCallValue, error) {
+	panic("unimplemented")
+}
+
+func (self *cc) StreamCall(pb.DevicedService_StreamCallServer) (StreamConnection, error) {
 	panic("unimplemented")
 }
 
