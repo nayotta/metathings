@@ -1,6 +1,8 @@
 package metathings_deviced_service
 
 import (
+	"errors"
+
 	deviced_helper "github.com/nayotta/metathings/pkg/deviced/helper"
 	storage "github.com/nayotta/metathings/pkg/deviced/storage"
 	pb "github.com/nayotta/metathings/pkg/proto/deviced"
@@ -47,4 +49,15 @@ func copy_modules(xs []*storage.Module) []*pb.Module {
 	}
 
 	return ys
+}
+
+type get_devicer interface {
+	GetDevice() *pb.OpDevice
+}
+
+func ensure_get_device_id(x get_devicer) error {
+	if x.GetDevice().GetId() == nil {
+		return errors.New("device.id is empty")
+	}
+	return nil
 }

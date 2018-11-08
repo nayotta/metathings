@@ -91,3 +91,14 @@ func (self *identityd2TokenValidator) Validate(token string) (*identityd2_pb.Tok
 
 	return res.Token, nil
 }
+
+func NewTokenValidator(
+	app_cred_mgr app_cred_mgr.ApplicationCredentialManager,
+	cli_fty *client_helper.ClientFactory,
+	logger log.FieldLogger) TokenValidator {
+	return &identityd2TokenValidator{
+		app_cred_mgr: app_cred_mgr,
+		cli_fty:      cli_fty,
+		logger:       logger,
+	}
+}
