@@ -175,11 +175,13 @@ func (self *connectionCenter) BuildConnection(dev *storage.Device, stm pb.Device
 	if err != nil {
 		return nil, err
 	}
+	br_id := br.Id()
 
-	err = self.storage.AddBridgeToDevice(dev_id, br.Id())
+	err = self.storage.AddBridgeToDevice(dev_id, br_id)
 	if err != nil {
 		return nil, err
 	}
+	defer self.storage.RemoveBridgeFromDevice(dev_id, br_id)
 
 	conn := &connection{
 		c: make(chan bool),
