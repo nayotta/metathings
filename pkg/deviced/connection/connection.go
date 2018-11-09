@@ -63,7 +63,7 @@ func (self *connectionCenter) get_session_from_context(ctx context.Context) int3
 	return int32(x)
 }
 
-func (self *connectionCenter) connection_loop(conn Connection, br Bridge, stm pb.DevicedService_ConnectServer) {
+func (self *connectionCenter) connection_loop(dev *storage.Device, conn Connection, br Bridge, stm pb.DevicedService_ConnectServer) {
 	wg := &sync.WaitGroup{}
 	wg.Add(2)
 
@@ -72,8 +72,8 @@ func (self *connectionCenter) connection_loop(conn Connection, br Bridge, stm pb
 	defer close(br2stm_quit)
 	defer close(stm2br_quit)
 
-	br2stm_wait := self.br2stm(conn, br, stm, br2stm_quit, wg)
-	stm2br_wait := self.stm2br(conn, br, stm, stm2br_quit, wg)
+	br2stm_wait := self.br2stm(dev, conn, br, stm, br2stm_quit, wg)
+	stm2br_wait := self.stm2br(dev, conn, br, stm, stm2br_quit, wg)
 	defer close(br2stm_wait)
 	defer close(stm2br_wait)
 
@@ -87,7 +87,7 @@ func (self *connectionCenter) connection_loop(conn Connection, br Bridge, stm pb
 	wg.Wait()
 }
 
-func (self *connectionCenter) br2stm(conn Connection, br Bridge, stm pb.DevicedService_ConnectServer, quit chan bool, wg *sync.WaitGroup) chan bool {
+func (self *connectionCenter) br2stm(dev *storage.Device, conn Connection, br Bridge, stm pb.DevicedService_ConnectServer, quit chan bool, wg *sync.WaitGroup) chan bool {
 	wait := make(chan bool)
 
 	go func() {
@@ -122,12 +122,13 @@ func (self *connectionCenter) br2stm(conn Connection, br Bridge, stm pb.DevicedS
 	return wait
 }
 
-func (self *connectionCenter) stm2br(conn Connection, br Bridge, stm pb.DevicedService_ConnectServer, quit chan bool, wg *sync.WaitGroup) chan bool {
+func (self *connectionCenter) stm2br(dev *storage.Device, conn Connection, br Bridge, stm pb.DevicedService_ConnectServer, quit chan bool, wg *sync.WaitGroup) chan bool {
 	wait := make(chan bool)
 
 	go func() {
 		var buf []byte
 		var res *pb.ConnectResponse
+		var res_br Bridge
 		var err error
 
 		defer wg.Done()
@@ -144,11 +145,19 @@ func (self *connectionCenter) stm2br(conn Connection, br Bridge, stm pb.DevicedS
 				return
 			}
 
+			if res.GetUnaryCall() != nil {
+				if res_br, err = self.brfty.BuildBridge(*dev.Id, res.SessionId); err != nil {
+					return
+				}
+			} else {
+				res_br = br
+			}
+
 			if buf, err = proto.Marshal(res); err != nil {
 				return
 			}
 
-			if err = br.Send(buf); err != nil {
+			if err = res_br.Send(buf); err != nil {
 				return
 			}
 		}
@@ -176,7 +185,7 @@ func (self *connectionCenter) BuildConnection(dev *storage.Device, stm pb.Device
 		c: make(chan bool),
 	}
 
-	go self.connection_loop(conn, br, stm)
+	go self.connection_loop(dev, conn, br, stm)
 
 	return conn, nil
 }
