@@ -15,7 +15,7 @@ enum ConnectMessageKind {
 }
 
 message ConnectResponse {
-	string session_id = 1;
+	int32 session_id = 1;
 	ConnectMessageKind kind = 2;
 	oneof union {
 		UnaryCallValue unary_call = 3;
@@ -25,7 +25,7 @@ message ConnectResponse {
 }
 
 message ConnectRequest {
-	google.protobuf.StringValue session_id = 1 [(validator.field) = {msg_exists: true}];
+	google.protobuf.Int32Value session_id = 1 [(validator.field) = {msg_exists: true}];
 	ConnectMessageKind kind = 2 [(validator.field) = {msg_exists: true}];
 	oneof union {
 		OpUnaryCallValue unary_call = 3;
