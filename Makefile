@@ -36,8 +36,11 @@ build_agent: \
 clean:
 	$(RM) -rf $(CLEAN_PATHS)
 
+protos_from_docker:
+	$(DOCKER_EXE) run -it -v $(CUR_PATH):/go/src/github.com/nayotta/metathings nayotta/metathings-protobuf-maker
+
 protos:
-	$(DOCKER_EXE) exec -it -v $(CUR_PATH)/../metathings:/go/src/github.com/nayotta/metathins nayotta/metathings-protobuf-build-test
+	$(MAKE) -C pkg/proto all
 
 metathings_bin:
 	$(MAKE) -C cmd/metathings all
