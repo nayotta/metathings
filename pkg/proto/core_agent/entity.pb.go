@@ -3,10 +3,12 @@
 
 package core_agent
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import state "github.com/nayotta/metathings/pkg/proto/common/state"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	state "github.com/nayotta/metathings/pkg/proto/common/state"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -20,11 +22,11 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type Entity struct {
-	Id                   string            `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	Name                 string            `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
-	ServiceName          string            `protobuf:"bytes,3,opt,name=service_name,json=serviceName" json:"service_name,omitempty"`
-	Endpoint             string            `protobuf:"bytes,4,opt,name=endpoint" json:"endpoint,omitempty"`
-	State                state.EntityState `protobuf:"varint,5,opt,name=state,enum=ai.metathings.state.EntityState" json:"state,omitempty"`
+	Id                   string            `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name                 string            `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	ServiceName          string            `protobuf:"bytes,3,opt,name=service_name,json=serviceName,proto3" json:"service_name,omitempty"`
+	Endpoint             string            `protobuf:"bytes,4,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
+	State                state.EntityState `protobuf:"varint,5,opt,name=state,proto3,enum=ai.metathings.state.EntityState" json:"state,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
 	XXX_unrecognized     []byte            `json:"-"`
 	XXX_sizecache        int32             `json:"-"`
@@ -34,16 +36,17 @@ func (m *Entity) Reset()         { *m = Entity{} }
 func (m *Entity) String() string { return proto.CompactTextString(m) }
 func (*Entity) ProtoMessage()    {}
 func (*Entity) Descriptor() ([]byte, []int) {
-	return fileDescriptor_entity_0e954242ba4788ff, []int{0}
+	return fileDescriptor_cf50d946d740d100, []int{0}
 }
+
 func (m *Entity) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Entity.Unmarshal(m, b)
 }
 func (m *Entity) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Entity.Marshal(b, m, deterministic)
 }
-func (dst *Entity) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Entity.Merge(dst, src)
+func (m *Entity) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Entity.Merge(m, src)
 }
 func (m *Entity) XXX_Size() int {
 	return xxx_messageInfo_Entity.Size(m)
@@ -93,9 +96,9 @@ func init() {
 	proto.RegisterType((*Entity)(nil), "ai.metathings.service.core_agent.Entity")
 }
 
-func init() { proto.RegisterFile("entity.proto", fileDescriptor_entity_0e954242ba4788ff) }
+func init() { proto.RegisterFile("entity.proto", fileDescriptor_cf50d946d740d100) }
 
-var fileDescriptor_entity_0e954242ba4788ff = []byte{
+var fileDescriptor_cf50d946d740d100 = []byte{
 	// 221 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x5c, 0x8f, 0xc1, 0x4a, 0x03, 0x31,
 	0x10, 0x86, 0xd9, 0xb5, 0x2d, 0x1a, 0x4b, 0x0f, 0x39, 0x2d, 0x3d, 0x45, 0x4f, 0x3d, 0x25, 0xa0,

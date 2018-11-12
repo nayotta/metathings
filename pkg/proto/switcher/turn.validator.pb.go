@@ -3,7 +3,7 @@
 
 package switcher
 
-import go_proto_validators "github.com/mwitkow/go-proto-validators"
+import github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
@@ -20,8 +20,8 @@ func (this *TurnRequest) Validate() error {
 }
 func (this *TurnResponse) Validate() error {
 	if this.Switcher != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Switcher); err != nil {
-			return go_proto_validators.FieldError("Switcher", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Switcher); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Switcher", err)
 		}
 	}
 	return nil

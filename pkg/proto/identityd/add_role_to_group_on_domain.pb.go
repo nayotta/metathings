@@ -3,11 +3,13 @@
 
 package identityd
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import wrappers "github.com/golang/protobuf/ptypes/wrappers"
-import _ "github.com/mwitkow/go-proto-validators"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	wrappers "github.com/golang/protobuf/ptypes/wrappers"
+	_ "github.com/mwitkow/go-proto-validators"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -21,9 +23,9 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type AddRoleToGroupOnDomainRequest struct {
-	DomainId             *wrappers.StringValue `protobuf:"bytes,1,opt,name=domain_id,json=domainId" json:"domain_id,omitempty"`
-	GroupId              *wrappers.StringValue `protobuf:"bytes,2,opt,name=group_id,json=groupId" json:"group_id,omitempty"`
-	RoleId               *wrappers.StringValue `protobuf:"bytes,3,opt,name=role_id,json=roleId" json:"role_id,omitempty"`
+	DomainId             *wrappers.StringValue `protobuf:"bytes,1,opt,name=domain_id,json=domainId,proto3" json:"domain_id,omitempty"`
+	GroupId              *wrappers.StringValue `protobuf:"bytes,2,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`
+	RoleId               *wrappers.StringValue `protobuf:"bytes,3,opt,name=role_id,json=roleId,proto3" json:"role_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -33,16 +35,17 @@ func (m *AddRoleToGroupOnDomainRequest) Reset()         { *m = AddRoleToGroupOnD
 func (m *AddRoleToGroupOnDomainRequest) String() string { return proto.CompactTextString(m) }
 func (*AddRoleToGroupOnDomainRequest) ProtoMessage()    {}
 func (*AddRoleToGroupOnDomainRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_add_role_to_group_on_domain_8cbce4f50c9adc1a, []int{0}
+	return fileDescriptor_6af50eccb3e006a0, []int{0}
 }
+
 func (m *AddRoleToGroupOnDomainRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_AddRoleToGroupOnDomainRequest.Unmarshal(m, b)
 }
 func (m *AddRoleToGroupOnDomainRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_AddRoleToGroupOnDomainRequest.Marshal(b, m, deterministic)
 }
-func (dst *AddRoleToGroupOnDomainRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_AddRoleToGroupOnDomainRequest.Merge(dst, src)
+func (m *AddRoleToGroupOnDomainRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_AddRoleToGroupOnDomainRequest.Merge(m, src)
 }
 func (m *AddRoleToGroupOnDomainRequest) XXX_Size() int {
 	return xxx_messageInfo_AddRoleToGroupOnDomainRequest.Size(m)
@@ -78,11 +81,9 @@ func init() {
 	proto.RegisterType((*AddRoleToGroupOnDomainRequest)(nil), "ai.metathings.service.identityd.AddRoleToGroupOnDomainRequest")
 }
 
-func init() {
-	proto.RegisterFile("add_role_to_group_on_domain.proto", fileDescriptor_add_role_to_group_on_domain_8cbce4f50c9adc1a)
-}
+func init() { proto.RegisterFile("add_role_to_group_on_domain.proto", fileDescriptor_6af50eccb3e006a0) }
 
-var fileDescriptor_add_role_to_group_on_domain_8cbce4f50c9adc1a = []byte{
+var fileDescriptor_6af50eccb3e006a0 = []byte{
 	// 262 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x90, 0x41, 0x4b, 0xf3, 0x40,
 	0x10, 0x86, 0x49, 0x3f, 0x68, 0xfb, 0xc5, 0x5b, 0x4e, 0xa5, 0xa8, 0xad, 0x9e, 0xbc, 0x74, 0x03,

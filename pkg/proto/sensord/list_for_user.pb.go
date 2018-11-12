@@ -3,12 +3,14 @@
 
 package sensord
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import wrappers "github.com/golang/protobuf/ptypes/wrappers"
-import _ "github.com/mwitkow/go-proto-validators"
-import sensor "github.com/nayotta/metathings/pkg/proto/sensor"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	wrappers "github.com/golang/protobuf/ptypes/wrappers"
+	_ "github.com/mwitkow/go-proto-validators"
+	sensor "github.com/nayotta/metathings/pkg/proto/sensor"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -22,10 +24,10 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type ListForUserRequest struct {
-	Name                 *wrappers.StringValue `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
-	CoreId               *wrappers.StringValue `protobuf:"bytes,2,opt,name=core_id,json=coreId" json:"core_id,omitempty"`
-	EntityName           *wrappers.StringValue `protobuf:"bytes,3,opt,name=entity_name,json=entityName" json:"entity_name,omitempty"`
-	State                sensor.SensorState    `protobuf:"varint,4,opt,name=state,enum=ai.metathings.service.sensor.SensorState" json:"state,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	CoreId               *wrappers.StringValue `protobuf:"bytes,2,opt,name=core_id,json=coreId,proto3" json:"core_id,omitempty"`
+	EntityName           *wrappers.StringValue `protobuf:"bytes,3,opt,name=entity_name,json=entityName,proto3" json:"entity_name,omitempty"`
+	State                sensor.SensorState    `protobuf:"varint,4,opt,name=state,proto3,enum=ai.metathings.service.sensor.SensorState" json:"state,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -35,16 +37,17 @@ func (m *ListForUserRequest) Reset()         { *m = ListForUserRequest{} }
 func (m *ListForUserRequest) String() string { return proto.CompactTextString(m) }
 func (*ListForUserRequest) ProtoMessage()    {}
 func (*ListForUserRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_list_for_user_7113f102a4c85a78, []int{0}
+	return fileDescriptor_7eb8008bafc57221, []int{0}
 }
+
 func (m *ListForUserRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ListForUserRequest.Unmarshal(m, b)
 }
 func (m *ListForUserRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_ListForUserRequest.Marshal(b, m, deterministic)
 }
-func (dst *ListForUserRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ListForUserRequest.Merge(dst, src)
+func (m *ListForUserRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ListForUserRequest.Merge(m, src)
 }
 func (m *ListForUserRequest) XXX_Size() int {
 	return xxx_messageInfo_ListForUserRequest.Size(m)
@@ -84,7 +87,7 @@ func (m *ListForUserRequest) GetState() sensor.SensorState {
 }
 
 type ListForUserResponse struct {
-	Sensors              []*Sensor `protobuf:"bytes,1,rep,name=sensors" json:"sensors,omitempty"`
+	Sensors              []*Sensor `protobuf:"bytes,1,rep,name=sensors,proto3" json:"sensors,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}  `json:"-"`
 	XXX_unrecognized     []byte    `json:"-"`
 	XXX_sizecache        int32     `json:"-"`
@@ -94,16 +97,17 @@ func (m *ListForUserResponse) Reset()         { *m = ListForUserResponse{} }
 func (m *ListForUserResponse) String() string { return proto.CompactTextString(m) }
 func (*ListForUserResponse) ProtoMessage()    {}
 func (*ListForUserResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_list_for_user_7113f102a4c85a78, []int{1}
+	return fileDescriptor_7eb8008bafc57221, []int{1}
 }
+
 func (m *ListForUserResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ListForUserResponse.Unmarshal(m, b)
 }
 func (m *ListForUserResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_ListForUserResponse.Marshal(b, m, deterministic)
 }
-func (dst *ListForUserResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ListForUserResponse.Merge(dst, src)
+func (m *ListForUserResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ListForUserResponse.Merge(m, src)
 }
 func (m *ListForUserResponse) XXX_Size() int {
 	return xxx_messageInfo_ListForUserResponse.Size(m)
@@ -126,9 +130,9 @@ func init() {
 	proto.RegisterType((*ListForUserResponse)(nil), "ai.metathings.service.sensord.ListForUserResponse")
 }
 
-func init() { proto.RegisterFile("list_for_user.proto", fileDescriptor_list_for_user_7113f102a4c85a78) }
+func init() { proto.RegisterFile("list_for_user.proto", fileDescriptor_7eb8008bafc57221) }
 
-var fileDescriptor_list_for_user_7113f102a4c85a78 = []byte{
+var fileDescriptor_7eb8008bafc57221 = []byte{
 	// 321 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x91, 0xcf, 0x6b, 0xe2, 0x40,
 	0x14, 0xc7, 0xc9, 0xea, 0x2a, 0x8c, 0xcb, 0x1e, 0xe2, 0x25, 0xc8, 0x6e, 0x11, 0xa1, 0x60, 0x0f,

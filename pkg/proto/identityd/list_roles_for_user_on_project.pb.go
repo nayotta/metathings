@@ -3,11 +3,13 @@
 
 package identityd
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import wrappers "github.com/golang/protobuf/ptypes/wrappers"
-import _ "github.com/mwitkow/go-proto-validators"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	wrappers "github.com/golang/protobuf/ptypes/wrappers"
+	_ "github.com/mwitkow/go-proto-validators"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -21,8 +23,8 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type ListRolesForUserOnProjectRequest struct {
-	ProjectId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=project_id,json=projectId" json:"project_id,omitempty"`
-	UserId               *wrappers.StringValue `protobuf:"bytes,2,opt,name=user_id,json=userId" json:"user_id,omitempty"`
+	ProjectId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=project_id,json=projectId,proto3" json:"project_id,omitempty"`
+	UserId               *wrappers.StringValue `protobuf:"bytes,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -32,16 +34,17 @@ func (m *ListRolesForUserOnProjectRequest) Reset()         { *m = ListRolesForUs
 func (m *ListRolesForUserOnProjectRequest) String() string { return proto.CompactTextString(m) }
 func (*ListRolesForUserOnProjectRequest) ProtoMessage()    {}
 func (*ListRolesForUserOnProjectRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_list_roles_for_user_on_project_15f29cf868e364c8, []int{0}
+	return fileDescriptor_e5a39e9bed61a4bf, []int{0}
 }
+
 func (m *ListRolesForUserOnProjectRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ListRolesForUserOnProjectRequest.Unmarshal(m, b)
 }
 func (m *ListRolesForUserOnProjectRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_ListRolesForUserOnProjectRequest.Marshal(b, m, deterministic)
 }
-func (dst *ListRolesForUserOnProjectRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ListRolesForUserOnProjectRequest.Merge(dst, src)
+func (m *ListRolesForUserOnProjectRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ListRolesForUserOnProjectRequest.Merge(m, src)
 }
 func (m *ListRolesForUserOnProjectRequest) XXX_Size() int {
 	return xxx_messageInfo_ListRolesForUserOnProjectRequest.Size(m)
@@ -67,7 +70,7 @@ func (m *ListRolesForUserOnProjectRequest) GetUserId() *wrappers.StringValue {
 }
 
 type ListRolesForUserOnProjectResponse struct {
-	Roles                []*Role  `protobuf:"bytes,1,rep,name=roles" json:"roles,omitempty"`
+	Roles                []*Role  `protobuf:"bytes,1,rep,name=roles,proto3" json:"roles,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -77,16 +80,17 @@ func (m *ListRolesForUserOnProjectResponse) Reset()         { *m = ListRolesForU
 func (m *ListRolesForUserOnProjectResponse) String() string { return proto.CompactTextString(m) }
 func (*ListRolesForUserOnProjectResponse) ProtoMessage()    {}
 func (*ListRolesForUserOnProjectResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_list_roles_for_user_on_project_15f29cf868e364c8, []int{1}
+	return fileDescriptor_e5a39e9bed61a4bf, []int{1}
 }
+
 func (m *ListRolesForUserOnProjectResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ListRolesForUserOnProjectResponse.Unmarshal(m, b)
 }
 func (m *ListRolesForUserOnProjectResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_ListRolesForUserOnProjectResponse.Marshal(b, m, deterministic)
 }
-func (dst *ListRolesForUserOnProjectResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ListRolesForUserOnProjectResponse.Merge(dst, src)
+func (m *ListRolesForUserOnProjectResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ListRolesForUserOnProjectResponse.Merge(m, src)
 }
 func (m *ListRolesForUserOnProjectResponse) XXX_Size() int {
 	return xxx_messageInfo_ListRolesForUserOnProjectResponse.Size(m)
@@ -110,10 +114,10 @@ func init() {
 }
 
 func init() {
-	proto.RegisterFile("list_roles_for_user_on_project.proto", fileDescriptor_list_roles_for_user_on_project_15f29cf868e364c8)
+	proto.RegisterFile("list_roles_for_user_on_project.proto", fileDescriptor_e5a39e9bed61a4bf)
 }
 
-var fileDescriptor_list_roles_for_user_on_project_15f29cf868e364c8 = []byte{
+var fileDescriptor_e5a39e9bed61a4bf = []byte{
 	// 290 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0xd0, 0xcf, 0x4a, 0xc3, 0x40,
 	0x10, 0x06, 0x70, 0x52, 0xb1, 0xe2, 0xf6, 0x96, 0x53, 0x29, 0x62, 0x63, 0x51, 0xe8, 0xa5, 0x1b,

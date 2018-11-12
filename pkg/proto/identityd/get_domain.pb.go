@@ -3,11 +3,13 @@
 
 package identityd
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import wrappers "github.com/golang/protobuf/ptypes/wrappers"
-import _ "github.com/mwitkow/go-proto-validators"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	wrappers "github.com/golang/protobuf/ptypes/wrappers"
+	_ "github.com/mwitkow/go-proto-validators"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -21,7 +23,7 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type GetDomainRequest struct {
-	DomainId             *wrappers.StringValue `protobuf:"bytes,1,opt,name=domain_id,json=domainId" json:"domain_id,omitempty"`
+	DomainId             *wrappers.StringValue `protobuf:"bytes,1,opt,name=domain_id,json=domainId,proto3" json:"domain_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -31,16 +33,17 @@ func (m *GetDomainRequest) Reset()         { *m = GetDomainRequest{} }
 func (m *GetDomainRequest) String() string { return proto.CompactTextString(m) }
 func (*GetDomainRequest) ProtoMessage()    {}
 func (*GetDomainRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_get_domain_4e5e89cb5e9d145e, []int{0}
+	return fileDescriptor_3a2d6a3c161bc055, []int{0}
 }
+
 func (m *GetDomainRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_GetDomainRequest.Unmarshal(m, b)
 }
 func (m *GetDomainRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_GetDomainRequest.Marshal(b, m, deterministic)
 }
-func (dst *GetDomainRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_GetDomainRequest.Merge(dst, src)
+func (m *GetDomainRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetDomainRequest.Merge(m, src)
 }
 func (m *GetDomainRequest) XXX_Size() int {
 	return xxx_messageInfo_GetDomainRequest.Size(m)
@@ -59,7 +62,7 @@ func (m *GetDomainRequest) GetDomainId() *wrappers.StringValue {
 }
 
 type GetDomainResponse struct {
-	Domain               *Domain  `protobuf:"bytes,1,opt,name=domain" json:"domain,omitempty"`
+	Domain               *Domain  `protobuf:"bytes,1,opt,name=domain,proto3" json:"domain,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -69,16 +72,17 @@ func (m *GetDomainResponse) Reset()         { *m = GetDomainResponse{} }
 func (m *GetDomainResponse) String() string { return proto.CompactTextString(m) }
 func (*GetDomainResponse) ProtoMessage()    {}
 func (*GetDomainResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_get_domain_4e5e89cb5e9d145e, []int{1}
+	return fileDescriptor_3a2d6a3c161bc055, []int{1}
 }
+
 func (m *GetDomainResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_GetDomainResponse.Unmarshal(m, b)
 }
 func (m *GetDomainResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_GetDomainResponse.Marshal(b, m, deterministic)
 }
-func (dst *GetDomainResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_GetDomainResponse.Merge(dst, src)
+func (m *GetDomainResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetDomainResponse.Merge(m, src)
 }
 func (m *GetDomainResponse) XXX_Size() int {
 	return xxx_messageInfo_GetDomainResponse.Size(m)
@@ -101,9 +105,9 @@ func init() {
 	proto.RegisterType((*GetDomainResponse)(nil), "ai.metathings.service.identityd.GetDomainResponse")
 }
 
-func init() { proto.RegisterFile("get_domain.proto", fileDescriptor_get_domain_4e5e89cb5e9d145e) }
+func init() { proto.RegisterFile("get_domain.proto", fileDescriptor_3a2d6a3c161bc055) }
 
-var fileDescriptor_get_domain_4e5e89cb5e9d145e = []byte{
+var fileDescriptor_3a2d6a3c161bc055 = []byte{
 	// 240 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x90, 0x4d, 0x4b, 0xc3, 0x40,
 	0x10, 0x86, 0x89, 0x87, 0xa0, 0xab, 0x87, 0x9a, 0x93, 0x14, 0xb1, 0xa5, 0x17, 0xbd, 0x74, 0x16,

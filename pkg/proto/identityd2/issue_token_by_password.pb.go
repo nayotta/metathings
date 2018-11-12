@@ -3,10 +3,12 @@
 
 package identityd2
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import _ "github.com/mwitkow/go-proto-validators"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	_ "github.com/mwitkow/go-proto-validators"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -20,7 +22,7 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type IssueTokenByPasswordRequest struct {
-	Entity               *OpEntity `protobuf:"bytes,1,opt,name=entity" json:"entity,omitempty"`
+	Entity               *OpEntity `protobuf:"bytes,1,opt,name=entity,proto3" json:"entity,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}  `json:"-"`
 	XXX_unrecognized     []byte    `json:"-"`
 	XXX_sizecache        int32     `json:"-"`
@@ -30,16 +32,17 @@ func (m *IssueTokenByPasswordRequest) Reset()         { *m = IssueTokenByPasswor
 func (m *IssueTokenByPasswordRequest) String() string { return proto.CompactTextString(m) }
 func (*IssueTokenByPasswordRequest) ProtoMessage()    {}
 func (*IssueTokenByPasswordRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_issue_token_by_password_85719702f47fc901, []int{0}
+	return fileDescriptor_186c4bb50bac5b83, []int{0}
 }
+
 func (m *IssueTokenByPasswordRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_IssueTokenByPasswordRequest.Unmarshal(m, b)
 }
 func (m *IssueTokenByPasswordRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_IssueTokenByPasswordRequest.Marshal(b, m, deterministic)
 }
-func (dst *IssueTokenByPasswordRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_IssueTokenByPasswordRequest.Merge(dst, src)
+func (m *IssueTokenByPasswordRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_IssueTokenByPasswordRequest.Merge(m, src)
 }
 func (m *IssueTokenByPasswordRequest) XXX_Size() int {
 	return xxx_messageInfo_IssueTokenByPasswordRequest.Size(m)
@@ -58,7 +61,7 @@ func (m *IssueTokenByPasswordRequest) GetEntity() *OpEntity {
 }
 
 type IssueTokenByPasswordResponse struct {
-	Token                *Token   `protobuf:"bytes,1,opt,name=token" json:"token,omitempty"`
+	Token                *Token   `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -68,16 +71,17 @@ func (m *IssueTokenByPasswordResponse) Reset()         { *m = IssueTokenByPasswo
 func (m *IssueTokenByPasswordResponse) String() string { return proto.CompactTextString(m) }
 func (*IssueTokenByPasswordResponse) ProtoMessage()    {}
 func (*IssueTokenByPasswordResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_issue_token_by_password_85719702f47fc901, []int{1}
+	return fileDescriptor_186c4bb50bac5b83, []int{1}
 }
+
 func (m *IssueTokenByPasswordResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_IssueTokenByPasswordResponse.Unmarshal(m, b)
 }
 func (m *IssueTokenByPasswordResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_IssueTokenByPasswordResponse.Marshal(b, m, deterministic)
 }
-func (dst *IssueTokenByPasswordResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_IssueTokenByPasswordResponse.Merge(dst, src)
+func (m *IssueTokenByPasswordResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_IssueTokenByPasswordResponse.Merge(m, src)
 }
 func (m *IssueTokenByPasswordResponse) XXX_Size() int {
 	return xxx_messageInfo_IssueTokenByPasswordResponse.Size(m)
@@ -100,11 +104,9 @@ func init() {
 	proto.RegisterType((*IssueTokenByPasswordResponse)(nil), "ai.metathings.service.identityd2.IssueTokenByPasswordResponse")
 }
 
-func init() {
-	proto.RegisterFile("issue_token_by_password.proto", fileDescriptor_issue_token_by_password_85719702f47fc901)
-}
+func init() { proto.RegisterFile("issue_token_by_password.proto", fileDescriptor_186c4bb50bac5b83) }
 
-var fileDescriptor_issue_token_by_password_85719702f47fc901 = []byte{
+var fileDescriptor_186c4bb50bac5b83 = []byte{
 	// 231 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x90, 0x41, 0x4b, 0xc3, 0x40,
 	0x10, 0x85, 0x89, 0x60, 0x0e, 0xdb, 0x5b, 0x4e, 0x52, 0x15, 0x43, 0x2f, 0x8a, 0xd0, 0x0d, 0x54,

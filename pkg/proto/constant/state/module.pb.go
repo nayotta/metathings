@@ -3,9 +3,11 @@
 
 package ai_metathings_constant_state
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -31,6 +33,7 @@ var ModuleState_name = map[int32]string{
 	1: "MODULE_STATE_ONLINE",
 	2: "MODULE_STATE_OFFLINE",
 }
+
 var ModuleState_value = map[string]int32{
 	"MODULE_STATE_UNKNOWN": 0,
 	"MODULE_STATE_ONLINE":  1,
@@ -40,17 +43,18 @@ var ModuleState_value = map[string]int32{
 func (x ModuleState) String() string {
 	return proto.EnumName(ModuleState_name, int32(x))
 }
+
 func (ModuleState) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_module_ff64c4b967d8be4a, []int{0}
+	return fileDescriptor_ae7704718fb7daeb, []int{0}
 }
 
 func init() {
 	proto.RegisterEnum("ai.metathings.constant.state.ModuleState", ModuleState_name, ModuleState_value)
 }
 
-func init() { proto.RegisterFile("module.proto", fileDescriptor_module_ff64c4b967d8be4a) }
+func init() { proto.RegisterFile("module.proto", fileDescriptor_ae7704718fb7daeb) }
 
-var fileDescriptor_module_ff64c4b967d8be4a = []byte{
+var fileDescriptor_ae7704718fb7daeb = []byte{
 	// 131 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xe2, 0xc9, 0xcd, 0x4f, 0x29,
 	0xcd, 0x49, 0xd5, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x92, 0x49, 0xcc, 0xd4, 0xcb, 0x4d, 0x2d,

@@ -3,12 +3,12 @@
 
 package cored
 
-import go_proto_validators "github.com/mwitkow/go-proto-validators"
+import github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import _ "github.com/golang/protobuf/ptypes/wrappers"
 import _ "github.com/golang/protobuf/ptypes/any"
+import _ "github.com/golang/protobuf/ptypes/wrappers"
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -20,31 +20,31 @@ func (this *StreamErrorResponsePayload) Validate() error {
 }
 func (this *UnaryCallRequestPayload) Validate() error {
 	if this.Name != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Name); err != nil {
-			return go_proto_validators.FieldError("Name", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Name); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Name", err)
 		}
 	}
 	if this.ServiceName != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.ServiceName); err != nil {
-			return go_proto_validators.FieldError("ServiceName", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.ServiceName); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("ServiceName", err)
 		}
 	}
 	if this.MethodName != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.MethodName); err != nil {
-			return go_proto_validators.FieldError("MethodName", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.MethodName); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("MethodName", err)
 		}
 	}
 	if this.Value != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Value); err != nil {
-			return go_proto_validators.FieldError("Value", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Value); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Value", err)
 		}
 	}
 	return nil
 }
 func (this *UnaryCallResponsePayload) Validate() error {
 	if this.Value != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Value); err != nil {
-			return go_proto_validators.FieldError("Value", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Value); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Value", err)
 		}
 	}
 	return nil
@@ -52,15 +52,15 @@ func (this *UnaryCallResponsePayload) Validate() error {
 func (this *StreamCallRequestPayload) Validate() error {
 	if oneOfNester, ok := this.GetPayload().(*StreamCallRequestPayload_Config); ok {
 		if oneOfNester.Config != nil {
-			if err := go_proto_validators.CallValidatorIfExists(oneOfNester.Config); err != nil {
-				return go_proto_validators.FieldError("Config", err)
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.Config); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("Config", err)
 			}
 		}
 	}
 	if oneOfNester, ok := this.GetPayload().(*StreamCallRequestPayload_Data); ok {
 		if oneOfNester.Data != nil {
-			if err := go_proto_validators.CallValidatorIfExists(oneOfNester.Data); err != nil {
-				return go_proto_validators.FieldError("Data", err)
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.Data); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("Data", err)
 			}
 		}
 	}
@@ -69,15 +69,15 @@ func (this *StreamCallRequestPayload) Validate() error {
 func (this *StreamCallResponsePayload) Validate() error {
 	if oneOfNester, ok := this.GetPayload().(*StreamCallResponsePayload_Config); ok {
 		if oneOfNester.Config != nil {
-			if err := go_proto_validators.CallValidatorIfExists(oneOfNester.Config); err != nil {
-				return go_proto_validators.FieldError("Config", err)
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.Config); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("Config", err)
 			}
 		}
 	}
 	if oneOfNester, ok := this.GetPayload().(*StreamCallResponsePayload_Data); ok {
 		if oneOfNester.Data != nil {
-			if err := go_proto_validators.CallValidatorIfExists(oneOfNester.Data); err != nil {
-				return go_proto_validators.FieldError("Data", err)
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.Data); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("Data", err)
 			}
 		}
 	}
@@ -85,18 +85,18 @@ func (this *StreamCallResponsePayload) Validate() error {
 }
 func (this *StreamCallConfigRequest) Validate() error {
 	if this.Name != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Name); err != nil {
-			return go_proto_validators.FieldError("Name", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Name); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Name", err)
 		}
 	}
 	if this.ServiceName != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.ServiceName); err != nil {
-			return go_proto_validators.FieldError("ServiceName", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.ServiceName); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("ServiceName", err)
 		}
 	}
 	if this.MethodName != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.MethodName); err != nil {
-			return go_proto_validators.FieldError("MethodName", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.MethodName); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("MethodName", err)
 		}
 	}
 	return nil
@@ -106,16 +106,16 @@ func (this *StreamCallConfigResponse) Validate() error {
 }
 func (this *StreamCallDataRequest) Validate() error {
 	if this.Value != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Value); err != nil {
-			return go_proto_validators.FieldError("Value", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Value); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Value", err)
 		}
 	}
 	return nil
 }
 func (this *StreamCallDataResponse) Validate() error {
 	if this.Value != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Value); err != nil {
-			return go_proto_validators.FieldError("Value", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Value); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Value", err)
 		}
 	}
 	return nil

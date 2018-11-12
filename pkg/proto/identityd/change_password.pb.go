@@ -3,11 +3,13 @@
 
 package identityd
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import wrappers "github.com/golang/protobuf/ptypes/wrappers"
-import _ "github.com/mwitkow/go-proto-validators"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	wrappers "github.com/golang/protobuf/ptypes/wrappers"
+	_ "github.com/mwitkow/go-proto-validators"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -21,9 +23,9 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type ChangePasswordRequest struct {
-	UserId               *wrappers.StringValue `protobuf:"bytes,1,opt,name=user_id,json=userId" json:"user_id,omitempty"`
-	OriginalPassword     *wrappers.StringValue `protobuf:"bytes,2,opt,name=original_password,json=originalPassword" json:"original_password,omitempty"`
-	Password             *wrappers.StringValue `protobuf:"bytes,3,opt,name=password" json:"password,omitempty"`
+	UserId               *wrappers.StringValue `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	OriginalPassword     *wrappers.StringValue `protobuf:"bytes,2,opt,name=original_password,json=originalPassword,proto3" json:"original_password,omitempty"`
+	Password             *wrappers.StringValue `protobuf:"bytes,3,opt,name=password,proto3" json:"password,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -33,16 +35,17 @@ func (m *ChangePasswordRequest) Reset()         { *m = ChangePasswordRequest{} }
 func (m *ChangePasswordRequest) String() string { return proto.CompactTextString(m) }
 func (*ChangePasswordRequest) ProtoMessage()    {}
 func (*ChangePasswordRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_change_password_0134fc789f13fa1b, []int{0}
+	return fileDescriptor_2e53f826de1b5ba2, []int{0}
 }
+
 func (m *ChangePasswordRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ChangePasswordRequest.Unmarshal(m, b)
 }
 func (m *ChangePasswordRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_ChangePasswordRequest.Marshal(b, m, deterministic)
 }
-func (dst *ChangePasswordRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ChangePasswordRequest.Merge(dst, src)
+func (m *ChangePasswordRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ChangePasswordRequest.Merge(m, src)
 }
 func (m *ChangePasswordRequest) XXX_Size() int {
 	return xxx_messageInfo_ChangePasswordRequest.Size(m)
@@ -78,11 +81,9 @@ func init() {
 	proto.RegisterType((*ChangePasswordRequest)(nil), "ai.metathings.service.identityd.ChangePasswordRequest")
 }
 
-func init() {
-	proto.RegisterFile("change_password.proto", fileDescriptor_change_password_0134fc789f13fa1b)
-}
+func init() { proto.RegisterFile("change_password.proto", fileDescriptor_2e53f826de1b5ba2) }
 
-var fileDescriptor_change_password_0134fc789f13fa1b = []byte{
+var fileDescriptor_2e53f826de1b5ba2 = []byte{
 	// 248 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x8f, 0x41, 0x4b, 0xc4, 0x30,
 	0x10, 0x46, 0xe9, 0x0a, 0x55, 0xe2, 0x45, 0x0b, 0x0b, 0xcb, 0x22, 0xee, 0xe2, 0xc9, 0xcb, 0x26,

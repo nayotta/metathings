@@ -4,11 +4,11 @@
 package servo
 
 import fmt "fmt"
-import go_proto_validators "github.com/mwitkow/go-proto-validators"
+import github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
 import proto "github.com/golang/protobuf/proto"
 import math "math"
-import _ "github.com/golang/protobuf/ptypes/wrappers"
 import _ "github.com/golang/protobuf/ptypes/timestamp"
+import _ "github.com/golang/protobuf/ptypes/wrappers"
 import _ "github.com/mwitkow/go-proto-validators"
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -18,80 +18,80 @@ var _ = math.Inf
 
 func (this *StreamPingRequest) Validate() error {
 	if nil == this.Timestamp {
-		return go_proto_validators.FieldError("Timestamp", fmt.Errorf("message must exist"))
+		return github_com_mwitkow_go_proto_validators.FieldError("Timestamp", fmt.Errorf("message must exist"))
 	}
 	if this.Timestamp != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Timestamp); err != nil {
-			return go_proto_validators.FieldError("Timestamp", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Timestamp); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Timestamp", err)
 		}
 	}
 	return nil
 }
 func (this *StreamPingResponse) Validate() error {
 	if this.Timestamp != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Timestamp); err != nil {
-			return go_proto_validators.FieldError("Timestamp", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Timestamp); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Timestamp", err)
 		}
 	}
 	return nil
 }
 func (this *StreamSetStateRequest) Validate() error {
 	if nil == this.Name {
-		return go_proto_validators.FieldError("Name", fmt.Errorf("message must exist"))
+		return github_com_mwitkow_go_proto_validators.FieldError("Name", fmt.Errorf("message must exist"))
 	}
 	if this.Name != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Name); err != nil {
-			return go_proto_validators.FieldError("Name", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Name); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Name", err)
 		}
 	}
 	return nil
 }
 func (this *StreamSetAngleRequest) Validate() error {
 	if nil == this.Name {
-		return go_proto_validators.FieldError("Name", fmt.Errorf("message must exist"))
+		return github_com_mwitkow_go_proto_validators.FieldError("Name", fmt.Errorf("message must exist"))
 	}
 	if this.Name != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Name); err != nil {
-			return go_proto_validators.FieldError("Name", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Name); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Name", err)
 		}
 	}
 	if nil == this.Angle {
-		return go_proto_validators.FieldError("Angle", fmt.Errorf("message must exist"))
+		return github_com_mwitkow_go_proto_validators.FieldError("Angle", fmt.Errorf("message must exist"))
 	}
 	if this.Angle != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Angle); err != nil {
-			return go_proto_validators.FieldError("Angle", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Angle); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Angle", err)
 		}
 	}
 	return nil
 }
 func (this *StreamRequest) Validate() error {
 	if nil == this.Session {
-		return go_proto_validators.FieldError("Session", fmt.Errorf("message must exist"))
+		return github_com_mwitkow_go_proto_validators.FieldError("Session", fmt.Errorf("message must exist"))
 	}
 	if this.Session != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Session); err != nil {
-			return go_proto_validators.FieldError("Session", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Session); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Session", err)
 		}
 	}
 	if oneOfNester, ok := this.GetPayload().(*StreamRequest_Ping); ok {
 		if oneOfNester.Ping != nil {
-			if err := go_proto_validators.CallValidatorIfExists(oneOfNester.Ping); err != nil {
-				return go_proto_validators.FieldError("Ping", err)
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.Ping); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("Ping", err)
 			}
 		}
 	}
 	if oneOfNester, ok := this.GetPayload().(*StreamRequest_SetState); ok {
 		if oneOfNester.SetState != nil {
-			if err := go_proto_validators.CallValidatorIfExists(oneOfNester.SetState); err != nil {
-				return go_proto_validators.FieldError("SetState", err)
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.SetState); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("SetState", err)
 			}
 		}
 	}
 	if oneOfNester, ok := this.GetPayload().(*StreamRequest_SetAngle); ok {
 		if oneOfNester.SetAngle != nil {
-			if err := go_proto_validators.CallValidatorIfExists(oneOfNester.SetAngle); err != nil {
-				return go_proto_validators.FieldError("SetAngle", err)
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.SetAngle); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("SetAngle", err)
 			}
 		}
 	}
@@ -100,8 +100,8 @@ func (this *StreamRequest) Validate() error {
 func (this *StreamRequests) Validate() error {
 	for _, item := range this.Requests {
 		if item != nil {
-			if err := go_proto_validators.CallValidatorIfExists(item); err != nil {
-				return go_proto_validators.FieldError("Requests", err)
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("Requests", err)
 			}
 		}
 	}
@@ -110,8 +110,8 @@ func (this *StreamRequests) Validate() error {
 func (this *StreamResponse) Validate() error {
 	if oneOfNester, ok := this.GetPayload().(*StreamResponse_Ping); ok {
 		if oneOfNester.Ping != nil {
-			if err := go_proto_validators.CallValidatorIfExists(oneOfNester.Ping); err != nil {
-				return go_proto_validators.FieldError("Ping", err)
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.Ping); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("Ping", err)
 			}
 		}
 	}

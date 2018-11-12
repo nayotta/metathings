@@ -4,7 +4,7 @@
 package identityd
 
 import fmt "fmt"
-import go_proto_validators "github.com/mwitkow/go-proto-validators"
+import github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
 import proto "github.com/golang/protobuf/proto"
 import math "math"
 import _ "github.com/golang/protobuf/ptypes/wrappers"
@@ -17,26 +17,26 @@ var _ = math.Inf
 
 func (this *PatchUserRequest) Validate() error {
 	if nil == this.UserId {
-		return go_proto_validators.FieldError("UserId", fmt.Errorf("message must exist"))
+		return github_com_mwitkow_go_proto_validators.FieldError("UserId", fmt.Errorf("message must exist"))
 	}
 	if this.UserId != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.UserId); err != nil {
-			return go_proto_validators.FieldError("UserId", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.UserId); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("UserId", err)
 		}
 	}
 	if this.DefaultProjectId != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.DefaultProjectId); err != nil {
-			return go_proto_validators.FieldError("DefaultProjectId", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.DefaultProjectId); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("DefaultProjectId", err)
 		}
 	}
 	if this.Password != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Password); err != nil {
-			return go_proto_validators.FieldError("Password", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Password); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Password", err)
 		}
 	}
 	if this.Enabled != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Enabled); err != nil {
-			return go_proto_validators.FieldError("Enabled", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Enabled); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Enabled", err)
 		}
 	}
 	// Validation of proto3 map<> fields is unsupported.
@@ -44,8 +44,8 @@ func (this *PatchUserRequest) Validate() error {
 }
 func (this *PatchUserResponse) Validate() error {
 	if this.User != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.User); err != nil {
-			return go_proto_validators.FieldError("User", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.User); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("User", err)
 		}
 	}
 	return nil

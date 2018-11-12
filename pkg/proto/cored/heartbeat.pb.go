@@ -3,12 +3,14 @@
 
 package cored
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import timestamp "github.com/golang/protobuf/ptypes/timestamp"
-import wrappers "github.com/golang/protobuf/ptypes/wrappers"
-import _ "github.com/mwitkow/go-proto-validators"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	timestamp "github.com/golang/protobuf/ptypes/timestamp"
+	wrappers "github.com/golang/protobuf/ptypes/wrappers"
+	_ "github.com/mwitkow/go-proto-validators"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -22,8 +24,8 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type HeartbeatEntity struct {
-	Id                   *wrappers.StringValue `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	HeartbeatAt          *timestamp.Timestamp  `protobuf:"bytes,2,opt,name=heartbeat_at,json=heartbeatAt" json:"heartbeat_at,omitempty"`
+	Id                   *wrappers.StringValue `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	HeartbeatAt          *timestamp.Timestamp  `protobuf:"bytes,2,opt,name=heartbeat_at,json=heartbeatAt,proto3" json:"heartbeat_at,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -33,16 +35,17 @@ func (m *HeartbeatEntity) Reset()         { *m = HeartbeatEntity{} }
 func (m *HeartbeatEntity) String() string { return proto.CompactTextString(m) }
 func (*HeartbeatEntity) ProtoMessage()    {}
 func (*HeartbeatEntity) Descriptor() ([]byte, []int) {
-	return fileDescriptor_heartbeat_477d8f1e7fbd4fff, []int{0}
+	return fileDescriptor_3c667767fb9826a9, []int{0}
 }
+
 func (m *HeartbeatEntity) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_HeartbeatEntity.Unmarshal(m, b)
 }
 func (m *HeartbeatEntity) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_HeartbeatEntity.Marshal(b, m, deterministic)
 }
-func (dst *HeartbeatEntity) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_HeartbeatEntity.Merge(dst, src)
+func (m *HeartbeatEntity) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_HeartbeatEntity.Merge(m, src)
 }
 func (m *HeartbeatEntity) XXX_Size() int {
 	return xxx_messageInfo_HeartbeatEntity.Size(m)
@@ -68,8 +71,8 @@ func (m *HeartbeatEntity) GetHeartbeatAt() *timestamp.Timestamp {
 }
 
 type HeartbeatRequest struct {
-	Session              *wrappers.UInt64Value `protobuf:"bytes,1,opt,name=session" json:"session,omitempty"`
-	Entities             []*HeartbeatEntity    `protobuf:"bytes,2,rep,name=entities" json:"entities,omitempty"`
+	Session              *wrappers.UInt64Value `protobuf:"bytes,1,opt,name=session,proto3" json:"session,omitempty"`
+	Entities             []*HeartbeatEntity    `protobuf:"bytes,2,rep,name=entities,proto3" json:"entities,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -79,16 +82,17 @@ func (m *HeartbeatRequest) Reset()         { *m = HeartbeatRequest{} }
 func (m *HeartbeatRequest) String() string { return proto.CompactTextString(m) }
 func (*HeartbeatRequest) ProtoMessage()    {}
 func (*HeartbeatRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_heartbeat_477d8f1e7fbd4fff, []int{1}
+	return fileDescriptor_3c667767fb9826a9, []int{1}
 }
+
 func (m *HeartbeatRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_HeartbeatRequest.Unmarshal(m, b)
 }
 func (m *HeartbeatRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_HeartbeatRequest.Marshal(b, m, deterministic)
 }
-func (dst *HeartbeatRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_HeartbeatRequest.Merge(dst, src)
+func (m *HeartbeatRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_HeartbeatRequest.Merge(m, src)
 }
 func (m *HeartbeatRequest) XXX_Size() int {
 	return xxx_messageInfo_HeartbeatRequest.Size(m)
@@ -118,9 +122,9 @@ func init() {
 	proto.RegisterType((*HeartbeatRequest)(nil), "ai.metathings.service.cored.HeartbeatRequest")
 }
 
-func init() { proto.RegisterFile("heartbeat.proto", fileDescriptor_heartbeat_477d8f1e7fbd4fff) }
+func init() { proto.RegisterFile("heartbeat.proto", fileDescriptor_3c667767fb9826a9) }
 
-var fileDescriptor_heartbeat_477d8f1e7fbd4fff = []byte{
+var fileDescriptor_3c667767fb9826a9 = []byte{
 	// 292 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x7c, 0x90, 0xcf, 0x4a, 0xc3, 0x40,
 	0x10, 0xc6, 0x49, 0x84, 0x2a, 0x1b, 0xa1, 0x92, 0x53, 0x88, 0x62, 0x43, 0x4f, 0x3d, 0xb4, 0x1b,

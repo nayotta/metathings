@@ -3,11 +3,13 @@
 
 package identityd
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import wrappers "github.com/golang/protobuf/ptypes/wrappers"
-import _ "github.com/mwitkow/go-proto-validators"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	wrappers "github.com/golang/protobuf/ptypes/wrappers"
+	_ "github.com/mwitkow/go-proto-validators"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -21,8 +23,8 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type DeleteApplicationCredentialRequest struct {
-	UserId                  *wrappers.StringValue `protobuf:"bytes,1,opt,name=user_id,json=userId" json:"user_id,omitempty"`
-	ApplicationCredentialId *wrappers.StringValue `protobuf:"bytes,2,opt,name=application_credential_id,json=applicationCredentialId" json:"application_credential_id,omitempty"`
+	UserId                  *wrappers.StringValue `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	ApplicationCredentialId *wrappers.StringValue `protobuf:"bytes,2,opt,name=application_credential_id,json=applicationCredentialId,proto3" json:"application_credential_id,omitempty"`
 	XXX_NoUnkeyedLiteral    struct{}              `json:"-"`
 	XXX_unrecognized        []byte                `json:"-"`
 	XXX_sizecache           int32                 `json:"-"`
@@ -32,16 +34,17 @@ func (m *DeleteApplicationCredentialRequest) Reset()         { *m = DeleteApplic
 func (m *DeleteApplicationCredentialRequest) String() string { return proto.CompactTextString(m) }
 func (*DeleteApplicationCredentialRequest) ProtoMessage()    {}
 func (*DeleteApplicationCredentialRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_delete_application_credential_1e9367e5411fca92, []int{0}
+	return fileDescriptor_6422e139ae41ba51, []int{0}
 }
+
 func (m *DeleteApplicationCredentialRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_DeleteApplicationCredentialRequest.Unmarshal(m, b)
 }
 func (m *DeleteApplicationCredentialRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_DeleteApplicationCredentialRequest.Marshal(b, m, deterministic)
 }
-func (dst *DeleteApplicationCredentialRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_DeleteApplicationCredentialRequest.Merge(dst, src)
+func (m *DeleteApplicationCredentialRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DeleteApplicationCredentialRequest.Merge(m, src)
 }
 func (m *DeleteApplicationCredentialRequest) XXX_Size() int {
 	return xxx_messageInfo_DeleteApplicationCredentialRequest.Size(m)
@@ -71,10 +74,10 @@ func init() {
 }
 
 func init() {
-	proto.RegisterFile("delete_application_credential.proto", fileDescriptor_delete_application_credential_1e9367e5411fca92)
+	proto.RegisterFile("delete_application_credential.proto", fileDescriptor_6422e139ae41ba51)
 }
 
-var fileDescriptor_delete_application_credential_1e9367e5411fca92 = []byte{
+var fileDescriptor_6422e139ae41ba51 = []byte{
 	// 247 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0xcf, 0xbf, 0x4e, 0xc3, 0x30,
 	0x10, 0x06, 0x70, 0xa5, 0x43, 0x90, 0xc2, 0x96, 0x05, 0xa8, 0x10, 0xad, 0xca, 0xc2, 0x52, 0x5b,

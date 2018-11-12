@@ -3,7 +3,7 @@
 
 package identityd
 
-import go_proto_validators "github.com/mwitkow/go-proto-validators"
+import github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
@@ -17,23 +17,23 @@ var _ = math.Inf
 
 func (this *ListProjectsRequest) Validate() error {
 	if this.DomainId != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.DomainId); err != nil {
-			return go_proto_validators.FieldError("DomainId", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.DomainId); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("DomainId", err)
 		}
 	}
 	if this.ParentId != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.ParentId); err != nil {
-			return go_proto_validators.FieldError("ParentId", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.ParentId); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("ParentId", err)
 		}
 	}
 	if this.Enabled != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Enabled); err != nil {
-			return go_proto_validators.FieldError("Enabled", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Enabled); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Enabled", err)
 		}
 	}
 	if this.Name != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Name); err != nil {
-			return go_proto_validators.FieldError("Name", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Name); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Name", err)
 		}
 	}
 	return nil
@@ -41,8 +41,8 @@ func (this *ListProjectsRequest) Validate() error {
 func (this *ListProjectsResponse) Validate() error {
 	for _, item := range this.Projects {
 		if item != nil {
-			if err := go_proto_validators.CallValidatorIfExists(item); err != nil {
-				return go_proto_validators.FieldError("Projects", err)
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("Projects", err)
 			}
 		}
 	}

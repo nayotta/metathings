@@ -3,10 +3,12 @@
 
 package identityd2
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import _ "github.com/mwitkow/go-proto-validators"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	_ "github.com/mwitkow/go-proto-validators"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -20,7 +22,7 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type IssueTokenByTokenRequest struct {
-	Token                *OpToken `protobuf:"bytes,1,opt,name=token" json:"token,omitempty"`
+	Token                *OpToken `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -30,16 +32,17 @@ func (m *IssueTokenByTokenRequest) Reset()         { *m = IssueTokenByTokenReque
 func (m *IssueTokenByTokenRequest) String() string { return proto.CompactTextString(m) }
 func (*IssueTokenByTokenRequest) ProtoMessage()    {}
 func (*IssueTokenByTokenRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_issue_token_by_token_372f0f662d1f8364, []int{0}
+	return fileDescriptor_26035bc87685e0e6, []int{0}
 }
+
 func (m *IssueTokenByTokenRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_IssueTokenByTokenRequest.Unmarshal(m, b)
 }
 func (m *IssueTokenByTokenRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_IssueTokenByTokenRequest.Marshal(b, m, deterministic)
 }
-func (dst *IssueTokenByTokenRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_IssueTokenByTokenRequest.Merge(dst, src)
+func (m *IssueTokenByTokenRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_IssueTokenByTokenRequest.Merge(m, src)
 }
 func (m *IssueTokenByTokenRequest) XXX_Size() int {
 	return xxx_messageInfo_IssueTokenByTokenRequest.Size(m)
@@ -58,7 +61,7 @@ func (m *IssueTokenByTokenRequest) GetToken() *OpToken {
 }
 
 type IssueTokenByTokenResponse struct {
-	Token                *Token   `protobuf:"bytes,1,opt,name=token" json:"token,omitempty"`
+	Token                *Token   `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -68,16 +71,17 @@ func (m *IssueTokenByTokenResponse) Reset()         { *m = IssueTokenByTokenResp
 func (m *IssueTokenByTokenResponse) String() string { return proto.CompactTextString(m) }
 func (*IssueTokenByTokenResponse) ProtoMessage()    {}
 func (*IssueTokenByTokenResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_issue_token_by_token_372f0f662d1f8364, []int{1}
+	return fileDescriptor_26035bc87685e0e6, []int{1}
 }
+
 func (m *IssueTokenByTokenResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_IssueTokenByTokenResponse.Unmarshal(m, b)
 }
 func (m *IssueTokenByTokenResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_IssueTokenByTokenResponse.Marshal(b, m, deterministic)
 }
-func (dst *IssueTokenByTokenResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_IssueTokenByTokenResponse.Merge(dst, src)
+func (m *IssueTokenByTokenResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_IssueTokenByTokenResponse.Merge(m, src)
 }
 func (m *IssueTokenByTokenResponse) XXX_Size() int {
 	return xxx_messageInfo_IssueTokenByTokenResponse.Size(m)
@@ -100,11 +104,9 @@ func init() {
 	proto.RegisterType((*IssueTokenByTokenResponse)(nil), "ai.metathings.service.identityd2.IssueTokenByTokenResponse")
 }
 
-func init() {
-	proto.RegisterFile("issue_token_by_token.proto", fileDescriptor_issue_token_by_token_372f0f662d1f8364)
-}
+func init() { proto.RegisterFile("issue_token_by_token.proto", fileDescriptor_26035bc87685e0e6) }
 
-var fileDescriptor_issue_token_by_token_372f0f662d1f8364 = []byte{
+var fileDescriptor_26035bc87685e0e6 = []byte{
 	// 216 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x92, 0xca, 0x2c, 0x2e, 0x2e,
 	0x4d, 0x8d, 0x2f, 0xc9, 0xcf, 0x4e, 0xcd, 0x8b, 0x4f, 0xaa, 0x84, 0x30, 0xf4, 0x0a, 0x8a, 0xf2,

@@ -3,11 +3,13 @@
 
 package identityd
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import wrappers "github.com/golang/protobuf/ptypes/wrappers"
-import _ "github.com/mwitkow/go-proto-validators"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	wrappers "github.com/golang/protobuf/ptypes/wrappers"
+	_ "github.com/mwitkow/go-proto-validators"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -21,7 +23,7 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type DeleteRegionRequest struct {
-	RegionId             *wrappers.StringValue `protobuf:"bytes,1,opt,name=region_id,json=regionId" json:"region_id,omitempty"`
+	RegionId             *wrappers.StringValue `protobuf:"bytes,1,opt,name=region_id,json=regionId,proto3" json:"region_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -31,16 +33,17 @@ func (m *DeleteRegionRequest) Reset()         { *m = DeleteRegionRequest{} }
 func (m *DeleteRegionRequest) String() string { return proto.CompactTextString(m) }
 func (*DeleteRegionRequest) ProtoMessage()    {}
 func (*DeleteRegionRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_delete_region_d8c1a5de45ad7754, []int{0}
+	return fileDescriptor_792d42ee079137de, []int{0}
 }
+
 func (m *DeleteRegionRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_DeleteRegionRequest.Unmarshal(m, b)
 }
 func (m *DeleteRegionRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_DeleteRegionRequest.Marshal(b, m, deterministic)
 }
-func (dst *DeleteRegionRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_DeleteRegionRequest.Merge(dst, src)
+func (m *DeleteRegionRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DeleteRegionRequest.Merge(m, src)
 }
 func (m *DeleteRegionRequest) XXX_Size() int {
 	return xxx_messageInfo_DeleteRegionRequest.Size(m)
@@ -62,9 +65,9 @@ func init() {
 	proto.RegisterType((*DeleteRegionRequest)(nil), "ai.metathings.service.identityd.DeleteRegionRequest")
 }
 
-func init() { proto.RegisterFile("delete_region.proto", fileDescriptor_delete_region_d8c1a5de45ad7754) }
+func init() { proto.RegisterFile("delete_region.proto", fileDescriptor_792d42ee079137de) }
 
-var fileDescriptor_delete_region_d8c1a5de45ad7754 = []byte{
+var fileDescriptor_792d42ee079137de = []byte{
 	// 209 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x3c, 0xce, 0x41, 0x4b, 0xc4, 0x30,
 	0x10, 0x05, 0x60, 0xea, 0x61, 0xd1, 0x7a, 0xdb, 0xbd, 0xc8, 0x22, 0xee, 0xe2, 0xc9, 0x4b, 0x27,

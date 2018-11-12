@@ -3,10 +3,12 @@
 
 package deviced
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import _ "github.com/mwitkow/go-proto-validators"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	_ "github.com/mwitkow/go-proto-validators"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -20,7 +22,7 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type CreateDeviceRequest struct {
-	Device               *OpDevice `protobuf:"bytes,1,opt,name=device" json:"device,omitempty"`
+	Device               *OpDevice `protobuf:"bytes,1,opt,name=device,proto3" json:"device,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}  `json:"-"`
 	XXX_unrecognized     []byte    `json:"-"`
 	XXX_sizecache        int32     `json:"-"`
@@ -30,16 +32,17 @@ func (m *CreateDeviceRequest) Reset()         { *m = CreateDeviceRequest{} }
 func (m *CreateDeviceRequest) String() string { return proto.CompactTextString(m) }
 func (*CreateDeviceRequest) ProtoMessage()    {}
 func (*CreateDeviceRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_create_device_875e0b3b1b3eb0fa, []int{0}
+	return fileDescriptor_ba10584e722b27cc, []int{0}
 }
+
 func (m *CreateDeviceRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_CreateDeviceRequest.Unmarshal(m, b)
 }
 func (m *CreateDeviceRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_CreateDeviceRequest.Marshal(b, m, deterministic)
 }
-func (dst *CreateDeviceRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CreateDeviceRequest.Merge(dst, src)
+func (m *CreateDeviceRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CreateDeviceRequest.Merge(m, src)
 }
 func (m *CreateDeviceRequest) XXX_Size() int {
 	return xxx_messageInfo_CreateDeviceRequest.Size(m)
@@ -58,7 +61,7 @@ func (m *CreateDeviceRequest) GetDevice() *OpDevice {
 }
 
 type CreateDeviceResponse struct {
-	Device               *Device  `protobuf:"bytes,1,opt,name=device" json:"device,omitempty"`
+	Device               *Device  `protobuf:"bytes,1,opt,name=device,proto3" json:"device,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -68,16 +71,17 @@ func (m *CreateDeviceResponse) Reset()         { *m = CreateDeviceResponse{} }
 func (m *CreateDeviceResponse) String() string { return proto.CompactTextString(m) }
 func (*CreateDeviceResponse) ProtoMessage()    {}
 func (*CreateDeviceResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_create_device_875e0b3b1b3eb0fa, []int{1}
+	return fileDescriptor_ba10584e722b27cc, []int{1}
 }
+
 func (m *CreateDeviceResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_CreateDeviceResponse.Unmarshal(m, b)
 }
 func (m *CreateDeviceResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_CreateDeviceResponse.Marshal(b, m, deterministic)
 }
-func (dst *CreateDeviceResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CreateDeviceResponse.Merge(dst, src)
+func (m *CreateDeviceResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CreateDeviceResponse.Merge(m, src)
 }
 func (m *CreateDeviceResponse) XXX_Size() int {
 	return xxx_messageInfo_CreateDeviceResponse.Size(m)
@@ -100,9 +104,9 @@ func init() {
 	proto.RegisterType((*CreateDeviceResponse)(nil), "ai.metathings.service.deviced.CreateDeviceResponse")
 }
 
-func init() { proto.RegisterFile("create_device.proto", fileDescriptor_create_device_875e0b3b1b3eb0fa) }
+func init() { proto.RegisterFile("create_device.proto", fileDescriptor_ba10584e722b27cc) }
 
-var fileDescriptor_create_device_875e0b3b1b3eb0fa = []byte{
+var fileDescriptor_ba10584e722b27cc = []byte{
 	// 200 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x12, 0x4e, 0x2e, 0x4a, 0x4d,
 	0x2c, 0x49, 0x8d, 0x4f, 0x49, 0x2d, 0xcb, 0x4c, 0x4e, 0xd5, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17,

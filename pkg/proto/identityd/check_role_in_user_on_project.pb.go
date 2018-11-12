@@ -3,11 +3,13 @@
 
 package identityd
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import wrappers "github.com/golang/protobuf/ptypes/wrappers"
-import _ "github.com/mwitkow/go-proto-validators"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	wrappers "github.com/golang/protobuf/ptypes/wrappers"
+	_ "github.com/mwitkow/go-proto-validators"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -21,9 +23,9 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type CheckRoleInUserOnProjectRequest struct {
-	ProjectId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=project_id,json=projectId" json:"project_id,omitempty"`
-	UserId               *wrappers.StringValue `protobuf:"bytes,2,opt,name=user_id,json=userId" json:"user_id,omitempty"`
-	RoleId               *wrappers.StringValue `protobuf:"bytes,3,opt,name=role_id,json=roleId" json:"role_id,omitempty"`
+	ProjectId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=project_id,json=projectId,proto3" json:"project_id,omitempty"`
+	UserId               *wrappers.StringValue `protobuf:"bytes,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	RoleId               *wrappers.StringValue `protobuf:"bytes,3,opt,name=role_id,json=roleId,proto3" json:"role_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -33,16 +35,17 @@ func (m *CheckRoleInUserOnProjectRequest) Reset()         { *m = CheckRoleInUser
 func (m *CheckRoleInUserOnProjectRequest) String() string { return proto.CompactTextString(m) }
 func (*CheckRoleInUserOnProjectRequest) ProtoMessage()    {}
 func (*CheckRoleInUserOnProjectRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_check_role_in_user_on_project_3ae05ad25ebc6bc6, []int{0}
+	return fileDescriptor_a8b1dd537ec565d3, []int{0}
 }
+
 func (m *CheckRoleInUserOnProjectRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_CheckRoleInUserOnProjectRequest.Unmarshal(m, b)
 }
 func (m *CheckRoleInUserOnProjectRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_CheckRoleInUserOnProjectRequest.Marshal(b, m, deterministic)
 }
-func (dst *CheckRoleInUserOnProjectRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CheckRoleInUserOnProjectRequest.Merge(dst, src)
+func (m *CheckRoleInUserOnProjectRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CheckRoleInUserOnProjectRequest.Merge(m, src)
 }
 func (m *CheckRoleInUserOnProjectRequest) XXX_Size() int {
 	return xxx_messageInfo_CheckRoleInUserOnProjectRequest.Size(m)
@@ -79,10 +82,10 @@ func init() {
 }
 
 func init() {
-	proto.RegisterFile("check_role_in_user_on_project.proto", fileDescriptor_check_role_in_user_on_project_3ae05ad25ebc6bc6)
+	proto.RegisterFile("check_role_in_user_on_project.proto", fileDescriptor_a8b1dd537ec565d3)
 }
 
-var fileDescriptor_check_role_in_user_on_project_3ae05ad25ebc6bc6 = []byte{
+var fileDescriptor_a8b1dd537ec565d3 = []byte{
 	// 261 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x90, 0x31, 0x4b, 0xf4, 0x40,
 	0x10, 0x86, 0xc9, 0x7d, 0x70, 0x1f, 0xc6, 0x2e, 0x55, 0x38, 0xc4, 0x1c, 0xda, 0xd8, 0xdc, 0x06,

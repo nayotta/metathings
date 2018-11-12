@@ -3,11 +3,13 @@
 
 package identityd
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import wrappers "github.com/golang/protobuf/ptypes/wrappers"
-import _ "github.com/mwitkow/go-proto-validators"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	wrappers "github.com/golang/protobuf/ptypes/wrappers"
+	_ "github.com/mwitkow/go-proto-validators"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -35,6 +37,7 @@ var AUTH_METHOD_name = map[int32]string{
 	2: "TOKEN",
 	3: "APPLICATION_CREDENTIAL",
 }
+
 var AUTH_METHOD_value = map[string]int32{
 	"UNKNOWN":                0,
 	"PASSWORD":               1,
@@ -45,13 +48,14 @@ var AUTH_METHOD_value = map[string]int32{
 func (x AUTH_METHOD) String() string {
 	return proto.EnumName(AUTH_METHOD_name, int32(x))
 }
+
 func (AUTH_METHOD) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_issue_token_da78f491fb31322c, []int{0}
+	return fileDescriptor_2483cb65df7d1b5d, []int{0}
 }
 
 type TokenScope struct {
-	DomainId             *wrappers.StringValue `protobuf:"bytes,1,opt,name=domain_id,json=domainId" json:"domain_id,omitempty"`
-	ProjectId            *wrappers.StringValue `protobuf:"bytes,2,opt,name=project_id,json=projectId" json:"project_id,omitempty"`
+	DomainId             *wrappers.StringValue `protobuf:"bytes,1,opt,name=domain_id,json=domainId,proto3" json:"domain_id,omitempty"`
+	ProjectId            *wrappers.StringValue `protobuf:"bytes,2,opt,name=project_id,json=projectId,proto3" json:"project_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -61,16 +65,17 @@ func (m *TokenScope) Reset()         { *m = TokenScope{} }
 func (m *TokenScope) String() string { return proto.CompactTextString(m) }
 func (*TokenScope) ProtoMessage()    {}
 func (*TokenScope) Descriptor() ([]byte, []int) {
-	return fileDescriptor_issue_token_da78f491fb31322c, []int{0}
+	return fileDescriptor_2483cb65df7d1b5d, []int{0}
 }
+
 func (m *TokenScope) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_TokenScope.Unmarshal(m, b)
 }
 func (m *TokenScope) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_TokenScope.Marshal(b, m, deterministic)
 }
-func (dst *TokenScope) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_TokenScope.Merge(dst, src)
+func (m *TokenScope) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TokenScope.Merge(m, src)
 }
 func (m *TokenScope) XXX_Size() int {
 	return xxx_messageInfo_TokenScope.Size(m)
@@ -96,12 +101,12 @@ func (m *TokenScope) GetProjectId() *wrappers.StringValue {
 }
 
 type PasswordPayload struct {
-	Id                   *wrappers.StringValue `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	Username             *wrappers.StringValue `protobuf:"bytes,2,opt,name=username" json:"username,omitempty"`
-	Password             *wrappers.StringValue `protobuf:"bytes,3,opt,name=password" json:"password,omitempty"`
-	DomainId             *wrappers.StringValue `protobuf:"bytes,4,opt,name=domain_id,json=domainId" json:"domain_id,omitempty"`
-	DomainName           *wrappers.StringValue `protobuf:"bytes,5,opt,name=domain_name,json=domainName" json:"domain_name,omitempty"`
-	Scope                *TokenScope           `protobuf:"bytes,6,opt,name=scope" json:"scope,omitempty"`
+	Id                   *wrappers.StringValue `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Username             *wrappers.StringValue `protobuf:"bytes,2,opt,name=username,proto3" json:"username,omitempty"`
+	Password             *wrappers.StringValue `protobuf:"bytes,3,opt,name=password,proto3" json:"password,omitempty"`
+	DomainId             *wrappers.StringValue `protobuf:"bytes,4,opt,name=domain_id,json=domainId,proto3" json:"domain_id,omitempty"`
+	DomainName           *wrappers.StringValue `protobuf:"bytes,5,opt,name=domain_name,json=domainName,proto3" json:"domain_name,omitempty"`
+	Scope                *TokenScope           `protobuf:"bytes,6,opt,name=scope,proto3" json:"scope,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -111,16 +116,17 @@ func (m *PasswordPayload) Reset()         { *m = PasswordPayload{} }
 func (m *PasswordPayload) String() string { return proto.CompactTextString(m) }
 func (*PasswordPayload) ProtoMessage()    {}
 func (*PasswordPayload) Descriptor() ([]byte, []int) {
-	return fileDescriptor_issue_token_da78f491fb31322c, []int{1}
+	return fileDescriptor_2483cb65df7d1b5d, []int{1}
 }
+
 func (m *PasswordPayload) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_PasswordPayload.Unmarshal(m, b)
 }
 func (m *PasswordPayload) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_PasswordPayload.Marshal(b, m, deterministic)
 }
-func (dst *PasswordPayload) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_PasswordPayload.Merge(dst, src)
+func (m *PasswordPayload) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PasswordPayload.Merge(m, src)
 }
 func (m *PasswordPayload) XXX_Size() int {
 	return xxx_messageInfo_PasswordPayload.Size(m)
@@ -174,8 +180,8 @@ func (m *PasswordPayload) GetScope() *TokenScope {
 }
 
 type TokenPayload struct {
-	TokenId              *wrappers.StringValue `protobuf:"bytes,1,opt,name=token_id,json=tokenId" json:"token_id,omitempty"`
-	Scope                *TokenScope           `protobuf:"bytes,2,opt,name=scope" json:"scope,omitempty"`
+	TokenId              *wrappers.StringValue `protobuf:"bytes,1,opt,name=token_id,json=tokenId,proto3" json:"token_id,omitempty"`
+	Scope                *TokenScope           `protobuf:"bytes,2,opt,name=scope,proto3" json:"scope,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -185,16 +191,17 @@ func (m *TokenPayload) Reset()         { *m = TokenPayload{} }
 func (m *TokenPayload) String() string { return proto.CompactTextString(m) }
 func (*TokenPayload) ProtoMessage()    {}
 func (*TokenPayload) Descriptor() ([]byte, []int) {
-	return fileDescriptor_issue_token_da78f491fb31322c, []int{2}
+	return fileDescriptor_2483cb65df7d1b5d, []int{2}
 }
+
 func (m *TokenPayload) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_TokenPayload.Unmarshal(m, b)
 }
 func (m *TokenPayload) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_TokenPayload.Marshal(b, m, deterministic)
 }
-func (dst *TokenPayload) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_TokenPayload.Merge(dst, src)
+func (m *TokenPayload) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TokenPayload.Merge(m, src)
 }
 func (m *TokenPayload) XXX_Size() int {
 	return xxx_messageInfo_TokenPayload.Size(m)
@@ -220,12 +227,12 @@ func (m *TokenPayload) GetScope() *TokenScope {
 }
 
 type ApplicationCredentialPayload struct {
-	Id                   *wrappers.StringValue `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
-	Secret               *wrappers.StringValue `protobuf:"bytes,3,opt,name=secret" json:"secret,omitempty"`
-	UserId               *wrappers.StringValue `protobuf:"bytes,4,opt,name=user_id,json=userId" json:"user_id,omitempty"`
-	Username             *wrappers.StringValue `protobuf:"bytes,5,opt,name=username" json:"username,omitempty"`
-	DomainId             *wrappers.StringValue `protobuf:"bytes,6,opt,name=domain_id,json=domainId" json:"domain_id,omitempty"`
+	Id                   *wrappers.StringValue `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Secret               *wrappers.StringValue `protobuf:"bytes,3,opt,name=secret,proto3" json:"secret,omitempty"`
+	UserId               *wrappers.StringValue `protobuf:"bytes,4,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Username             *wrappers.StringValue `protobuf:"bytes,5,opt,name=username,proto3" json:"username,omitempty"`
+	DomainId             *wrappers.StringValue `protobuf:"bytes,6,opt,name=domain_id,json=domainId,proto3" json:"domain_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -235,16 +242,17 @@ func (m *ApplicationCredentialPayload) Reset()         { *m = ApplicationCredent
 func (m *ApplicationCredentialPayload) String() string { return proto.CompactTextString(m) }
 func (*ApplicationCredentialPayload) ProtoMessage()    {}
 func (*ApplicationCredentialPayload) Descriptor() ([]byte, []int) {
-	return fileDescriptor_issue_token_da78f491fb31322c, []int{3}
+	return fileDescriptor_2483cb65df7d1b5d, []int{3}
 }
+
 func (m *ApplicationCredentialPayload) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ApplicationCredentialPayload.Unmarshal(m, b)
 }
 func (m *ApplicationCredentialPayload) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_ApplicationCredentialPayload.Marshal(b, m, deterministic)
 }
-func (dst *ApplicationCredentialPayload) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ApplicationCredentialPayload.Merge(dst, src)
+func (m *ApplicationCredentialPayload) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ApplicationCredentialPayload.Merge(m, src)
 }
 func (m *ApplicationCredentialPayload) XXX_Size() int {
 	return xxx_messageInfo_ApplicationCredentialPayload.Size(m)
@@ -298,7 +306,7 @@ func (m *ApplicationCredentialPayload) GetDomainId() *wrappers.StringValue {
 }
 
 type IssueTokenRequest struct {
-	Method AUTH_METHOD `protobuf:"varint,1,opt,name=method,enum=ai.metathings.service.identityd.AUTH_METHOD" json:"method,omitempty"`
+	Method AUTH_METHOD `protobuf:"varint,1,opt,name=method,proto3,enum=ai.metathings.service.identityd.AUTH_METHOD" json:"method,omitempty"`
 	// Types that are valid to be assigned to Payload:
 	//	*IssueTokenRequest_Password
 	//	*IssueTokenRequest_Token
@@ -313,16 +321,17 @@ func (m *IssueTokenRequest) Reset()         { *m = IssueTokenRequest{} }
 func (m *IssueTokenRequest) String() string { return proto.CompactTextString(m) }
 func (*IssueTokenRequest) ProtoMessage()    {}
 func (*IssueTokenRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_issue_token_da78f491fb31322c, []int{4}
+	return fileDescriptor_2483cb65df7d1b5d, []int{4}
 }
+
 func (m *IssueTokenRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_IssueTokenRequest.Unmarshal(m, b)
 }
 func (m *IssueTokenRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_IssueTokenRequest.Marshal(b, m, deterministic)
 }
-func (dst *IssueTokenRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_IssueTokenRequest.Merge(dst, src)
+func (m *IssueTokenRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_IssueTokenRequest.Merge(m, src)
 }
 func (m *IssueTokenRequest) XXX_Size() int {
 	return xxx_messageInfo_IssueTokenRequest.Size(m)
@@ -333,22 +342,33 @@ func (m *IssueTokenRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_IssueTokenRequest proto.InternalMessageInfo
 
+func (m *IssueTokenRequest) GetMethod() AUTH_METHOD {
+	if m != nil {
+		return m.Method
+	}
+	return AUTH_METHOD_UNKNOWN
+}
+
 type isIssueTokenRequest_Payload interface {
 	isIssueTokenRequest_Payload()
 }
 
 type IssueTokenRequest_Password struct {
-	Password *PasswordPayload `protobuf:"bytes,2,opt,name=password,oneof"`
-}
-type IssueTokenRequest_Token struct {
-	Token *TokenPayload `protobuf:"bytes,3,opt,name=token,oneof"`
-}
-type IssueTokenRequest_ApplicationCredential struct {
-	ApplicationCredential *ApplicationCredentialPayload `protobuf:"bytes,4,opt,name=application_credential,json=applicationCredential,oneof"`
+	Password *PasswordPayload `protobuf:"bytes,2,opt,name=password,proto3,oneof"`
 }
 
-func (*IssueTokenRequest_Password) isIssueTokenRequest_Payload()              {}
-func (*IssueTokenRequest_Token) isIssueTokenRequest_Payload()                 {}
+type IssueTokenRequest_Token struct {
+	Token *TokenPayload `protobuf:"bytes,3,opt,name=token,proto3,oneof"`
+}
+
+type IssueTokenRequest_ApplicationCredential struct {
+	ApplicationCredential *ApplicationCredentialPayload `protobuf:"bytes,4,opt,name=application_credential,json=applicationCredential,proto3,oneof"`
+}
+
+func (*IssueTokenRequest_Password) isIssueTokenRequest_Payload() {}
+
+func (*IssueTokenRequest_Token) isIssueTokenRequest_Payload() {}
+
 func (*IssueTokenRequest_ApplicationCredential) isIssueTokenRequest_Payload() {}
 
 func (m *IssueTokenRequest) GetPayload() isIssueTokenRequest_Payload {
@@ -356,13 +376,6 @@ func (m *IssueTokenRequest) GetPayload() isIssueTokenRequest_Payload {
 		return m.Payload
 	}
 	return nil
-}
-
-func (m *IssueTokenRequest) GetMethod() AUTH_METHOD {
-	if m != nil {
-		return m.Method
-	}
-	return AUTH_METHOD_UNKNOWN
 }
 
 func (m *IssueTokenRequest) GetPassword() *PasswordPayload {
@@ -480,7 +493,7 @@ func _IssueTokenRequest_OneofSizer(msg proto.Message) (n int) {
 }
 
 type IssueTokenResponse struct {
-	Token                *Token   `protobuf:"bytes,1,opt,name=token" json:"token,omitempty"`
+	Token                *Token   `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -490,16 +503,17 @@ func (m *IssueTokenResponse) Reset()         { *m = IssueTokenResponse{} }
 func (m *IssueTokenResponse) String() string { return proto.CompactTextString(m) }
 func (*IssueTokenResponse) ProtoMessage()    {}
 func (*IssueTokenResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_issue_token_da78f491fb31322c, []int{5}
+	return fileDescriptor_2483cb65df7d1b5d, []int{5}
 }
+
 func (m *IssueTokenResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_IssueTokenResponse.Unmarshal(m, b)
 }
 func (m *IssueTokenResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_IssueTokenResponse.Marshal(b, m, deterministic)
 }
-func (dst *IssueTokenResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_IssueTokenResponse.Merge(dst, src)
+func (m *IssueTokenResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_IssueTokenResponse.Merge(m, src)
 }
 func (m *IssueTokenResponse) XXX_Size() int {
 	return xxx_messageInfo_IssueTokenResponse.Size(m)
@@ -518,18 +532,18 @@ func (m *IssueTokenResponse) GetToken() *Token {
 }
 
 func init() {
+	proto.RegisterEnum("ai.metathings.service.identityd.AUTH_METHOD", AUTH_METHOD_name, AUTH_METHOD_value)
 	proto.RegisterType((*TokenScope)(nil), "ai.metathings.service.identityd.TokenScope")
 	proto.RegisterType((*PasswordPayload)(nil), "ai.metathings.service.identityd.PasswordPayload")
 	proto.RegisterType((*TokenPayload)(nil), "ai.metathings.service.identityd.TokenPayload")
 	proto.RegisterType((*ApplicationCredentialPayload)(nil), "ai.metathings.service.identityd.ApplicationCredentialPayload")
 	proto.RegisterType((*IssueTokenRequest)(nil), "ai.metathings.service.identityd.IssueTokenRequest")
 	proto.RegisterType((*IssueTokenResponse)(nil), "ai.metathings.service.identityd.IssueTokenResponse")
-	proto.RegisterEnum("ai.metathings.service.identityd.AUTH_METHOD", AUTH_METHOD_name, AUTH_METHOD_value)
 }
 
-func init() { proto.RegisterFile("issue_token.proto", fileDescriptor_issue_token_da78f491fb31322c) }
+func init() { proto.RegisterFile("issue_token.proto", fileDescriptor_2483cb65df7d1b5d) }
 
-var fileDescriptor_issue_token_da78f491fb31322c = []byte{
+var fileDescriptor_2483cb65df7d1b5d = []byte{
 	// 619 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x94, 0xcd, 0x4e, 0xdb, 0x4e,
 	0x14, 0xc5, 0x89, 0x21, 0x4e, 0x72, 0x83, 0xfe, 0xff, 0x30, 0x52, 0x11, 0x42, 0xa8, 0xa0, 0x2c,

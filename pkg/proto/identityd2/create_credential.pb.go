@@ -3,12 +3,14 @@
 
 package identityd2
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import timestamp "github.com/golang/protobuf/ptypes/timestamp"
-import wrappers "github.com/golang/protobuf/ptypes/wrappers"
-import _ "github.com/mwitkow/go-proto-validators"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	timestamp "github.com/golang/protobuf/ptypes/timestamp"
+	wrappers "github.com/golang/protobuf/ptypes/wrappers"
+	_ "github.com/mwitkow/go-proto-validators"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -22,15 +24,15 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type CreateCredentialRequest struct {
-	Id                   *wrappers.StringValue `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	Domain               *OpDomain             `protobuf:"bytes,2,opt,name=domain" json:"domain,omitempty"`
-	Roles                []*OpRole             `protobuf:"bytes,3,rep,name=roles" json:"roles,omitempty"`
-	Entity               *OpEntity             `protobuf:"bytes,4,opt,name=entity" json:"entity,omitempty"`
-	Name                 *wrappers.StringValue `protobuf:"bytes,5,opt,name=name" json:"name,omitempty"`
-	Alias                *wrappers.StringValue `protobuf:"bytes,6,opt,name=alias" json:"alias,omitempty"`
-	Secret               *wrappers.StringValue `protobuf:"bytes,7,opt,name=secret" json:"secret,omitempty"`
-	Description          *wrappers.StringValue `protobuf:"bytes,8,opt,name=description" json:"description,omitempty"`
-	ExpiresAt            *timestamp.Timestamp  `protobuf:"bytes,9,opt,name=expires_at,json=expiresAt" json:"expires_at,omitempty"`
+	Id                   *wrappers.StringValue `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Domain               *OpDomain             `protobuf:"bytes,2,opt,name=domain,proto3" json:"domain,omitempty"`
+	Roles                []*OpRole             `protobuf:"bytes,3,rep,name=roles,proto3" json:"roles,omitempty"`
+	Entity               *OpEntity             `protobuf:"bytes,4,opt,name=entity,proto3" json:"entity,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,5,opt,name=name,proto3" json:"name,omitempty"`
+	Alias                *wrappers.StringValue `protobuf:"bytes,6,opt,name=alias,proto3" json:"alias,omitempty"`
+	Secret               *wrappers.StringValue `protobuf:"bytes,7,opt,name=secret,proto3" json:"secret,omitempty"`
+	Description          *wrappers.StringValue `protobuf:"bytes,8,opt,name=description,proto3" json:"description,omitempty"`
+	ExpiresAt            *timestamp.Timestamp  `protobuf:"bytes,9,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -40,16 +42,17 @@ func (m *CreateCredentialRequest) Reset()         { *m = CreateCredentialRequest
 func (m *CreateCredentialRequest) String() string { return proto.CompactTextString(m) }
 func (*CreateCredentialRequest) ProtoMessage()    {}
 func (*CreateCredentialRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_create_credential_fb1e2690f0f36792, []int{0}
+	return fileDescriptor_7f34767a917b63eb, []int{0}
 }
+
 func (m *CreateCredentialRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_CreateCredentialRequest.Unmarshal(m, b)
 }
 func (m *CreateCredentialRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_CreateCredentialRequest.Marshal(b, m, deterministic)
 }
-func (dst *CreateCredentialRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CreateCredentialRequest.Merge(dst, src)
+func (m *CreateCredentialRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CreateCredentialRequest.Merge(m, src)
 }
 func (m *CreateCredentialRequest) XXX_Size() int {
 	return xxx_messageInfo_CreateCredentialRequest.Size(m)
@@ -124,7 +127,7 @@ func (m *CreateCredentialRequest) GetExpiresAt() *timestamp.Timestamp {
 }
 
 type CreateCredentialResponse struct {
-	Credential           *Credential `protobuf:"bytes,1,opt,name=credential" json:"credential,omitempty"`
+	Credential           *Credential `protobuf:"bytes,1,opt,name=credential,proto3" json:"credential,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}    `json:"-"`
 	XXX_unrecognized     []byte      `json:"-"`
 	XXX_sizecache        int32       `json:"-"`
@@ -134,16 +137,17 @@ func (m *CreateCredentialResponse) Reset()         { *m = CreateCredentialRespon
 func (m *CreateCredentialResponse) String() string { return proto.CompactTextString(m) }
 func (*CreateCredentialResponse) ProtoMessage()    {}
 func (*CreateCredentialResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_create_credential_fb1e2690f0f36792, []int{1}
+	return fileDescriptor_7f34767a917b63eb, []int{1}
 }
+
 func (m *CreateCredentialResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_CreateCredentialResponse.Unmarshal(m, b)
 }
 func (m *CreateCredentialResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_CreateCredentialResponse.Marshal(b, m, deterministic)
 }
-func (dst *CreateCredentialResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CreateCredentialResponse.Merge(dst, src)
+func (m *CreateCredentialResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CreateCredentialResponse.Merge(m, src)
 }
 func (m *CreateCredentialResponse) XXX_Size() int {
 	return xxx_messageInfo_CreateCredentialResponse.Size(m)
@@ -166,11 +170,9 @@ func init() {
 	proto.RegisterType((*CreateCredentialResponse)(nil), "ai.metathings.service.identityd2.CreateCredentialResponse")
 }
 
-func init() {
-	proto.RegisterFile("create_credential.proto", fileDescriptor_create_credential_fb1e2690f0f36792)
-}
+func init() { proto.RegisterFile("create_credential.proto", fileDescriptor_7f34767a917b63eb) }
 
-var fileDescriptor_create_credential_fb1e2690f0f36792 = []byte{
+var fileDescriptor_7f34767a917b63eb = []byte{
 	// 400 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x93, 0xc1, 0x6b, 0xd4, 0x40,
 	0x14, 0xc6, 0xd9, 0x74, 0x37, 0xda, 0xc9, 0x6d, 0x2e, 0x1d, 0x16, 0xb1, 0xa1, 0xa7, 0x45, 0xda,

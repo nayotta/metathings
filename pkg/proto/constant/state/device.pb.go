@@ -3,9 +3,11 @@
 
 package ai_metathings_constant_state
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -31,6 +33,7 @@ var DeviceState_name = map[int32]string{
 	1: "DEVICE_STATE_ONLINE",
 	2: "DEVICE_STATE_OFFLINE",
 }
+
 var DeviceState_value = map[string]int32{
 	"DEVICE_STATE_UNKNOWN": 0,
 	"DEVICE_STATE_ONLINE":  1,
@@ -40,17 +43,18 @@ var DeviceState_value = map[string]int32{
 func (x DeviceState) String() string {
 	return proto.EnumName(DeviceState_name, int32(x))
 }
+
 func (DeviceState) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_device_822f2311d98a13cf, []int{0}
+	return fileDescriptor_870276a56ac00da5, []int{0}
 }
 
 func init() {
 	proto.RegisterEnum("ai.metathings.constant.state.DeviceState", DeviceState_name, DeviceState_value)
 }
 
-func init() { proto.RegisterFile("device.proto", fileDescriptor_device_822f2311d98a13cf) }
+func init() { proto.RegisterFile("device.proto", fileDescriptor_870276a56ac00da5) }
 
-var fileDescriptor_device_822f2311d98a13cf = []byte{
+var fileDescriptor_870276a56ac00da5 = []byte{
 	// 131 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xe2, 0x49, 0x49, 0x2d, 0xcb,
 	0x4c, 0x4e, 0xd5, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x92, 0x49, 0xcc, 0xd4, 0xcb, 0x4d, 0x2d,

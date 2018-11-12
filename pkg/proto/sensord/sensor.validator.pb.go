@@ -3,12 +3,12 @@
 
 package sensord
 
-import go_proto_validators "github.com/mwitkow/go-proto-validators"
+import github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import _ "github.com/golang/protobuf/ptypes/wrappers"
 import _ "github.com/golang/protobuf/ptypes/timestamp"
+import _ "github.com/golang/protobuf/ptypes/wrappers"
 import _ "github.com/nayotta/metathings/pkg/proto/sensor"
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -22,13 +22,13 @@ func (this *Sensor) Validate() error {
 }
 func (this *SensorData) Validate() error {
 	if this.CreatedAt != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.CreatedAt); err != nil {
-			return go_proto_validators.FieldError("CreatedAt", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.CreatedAt); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("CreatedAt", err)
 		}
 	}
 	if this.ArrivedAt != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.ArrivedAt); err != nil {
-			return go_proto_validators.FieldError("ArrivedAt", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.ArrivedAt); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("ArrivedAt", err)
 		}
 	}
 	// Validation of proto3 map<> fields is unsupported.

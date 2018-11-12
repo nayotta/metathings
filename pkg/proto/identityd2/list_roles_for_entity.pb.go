@@ -3,10 +3,12 @@
 
 package identityd2
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import wrappers "github.com/golang/protobuf/ptypes/wrappers"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	wrappers "github.com/golang/protobuf/ptypes/wrappers"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -20,10 +22,10 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type ListRolesForEntityRequest struct {
-	Id                   *wrappers.StringValue `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	Domain               *OpDomain             `protobuf:"bytes,2,opt,name=domain" json:"domain,omitempty"`
-	Name                 *wrappers.StringValue `protobuf:"bytes,3,opt,name=name" json:"name,omitempty"`
-	Alias                *wrappers.StringValue `protobuf:"bytes,4,opt,name=alias" json:"alias,omitempty"`
+	Id                   *wrappers.StringValue `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Domain               *OpDomain             `protobuf:"bytes,2,opt,name=domain,proto3" json:"domain,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
+	Alias                *wrappers.StringValue `protobuf:"bytes,4,opt,name=alias,proto3" json:"alias,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -33,16 +35,17 @@ func (m *ListRolesForEntityRequest) Reset()         { *m = ListRolesForEntityReq
 func (m *ListRolesForEntityRequest) String() string { return proto.CompactTextString(m) }
 func (*ListRolesForEntityRequest) ProtoMessage()    {}
 func (*ListRolesForEntityRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_list_roles_for_entity_4cd8474d070a71c4, []int{0}
+	return fileDescriptor_f9acafdfc7f2fc5b, []int{0}
 }
+
 func (m *ListRolesForEntityRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ListRolesForEntityRequest.Unmarshal(m, b)
 }
 func (m *ListRolesForEntityRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_ListRolesForEntityRequest.Marshal(b, m, deterministic)
 }
-func (dst *ListRolesForEntityRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ListRolesForEntityRequest.Merge(dst, src)
+func (m *ListRolesForEntityRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ListRolesForEntityRequest.Merge(m, src)
 }
 func (m *ListRolesForEntityRequest) XXX_Size() int {
 	return xxx_messageInfo_ListRolesForEntityRequest.Size(m)
@@ -82,7 +85,7 @@ func (m *ListRolesForEntityRequest) GetAlias() *wrappers.StringValue {
 }
 
 type ListRolesForEntityResponse struct {
-	Roles                []*Role  `protobuf:"bytes,1,rep,name=roles" json:"roles,omitempty"`
+	Roles                []*Role  `protobuf:"bytes,1,rep,name=roles,proto3" json:"roles,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -92,16 +95,17 @@ func (m *ListRolesForEntityResponse) Reset()         { *m = ListRolesForEntityRe
 func (m *ListRolesForEntityResponse) String() string { return proto.CompactTextString(m) }
 func (*ListRolesForEntityResponse) ProtoMessage()    {}
 func (*ListRolesForEntityResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_list_roles_for_entity_4cd8474d070a71c4, []int{1}
+	return fileDescriptor_f9acafdfc7f2fc5b, []int{1}
 }
+
 func (m *ListRolesForEntityResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ListRolesForEntityResponse.Unmarshal(m, b)
 }
 func (m *ListRolesForEntityResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_ListRolesForEntityResponse.Marshal(b, m, deterministic)
 }
-func (dst *ListRolesForEntityResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ListRolesForEntityResponse.Merge(dst, src)
+func (m *ListRolesForEntityResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ListRolesForEntityResponse.Merge(m, src)
 }
 func (m *ListRolesForEntityResponse) XXX_Size() int {
 	return xxx_messageInfo_ListRolesForEntityResponse.Size(m)
@@ -124,11 +128,9 @@ func init() {
 	proto.RegisterType((*ListRolesForEntityResponse)(nil), "ai.metathings.service.identityd2.ListRolesForEntityResponse")
 }
 
-func init() {
-	proto.RegisterFile("list_roles_for_entity.proto", fileDescriptor_list_roles_for_entity_4cd8474d070a71c4)
-}
+func init() { proto.RegisterFile("list_roles_for_entity.proto", fileDescriptor_f9acafdfc7f2fc5b) }
 
-var fileDescriptor_list_roles_for_entity_4cd8474d070a71c4 = []byte{
+var fileDescriptor_f9acafdfc7f2fc5b = []byte{
 	// 274 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x91, 0x4d, 0x4b, 0x03, 0x31,
 	0x10, 0x40, 0xe9, 0xf6, 0xe3, 0x90, 0xbd, 0xe5, 0xb4, 0x56, 0x91, 0xa5, 0x07, 0x29, 0x22, 0xa9,

@@ -4,7 +4,7 @@
 package identityd
 
 import fmt "fmt"
-import go_proto_validators "github.com/mwitkow/go-proto-validators"
+import github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
 import proto "github.com/golang/protobuf/proto"
 import math "math"
 import _ "github.com/golang/protobuf/ptypes/wrappers"
@@ -17,24 +17,24 @@ var _ = math.Inf
 
 func (this *CreateRoleRequest) Validate() error {
 	if nil == this.Name {
-		return go_proto_validators.FieldError("Name", fmt.Errorf("message must exist"))
+		return github_com_mwitkow_go_proto_validators.FieldError("Name", fmt.Errorf("message must exist"))
 	}
 	if this.Name != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Name); err != nil {
-			return go_proto_validators.FieldError("Name", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Name); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Name", err)
 		}
 	}
 	if this.DomainId != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.DomainId); err != nil {
-			return go_proto_validators.FieldError("DomainId", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.DomainId); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("DomainId", err)
 		}
 	}
 	return nil
 }
 func (this *CreateRoleResponse) Validate() error {
 	if this.Role != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Role); err != nil {
-			return go_proto_validators.FieldError("Role", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Role); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Role", err)
 		}
 	}
 	return nil

@@ -3,11 +3,13 @@
 
 package sensord
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import wrappers "github.com/golang/protobuf/ptypes/wrappers"
-import _ "github.com/mwitkow/go-proto-validators"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	wrappers "github.com/golang/protobuf/ptypes/wrappers"
+	_ "github.com/mwitkow/go-proto-validators"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -21,10 +23,10 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type CreateRequest struct {
-	Name                    *wrappers.StringValue `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
-	CoreId                  *wrappers.StringValue `protobuf:"bytes,2,opt,name=core_id,json=coreId" json:"core_id,omitempty"`
-	EntityName              *wrappers.StringValue `protobuf:"bytes,3,opt,name=entity_name,json=entityName" json:"entity_name,omitempty"`
-	ApplicationCredentialId *wrappers.StringValue `protobuf:"bytes,4,opt,name=application_credential_id,json=applicationCredentialId" json:"application_credential_id,omitempty"`
+	Name                    *wrappers.StringValue `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	CoreId                  *wrappers.StringValue `protobuf:"bytes,2,opt,name=core_id,json=coreId,proto3" json:"core_id,omitempty"`
+	EntityName              *wrappers.StringValue `protobuf:"bytes,3,opt,name=entity_name,json=entityName,proto3" json:"entity_name,omitempty"`
+	ApplicationCredentialId *wrappers.StringValue `protobuf:"bytes,4,opt,name=application_credential_id,json=applicationCredentialId,proto3" json:"application_credential_id,omitempty"`
 	XXX_NoUnkeyedLiteral    struct{}              `json:"-"`
 	XXX_unrecognized        []byte                `json:"-"`
 	XXX_sizecache           int32                 `json:"-"`
@@ -34,16 +36,17 @@ func (m *CreateRequest) Reset()         { *m = CreateRequest{} }
 func (m *CreateRequest) String() string { return proto.CompactTextString(m) }
 func (*CreateRequest) ProtoMessage()    {}
 func (*CreateRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_create_fb2b7572a44bd61a, []int{0}
+	return fileDescriptor_a4d26d5dcda09a78, []int{0}
 }
+
 func (m *CreateRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_CreateRequest.Unmarshal(m, b)
 }
 func (m *CreateRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_CreateRequest.Marshal(b, m, deterministic)
 }
-func (dst *CreateRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CreateRequest.Merge(dst, src)
+func (m *CreateRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CreateRequest.Merge(m, src)
 }
 func (m *CreateRequest) XXX_Size() int {
 	return xxx_messageInfo_CreateRequest.Size(m)
@@ -83,7 +86,7 @@ func (m *CreateRequest) GetApplicationCredentialId() *wrappers.StringValue {
 }
 
 type CreateResponse struct {
-	Sensor               *Sensor  `protobuf:"bytes,1,opt,name=sensor" json:"sensor,omitempty"`
+	Sensor               *Sensor  `protobuf:"bytes,1,opt,name=sensor,proto3" json:"sensor,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -93,16 +96,17 @@ func (m *CreateResponse) Reset()         { *m = CreateResponse{} }
 func (m *CreateResponse) String() string { return proto.CompactTextString(m) }
 func (*CreateResponse) ProtoMessage()    {}
 func (*CreateResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_create_fb2b7572a44bd61a, []int{1}
+	return fileDescriptor_a4d26d5dcda09a78, []int{1}
 }
+
 func (m *CreateResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_CreateResponse.Unmarshal(m, b)
 }
 func (m *CreateResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_CreateResponse.Marshal(b, m, deterministic)
 }
-func (dst *CreateResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CreateResponse.Merge(dst, src)
+func (m *CreateResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CreateResponse.Merge(m, src)
 }
 func (m *CreateResponse) XXX_Size() int {
 	return xxx_messageInfo_CreateResponse.Size(m)
@@ -125,9 +129,9 @@ func init() {
 	proto.RegisterType((*CreateResponse)(nil), "ai.metathings.service.sensord.CreateResponse")
 }
 
-func init() { proto.RegisterFile("create.proto", fileDescriptor_create_fb2b7572a44bd61a) }
+func init() { proto.RegisterFile("create.proto", fileDescriptor_a4d26d5dcda09a78) }
 
-var fileDescriptor_create_fb2b7572a44bd61a = []byte{
+var fileDescriptor_a4d26d5dcda09a78 = []byte{
 	// 306 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x91, 0x4f, 0x4b, 0x33, 0x31,
 	0x10, 0x87, 0x69, 0xdf, 0xb2, 0x2f, 0xa4, 0xd5, 0xc3, 0x5e, 0xac, 0xc5, 0x3f, 0xa5, 0x20, 0x78,

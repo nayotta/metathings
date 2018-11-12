@@ -3,7 +3,7 @@
 
 package identityd
 
-import go_proto_validators "github.com/mwitkow/go-proto-validators"
+import github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
@@ -17,13 +17,13 @@ var _ = math.Inf
 
 func (this *ListGroupsRequest) Validate() error {
 	if this.DomainId != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.DomainId); err != nil {
-			return go_proto_validators.FieldError("DomainId", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.DomainId); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("DomainId", err)
 		}
 	}
 	if this.Name != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Name); err != nil {
-			return go_proto_validators.FieldError("Name", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Name); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Name", err)
 		}
 	}
 	return nil
@@ -31,8 +31,8 @@ func (this *ListGroupsRequest) Validate() error {
 func (this *ListGroupsResponse) Validate() error {
 	for _, item := range this.Groups {
 		if item != nil {
-			if err := go_proto_validators.CallValidatorIfExists(item); err != nil {
-				return go_proto_validators.FieldError("Groups", err)
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("Groups", err)
 			}
 		}
 	}

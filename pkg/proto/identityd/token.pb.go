@@ -3,10 +3,12 @@
 
 package identityd
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import timestamp "github.com/golang/protobuf/ptypes/timestamp"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	timestamp "github.com/golang/protobuf/ptypes/timestamp"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -20,14 +22,14 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type Token struct {
-	Methods               []string                      `protobuf:"bytes,1,rep,name=methods" json:"methods,omitempty"`
-	ExpiresAt             *timestamp.Timestamp          `protobuf:"bytes,2,opt,name=expires_at,json=expiresAt" json:"expires_at,omitempty"`
-	IssuedAt              *timestamp.Timestamp          `protobuf:"bytes,3,opt,name=issued_at,json=issuedAt" json:"issued_at,omitempty"`
-	IsDomain              bool                          `protobuf:"varint,4,opt,name=is_domain,json=isDomain" json:"is_domain,omitempty"`
-	User                  *Token__User                  `protobuf:"bytes,5,opt,name=user" json:"user,omitempty"`
-	Roles                 []*Token__Role                `protobuf:"bytes,6,rep,name=roles" json:"roles,omitempty"`
-	Project               *Token__Project               `protobuf:"bytes,7,opt,name=project" json:"project,omitempty"`
-	ApplicationCredential *Token__ApplicationCredential `protobuf:"bytes,8,opt,name=application_credential,json=applicationCredential" json:"application_credential,omitempty"`
+	Methods               []string                      `protobuf:"bytes,1,rep,name=methods,proto3" json:"methods,omitempty"`
+	ExpiresAt             *timestamp.Timestamp          `protobuf:"bytes,2,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at,omitempty"`
+	IssuedAt              *timestamp.Timestamp          `protobuf:"bytes,3,opt,name=issued_at,json=issuedAt,proto3" json:"issued_at,omitempty"`
+	IsDomain              bool                          `protobuf:"varint,4,opt,name=is_domain,json=isDomain,proto3" json:"is_domain,omitempty"`
+	User                  *Token__User                  `protobuf:"bytes,5,opt,name=user,proto3" json:"user,omitempty"`
+	Roles                 []*Token__Role                `protobuf:"bytes,6,rep,name=roles,proto3" json:"roles,omitempty"`
+	Project               *Token__Project               `protobuf:"bytes,7,opt,name=project,proto3" json:"project,omitempty"`
+	ApplicationCredential *Token__ApplicationCredential `protobuf:"bytes,8,opt,name=application_credential,json=applicationCredential,proto3" json:"application_credential,omitempty"`
 	XXX_NoUnkeyedLiteral  struct{}                      `json:"-"`
 	XXX_unrecognized      []byte                        `json:"-"`
 	XXX_sizecache         int32                         `json:"-"`
@@ -37,16 +39,17 @@ func (m *Token) Reset()         { *m = Token{} }
 func (m *Token) String() string { return proto.CompactTextString(m) }
 func (*Token) ProtoMessage()    {}
 func (*Token) Descriptor() ([]byte, []int) {
-	return fileDescriptor_token_7da825058c694fba, []int{0}
+	return fileDescriptor_3aff0bcd502840ab, []int{0}
 }
+
 func (m *Token) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Token.Unmarshal(m, b)
 }
 func (m *Token) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Token.Marshal(b, m, deterministic)
 }
-func (dst *Token) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Token.Merge(dst, src)
+func (m *Token) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Token.Merge(m, src)
 }
 func (m *Token) XXX_Size() int {
 	return xxx_messageInfo_Token.Size(m)
@@ -114,8 +117,8 @@ func (m *Token) GetApplicationCredential() *Token__ApplicationCredential {
 }
 
 type Token__Domain struct {
-	Id                   string   `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	Name                 string   `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
+	Id                   string   `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name                 string   `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -125,16 +128,17 @@ func (m *Token__Domain) Reset()         { *m = Token__Domain{} }
 func (m *Token__Domain) String() string { return proto.CompactTextString(m) }
 func (*Token__Domain) ProtoMessage()    {}
 func (*Token__Domain) Descriptor() ([]byte, []int) {
-	return fileDescriptor_token_7da825058c694fba, []int{0, 0}
+	return fileDescriptor_3aff0bcd502840ab, []int{0, 0}
 }
+
 func (m *Token__Domain) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Token__Domain.Unmarshal(m, b)
 }
 func (m *Token__Domain) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Token__Domain.Marshal(b, m, deterministic)
 }
-func (dst *Token__Domain) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Token__Domain.Merge(dst, src)
+func (m *Token__Domain) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Token__Domain.Merge(m, src)
 }
 func (m *Token__Domain) XXX_Size() int {
 	return xxx_messageInfo_Token__Domain.Size(m)
@@ -160,9 +164,9 @@ func (m *Token__Domain) GetName() string {
 }
 
 type Token__Project struct {
-	Id                   string         `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	Name                 string         `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
-	Domain               *Token__Domain `protobuf:"bytes,3,opt,name=domain" json:"domain,omitempty"`
+	Id                   string         `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name                 string         `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Domain               *Token__Domain `protobuf:"bytes,3,opt,name=domain,proto3" json:"domain,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}       `json:"-"`
 	XXX_unrecognized     []byte         `json:"-"`
 	XXX_sizecache        int32          `json:"-"`
@@ -172,16 +176,17 @@ func (m *Token__Project) Reset()         { *m = Token__Project{} }
 func (m *Token__Project) String() string { return proto.CompactTextString(m) }
 func (*Token__Project) ProtoMessage()    {}
 func (*Token__Project) Descriptor() ([]byte, []int) {
-	return fileDescriptor_token_7da825058c694fba, []int{0, 1}
+	return fileDescriptor_3aff0bcd502840ab, []int{0, 1}
 }
+
 func (m *Token__Project) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Token__Project.Unmarshal(m, b)
 }
 func (m *Token__Project) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Token__Project.Marshal(b, m, deterministic)
 }
-func (dst *Token__Project) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Token__Project.Merge(dst, src)
+func (m *Token__Project) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Token__Project.Merge(m, src)
 }
 func (m *Token__Project) XXX_Size() int {
 	return xxx_messageInfo_Token__Project.Size(m)
@@ -214,9 +219,9 @@ func (m *Token__Project) GetDomain() *Token__Domain {
 }
 
 type Token__User struct {
-	Id                   string         `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	Name                 string         `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
-	Domain               *Token__Domain `protobuf:"bytes,3,opt,name=domain" json:"domain,omitempty"`
+	Id                   string         `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name                 string         `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Domain               *Token__Domain `protobuf:"bytes,3,opt,name=domain,proto3" json:"domain,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}       `json:"-"`
 	XXX_unrecognized     []byte         `json:"-"`
 	XXX_sizecache        int32          `json:"-"`
@@ -226,16 +231,17 @@ func (m *Token__User) Reset()         { *m = Token__User{} }
 func (m *Token__User) String() string { return proto.CompactTextString(m) }
 func (*Token__User) ProtoMessage()    {}
 func (*Token__User) Descriptor() ([]byte, []int) {
-	return fileDescriptor_token_7da825058c694fba, []int{0, 2}
+	return fileDescriptor_3aff0bcd502840ab, []int{0, 2}
 }
+
 func (m *Token__User) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Token__User.Unmarshal(m, b)
 }
 func (m *Token__User) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Token__User.Marshal(b, m, deterministic)
 }
-func (dst *Token__User) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Token__User.Merge(dst, src)
+func (m *Token__User) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Token__User.Merge(m, src)
 }
 func (m *Token__User) XXX_Size() int {
 	return xxx_messageInfo_Token__User.Size(m)
@@ -268,8 +274,8 @@ func (m *Token__User) GetDomain() *Token__Domain {
 }
 
 type Token__Role struct {
-	Id                   string   `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	Name                 string   `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
+	Id                   string   `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name                 string   `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -279,16 +285,17 @@ func (m *Token__Role) Reset()         { *m = Token__Role{} }
 func (m *Token__Role) String() string { return proto.CompactTextString(m) }
 func (*Token__Role) ProtoMessage()    {}
 func (*Token__Role) Descriptor() ([]byte, []int) {
-	return fileDescriptor_token_7da825058c694fba, []int{0, 3}
+	return fileDescriptor_3aff0bcd502840ab, []int{0, 3}
 }
+
 func (m *Token__Role) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Token__Role.Unmarshal(m, b)
 }
 func (m *Token__Role) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Token__Role.Marshal(b, m, deterministic)
 }
-func (dst *Token__Role) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Token__Role.Merge(dst, src)
+func (m *Token__Role) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Token__Role.Merge(m, src)
 }
 func (m *Token__Role) XXX_Size() int {
 	return xxx_messageInfo_Token__Role.Size(m)
@@ -314,9 +321,9 @@ func (m *Token__Role) GetName() string {
 }
 
 type Token__ApplicationCredential struct {
-	Id                   string   `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	Name                 string   `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
-	Restricted           bool     `protobuf:"varint,3,opt,name=restricted" json:"restricted,omitempty"`
+	Id                   string   `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name                 string   `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Restricted           bool     `protobuf:"varint,3,opt,name=restricted,proto3" json:"restricted,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -326,16 +333,17 @@ func (m *Token__ApplicationCredential) Reset()         { *m = Token__Application
 func (m *Token__ApplicationCredential) String() string { return proto.CompactTextString(m) }
 func (*Token__ApplicationCredential) ProtoMessage()    {}
 func (*Token__ApplicationCredential) Descriptor() ([]byte, []int) {
-	return fileDescriptor_token_7da825058c694fba, []int{0, 4}
+	return fileDescriptor_3aff0bcd502840ab, []int{0, 4}
 }
+
 func (m *Token__ApplicationCredential) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Token__ApplicationCredential.Unmarshal(m, b)
 }
 func (m *Token__ApplicationCredential) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Token__ApplicationCredential.Marshal(b, m, deterministic)
 }
-func (dst *Token__ApplicationCredential) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Token__ApplicationCredential.Merge(dst, src)
+func (m *Token__ApplicationCredential) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Token__ApplicationCredential.Merge(m, src)
 }
 func (m *Token__ApplicationCredential) XXX_Size() int {
 	return xxx_messageInfo_Token__ApplicationCredential.Size(m)
@@ -376,9 +384,9 @@ func init() {
 	proto.RegisterType((*Token__ApplicationCredential)(nil), "ai.metathings.service.identityd.Token._ApplicationCredential")
 }
 
-func init() { proto.RegisterFile("token.proto", fileDescriptor_token_7da825058c694fba) }
+func init() { proto.RegisterFile("token.proto", fileDescriptor_3aff0bcd502840ab) }
 
-var fileDescriptor_token_7da825058c694fba = []byte{
+var fileDescriptor_3aff0bcd502840ab = []byte{
 	// 426 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xbc, 0x93, 0x41, 0x8b, 0xd4, 0x30,
 	0x14, 0xc7, 0xe9, 0xcc, 0x74, 0xda, 0xbe, 0x05, 0x0f, 0x11, 0x97, 0x50, 0xc1, 0x2d, 0x9e, 0x06,

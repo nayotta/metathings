@@ -4,7 +4,7 @@
 package camera
 
 import fmt "fmt"
-import go_proto_validators "github.com/mwitkow/go-proto-validators"
+import github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
 import proto "github.com/golang/protobuf/proto"
 import math "math"
 import _ "github.com/golang/protobuf/ptypes/wrappers"
@@ -17,55 +17,55 @@ var _ = math.Inf
 
 func (this *StartConfig) Validate() error {
 	if nil == this.Url {
-		return go_proto_validators.FieldError("Url", fmt.Errorf("message must exist"))
+		return github_com_mwitkow_go_proto_validators.FieldError("Url", fmt.Errorf("message must exist"))
 	}
 	if this.Url != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Url); err != nil {
-			return go_proto_validators.FieldError("Url", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Url); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Url", err)
 		}
 	}
 	if this.Device != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Device); err != nil {
-			return go_proto_validators.FieldError("Device", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Device); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Device", err)
 		}
 	}
 	if this.Width != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Width); err != nil {
-			return go_proto_validators.FieldError("Width", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Width); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Width", err)
 		}
 	}
 	if this.Height != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Height); err != nil {
-			return go_proto_validators.FieldError("Height", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Height); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Height", err)
 		}
 	}
 	if this.Bitrate != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Bitrate); err != nil {
-			return go_proto_validators.FieldError("Bitrate", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Bitrate); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Bitrate", err)
 		}
 	}
 	if this.Framerate != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Framerate); err != nil {
-			return go_proto_validators.FieldError("Framerate", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Framerate); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Framerate", err)
 		}
 	}
 	return nil
 }
 func (this *StartRequest) Validate() error {
 	if nil == this.Config {
-		return go_proto_validators.FieldError("Config", fmt.Errorf("message must exist"))
+		return github_com_mwitkow_go_proto_validators.FieldError("Config", fmt.Errorf("message must exist"))
 	}
 	if this.Config != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Config); err != nil {
-			return go_proto_validators.FieldError("Config", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Config); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Config", err)
 		}
 	}
 	return nil
 }
 func (this *StartResponse) Validate() error {
 	if this.Camera != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Camera); err != nil {
-			return go_proto_validators.FieldError("Camera", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Camera); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Camera", err)
 		}
 	}
 	return nil

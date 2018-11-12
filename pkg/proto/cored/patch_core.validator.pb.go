@@ -4,7 +4,7 @@
 package cored
 
 import fmt "fmt"
-import go_proto_validators "github.com/mwitkow/go-proto-validators"
+import github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
 import proto "github.com/golang/protobuf/proto"
 import math "math"
 import _ "github.com/golang/protobuf/ptypes/wrappers"
@@ -18,24 +18,24 @@ var _ = math.Inf
 
 func (this *PatchCoreRequest) Validate() error {
 	if nil == this.Id {
-		return go_proto_validators.FieldError("Id", fmt.Errorf("message must exist"))
+		return github_com_mwitkow_go_proto_validators.FieldError("Id", fmt.Errorf("message must exist"))
 	}
 	if this.Id != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Id); err != nil {
-			return go_proto_validators.FieldError("Id", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Id); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Id", err)
 		}
 	}
 	if this.Name != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Name); err != nil {
-			return go_proto_validators.FieldError("Name", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Name); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Name", err)
 		}
 	}
 	return nil
 }
 func (this *PatchCoreResponse) Validate() error {
 	if this.Core != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Core); err != nil {
-			return go_proto_validators.FieldError("Core", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Core); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Core", err)
 		}
 	}
 	return nil

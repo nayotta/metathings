@@ -4,7 +4,7 @@
 package identityd
 
 import fmt "fmt"
-import go_proto_validators "github.com/mwitkow/go-proto-validators"
+import github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
 import proto "github.com/golang/protobuf/proto"
 import math "math"
 import _ "github.com/golang/protobuf/ptypes/wrappers"
@@ -17,37 +17,37 @@ var _ = math.Inf
 
 func (this *CreateProjectRequest) Validate() error {
 	if this.DomainId != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.DomainId); err != nil {
-			return go_proto_validators.FieldError("DomainId", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.DomainId); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("DomainId", err)
 		}
 	}
 	if this.ParentId != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.ParentId); err != nil {
-			return go_proto_validators.FieldError("ParentId", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.ParentId); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("ParentId", err)
 		}
 	}
 	if this.Enabled != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Enabled); err != nil {
-			return go_proto_validators.FieldError("Enabled", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Enabled); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Enabled", err)
 		}
 	}
 	if nil == this.Name {
-		return go_proto_validators.FieldError("Name", fmt.Errorf("message must exist"))
+		return github_com_mwitkow_go_proto_validators.FieldError("Name", fmt.Errorf("message must exist"))
 	}
 	if this.Name != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Name); err != nil {
-			return go_proto_validators.FieldError("Name", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Name); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Name", err)
 		}
 	}
 	if this.Description != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Description); err != nil {
-			return go_proto_validators.FieldError("Description", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Description); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Description", err)
 		}
 	}
 	for _, item := range this.Tags {
 		if item != nil {
-			if err := go_proto_validators.CallValidatorIfExists(item); err != nil {
-				return go_proto_validators.FieldError("Tags", err)
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("Tags", err)
 			}
 		}
 	}
@@ -55,8 +55,8 @@ func (this *CreateProjectRequest) Validate() error {
 }
 func (this *CreateProjectResponse) Validate() error {
 	if this.Project != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Project); err != nil {
-			return go_proto_validators.FieldError("Project", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Project); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Project", err)
 		}
 	}
 	return nil

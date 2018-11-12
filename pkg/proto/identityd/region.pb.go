@@ -3,9 +3,11 @@
 
 package identityd
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -19,9 +21,9 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type Region struct {
-	Id                   string   `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	ParentRegionId       string   `protobuf:"bytes,2,opt,name=parent_region_id,json=parentRegionId" json:"parent_region_id,omitempty"`
-	Description          string   `protobuf:"bytes,3,opt,name=description" json:"description,omitempty"`
+	Id                   string   `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	ParentRegionId       string   `protobuf:"bytes,2,opt,name=parent_region_id,json=parentRegionId,proto3" json:"parent_region_id,omitempty"`
+	Description          string   `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -31,16 +33,17 @@ func (m *Region) Reset()         { *m = Region{} }
 func (m *Region) String() string { return proto.CompactTextString(m) }
 func (*Region) ProtoMessage()    {}
 func (*Region) Descriptor() ([]byte, []int) {
-	return fileDescriptor_region_bc5460e3242113ab, []int{0}
+	return fileDescriptor_6eef30384a8831dd, []int{0}
 }
+
 func (m *Region) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Region.Unmarshal(m, b)
 }
 func (m *Region) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Region.Marshal(b, m, deterministic)
 }
-func (dst *Region) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Region.Merge(dst, src)
+func (m *Region) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Region.Merge(m, src)
 }
 func (m *Region) XXX_Size() int {
 	return xxx_messageInfo_Region.Size(m)
@@ -76,9 +79,9 @@ func init() {
 	proto.RegisterType((*Region)(nil), "ai.metathings.service.identityd.Region")
 }
 
-func init() { proto.RegisterFile("region.proto", fileDescriptor_region_bc5460e3242113ab) }
+func init() { proto.RegisterFile("region.proto", fileDescriptor_6eef30384a8831dd) }
 
-var fileDescriptor_region_bc5460e3242113ab = []byte{
+var fileDescriptor_6eef30384a8831dd = []byte{
 	// 145 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x4c, 0x8e, 0x31, 0x0b, 0xc2, 0x30,
 	0x14, 0x84, 0x69, 0x85, 0x82, 0x51, 0x8a, 0x64, 0xca, 0x66, 0x71, 0xea, 0x94, 0xc5, 0x5f, 0xe1,

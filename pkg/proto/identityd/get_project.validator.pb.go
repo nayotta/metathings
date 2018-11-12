@@ -4,7 +4,7 @@
 package identityd
 
 import fmt "fmt"
-import go_proto_validators "github.com/mwitkow/go-proto-validators"
+import github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
 import proto "github.com/golang/protobuf/proto"
 import math "math"
 import _ "github.com/golang/protobuf/ptypes/wrappers"
@@ -17,19 +17,19 @@ var _ = math.Inf
 
 func (this *GetProjectRequest) Validate() error {
 	if nil == this.ProjectId {
-		return go_proto_validators.FieldError("ProjectId", fmt.Errorf("message must exist"))
+		return github_com_mwitkow_go_proto_validators.FieldError("ProjectId", fmt.Errorf("message must exist"))
 	}
 	if this.ProjectId != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.ProjectId); err != nil {
-			return go_proto_validators.FieldError("ProjectId", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.ProjectId); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("ProjectId", err)
 		}
 	}
 	return nil
 }
 func (this *GetProjectResponse) Validate() error {
 	if this.Project != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Project); err != nil {
-			return go_proto_validators.FieldError("Project", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Project); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Project", err)
 		}
 	}
 	return nil

@@ -3,11 +3,13 @@
 
 package streamd
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import wrappers "github.com/golang/protobuf/ptypes/wrappers"
-import _ "github.com/mwitkow/go-proto-validators"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	wrappers "github.com/golang/protobuf/ptypes/wrappers"
+	_ "github.com/mwitkow/go-proto-validators"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -21,8 +23,8 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type PatchRequest struct {
-	Id                   *wrappers.StringValue `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
+	Id                   *wrappers.StringValue `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -32,16 +34,17 @@ func (m *PatchRequest) Reset()         { *m = PatchRequest{} }
 func (m *PatchRequest) String() string { return proto.CompactTextString(m) }
 func (*PatchRequest) ProtoMessage()    {}
 func (*PatchRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_patch_ce9de541e49cdb03, []int{0}
+	return fileDescriptor_1fe77fd0a0574cdd, []int{0}
 }
+
 func (m *PatchRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_PatchRequest.Unmarshal(m, b)
 }
 func (m *PatchRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_PatchRequest.Marshal(b, m, deterministic)
 }
-func (dst *PatchRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_PatchRequest.Merge(dst, src)
+func (m *PatchRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PatchRequest.Merge(m, src)
 }
 func (m *PatchRequest) XXX_Size() int {
 	return xxx_messageInfo_PatchRequest.Size(m)
@@ -67,7 +70,7 @@ func (m *PatchRequest) GetName() *wrappers.StringValue {
 }
 
 type PatchResponse struct {
-	Stream               *Stream  `protobuf:"bytes,1,opt,name=stream" json:"stream,omitempty"`
+	Stream               *Stream  `protobuf:"bytes,1,opt,name=stream,proto3" json:"stream,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -77,16 +80,17 @@ func (m *PatchResponse) Reset()         { *m = PatchResponse{} }
 func (m *PatchResponse) String() string { return proto.CompactTextString(m) }
 func (*PatchResponse) ProtoMessage()    {}
 func (*PatchResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_patch_ce9de541e49cdb03, []int{1}
+	return fileDescriptor_1fe77fd0a0574cdd, []int{1}
 }
+
 func (m *PatchResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_PatchResponse.Unmarshal(m, b)
 }
 func (m *PatchResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_PatchResponse.Marshal(b, m, deterministic)
 }
-func (dst *PatchResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_PatchResponse.Merge(dst, src)
+func (m *PatchResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PatchResponse.Merge(m, src)
 }
 func (m *PatchResponse) XXX_Size() int {
 	return xxx_messageInfo_PatchResponse.Size(m)
@@ -109,9 +113,9 @@ func init() {
 	proto.RegisterType((*PatchResponse)(nil), "ai.metathings.service.streamd.PatchResponse")
 }
 
-func init() { proto.RegisterFile("patch.proto", fileDescriptor_patch_ce9de541e49cdb03) }
+func init() { proto.RegisterFile("patch.proto", fileDescriptor_1fe77fd0a0574cdd) }
 
-var fileDescriptor_patch_ce9de541e49cdb03 = []byte{
+var fileDescriptor_1fe77fd0a0574cdd = []byte{
 	// 242 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x90, 0xcd, 0x4a, 0xc4, 0x30,
 	0x10, 0x80, 0x69, 0x91, 0x1e, 0xb2, 0xeb, 0xa5, 0xa7, 0x65, 0xf1, 0x67, 0x59, 0x10, 0xbc, 0x6c,

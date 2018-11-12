@@ -4,7 +4,7 @@
 package sensor
 
 import fmt "fmt"
-import go_proto_validators "github.com/mwitkow/go-proto-validators"
+import github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
 import proto "github.com/golang/protobuf/proto"
 import math "math"
 import _ "github.com/golang/protobuf/ptypes/wrappers"
@@ -17,19 +17,19 @@ var _ = math.Inf
 
 func (this *GetDataRequest) Validate() error {
 	if nil == this.Name {
-		return go_proto_validators.FieldError("Name", fmt.Errorf("message must exist"))
+		return github_com_mwitkow_go_proto_validators.FieldError("Name", fmt.Errorf("message must exist"))
 	}
 	if this.Name != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Name); err != nil {
-			return go_proto_validators.FieldError("Name", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Name); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Name", err)
 		}
 	}
 	return nil
 }
 func (this *GetDataResponse) Validate() error {
 	if this.Data != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Data); err != nil {
-			return go_proto_validators.FieldError("Data", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Data); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Data", err)
 		}
 	}
 	return nil

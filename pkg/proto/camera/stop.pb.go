@@ -3,9 +3,11 @@
 
 package camera
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -19,7 +21,7 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type StopResponse struct {
-	Camera               *Camera  `protobuf:"bytes,1,opt,name=camera" json:"camera,omitempty"`
+	Camera               *Camera  `protobuf:"bytes,1,opt,name=camera,proto3" json:"camera,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -29,16 +31,17 @@ func (m *StopResponse) Reset()         { *m = StopResponse{} }
 func (m *StopResponse) String() string { return proto.CompactTextString(m) }
 func (*StopResponse) ProtoMessage()    {}
 func (*StopResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_stop_82e85952c12a71df, []int{0}
+	return fileDescriptor_f049a61f03aafc0b, []int{0}
 }
+
 func (m *StopResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_StopResponse.Unmarshal(m, b)
 }
 func (m *StopResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_StopResponse.Marshal(b, m, deterministic)
 }
-func (dst *StopResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_StopResponse.Merge(dst, src)
+func (m *StopResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StopResponse.Merge(m, src)
 }
 func (m *StopResponse) XXX_Size() int {
 	return xxx_messageInfo_StopResponse.Size(m)
@@ -60,9 +63,9 @@ func init() {
 	proto.RegisterType((*StopResponse)(nil), "ai.metathings.service.camera.StopResponse")
 }
 
-func init() { proto.RegisterFile("stop.proto", fileDescriptor_stop_82e85952c12a71df) }
+func init() { proto.RegisterFile("stop.proto", fileDescriptor_f049a61f03aafc0b) }
 
-var fileDescriptor_stop_82e85952c12a71df = []byte{
+var fileDescriptor_f049a61f03aafc0b = []byte{
 	// 117 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xe2, 0x2a, 0x2e, 0xc9, 0x2f,
 	0xd0, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x92, 0x49, 0xcc, 0xd4, 0xcb, 0x4d, 0x2d, 0x49, 0x2c,

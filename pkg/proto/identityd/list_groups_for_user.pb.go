@@ -3,11 +3,13 @@
 
 package identityd
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import wrappers "github.com/golang/protobuf/ptypes/wrappers"
-import _ "github.com/mwitkow/go-proto-validators"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	wrappers "github.com/golang/protobuf/ptypes/wrappers"
+	_ "github.com/mwitkow/go-proto-validators"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -21,7 +23,7 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type ListGroupsForUserRequest struct {
-	UserId               *wrappers.StringValue `protobuf:"bytes,1,opt,name=user_id,json=userId" json:"user_id,omitempty"`
+	UserId               *wrappers.StringValue `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -31,16 +33,17 @@ func (m *ListGroupsForUserRequest) Reset()         { *m = ListGroupsForUserReque
 func (m *ListGroupsForUserRequest) String() string { return proto.CompactTextString(m) }
 func (*ListGroupsForUserRequest) ProtoMessage()    {}
 func (*ListGroupsForUserRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_list_groups_for_user_f3a5eb9bd073436d, []int{0}
+	return fileDescriptor_b07cbf580ab2334e, []int{0}
 }
+
 func (m *ListGroupsForUserRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ListGroupsForUserRequest.Unmarshal(m, b)
 }
 func (m *ListGroupsForUserRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_ListGroupsForUserRequest.Marshal(b, m, deterministic)
 }
-func (dst *ListGroupsForUserRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ListGroupsForUserRequest.Merge(dst, src)
+func (m *ListGroupsForUserRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ListGroupsForUserRequest.Merge(m, src)
 }
 func (m *ListGroupsForUserRequest) XXX_Size() int {
 	return xxx_messageInfo_ListGroupsForUserRequest.Size(m)
@@ -59,7 +62,7 @@ func (m *ListGroupsForUserRequest) GetUserId() *wrappers.StringValue {
 }
 
 type ListGroupsForUserResponse struct {
-	Groups               []*Group `protobuf:"bytes,1,rep,name=groups" json:"groups,omitempty"`
+	Groups               []*Group `protobuf:"bytes,1,rep,name=groups,proto3" json:"groups,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -69,16 +72,17 @@ func (m *ListGroupsForUserResponse) Reset()         { *m = ListGroupsForUserResp
 func (m *ListGroupsForUserResponse) String() string { return proto.CompactTextString(m) }
 func (*ListGroupsForUserResponse) ProtoMessage()    {}
 func (*ListGroupsForUserResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_list_groups_for_user_f3a5eb9bd073436d, []int{1}
+	return fileDescriptor_b07cbf580ab2334e, []int{1}
 }
+
 func (m *ListGroupsForUserResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ListGroupsForUserResponse.Unmarshal(m, b)
 }
 func (m *ListGroupsForUserResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_ListGroupsForUserResponse.Marshal(b, m, deterministic)
 }
-func (dst *ListGroupsForUserResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ListGroupsForUserResponse.Merge(dst, src)
+func (m *ListGroupsForUserResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ListGroupsForUserResponse.Merge(m, src)
 }
 func (m *ListGroupsForUserResponse) XXX_Size() int {
 	return xxx_messageInfo_ListGroupsForUserResponse.Size(m)
@@ -101,11 +105,9 @@ func init() {
 	proto.RegisterType((*ListGroupsForUserResponse)(nil), "ai.metathings.service.identityd.ListGroupsForUserResponse")
 }
 
-func init() {
-	proto.RegisterFile("list_groups_for_user.proto", fileDescriptor_list_groups_for_user_f3a5eb9bd073436d)
-}
+func init() { proto.RegisterFile("list_groups_for_user.proto", fileDescriptor_b07cbf580ab2334e) }
 
-var fileDescriptor_list_groups_for_user_f3a5eb9bd073436d = []byte{
+var fileDescriptor_b07cbf580ab2334e = []byte{
 	// 262 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x90, 0x31, 0x4b, 0xf4, 0x40,
 	0x10, 0x86, 0xc9, 0xf7, 0x41, 0x84, 0xa4, 0x4b, 0x15, 0x83, 0x78, 0xe1, 0x0a, 0xb9, 0xe6, 0x36,

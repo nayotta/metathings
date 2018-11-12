@@ -4,7 +4,7 @@
 package identityd
 
 import fmt "fmt"
-import go_proto_validators "github.com/mwitkow/go-proto-validators"
+import github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
 import proto "github.com/golang/protobuf/proto"
 import math "math"
 import _ "github.com/golang/protobuf/ptypes/wrappers"
@@ -17,19 +17,19 @@ var _ = math.Inf
 
 func (this *GetDomainRequest) Validate() error {
 	if nil == this.DomainId {
-		return go_proto_validators.FieldError("DomainId", fmt.Errorf("message must exist"))
+		return github_com_mwitkow_go_proto_validators.FieldError("DomainId", fmt.Errorf("message must exist"))
 	}
 	if this.DomainId != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.DomainId); err != nil {
-			return go_proto_validators.FieldError("DomainId", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.DomainId); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("DomainId", err)
 		}
 	}
 	return nil
 }
 func (this *GetDomainResponse) Validate() error {
 	if this.Domain != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Domain); err != nil {
-			return go_proto_validators.FieldError("Domain", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Domain); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Domain", err)
 		}
 	}
 	return nil

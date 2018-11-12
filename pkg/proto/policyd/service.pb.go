@@ -3,13 +3,12 @@
 
 package policyd
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-
 import (
-	context "golang.org/x/net/context"
+	context "context"
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
 	grpc "google.golang.org/grpc"
+	math "math"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -24,8 +23,8 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type NewEnforcerRequest struct {
-	ModelText            string   `protobuf:"bytes,1,opt,name=modelText" json:"modelText,omitempty"`
-	AdapterHandle        int32    `protobuf:"varint,2,opt,name=adapterHandle" json:"adapterHandle,omitempty"`
+	ModelText            string   `protobuf:"bytes,1,opt,name=modelText,proto3" json:"modelText,omitempty"`
+	AdapterHandle        int32    `protobuf:"varint,2,opt,name=adapterHandle,proto3" json:"adapterHandle,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -35,16 +34,17 @@ func (m *NewEnforcerRequest) Reset()         { *m = NewEnforcerRequest{} }
 func (m *NewEnforcerRequest) String() string { return proto.CompactTextString(m) }
 func (*NewEnforcerRequest) ProtoMessage()    {}
 func (*NewEnforcerRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_4d8d3be0952d5456, []int{0}
+	return fileDescriptor_a0b84a42fa06f626, []int{0}
 }
+
 func (m *NewEnforcerRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_NewEnforcerRequest.Unmarshal(m, b)
 }
 func (m *NewEnforcerRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_NewEnforcerRequest.Marshal(b, m, deterministic)
 }
-func (dst *NewEnforcerRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_NewEnforcerRequest.Merge(dst, src)
+func (m *NewEnforcerRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_NewEnforcerRequest.Merge(m, src)
 }
 func (m *NewEnforcerRequest) XXX_Size() int {
 	return xxx_messageInfo_NewEnforcerRequest.Size(m)
@@ -70,7 +70,7 @@ func (m *NewEnforcerRequest) GetAdapterHandle() int32 {
 }
 
 type NewEnforcerReply struct {
-	Handler              int32    `protobuf:"varint,1,opt,name=handler" json:"handler,omitempty"`
+	Handler              int32    `protobuf:"varint,1,opt,name=handler,proto3" json:"handler,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -80,16 +80,17 @@ func (m *NewEnforcerReply) Reset()         { *m = NewEnforcerReply{} }
 func (m *NewEnforcerReply) String() string { return proto.CompactTextString(m) }
 func (*NewEnforcerReply) ProtoMessage()    {}
 func (*NewEnforcerReply) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_4d8d3be0952d5456, []int{1}
+	return fileDescriptor_a0b84a42fa06f626, []int{1}
 }
+
 func (m *NewEnforcerReply) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_NewEnforcerReply.Unmarshal(m, b)
 }
 func (m *NewEnforcerReply) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_NewEnforcerReply.Marshal(b, m, deterministic)
 }
-func (dst *NewEnforcerReply) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_NewEnforcerReply.Merge(dst, src)
+func (m *NewEnforcerReply) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_NewEnforcerReply.Merge(m, src)
 }
 func (m *NewEnforcerReply) XXX_Size() int {
 	return xxx_messageInfo_NewEnforcerReply.Size(m)
@@ -108,9 +109,9 @@ func (m *NewEnforcerReply) GetHandler() int32 {
 }
 
 type NewAdapterRequest struct {
-	AdapterName          string   `protobuf:"bytes,1,opt,name=adapterName" json:"adapterName,omitempty"`
-	DriverName           string   `protobuf:"bytes,2,opt,name=driverName" json:"driverName,omitempty"`
-	ConnectString        string   `protobuf:"bytes,3,opt,name=connectString" json:"connectString,omitempty"`
+	AdapterName          string   `protobuf:"bytes,1,opt,name=adapterName,proto3" json:"adapterName,omitempty"`
+	DriverName           string   `protobuf:"bytes,2,opt,name=driverName,proto3" json:"driverName,omitempty"`
+	ConnectString        string   `protobuf:"bytes,3,opt,name=connectString,proto3" json:"connectString,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -120,16 +121,17 @@ func (m *NewAdapterRequest) Reset()         { *m = NewAdapterRequest{} }
 func (m *NewAdapterRequest) String() string { return proto.CompactTextString(m) }
 func (*NewAdapterRequest) ProtoMessage()    {}
 func (*NewAdapterRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_4d8d3be0952d5456, []int{2}
+	return fileDescriptor_a0b84a42fa06f626, []int{2}
 }
+
 func (m *NewAdapterRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_NewAdapterRequest.Unmarshal(m, b)
 }
 func (m *NewAdapterRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_NewAdapterRequest.Marshal(b, m, deterministic)
 }
-func (dst *NewAdapterRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_NewAdapterRequest.Merge(dst, src)
+func (m *NewAdapterRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_NewAdapterRequest.Merge(m, src)
 }
 func (m *NewAdapterRequest) XXX_Size() int {
 	return xxx_messageInfo_NewAdapterRequest.Size(m)
@@ -162,7 +164,7 @@ func (m *NewAdapterRequest) GetConnectString() string {
 }
 
 type NewAdapterReply struct {
-	Handler              int32    `protobuf:"varint,1,opt,name=handler" json:"handler,omitempty"`
+	Handler              int32    `protobuf:"varint,1,opt,name=handler,proto3" json:"handler,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -172,16 +174,17 @@ func (m *NewAdapterReply) Reset()         { *m = NewAdapterReply{} }
 func (m *NewAdapterReply) String() string { return proto.CompactTextString(m) }
 func (*NewAdapterReply) ProtoMessage()    {}
 func (*NewAdapterReply) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_4d8d3be0952d5456, []int{3}
+	return fileDescriptor_a0b84a42fa06f626, []int{3}
 }
+
 func (m *NewAdapterReply) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_NewAdapterReply.Unmarshal(m, b)
 }
 func (m *NewAdapterReply) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_NewAdapterReply.Marshal(b, m, deterministic)
 }
-func (dst *NewAdapterReply) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_NewAdapterReply.Merge(dst, src)
+func (m *NewAdapterReply) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_NewAdapterReply.Merge(m, src)
 }
 func (m *NewAdapterReply) XXX_Size() int {
 	return xxx_messageInfo_NewAdapterReply.Size(m)
@@ -200,8 +203,8 @@ func (m *NewAdapterReply) GetHandler() int32 {
 }
 
 type EnforceRequest struct {
-	EnforcerHandler      int32    `protobuf:"varint,1,opt,name=enforcerHandler" json:"enforcerHandler,omitempty"`
-	Params               []string `protobuf:"bytes,2,rep,name=params" json:"params,omitempty"`
+	EnforcerHandler      int32    `protobuf:"varint,1,opt,name=enforcerHandler,proto3" json:"enforcerHandler,omitempty"`
+	Params               []string `protobuf:"bytes,2,rep,name=params,proto3" json:"params,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -211,16 +214,17 @@ func (m *EnforceRequest) Reset()         { *m = EnforceRequest{} }
 func (m *EnforceRequest) String() string { return proto.CompactTextString(m) }
 func (*EnforceRequest) ProtoMessage()    {}
 func (*EnforceRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_4d8d3be0952d5456, []int{4}
+	return fileDescriptor_a0b84a42fa06f626, []int{4}
 }
+
 func (m *EnforceRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_EnforceRequest.Unmarshal(m, b)
 }
 func (m *EnforceRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_EnforceRequest.Marshal(b, m, deterministic)
 }
-func (dst *EnforceRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_EnforceRequest.Merge(dst, src)
+func (m *EnforceRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_EnforceRequest.Merge(m, src)
 }
 func (m *EnforceRequest) XXX_Size() int {
 	return xxx_messageInfo_EnforceRequest.Size(m)
@@ -246,7 +250,7 @@ func (m *EnforceRequest) GetParams() []string {
 }
 
 type EnforceBucketRequest struct {
-	Requests             []*EnforceRequest `protobuf:"bytes,1,rep,name=requests" json:"requests,omitempty"`
+	Requests             []*EnforceRequest `protobuf:"bytes,1,rep,name=requests,proto3" json:"requests,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
 	XXX_unrecognized     []byte            `json:"-"`
 	XXX_sizecache        int32             `json:"-"`
@@ -256,16 +260,17 @@ func (m *EnforceBucketRequest) Reset()         { *m = EnforceBucketRequest{} }
 func (m *EnforceBucketRequest) String() string { return proto.CompactTextString(m) }
 func (*EnforceBucketRequest) ProtoMessage()    {}
 func (*EnforceBucketRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_4d8d3be0952d5456, []int{5}
+	return fileDescriptor_a0b84a42fa06f626, []int{5}
 }
+
 func (m *EnforceBucketRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_EnforceBucketRequest.Unmarshal(m, b)
 }
 func (m *EnforceBucketRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_EnforceBucketRequest.Marshal(b, m, deterministic)
 }
-func (dst *EnforceBucketRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_EnforceBucketRequest.Merge(dst, src)
+func (m *EnforceBucketRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_EnforceBucketRequest.Merge(m, src)
 }
 func (m *EnforceBucketRequest) XXX_Size() int {
 	return xxx_messageInfo_EnforceBucketRequest.Size(m)
@@ -284,7 +289,7 @@ func (m *EnforceBucketRequest) GetRequests() []*EnforceRequest {
 }
 
 type BoolReply struct {
-	Res                  bool     `protobuf:"varint,1,opt,name=res" json:"res,omitempty"`
+	Res                  bool     `protobuf:"varint,1,opt,name=res,proto3" json:"res,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -294,16 +299,17 @@ func (m *BoolReply) Reset()         { *m = BoolReply{} }
 func (m *BoolReply) String() string { return proto.CompactTextString(m) }
 func (*BoolReply) ProtoMessage()    {}
 func (*BoolReply) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_4d8d3be0952d5456, []int{6}
+	return fileDescriptor_a0b84a42fa06f626, []int{6}
 }
+
 func (m *BoolReply) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_BoolReply.Unmarshal(m, b)
 }
 func (m *BoolReply) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_BoolReply.Marshal(b, m, deterministic)
 }
-func (dst *BoolReply) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_BoolReply.Merge(dst, src)
+func (m *BoolReply) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_BoolReply.Merge(m, src)
 }
 func (m *BoolReply) XXX_Size() int {
 	return xxx_messageInfo_BoolReply.Size(m)
@@ -322,7 +328,7 @@ func (m *BoolReply) GetRes() bool {
 }
 
 type EmptyRequest struct {
-	Handler              int32    `protobuf:"varint,1,opt,name=handler" json:"handler,omitempty"`
+	Handler              int32    `protobuf:"varint,1,opt,name=handler,proto3" json:"handler,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -332,16 +338,17 @@ func (m *EmptyRequest) Reset()         { *m = EmptyRequest{} }
 func (m *EmptyRequest) String() string { return proto.CompactTextString(m) }
 func (*EmptyRequest) ProtoMessage()    {}
 func (*EmptyRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_4d8d3be0952d5456, []int{7}
+	return fileDescriptor_a0b84a42fa06f626, []int{7}
 }
+
 func (m *EmptyRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_EmptyRequest.Unmarshal(m, b)
 }
 func (m *EmptyRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_EmptyRequest.Marshal(b, m, deterministic)
 }
-func (dst *EmptyRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_EmptyRequest.Merge(dst, src)
+func (m *EmptyRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_EmptyRequest.Merge(m, src)
 }
 func (m *EmptyRequest) XXX_Size() int {
 	return xxx_messageInfo_EmptyRequest.Size(m)
@@ -369,16 +376,17 @@ func (m *EmptyReply) Reset()         { *m = EmptyReply{} }
 func (m *EmptyReply) String() string { return proto.CompactTextString(m) }
 func (*EmptyReply) ProtoMessage()    {}
 func (*EmptyReply) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_4d8d3be0952d5456, []int{8}
+	return fileDescriptor_a0b84a42fa06f626, []int{8}
 }
+
 func (m *EmptyReply) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_EmptyReply.Unmarshal(m, b)
 }
 func (m *EmptyReply) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_EmptyReply.Marshal(b, m, deterministic)
 }
-func (dst *EmptyReply) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_EmptyReply.Merge(dst, src)
+func (m *EmptyReply) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_EmptyReply.Merge(m, src)
 }
 func (m *EmptyReply) XXX_Size() int {
 	return xxx_messageInfo_EmptyReply.Size(m)
@@ -390,9 +398,9 @@ func (m *EmptyReply) XXX_DiscardUnknown() {
 var xxx_messageInfo_EmptyReply proto.InternalMessageInfo
 
 type PolicyRequest struct {
-	EnforcerHandler      int32    `protobuf:"varint,1,opt,name=enforcerHandler" json:"enforcerHandler,omitempty"`
-	PType                string   `protobuf:"bytes,2,opt,name=pType" json:"pType,omitempty"`
-	Params               []string `protobuf:"bytes,3,rep,name=params" json:"params,omitempty"`
+	EnforcerHandler      int32    `protobuf:"varint,1,opt,name=enforcerHandler,proto3" json:"enforcerHandler,omitempty"`
+	PType                string   `protobuf:"bytes,2,opt,name=pType,proto3" json:"pType,omitempty"`
+	Params               []string `protobuf:"bytes,3,rep,name=params,proto3" json:"params,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -402,16 +410,17 @@ func (m *PolicyRequest) Reset()         { *m = PolicyRequest{} }
 func (m *PolicyRequest) String() string { return proto.CompactTextString(m) }
 func (*PolicyRequest) ProtoMessage()    {}
 func (*PolicyRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_4d8d3be0952d5456, []int{9}
+	return fileDescriptor_a0b84a42fa06f626, []int{9}
 }
+
 func (m *PolicyRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_PolicyRequest.Unmarshal(m, b)
 }
 func (m *PolicyRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_PolicyRequest.Marshal(b, m, deterministic)
 }
-func (dst *PolicyRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_PolicyRequest.Merge(dst, src)
+func (m *PolicyRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PolicyRequest.Merge(m, src)
 }
 func (m *PolicyRequest) XXX_Size() int {
 	return xxx_messageInfo_PolicyRequest.Size(m)
@@ -444,8 +453,8 @@ func (m *PolicyRequest) GetParams() []string {
 }
 
 type SimpleGetRequest struct {
-	EnforcerHandler      int32    `protobuf:"varint,1,opt,name=enforcerHandler" json:"enforcerHandler,omitempty"`
-	PType                string   `protobuf:"bytes,2,opt,name=pType" json:"pType,omitempty"`
+	EnforcerHandler      int32    `protobuf:"varint,1,opt,name=enforcerHandler,proto3" json:"enforcerHandler,omitempty"`
+	PType                string   `protobuf:"bytes,2,opt,name=pType,proto3" json:"pType,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -455,16 +464,17 @@ func (m *SimpleGetRequest) Reset()         { *m = SimpleGetRequest{} }
 func (m *SimpleGetRequest) String() string { return proto.CompactTextString(m) }
 func (*SimpleGetRequest) ProtoMessage()    {}
 func (*SimpleGetRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_4d8d3be0952d5456, []int{10}
+	return fileDescriptor_a0b84a42fa06f626, []int{10}
 }
+
 func (m *SimpleGetRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_SimpleGetRequest.Unmarshal(m, b)
 }
 func (m *SimpleGetRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_SimpleGetRequest.Marshal(b, m, deterministic)
 }
-func (dst *SimpleGetRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_SimpleGetRequest.Merge(dst, src)
+func (m *SimpleGetRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_SimpleGetRequest.Merge(m, src)
 }
 func (m *SimpleGetRequest) XXX_Size() int {
 	return xxx_messageInfo_SimpleGetRequest.Size(m)
@@ -490,7 +500,7 @@ func (m *SimpleGetRequest) GetPType() string {
 }
 
 type ArrayReply struct {
-	Array                []string `protobuf:"bytes,1,rep,name=array" json:"array,omitempty"`
+	Array                []string `protobuf:"bytes,1,rep,name=array,proto3" json:"array,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -500,16 +510,17 @@ func (m *ArrayReply) Reset()         { *m = ArrayReply{} }
 func (m *ArrayReply) String() string { return proto.CompactTextString(m) }
 func (*ArrayReply) ProtoMessage()    {}
 func (*ArrayReply) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_4d8d3be0952d5456, []int{11}
+	return fileDescriptor_a0b84a42fa06f626, []int{11}
 }
+
 func (m *ArrayReply) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ArrayReply.Unmarshal(m, b)
 }
 func (m *ArrayReply) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_ArrayReply.Marshal(b, m, deterministic)
 }
-func (dst *ArrayReply) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ArrayReply.Merge(dst, src)
+func (m *ArrayReply) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ArrayReply.Merge(m, src)
 }
 func (m *ArrayReply) XXX_Size() int {
 	return xxx_messageInfo_ArrayReply.Size(m)
@@ -528,10 +539,10 @@ func (m *ArrayReply) GetArray() []string {
 }
 
 type FilteredPolicyRequest struct {
-	EnforcerHandler      int32    `protobuf:"varint,1,opt,name=enforcerHandler" json:"enforcerHandler,omitempty"`
-	PType                string   `protobuf:"bytes,2,opt,name=pType" json:"pType,omitempty"`
-	FieldIndex           int32    `protobuf:"varint,3,opt,name=fieldIndex" json:"fieldIndex,omitempty"`
-	FieldValues          []string `protobuf:"bytes,4,rep,name=fieldValues" json:"fieldValues,omitempty"`
+	EnforcerHandler      int32    `protobuf:"varint,1,opt,name=enforcerHandler,proto3" json:"enforcerHandler,omitempty"`
+	PType                string   `protobuf:"bytes,2,opt,name=pType,proto3" json:"pType,omitempty"`
+	FieldIndex           int32    `protobuf:"varint,3,opt,name=fieldIndex,proto3" json:"fieldIndex,omitempty"`
+	FieldValues          []string `protobuf:"bytes,4,rep,name=fieldValues,proto3" json:"fieldValues,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -541,16 +552,17 @@ func (m *FilteredPolicyRequest) Reset()         { *m = FilteredPolicyRequest{} }
 func (m *FilteredPolicyRequest) String() string { return proto.CompactTextString(m) }
 func (*FilteredPolicyRequest) ProtoMessage()    {}
 func (*FilteredPolicyRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_4d8d3be0952d5456, []int{12}
+	return fileDescriptor_a0b84a42fa06f626, []int{12}
 }
+
 func (m *FilteredPolicyRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_FilteredPolicyRequest.Unmarshal(m, b)
 }
 func (m *FilteredPolicyRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_FilteredPolicyRequest.Marshal(b, m, deterministic)
 }
-func (dst *FilteredPolicyRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_FilteredPolicyRequest.Merge(dst, src)
+func (m *FilteredPolicyRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_FilteredPolicyRequest.Merge(m, src)
 }
 func (m *FilteredPolicyRequest) XXX_Size() int {
 	return xxx_messageInfo_FilteredPolicyRequest.Size(m)
@@ -590,9 +602,9 @@ func (m *FilteredPolicyRequest) GetFieldValues() []string {
 }
 
 type UserRoleRequest struct {
-	EnforcerHandler      int32    `protobuf:"varint,1,opt,name=enforcerHandler" json:"enforcerHandler,omitempty"`
-	User                 string   `protobuf:"bytes,2,opt,name=user" json:"user,omitempty"`
-	Role                 string   `protobuf:"bytes,3,opt,name=role" json:"role,omitempty"`
+	EnforcerHandler      int32    `protobuf:"varint,1,opt,name=enforcerHandler,proto3" json:"enforcerHandler,omitempty"`
+	User                 string   `protobuf:"bytes,2,opt,name=user,proto3" json:"user,omitempty"`
+	Role                 string   `protobuf:"bytes,3,opt,name=role,proto3" json:"role,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -602,16 +614,17 @@ func (m *UserRoleRequest) Reset()         { *m = UserRoleRequest{} }
 func (m *UserRoleRequest) String() string { return proto.CompactTextString(m) }
 func (*UserRoleRequest) ProtoMessage()    {}
 func (*UserRoleRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_4d8d3be0952d5456, []int{13}
+	return fileDescriptor_a0b84a42fa06f626, []int{13}
 }
+
 func (m *UserRoleRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_UserRoleRequest.Unmarshal(m, b)
 }
 func (m *UserRoleRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_UserRoleRequest.Marshal(b, m, deterministic)
 }
-func (dst *UserRoleRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_UserRoleRequest.Merge(dst, src)
+func (m *UserRoleRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_UserRoleRequest.Merge(m, src)
 }
 func (m *UserRoleRequest) XXX_Size() int {
 	return xxx_messageInfo_UserRoleRequest.Size(m)
@@ -644,9 +657,9 @@ func (m *UserRoleRequest) GetRole() string {
 }
 
 type PermissionRequest struct {
-	EnforcerHandler      int32    `protobuf:"varint,1,opt,name=enforcerHandler" json:"enforcerHandler,omitempty"`
-	User                 string   `protobuf:"bytes,2,opt,name=user" json:"user,omitempty"`
-	Permissions          []string `protobuf:"bytes,3,rep,name=permissions" json:"permissions,omitempty"`
+	EnforcerHandler      int32    `protobuf:"varint,1,opt,name=enforcerHandler,proto3" json:"enforcerHandler,omitempty"`
+	User                 string   `protobuf:"bytes,2,opt,name=user,proto3" json:"user,omitempty"`
+	Permissions          []string `protobuf:"bytes,3,rep,name=permissions,proto3" json:"permissions,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -656,16 +669,17 @@ func (m *PermissionRequest) Reset()         { *m = PermissionRequest{} }
 func (m *PermissionRequest) String() string { return proto.CompactTextString(m) }
 func (*PermissionRequest) ProtoMessage()    {}
 func (*PermissionRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_4d8d3be0952d5456, []int{14}
+	return fileDescriptor_a0b84a42fa06f626, []int{14}
 }
+
 func (m *PermissionRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_PermissionRequest.Unmarshal(m, b)
 }
 func (m *PermissionRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_PermissionRequest.Marshal(b, m, deterministic)
 }
-func (dst *PermissionRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_PermissionRequest.Merge(dst, src)
+func (m *PermissionRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PermissionRequest.Merge(m, src)
 }
 func (m *PermissionRequest) XXX_Size() int {
 	return xxx_messageInfo_PermissionRequest.Size(m)
@@ -698,7 +712,7 @@ func (m *PermissionRequest) GetPermissions() []string {
 }
 
 type Array2DReply struct {
-	D2                   []*Array2DReplyD `protobuf:"bytes,1,rep,name=d2" json:"d2,omitempty"`
+	D2                   []*Array2DReplyD `protobuf:"bytes,1,rep,name=d2,proto3" json:"d2,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}         `json:"-"`
 	XXX_unrecognized     []byte           `json:"-"`
 	XXX_sizecache        int32            `json:"-"`
@@ -708,16 +722,17 @@ func (m *Array2DReply) Reset()         { *m = Array2DReply{} }
 func (m *Array2DReply) String() string { return proto.CompactTextString(m) }
 func (*Array2DReply) ProtoMessage()    {}
 func (*Array2DReply) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_4d8d3be0952d5456, []int{15}
+	return fileDescriptor_a0b84a42fa06f626, []int{15}
 }
+
 func (m *Array2DReply) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Array2DReply.Unmarshal(m, b)
 }
 func (m *Array2DReply) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Array2DReply.Marshal(b, m, deterministic)
 }
-func (dst *Array2DReply) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Array2DReply.Merge(dst, src)
+func (m *Array2DReply) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Array2DReply.Merge(m, src)
 }
 func (m *Array2DReply) XXX_Size() int {
 	return xxx_messageInfo_Array2DReply.Size(m)
@@ -736,7 +751,7 @@ func (m *Array2DReply) GetD2() []*Array2DReplyD {
 }
 
 type Array2DReplyD struct {
-	D1                   []string `protobuf:"bytes,1,rep,name=d1" json:"d1,omitempty"`
+	D1                   []string `protobuf:"bytes,1,rep,name=d1,proto3" json:"d1,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -746,16 +761,17 @@ func (m *Array2DReplyD) Reset()         { *m = Array2DReplyD{} }
 func (m *Array2DReplyD) String() string { return proto.CompactTextString(m) }
 func (*Array2DReplyD) ProtoMessage()    {}
 func (*Array2DReplyD) Descriptor() ([]byte, []int) {
-	return fileDescriptor_service_4d8d3be0952d5456, []int{15, 0}
+	return fileDescriptor_a0b84a42fa06f626, []int{15, 0}
 }
+
 func (m *Array2DReplyD) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Array2DReplyD.Unmarshal(m, b)
 }
 func (m *Array2DReplyD) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Array2DReplyD.Marshal(b, m, deterministic)
 }
-func (dst *Array2DReplyD) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Array2DReplyD.Merge(dst, src)
+func (m *Array2DReplyD) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Array2DReplyD.Merge(m, src)
 }
 func (m *Array2DReplyD) XXX_Size() int {
 	return xxx_messageInfo_Array2DReplyD.Size(m)
@@ -793,6 +809,72 @@ func init() {
 	proto.RegisterType((*Array2DReplyD)(nil), "ai.metathings.service.policyd.Array2DReply.d")
 }
 
+func init() { proto.RegisterFile("service.proto", fileDescriptor_a0b84a42fa06f626) }
+
+var fileDescriptor_a0b84a42fa06f626 = []byte{
+	// 960 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xc4, 0x98, 0xcd, 0x6e, 0xdb, 0x46,
+	0x10, 0xc7, 0x43, 0x29, 0x8e, 0xc3, 0x91, 0x25, 0x5b, 0x1b, 0xd7, 0x50, 0x84, 0xc4, 0x50, 0xd9,
+	0x1e, 0x54, 0x38, 0x55, 0x6b, 0xa5, 0xd7, 0x1e, 0x64, 0x34, 0x95, 0x02, 0x14, 0x8e, 0x41, 0xa5,
+	0x45, 0xd1, 0xdb, 0x9a, 0x3b, 0x96, 0xe9, 0xf0, 0xab, 0xbb, 0xa4, 0x63, 0xa1, 0x08, 0x90, 0x4b,
+	0x1e, 0xa2, 0xef, 0xd8, 0x87, 0x28, 0xb8, 0x5c, 0xca, 0xa4, 0x9a, 0x46, 0xa6, 0x2d, 0x32, 0x37,
+	0xee, 0x68, 0x77, 0x7e, 0xf3, 0x9f, 0xe1, 0x0c, 0x49, 0x41, 0x53, 0x20, 0xbf, 0xb4, 0x2d, 0x1c,
+	0x04, 0xdc, 0x0f, 0x7d, 0xf2, 0x94, 0xda, 0x03, 0x17, 0x43, 0x1a, 0x9e, 0xdb, 0xde, 0x4c, 0x0c,
+	0x16, 0x3f, 0xfa, 0x8e, 0x6d, 0xcd, 0x99, 0xf1, 0x3b, 0x90, 0x63, 0x7c, 0xfb, 0xc2, 0x3b, 0xf3,
+	0xb9, 0x85, 0xdc, 0xc4, 0x3f, 0x23, 0x14, 0x21, 0x79, 0x02, 0xba, 0xeb, 0x33, 0x74, 0x5e, 0xe3,
+	0x55, 0xd8, 0xd1, 0x7a, 0x5a, 0x5f, 0x37, 0xaf, 0x0d, 0xe4, 0x6b, 0x68, 0x52, 0x46, 0x83, 0x10,
+	0xf9, 0x84, 0x7a, 0xcc, 0xc1, 0x4e, 0xad, 0xa7, 0xf5, 0x37, 0xcc, 0xbc, 0xd1, 0x78, 0x06, 0x3b,
+	0x39, 0xcf, 0x81, 0x33, 0x27, 0x1d, 0xd8, 0x3c, 0x97, 0xbf, 0x72, 0xe9, 0x75, 0xc3, 0x4c, 0x97,
+	0xc6, 0x5f, 0xd0, 0x3e, 0xc6, 0xb7, 0xa3, 0xc4, 0x43, 0x1a, 0x46, 0x0f, 0x1a, 0xca, 0xe7, 0x31,
+	0x75, 0x51, 0x05, 0x92, 0x35, 0x91, 0x7d, 0x00, 0xc6, 0xed, 0x4b, 0xb5, 0xa1, 0x26, 0x37, 0x64,
+	0x2c, 0x71, 0xa8, 0x96, 0xef, 0x79, 0x68, 0x85, 0xd3, 0x90, 0xdb, 0xde, 0xac, 0x53, 0x97, 0x5b,
+	0xf2, 0x46, 0xe3, 0x00, 0xb6, 0xb3, 0xf0, 0x4f, 0x47, 0x6a, 0x42, 0x4b, 0x89, 0x4a, 0xc3, 0xec,
+	0xc3, 0x36, 0x2a, 0x99, 0x93, 0xdc, 0x99, 0x65, 0x33, 0xd9, 0x83, 0x07, 0x01, 0xe5, 0xd4, 0x15,
+	0x9d, 0x5a, 0xaf, 0xde, 0xd7, 0x4d, 0xb5, 0x32, 0x28, 0xec, 0x2a, 0x9f, 0x47, 0x91, 0xf5, 0x06,
+	0xc3, 0xd4, 0xf3, 0x4b, 0x78, 0xc8, 0x93, 0x4b, 0xd1, 0xd1, 0x7a, 0xf5, 0x7e, 0x63, 0xf8, 0xed,
+	0xe0, 0x93, 0xf5, 0x1c, 0xe4, 0x43, 0x33, 0x17, 0xc7, 0x8d, 0xa7, 0xa0, 0x1f, 0xf9, 0xbe, 0x93,
+	0xa8, 0xdb, 0x81, 0x3a, 0x47, 0x21, 0xa3, 0x7c, 0x68, 0xc6, 0x97, 0x46, 0x1f, 0xb6, 0x5e, 0xb8,
+	0x41, 0x38, 0x4f, 0xc9, 0xff, 0xaf, 0x7f, 0x0b, 0x40, 0xed, 0x0c, 0x9c, 0xb9, 0x31, 0x83, 0xe6,
+	0x89, 0x44, 0x17, 0x4f, 0xc6, 0x2e, 0x6c, 0x04, 0xaf, 0xe7, 0x41, 0x5a, 0xb6, 0x64, 0x91, 0x49,
+	0x51, 0x3d, 0x97, 0x22, 0x13, 0x76, 0xa6, 0xb6, 0x1b, 0x38, 0x38, 0xbe, 0x4e, 0xcf, 0x1d, 0x59,
+	0x86, 0x01, 0x30, 0xe2, 0x9c, 0x26, 0x52, 0xe2, 0x3d, 0x34, 0x5e, 0xc9, 0x4c, 0xeb, 0x66, 0xb2,
+	0x30, 0xfe, 0xd6, 0xe0, 0x8b, 0x9f, 0x6d, 0x27, 0x44, 0x8e, 0x6c, 0xbd, 0x4a, 0xf7, 0x01, 0xce,
+	0x6c, 0x74, 0xd8, 0x4b, 0x8f, 0xe1, 0x95, 0xbc, 0x31, 0x37, 0xcc, 0x8c, 0x25, 0xbe, 0xfb, 0xe5,
+	0xea, 0x37, 0xea, 0x44, 0x28, 0x3a, 0xf7, 0x65, 0x54, 0x59, 0x93, 0x61, 0xc1, 0xf6, 0xaf, 0x02,
+	0xb9, 0xe9, 0x3b, 0xb7, 0xb8, 0x17, 0x09, 0xdc, 0x8f, 0x04, 0x72, 0x15, 0x93, 0xbc, 0x8e, 0x6d,
+	0xdc, 0x77, 0x50, 0x75, 0x89, 0xbc, 0x36, 0x04, 0xb4, 0x4f, 0x90, 0xbb, 0xb6, 0x10, 0xb6, 0xef,
+	0xad, 0x07, 0xd3, 0x83, 0x46, 0xb0, 0x70, 0x99, 0x16, 0x3a, 0x6b, 0x32, 0x4e, 0x61, 0x4b, 0x56,
+	0x66, 0xf8, 0x53, 0x52, 0x9b, 0x1f, 0xa1, 0xc6, 0x86, 0x37, 0x6c, 0x81, 0xec, 0xc1, 0x01, 0x33,
+	0x6b, 0x6c, 0xd8, 0x7d, 0x04, 0x1a, 0x23, 0x2d, 0xa8, 0xb1, 0x43, 0x55, 0xdc, 0x1a, 0x3b, 0x1c,
+	0xfe, 0xf3, 0x15, 0xb4, 0x92, 0x8a, 0xb2, 0x69, 0xe2, 0x82, 0x08, 0x68, 0x64, 0x66, 0x16, 0x39,
+	0x5c, 0x41, 0xfa, 0xef, 0xe4, 0xec, 0x7e, 0x57, 0xe4, 0x48, 0xdc, 0x40, 0xf7, 0x48, 0x00, 0x70,
+	0x3d, 0x7d, 0xc8, 0xf7, 0xab, 0x1d, 0xe4, 0xa7, 0x64, 0x77, 0x50, 0xe0, 0x44, 0x42, 0x64, 0xb0,
+	0xa9, 0x82, 0x20, 0xc5, 0xe6, 0x49, 0xb7, 0xbf, 0x62, 0xfb, 0x62, 0xc4, 0x48, 0x5d, 0xcd, 0xdc,
+	0x50, 0x23, 0xcf, 0x6f, 0xc6, 0xca, 0x8d, 0xc0, 0x42, 0xc4, 0x33, 0x80, 0x5f, 0x7c, 0xaa, 0xda,
+	0x94, 0x1c, 0xac, 0xc2, 0x65, 0xe6, 0x5d, 0xf7, 0x9b, 0x9b, 0x6d, 0x5e, 0x70, 0xa6, 0xf4, 0x12,
+	0x4b, 0xe7, 0xbc, 0x81, 0xed, 0x11, 0x63, 0x27, 0x1c, 0x05, 0x86, 0x0a, 0xf6, 0x6c, 0xc5, 0xf9,
+	0xdc, 0x88, 0x2a, 0x94, 0x3c, 0x0f, 0x88, 0x89, 0xae, 0x7f, 0x89, 0x15, 0xf1, 0x10, 0xf4, 0x58,
+	0x5c, 0xd9, 0x98, 0x0b, 0x68, 0x8d, 0x18, 0x8b, 0x5f, 0x06, 0xca, 0x67, 0x9d, 0xc3, 0x96, 0x4a,
+	0x61, 0xd9, 0x24, 0x17, 0xda, 0x09, 0xa9, 0x1a, 0x61, 0x57, 0xb0, 0x9b, 0xe0, 0xf2, 0x4f, 0x42,
+	0xf2, 0xc3, 0x0a, 0x1f, 0x1f, 0x7d, 0x70, 0x16, 0x22, 0xbf, 0x83, 0xc7, 0x79, 0x72, 0x56, 0x70,
+	0xf9, 0xf8, 0x19, 0xe8, 0xe3, 0x45, 0x2f, 0x14, 0x6a, 0xf4, 0x83, 0x02, 0x4f, 0x29, 0x59, 0xd0,
+	0xd6, 0x18, 0xc3, 0xdb, 0x57, 0xb3, 0x20, 0xee, 0x0a, 0xda, 0x63, 0x0c, 0xd7, 0x52, 0xcd, 0x82,
+	0xe4, 0x77, 0xb0, 0x97, 0x21, 0xdf, 0xbd, 0x9a, 0x85, 0xf3, 0xdc, 0x1e, 0x31, 0x36, 0xe6, 0x7e,
+	0x14, 0xd8, 0xde, 0xac, 0xf4, 0xc6, 0xe1, 0xb0, 0x97, 0x4e, 0x9f, 0xca, 0x98, 0x41, 0xda, 0xac,
+	0x95, 0x11, 0xa3, 0xb4, 0x49, 0xab, 0x15, 0xfa, 0x5e, 0x83, 0x27, 0xf9, 0xe1, 0xb0, 0x84, 0x2e,
+	0x7f, 0x3e, 0x7c, 0xd0, 0xe0, 0xcb, 0x8f, 0xcc, 0xa7, 0xca, 0xe3, 0xf0, 0x65, 0x3f, 0x2f, 0x61,
+	0xcb, 0x9c, 0x57, 0x91, 0x6c, 0xe3, 0xbb, 0xd7, 0xbb, 0x20, 0xf6, 0xbd, 0x06, 0x8f, 0x33, 0xe3,
+	0x63, 0x2d, 0x79, 0x2e, 0x18, 0xc2, 0x07, 0x0d, 0xf6, 0x97, 0x27, 0xd8, 0xe7, 0x88, 0xe3, 0x42,
+	0x3e, 0x31, 0x46, 0x8e, 0x33, 0x8d, 0x4e, 0x2f, 0xd0, 0x0a, 0xc5, 0x7a, 0x5f, 0x44, 0xaf, 0x3f,
+	0x8c, 0x8d, 0x7b, 0x44, 0xc0, 0xa3, 0x84, 0x25, 0xd5, 0x2e, 0x80, 0xab, 0x3e, 0x76, 0x96, 0x3f,
+	0xd8, 0x8b, 0x41, 0x6d, 0x68, 0x26, 0xd0, 0x57, 0xa5, 0xeb, 0xe3, 0x40, 0x32, 0xfa, 0x5e, 0x55,
+	0x2b, 0x6f, 0x64, 0x85, 0xf1, 0x37, 0x6f, 0x65, 0xf2, 0x52, 0x5e, 0xb9, 0xf2, 0x66, 0xd0, 0x48,
+	0x98, 0xa6, 0xef, 0x60, 0x99, 0xe2, 0x02, 0xd8, 0xc9, 0x88, 0x4b, 0x68, 0xe5, 0x4a, 0x43, 0xd0,
+	0x27, 0x54, 0x54, 0xf1, 0xe5, 0x32, 0xa1, 0xa2, 0x9a, 0x17, 0x7c, 0x17, 0xda, 0x13, 0x2a, 0xaa,
+	0x7c, 0x2d, 0x4a, 0xa5, 0x55, 0xc5, 0x3c, 0xd2, 0xff, 0xd8, 0x54, 0xe6, 0xd3, 0x07, 0xf2, 0xaf,
+	0xf1, 0xe7, 0xff, 0x06, 0x00, 0x00, 0xff, 0xff, 0x39, 0xae, 0x0f, 0xed, 0x2b, 0x17, 0x00, 0x00,
+}
+
 // Reference imports to suppress errors if they are not otherwise used.
 var _ context.Context
 var _ grpc.ClientConn
@@ -801,8 +883,9 @@ var _ grpc.ClientConn
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion4
 
-// Client API for PolicydService service
-
+// PolicydServiceClient is the client API for PolicydService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type PolicydServiceClient interface {
 	NewEnforcer(ctx context.Context, in *NewEnforcerRequest, opts ...grpc.CallOption) (*NewEnforcerReply, error)
 	NewAdapter(ctx context.Context, in *NewAdapterRequest, opts ...grpc.CallOption) (*NewAdapterReply, error)
@@ -856,7 +939,7 @@ func NewPolicydServiceClient(cc *grpc.ClientConn) PolicydServiceClient {
 
 func (c *policydServiceClient) NewEnforcer(ctx context.Context, in *NewEnforcerRequest, opts ...grpc.CallOption) (*NewEnforcerReply, error) {
 	out := new(NewEnforcerReply)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/NewEnforcer", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/NewEnforcer", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -865,7 +948,7 @@ func (c *policydServiceClient) NewEnforcer(ctx context.Context, in *NewEnforcerR
 
 func (c *policydServiceClient) NewAdapter(ctx context.Context, in *NewAdapterRequest, opts ...grpc.CallOption) (*NewAdapterReply, error) {
 	out := new(NewAdapterReply)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/NewAdapter", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/NewAdapter", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -874,7 +957,7 @@ func (c *policydServiceClient) NewAdapter(ctx context.Context, in *NewAdapterReq
 
 func (c *policydServiceClient) Enforce(ctx context.Context, in *EnforceRequest, opts ...grpc.CallOption) (*BoolReply, error) {
 	out := new(BoolReply)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/Enforce", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/Enforce", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -883,7 +966,7 @@ func (c *policydServiceClient) Enforce(ctx context.Context, in *EnforceRequest, 
 
 func (c *policydServiceClient) EnforceBucket(ctx context.Context, in *EnforceBucketRequest, opts ...grpc.CallOption) (*BoolReply, error) {
 	out := new(BoolReply)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/EnforceBucket", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/EnforceBucket", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -892,7 +975,7 @@ func (c *policydServiceClient) EnforceBucket(ctx context.Context, in *EnforceBuc
 
 func (c *policydServiceClient) LoadPolicy(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*EmptyReply, error) {
 	out := new(EmptyReply)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/LoadPolicy", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/LoadPolicy", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -901,7 +984,7 @@ func (c *policydServiceClient) LoadPolicy(ctx context.Context, in *EmptyRequest,
 
 func (c *policydServiceClient) SavePolicy(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*EmptyReply, error) {
 	out := new(EmptyReply)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/SavePolicy", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/SavePolicy", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -910,7 +993,7 @@ func (c *policydServiceClient) SavePolicy(ctx context.Context, in *EmptyRequest,
 
 func (c *policydServiceClient) AddPresetPolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*BoolReply, error) {
 	out := new(BoolReply)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/AddPresetPolicy", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/AddPresetPolicy", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -919,7 +1002,7 @@ func (c *policydServiceClient) AddPresetPolicy(ctx context.Context, in *PolicyRe
 
 func (c *policydServiceClient) RemovePresetPolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*BoolReply, error) {
 	out := new(BoolReply)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/RemovePresetPolicy", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/RemovePresetPolicy", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -928,7 +1011,7 @@ func (c *policydServiceClient) RemovePresetPolicy(ctx context.Context, in *Polic
 
 func (c *policydServiceClient) AddPolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*BoolReply, error) {
 	out := new(BoolReply)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/AddPolicy", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/AddPolicy", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -937,7 +1020,7 @@ func (c *policydServiceClient) AddPolicy(ctx context.Context, in *PolicyRequest,
 
 func (c *policydServiceClient) AddNamedPolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*BoolReply, error) {
 	out := new(BoolReply)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/AddNamedPolicy", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/AddNamedPolicy", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -946,7 +1029,7 @@ func (c *policydServiceClient) AddNamedPolicy(ctx context.Context, in *PolicyReq
 
 func (c *policydServiceClient) RemovePolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*BoolReply, error) {
 	out := new(BoolReply)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/RemovePolicy", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/RemovePolicy", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -955,7 +1038,7 @@ func (c *policydServiceClient) RemovePolicy(ctx context.Context, in *PolicyReque
 
 func (c *policydServiceClient) RemoveNamedPolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*BoolReply, error) {
 	out := new(BoolReply)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/RemoveNamedPolicy", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/RemoveNamedPolicy", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -964,7 +1047,7 @@ func (c *policydServiceClient) RemoveNamedPolicy(ctx context.Context, in *Policy
 
 func (c *policydServiceClient) RemoveFilteredPolicy(ctx context.Context, in *FilteredPolicyRequest, opts ...grpc.CallOption) (*BoolReply, error) {
 	out := new(BoolReply)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/RemoveFilteredPolicy", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/RemoveFilteredPolicy", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -973,7 +1056,7 @@ func (c *policydServiceClient) RemoveFilteredPolicy(ctx context.Context, in *Fil
 
 func (c *policydServiceClient) RemoveFilteredNamedPolicy(ctx context.Context, in *FilteredPolicyRequest, opts ...grpc.CallOption) (*BoolReply, error) {
 	out := new(BoolReply)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/RemoveFilteredNamedPolicy", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/RemoveFilteredNamedPolicy", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -982,7 +1065,7 @@ func (c *policydServiceClient) RemoveFilteredNamedPolicy(ctx context.Context, in
 
 func (c *policydServiceClient) GetPolicy(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*Array2DReply, error) {
 	out := new(Array2DReply)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/GetPolicy", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/GetPolicy", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -991,7 +1074,7 @@ func (c *policydServiceClient) GetPolicy(ctx context.Context, in *EmptyRequest, 
 
 func (c *policydServiceClient) GetNamedPolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*Array2DReply, error) {
 	out := new(Array2DReply)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/GetNamedPolicy", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/GetNamedPolicy", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1000,7 +1083,7 @@ func (c *policydServiceClient) GetNamedPolicy(ctx context.Context, in *PolicyReq
 
 func (c *policydServiceClient) GetFilteredPolicy(ctx context.Context, in *FilteredPolicyRequest, opts ...grpc.CallOption) (*Array2DReply, error) {
 	out := new(Array2DReply)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/GetFilteredPolicy", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/GetFilteredPolicy", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1009,7 +1092,7 @@ func (c *policydServiceClient) GetFilteredPolicy(ctx context.Context, in *Filter
 
 func (c *policydServiceClient) GetFilteredNamedPolicy(ctx context.Context, in *FilteredPolicyRequest, opts ...grpc.CallOption) (*Array2DReply, error) {
 	out := new(Array2DReply)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/GetFilteredNamedPolicy", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/GetFilteredNamedPolicy", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1018,7 +1101,7 @@ func (c *policydServiceClient) GetFilteredNamedPolicy(ctx context.Context, in *F
 
 func (c *policydServiceClient) AddGroupingPolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*BoolReply, error) {
 	out := new(BoolReply)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/AddGroupingPolicy", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/AddGroupingPolicy", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1027,7 +1110,7 @@ func (c *policydServiceClient) AddGroupingPolicy(ctx context.Context, in *Policy
 
 func (c *policydServiceClient) AddNamedGroupingPolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*BoolReply, error) {
 	out := new(BoolReply)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/AddNamedGroupingPolicy", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/AddNamedGroupingPolicy", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1036,7 +1119,7 @@ func (c *policydServiceClient) AddNamedGroupingPolicy(ctx context.Context, in *P
 
 func (c *policydServiceClient) RemoveGroupingPolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*BoolReply, error) {
 	out := new(BoolReply)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/RemoveGroupingPolicy", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/RemoveGroupingPolicy", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1045,7 +1128,7 @@ func (c *policydServiceClient) RemoveGroupingPolicy(ctx context.Context, in *Pol
 
 func (c *policydServiceClient) RemoveNamedGroupingPolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*BoolReply, error) {
 	out := new(BoolReply)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/RemoveNamedGroupingPolicy", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/RemoveNamedGroupingPolicy", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1054,7 +1137,7 @@ func (c *policydServiceClient) RemoveNamedGroupingPolicy(ctx context.Context, in
 
 func (c *policydServiceClient) RemoveFilteredGroupingPolicy(ctx context.Context, in *FilteredPolicyRequest, opts ...grpc.CallOption) (*BoolReply, error) {
 	out := new(BoolReply)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/RemoveFilteredGroupingPolicy", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/RemoveFilteredGroupingPolicy", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1063,7 +1146,7 @@ func (c *policydServiceClient) RemoveFilteredGroupingPolicy(ctx context.Context,
 
 func (c *policydServiceClient) RemoveFilteredNamedGroupingPolicy(ctx context.Context, in *FilteredPolicyRequest, opts ...grpc.CallOption) (*BoolReply, error) {
 	out := new(BoolReply)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/RemoveFilteredNamedGroupingPolicy", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/RemoveFilteredNamedGroupingPolicy", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1072,7 +1155,7 @@ func (c *policydServiceClient) RemoveFilteredNamedGroupingPolicy(ctx context.Con
 
 func (c *policydServiceClient) GetGroupingPolicy(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*Array2DReply, error) {
 	out := new(Array2DReply)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/GetGroupingPolicy", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/GetGroupingPolicy", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1081,7 +1164,7 @@ func (c *policydServiceClient) GetGroupingPolicy(ctx context.Context, in *EmptyR
 
 func (c *policydServiceClient) GetNamedGroupingPolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*Array2DReply, error) {
 	out := new(Array2DReply)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/GetNamedGroupingPolicy", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/GetNamedGroupingPolicy", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1090,7 +1173,7 @@ func (c *policydServiceClient) GetNamedGroupingPolicy(ctx context.Context, in *P
 
 func (c *policydServiceClient) GetFilteredGroupingPolicy(ctx context.Context, in *FilteredPolicyRequest, opts ...grpc.CallOption) (*Array2DReply, error) {
 	out := new(Array2DReply)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/GetFilteredGroupingPolicy", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/GetFilteredGroupingPolicy", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1099,7 +1182,7 @@ func (c *policydServiceClient) GetFilteredGroupingPolicy(ctx context.Context, in
 
 func (c *policydServiceClient) GetFilteredNamedGroupingPolicy(ctx context.Context, in *FilteredPolicyRequest, opts ...grpc.CallOption) (*Array2DReply, error) {
 	out := new(Array2DReply)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/GetFilteredNamedGroupingPolicy", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/GetFilteredNamedGroupingPolicy", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1108,7 +1191,7 @@ func (c *policydServiceClient) GetFilteredNamedGroupingPolicy(ctx context.Contex
 
 func (c *policydServiceClient) GetAllSubjects(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*ArrayReply, error) {
 	out := new(ArrayReply)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/GetAllSubjects", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/GetAllSubjects", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1117,7 +1200,7 @@ func (c *policydServiceClient) GetAllSubjects(ctx context.Context, in *EmptyRequ
 
 func (c *policydServiceClient) GetAllNamedSubjects(ctx context.Context, in *SimpleGetRequest, opts ...grpc.CallOption) (*ArrayReply, error) {
 	out := new(ArrayReply)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/GetAllNamedSubjects", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/GetAllNamedSubjects", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1126,7 +1209,7 @@ func (c *policydServiceClient) GetAllNamedSubjects(ctx context.Context, in *Simp
 
 func (c *policydServiceClient) GetAllObjects(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*ArrayReply, error) {
 	out := new(ArrayReply)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/GetAllObjects", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/GetAllObjects", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1135,7 +1218,7 @@ func (c *policydServiceClient) GetAllObjects(ctx context.Context, in *EmptyReque
 
 func (c *policydServiceClient) GetAllNamedObjects(ctx context.Context, in *SimpleGetRequest, opts ...grpc.CallOption) (*ArrayReply, error) {
 	out := new(ArrayReply)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/GetAllNamedObjects", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/GetAllNamedObjects", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1144,7 +1227,7 @@ func (c *policydServiceClient) GetAllNamedObjects(ctx context.Context, in *Simpl
 
 func (c *policydServiceClient) GetAllActions(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*ArrayReply, error) {
 	out := new(ArrayReply)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/GetAllActions", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/GetAllActions", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1153,7 +1236,7 @@ func (c *policydServiceClient) GetAllActions(ctx context.Context, in *EmptyReque
 
 func (c *policydServiceClient) GetAllNamedActions(ctx context.Context, in *SimpleGetRequest, opts ...grpc.CallOption) (*ArrayReply, error) {
 	out := new(ArrayReply)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/GetAllNamedActions", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/GetAllNamedActions", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1162,7 +1245,7 @@ func (c *policydServiceClient) GetAllNamedActions(ctx context.Context, in *Simpl
 
 func (c *policydServiceClient) GetAllRoles(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*ArrayReply, error) {
 	out := new(ArrayReply)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/GetAllRoles", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/GetAllRoles", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1171,7 +1254,7 @@ func (c *policydServiceClient) GetAllRoles(ctx context.Context, in *EmptyRequest
 
 func (c *policydServiceClient) GetAllNamedRoles(ctx context.Context, in *SimpleGetRequest, opts ...grpc.CallOption) (*ArrayReply, error) {
 	out := new(ArrayReply)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/GetAllNamedRoles", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/GetAllNamedRoles", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1180,7 +1263,7 @@ func (c *policydServiceClient) GetAllNamedRoles(ctx context.Context, in *SimpleG
 
 func (c *policydServiceClient) HasPolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*BoolReply, error) {
 	out := new(BoolReply)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/HasPolicy", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/HasPolicy", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1189,7 +1272,7 @@ func (c *policydServiceClient) HasPolicy(ctx context.Context, in *PolicyRequest,
 
 func (c *policydServiceClient) HasNamedPolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*BoolReply, error) {
 	out := new(BoolReply)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/HasNamedPolicy", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/HasNamedPolicy", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1198,7 +1281,7 @@ func (c *policydServiceClient) HasNamedPolicy(ctx context.Context, in *PolicyReq
 
 func (c *policydServiceClient) HasGroupingPolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*BoolReply, error) {
 	out := new(BoolReply)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/HasGroupingPolicy", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/HasGroupingPolicy", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1207,15 +1290,14 @@ func (c *policydServiceClient) HasGroupingPolicy(ctx context.Context, in *Policy
 
 func (c *policydServiceClient) HasNamedGroupingPolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*BoolReply, error) {
 	out := new(BoolReply)
-	err := grpc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/HasNamedGroupingPolicy", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/HasNamedGroupingPolicy", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// Server API for PolicydService service
-
+// PolicydServiceServer is the server API for PolicydService service.
 type PolicydServiceServer interface {
 	NewEnforcer(context.Context, *NewEnforcerRequest) (*NewEnforcerReply, error)
 	NewAdapter(context.Context, *NewAdapterRequest) (*NewAdapterReply, error)
@@ -2150,70 +2232,4 @@ var _PolicydService_serviceDesc = grpc.ServiceDesc{
 	},
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "service.proto",
-}
-
-func init() { proto.RegisterFile("service.proto", fileDescriptor_service_4d8d3be0952d5456) }
-
-var fileDescriptor_service_4d8d3be0952d5456 = []byte{
-	// 960 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xc4, 0x98, 0xcd, 0x6e, 0xdb, 0x46,
-	0x10, 0xc7, 0x43, 0x29, 0x8e, 0xc3, 0x91, 0x25, 0x5b, 0x1b, 0xd7, 0x50, 0x84, 0xc4, 0x50, 0xd9,
-	0x1e, 0x54, 0x38, 0x55, 0x6b, 0xa5, 0xd7, 0x1e, 0x64, 0x34, 0x95, 0x02, 0x14, 0x8e, 0x41, 0xa5,
-	0x45, 0xd1, 0xdb, 0x9a, 0x3b, 0x96, 0xe9, 0xf0, 0xab, 0xbb, 0xa4, 0x63, 0xa1, 0x08, 0x90, 0x4b,
-	0x1e, 0xa2, 0xef, 0xd8, 0x87, 0x28, 0xb8, 0x5c, 0xca, 0xa4, 0x9a, 0x46, 0xa6, 0x2d, 0x32, 0x37,
-	0xee, 0x68, 0x77, 0x7e, 0xf3, 0x9f, 0xe1, 0x0c, 0x49, 0x41, 0x53, 0x20, 0xbf, 0xb4, 0x2d, 0x1c,
-	0x04, 0xdc, 0x0f, 0x7d, 0xf2, 0x94, 0xda, 0x03, 0x17, 0x43, 0x1a, 0x9e, 0xdb, 0xde, 0x4c, 0x0c,
-	0x16, 0x3f, 0xfa, 0x8e, 0x6d, 0xcd, 0x99, 0xf1, 0x3b, 0x90, 0x63, 0x7c, 0xfb, 0xc2, 0x3b, 0xf3,
-	0xb9, 0x85, 0xdc, 0xc4, 0x3f, 0x23, 0x14, 0x21, 0x79, 0x02, 0xba, 0xeb, 0x33, 0x74, 0x5e, 0xe3,
-	0x55, 0xd8, 0xd1, 0x7a, 0x5a, 0x5f, 0x37, 0xaf, 0x0d, 0xe4, 0x6b, 0x68, 0x52, 0x46, 0x83, 0x10,
-	0xf9, 0x84, 0x7a, 0xcc, 0xc1, 0x4e, 0xad, 0xa7, 0xf5, 0x37, 0xcc, 0xbc, 0xd1, 0x78, 0x06, 0x3b,
-	0x39, 0xcf, 0x81, 0x33, 0x27, 0x1d, 0xd8, 0x3c, 0x97, 0xbf, 0x72, 0xe9, 0x75, 0xc3, 0x4c, 0x97,
-	0xc6, 0x5f, 0xd0, 0x3e, 0xc6, 0xb7, 0xa3, 0xc4, 0x43, 0x1a, 0x46, 0x0f, 0x1a, 0xca, 0xe7, 0x31,
-	0x75, 0x51, 0x05, 0x92, 0x35, 0x91, 0x7d, 0x00, 0xc6, 0xed, 0x4b, 0xb5, 0xa1, 0x26, 0x37, 0x64,
-	0x2c, 0x71, 0xa8, 0x96, 0xef, 0x79, 0x68, 0x85, 0xd3, 0x90, 0xdb, 0xde, 0xac, 0x53, 0x97, 0x5b,
-	0xf2, 0x46, 0xe3, 0x00, 0xb6, 0xb3, 0xf0, 0x4f, 0x47, 0x6a, 0x42, 0x4b, 0x89, 0x4a, 0xc3, 0xec,
-	0xc3, 0x36, 0x2a, 0x99, 0x93, 0xdc, 0x99, 0x65, 0x33, 0xd9, 0x83, 0x07, 0x01, 0xe5, 0xd4, 0x15,
-	0x9d, 0x5a, 0xaf, 0xde, 0xd7, 0x4d, 0xb5, 0x32, 0x28, 0xec, 0x2a, 0x9f, 0x47, 0x91, 0xf5, 0x06,
-	0xc3, 0xd4, 0xf3, 0x4b, 0x78, 0xc8, 0x93, 0x4b, 0xd1, 0xd1, 0x7a, 0xf5, 0x7e, 0x63, 0xf8, 0xed,
-	0xe0, 0x93, 0xf5, 0x1c, 0xe4, 0x43, 0x33, 0x17, 0xc7, 0x8d, 0xa7, 0xa0, 0x1f, 0xf9, 0xbe, 0x93,
-	0xa8, 0xdb, 0x81, 0x3a, 0x47, 0x21, 0xa3, 0x7c, 0x68, 0xc6, 0x97, 0x46, 0x1f, 0xb6, 0x5e, 0xb8,
-	0x41, 0x38, 0x4f, 0xc9, 0xff, 0xaf, 0x7f, 0x0b, 0x40, 0xed, 0x0c, 0x9c, 0xb9, 0x31, 0x83, 0xe6,
-	0x89, 0x44, 0x17, 0x4f, 0xc6, 0x2e, 0x6c, 0x04, 0xaf, 0xe7, 0x41, 0x5a, 0xb6, 0x64, 0x91, 0x49,
-	0x51, 0x3d, 0x97, 0x22, 0x13, 0x76, 0xa6, 0xb6, 0x1b, 0x38, 0x38, 0xbe, 0x4e, 0xcf, 0x1d, 0x59,
-	0x86, 0x01, 0x30, 0xe2, 0x9c, 0x26, 0x52, 0xe2, 0x3d, 0x34, 0x5e, 0xc9, 0x4c, 0xeb, 0x66, 0xb2,
-	0x30, 0xfe, 0xd6, 0xe0, 0x8b, 0x9f, 0x6d, 0x27, 0x44, 0x8e, 0x6c, 0xbd, 0x4a, 0xf7, 0x01, 0xce,
-	0x6c, 0x74, 0xd8, 0x4b, 0x8f, 0xe1, 0x95, 0xbc, 0x31, 0x37, 0xcc, 0x8c, 0x25, 0xbe, 0xfb, 0xe5,
-	0xea, 0x37, 0xea, 0x44, 0x28, 0x3a, 0xf7, 0x65, 0x54, 0x59, 0x93, 0x61, 0xc1, 0xf6, 0xaf, 0x02,
-	0xb9, 0xe9, 0x3b, 0xb7, 0xb8, 0x17, 0x09, 0xdc, 0x8f, 0x04, 0x72, 0x15, 0x93, 0xbc, 0x8e, 0x6d,
-	0xdc, 0x77, 0x50, 0x75, 0x89, 0xbc, 0x36, 0x04, 0xb4, 0x4f, 0x90, 0xbb, 0xb6, 0x10, 0xb6, 0xef,
-	0xad, 0x07, 0xd3, 0x83, 0x46, 0xb0, 0x70, 0x99, 0x16, 0x3a, 0x6b, 0x32, 0x4e, 0x61, 0x4b, 0x56,
-	0x66, 0xf8, 0x53, 0x52, 0x9b, 0x1f, 0xa1, 0xc6, 0x86, 0x37, 0x6c, 0x81, 0xec, 0xc1, 0x01, 0x33,
-	0x6b, 0x6c, 0xd8, 0x7d, 0x04, 0x1a, 0x23, 0x2d, 0xa8, 0xb1, 0x43, 0x55, 0xdc, 0x1a, 0x3b, 0x1c,
-	0xfe, 0xf3, 0x15, 0xb4, 0x92, 0x8a, 0xb2, 0x69, 0xe2, 0x82, 0x08, 0x68, 0x64, 0x66, 0x16, 0x39,
-	0x5c, 0x41, 0xfa, 0xef, 0xe4, 0xec, 0x7e, 0x57, 0xe4, 0x48, 0xdc, 0x40, 0xf7, 0x48, 0x00, 0x70,
-	0x3d, 0x7d, 0xc8, 0xf7, 0xab, 0x1d, 0xe4, 0xa7, 0x64, 0x77, 0x50, 0xe0, 0x44, 0x42, 0x64, 0xb0,
-	0xa9, 0x82, 0x20, 0xc5, 0xe6, 0x49, 0xb7, 0xbf, 0x62, 0xfb, 0x62, 0xc4, 0x48, 0x5d, 0xcd, 0xdc,
-	0x50, 0x23, 0xcf, 0x6f, 0xc6, 0xca, 0x8d, 0xc0, 0x42, 0xc4, 0x33, 0x80, 0x5f, 0x7c, 0xaa, 0xda,
-	0x94, 0x1c, 0xac, 0xc2, 0x65, 0xe6, 0x5d, 0xf7, 0x9b, 0x9b, 0x6d, 0x5e, 0x70, 0xa6, 0xf4, 0x12,
-	0x4b, 0xe7, 0xbc, 0x81, 0xed, 0x11, 0x63, 0x27, 0x1c, 0x05, 0x86, 0x0a, 0xf6, 0x6c, 0xc5, 0xf9,
-	0xdc, 0x88, 0x2a, 0x94, 0x3c, 0x0f, 0x88, 0x89, 0xae, 0x7f, 0x89, 0x15, 0xf1, 0x10, 0xf4, 0x58,
-	0x5c, 0xd9, 0x98, 0x0b, 0x68, 0x8d, 0x18, 0x8b, 0x5f, 0x06, 0xca, 0x67, 0x9d, 0xc3, 0x96, 0x4a,
-	0x61, 0xd9, 0x24, 0x17, 0xda, 0x09, 0xa9, 0x1a, 0x61, 0x57, 0xb0, 0x9b, 0xe0, 0xf2, 0x4f, 0x42,
-	0xf2, 0xc3, 0x0a, 0x1f, 0x1f, 0x7d, 0x70, 0x16, 0x22, 0xbf, 0x83, 0xc7, 0x79, 0x72, 0x56, 0x70,
-	0xf9, 0xf8, 0x19, 0xe8, 0xe3, 0x45, 0x2f, 0x14, 0x6a, 0xf4, 0x83, 0x02, 0x4f, 0x29, 0x59, 0xd0,
-	0xd6, 0x18, 0xc3, 0xdb, 0x57, 0xb3, 0x20, 0xee, 0x0a, 0xda, 0x63, 0x0c, 0xd7, 0x52, 0xcd, 0x82,
-	0xe4, 0x77, 0xb0, 0x97, 0x21, 0xdf, 0xbd, 0x9a, 0x85, 0xf3, 0xdc, 0x1e, 0x31, 0x36, 0xe6, 0x7e,
-	0x14, 0xd8, 0xde, 0xac, 0xf4, 0xc6, 0xe1, 0xb0, 0x97, 0x4e, 0x9f, 0xca, 0x98, 0x41, 0xda, 0xac,
-	0x95, 0x11, 0xa3, 0xb4, 0x49, 0xab, 0x15, 0xfa, 0x5e, 0x83, 0x27, 0xf9, 0xe1, 0xb0, 0x84, 0x2e,
-	0x7f, 0x3e, 0x7c, 0xd0, 0xe0, 0xcb, 0x8f, 0xcc, 0xa7, 0xca, 0xe3, 0xf0, 0x65, 0x3f, 0x2f, 0x61,
-	0xcb, 0x9c, 0x57, 0x91, 0x6c, 0xe3, 0xbb, 0xd7, 0xbb, 0x20, 0xf6, 0xbd, 0x06, 0x8f, 0x33, 0xe3,
-	0x63, 0x2d, 0x79, 0x2e, 0x18, 0xc2, 0x07, 0x0d, 0xf6, 0x97, 0x27, 0xd8, 0xe7, 0x88, 0xe3, 0x42,
-	0x3e, 0x31, 0x46, 0x8e, 0x33, 0x8d, 0x4e, 0x2f, 0xd0, 0x0a, 0xc5, 0x7a, 0x5f, 0x44, 0xaf, 0x3f,
-	0x8c, 0x8d, 0x7b, 0x44, 0xc0, 0xa3, 0x84, 0x25, 0xd5, 0x2e, 0x80, 0xab, 0x3e, 0x76, 0x96, 0x3f,
-	0xd8, 0x8b, 0x41, 0x6d, 0x68, 0x26, 0xd0, 0x57, 0xa5, 0xeb, 0xe3, 0x40, 0x32, 0xfa, 0x5e, 0x55,
-	0x2b, 0x6f, 0x64, 0x85, 0xf1, 0x37, 0x6f, 0x65, 0xf2, 0x52, 0x5e, 0xb9, 0xf2, 0x66, 0xd0, 0x48,
-	0x98, 0xa6, 0xef, 0x60, 0x99, 0xe2, 0x02, 0xd8, 0xc9, 0x88, 0x4b, 0x68, 0xe5, 0x4a, 0x43, 0xd0,
-	0x27, 0x54, 0x54, 0xf1, 0xe5, 0x32, 0xa1, 0xa2, 0x9a, 0x17, 0x7c, 0x17, 0xda, 0x13, 0x2a, 0xaa,
-	0x7c, 0x2d, 0x4a, 0xa5, 0x55, 0xc5, 0x3c, 0xd2, 0xff, 0xd8, 0x54, 0xe6, 0xd3, 0x07, 0xf2, 0xaf,
-	0xf1, 0xe7, 0xff, 0x06, 0x00, 0x00, 0xff, 0xff, 0x39, 0xae, 0x0f, 0xed, 0x2b, 0x17, 0x00, 0x00,
 }

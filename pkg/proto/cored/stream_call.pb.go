@@ -3,12 +3,14 @@
 
 package cored
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import _ "github.com/golang/protobuf/ptypes/any"
-import wrappers "github.com/golang/protobuf/ptypes/wrappers"
-import _ "github.com/mwitkow/go-proto-validators"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	_ "github.com/golang/protobuf/ptypes/any"
+	wrappers "github.com/golang/protobuf/ptypes/wrappers"
+	_ "github.com/mwitkow/go-proto-validators"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -22,8 +24,8 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type StreamCallRequest struct {
-	CoreId               *wrappers.StringValue     `protobuf:"bytes,1,opt,name=core_id,json=coreId" json:"core_id,omitempty"`
-	Payload              *StreamCallRequestPayload `protobuf:"bytes,2,opt,name=payload" json:"payload,omitempty"`
+	CoreId               *wrappers.StringValue     `protobuf:"bytes,1,opt,name=core_id,json=coreId,proto3" json:"core_id,omitempty"`
+	Payload              *StreamCallRequestPayload `protobuf:"bytes,2,opt,name=payload,proto3" json:"payload,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}                  `json:"-"`
 	XXX_unrecognized     []byte                    `json:"-"`
 	XXX_sizecache        int32                     `json:"-"`
@@ -33,16 +35,17 @@ func (m *StreamCallRequest) Reset()         { *m = StreamCallRequest{} }
 func (m *StreamCallRequest) String() string { return proto.CompactTextString(m) }
 func (*StreamCallRequest) ProtoMessage()    {}
 func (*StreamCallRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_stream_call_e17db761bbd4127e, []int{0}
+	return fileDescriptor_61c43dc63f14d203, []int{0}
 }
+
 func (m *StreamCallRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_StreamCallRequest.Unmarshal(m, b)
 }
 func (m *StreamCallRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_StreamCallRequest.Marshal(b, m, deterministic)
 }
-func (dst *StreamCallRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_StreamCallRequest.Merge(dst, src)
+func (m *StreamCallRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StreamCallRequest.Merge(m, src)
 }
 func (m *StreamCallRequest) XXX_Size() int {
 	return xxx_messageInfo_StreamCallRequest.Size(m)
@@ -68,7 +71,7 @@ func (m *StreamCallRequest) GetPayload() *StreamCallRequestPayload {
 }
 
 type StreamCallResponse struct {
-	Payload              *StreamCallResponsePayload `protobuf:"bytes,2,opt,name=payload" json:"payload,omitempty"`
+	Payload              *StreamCallResponsePayload `protobuf:"bytes,2,opt,name=payload,proto3" json:"payload,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}                   `json:"-"`
 	XXX_unrecognized     []byte                     `json:"-"`
 	XXX_sizecache        int32                      `json:"-"`
@@ -78,16 +81,17 @@ func (m *StreamCallResponse) Reset()         { *m = StreamCallResponse{} }
 func (m *StreamCallResponse) String() string { return proto.CompactTextString(m) }
 func (*StreamCallResponse) ProtoMessage()    {}
 func (*StreamCallResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_stream_call_e17db761bbd4127e, []int{1}
+	return fileDescriptor_61c43dc63f14d203, []int{1}
 }
+
 func (m *StreamCallResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_StreamCallResponse.Unmarshal(m, b)
 }
 func (m *StreamCallResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_StreamCallResponse.Marshal(b, m, deterministic)
 }
-func (dst *StreamCallResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_StreamCallResponse.Merge(dst, src)
+func (m *StreamCallResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StreamCallResponse.Merge(m, src)
 }
 func (m *StreamCallResponse) XXX_Size() int {
 	return xxx_messageInfo_StreamCallResponse.Size(m)
@@ -110,9 +114,9 @@ func init() {
 	proto.RegisterType((*StreamCallResponse)(nil), "ai.metathings.service.cored.StreamCallResponse")
 }
 
-func init() { proto.RegisterFile("stream_call.proto", fileDescriptor_stream_call_e17db761bbd4127e) }
+func init() { proto.RegisterFile("stream_call.proto", fileDescriptor_61c43dc63f14d203) }
 
-var fileDescriptor_stream_call_e17db761bbd4127e = []byte{
+var fileDescriptor_61c43dc63f14d203 = []byte{
 	// 259 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x8f, 0xcf, 0x4b, 0xc3, 0x30,
 	0x14, 0xc7, 0xa9, 0x87, 0x0d, 0x2a, 0x1e, 0xd6, 0xd3, 0x9c, 0x22, 0xb2, 0x93, 0x97, 0xbd, 0x82,

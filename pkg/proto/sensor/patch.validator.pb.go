@@ -4,7 +4,7 @@
 package sensor
 
 import fmt "fmt"
-import go_proto_validators "github.com/mwitkow/go-proto-validators"
+import github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
 import proto "github.com/golang/protobuf/proto"
 import math "math"
 import _ "github.com/golang/protobuf/ptypes/wrappers"
@@ -17,11 +17,11 @@ var _ = math.Inf
 
 func (this *PatchRequest) Validate() error {
 	if nil == this.Name {
-		return go_proto_validators.FieldError("Name", fmt.Errorf("message must exist"))
+		return github_com_mwitkow_go_proto_validators.FieldError("Name", fmt.Errorf("message must exist"))
 	}
 	if this.Name != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Name); err != nil {
-			return go_proto_validators.FieldError("Name", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Name); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Name", err)
 		}
 	}
 	// Validation of proto3 map<> fields is unsupported.
@@ -29,8 +29,8 @@ func (this *PatchRequest) Validate() error {
 }
 func (this *PatchResponse) Validate() error {
 	if this.Sensor != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Sensor); err != nil {
-			return go_proto_validators.FieldError("Sensor", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Sensor); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Sensor", err)
 		}
 	}
 	return nil

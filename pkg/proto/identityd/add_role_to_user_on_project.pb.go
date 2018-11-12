@@ -3,11 +3,13 @@
 
 package identityd
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import wrappers "github.com/golang/protobuf/ptypes/wrappers"
-import _ "github.com/mwitkow/go-proto-validators"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	wrappers "github.com/golang/protobuf/ptypes/wrappers"
+	_ "github.com/mwitkow/go-proto-validators"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -21,9 +23,9 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type AddRoleToUserOnProjectRequest struct {
-	ProjectId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=project_id,json=projectId" json:"project_id,omitempty"`
-	UserId               *wrappers.StringValue `protobuf:"bytes,2,opt,name=user_id,json=userId" json:"user_id,omitempty"`
-	RoleId               *wrappers.StringValue `protobuf:"bytes,3,opt,name=role_id,json=roleId" json:"role_id,omitempty"`
+	ProjectId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=project_id,json=projectId,proto3" json:"project_id,omitempty"`
+	UserId               *wrappers.StringValue `protobuf:"bytes,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	RoleId               *wrappers.StringValue `protobuf:"bytes,3,opt,name=role_id,json=roleId,proto3" json:"role_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -33,16 +35,17 @@ func (m *AddRoleToUserOnProjectRequest) Reset()         { *m = AddRoleToUserOnPr
 func (m *AddRoleToUserOnProjectRequest) String() string { return proto.CompactTextString(m) }
 func (*AddRoleToUserOnProjectRequest) ProtoMessage()    {}
 func (*AddRoleToUserOnProjectRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_add_role_to_user_on_project_9c8e17fecbc8c998, []int{0}
+	return fileDescriptor_d3656556eb72fe8a, []int{0}
 }
+
 func (m *AddRoleToUserOnProjectRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_AddRoleToUserOnProjectRequest.Unmarshal(m, b)
 }
 func (m *AddRoleToUserOnProjectRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_AddRoleToUserOnProjectRequest.Marshal(b, m, deterministic)
 }
-func (dst *AddRoleToUserOnProjectRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_AddRoleToUserOnProjectRequest.Merge(dst, src)
+func (m *AddRoleToUserOnProjectRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_AddRoleToUserOnProjectRequest.Merge(m, src)
 }
 func (m *AddRoleToUserOnProjectRequest) XXX_Size() int {
 	return xxx_messageInfo_AddRoleToUserOnProjectRequest.Size(m)
@@ -78,11 +81,9 @@ func init() {
 	proto.RegisterType((*AddRoleToUserOnProjectRequest)(nil), "ai.metathings.service.identityd.AddRoleToUserOnProjectRequest")
 }
 
-func init() {
-	proto.RegisterFile("add_role_to_user_on_project.proto", fileDescriptor_add_role_to_user_on_project_9c8e17fecbc8c998)
-}
+func init() { proto.RegisterFile("add_role_to_user_on_project.proto", fileDescriptor_d3656556eb72fe8a) }
 
-var fileDescriptor_add_role_to_user_on_project_9c8e17fecbc8c998 = []byte{
+var fileDescriptor_d3656556eb72fe8a = []byte{
 	// 258 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x90, 0x3d, 0x4f, 0xc3, 0x40,
 	0x0c, 0x86, 0x95, 0x22, 0x05, 0x11, 0xb6, 0x4c, 0x51, 0x05, 0xb4, 0x30, 0xb1, 0xf4, 0x22, 0x81,

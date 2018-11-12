@@ -3,12 +3,14 @@
 
 package cored
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import wrappers "github.com/golang/protobuf/ptypes/wrappers"
-import _ "github.com/mwitkow/go-proto-validators"
-import state "github.com/nayotta/metathings/pkg/proto/common/state"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	wrappers "github.com/golang/protobuf/ptypes/wrappers"
+	_ "github.com/mwitkow/go-proto-validators"
+	state "github.com/nayotta/metathings/pkg/proto/common/state"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -22,9 +24,9 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type ListCoresForUserRequest struct {
-	Name                 *wrappers.StringValue `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
-	ProjectId            *wrappers.StringValue `protobuf:"bytes,2,opt,name=project_id,json=projectId" json:"project_id,omitempty"`
-	State                state.CoreState       `protobuf:"varint,4,opt,name=state,enum=ai.metathings.state.CoreState" json:"state,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	ProjectId            *wrappers.StringValue `protobuf:"bytes,2,opt,name=project_id,json=projectId,proto3" json:"project_id,omitempty"`
+	State                state.CoreState       `protobuf:"varint,4,opt,name=state,proto3,enum=ai.metathings.state.CoreState" json:"state,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -34,16 +36,17 @@ func (m *ListCoresForUserRequest) Reset()         { *m = ListCoresForUserRequest
 func (m *ListCoresForUserRequest) String() string { return proto.CompactTextString(m) }
 func (*ListCoresForUserRequest) ProtoMessage()    {}
 func (*ListCoresForUserRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_list_cores_for_user_5283205ebc97f0e2, []int{0}
+	return fileDescriptor_7783c14c25cc374d, []int{0}
 }
+
 func (m *ListCoresForUserRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ListCoresForUserRequest.Unmarshal(m, b)
 }
 func (m *ListCoresForUserRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_ListCoresForUserRequest.Marshal(b, m, deterministic)
 }
-func (dst *ListCoresForUserRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ListCoresForUserRequest.Merge(dst, src)
+func (m *ListCoresForUserRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ListCoresForUserRequest.Merge(m, src)
 }
 func (m *ListCoresForUserRequest) XXX_Size() int {
 	return xxx_messageInfo_ListCoresForUserRequest.Size(m)
@@ -76,7 +79,7 @@ func (m *ListCoresForUserRequest) GetState() state.CoreState {
 }
 
 type ListCoresForUserResponse struct {
-	Cores                []*Core  `protobuf:"bytes,1,rep,name=cores" json:"cores,omitempty"`
+	Cores                []*Core  `protobuf:"bytes,1,rep,name=cores,proto3" json:"cores,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -86,16 +89,17 @@ func (m *ListCoresForUserResponse) Reset()         { *m = ListCoresForUserRespon
 func (m *ListCoresForUserResponse) String() string { return proto.CompactTextString(m) }
 func (*ListCoresForUserResponse) ProtoMessage()    {}
 func (*ListCoresForUserResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_list_cores_for_user_5283205ebc97f0e2, []int{1}
+	return fileDescriptor_7783c14c25cc374d, []int{1}
 }
+
 func (m *ListCoresForUserResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ListCoresForUserResponse.Unmarshal(m, b)
 }
 func (m *ListCoresForUserResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_ListCoresForUserResponse.Marshal(b, m, deterministic)
 }
-func (dst *ListCoresForUserResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ListCoresForUserResponse.Merge(dst, src)
+func (m *ListCoresForUserResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ListCoresForUserResponse.Merge(m, src)
 }
 func (m *ListCoresForUserResponse) XXX_Size() int {
 	return xxx_messageInfo_ListCoresForUserResponse.Size(m)
@@ -118,11 +122,9 @@ func init() {
 	proto.RegisterType((*ListCoresForUserResponse)(nil), "ai.metathings.service.cored.ListCoresForUserResponse")
 }
 
-func init() {
-	proto.RegisterFile("list_cores_for_user.proto", fileDescriptor_list_cores_for_user_5283205ebc97f0e2)
-}
+func init() { proto.RegisterFile("list_cores_for_user.proto", fileDescriptor_7783c14c25cc374d) }
 
-var fileDescriptor_list_cores_for_user_5283205ebc97f0e2 = []byte{
+var fileDescriptor_7783c14c25cc374d = []byte{
 	// 319 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x91, 0x4d, 0x4b, 0xc3, 0x40,
 	0x10, 0x86, 0x89, 0xb6, 0x82, 0x5b, 0xf0, 0x90, 0x8b, 0xb1, 0x4a, 0xa9, 0x3d, 0xf5, 0xd2, 0x5d,

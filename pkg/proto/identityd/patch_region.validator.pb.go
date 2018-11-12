@@ -4,7 +4,7 @@
 package identityd
 
 import fmt "fmt"
-import go_proto_validators "github.com/mwitkow/go-proto-validators"
+import github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
 import proto "github.com/golang/protobuf/proto"
 import math "math"
 import _ "github.com/golang/protobuf/ptypes/wrappers"
@@ -17,29 +17,29 @@ var _ = math.Inf
 
 func (this *PatchRegionRequest) Validate() error {
 	if nil == this.RegionId {
-		return go_proto_validators.FieldError("RegionId", fmt.Errorf("message must exist"))
+		return github_com_mwitkow_go_proto_validators.FieldError("RegionId", fmt.Errorf("message must exist"))
 	}
 	if this.RegionId != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.RegionId); err != nil {
-			return go_proto_validators.FieldError("RegionId", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.RegionId); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("RegionId", err)
 		}
 	}
 	if this.ParentRegionId != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.ParentRegionId); err != nil {
-			return go_proto_validators.FieldError("ParentRegionId", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.ParentRegionId); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("ParentRegionId", err)
 		}
 	}
 	if this.Description != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Description); err != nil {
-			return go_proto_validators.FieldError("Description", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Description); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Description", err)
 		}
 	}
 	return nil
 }
 func (this *PatchRegionResponse) Validate() error {
 	if this.Region != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Region); err != nil {
-			return go_proto_validators.FieldError("Region", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Region); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Region", err)
 		}
 	}
 	return nil
