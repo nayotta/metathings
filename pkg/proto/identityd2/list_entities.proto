@@ -12,11 +12,11 @@ message ListEntitiesRequest {
 	reserved "password", "extra";
 
 	google.protobuf.StringValue id = 1;
-	OpDomain domain = 2 [(validator.field) = {msg_exists: true}];
+	OpDomain domain = 2;
 	repeated OpGroup groups = 3;
 	repeated OpRole roles = 4;
-	google.protobuf.StringValue name = 5 [(validator.field) = {msg_exists: true}];
-	google.protobuf.StringValue alias = 6 [(validator.field) = {msg_exists: true}];
+	google.protobuf.StringValue name = 5;
+	google.protobuf.StringValue alias = 6;
 }
 
 message ListEntitiesResponse {

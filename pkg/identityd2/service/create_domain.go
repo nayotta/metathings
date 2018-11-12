@@ -4,12 +4,11 @@ import (
 	"context"
 	"errors"
 
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
-
 	id_helper "github.com/nayotta/metathings/pkg/common/id"
 	storage "github.com/nayotta/metathings/pkg/identityd2/storage"
 	pb "github.com/nayotta/metathings/pkg/proto/identityd2"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 func (self *MetathingsIdentitydService) CreateDomain(ctx context.Context, req *pb.CreateDomainRequest) (*pb.CreateDomainResponse, error) {

@@ -66,7 +66,7 @@ func (self *MetathingsIdentitydService) CreateCredential(ctx context.Context, re
 	if req.GetSecret() != nil {
 		srt_str = req.GetSecret().GetValue()
 	}
-	srt_str = passwd_helper.MustParsePassword(srt_str)
+	srt_encode_str := passwd_helper.MustParsePassword(srt_str)
 
 	desc_str := ""
 	if req.GetDescription() != nil {
@@ -84,7 +84,7 @@ func (self *MetathingsIdentitydService) CreateCredential(ctx context.Context, re
 		EntityId:    &ent_id_str,
 		Name:        &req.Name.Value,
 		Alias:       &alias_str,
-		Secret:      &srt_str,
+		Secret:      &srt_encode_str,
 		Description: &desc_str,
 		ExpiresAt:   &expires,
 		Roles:       roles,
@@ -94,6 +94,11 @@ func (self *MetathingsIdentitydService) CreateCredential(ctx context.Context, re
 		self.logger.WithError(err).Errorf("failed to create credential in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
+
+	//return no encode secret string
+	//storage save the encode secret string
+	//should remember secret on response, you will nerver get no encode secret string in future
+	cred.Secret = &srt_str
 
 	res := &pb.CreateCredentialResponse{
 		Credential: copy_credential(cred),
