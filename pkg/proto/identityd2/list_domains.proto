@@ -15,5 +15,5 @@ message ListDomainsRequest {
 }
 
 message ListDomainsResponse {
-	repeated Domain domain = 1;
+	repeated Domain domains = 1;
 }

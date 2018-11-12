@@ -11,7 +11,7 @@ import (
 )
 
 func (self *MetathingsIdentitydService) PatchRole(ctx context.Context, req *pb.PatchRoleRequest) (*pb.PatchRoleResponse, error) {
-	var rol *storage.Role
+	var rol = &storage.Role{}
 	var err error
 
 	if err = req.Validate(); err != nil {
@@ -27,10 +27,16 @@ func (self *MetathingsIdentitydService) PatchRole(ctx context.Context, req *pb.P
 	idStr := req.GetId().GetValue()
 
 	if req.GetAlias() != nil {
-		*rol.Alias = req.GetAlias().GetValue()
+		aliasStr := req.GetAlias().GetValue()
+		rol.Alias = &aliasStr
 	}
 	if req.GetDescription() != nil {
-		*rol.Description = req.GetDescription().GetValue()
+		descriptionStr := req.GetDescription().GetValue()
+		rol.Description = &descriptionStr
+	}
+	if req.GetExtra() != nil {
+		extraStr := must_parse_extra(req.GetExtra())
+		rol.Extra = &extraStr
 	}
 
 	if rol, err = self.storage.PatchRole(idStr, rol); err != nil {

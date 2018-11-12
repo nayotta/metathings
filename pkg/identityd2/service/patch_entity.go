@@ -12,7 +12,7 @@ import (
 )
 
 func (self *MetathingsIdentitydService) PatchEntity(ctx context.Context, req *pb.PatchEntityRequest) (*pb.PatchEntityResponse, error) {
-	var ent *storage.Entity
+	var ent = &storage.Entity{}
 	var err error
 
 	if err = req.Validate(); err != nil {
@@ -28,10 +28,16 @@ func (self *MetathingsIdentitydService) PatchEntity(ctx context.Context, req *pb
 	idStr := req.GetId().GetValue()
 
 	if req.GetAlias() != nil {
-		*ent.Alias = req.GetAlias().GetValue()
+		aliasStr := req.GetAlias().GetValue()
+		ent.Alias = &aliasStr
 	}
 	if req.GetPassword() != nil {
-		*ent.Password = passwd_helper.MustParsePassword(req.GetPassword().GetValue())
+		passwordStr := passwd_helper.MustParsePassword(req.GetPassword().GetValue())
+		ent.Password = &passwordStr
+	}
+	if req.GetExtra() != nil {
+		extraStr := must_parse_extra(req.GetExtra())
+		ent.Extra = &extraStr
 	}
 
 	if ent, err = self.storage.PatchEntity(idStr, ent); err != nil {

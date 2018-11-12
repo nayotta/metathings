@@ -11,7 +11,7 @@ import (
 )
 
 func (self *MetathingsIdentitydService) PatchDomain(ctx context.Context, req *pb.PatchDomainRequest) (*pb.PatchDomainResponse, error) {
-	var dom *storage.Domain
+	var dom = &storage.Domain{}
 	var err error
 
 	if err = req.Validate(); err != nil {
@@ -27,7 +27,12 @@ func (self *MetathingsIdentitydService) PatchDomain(ctx context.Context, req *pb
 	idStr := req.GetId().GetValue()
 
 	if req.GetAlias() != nil {
-		*dom.Alias = req.GetAlias().GetValue()
+		aliasStr := req.GetAlias().GetValue()
+		dom.Alias = &aliasStr
+	}
+	if req.GetExtra() != nil {
+		extraStr := must_parse_extra(req.GetExtra())
+		dom.Extra = &extraStr
 	}
 
 	if dom, err = self.storage.PatchDomain(idStr, dom); err != nil {

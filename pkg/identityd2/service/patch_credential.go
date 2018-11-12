@@ -12,7 +12,7 @@ import (
 )
 
 func (self *MetathingsIdentitydService) PatchCredential(ctx context.Context, req *pb.PatchCredentialRequest) (*pb.PatchCredentialResponse, error) {
-	var cred *storage.Credential
+	var cred = &storage.Credential{}
 	var err error
 
 	if err = req.Validate(); err != nil {
@@ -28,10 +28,12 @@ func (self *MetathingsIdentitydService) PatchCredential(ctx context.Context, req
 	idStr := req.GetId().GetValue()
 
 	if req.GetAlias() != nil {
-		*cred.Alias = req.GetAlias().GetValue()
+		aliasStr := req.GetAlias().GetValue()
+		cred.Alias = &aliasStr
 	}
 	if req.GetDescription() != nil {
-		*cred.Description = req.GetDescription().GetValue()
+		descriptionStr := req.GetDescription().GetValue()
+		cred.Description = &descriptionStr
 	}
 
 	if cred, err = self.storage.PatchCredential(idStr, cred); err != nil {
