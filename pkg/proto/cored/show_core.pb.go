@@ -3,9 +3,11 @@
 
 package cored
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -19,7 +21,7 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type ShowCoreResponse struct {
-	Core                 *Core    `protobuf:"bytes,1,opt,name=core" json:"core,omitempty"`
+	Core                 *Core    `protobuf:"bytes,1,opt,name=core,proto3" json:"core,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -29,16 +31,17 @@ func (m *ShowCoreResponse) Reset()         { *m = ShowCoreResponse{} }
 func (m *ShowCoreResponse) String() string { return proto.CompactTextString(m) }
 func (*ShowCoreResponse) ProtoMessage()    {}
 func (*ShowCoreResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_show_core_5adb5b7a26afc60a, []int{0}
+	return fileDescriptor_51088005da6dbdcd, []int{0}
 }
+
 func (m *ShowCoreResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ShowCoreResponse.Unmarshal(m, b)
 }
 func (m *ShowCoreResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_ShowCoreResponse.Marshal(b, m, deterministic)
 }
-func (dst *ShowCoreResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ShowCoreResponse.Merge(dst, src)
+func (m *ShowCoreResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ShowCoreResponse.Merge(m, src)
 }
 func (m *ShowCoreResponse) XXX_Size() int {
 	return xxx_messageInfo_ShowCoreResponse.Size(m)
@@ -60,9 +63,9 @@ func init() {
 	proto.RegisterType((*ShowCoreResponse)(nil), "ai.metathings.service.cored.ShowCoreResponse")
 }
 
-func init() { proto.RegisterFile("show_core.proto", fileDescriptor_show_core_5adb5b7a26afc60a) }
+func init() { proto.RegisterFile("show_core.proto", fileDescriptor_51088005da6dbdcd) }
 
-var fileDescriptor_show_core_5adb5b7a26afc60a = []byte{
+var fileDescriptor_51088005da6dbdcd = []byte{
 	// 120 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xe2, 0x2f, 0xce, 0xc8, 0x2f,
 	0x8f, 0x4f, 0xce, 0x2f, 0x4a, 0xd5, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x92, 0x4e, 0xcc, 0xd4,

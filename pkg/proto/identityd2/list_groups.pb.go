@@ -3,11 +3,13 @@
 
 package identityd2
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import wrappers "github.com/golang/protobuf/ptypes/wrappers"
-import _ "github.com/mwitkow/go-proto-validators"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	wrappers "github.com/golang/protobuf/ptypes/wrappers"
+	_ "github.com/mwitkow/go-proto-validators"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -21,10 +23,10 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type ListGroupsRequest struct {
-	Id                   *wrappers.StringValue `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	Domain               *OpDomain             `protobuf:"bytes,2,opt,name=domain" json:"domain,omitempty"`
-	Name                 *wrappers.StringValue `protobuf:"bytes,5,opt,name=name" json:"name,omitempty"`
-	Alias                *wrappers.StringValue `protobuf:"bytes,6,opt,name=alias" json:"alias,omitempty"`
+	Id                   *wrappers.StringValue `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Domain               *OpDomain             `protobuf:"bytes,2,opt,name=domain,proto3" json:"domain,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,5,opt,name=name,proto3" json:"name,omitempty"`
+	Alias                *wrappers.StringValue `protobuf:"bytes,6,opt,name=alias,proto3" json:"alias,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -34,16 +36,17 @@ func (m *ListGroupsRequest) Reset()         { *m = ListGroupsRequest{} }
 func (m *ListGroupsRequest) String() string { return proto.CompactTextString(m) }
 func (*ListGroupsRequest) ProtoMessage()    {}
 func (*ListGroupsRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_list_groups_452cd1dca0bc6ac5, []int{0}
+	return fileDescriptor_e73ec0602ce3afc8, []int{0}
 }
+
 func (m *ListGroupsRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ListGroupsRequest.Unmarshal(m, b)
 }
 func (m *ListGroupsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_ListGroupsRequest.Marshal(b, m, deterministic)
 }
-func (dst *ListGroupsRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ListGroupsRequest.Merge(dst, src)
+func (m *ListGroupsRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ListGroupsRequest.Merge(m, src)
 }
 func (m *ListGroupsRequest) XXX_Size() int {
 	return xxx_messageInfo_ListGroupsRequest.Size(m)
@@ -83,7 +86,7 @@ func (m *ListGroupsRequest) GetAlias() *wrappers.StringValue {
 }
 
 type ListGroupsResponse struct {
-	Groups               []*Group `protobuf:"bytes,1,rep,name=groups" json:"groups,omitempty"`
+	Groups               []*Group `protobuf:"bytes,1,rep,name=groups,proto3" json:"groups,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -93,16 +96,17 @@ func (m *ListGroupsResponse) Reset()         { *m = ListGroupsResponse{} }
 func (m *ListGroupsResponse) String() string { return proto.CompactTextString(m) }
 func (*ListGroupsResponse) ProtoMessage()    {}
 func (*ListGroupsResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_list_groups_452cd1dca0bc6ac5, []int{1}
+	return fileDescriptor_e73ec0602ce3afc8, []int{1}
 }
+
 func (m *ListGroupsResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ListGroupsResponse.Unmarshal(m, b)
 }
 func (m *ListGroupsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_ListGroupsResponse.Marshal(b, m, deterministic)
 }
-func (dst *ListGroupsResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ListGroupsResponse.Merge(dst, src)
+func (m *ListGroupsResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ListGroupsResponse.Merge(m, src)
 }
 func (m *ListGroupsResponse) XXX_Size() int {
 	return xxx_messageInfo_ListGroupsResponse.Size(m)
@@ -125,9 +129,9 @@ func init() {
 	proto.RegisterType((*ListGroupsResponse)(nil), "ai.metathings.service.identityd2.ListGroupsResponse")
 }
 
-func init() { proto.RegisterFile("list_groups.proto", fileDescriptor_list_groups_452cd1dca0bc6ac5) }
+func init() { proto.RegisterFile("list_groups.proto", fileDescriptor_e73ec0602ce3afc8) }
 
-var fileDescriptor_list_groups_452cd1dca0bc6ac5 = []byte{
+var fileDescriptor_e73ec0602ce3afc8 = []byte{
 	// 309 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x91, 0x51, 0x4b, 0xeb, 0x30,
 	0x14, 0xc7, 0x59, 0xef, 0x6d, 0xb9, 0xa4, 0x4f, 0xeb, 0x53, 0x19, 0x97, 0xcb, 0xd8, 0xcb, 0x1d,

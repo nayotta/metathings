@@ -4,7 +4,7 @@
 package sensord
 
 import fmt "fmt"
-import go_proto_validators "github.com/mwitkow/go-proto-validators"
+import github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
 import proto "github.com/golang/protobuf/proto"
 import math "math"
 import _ "github.com/golang/protobuf/ptypes/wrappers"
@@ -18,64 +18,64 @@ var _ = math.Inf
 
 func (this *SubscribeByIdRequest) Validate() error {
 	if nil == this.Id {
-		return go_proto_validators.FieldError("Id", fmt.Errorf("message must exist"))
+		return github_com_mwitkow_go_proto_validators.FieldError("Id", fmt.Errorf("message must exist"))
 	}
 	if this.Id != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Id); err != nil {
-			return go_proto_validators.FieldError("Id", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Id); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Id", err)
 		}
 	}
 	return nil
 }
 func (this *SubscribeByUserIdRequest) Validate() error {
 	if nil == this.UserId {
-		return go_proto_validators.FieldError("UserId", fmt.Errorf("message must exist"))
+		return github_com_mwitkow_go_proto_validators.FieldError("UserId", fmt.Errorf("message must exist"))
 	}
 	if this.UserId != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.UserId); err != nil {
-			return go_proto_validators.FieldError("UserId", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.UserId); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("UserId", err)
 		}
 	}
 	return nil
 }
 func (this *SubscribeByCoreIdRequest) Validate() error {
 	if nil == this.CoreId {
-		return go_proto_validators.FieldError("CoreId", fmt.Errorf("message must exist"))
+		return github_com_mwitkow_go_proto_validators.FieldError("CoreId", fmt.Errorf("message must exist"))
 	}
 	if this.CoreId != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.CoreId); err != nil {
-			return go_proto_validators.FieldError("CoreId", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.CoreId); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("CoreId", err)
 		}
 	}
 	return nil
 }
 func (this *SubscribeRequest) Validate() error {
 	if nil == this.Session {
-		return go_proto_validators.FieldError("Session", fmt.Errorf("message must exist"))
+		return github_com_mwitkow_go_proto_validators.FieldError("Session", fmt.Errorf("message must exist"))
 	}
 	if this.Session != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Session); err != nil {
-			return go_proto_validators.FieldError("Session", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Session); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Session", err)
 		}
 	}
 	if oneOfNester, ok := this.GetPayload().(*SubscribeRequest_SubscribeById); ok {
 		if oneOfNester.SubscribeById != nil {
-			if err := go_proto_validators.CallValidatorIfExists(oneOfNester.SubscribeById); err != nil {
-				return go_proto_validators.FieldError("SubscribeById", err)
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.SubscribeById); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("SubscribeById", err)
 			}
 		}
 	}
 	if oneOfNester, ok := this.GetPayload().(*SubscribeRequest_SubscribeByUserId); ok {
 		if oneOfNester.SubscribeByUserId != nil {
-			if err := go_proto_validators.CallValidatorIfExists(oneOfNester.SubscribeByUserId); err != nil {
-				return go_proto_validators.FieldError("SubscribeByUserId", err)
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.SubscribeByUserId); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("SubscribeByUserId", err)
 			}
 		}
 	}
 	if oneOfNester, ok := this.GetPayload().(*SubscribeRequest_SubscribeByCoreId); ok {
 		if oneOfNester.SubscribeByCoreId != nil {
-			if err := go_proto_validators.CallValidatorIfExists(oneOfNester.SubscribeByCoreId); err != nil {
-				return go_proto_validators.FieldError("SubscribeByCoreId", err)
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.SubscribeByCoreId); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("SubscribeByCoreId", err)
 			}
 		}
 	}
@@ -84,8 +84,8 @@ func (this *SubscribeRequest) Validate() error {
 func (this *SubscribeRequests) Validate() error {
 	for _, item := range this.Requests {
 		if item != nil {
-			if err := go_proto_validators.CallValidatorIfExists(item); err != nil {
-				return go_proto_validators.FieldError("Requests", err)
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("Requests", err)
 			}
 		}
 	}
@@ -93,8 +93,8 @@ func (this *SubscribeRequests) Validate() error {
 }
 func (this *SubscribeResponse) Validate() error {
 	if this.Data != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Data); err != nil {
-			return go_proto_validators.FieldError("Data", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Data); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Data", err)
 		}
 	}
 	return nil
@@ -102,8 +102,8 @@ func (this *SubscribeResponse) Validate() error {
 func (this *SubscribeResponses) Validate() error {
 	for _, item := range this.Responses {
 		if item != nil {
-			if err := go_proto_validators.CallValidatorIfExists(item); err != nil {
-				return go_proto_validators.FieldError("Responses", err)
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("Responses", err)
 			}
 		}
 	}

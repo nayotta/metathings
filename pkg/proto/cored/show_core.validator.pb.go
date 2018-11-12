@@ -3,7 +3,7 @@
 
 package cored
 
-import go_proto_validators "github.com/mwitkow/go-proto-validators"
+import github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
@@ -15,8 +15,8 @@ var _ = math.Inf
 
 func (this *ShowCoreResponse) Validate() error {
 	if this.Core != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Core); err != nil {
-			return go_proto_validators.FieldError("Core", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Core); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Core", err)
 		}
 	}
 	return nil

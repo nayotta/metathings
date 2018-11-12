@@ -3,10 +3,12 @@
 
 package cored
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import state "github.com/nayotta/metathings/pkg/proto/common/state"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	state "github.com/nayotta/metathings/pkg/proto/common/state"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -20,12 +22,12 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type Entity struct {
-	Id                   string            `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	CoreId               string            `protobuf:"bytes,2,opt,name=core_id,json=coreId" json:"core_id,omitempty"`
-	Name                 string            `protobuf:"bytes,3,opt,name=name" json:"name,omitempty"`
-	ServiceName          string            `protobuf:"bytes,4,opt,name=service_name,json=serviceName" json:"service_name,omitempty"`
-	Endpoint             string            `protobuf:"bytes,5,opt,name=endpoint" json:"endpoint,omitempty"`
-	State                state.EntityState `protobuf:"varint,6,opt,name=state,enum=ai.metathings.state.EntityState" json:"state,omitempty"`
+	Id                   string            `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	CoreId               string            `protobuf:"bytes,2,opt,name=core_id,json=coreId,proto3" json:"core_id,omitempty"`
+	Name                 string            `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
+	ServiceName          string            `protobuf:"bytes,4,opt,name=service_name,json=serviceName,proto3" json:"service_name,omitempty"`
+	Endpoint             string            `protobuf:"bytes,5,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
+	State                state.EntityState `protobuf:"varint,6,opt,name=state,proto3,enum=ai.metathings.state.EntityState" json:"state,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
 	XXX_unrecognized     []byte            `json:"-"`
 	XXX_sizecache        int32             `json:"-"`
@@ -35,16 +37,17 @@ func (m *Entity) Reset()         { *m = Entity{} }
 func (m *Entity) String() string { return proto.CompactTextString(m) }
 func (*Entity) ProtoMessage()    {}
 func (*Entity) Descriptor() ([]byte, []int) {
-	return fileDescriptor_entity_6fe0b90f6ce8bf8f, []int{0}
+	return fileDescriptor_cf50d946d740d100, []int{0}
 }
+
 func (m *Entity) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Entity.Unmarshal(m, b)
 }
 func (m *Entity) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Entity.Marshal(b, m, deterministic)
 }
-func (dst *Entity) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Entity.Merge(dst, src)
+func (m *Entity) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Entity.Merge(m, src)
 }
 func (m *Entity) XXX_Size() int {
 	return xxx_messageInfo_Entity.Size(m)
@@ -101,9 +104,9 @@ func init() {
 	proto.RegisterType((*Entity)(nil), "ai.metathings.service.cored.Entity")
 }
 
-func init() { proto.RegisterFile("entity.proto", fileDescriptor_entity_6fe0b90f6ce8bf8f) }
+func init() { proto.RegisterFile("entity.proto", fileDescriptor_cf50d946d740d100) }
 
-var fileDescriptor_entity_6fe0b90f6ce8bf8f = []byte{
+var fileDescriptor_cf50d946d740d100 = []byte{
 	// 232 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x5c, 0x8f, 0xcd, 0x4a, 0xc3, 0x40,
 	0x10, 0xc7, 0x49, 0x6c, 0xa3, 0x8e, 0xa5, 0x87, 0xbd, 0xb8, 0xd4, 0x4b, 0xf4, 0xd4, 0xd3, 0x2e,

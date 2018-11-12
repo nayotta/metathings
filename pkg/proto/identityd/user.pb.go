@@ -3,9 +3,11 @@
 
 package identityd
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -19,12 +21,12 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type User struct {
-	Id                   string            `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	Name                 string            `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
-	DefaultProjectId     string            `protobuf:"bytes,3,opt,name=default_project_id,json=defaultProjectId" json:"default_project_id,omitempty"`
-	DomainId             string            `protobuf:"bytes,4,opt,name=domain_id,json=domainId" json:"domain_id,omitempty"`
-	Enabled              bool              `protobuf:"varint,5,opt,name=enabled" json:"enabled,omitempty"`
-	Extra                map[string]string `protobuf:"bytes,6,rep,name=extra" json:"extra,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	Id                   string            `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name                 string            `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	DefaultProjectId     string            `protobuf:"bytes,3,opt,name=default_project_id,json=defaultProjectId,proto3" json:"default_project_id,omitempty"`
+	DomainId             string            `protobuf:"bytes,4,opt,name=domain_id,json=domainId,proto3" json:"domain_id,omitempty"`
+	Enabled              bool              `protobuf:"varint,5,opt,name=enabled,proto3" json:"enabled,omitempty"`
+	Extra                map[string]string `protobuf:"bytes,6,rep,name=extra,proto3" json:"extra,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
 	XXX_unrecognized     []byte            `json:"-"`
 	XXX_sizecache        int32             `json:"-"`
@@ -34,16 +36,17 @@ func (m *User) Reset()         { *m = User{} }
 func (m *User) String() string { return proto.CompactTextString(m) }
 func (*User) ProtoMessage()    {}
 func (*User) Descriptor() ([]byte, []int) {
-	return fileDescriptor_user_c59914cd7a8c2fa5, []int{0}
+	return fileDescriptor_116e343673f7ffaf, []int{0}
 }
+
 func (m *User) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_User.Unmarshal(m, b)
 }
 func (m *User) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_User.Marshal(b, m, deterministic)
 }
-func (dst *User) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_User.Merge(dst, src)
+func (m *User) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_User.Merge(m, src)
 }
 func (m *User) XXX_Size() int {
 	return xxx_messageInfo_User.Size(m)
@@ -101,9 +104,9 @@ func init() {
 	proto.RegisterMapType((map[string]string)(nil), "ai.metathings.service.identityd.User.ExtraEntry")
 }
 
-func init() { proto.RegisterFile("user.proto", fileDescriptor_user_c59914cd7a8c2fa5) }
+func init() { proto.RegisterFile("user.proto", fileDescriptor_116e343673f7ffaf) }
 
-var fileDescriptor_user_c59914cd7a8c2fa5 = []byte{
+var fileDescriptor_116e343673f7ffaf = []byte{
 	// 258 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x50, 0x4d, 0x4b, 0xf3, 0x40,
 	0x10, 0x26, 0x5f, 0x7d, 0xdb, 0x79, 0x41, 0xca, 0xe8, 0x61, 0xd1, 0x83, 0xc1, 0x53, 0x0e, 0xb2,

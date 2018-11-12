@@ -3,11 +3,13 @@
 
 package identityd
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import wrappers "github.com/golang/protobuf/ptypes/wrappers"
-import _ "github.com/mwitkow/go-proto-validators"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	wrappers "github.com/golang/protobuf/ptypes/wrappers"
+	_ "github.com/mwitkow/go-proto-validators"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -21,8 +23,8 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type ListRolesRequest struct {
-	Name                 *wrappers.StringValue `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
-	DomainId             *wrappers.StringValue `protobuf:"bytes,2,opt,name=domain_id,json=domainId" json:"domain_id,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	DomainId             *wrappers.StringValue `protobuf:"bytes,2,opt,name=domain_id,json=domainId,proto3" json:"domain_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -32,16 +34,17 @@ func (m *ListRolesRequest) Reset()         { *m = ListRolesRequest{} }
 func (m *ListRolesRequest) String() string { return proto.CompactTextString(m) }
 func (*ListRolesRequest) ProtoMessage()    {}
 func (*ListRolesRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_list_roles_447ec899e57cbfba, []int{0}
+	return fileDescriptor_39632ff8fb9178eb, []int{0}
 }
+
 func (m *ListRolesRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ListRolesRequest.Unmarshal(m, b)
 }
 func (m *ListRolesRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_ListRolesRequest.Marshal(b, m, deterministic)
 }
-func (dst *ListRolesRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ListRolesRequest.Merge(dst, src)
+func (m *ListRolesRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ListRolesRequest.Merge(m, src)
 }
 func (m *ListRolesRequest) XXX_Size() int {
 	return xxx_messageInfo_ListRolesRequest.Size(m)
@@ -67,7 +70,7 @@ func (m *ListRolesRequest) GetDomainId() *wrappers.StringValue {
 }
 
 type ListRolesResponse struct {
-	Roles                []*Role  `protobuf:"bytes,1,rep,name=roles" json:"roles,omitempty"`
+	Roles                []*Role  `protobuf:"bytes,1,rep,name=roles,proto3" json:"roles,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -77,16 +80,17 @@ func (m *ListRolesResponse) Reset()         { *m = ListRolesResponse{} }
 func (m *ListRolesResponse) String() string { return proto.CompactTextString(m) }
 func (*ListRolesResponse) ProtoMessage()    {}
 func (*ListRolesResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_list_roles_447ec899e57cbfba, []int{1}
+	return fileDescriptor_39632ff8fb9178eb, []int{1}
 }
+
 func (m *ListRolesResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ListRolesResponse.Unmarshal(m, b)
 }
 func (m *ListRolesResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_ListRolesResponse.Marshal(b, m, deterministic)
 }
-func (dst *ListRolesResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ListRolesResponse.Merge(dst, src)
+func (m *ListRolesResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ListRolesResponse.Merge(m, src)
 }
 func (m *ListRolesResponse) XXX_Size() int {
 	return xxx_messageInfo_ListRolesResponse.Size(m)
@@ -109,9 +113,9 @@ func init() {
 	proto.RegisterType((*ListRolesResponse)(nil), "ai.metathings.service.identityd.ListRolesResponse")
 }
 
-func init() { proto.RegisterFile("list_roles.proto", fileDescriptor_list_roles_447ec899e57cbfba) }
+func init() { proto.RegisterFile("list_roles.proto", fileDescriptor_39632ff8fb9178eb) }
 
-var fileDescriptor_list_roles_447ec899e57cbfba = []byte{
+var fileDescriptor_39632ff8fb9178eb = []byte{
 	// 253 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x90, 0x4f, 0x4b, 0xc3, 0x40,
 	0x10, 0xc5, 0x89, 0xff, 0xd0, 0xed, 0xa5, 0xe6, 0x14, 0x8a, 0x68, 0x29, 0x08, 0xbd, 0x74, 0x22,

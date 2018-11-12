@@ -3,12 +3,14 @@
 
 package servo
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import timestamp "github.com/golang/protobuf/ptypes/timestamp"
-import wrappers "github.com/golang/protobuf/ptypes/wrappers"
-import _ "github.com/mwitkow/go-proto-validators"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	timestamp "github.com/golang/protobuf/ptypes/timestamp"
+	wrappers "github.com/golang/protobuf/ptypes/wrappers"
+	_ "github.com/mwitkow/go-proto-validators"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -22,7 +24,7 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type StreamPingRequest struct {
-	Timestamp            *timestamp.Timestamp `protobuf:"bytes,1,opt,name=timestamp" json:"timestamp,omitempty"`
+	Timestamp            *timestamp.Timestamp `protobuf:"bytes,1,opt,name=timestamp,proto3" json:"timestamp,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}             `json:"-"`
 	XXX_unrecognized     []byte               `json:"-"`
 	XXX_sizecache        int32                `json:"-"`
@@ -32,16 +34,17 @@ func (m *StreamPingRequest) Reset()         { *m = StreamPingRequest{} }
 func (m *StreamPingRequest) String() string { return proto.CompactTextString(m) }
 func (*StreamPingRequest) ProtoMessage()    {}
 func (*StreamPingRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_stream_500dc09ae8cce090, []int{0}
+	return fileDescriptor_bb17ef3f514bfe54, []int{0}
 }
+
 func (m *StreamPingRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_StreamPingRequest.Unmarshal(m, b)
 }
 func (m *StreamPingRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_StreamPingRequest.Marshal(b, m, deterministic)
 }
-func (dst *StreamPingRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_StreamPingRequest.Merge(dst, src)
+func (m *StreamPingRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StreamPingRequest.Merge(m, src)
 }
 func (m *StreamPingRequest) XXX_Size() int {
 	return xxx_messageInfo_StreamPingRequest.Size(m)
@@ -60,7 +63,7 @@ func (m *StreamPingRequest) GetTimestamp() *timestamp.Timestamp {
 }
 
 type StreamPingResponse struct {
-	Timestamp            *timestamp.Timestamp `protobuf:"bytes,1,opt,name=timestamp" json:"timestamp,omitempty"`
+	Timestamp            *timestamp.Timestamp `protobuf:"bytes,1,opt,name=timestamp,proto3" json:"timestamp,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}             `json:"-"`
 	XXX_unrecognized     []byte               `json:"-"`
 	XXX_sizecache        int32                `json:"-"`
@@ -70,16 +73,17 @@ func (m *StreamPingResponse) Reset()         { *m = StreamPingResponse{} }
 func (m *StreamPingResponse) String() string { return proto.CompactTextString(m) }
 func (*StreamPingResponse) ProtoMessage()    {}
 func (*StreamPingResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_stream_500dc09ae8cce090, []int{1}
+	return fileDescriptor_bb17ef3f514bfe54, []int{1}
 }
+
 func (m *StreamPingResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_StreamPingResponse.Unmarshal(m, b)
 }
 func (m *StreamPingResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_StreamPingResponse.Marshal(b, m, deterministic)
 }
-func (dst *StreamPingResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_StreamPingResponse.Merge(dst, src)
+func (m *StreamPingResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StreamPingResponse.Merge(m, src)
 }
 func (m *StreamPingResponse) XXX_Size() int {
 	return xxx_messageInfo_StreamPingResponse.Size(m)
@@ -98,8 +102,8 @@ func (m *StreamPingResponse) GetTimestamp() *timestamp.Timestamp {
 }
 
 type StreamSetStateRequest struct {
-	Name                 *wrappers.StringValue `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
-	State                ServoState            `protobuf:"varint,2,opt,name=state,enum=ai.metathings.service.servo.ServoState" json:"state,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	State                ServoState            `protobuf:"varint,2,opt,name=state,proto3,enum=ai.metathings.service.servo.ServoState" json:"state,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -109,16 +113,17 @@ func (m *StreamSetStateRequest) Reset()         { *m = StreamSetStateRequest{} }
 func (m *StreamSetStateRequest) String() string { return proto.CompactTextString(m) }
 func (*StreamSetStateRequest) ProtoMessage()    {}
 func (*StreamSetStateRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_stream_500dc09ae8cce090, []int{2}
+	return fileDescriptor_bb17ef3f514bfe54, []int{2}
 }
+
 func (m *StreamSetStateRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_StreamSetStateRequest.Unmarshal(m, b)
 }
 func (m *StreamSetStateRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_StreamSetStateRequest.Marshal(b, m, deterministic)
 }
-func (dst *StreamSetStateRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_StreamSetStateRequest.Merge(dst, src)
+func (m *StreamSetStateRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StreamSetStateRequest.Merge(m, src)
 }
 func (m *StreamSetStateRequest) XXX_Size() int {
 	return xxx_messageInfo_StreamSetStateRequest.Size(m)
@@ -144,8 +149,8 @@ func (m *StreamSetStateRequest) GetState() ServoState {
 }
 
 type StreamSetAngleRequest struct {
-	Name                 *wrappers.StringValue `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
-	Angle                *wrappers.FloatValue  `protobuf:"bytes,2,opt,name=angle" json:"angle,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Angle                *wrappers.FloatValue  `protobuf:"bytes,2,opt,name=angle,proto3" json:"angle,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -155,16 +160,17 @@ func (m *StreamSetAngleRequest) Reset()         { *m = StreamSetAngleRequest{} }
 func (m *StreamSetAngleRequest) String() string { return proto.CompactTextString(m) }
 func (*StreamSetAngleRequest) ProtoMessage()    {}
 func (*StreamSetAngleRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_stream_500dc09ae8cce090, []int{3}
+	return fileDescriptor_bb17ef3f514bfe54, []int{3}
 }
+
 func (m *StreamSetAngleRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_StreamSetAngleRequest.Unmarshal(m, b)
 }
 func (m *StreamSetAngleRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_StreamSetAngleRequest.Marshal(b, m, deterministic)
 }
-func (dst *StreamSetAngleRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_StreamSetAngleRequest.Merge(dst, src)
+func (m *StreamSetAngleRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StreamSetAngleRequest.Merge(m, src)
 }
 func (m *StreamSetAngleRequest) XXX_Size() int {
 	return xxx_messageInfo_StreamSetAngleRequest.Size(m)
@@ -190,7 +196,7 @@ func (m *StreamSetAngleRequest) GetAngle() *wrappers.FloatValue {
 }
 
 type StreamRequest struct {
-	Session *wrappers.UInt64Value `protobuf:"bytes,1,opt,name=session" json:"session,omitempty"`
+	Session *wrappers.UInt64Value `protobuf:"bytes,1,opt,name=session,proto3" json:"session,omitempty"`
 	// Types that are valid to be assigned to Payload:
 	//	*StreamRequest_Ping
 	//	*StreamRequest_SetState
@@ -205,16 +211,17 @@ func (m *StreamRequest) Reset()         { *m = StreamRequest{} }
 func (m *StreamRequest) String() string { return proto.CompactTextString(m) }
 func (*StreamRequest) ProtoMessage()    {}
 func (*StreamRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_stream_500dc09ae8cce090, []int{4}
+	return fileDescriptor_bb17ef3f514bfe54, []int{4}
 }
+
 func (m *StreamRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_StreamRequest.Unmarshal(m, b)
 }
 func (m *StreamRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_StreamRequest.Marshal(b, m, deterministic)
 }
-func (dst *StreamRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_StreamRequest.Merge(dst, src)
+func (m *StreamRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StreamRequest.Merge(m, src)
 }
 func (m *StreamRequest) XXX_Size() int {
 	return xxx_messageInfo_StreamRequest.Size(m)
@@ -225,34 +232,38 @@ func (m *StreamRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_StreamRequest proto.InternalMessageInfo
 
+func (m *StreamRequest) GetSession() *wrappers.UInt64Value {
+	if m != nil {
+		return m.Session
+	}
+	return nil
+}
+
 type isStreamRequest_Payload interface {
 	isStreamRequest_Payload()
 }
 
 type StreamRequest_Ping struct {
-	Ping *StreamPingRequest `protobuf:"bytes,2,opt,name=ping,oneof"`
-}
-type StreamRequest_SetState struct {
-	SetState *StreamSetStateRequest `protobuf:"bytes,3,opt,name=set_state,json=setState,oneof"`
-}
-type StreamRequest_SetAngle struct {
-	SetAngle *StreamSetAngleRequest `protobuf:"bytes,4,opt,name=set_angle,json=setAngle,oneof"`
+	Ping *StreamPingRequest `protobuf:"bytes,2,opt,name=ping,proto3,oneof"`
 }
 
-func (*StreamRequest_Ping) isStreamRequest_Payload()     {}
+type StreamRequest_SetState struct {
+	SetState *StreamSetStateRequest `protobuf:"bytes,3,opt,name=set_state,json=setState,proto3,oneof"`
+}
+
+type StreamRequest_SetAngle struct {
+	SetAngle *StreamSetAngleRequest `protobuf:"bytes,4,opt,name=set_angle,json=setAngle,proto3,oneof"`
+}
+
+func (*StreamRequest_Ping) isStreamRequest_Payload() {}
+
 func (*StreamRequest_SetState) isStreamRequest_Payload() {}
+
 func (*StreamRequest_SetAngle) isStreamRequest_Payload() {}
 
 func (m *StreamRequest) GetPayload() isStreamRequest_Payload {
 	if m != nil {
 		return m.Payload
-	}
-	return nil
-}
-
-func (m *StreamRequest) GetSession() *wrappers.UInt64Value {
-	if m != nil {
-		return m.Session
 	}
 	return nil
 }
@@ -372,7 +383,7 @@ func _StreamRequest_OneofSizer(msg proto.Message) (n int) {
 }
 
 type StreamRequests struct {
-	Requests             []*StreamRequest `protobuf:"bytes,1,rep,name=requests" json:"requests,omitempty"`
+	Requests             []*StreamRequest `protobuf:"bytes,1,rep,name=requests,proto3" json:"requests,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}         `json:"-"`
 	XXX_unrecognized     []byte           `json:"-"`
 	XXX_sizecache        int32            `json:"-"`
@@ -382,16 +393,17 @@ func (m *StreamRequests) Reset()         { *m = StreamRequests{} }
 func (m *StreamRequests) String() string { return proto.CompactTextString(m) }
 func (*StreamRequests) ProtoMessage()    {}
 func (*StreamRequests) Descriptor() ([]byte, []int) {
-	return fileDescriptor_stream_500dc09ae8cce090, []int{5}
+	return fileDescriptor_bb17ef3f514bfe54, []int{5}
 }
+
 func (m *StreamRequests) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_StreamRequests.Unmarshal(m, b)
 }
 func (m *StreamRequests) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_StreamRequests.Marshal(b, m, deterministic)
 }
-func (dst *StreamRequests) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_StreamRequests.Merge(dst, src)
+func (m *StreamRequests) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StreamRequests.Merge(m, src)
 }
 func (m *StreamRequests) XXX_Size() int {
 	return xxx_messageInfo_StreamRequests.Size(m)
@@ -410,7 +422,7 @@ func (m *StreamRequests) GetRequests() []*StreamRequest {
 }
 
 type StreamResponse struct {
-	Session uint64 `protobuf:"varint,1,opt,name=session" json:"session,omitempty"`
+	Session uint64 `protobuf:"varint,1,opt,name=session,proto3" json:"session,omitempty"`
 	// Types that are valid to be assigned to Payload:
 	//	*StreamResponse_Ping
 	Payload              isStreamResponse_Payload `protobuf_oneof:"payload"`
@@ -423,16 +435,17 @@ func (m *StreamResponse) Reset()         { *m = StreamResponse{} }
 func (m *StreamResponse) String() string { return proto.CompactTextString(m) }
 func (*StreamResponse) ProtoMessage()    {}
 func (*StreamResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_stream_500dc09ae8cce090, []int{6}
+	return fileDescriptor_bb17ef3f514bfe54, []int{6}
 }
+
 func (m *StreamResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_StreamResponse.Unmarshal(m, b)
 }
 func (m *StreamResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_StreamResponse.Marshal(b, m, deterministic)
 }
-func (dst *StreamResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_StreamResponse.Merge(dst, src)
+func (m *StreamResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StreamResponse.Merge(m, src)
 }
 func (m *StreamResponse) XXX_Size() int {
 	return xxx_messageInfo_StreamResponse.Size(m)
@@ -443,12 +456,19 @@ func (m *StreamResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_StreamResponse proto.InternalMessageInfo
 
+func (m *StreamResponse) GetSession() uint64 {
+	if m != nil {
+		return m.Session
+	}
+	return 0
+}
+
 type isStreamResponse_Payload interface {
 	isStreamResponse_Payload()
 }
 
 type StreamResponse_Ping struct {
-	Ping *StreamPingResponse `protobuf:"bytes,2,opt,name=ping,oneof"`
+	Ping *StreamPingResponse `protobuf:"bytes,2,opt,name=ping,proto3,oneof"`
 }
 
 func (*StreamResponse_Ping) isStreamResponse_Payload() {}
@@ -458,13 +478,6 @@ func (m *StreamResponse) GetPayload() isStreamResponse_Payload {
 		return m.Payload
 	}
 	return nil
-}
-
-func (m *StreamResponse) GetSession() uint64 {
-	if m != nil {
-		return m.Session
-	}
-	return 0
 }
 
 func (m *StreamResponse) GetPing() *StreamPingResponse {
@@ -539,9 +552,9 @@ func init() {
 	proto.RegisterType((*StreamResponse)(nil), "ai.metathings.service.servo.StreamResponse")
 }
 
-func init() { proto.RegisterFile("stream.proto", fileDescriptor_stream_500dc09ae8cce090) }
+func init() { proto.RegisterFile("stream.proto", fileDescriptor_bb17ef3f514bfe54) }
 
-var fileDescriptor_stream_500dc09ae8cce090 = []byte{
+var fileDescriptor_bb17ef3f514bfe54 = []byte{
 	// 476 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x93, 0xdf, 0x6a, 0xd4, 0x40,
 	0x14, 0xc6, 0x9b, 0xed, 0xf6, 0xcf, 0xce, 0x6a, 0xc1, 0x80, 0xb0, 0x6c, 0xc5, 0x2e, 0xb9, 0x71,

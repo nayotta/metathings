@@ -3,11 +3,13 @@
 
 package identityd
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import wrappers "github.com/golang/protobuf/ptypes/wrappers"
-import _ "github.com/mwitkow/go-proto-validators"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	wrappers "github.com/golang/protobuf/ptypes/wrappers"
+	_ "github.com/mwitkow/go-proto-validators"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -21,8 +23,8 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type ListDomainsRequest struct {
-	Name                 *wrappers.StringValue `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
-	Enabled              *wrappers.BoolValue   `protobuf:"bytes,2,opt,name=enabled" json:"enabled,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Enabled              *wrappers.BoolValue   `protobuf:"bytes,2,opt,name=enabled,proto3" json:"enabled,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -32,16 +34,17 @@ func (m *ListDomainsRequest) Reset()         { *m = ListDomainsRequest{} }
 func (m *ListDomainsRequest) String() string { return proto.CompactTextString(m) }
 func (*ListDomainsRequest) ProtoMessage()    {}
 func (*ListDomainsRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_list_domains_9e3a7ab1bf655566, []int{0}
+	return fileDescriptor_bfecf37b0212c1f1, []int{0}
 }
+
 func (m *ListDomainsRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ListDomainsRequest.Unmarshal(m, b)
 }
 func (m *ListDomainsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_ListDomainsRequest.Marshal(b, m, deterministic)
 }
-func (dst *ListDomainsRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ListDomainsRequest.Merge(dst, src)
+func (m *ListDomainsRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ListDomainsRequest.Merge(m, src)
 }
 func (m *ListDomainsRequest) XXX_Size() int {
 	return xxx_messageInfo_ListDomainsRequest.Size(m)
@@ -67,7 +70,7 @@ func (m *ListDomainsRequest) GetEnabled() *wrappers.BoolValue {
 }
 
 type ListDomainsResponse struct {
-	Domains              []*Domain `protobuf:"bytes,1,rep,name=domains" json:"domains,omitempty"`
+	Domains              []*Domain `protobuf:"bytes,1,rep,name=domains,proto3" json:"domains,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}  `json:"-"`
 	XXX_unrecognized     []byte    `json:"-"`
 	XXX_sizecache        int32     `json:"-"`
@@ -77,16 +80,17 @@ func (m *ListDomainsResponse) Reset()         { *m = ListDomainsResponse{} }
 func (m *ListDomainsResponse) String() string { return proto.CompactTextString(m) }
 func (*ListDomainsResponse) ProtoMessage()    {}
 func (*ListDomainsResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_list_domains_9e3a7ab1bf655566, []int{1}
+	return fileDescriptor_bfecf37b0212c1f1, []int{1}
 }
+
 func (m *ListDomainsResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ListDomainsResponse.Unmarshal(m, b)
 }
 func (m *ListDomainsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_ListDomainsResponse.Marshal(b, m, deterministic)
 }
-func (dst *ListDomainsResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ListDomainsResponse.Merge(dst, src)
+func (m *ListDomainsResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ListDomainsResponse.Merge(m, src)
 }
 func (m *ListDomainsResponse) XXX_Size() int {
 	return xxx_messageInfo_ListDomainsResponse.Size(m)
@@ -109,9 +113,9 @@ func init() {
 	proto.RegisterType((*ListDomainsResponse)(nil), "ai.metathings.service.identityd.ListDomainsResponse")
 }
 
-func init() { proto.RegisterFile("list_domains.proto", fileDescriptor_list_domains_9e3a7ab1bf655566) }
+func init() { proto.RegisterFile("list_domains.proto", fileDescriptor_bfecf37b0212c1f1) }
 
-var fileDescriptor_list_domains_9e3a7ab1bf655566 = []byte{
+var fileDescriptor_bfecf37b0212c1f1 = []byte{
 	// 255 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x90, 0x41, 0x4b, 0xc4, 0x30,
 	0x10, 0x85, 0xa9, 0x8a, 0x0b, 0x59, 0x4f, 0xf1, 0x52, 0x8a, 0xe8, 0xb2, 0x17, 0xf7, 0xb2, 0xa9,

@@ -3,12 +3,14 @@
 
 package sensord
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import timestamp "github.com/golang/protobuf/ptypes/timestamp"
-import _ "github.com/golang/protobuf/ptypes/wrappers"
-import sensor "github.com/nayotta/metathings/pkg/proto/sensor"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	timestamp "github.com/golang/protobuf/ptypes/timestamp"
+	_ "github.com/golang/protobuf/ptypes/wrappers"
+	sensor "github.com/nayotta/metathings/pkg/proto/sensor"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -22,15 +24,15 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type Sensor struct {
-	Id                      string                         `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	Name                    string                         `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
-	ApplicationCredentialId string                         `protobuf:"bytes,3,opt,name=application_credential_id,json=applicationCredentialId" json:"application_credential_id,omitempty"`
-	CoreId                  string                         `protobuf:"bytes,4,opt,name=core_id,json=coreId" json:"core_id,omitempty"`
-	EntityName              string                         `protobuf:"bytes,5,opt,name=entity_name,json=entityName" json:"entity_name,omitempty"`
-	OwnerId                 string                         `protobuf:"bytes,6,opt,name=owner_id,json=ownerId" json:"owner_id,omitempty"`
-	Tags                    []string                       `protobuf:"bytes,7,rep,name=tags" json:"tags,omitempty"`
-	State                   sensor.SensorState             `protobuf:"varint,8,opt,name=state,enum=ai.metathings.service.sensor.SensorState" json:"state,omitempty"`
-	Config                  map[string]*sensor.SensorValue `protobuf:"bytes,9,rep,name=config" json:"config,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	Id                      string                         `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name                    string                         `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	ApplicationCredentialId string                         `protobuf:"bytes,3,opt,name=application_credential_id,json=applicationCredentialId,proto3" json:"application_credential_id,omitempty"`
+	CoreId                  string                         `protobuf:"bytes,4,opt,name=core_id,json=coreId,proto3" json:"core_id,omitempty"`
+	EntityName              string                         `protobuf:"bytes,5,opt,name=entity_name,json=entityName,proto3" json:"entity_name,omitempty"`
+	OwnerId                 string                         `protobuf:"bytes,6,opt,name=owner_id,json=ownerId,proto3" json:"owner_id,omitempty"`
+	Tags                    []string                       `protobuf:"bytes,7,rep,name=tags,proto3" json:"tags,omitempty"`
+	State                   sensor.SensorState             `protobuf:"varint,8,opt,name=state,proto3,enum=ai.metathings.service.sensor.SensorState" json:"state,omitempty"`
+	Config                  map[string]*sensor.SensorValue `protobuf:"bytes,9,rep,name=config,proto3" json:"config,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 	XXX_NoUnkeyedLiteral    struct{}                       `json:"-"`
 	XXX_unrecognized        []byte                         `json:"-"`
 	XXX_sizecache           int32                          `json:"-"`
@@ -40,16 +42,17 @@ func (m *Sensor) Reset()         { *m = Sensor{} }
 func (m *Sensor) String() string { return proto.CompactTextString(m) }
 func (*Sensor) ProtoMessage()    {}
 func (*Sensor) Descriptor() ([]byte, []int) {
-	return fileDescriptor_sensor_2c0de7fd31b95423, []int{0}
+	return fileDescriptor_c749425f02243e2d, []int{0}
 }
+
 func (m *Sensor) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Sensor.Unmarshal(m, b)
 }
 func (m *Sensor) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Sensor.Marshal(b, m, deterministic)
 }
-func (dst *Sensor) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Sensor.Merge(dst, src)
+func (m *Sensor) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Sensor.Merge(m, src)
 }
 func (m *Sensor) XXX_Size() int {
 	return xxx_messageInfo_Sensor.Size(m)
@@ -124,10 +127,10 @@ func (m *Sensor) GetConfig() map[string]*sensor.SensorValue {
 }
 
 type SensorData struct {
-	SensorId             string                         `protobuf:"bytes,1,opt,name=sensor_id,json=sensorId" json:"sensor_id,omitempty"`
-	CreatedAt            *timestamp.Timestamp           `protobuf:"bytes,2,opt,name=created_at,json=createdAt" json:"created_at,omitempty"`
-	ArrivedAt            *timestamp.Timestamp           `protobuf:"bytes,3,opt,name=arrived_at,json=arrivedAt" json:"arrived_at,omitempty"`
-	Data                 map[string]*sensor.SensorValue `protobuf:"bytes,4,rep,name=data" json:"data,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	SensorId             string                         `protobuf:"bytes,1,opt,name=sensor_id,json=sensorId,proto3" json:"sensor_id,omitempty"`
+	CreatedAt            *timestamp.Timestamp           `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	ArrivedAt            *timestamp.Timestamp           `protobuf:"bytes,3,opt,name=arrived_at,json=arrivedAt,proto3" json:"arrived_at,omitempty"`
+	Data                 map[string]*sensor.SensorValue `protobuf:"bytes,4,rep,name=data,proto3" json:"data,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 	XXX_NoUnkeyedLiteral struct{}                       `json:"-"`
 	XXX_unrecognized     []byte                         `json:"-"`
 	XXX_sizecache        int32                          `json:"-"`
@@ -137,16 +140,17 @@ func (m *SensorData) Reset()         { *m = SensorData{} }
 func (m *SensorData) String() string { return proto.CompactTextString(m) }
 func (*SensorData) ProtoMessage()    {}
 func (*SensorData) Descriptor() ([]byte, []int) {
-	return fileDescriptor_sensor_2c0de7fd31b95423, []int{1}
+	return fileDescriptor_c749425f02243e2d, []int{1}
 }
+
 func (m *SensorData) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_SensorData.Unmarshal(m, b)
 }
 func (m *SensorData) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_SensorData.Marshal(b, m, deterministic)
 }
-func (dst *SensorData) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_SensorData.Merge(dst, src)
+func (m *SensorData) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_SensorData.Merge(m, src)
 }
 func (m *SensorData) XXX_Size() int {
 	return xxx_messageInfo_SensorData.Size(m)
@@ -192,9 +196,9 @@ func init() {
 	proto.RegisterMapType((map[string]*sensor.SensorValue)(nil), "ai.metathings.service.sensord.SensorData.DataEntry")
 }
 
-func init() { proto.RegisterFile("sensor.proto", fileDescriptor_sensor_2c0de7fd31b95423) }
+func init() { proto.RegisterFile("sensor.proto", fileDescriptor_c749425f02243e2d) }
 
-var fileDescriptor_sensor_2c0de7fd31b95423 = []byte{
+var fileDescriptor_c749425f02243e2d = []byte{
 	// 460 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xb4, 0x52, 0x4d, 0x6f, 0xd3, 0x40,
 	0x10, 0x55, 0xec, 0xd4, 0x89, 0x27, 0xa8, 0x42, 0x7b, 0xa9, 0x6b, 0x04, 0x8d, 0x7a, 0x0a, 0x97,

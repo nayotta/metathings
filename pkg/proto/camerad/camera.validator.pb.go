@@ -3,7 +3,7 @@
 
 package camerad
 
-import go_proto_validators "github.com/mwitkow/go-proto-validators"
+import github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
@@ -17,36 +17,36 @@ var _ = math.Inf
 
 func (this *OpConfig) Validate() error {
 	if this.Device != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Device); err != nil {
-			return go_proto_validators.FieldError("Device", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Device); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Device", err)
 		}
 	}
 	if this.Width != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Width); err != nil {
-			return go_proto_validators.FieldError("Width", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Width); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Width", err)
 		}
 	}
 	if this.Height != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Height); err != nil {
-			return go_proto_validators.FieldError("Height", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Height); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Height", err)
 		}
 	}
 	if this.Bitrate != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Bitrate); err != nil {
-			return go_proto_validators.FieldError("Bitrate", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Bitrate); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Bitrate", err)
 		}
 	}
 	if this.Framerate != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Framerate); err != nil {
-			return go_proto_validators.FieldError("Framerate", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Framerate); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Framerate", err)
 		}
 	}
 	return nil
 }
 func (this *Camera) Validate() error {
 	if this.Config != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Config); err != nil {
-			return go_proto_validators.FieldError("Config", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Config); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Config", err)
 		}
 	}
 	return nil

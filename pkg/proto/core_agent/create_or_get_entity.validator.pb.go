@@ -4,7 +4,7 @@
 package core_agent
 
 import fmt "fmt"
-import go_proto_validators "github.com/mwitkow/go-proto-validators"
+import github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
 import proto "github.com/golang/protobuf/proto"
 import math "math"
 import _ "github.com/golang/protobuf/ptypes/wrappers"
@@ -17,32 +17,32 @@ var _ = math.Inf
 
 func (this *CreateOrGetEntityRequest) Validate() error {
 	if this.Name != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Name); err != nil {
-			return go_proto_validators.FieldError("Name", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Name); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Name", err)
 		}
 	}
 	if nil == this.ServiceName {
-		return go_proto_validators.FieldError("ServiceName", fmt.Errorf("message must exist"))
+		return github_com_mwitkow_go_proto_validators.FieldError("ServiceName", fmt.Errorf("message must exist"))
 	}
 	if this.ServiceName != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.ServiceName); err != nil {
-			return go_proto_validators.FieldError("ServiceName", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.ServiceName); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("ServiceName", err)
 		}
 	}
 	if nil == this.Endpoint {
-		return go_proto_validators.FieldError("Endpoint", fmt.Errorf("message must exist"))
+		return github_com_mwitkow_go_proto_validators.FieldError("Endpoint", fmt.Errorf("message must exist"))
 	}
 	if this.Endpoint != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Endpoint); err != nil {
-			return go_proto_validators.FieldError("Endpoint", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Endpoint); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Endpoint", err)
 		}
 	}
 	return nil
 }
 func (this *CreateOrGetEntityResponse) Validate() error {
 	if this.Entity != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Entity); err != nil {
-			return go_proto_validators.FieldError("Entity", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Entity); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Entity", err)
 		}
 	}
 	return nil

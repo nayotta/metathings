@@ -3,11 +3,13 @@
 
 package identityd
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import wrappers "github.com/golang/protobuf/ptypes/wrappers"
-import _ "github.com/mwitkow/go-proto-validators"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	wrappers "github.com/golang/protobuf/ptypes/wrappers"
+	_ "github.com/mwitkow/go-proto-validators"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -21,7 +23,7 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type ListRegionsRequest struct {
-	ParentRegionId       *wrappers.StringValue `protobuf:"bytes,1,opt,name=parent_region_id,json=parentRegionId" json:"parent_region_id,omitempty"`
+	ParentRegionId       *wrappers.StringValue `protobuf:"bytes,1,opt,name=parent_region_id,json=parentRegionId,proto3" json:"parent_region_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -31,16 +33,17 @@ func (m *ListRegionsRequest) Reset()         { *m = ListRegionsRequest{} }
 func (m *ListRegionsRequest) String() string { return proto.CompactTextString(m) }
 func (*ListRegionsRequest) ProtoMessage()    {}
 func (*ListRegionsRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_list_regions_d7ddadf6727d541d, []int{0}
+	return fileDescriptor_2fcfdc2678ef03cc, []int{0}
 }
+
 func (m *ListRegionsRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ListRegionsRequest.Unmarshal(m, b)
 }
 func (m *ListRegionsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_ListRegionsRequest.Marshal(b, m, deterministic)
 }
-func (dst *ListRegionsRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ListRegionsRequest.Merge(dst, src)
+func (m *ListRegionsRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ListRegionsRequest.Merge(m, src)
 }
 func (m *ListRegionsRequest) XXX_Size() int {
 	return xxx_messageInfo_ListRegionsRequest.Size(m)
@@ -59,7 +62,7 @@ func (m *ListRegionsRequest) GetParentRegionId() *wrappers.StringValue {
 }
 
 type ListRegionsResponse struct {
-	Regions              []*Region `protobuf:"bytes,1,rep,name=regions" json:"regions,omitempty"`
+	Regions              []*Region `protobuf:"bytes,1,rep,name=regions,proto3" json:"regions,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}  `json:"-"`
 	XXX_unrecognized     []byte    `json:"-"`
 	XXX_sizecache        int32     `json:"-"`
@@ -69,16 +72,17 @@ func (m *ListRegionsResponse) Reset()         { *m = ListRegionsResponse{} }
 func (m *ListRegionsResponse) String() string { return proto.CompactTextString(m) }
 func (*ListRegionsResponse) ProtoMessage()    {}
 func (*ListRegionsResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_list_regions_d7ddadf6727d541d, []int{1}
+	return fileDescriptor_2fcfdc2678ef03cc, []int{1}
 }
+
 func (m *ListRegionsResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ListRegionsResponse.Unmarshal(m, b)
 }
 func (m *ListRegionsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_ListRegionsResponse.Marshal(b, m, deterministic)
 }
-func (dst *ListRegionsResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ListRegionsResponse.Merge(dst, src)
+func (m *ListRegionsResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ListRegionsResponse.Merge(m, src)
 }
 func (m *ListRegionsResponse) XXX_Size() int {
 	return xxx_messageInfo_ListRegionsResponse.Size(m)
@@ -101,9 +105,9 @@ func init() {
 	proto.RegisterType((*ListRegionsResponse)(nil), "ai.metathings.service.identityd.ListRegionsResponse")
 }
 
-func init() { proto.RegisterFile("list_regions.proto", fileDescriptor_list_regions_d7ddadf6727d541d) }
+func init() { proto.RegisterFile("list_regions.proto", fileDescriptor_2fcfdc2678ef03cc) }
 
-var fileDescriptor_list_regions_d7ddadf6727d541d = []byte{
+var fileDescriptor_2fcfdc2678ef03cc = []byte{
 	// 245 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x90, 0x41, 0x4b, 0x33, 0x31,
 	0x10, 0x86, 0x59, 0x3e, 0xf8, 0x84, 0xad, 0x88, 0xc4, 0x4b, 0x29, 0xa2, 0xa5, 0x17, 0x7b, 0xe9,

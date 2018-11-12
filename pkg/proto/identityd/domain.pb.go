@@ -3,9 +3,11 @@
 
 package identityd
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -19,10 +21,10 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type Domain struct {
-	Id                   string   `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	Name                 string   `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
-	Description          string   `protobuf:"bytes,3,opt,name=description" json:"description,omitempty"`
-	Enabled              bool     `protobuf:"varint,4,opt,name=enabled" json:"enabled,omitempty"`
+	Id                   string   `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name                 string   `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Description          string   `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
+	Enabled              bool     `protobuf:"varint,4,opt,name=enabled,proto3" json:"enabled,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -32,16 +34,17 @@ func (m *Domain) Reset()         { *m = Domain{} }
 func (m *Domain) String() string { return proto.CompactTextString(m) }
 func (*Domain) ProtoMessage()    {}
 func (*Domain) Descriptor() ([]byte, []int) {
-	return fileDescriptor_domain_1c148c38e1a19247, []int{0}
+	return fileDescriptor_73e6234e76dbdb84, []int{0}
 }
+
 func (m *Domain) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Domain.Unmarshal(m, b)
 }
 func (m *Domain) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Domain.Marshal(b, m, deterministic)
 }
-func (dst *Domain) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Domain.Merge(dst, src)
+func (m *Domain) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Domain.Merge(m, src)
 }
 func (m *Domain) XXX_Size() int {
 	return xxx_messageInfo_Domain.Size(m)
@@ -84,9 +87,9 @@ func init() {
 	proto.RegisterType((*Domain)(nil), "ai.metathings.service.identityd.Domain")
 }
 
-func init() { proto.RegisterFile("domain.proto", fileDescriptor_domain_1c148c38e1a19247) }
+func init() { proto.RegisterFile("domain.proto", fileDescriptor_73e6234e76dbdb84) }
 
-var fileDescriptor_domain_1c148c38e1a19247 = []byte{
+var fileDescriptor_73e6234e76dbdb84 = []byte{
 	// 151 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x4c, 0x8e, 0x41, 0x0a, 0xc2, 0x30,
 	0x10, 0x45, 0x69, 0x2d, 0x55, 0x47, 0x71, 0x31, 0xab, 0xec, 0x2c, 0xae, 0xba, 0xca, 0xc6, 0x2b,

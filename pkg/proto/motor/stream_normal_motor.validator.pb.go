@@ -3,12 +3,12 @@
 
 package motor
 
-import go_proto_validators "github.com/mwitkow/go-proto-validators"
+import github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import _ "github.com/golang/protobuf/ptypes/wrappers"
 import _ "github.com/golang/protobuf/ptypes/timestamp"
+import _ "github.com/golang/protobuf/ptypes/wrappers"
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -17,24 +17,24 @@ var _ = math.Inf
 
 func (this *StreamNormalMotorPingRequest) Validate() error {
 	if this.Timestamp != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Timestamp); err != nil {
-			return go_proto_validators.FieldError("Timestamp", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Timestamp); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Timestamp", err)
 		}
 	}
 	return nil
 }
 func (this *StreamNormalMotorPingResponse) Validate() error {
 	if this.Timestamp != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Timestamp); err != nil {
-			return go_proto_validators.FieldError("Timestamp", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Timestamp); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Timestamp", err)
 		}
 	}
 	return nil
 }
 func (this *StreamNormalMotorSetSpeedRequest) Validate() error {
 	if this.Speed != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Speed); err != nil {
-			return go_proto_validators.FieldError("Speed", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Speed); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Speed", err)
 		}
 	}
 	return nil
@@ -44,21 +44,21 @@ func (this *StreamNormalMotorSetStateRequest) Validate() error {
 }
 func (this *StreamNormalMotorRequest) Validate() error {
 	if this.Session != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Session); err != nil {
-			return go_proto_validators.FieldError("Session", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Session); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Session", err)
 		}
 	}
 	if oneOfNester, ok := this.GetPayload().(*StreamNormalMotorRequest_Ping); ok {
 		if oneOfNester.Ping != nil {
-			if err := go_proto_validators.CallValidatorIfExists(oneOfNester.Ping); err != nil {
-				return go_proto_validators.FieldError("Ping", err)
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.Ping); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("Ping", err)
 			}
 		}
 	}
 	if oneOfNester, ok := this.GetPayload().(*StreamNormalMotorRequest_SetSpeed); ok {
 		if oneOfNester.SetSpeed != nil {
-			if err := go_proto_validators.CallValidatorIfExists(oneOfNester.SetSpeed); err != nil {
-				return go_proto_validators.FieldError("SetSpeed", err)
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.SetSpeed); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("SetSpeed", err)
 			}
 		}
 	}
@@ -67,8 +67,8 @@ func (this *StreamNormalMotorRequest) Validate() error {
 func (this *StreamNormalMotorRequests) Validate() error {
 	for _, item := range this.Requests {
 		if item != nil {
-			if err := go_proto_validators.CallValidatorIfExists(item); err != nil {
-				return go_proto_validators.FieldError("Requests", err)
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("Requests", err)
 			}
 		}
 	}
@@ -77,8 +77,8 @@ func (this *StreamNormalMotorRequests) Validate() error {
 func (this *StreamNormalMotorResponse) Validate() error {
 	if oneOfNester, ok := this.GetPayload().(*StreamNormalMotorResponse_Ping); ok {
 		if oneOfNester.Ping != nil {
-			if err := go_proto_validators.CallValidatorIfExists(oneOfNester.Ping); err != nil {
-				return go_proto_validators.FieldError("Ping", err)
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.Ping); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("Ping", err)
 			}
 		}
 	}

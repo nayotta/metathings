@@ -3,11 +3,13 @@
 
 package identityd
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import wrappers "github.com/golang/protobuf/ptypes/wrappers"
-import _ "github.com/mwitkow/go-proto-validators"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	wrappers "github.com/golang/protobuf/ptypes/wrappers"
+	_ "github.com/mwitkow/go-proto-validators"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -21,7 +23,7 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type GetRegionRequest struct {
-	RegionId             *wrappers.StringValue `protobuf:"bytes,1,opt,name=region_id,json=regionId" json:"region_id,omitempty"`
+	RegionId             *wrappers.StringValue `protobuf:"bytes,1,opt,name=region_id,json=regionId,proto3" json:"region_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -31,16 +33,17 @@ func (m *GetRegionRequest) Reset()         { *m = GetRegionRequest{} }
 func (m *GetRegionRequest) String() string { return proto.CompactTextString(m) }
 func (*GetRegionRequest) ProtoMessage()    {}
 func (*GetRegionRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_get_region_e5cb4874ad4eccc0, []int{0}
+	return fileDescriptor_129bbf1f58ea149e, []int{0}
 }
+
 func (m *GetRegionRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_GetRegionRequest.Unmarshal(m, b)
 }
 func (m *GetRegionRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_GetRegionRequest.Marshal(b, m, deterministic)
 }
-func (dst *GetRegionRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_GetRegionRequest.Merge(dst, src)
+func (m *GetRegionRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetRegionRequest.Merge(m, src)
 }
 func (m *GetRegionRequest) XXX_Size() int {
 	return xxx_messageInfo_GetRegionRequest.Size(m)
@@ -59,7 +62,7 @@ func (m *GetRegionRequest) GetRegionId() *wrappers.StringValue {
 }
 
 type GetRegionResponse struct {
-	Region               *Region  `protobuf:"bytes,1,opt,name=region" json:"region,omitempty"`
+	Region               *Region  `protobuf:"bytes,1,opt,name=region,proto3" json:"region,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -69,16 +72,17 @@ func (m *GetRegionResponse) Reset()         { *m = GetRegionResponse{} }
 func (m *GetRegionResponse) String() string { return proto.CompactTextString(m) }
 func (*GetRegionResponse) ProtoMessage()    {}
 func (*GetRegionResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_get_region_e5cb4874ad4eccc0, []int{1}
+	return fileDescriptor_129bbf1f58ea149e, []int{1}
 }
+
 func (m *GetRegionResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_GetRegionResponse.Unmarshal(m, b)
 }
 func (m *GetRegionResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_GetRegionResponse.Marshal(b, m, deterministic)
 }
-func (dst *GetRegionResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_GetRegionResponse.Merge(dst, src)
+func (m *GetRegionResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetRegionResponse.Merge(m, src)
 }
 func (m *GetRegionResponse) XXX_Size() int {
 	return xxx_messageInfo_GetRegionResponse.Size(m)
@@ -101,9 +105,9 @@ func init() {
 	proto.RegisterType((*GetRegionResponse)(nil), "ai.metathings.service.identityd.GetRegionResponse")
 }
 
-func init() { proto.RegisterFile("get_region.proto", fileDescriptor_get_region_e5cb4874ad4eccc0) }
+func init() { proto.RegisterFile("get_region.proto", fileDescriptor_129bbf1f58ea149e) }
 
-var fileDescriptor_get_region_e5cb4874ad4eccc0 = []byte{
+var fileDescriptor_129bbf1f58ea149e = []byte{
 	// 240 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x90, 0x4d, 0x4b, 0xc3, 0x40,
 	0x10, 0x86, 0x89, 0x87, 0xa0, 0xab, 0x87, 0x9a, 0x93, 0x14, 0xb1, 0xa5, 0x17, 0xbd, 0x74, 0x16,

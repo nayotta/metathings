@@ -3,9 +3,11 @@
 
 package identityd
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -19,10 +21,10 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type Group struct {
-	Id                   string   `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	Name                 string   `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
-	DomainId             string   `protobuf:"bytes,3,opt,name=domain_id,json=domainId" json:"domain_id,omitempty"`
-	Description          string   `protobuf:"bytes,4,opt,name=description" json:"description,omitempty"`
+	Id                   string   `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name                 string   `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	DomainId             string   `protobuf:"bytes,3,opt,name=domain_id,json=domainId,proto3" json:"domain_id,omitempty"`
+	Description          string   `protobuf:"bytes,4,opt,name=description,proto3" json:"description,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -32,16 +34,17 @@ func (m *Group) Reset()         { *m = Group{} }
 func (m *Group) String() string { return proto.CompactTextString(m) }
 func (*Group) ProtoMessage()    {}
 func (*Group) Descriptor() ([]byte, []int) {
-	return fileDescriptor_group_5feaba4a84eadfc9, []int{0}
+	return fileDescriptor_e10f4c9b19ad8eee, []int{0}
 }
+
 func (m *Group) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Group.Unmarshal(m, b)
 }
 func (m *Group) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Group.Marshal(b, m, deterministic)
 }
-func (dst *Group) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Group.Merge(dst, src)
+func (m *Group) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Group.Merge(m, src)
 }
 func (m *Group) XXX_Size() int {
 	return xxx_messageInfo_Group.Size(m)
@@ -84,9 +87,9 @@ func init() {
 	proto.RegisterType((*Group)(nil), "ai.metathings.service.identityd.Group")
 }
 
-func init() { proto.RegisterFile("group.proto", fileDescriptor_group_5feaba4a84eadfc9) }
+func init() { proto.RegisterFile("group.proto", fileDescriptor_e10f4c9b19ad8eee) }
 
-var fileDescriptor_group_5feaba4a84eadfc9 = []byte{
+var fileDescriptor_e10f4c9b19ad8eee = []byte{
 	// 153 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x4c, 0xce, 0xbf, 0x0a, 0xc2, 0x40,
 	0x0c, 0xc7, 0x71, 0x5a, 0xab, 0xd8, 0x14, 0x1c, 0x32, 0x1d, 0x38, 0x58, 0x9c, 0x9c, 0x6e, 0xf1,

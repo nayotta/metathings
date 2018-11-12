@@ -4,11 +4,11 @@
 package sensor
 
 import fmt "fmt"
-import go_proto_validators "github.com/mwitkow/go-proto-validators"
+import github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
 import proto "github.com/golang/protobuf/proto"
 import math "math"
-import _ "github.com/golang/protobuf/ptypes/wrappers"
 import _ "github.com/golang/protobuf/ptypes/timestamp"
+import _ "github.com/golang/protobuf/ptypes/wrappers"
 import _ "github.com/mwitkow/go-proto-validators"
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -18,74 +18,74 @@ var _ = math.Inf
 
 func (this *StreamPingRequest) Validate() error {
 	if nil == this.Timestamp {
-		return go_proto_validators.FieldError("Timestamp", fmt.Errorf("message must exist"))
+		return github_com_mwitkow_go_proto_validators.FieldError("Timestamp", fmt.Errorf("message must exist"))
 	}
 	if this.Timestamp != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Timestamp); err != nil {
-			return go_proto_validators.FieldError("Timestamp", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Timestamp); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Timestamp", err)
 		}
 	}
 	return nil
 }
 func (this *StreamPingResponse) Validate() error {
 	if this.Timestamp != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Timestamp); err != nil {
-			return go_proto_validators.FieldError("Timestamp", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Timestamp); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Timestamp", err)
 		}
 	}
 	return nil
 }
 func (this *StreamSetPeriodRequest) Validate() error {
 	if nil == this.Name {
-		return go_proto_validators.FieldError("Name", fmt.Errorf("message must exist"))
+		return github_com_mwitkow_go_proto_validators.FieldError("Name", fmt.Errorf("message must exist"))
 	}
 	if this.Name != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Name); err != nil {
-			return go_proto_validators.FieldError("Name", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Name); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Name", err)
 		}
 	}
 	if nil == this.Period {
-		return go_proto_validators.FieldError("Period", fmt.Errorf("message must exist"))
+		return github_com_mwitkow_go_proto_validators.FieldError("Period", fmt.Errorf("message must exist"))
 	}
 	if this.Period != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Period); err != nil {
-			return go_proto_validators.FieldError("Period", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Period); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Period", err)
 		}
 	}
 	return nil
 }
 func (this *StreamDataRequest) Validate() error {
 	if nil == this.Name {
-		return go_proto_validators.FieldError("Name", fmt.Errorf("message must exist"))
+		return github_com_mwitkow_go_proto_validators.FieldError("Name", fmt.Errorf("message must exist"))
 	}
 	if this.Name != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Name); err != nil {
-			return go_proto_validators.FieldError("Name", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Name); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Name", err)
 		}
 	}
 	return nil
 }
 func (this *StreamDataResponse) Validate() error {
 	if this.Sensor != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Sensor); err != nil {
-			return go_proto_validators.FieldError("Sensor", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Sensor); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Sensor", err)
 		}
 	}
 	return nil
 }
 func (this *StreamRequest) Validate() error {
 	if nil == this.Id {
-		return go_proto_validators.FieldError("Id", fmt.Errorf("message must exist"))
+		return github_com_mwitkow_go_proto_validators.FieldError("Id", fmt.Errorf("message must exist"))
 	}
 	if this.Id != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Id); err != nil {
-			return go_proto_validators.FieldError("Id", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Id); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Id", err)
 		}
 	}
 	if oneOfNester, ok := this.GetPayload().(*StreamRequest_Ping); ok {
 		if oneOfNester.Ping != nil {
-			if err := go_proto_validators.CallValidatorIfExists(oneOfNester.Ping); err != nil {
-				return go_proto_validators.FieldError("Ping", err)
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.Ping); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("Ping", err)
 			}
 		}
 	}
@@ -94,8 +94,8 @@ func (this *StreamRequest) Validate() error {
 func (this *StreamResponse) Validate() error {
 	if oneOfNester, ok := this.GetPayload().(*StreamResponse_Ping); ok {
 		if oneOfNester.Ping != nil {
-			if err := go_proto_validators.CallValidatorIfExists(oneOfNester.Ping); err != nil {
-				return go_proto_validators.FieldError("Ping", err)
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.Ping); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("Ping", err)
 			}
 		}
 	}
@@ -103,14 +103,14 @@ func (this *StreamResponse) Validate() error {
 }
 func (this *StreamRequests) Validate() error {
 	if this.Session != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Session); err != nil {
-			return go_proto_validators.FieldError("Session", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Session); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Session", err)
 		}
 	}
 	for _, item := range this.Requests {
 		if item != nil {
-			if err := go_proto_validators.CallValidatorIfExists(item); err != nil {
-				return go_proto_validators.FieldError("Requests", err)
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("Requests", err)
 			}
 		}
 	}
@@ -119,8 +119,8 @@ func (this *StreamRequests) Validate() error {
 func (this *StreamResponses) Validate() error {
 	for _, item := range this.Responses {
 		if item != nil {
-			if err := go_proto_validators.CallValidatorIfExists(item); err != nil {
-				return go_proto_validators.FieldError("Responses", err)
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("Responses", err)
 			}
 		}
 	}

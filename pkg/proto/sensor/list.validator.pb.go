@@ -3,7 +3,7 @@
 
 package sensor
 
-import go_proto_validators "github.com/mwitkow/go-proto-validators"
+import github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
@@ -20,8 +20,8 @@ func (this *ListRequest) Validate() error {
 func (this *ListResponse) Validate() error {
 	for _, item := range this.Sensors {
 		if item != nil {
-			if err := go_proto_validators.CallValidatorIfExists(item); err != nil {
-				return go_proto_validators.FieldError("Sensors", err)
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("Sensors", err)
 			}
 		}
 	}

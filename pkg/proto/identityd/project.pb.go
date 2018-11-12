@@ -3,9 +3,11 @@
 
 package identityd
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -19,14 +21,14 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type Project struct {
-	Id                   string   `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	DomainId             string   `protobuf:"bytes,2,opt,name=domain_id,json=domainId" json:"domain_id,omitempty"`
-	ParentId             string   `protobuf:"bytes,3,opt,name=parent_id,json=parentId" json:"parent_id,omitempty"`
-	IsDomain             bool     `protobuf:"varint,4,opt,name=is_domain,json=isDomain" json:"is_domain,omitempty"`
-	Enabled              bool     `protobuf:"varint,5,opt,name=enabled" json:"enabled,omitempty"`
-	Name                 string   `protobuf:"bytes,6,opt,name=name" json:"name,omitempty"`
-	Description          string   `protobuf:"bytes,7,opt,name=description" json:"description,omitempty"`
-	Tags                 []string `protobuf:"bytes,8,rep,name=tags" json:"tags,omitempty"`
+	Id                   string   `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	DomainId             string   `protobuf:"bytes,2,opt,name=domain_id,json=domainId,proto3" json:"domain_id,omitempty"`
+	ParentId             string   `protobuf:"bytes,3,opt,name=parent_id,json=parentId,proto3" json:"parent_id,omitempty"`
+	IsDomain             bool     `protobuf:"varint,4,opt,name=is_domain,json=isDomain,proto3" json:"is_domain,omitempty"`
+	Enabled              bool     `protobuf:"varint,5,opt,name=enabled,proto3" json:"enabled,omitempty"`
+	Name                 string   `protobuf:"bytes,6,opt,name=name,proto3" json:"name,omitempty"`
+	Description          string   `protobuf:"bytes,7,opt,name=description,proto3" json:"description,omitempty"`
+	Tags                 []string `protobuf:"bytes,8,rep,name=tags,proto3" json:"tags,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -36,16 +38,17 @@ func (m *Project) Reset()         { *m = Project{} }
 func (m *Project) String() string { return proto.CompactTextString(m) }
 func (*Project) ProtoMessage()    {}
 func (*Project) Descriptor() ([]byte, []int) {
-	return fileDescriptor_project_793f40e7fc5b6c2b, []int{0}
+	return fileDescriptor_8340e6318dfdfac2, []int{0}
 }
+
 func (m *Project) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Project.Unmarshal(m, b)
 }
 func (m *Project) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Project.Marshal(b, m, deterministic)
 }
-func (dst *Project) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Project.Merge(dst, src)
+func (m *Project) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Project.Merge(m, src)
 }
 func (m *Project) XXX_Size() int {
 	return xxx_messageInfo_Project.Size(m)
@@ -116,9 +119,9 @@ func init() {
 	proto.RegisterType((*Project)(nil), "ai.metathings.service.identityd.Project")
 }
 
-func init() { proto.RegisterFile("project.proto", fileDescriptor_project_793f40e7fc5b6c2b) }
+func init() { proto.RegisterFile("project.proto", fileDescriptor_8340e6318dfdfac2) }
 
-var fileDescriptor_project_793f40e7fc5b6c2b = []byte{
+var fileDescriptor_8340e6318dfdfac2 = []byte{
 	// 208 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x4c, 0x8f, 0xb1, 0x4a, 0x04, 0x31,
 	0x10, 0x86, 0xd9, 0xbd, 0xf3, 0x76, 0x2f, 0xa2, 0x45, 0xaa, 0x01, 0x0b, 0x83, 0xd5, 0x55, 0x69,

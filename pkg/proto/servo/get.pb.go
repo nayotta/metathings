@@ -3,11 +3,13 @@
 
 package servo
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import wrappers "github.com/golang/protobuf/ptypes/wrappers"
-import _ "github.com/mwitkow/go-proto-validators"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	wrappers "github.com/golang/protobuf/ptypes/wrappers"
+	_ "github.com/mwitkow/go-proto-validators"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -21,7 +23,7 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type GetRequest struct {
-	Name                 *wrappers.StringValue `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -31,16 +33,17 @@ func (m *GetRequest) Reset()         { *m = GetRequest{} }
 func (m *GetRequest) String() string { return proto.CompactTextString(m) }
 func (*GetRequest) ProtoMessage()    {}
 func (*GetRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_get_fd2b30c14dbe227b, []int{0}
+	return fileDescriptor_21b2a6be0e6d8388, []int{0}
 }
+
 func (m *GetRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_GetRequest.Unmarshal(m, b)
 }
 func (m *GetRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_GetRequest.Marshal(b, m, deterministic)
 }
-func (dst *GetRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_GetRequest.Merge(dst, src)
+func (m *GetRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetRequest.Merge(m, src)
 }
 func (m *GetRequest) XXX_Size() int {
 	return xxx_messageInfo_GetRequest.Size(m)
@@ -59,7 +62,7 @@ func (m *GetRequest) GetName() *wrappers.StringValue {
 }
 
 type GetResponse struct {
-	Servo                *Servo   `protobuf:"bytes,1,opt,name=servo" json:"servo,omitempty"`
+	Servo                *Servo   `protobuf:"bytes,1,opt,name=servo,proto3" json:"servo,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -69,16 +72,17 @@ func (m *GetResponse) Reset()         { *m = GetResponse{} }
 func (m *GetResponse) String() string { return proto.CompactTextString(m) }
 func (*GetResponse) ProtoMessage()    {}
 func (*GetResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_get_fd2b30c14dbe227b, []int{1}
+	return fileDescriptor_21b2a6be0e6d8388, []int{1}
 }
+
 func (m *GetResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_GetResponse.Unmarshal(m, b)
 }
 func (m *GetResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_GetResponse.Marshal(b, m, deterministic)
 }
-func (dst *GetResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_GetResponse.Merge(dst, src)
+func (m *GetResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetResponse.Merge(m, src)
 }
 func (m *GetResponse) XXX_Size() int {
 	return xxx_messageInfo_GetResponse.Size(m)
@@ -101,9 +105,9 @@ func init() {
 	proto.RegisterType((*GetResponse)(nil), "ai.metathings.service.servo.GetResponse")
 }
 
-func init() { proto.RegisterFile("get.proto", fileDescriptor_get_fd2b30c14dbe227b) }
+func init() { proto.RegisterFile("get.proto", fileDescriptor_21b2a6be0e6d8388) }
 
-var fileDescriptor_get_fd2b30c14dbe227b = []byte{
+var fileDescriptor_21b2a6be0e6d8388 = []byte{
 	// 222 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x7c, 0x8f, 0x31, 0x4f, 0xc3, 0x30,
 	0x10, 0x85, 0x15, 0x04, 0x95, 0x70, 0xb6, 0x4c, 0xa8, 0x20, 0xa8, 0x32, 0xb1, 0xf4, 0x2c, 0x81,

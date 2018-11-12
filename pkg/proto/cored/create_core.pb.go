@@ -3,11 +3,13 @@
 
 package cored
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import wrappers "github.com/golang/protobuf/ptypes/wrappers"
-import _ "github.com/mwitkow/go-proto-validators"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	wrappers "github.com/golang/protobuf/ptypes/wrappers"
+	_ "github.com/mwitkow/go-proto-validators"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -21,7 +23,7 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type CreateCoreRequest struct {
-	Name                 *wrappers.StringValue `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -31,16 +33,17 @@ func (m *CreateCoreRequest) Reset()         { *m = CreateCoreRequest{} }
 func (m *CreateCoreRequest) String() string { return proto.CompactTextString(m) }
 func (*CreateCoreRequest) ProtoMessage()    {}
 func (*CreateCoreRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_create_core_f428acebdfc7b4c9, []int{0}
+	return fileDescriptor_33c4061718cee4e4, []int{0}
 }
+
 func (m *CreateCoreRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_CreateCoreRequest.Unmarshal(m, b)
 }
 func (m *CreateCoreRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_CreateCoreRequest.Marshal(b, m, deterministic)
 }
-func (dst *CreateCoreRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CreateCoreRequest.Merge(dst, src)
+func (m *CreateCoreRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CreateCoreRequest.Merge(m, src)
 }
 func (m *CreateCoreRequest) XXX_Size() int {
 	return xxx_messageInfo_CreateCoreRequest.Size(m)
@@ -59,7 +62,7 @@ func (m *CreateCoreRequest) GetName() *wrappers.StringValue {
 }
 
 type CreateCoreResponse struct {
-	Core                 *Core    `protobuf:"bytes,1,opt,name=core" json:"core,omitempty"`
+	Core                 *Core    `protobuf:"bytes,1,opt,name=core,proto3" json:"core,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -69,16 +72,17 @@ func (m *CreateCoreResponse) Reset()         { *m = CreateCoreResponse{} }
 func (m *CreateCoreResponse) String() string { return proto.CompactTextString(m) }
 func (*CreateCoreResponse) ProtoMessage()    {}
 func (*CreateCoreResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_create_core_f428acebdfc7b4c9, []int{1}
+	return fileDescriptor_33c4061718cee4e4, []int{1}
 }
+
 func (m *CreateCoreResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_CreateCoreResponse.Unmarshal(m, b)
 }
 func (m *CreateCoreResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_CreateCoreResponse.Marshal(b, m, deterministic)
 }
-func (dst *CreateCoreResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CreateCoreResponse.Merge(dst, src)
+func (m *CreateCoreResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CreateCoreResponse.Merge(m, src)
 }
 func (m *CreateCoreResponse) XXX_Size() int {
 	return xxx_messageInfo_CreateCoreResponse.Size(m)
@@ -101,9 +105,9 @@ func init() {
 	proto.RegisterType((*CreateCoreResponse)(nil), "ai.metathings.service.cored.CreateCoreResponse")
 }
 
-func init() { proto.RegisterFile("create_core.proto", fileDescriptor_create_core_f428acebdfc7b4c9) }
+func init() { proto.RegisterFile("create_core.proto", fileDescriptor_33c4061718cee4e4) }
 
-var fileDescriptor_create_core_f428acebdfc7b4c9 = []byte{
+var fileDescriptor_33c4061718cee4e4 = []byte{
 	// 220 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x7c, 0x8f, 0xcd, 0x4a, 0x43, 0x31,
 	0x10, 0x85, 0x29, 0x14, 0x17, 0x71, 0xd5, 0xbb, 0x92, 0x2a, 0xa2, 0x5d, 0xb9, 0xe9, 0x44, 0x14,

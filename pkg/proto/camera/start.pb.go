@@ -3,11 +3,13 @@
 
 package camera
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import wrappers "github.com/golang/protobuf/ptypes/wrappers"
-import _ "github.com/mwitkow/go-proto-validators"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	wrappers "github.com/golang/protobuf/ptypes/wrappers"
+	_ "github.com/mwitkow/go-proto-validators"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -21,12 +23,12 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type StartConfig struct {
-	Url                  *wrappers.StringValue `protobuf:"bytes,1,opt,name=url" json:"url,omitempty"`
-	Device               *wrappers.StringValue `protobuf:"bytes,2,opt,name=device" json:"device,omitempty"`
-	Width                *wrappers.UInt32Value `protobuf:"bytes,3,opt,name=width" json:"width,omitempty"`
-	Height               *wrappers.UInt32Value `protobuf:"bytes,4,opt,name=height" json:"height,omitempty"`
-	Bitrate              *wrappers.UInt32Value `protobuf:"bytes,5,opt,name=bitrate" json:"bitrate,omitempty"`
-	Framerate            *wrappers.UInt32Value `protobuf:"bytes,6,opt,name=framerate" json:"framerate,omitempty"`
+	Url                  *wrappers.StringValue `protobuf:"bytes,1,opt,name=url,proto3" json:"url,omitempty"`
+	Device               *wrappers.StringValue `protobuf:"bytes,2,opt,name=device,proto3" json:"device,omitempty"`
+	Width                *wrappers.UInt32Value `protobuf:"bytes,3,opt,name=width,proto3" json:"width,omitempty"`
+	Height               *wrappers.UInt32Value `protobuf:"bytes,4,opt,name=height,proto3" json:"height,omitempty"`
+	Bitrate              *wrappers.UInt32Value `protobuf:"bytes,5,opt,name=bitrate,proto3" json:"bitrate,omitempty"`
+	Framerate            *wrappers.UInt32Value `protobuf:"bytes,6,opt,name=framerate,proto3" json:"framerate,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -36,16 +38,17 @@ func (m *StartConfig) Reset()         { *m = StartConfig{} }
 func (m *StartConfig) String() string { return proto.CompactTextString(m) }
 func (*StartConfig) ProtoMessage()    {}
 func (*StartConfig) Descriptor() ([]byte, []int) {
-	return fileDescriptor_start_5e5de41eb10b6ce8, []int{0}
+	return fileDescriptor_5c84144a9c93052f, []int{0}
 }
+
 func (m *StartConfig) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_StartConfig.Unmarshal(m, b)
 }
 func (m *StartConfig) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_StartConfig.Marshal(b, m, deterministic)
 }
-func (dst *StartConfig) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_StartConfig.Merge(dst, src)
+func (m *StartConfig) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StartConfig.Merge(m, src)
 }
 func (m *StartConfig) XXX_Size() int {
 	return xxx_messageInfo_StartConfig.Size(m)
@@ -99,7 +102,7 @@ func (m *StartConfig) GetFramerate() *wrappers.UInt32Value {
 }
 
 type StartRequest struct {
-	Config               *StartConfig `protobuf:"bytes,1,opt,name=config" json:"config,omitempty"`
+	Config               *StartConfig `protobuf:"bytes,1,opt,name=config,proto3" json:"config,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}     `json:"-"`
 	XXX_unrecognized     []byte       `json:"-"`
 	XXX_sizecache        int32        `json:"-"`
@@ -109,16 +112,17 @@ func (m *StartRequest) Reset()         { *m = StartRequest{} }
 func (m *StartRequest) String() string { return proto.CompactTextString(m) }
 func (*StartRequest) ProtoMessage()    {}
 func (*StartRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_start_5e5de41eb10b6ce8, []int{1}
+	return fileDescriptor_5c84144a9c93052f, []int{1}
 }
+
 func (m *StartRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_StartRequest.Unmarshal(m, b)
 }
 func (m *StartRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_StartRequest.Marshal(b, m, deterministic)
 }
-func (dst *StartRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_StartRequest.Merge(dst, src)
+func (m *StartRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StartRequest.Merge(m, src)
 }
 func (m *StartRequest) XXX_Size() int {
 	return xxx_messageInfo_StartRequest.Size(m)
@@ -137,7 +141,7 @@ func (m *StartRequest) GetConfig() *StartConfig {
 }
 
 type StartResponse struct {
-	Camera               *Camera  `protobuf:"bytes,1,opt,name=camera" json:"camera,omitempty"`
+	Camera               *Camera  `protobuf:"bytes,1,opt,name=camera,proto3" json:"camera,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -147,16 +151,17 @@ func (m *StartResponse) Reset()         { *m = StartResponse{} }
 func (m *StartResponse) String() string { return proto.CompactTextString(m) }
 func (*StartResponse) ProtoMessage()    {}
 func (*StartResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_start_5e5de41eb10b6ce8, []int{2}
+	return fileDescriptor_5c84144a9c93052f, []int{2}
 }
+
 func (m *StartResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_StartResponse.Unmarshal(m, b)
 }
 func (m *StartResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_StartResponse.Marshal(b, m, deterministic)
 }
-func (dst *StartResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_StartResponse.Merge(dst, src)
+func (m *StartResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StartResponse.Merge(m, src)
 }
 func (m *StartResponse) XXX_Size() int {
 	return xxx_messageInfo_StartResponse.Size(m)
@@ -180,9 +185,9 @@ func init() {
 	proto.RegisterType((*StartResponse)(nil), "ai.metathings.service.camera.StartResponse")
 }
 
-func init() { proto.RegisterFile("start.proto", fileDescriptor_start_5e5de41eb10b6ce8) }
+func init() { proto.RegisterFile("start.proto", fileDescriptor_5c84144a9c93052f) }
 
-var fileDescriptor_start_5e5de41eb10b6ce8 = []byte{
+var fileDescriptor_5c84144a9c93052f = []byte{
 	// 335 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x92, 0x31, 0x6f, 0xe2, 0x30,
 	0x1c, 0xc5, 0x05, 0x1c, 0x39, 0x9d, 0xe1, 0x16, 0x4f, 0x11, 0x42, 0x77, 0x08, 0x75, 0x68, 0x07,

@@ -3,11 +3,13 @@
 
 package sensor
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import wrappers "github.com/golang/protobuf/ptypes/wrappers"
-import _ "github.com/mwitkow/go-proto-validators"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	wrappers "github.com/golang/protobuf/ptypes/wrappers"
+	_ "github.com/mwitkow/go-proto-validators"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -21,7 +23,7 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type GetDataRequest struct {
-	Name                 *wrappers.StringValue `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -31,16 +33,17 @@ func (m *GetDataRequest) Reset()         { *m = GetDataRequest{} }
 func (m *GetDataRequest) String() string { return proto.CompactTextString(m) }
 func (*GetDataRequest) ProtoMessage()    {}
 func (*GetDataRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_get_data_8912bf3d33fbc83c, []int{0}
+	return fileDescriptor_db1e76dc0524eded, []int{0}
 }
+
 func (m *GetDataRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_GetDataRequest.Unmarshal(m, b)
 }
 func (m *GetDataRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_GetDataRequest.Marshal(b, m, deterministic)
 }
-func (dst *GetDataRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_GetDataRequest.Merge(dst, src)
+func (m *GetDataRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetDataRequest.Merge(m, src)
 }
 func (m *GetDataRequest) XXX_Size() int {
 	return xxx_messageInfo_GetDataRequest.Size(m)
@@ -59,7 +62,7 @@ func (m *GetDataRequest) GetName() *wrappers.StringValue {
 }
 
 type GetDataResponse struct {
-	Data                 *SensorData `protobuf:"bytes,1,opt,name=data" json:"data,omitempty"`
+	Data                 *SensorData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}    `json:"-"`
 	XXX_unrecognized     []byte      `json:"-"`
 	XXX_sizecache        int32       `json:"-"`
@@ -69,16 +72,17 @@ func (m *GetDataResponse) Reset()         { *m = GetDataResponse{} }
 func (m *GetDataResponse) String() string { return proto.CompactTextString(m) }
 func (*GetDataResponse) ProtoMessage()    {}
 func (*GetDataResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_get_data_8912bf3d33fbc83c, []int{1}
+	return fileDescriptor_db1e76dc0524eded, []int{1}
 }
+
 func (m *GetDataResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_GetDataResponse.Unmarshal(m, b)
 }
 func (m *GetDataResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_GetDataResponse.Marshal(b, m, deterministic)
 }
-func (dst *GetDataResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_GetDataResponse.Merge(dst, src)
+func (m *GetDataResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetDataResponse.Merge(m, src)
 }
 func (m *GetDataResponse) XXX_Size() int {
 	return xxx_messageInfo_GetDataResponse.Size(m)
@@ -101,9 +105,9 @@ func init() {
 	proto.RegisterType((*GetDataResponse)(nil), "ai.metathings.service.sensor.GetDataResponse")
 }
 
-func init() { proto.RegisterFile("get_data.proto", fileDescriptor_get_data_8912bf3d33fbc83c) }
+func init() { proto.RegisterFile("get_data.proto", fileDescriptor_db1e76dc0524eded) }
 
-var fileDescriptor_get_data_8912bf3d33fbc83c = []byte{
+var fileDescriptor_db1e76dc0524eded = []byte{
 	// 235 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x7c, 0x8f, 0x41, 0x4b, 0x03, 0x41,
 	0x0c, 0x85, 0x59, 0x29, 0x3d, 0x8c, 0x52, 0x61, 0x4f, 0x52, 0x8a, 0x96, 0x9e, 0x7a, 0x69, 0x06,

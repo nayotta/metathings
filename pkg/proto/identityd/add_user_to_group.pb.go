@@ -3,11 +3,13 @@
 
 package identityd
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import wrappers "github.com/golang/protobuf/ptypes/wrappers"
-import _ "github.com/mwitkow/go-proto-validators"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	wrappers "github.com/golang/protobuf/ptypes/wrappers"
+	_ "github.com/mwitkow/go-proto-validators"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -21,8 +23,8 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type AddUserToGroupRequest struct {
-	UserId               *wrappers.StringValue `protobuf:"bytes,1,opt,name=user_id,json=userId" json:"user_id,omitempty"`
-	GroupId              *wrappers.StringValue `protobuf:"bytes,2,opt,name=group_id,json=groupId" json:"group_id,omitempty"`
+	UserId               *wrappers.StringValue `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	GroupId              *wrappers.StringValue `protobuf:"bytes,2,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -32,16 +34,17 @@ func (m *AddUserToGroupRequest) Reset()         { *m = AddUserToGroupRequest{} }
 func (m *AddUserToGroupRequest) String() string { return proto.CompactTextString(m) }
 func (*AddUserToGroupRequest) ProtoMessage()    {}
 func (*AddUserToGroupRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_add_user_to_group_e8193875fa0bf7d7, []int{0}
+	return fileDescriptor_f995bf1643f3f9b4, []int{0}
 }
+
 func (m *AddUserToGroupRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_AddUserToGroupRequest.Unmarshal(m, b)
 }
 func (m *AddUserToGroupRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_AddUserToGroupRequest.Marshal(b, m, deterministic)
 }
-func (dst *AddUserToGroupRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_AddUserToGroupRequest.Merge(dst, src)
+func (m *AddUserToGroupRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_AddUserToGroupRequest.Merge(m, src)
 }
 func (m *AddUserToGroupRequest) XXX_Size() int {
 	return xxx_messageInfo_AddUserToGroupRequest.Size(m)
@@ -70,11 +73,9 @@ func init() {
 	proto.RegisterType((*AddUserToGroupRequest)(nil), "ai.metathings.service.identityd.AddUserToGroupRequest")
 }
 
-func init() {
-	proto.RegisterFile("add_user_to_group.proto", fileDescriptor_add_user_to_group_e8193875fa0bf7d7)
-}
+func init() { proto.RegisterFile("add_user_to_group.proto", fileDescriptor_f995bf1643f3f9b4) }
 
-var fileDescriptor_add_user_to_group_e8193875fa0bf7d7 = []byte{
+var fileDescriptor_f995bf1643f3f9b4 = []byte{
 	// 235 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x8f, 0xcd, 0x4a, 0xc3, 0x40,
 	0x10, 0x80, 0x49, 0x0f, 0xad, 0xc4, 0x5b, 0x40, 0x94, 0x22, 0xb6, 0x78, 0xf2, 0xd2, 0x5d, 0x50,

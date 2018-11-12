@@ -3,7 +3,7 @@
 
 package streamd
 
-import go_proto_validators "github.com/mwitkow/go-proto-validators"
+import github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
@@ -20,15 +20,15 @@ func (this *ConfigValue) Validate() error {
 func (this *Stream) Validate() error {
 	for _, item := range this.Sources {
 		if item != nil {
-			if err := go_proto_validators.CallValidatorIfExists(item); err != nil {
-				return go_proto_validators.FieldError("Sources", err)
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("Sources", err)
 			}
 		}
 	}
 	for _, item := range this.Groups {
 		if item != nil {
-			if err := go_proto_validators.CallValidatorIfExists(item); err != nil {
-				return go_proto_validators.FieldError("Groups", err)
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("Groups", err)
 			}
 		}
 	}
@@ -48,8 +48,8 @@ func (this *Output) Validate() error {
 }
 func (this *Source) Validate() error {
 	if this.Upstream != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Upstream); err != nil {
-			return go_proto_validators.FieldError("Upstream", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Upstream); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Upstream", err)
 		}
 	}
 	return nil
@@ -57,15 +57,15 @@ func (this *Source) Validate() error {
 func (this *Group) Validate() error {
 	for _, item := range this.Inputs {
 		if item != nil {
-			if err := go_proto_validators.CallValidatorIfExists(item); err != nil {
-				return go_proto_validators.FieldError("Inputs", err)
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("Inputs", err)
 			}
 		}
 	}
 	for _, item := range this.Outputs {
 		if item != nil {
-			if err := go_proto_validators.CallValidatorIfExists(item); err != nil {
-				return go_proto_validators.FieldError("Outputs", err)
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("Outputs", err)
 			}
 		}
 	}
@@ -73,18 +73,18 @@ func (this *Group) Validate() error {
 }
 func (this *OpUpstream) Validate() error {
 	if this.Id != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Id); err != nil {
-			return go_proto_validators.FieldError("Id", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Id); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Id", err)
 		}
 	}
 	if this.Name != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Name); err != nil {
-			return go_proto_validators.FieldError("Name", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Name); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Name", err)
 		}
 	}
 	if this.Alias != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Alias); err != nil {
-			return go_proto_validators.FieldError("Alias", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Alias); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Alias", err)
 		}
 	}
 	// Validation of proto3 map<> fields is unsupported.
@@ -92,18 +92,18 @@ func (this *OpUpstream) Validate() error {
 }
 func (this *OpInput) Validate() error {
 	if this.Id != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Id); err != nil {
-			return go_proto_validators.FieldError("Id", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Id); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Id", err)
 		}
 	}
 	if this.Name != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Name); err != nil {
-			return go_proto_validators.FieldError("Name", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Name); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Name", err)
 		}
 	}
 	if this.Alias != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Alias); err != nil {
-			return go_proto_validators.FieldError("Alias", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Alias); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Alias", err)
 		}
 	}
 	// Validation of proto3 map<> fields is unsupported.
@@ -111,18 +111,18 @@ func (this *OpInput) Validate() error {
 }
 func (this *OpOutput) Validate() error {
 	if this.Id != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Id); err != nil {
-			return go_proto_validators.FieldError("Id", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Id); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Id", err)
 		}
 	}
 	if this.Name != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Name); err != nil {
-			return go_proto_validators.FieldError("Name", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Name); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Name", err)
 		}
 	}
 	if this.Alias != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Alias); err != nil {
-			return go_proto_validators.FieldError("Alias", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Alias); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Alias", err)
 		}
 	}
 	// Validation of proto3 map<> fields is unsupported.
@@ -130,34 +130,34 @@ func (this *OpOutput) Validate() error {
 }
 func (this *OpSource) Validate() error {
 	if this.Id != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Id); err != nil {
-			return go_proto_validators.FieldError("Id", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Id); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Id", err)
 		}
 	}
 	if this.Upstream != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Upstream); err != nil {
-			return go_proto_validators.FieldError("Upstream", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Upstream); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Upstream", err)
 		}
 	}
 	return nil
 }
 func (this *OpGroup) Validate() error {
 	if this.Id != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Id); err != nil {
-			return go_proto_validators.FieldError("Id", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Id); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Id", err)
 		}
 	}
 	for _, item := range this.Inputs {
 		if item != nil {
-			if err := go_proto_validators.CallValidatorIfExists(item); err != nil {
-				return go_proto_validators.FieldError("Inputs", err)
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("Inputs", err)
 			}
 		}
 	}
 	for _, item := range this.Outputs {
 		if item != nil {
-			if err := go_proto_validators.CallValidatorIfExists(item); err != nil {
-				return go_proto_validators.FieldError("Outputs", err)
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("Outputs", err)
 			}
 		}
 	}

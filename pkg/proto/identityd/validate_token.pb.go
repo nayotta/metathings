@@ -3,11 +3,13 @@
 
 package identityd
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import _ "github.com/golang/protobuf/ptypes/wrappers"
-import _ "github.com/mwitkow/go-proto-validators"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	_ "github.com/golang/protobuf/ptypes/wrappers"
+	_ "github.com/mwitkow/go-proto-validators"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -21,7 +23,7 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type ValidateTokenResponse struct {
-	Token                *Token   `protobuf:"bytes,1,opt,name=token" json:"token,omitempty"`
+	Token                *Token   `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -31,16 +33,17 @@ func (m *ValidateTokenResponse) Reset()         { *m = ValidateTokenResponse{} }
 func (m *ValidateTokenResponse) String() string { return proto.CompactTextString(m) }
 func (*ValidateTokenResponse) ProtoMessage()    {}
 func (*ValidateTokenResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_validate_token_3ab913a511d09e48, []int{0}
+	return fileDescriptor_2b5b3bf2c98d17ba, []int{0}
 }
+
 func (m *ValidateTokenResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ValidateTokenResponse.Unmarshal(m, b)
 }
 func (m *ValidateTokenResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_ValidateTokenResponse.Marshal(b, m, deterministic)
 }
-func (dst *ValidateTokenResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ValidateTokenResponse.Merge(dst, src)
+func (m *ValidateTokenResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ValidateTokenResponse.Merge(m, src)
 }
 func (m *ValidateTokenResponse) XXX_Size() int {
 	return xxx_messageInfo_ValidateTokenResponse.Size(m)
@@ -62,11 +65,9 @@ func init() {
 	proto.RegisterType((*ValidateTokenResponse)(nil), "ai.metathings.service.identityd.ValidateTokenResponse")
 }
 
-func init() {
-	proto.RegisterFile("validate_token.proto", fileDescriptor_validate_token_3ab913a511d09e48)
-}
+func init() { proto.RegisterFile("validate_token.proto", fileDescriptor_2b5b3bf2c98d17ba) }
 
-var fileDescriptor_validate_token_3ab913a511d09e48 = []byte{
+var fileDescriptor_2b5b3bf2c98d17ba = []byte{
 	// 189 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x8e, 0xb1, 0x8a, 0xc2, 0x40,
 	0x10, 0x86, 0x49, 0x71, 0x57, 0x24, 0x5d, 0xb8, 0x83, 0x23, 0xc5, 0x29, 0x16, 0x62, 0x93, 0x5d,

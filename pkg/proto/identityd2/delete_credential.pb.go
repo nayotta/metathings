@@ -3,10 +3,12 @@
 
 package identityd2
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import _ "github.com/mwitkow/go-proto-validators"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	_ "github.com/mwitkow/go-proto-validators"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -20,7 +22,7 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type DeleteCredentialRequest struct {
-	Credential           *OpCredential `protobuf:"bytes,1,opt,name=credential" json:"credential,omitempty"`
+	Credential           *OpCredential `protobuf:"bytes,1,opt,name=credential,proto3" json:"credential,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}      `json:"-"`
 	XXX_unrecognized     []byte        `json:"-"`
 	XXX_sizecache        int32         `json:"-"`
@@ -30,16 +32,17 @@ func (m *DeleteCredentialRequest) Reset()         { *m = DeleteCredentialRequest
 func (m *DeleteCredentialRequest) String() string { return proto.CompactTextString(m) }
 func (*DeleteCredentialRequest) ProtoMessage()    {}
 func (*DeleteCredentialRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_delete_credential_5724c2d6df7d6ac0, []int{0}
+	return fileDescriptor_a7074b343416089b, []int{0}
 }
+
 func (m *DeleteCredentialRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_DeleteCredentialRequest.Unmarshal(m, b)
 }
 func (m *DeleteCredentialRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_DeleteCredentialRequest.Marshal(b, m, deterministic)
 }
-func (dst *DeleteCredentialRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_DeleteCredentialRequest.Merge(dst, src)
+func (m *DeleteCredentialRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DeleteCredentialRequest.Merge(m, src)
 }
 func (m *DeleteCredentialRequest) XXX_Size() int {
 	return xxx_messageInfo_DeleteCredentialRequest.Size(m)
@@ -61,11 +64,9 @@ func init() {
 	proto.RegisterType((*DeleteCredentialRequest)(nil), "ai.metathings.service.identityd2.DeleteCredentialRequest")
 }
 
-func init() {
-	proto.RegisterFile("delete_credential.proto", fileDescriptor_delete_credential_5724c2d6df7d6ac0)
-}
+func init() { proto.RegisterFile("delete_credential.proto", fileDescriptor_a7074b343416089b) }
 
-var fileDescriptor_delete_credential_5724c2d6df7d6ac0 = []byte{
+var fileDescriptor_a7074b343416089b = []byte{
 	// 187 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x12, 0x4f, 0x49, 0xcd, 0x49,
 	0x2d, 0x49, 0x8d, 0x4f, 0x2e, 0x4a, 0x4d, 0x49, 0xcd, 0x2b, 0xc9, 0x4c, 0xcc, 0xd1, 0x2b, 0x28,

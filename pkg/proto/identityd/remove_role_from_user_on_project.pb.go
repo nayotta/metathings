@@ -3,11 +3,13 @@
 
 package identityd
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import wrappers "github.com/golang/protobuf/ptypes/wrappers"
-import _ "github.com/mwitkow/go-proto-validators"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	wrappers "github.com/golang/protobuf/ptypes/wrappers"
+	_ "github.com/mwitkow/go-proto-validators"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -21,9 +23,9 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type RemoveRoleFromUserOnProjectRequest struct {
-	ProjectId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=project_id,json=projectId" json:"project_id,omitempty"`
-	UserId               *wrappers.StringValue `protobuf:"bytes,2,opt,name=user_id,json=userId" json:"user_id,omitempty"`
-	RoleId               *wrappers.StringValue `protobuf:"bytes,3,opt,name=role_id,json=roleId" json:"role_id,omitempty"`
+	ProjectId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=project_id,json=projectId,proto3" json:"project_id,omitempty"`
+	UserId               *wrappers.StringValue `protobuf:"bytes,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	RoleId               *wrappers.StringValue `protobuf:"bytes,3,opt,name=role_id,json=roleId,proto3" json:"role_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -33,16 +35,17 @@ func (m *RemoveRoleFromUserOnProjectRequest) Reset()         { *m = RemoveRoleFr
 func (m *RemoveRoleFromUserOnProjectRequest) String() string { return proto.CompactTextString(m) }
 func (*RemoveRoleFromUserOnProjectRequest) ProtoMessage()    {}
 func (*RemoveRoleFromUserOnProjectRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_remove_role_from_user_on_project_d89c1a1a38e195e9, []int{0}
+	return fileDescriptor_db74af4ca54ec441, []int{0}
 }
+
 func (m *RemoveRoleFromUserOnProjectRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_RemoveRoleFromUserOnProjectRequest.Unmarshal(m, b)
 }
 func (m *RemoveRoleFromUserOnProjectRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_RemoveRoleFromUserOnProjectRequest.Marshal(b, m, deterministic)
 }
-func (dst *RemoveRoleFromUserOnProjectRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_RemoveRoleFromUserOnProjectRequest.Merge(dst, src)
+func (m *RemoveRoleFromUserOnProjectRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_RemoveRoleFromUserOnProjectRequest.Merge(m, src)
 }
 func (m *RemoveRoleFromUserOnProjectRequest) XXX_Size() int {
 	return xxx_messageInfo_RemoveRoleFromUserOnProjectRequest.Size(m)
@@ -79,10 +82,10 @@ func init() {
 }
 
 func init() {
-	proto.RegisterFile("remove_role_from_user_on_project.proto", fileDescriptor_remove_role_from_user_on_project_d89c1a1a38e195e9)
+	proto.RegisterFile("remove_role_from_user_on_project.proto", fileDescriptor_db74af4ca54ec441)
 }
 
-var fileDescriptor_remove_role_from_user_on_project_d89c1a1a38e195e9 = []byte{
+var fileDescriptor_db74af4ca54ec441 = []byte{
 	// 264 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x90, 0xc1, 0x4a, 0xc3, 0x40,
 	0x10, 0x86, 0x49, 0x85, 0x8a, 0xf1, 0xd6, 0x53, 0x29, 0x62, 0x4b, 0x0f, 0xe2, 0xa5, 0x1b, 0x50,

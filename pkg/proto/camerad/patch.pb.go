@@ -3,11 +3,13 @@
 
 package camerad
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import wrappers "github.com/golang/protobuf/ptypes/wrappers"
-import _ "github.com/mwitkow/go-proto-validators"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	wrappers "github.com/golang/protobuf/ptypes/wrappers"
+	_ "github.com/mwitkow/go-proto-validators"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -21,9 +23,9 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type PatchRequest struct {
-	Id                   *wrappers.StringValue `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
-	Config               *OpConfig             `protobuf:"bytes,3,opt,name=config" json:"config,omitempty"`
+	Id                   *wrappers.StringValue `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Config               *OpConfig             `protobuf:"bytes,3,opt,name=config,proto3" json:"config,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -33,16 +35,17 @@ func (m *PatchRequest) Reset()         { *m = PatchRequest{} }
 func (m *PatchRequest) String() string { return proto.CompactTextString(m) }
 func (*PatchRequest) ProtoMessage()    {}
 func (*PatchRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_patch_f0599a5f946e0225, []int{0}
+	return fileDescriptor_1fe77fd0a0574cdd, []int{0}
 }
+
 func (m *PatchRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_PatchRequest.Unmarshal(m, b)
 }
 func (m *PatchRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_PatchRequest.Marshal(b, m, deterministic)
 }
-func (dst *PatchRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_PatchRequest.Merge(dst, src)
+func (m *PatchRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PatchRequest.Merge(m, src)
 }
 func (m *PatchRequest) XXX_Size() int {
 	return xxx_messageInfo_PatchRequest.Size(m)
@@ -75,7 +78,7 @@ func (m *PatchRequest) GetConfig() *OpConfig {
 }
 
 type PatchResponse struct {
-	Camera               *Camera  `protobuf:"bytes,1,opt,name=camera" json:"camera,omitempty"`
+	Camera               *Camera  `protobuf:"bytes,1,opt,name=camera,proto3" json:"camera,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -85,16 +88,17 @@ func (m *PatchResponse) Reset()         { *m = PatchResponse{} }
 func (m *PatchResponse) String() string { return proto.CompactTextString(m) }
 func (*PatchResponse) ProtoMessage()    {}
 func (*PatchResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_patch_f0599a5f946e0225, []int{1}
+	return fileDescriptor_1fe77fd0a0574cdd, []int{1}
 }
+
 func (m *PatchResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_PatchResponse.Unmarshal(m, b)
 }
 func (m *PatchResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_PatchResponse.Marshal(b, m, deterministic)
 }
-func (dst *PatchResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_PatchResponse.Merge(dst, src)
+func (m *PatchResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PatchResponse.Merge(m, src)
 }
 func (m *PatchResponse) XXX_Size() int {
 	return xxx_messageInfo_PatchResponse.Size(m)
@@ -117,9 +121,9 @@ func init() {
 	proto.RegisterType((*PatchResponse)(nil), "ai.metathings.service.camerad.PatchResponse")
 }
 
-func init() { proto.RegisterFile("patch.proto", fileDescriptor_patch_f0599a5f946e0225) }
+func init() { proto.RegisterFile("patch.proto", fileDescriptor_1fe77fd0a0574cdd) }
 
-var fileDescriptor_patch_f0599a5f946e0225 = []byte{
+var fileDescriptor_1fe77fd0a0574cdd = []byte{
 	// 266 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x90, 0xcd, 0x4a, 0xf4, 0x30,
 	0x14, 0x40, 0x69, 0xbf, 0x8f, 0x2e, 0x32, 0xe3, 0xa6, 0xab, 0x32, 0xf8, 0x33, 0x0c, 0x88, 0x6e,

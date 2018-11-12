@@ -3,9 +3,11 @@
 
 package identityd
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -19,9 +21,9 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type Role struct {
-	Id                   string   `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	Name                 string   `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
-	DomainId             string   `protobuf:"bytes,3,opt,name=domain_id,json=domainId" json:"domain_id,omitempty"`
+	Id                   string   `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name                 string   `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	DomainId             string   `protobuf:"bytes,3,opt,name=domain_id,json=domainId,proto3" json:"domain_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -31,16 +33,17 @@ func (m *Role) Reset()         { *m = Role{} }
 func (m *Role) String() string { return proto.CompactTextString(m) }
 func (*Role) ProtoMessage()    {}
 func (*Role) Descriptor() ([]byte, []int) {
-	return fileDescriptor_role_ce2085af35c6ac6e, []int{0}
+	return fileDescriptor_48a3ff9f7c9032f8, []int{0}
 }
+
 func (m *Role) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Role.Unmarshal(m, b)
 }
 func (m *Role) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Role.Marshal(b, m, deterministic)
 }
-func (dst *Role) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Role.Merge(dst, src)
+func (m *Role) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Role.Merge(m, src)
 }
 func (m *Role) XXX_Size() int {
 	return xxx_messageInfo_Role.Size(m)
@@ -76,9 +79,9 @@ func init() {
 	proto.RegisterType((*Role)(nil), "ai.metathings.service.identityd.Role")
 }
 
-func init() { proto.RegisterFile("role.proto", fileDescriptor_role_ce2085af35c6ac6e) }
+func init() { proto.RegisterFile("role.proto", fileDescriptor_48a3ff9f7c9032f8) }
 
-var fileDescriptor_role_ce2085af35c6ac6e = []byte{
+var fileDescriptor_48a3ff9f7c9032f8 = []byte{
 	// 134 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xe2, 0x2a, 0xca, 0xcf, 0x49,
 	0xd5, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x92, 0x4f, 0xcc, 0xd4, 0xcb, 0x4d, 0x2d, 0x49, 0x2c,

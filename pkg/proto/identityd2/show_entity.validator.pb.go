@@ -3,7 +3,7 @@
 
 package identityd2
 
-import go_proto_validators "github.com/mwitkow/go-proto-validators"
+import github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
@@ -15,8 +15,8 @@ var _ = math.Inf
 
 func (this *ShowEntityResponse) Validate() error {
 	if this.Entity != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Entity); err != nil {
-			return go_proto_validators.FieldError("Entity", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Entity); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Entity", err)
 		}
 	}
 	return nil

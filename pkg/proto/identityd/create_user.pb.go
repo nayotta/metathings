@@ -3,11 +3,13 @@
 
 package identityd
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import wrappers "github.com/golang/protobuf/ptypes/wrappers"
-import _ "github.com/mwitkow/go-proto-validators"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	wrappers "github.com/golang/protobuf/ptypes/wrappers"
+	_ "github.com/mwitkow/go-proto-validators"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -21,12 +23,12 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type CreateUserRequest struct {
-	DomainId             *wrappers.StringValue            `protobuf:"bytes,1,opt,name=domain_id,json=domainId" json:"domain_id,omitempty"`
-	DefaultProjectId     *wrappers.StringValue            `protobuf:"bytes,2,opt,name=default_project_id,json=defaultProjectId" json:"default_project_id,omitempty"`
-	Name                 *wrappers.StringValue            `protobuf:"bytes,3,opt,name=name" json:"name,omitempty"`
-	Password             *wrappers.StringValue            `protobuf:"bytes,4,opt,name=password" json:"password,omitempty"`
-	Enabled              *wrappers.BoolValue              `protobuf:"bytes,5,opt,name=enabled" json:"enabled,omitempty"`
-	Extra                map[string]*wrappers.StringValue `protobuf:"bytes,6,rep,name=extra" json:"extra,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	DomainId             *wrappers.StringValue            `protobuf:"bytes,1,opt,name=domain_id,json=domainId,proto3" json:"domain_id,omitempty"`
+	DefaultProjectId     *wrappers.StringValue            `protobuf:"bytes,2,opt,name=default_project_id,json=defaultProjectId,proto3" json:"default_project_id,omitempty"`
+	Name                 *wrappers.StringValue            `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
+	Password             *wrappers.StringValue            `protobuf:"bytes,4,opt,name=password,proto3" json:"password,omitempty"`
+	Enabled              *wrappers.BoolValue              `protobuf:"bytes,5,opt,name=enabled,proto3" json:"enabled,omitempty"`
+	Extra                map[string]*wrappers.StringValue `protobuf:"bytes,6,rep,name=extra,proto3" json:"extra,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 	XXX_NoUnkeyedLiteral struct{}                         `json:"-"`
 	XXX_unrecognized     []byte                           `json:"-"`
 	XXX_sizecache        int32                            `json:"-"`
@@ -36,16 +38,17 @@ func (m *CreateUserRequest) Reset()         { *m = CreateUserRequest{} }
 func (m *CreateUserRequest) String() string { return proto.CompactTextString(m) }
 func (*CreateUserRequest) ProtoMessage()    {}
 func (*CreateUserRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_create_user_3d049929f5690a77, []int{0}
+	return fileDescriptor_f4091f50dd9553f1, []int{0}
 }
+
 func (m *CreateUserRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_CreateUserRequest.Unmarshal(m, b)
 }
 func (m *CreateUserRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_CreateUserRequest.Marshal(b, m, deterministic)
 }
-func (dst *CreateUserRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CreateUserRequest.Merge(dst, src)
+func (m *CreateUserRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CreateUserRequest.Merge(m, src)
 }
 func (m *CreateUserRequest) XXX_Size() int {
 	return xxx_messageInfo_CreateUserRequest.Size(m)
@@ -99,7 +102,7 @@ func (m *CreateUserRequest) GetExtra() map[string]*wrappers.StringValue {
 }
 
 type CreateUserResponse struct {
-	User                 *User    `protobuf:"bytes,1,opt,name=user" json:"user,omitempty"`
+	User                 *User    `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -109,16 +112,17 @@ func (m *CreateUserResponse) Reset()         { *m = CreateUserResponse{} }
 func (m *CreateUserResponse) String() string { return proto.CompactTextString(m) }
 func (*CreateUserResponse) ProtoMessage()    {}
 func (*CreateUserResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_create_user_3d049929f5690a77, []int{1}
+	return fileDescriptor_f4091f50dd9553f1, []int{1}
 }
+
 func (m *CreateUserResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_CreateUserResponse.Unmarshal(m, b)
 }
 func (m *CreateUserResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_CreateUserResponse.Marshal(b, m, deterministic)
 }
-func (dst *CreateUserResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CreateUserResponse.Merge(dst, src)
+func (m *CreateUserResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CreateUserResponse.Merge(m, src)
 }
 func (m *CreateUserResponse) XXX_Size() int {
 	return xxx_messageInfo_CreateUserResponse.Size(m)
@@ -142,9 +146,9 @@ func init() {
 	proto.RegisterType((*CreateUserResponse)(nil), "ai.metathings.service.identityd.CreateUserResponse")
 }
 
-func init() { proto.RegisterFile("create_user.proto", fileDescriptor_create_user_3d049929f5690a77) }
+func init() { proto.RegisterFile("create_user.proto", fileDescriptor_f4091f50dd9553f1) }
 
-var fileDescriptor_create_user_3d049929f5690a77 = []byte{
+var fileDescriptor_f4091f50dd9553f1 = []byte{
 	// 387 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x92, 0xc1, 0xeb, 0xda, 0x30,
 	0x14, 0xc7, 0xa9, 0x56, 0xa7, 0xf1, 0xa2, 0x39, 0x95, 0x32, 0xa6, 0x08, 0x03, 0x2f, 0xa6, 0xe0,

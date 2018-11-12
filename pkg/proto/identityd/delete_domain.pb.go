@@ -3,11 +3,13 @@
 
 package identityd
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import wrappers "github.com/golang/protobuf/ptypes/wrappers"
-import _ "github.com/mwitkow/go-proto-validators"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	wrappers "github.com/golang/protobuf/ptypes/wrappers"
+	_ "github.com/mwitkow/go-proto-validators"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -21,7 +23,7 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type DeleteDomainRequest struct {
-	DomainId             *wrappers.StringValue `protobuf:"bytes,1,opt,name=domain_id,json=domainId" json:"domain_id,omitempty"`
+	DomainId             *wrappers.StringValue `protobuf:"bytes,1,opt,name=domain_id,json=domainId,proto3" json:"domain_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -31,16 +33,17 @@ func (m *DeleteDomainRequest) Reset()         { *m = DeleteDomainRequest{} }
 func (m *DeleteDomainRequest) String() string { return proto.CompactTextString(m) }
 func (*DeleteDomainRequest) ProtoMessage()    {}
 func (*DeleteDomainRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_delete_domain_61f1154c0b7f6ce9, []int{0}
+	return fileDescriptor_d51c09231368b19d, []int{0}
 }
+
 func (m *DeleteDomainRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_DeleteDomainRequest.Unmarshal(m, b)
 }
 func (m *DeleteDomainRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_DeleteDomainRequest.Marshal(b, m, deterministic)
 }
-func (dst *DeleteDomainRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_DeleteDomainRequest.Merge(dst, src)
+func (m *DeleteDomainRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DeleteDomainRequest.Merge(m, src)
 }
 func (m *DeleteDomainRequest) XXX_Size() int {
 	return xxx_messageInfo_DeleteDomainRequest.Size(m)
@@ -62,9 +65,9 @@ func init() {
 	proto.RegisterType((*DeleteDomainRequest)(nil), "ai.metathings.service.identityd.DeleteDomainRequest")
 }
 
-func init() { proto.RegisterFile("delete_domain.proto", fileDescriptor_delete_domain_61f1154c0b7f6ce9) }
+func init() { proto.RegisterFile("delete_domain.proto", fileDescriptor_d51c09231368b19d) }
 
-var fileDescriptor_delete_domain_61f1154c0b7f6ce9 = []byte{
+var fileDescriptor_d51c09231368b19d = []byte{
 	// 210 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x3c, 0xce, 0x41, 0x4b, 0x03, 0x31,
 	0x10, 0x05, 0x60, 0xd6, 0x43, 0xd1, 0xf5, 0xd6, 0x5e, 0xa4, 0x88, 0x2d, 0x9e, 0xbc, 0x74, 0x02,

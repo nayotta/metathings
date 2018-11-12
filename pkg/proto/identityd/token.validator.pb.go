@@ -3,7 +3,7 @@
 
 package identityd
 
-import go_proto_validators "github.com/mwitkow/go-proto-validators"
+import github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
@@ -16,35 +16,35 @@ var _ = math.Inf
 
 func (this *Token) Validate() error {
 	if this.ExpiresAt != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.ExpiresAt); err != nil {
-			return go_proto_validators.FieldError("ExpiresAt", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.ExpiresAt); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("ExpiresAt", err)
 		}
 	}
 	if this.IssuedAt != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.IssuedAt); err != nil {
-			return go_proto_validators.FieldError("IssuedAt", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.IssuedAt); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("IssuedAt", err)
 		}
 	}
 	if this.User != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.User); err != nil {
-			return go_proto_validators.FieldError("User", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.User); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("User", err)
 		}
 	}
 	for _, item := range this.Roles {
 		if item != nil {
-			if err := go_proto_validators.CallValidatorIfExists(item); err != nil {
-				return go_proto_validators.FieldError("Roles", err)
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("Roles", err)
 			}
 		}
 	}
 	if this.Project != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Project); err != nil {
-			return go_proto_validators.FieldError("Project", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Project); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Project", err)
 		}
 	}
 	if this.ApplicationCredential != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.ApplicationCredential); err != nil {
-			return go_proto_validators.FieldError("ApplicationCredential", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.ApplicationCredential); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("ApplicationCredential", err)
 		}
 	}
 	return nil
@@ -54,16 +54,16 @@ func (this *Token__Domain) Validate() error {
 }
 func (this *Token__Project) Validate() error {
 	if this.Domain != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Domain); err != nil {
-			return go_proto_validators.FieldError("Domain", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Domain); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Domain", err)
 		}
 	}
 	return nil
 }
 func (this *Token__User) Validate() error {
 	if this.Domain != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Domain); err != nil {
-			return go_proto_validators.FieldError("Domain", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Domain); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Domain", err)
 		}
 	}
 	return nil

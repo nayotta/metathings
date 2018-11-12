@@ -3,10 +3,12 @@
 
 package identityd2
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import _ "github.com/mwitkow/go-proto-validators"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	_ "github.com/mwitkow/go-proto-validators"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -20,8 +22,8 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type AddEntityToDomainRequest struct {
-	Domain               *OpDomain `protobuf:"bytes,1,opt,name=domain" json:"domain,omitempty"`
-	Entity               *OpEntity `protobuf:"bytes,2,opt,name=entity" json:"entity,omitempty"`
+	Domain               *OpDomain `protobuf:"bytes,1,opt,name=domain,proto3" json:"domain,omitempty"`
+	Entity               *OpEntity `protobuf:"bytes,2,opt,name=entity,proto3" json:"entity,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}  `json:"-"`
 	XXX_unrecognized     []byte    `json:"-"`
 	XXX_sizecache        int32     `json:"-"`
@@ -31,16 +33,17 @@ func (m *AddEntityToDomainRequest) Reset()         { *m = AddEntityToDomainReque
 func (m *AddEntityToDomainRequest) String() string { return proto.CompactTextString(m) }
 func (*AddEntityToDomainRequest) ProtoMessage()    {}
 func (*AddEntityToDomainRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_add_entity_to_domain_d4eeba4333424dd9, []int{0}
+	return fileDescriptor_d3a988c0435a95df, []int{0}
 }
+
 func (m *AddEntityToDomainRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_AddEntityToDomainRequest.Unmarshal(m, b)
 }
 func (m *AddEntityToDomainRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_AddEntityToDomainRequest.Marshal(b, m, deterministic)
 }
-func (dst *AddEntityToDomainRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_AddEntityToDomainRequest.Merge(dst, src)
+func (m *AddEntityToDomainRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_AddEntityToDomainRequest.Merge(m, src)
 }
 func (m *AddEntityToDomainRequest) XXX_Size() int {
 	return xxx_messageInfo_AddEntityToDomainRequest.Size(m)
@@ -69,11 +72,9 @@ func init() {
 	proto.RegisterType((*AddEntityToDomainRequest)(nil), "ai.metathings.service.identityd2.AddEntityToDomainRequest")
 }
 
-func init() {
-	proto.RegisterFile("add_entity_to_domain.proto", fileDescriptor_add_entity_to_domain_d4eeba4333424dd9)
-}
+func init() { proto.RegisterFile("add_entity_to_domain.proto", fileDescriptor_d3a988c0435a95df) }
 
-var fileDescriptor_add_entity_to_domain_d4eeba4333424dd9 = []byte{
+var fileDescriptor_d3a988c0435a95df = []byte{
 	// 209 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0xce, 0xc1, 0x4a, 0x87, 0x40,
 	0x10, 0xc7, 0x71, 0xf6, 0x7f, 0xf0, 0xa0, 0x37, 0x4f, 0xe2, 0x25, 0xe9, 0x14, 0x81, 0x2b, 0x18,

@@ -3,12 +3,14 @@
 
 package sensord
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import wrappers "github.com/golang/protobuf/ptypes/wrappers"
-import _ "github.com/mwitkow/go-proto-validators"
-import _ "github.com/nayotta/metathings/pkg/proto/sensor"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	wrappers "github.com/golang/protobuf/ptypes/wrappers"
+	_ "github.com/mwitkow/go-proto-validators"
+	_ "github.com/nayotta/metathings/pkg/proto/sensor"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -22,7 +24,7 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type SubscribeByIdRequest struct {
-	Id                   *wrappers.StringValue `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
+	Id                   *wrappers.StringValue `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -32,16 +34,17 @@ func (m *SubscribeByIdRequest) Reset()         { *m = SubscribeByIdRequest{} }
 func (m *SubscribeByIdRequest) String() string { return proto.CompactTextString(m) }
 func (*SubscribeByIdRequest) ProtoMessage()    {}
 func (*SubscribeByIdRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_subscribe_9e0adf85cc69f665, []int{0}
+	return fileDescriptor_38d2980c9543da44, []int{0}
 }
+
 func (m *SubscribeByIdRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_SubscribeByIdRequest.Unmarshal(m, b)
 }
 func (m *SubscribeByIdRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_SubscribeByIdRequest.Marshal(b, m, deterministic)
 }
-func (dst *SubscribeByIdRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_SubscribeByIdRequest.Merge(dst, src)
+func (m *SubscribeByIdRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_SubscribeByIdRequest.Merge(m, src)
 }
 func (m *SubscribeByIdRequest) XXX_Size() int {
 	return xxx_messageInfo_SubscribeByIdRequest.Size(m)
@@ -60,7 +63,7 @@ func (m *SubscribeByIdRequest) GetId() *wrappers.StringValue {
 }
 
 type SubscribeByUserIdRequest struct {
-	UserId               *wrappers.StringValue `protobuf:"bytes,1,opt,name=user_id,json=userId" json:"user_id,omitempty"`
+	UserId               *wrappers.StringValue `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -70,16 +73,17 @@ func (m *SubscribeByUserIdRequest) Reset()         { *m = SubscribeByUserIdReque
 func (m *SubscribeByUserIdRequest) String() string { return proto.CompactTextString(m) }
 func (*SubscribeByUserIdRequest) ProtoMessage()    {}
 func (*SubscribeByUserIdRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_subscribe_9e0adf85cc69f665, []int{1}
+	return fileDescriptor_38d2980c9543da44, []int{1}
 }
+
 func (m *SubscribeByUserIdRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_SubscribeByUserIdRequest.Unmarshal(m, b)
 }
 func (m *SubscribeByUserIdRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_SubscribeByUserIdRequest.Marshal(b, m, deterministic)
 }
-func (dst *SubscribeByUserIdRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_SubscribeByUserIdRequest.Merge(dst, src)
+func (m *SubscribeByUserIdRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_SubscribeByUserIdRequest.Merge(m, src)
 }
 func (m *SubscribeByUserIdRequest) XXX_Size() int {
 	return xxx_messageInfo_SubscribeByUserIdRequest.Size(m)
@@ -98,7 +102,7 @@ func (m *SubscribeByUserIdRequest) GetUserId() *wrappers.StringValue {
 }
 
 type SubscribeByCoreIdRequest struct {
-	CoreId               *wrappers.StringValue `protobuf:"bytes,1,opt,name=core_id,json=coreId" json:"core_id,omitempty"`
+	CoreId               *wrappers.StringValue `protobuf:"bytes,1,opt,name=core_id,json=coreId,proto3" json:"core_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -108,16 +112,17 @@ func (m *SubscribeByCoreIdRequest) Reset()         { *m = SubscribeByCoreIdReque
 func (m *SubscribeByCoreIdRequest) String() string { return proto.CompactTextString(m) }
 func (*SubscribeByCoreIdRequest) ProtoMessage()    {}
 func (*SubscribeByCoreIdRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_subscribe_9e0adf85cc69f665, []int{2}
+	return fileDescriptor_38d2980c9543da44, []int{2}
 }
+
 func (m *SubscribeByCoreIdRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_SubscribeByCoreIdRequest.Unmarshal(m, b)
 }
 func (m *SubscribeByCoreIdRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_SubscribeByCoreIdRequest.Marshal(b, m, deterministic)
 }
-func (dst *SubscribeByCoreIdRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_SubscribeByCoreIdRequest.Merge(dst, src)
+func (m *SubscribeByCoreIdRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_SubscribeByCoreIdRequest.Merge(m, src)
 }
 func (m *SubscribeByCoreIdRequest) XXX_Size() int {
 	return xxx_messageInfo_SubscribeByCoreIdRequest.Size(m)
@@ -136,7 +141,7 @@ func (m *SubscribeByCoreIdRequest) GetCoreId() *wrappers.StringValue {
 }
 
 type SubscribeRequest struct {
-	Session *wrappers.UInt64Value `protobuf:"bytes,1,opt,name=session" json:"session,omitempty"`
+	Session *wrappers.UInt64Value `protobuf:"bytes,1,opt,name=session,proto3" json:"session,omitempty"`
 	// Types that are valid to be assigned to Payload:
 	//	*SubscribeRequest_SubscribeById
 	//	*SubscribeRequest_SubscribeByUserId
@@ -151,16 +156,17 @@ func (m *SubscribeRequest) Reset()         { *m = SubscribeRequest{} }
 func (m *SubscribeRequest) String() string { return proto.CompactTextString(m) }
 func (*SubscribeRequest) ProtoMessage()    {}
 func (*SubscribeRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_subscribe_9e0adf85cc69f665, []int{3}
+	return fileDescriptor_38d2980c9543da44, []int{3}
 }
+
 func (m *SubscribeRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_SubscribeRequest.Unmarshal(m, b)
 }
 func (m *SubscribeRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_SubscribeRequest.Marshal(b, m, deterministic)
 }
-func (dst *SubscribeRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_SubscribeRequest.Merge(dst, src)
+func (m *SubscribeRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_SubscribeRequest.Merge(m, src)
 }
 func (m *SubscribeRequest) XXX_Size() int {
 	return xxx_messageInfo_SubscribeRequest.Size(m)
@@ -171,34 +177,38 @@ func (m *SubscribeRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_SubscribeRequest proto.InternalMessageInfo
 
+func (m *SubscribeRequest) GetSession() *wrappers.UInt64Value {
+	if m != nil {
+		return m.Session
+	}
+	return nil
+}
+
 type isSubscribeRequest_Payload interface {
 	isSubscribeRequest_Payload()
 }
 
 type SubscribeRequest_SubscribeById struct {
-	SubscribeById *SubscribeByIdRequest `protobuf:"bytes,2,opt,name=subscribe_by_id,json=subscribeById,oneof"`
-}
-type SubscribeRequest_SubscribeByUserId struct {
-	SubscribeByUserId *SubscribeByUserIdRequest `protobuf:"bytes,3,opt,name=subscribe_by_user_id,json=subscribeByUserId,oneof"`
-}
-type SubscribeRequest_SubscribeByCoreId struct {
-	SubscribeByCoreId *SubscribeByCoreIdRequest `protobuf:"bytes,4,opt,name=subscribe_by_core_id,json=subscribeByCoreId,oneof"`
+	SubscribeById *SubscribeByIdRequest `protobuf:"bytes,2,opt,name=subscribe_by_id,json=subscribeById,proto3,oneof"`
 }
 
-func (*SubscribeRequest_SubscribeById) isSubscribeRequest_Payload()     {}
+type SubscribeRequest_SubscribeByUserId struct {
+	SubscribeByUserId *SubscribeByUserIdRequest `protobuf:"bytes,3,opt,name=subscribe_by_user_id,json=subscribeByUserId,proto3,oneof"`
+}
+
+type SubscribeRequest_SubscribeByCoreId struct {
+	SubscribeByCoreId *SubscribeByCoreIdRequest `protobuf:"bytes,4,opt,name=subscribe_by_core_id,json=subscribeByCoreId,proto3,oneof"`
+}
+
+func (*SubscribeRequest_SubscribeById) isSubscribeRequest_Payload() {}
+
 func (*SubscribeRequest_SubscribeByUserId) isSubscribeRequest_Payload() {}
+
 func (*SubscribeRequest_SubscribeByCoreId) isSubscribeRequest_Payload() {}
 
 func (m *SubscribeRequest) GetPayload() isSubscribeRequest_Payload {
 	if m != nil {
 		return m.Payload
-	}
-	return nil
-}
-
-func (m *SubscribeRequest) GetSession() *wrappers.UInt64Value {
-	if m != nil {
-		return m.Session
 	}
 	return nil
 }
@@ -318,7 +328,7 @@ func _SubscribeRequest_OneofSizer(msg proto.Message) (n int) {
 }
 
 type SubscribeRequests struct {
-	Requests             []*SubscribeRequest `protobuf:"bytes,1,rep,name=requests" json:"requests,omitempty"`
+	Requests             []*SubscribeRequest `protobuf:"bytes,1,rep,name=requests,proto3" json:"requests,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}            `json:"-"`
 	XXX_unrecognized     []byte              `json:"-"`
 	XXX_sizecache        int32               `json:"-"`
@@ -328,16 +338,17 @@ func (m *SubscribeRequests) Reset()         { *m = SubscribeRequests{} }
 func (m *SubscribeRequests) String() string { return proto.CompactTextString(m) }
 func (*SubscribeRequests) ProtoMessage()    {}
 func (*SubscribeRequests) Descriptor() ([]byte, []int) {
-	return fileDescriptor_subscribe_9e0adf85cc69f665, []int{4}
+	return fileDescriptor_38d2980c9543da44, []int{4}
 }
+
 func (m *SubscribeRequests) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_SubscribeRequests.Unmarshal(m, b)
 }
 func (m *SubscribeRequests) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_SubscribeRequests.Marshal(b, m, deterministic)
 }
-func (dst *SubscribeRequests) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_SubscribeRequests.Merge(dst, src)
+func (m *SubscribeRequests) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_SubscribeRequests.Merge(m, src)
 }
 func (m *SubscribeRequests) XXX_Size() int {
 	return xxx_messageInfo_SubscribeRequests.Size(m)
@@ -356,8 +367,8 @@ func (m *SubscribeRequests) GetRequests() []*SubscribeRequest {
 }
 
 type SubscribeResponse struct {
-	Session              uint64      `protobuf:"varint,1,opt,name=session" json:"session,omitempty"`
-	Data                 *SensorData `protobuf:"bytes,2,opt,name=data" json:"data,omitempty"`
+	Session              uint64      `protobuf:"varint,1,opt,name=session,proto3" json:"session,omitempty"`
+	Data                 *SensorData `protobuf:"bytes,2,opt,name=data,proto3" json:"data,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}    `json:"-"`
 	XXX_unrecognized     []byte      `json:"-"`
 	XXX_sizecache        int32       `json:"-"`
@@ -367,16 +378,17 @@ func (m *SubscribeResponse) Reset()         { *m = SubscribeResponse{} }
 func (m *SubscribeResponse) String() string { return proto.CompactTextString(m) }
 func (*SubscribeResponse) ProtoMessage()    {}
 func (*SubscribeResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_subscribe_9e0adf85cc69f665, []int{5}
+	return fileDescriptor_38d2980c9543da44, []int{5}
 }
+
 func (m *SubscribeResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_SubscribeResponse.Unmarshal(m, b)
 }
 func (m *SubscribeResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_SubscribeResponse.Marshal(b, m, deterministic)
 }
-func (dst *SubscribeResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_SubscribeResponse.Merge(dst, src)
+func (m *SubscribeResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_SubscribeResponse.Merge(m, src)
 }
 func (m *SubscribeResponse) XXX_Size() int {
 	return xxx_messageInfo_SubscribeResponse.Size(m)
@@ -402,7 +414,7 @@ func (m *SubscribeResponse) GetData() *SensorData {
 }
 
 type SubscribeResponses struct {
-	Responses            []*SubscribeResponse `protobuf:"bytes,1,rep,name=responses" json:"responses,omitempty"`
+	Responses            []*SubscribeResponse `protobuf:"bytes,1,rep,name=responses,proto3" json:"responses,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}             `json:"-"`
 	XXX_unrecognized     []byte               `json:"-"`
 	XXX_sizecache        int32                `json:"-"`
@@ -412,16 +424,17 @@ func (m *SubscribeResponses) Reset()         { *m = SubscribeResponses{} }
 func (m *SubscribeResponses) String() string { return proto.CompactTextString(m) }
 func (*SubscribeResponses) ProtoMessage()    {}
 func (*SubscribeResponses) Descriptor() ([]byte, []int) {
-	return fileDescriptor_subscribe_9e0adf85cc69f665, []int{6}
+	return fileDescriptor_38d2980c9543da44, []int{6}
 }
+
 func (m *SubscribeResponses) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_SubscribeResponses.Unmarshal(m, b)
 }
 func (m *SubscribeResponses) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_SubscribeResponses.Marshal(b, m, deterministic)
 }
-func (dst *SubscribeResponses) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_SubscribeResponses.Merge(dst, src)
+func (m *SubscribeResponses) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_SubscribeResponses.Merge(m, src)
 }
 func (m *SubscribeResponses) XXX_Size() int {
 	return xxx_messageInfo_SubscribeResponses.Size(m)
@@ -449,9 +462,9 @@ func init() {
 	proto.RegisterType((*SubscribeResponses)(nil), "ai.metathings.service.sensord.SubscribeResponses")
 }
 
-func init() { proto.RegisterFile("subscribe.proto", fileDescriptor_subscribe_9e0adf85cc69f665) }
+func init() { proto.RegisterFile("subscribe.proto", fileDescriptor_38d2980c9543da44) }
 
-var fileDescriptor_subscribe_9e0adf85cc69f665 = []byte{
+var fileDescriptor_38d2980c9543da44 = []byte{
 	// 460 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x92, 0xcb, 0x6e, 0xd4, 0x30,
 	0x14, 0x86, 0x3b, 0x17, 0xcd, 0x50, 0x17, 0x04, 0xb5, 0xba, 0x18, 0x55, 0x5c, 0x46, 0x59, 0x95,

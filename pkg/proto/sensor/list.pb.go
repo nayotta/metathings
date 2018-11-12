@@ -3,10 +3,12 @@
 
 package sensor
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import _ "github.com/mwitkow/go-proto-validators"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	_ "github.com/mwitkow/go-proto-validators"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -29,16 +31,17 @@ func (m *ListRequest) Reset()         { *m = ListRequest{} }
 func (m *ListRequest) String() string { return proto.CompactTextString(m) }
 func (*ListRequest) ProtoMessage()    {}
 func (*ListRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_list_88f0ce4adfb96bf9, []int{0}
+	return fileDescriptor_af793ce248ee1bf0, []int{0}
 }
+
 func (m *ListRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ListRequest.Unmarshal(m, b)
 }
 func (m *ListRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_ListRequest.Marshal(b, m, deterministic)
 }
-func (dst *ListRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ListRequest.Merge(dst, src)
+func (m *ListRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ListRequest.Merge(m, src)
 }
 func (m *ListRequest) XXX_Size() int {
 	return xxx_messageInfo_ListRequest.Size(m)
@@ -50,7 +53,7 @@ func (m *ListRequest) XXX_DiscardUnknown() {
 var xxx_messageInfo_ListRequest proto.InternalMessageInfo
 
 type ListResponse struct {
-	Sensors              []*Sensor `protobuf:"bytes,1,rep,name=sensors" json:"sensors,omitempty"`
+	Sensors              []*Sensor `protobuf:"bytes,1,rep,name=sensors,proto3" json:"sensors,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}  `json:"-"`
 	XXX_unrecognized     []byte    `json:"-"`
 	XXX_sizecache        int32     `json:"-"`
@@ -60,16 +63,17 @@ func (m *ListResponse) Reset()         { *m = ListResponse{} }
 func (m *ListResponse) String() string { return proto.CompactTextString(m) }
 func (*ListResponse) ProtoMessage()    {}
 func (*ListResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_list_88f0ce4adfb96bf9, []int{1}
+	return fileDescriptor_af793ce248ee1bf0, []int{1}
 }
+
 func (m *ListResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ListResponse.Unmarshal(m, b)
 }
 func (m *ListResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_ListResponse.Marshal(b, m, deterministic)
 }
-func (dst *ListResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ListResponse.Merge(dst, src)
+func (m *ListResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ListResponse.Merge(m, src)
 }
 func (m *ListResponse) XXX_Size() int {
 	return xxx_messageInfo_ListResponse.Size(m)
@@ -92,9 +96,9 @@ func init() {
 	proto.RegisterType((*ListResponse)(nil), "ai.metathings.service.sensor.ListResponse")
 }
 
-func init() { proto.RegisterFile("list.proto", fileDescriptor_list_88f0ce4adfb96bf9) }
+func init() { proto.RegisterFile("list.proto", fileDescriptor_af793ce248ee1bf0) }
 
-var fileDescriptor_list_88f0ce4adfb96bf9 = []byte{
+var fileDescriptor_af793ce248ee1bf0 = []byte{
 	// 170 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x7c, 0x8e, 0xc1, 0x0a, 0x82, 0x40,
 	0x10, 0x86, 0x89, 0xa0, 0x60, 0xb5, 0x8b, 0xa7, 0x90, 0x0e, 0x21, 0x1d, 0xba, 0x38, 0x42, 0x41,

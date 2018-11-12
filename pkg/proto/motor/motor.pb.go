@@ -3,9 +3,11 @@
 
 package motor
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -31,6 +33,7 @@ var MotorState_name = map[int32]string{
 	1: "MOTOR_STATE_ON",
 	2: "MOTOR_STATE_OFF",
 }
+
 var MotorState_value = map[string]int32{
 	"MOTOR_STATE_UNKNOWN": 0,
 	"MOTOR_STATE_ON":      1,
@@ -40,8 +43,9 @@ var MotorState_value = map[string]int32{
 func (x MotorState) String() string {
 	return proto.EnumName(MotorState_name, int32(x))
 }
+
 func (MotorState) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_motor_2df5e2122e28dd77, []int{0}
+	return fileDescriptor_7024f82ae1d6a6dd, []int{0}
 }
 
 type MotorDirection int32
@@ -57,6 +61,7 @@ var MotorDirection_name = map[int32]string{
 	1: "MOTOR_DIRECTION_FORWARD",
 	2: "MOTOR_DIRECTION_BACKWARD",
 }
+
 var MotorDirection_value = map[string]int32{
 	"MTOOR_DIRECTION_UNKNOWN":  0,
 	"MOTOR_DIRECTION_FORWARD":  1,
@@ -66,16 +71,17 @@ var MotorDirection_value = map[string]int32{
 func (x MotorDirection) String() string {
 	return proto.EnumName(MotorDirection_name, int32(x))
 }
+
 func (MotorDirection) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_motor_2df5e2122e28dd77, []int{1}
+	return fileDescriptor_7024f82ae1d6a6dd, []int{1}
 }
 
 type Motor struct {
-	Name      string         `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
-	State     MotorState     `protobuf:"varint,2,opt,name=state,enum=ai.metathings.service.motor.MotorState" json:"state,omitempty"`
-	Direction MotorDirection `protobuf:"varint,3,opt,name=direction,enum=ai.metathings.service.motor.MotorDirection" json:"direction,omitempty"`
+	Name      string         `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	State     MotorState     `protobuf:"varint,2,opt,name=state,proto3,enum=ai.metathings.service.motor.MotorState" json:"state,omitempty"`
+	Direction MotorDirection `protobuf:"varint,3,opt,name=direction,proto3,enum=ai.metathings.service.motor.MotorDirection" json:"direction,omitempty"`
 	// speed range from 0 to 1
-	Speed                float32  `protobuf:"fixed32,4,opt,name=speed" json:"speed,omitempty"`
+	Speed                float32  `protobuf:"fixed32,4,opt,name=speed,proto3" json:"speed,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -85,16 +91,17 @@ func (m *Motor) Reset()         { *m = Motor{} }
 func (m *Motor) String() string { return proto.CompactTextString(m) }
 func (*Motor) ProtoMessage()    {}
 func (*Motor) Descriptor() ([]byte, []int) {
-	return fileDescriptor_motor_2df5e2122e28dd77, []int{0}
+	return fileDescriptor_7024f82ae1d6a6dd, []int{0}
 }
+
 func (m *Motor) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Motor.Unmarshal(m, b)
 }
 func (m *Motor) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Motor.Marshal(b, m, deterministic)
 }
-func (dst *Motor) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Motor.Merge(dst, src)
+func (m *Motor) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Motor.Merge(m, src)
 }
 func (m *Motor) XXX_Size() int {
 	return xxx_messageInfo_Motor.Size(m)
@@ -134,14 +141,14 @@ func (m *Motor) GetSpeed() float32 {
 }
 
 func init() {
-	proto.RegisterType((*Motor)(nil), "ai.metathings.service.motor.Motor")
 	proto.RegisterEnum("ai.metathings.service.motor.MotorState", MotorState_name, MotorState_value)
 	proto.RegisterEnum("ai.metathings.service.motor.MotorDirection", MotorDirection_name, MotorDirection_value)
+	proto.RegisterType((*Motor)(nil), "ai.metathings.service.motor.Motor")
 }
 
-func init() { proto.RegisterFile("motor.proto", fileDescriptor_motor_2df5e2122e28dd77) }
+func init() { proto.RegisterFile("motor.proto", fileDescriptor_7024f82ae1d6a6dd) }
 
-var fileDescriptor_motor_2df5e2122e28dd77 = []byte{
+var fileDescriptor_7024f82ae1d6a6dd = []byte{
 	// 267 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x91, 0x41, 0x4b, 0xc3, 0x30,
 	0x14, 0xc7, 0x4d, 0x5d, 0x85, 0x3d, 0xa1, 0x96, 0x37, 0x61, 0x85, 0x79, 0x28, 0x5e, 0x2c, 0x13,

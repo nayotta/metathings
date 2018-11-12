@@ -3,10 +3,12 @@
 
 package identityd2
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import _ "github.com/mwitkow/go-proto-validators"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	_ "github.com/mwitkow/go-proto-validators"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -20,8 +22,8 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type RemoveEntityFromGroupRequest struct {
-	Group                *OpGroup  `protobuf:"bytes,1,opt,name=group" json:"group,omitempty"`
-	Entity               *OpEntity `protobuf:"bytes,2,opt,name=entity" json:"entity,omitempty"`
+	Group                *OpGroup  `protobuf:"bytes,1,opt,name=group,proto3" json:"group,omitempty"`
+	Entity               *OpEntity `protobuf:"bytes,2,opt,name=entity,proto3" json:"entity,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}  `json:"-"`
 	XXX_unrecognized     []byte    `json:"-"`
 	XXX_sizecache        int32     `json:"-"`
@@ -31,16 +33,17 @@ func (m *RemoveEntityFromGroupRequest) Reset()         { *m = RemoveEntityFromGr
 func (m *RemoveEntityFromGroupRequest) String() string { return proto.CompactTextString(m) }
 func (*RemoveEntityFromGroupRequest) ProtoMessage()    {}
 func (*RemoveEntityFromGroupRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_remove_entity_from_group_c457030ee4684d0f, []int{0}
+	return fileDescriptor_d591f08ab97d230c, []int{0}
 }
+
 func (m *RemoveEntityFromGroupRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_RemoveEntityFromGroupRequest.Unmarshal(m, b)
 }
 func (m *RemoveEntityFromGroupRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_RemoveEntityFromGroupRequest.Marshal(b, m, deterministic)
 }
-func (dst *RemoveEntityFromGroupRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_RemoveEntityFromGroupRequest.Merge(dst, src)
+func (m *RemoveEntityFromGroupRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_RemoveEntityFromGroupRequest.Merge(m, src)
 }
 func (m *RemoveEntityFromGroupRequest) XXX_Size() int {
 	return xxx_messageInfo_RemoveEntityFromGroupRequest.Size(m)
@@ -69,11 +72,9 @@ func init() {
 	proto.RegisterType((*RemoveEntityFromGroupRequest)(nil), "ai.metathings.service.identityd2.RemoveEntityFromGroupRequest")
 }
 
-func init() {
-	proto.RegisterFile("remove_entity_from_group.proto", fileDescriptor_remove_entity_from_group_c457030ee4684d0f)
-}
+func init() { proto.RegisterFile("remove_entity_from_group.proto", fileDescriptor_d591f08ab97d230c) }
 
-var fileDescriptor_remove_entity_from_group_c457030ee4684d0f = []byte{
+var fileDescriptor_d591f08ab97d230c = []byte{
 	// 221 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0xce, 0x41, 0x4a, 0xc4, 0x30,
 	0x14, 0xc6, 0x71, 0x32, 0x60, 0x17, 0x99, 0x5d, 0x57, 0xc3, 0x20, 0x5a, 0x5c, 0xa9, 0x30, 0x29,

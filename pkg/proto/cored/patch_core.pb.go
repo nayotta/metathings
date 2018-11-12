@@ -3,12 +3,14 @@
 
 package cored
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import wrappers "github.com/golang/protobuf/ptypes/wrappers"
-import _ "github.com/mwitkow/go-proto-validators"
-import state "github.com/nayotta/metathings/pkg/proto/common/state"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	wrappers "github.com/golang/protobuf/ptypes/wrappers"
+	_ "github.com/mwitkow/go-proto-validators"
+	state "github.com/nayotta/metathings/pkg/proto/common/state"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -22,9 +24,9 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type PatchCoreRequest struct {
-	Id                   *wrappers.StringValue `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
-	State                state.CoreState       `protobuf:"varint,3,opt,name=state,enum=ai.metathings.state.CoreState" json:"state,omitempty"`
+	Id                   *wrappers.StringValue `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	State                state.CoreState       `protobuf:"varint,3,opt,name=state,proto3,enum=ai.metathings.state.CoreState" json:"state,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -34,16 +36,17 @@ func (m *PatchCoreRequest) Reset()         { *m = PatchCoreRequest{} }
 func (m *PatchCoreRequest) String() string { return proto.CompactTextString(m) }
 func (*PatchCoreRequest) ProtoMessage()    {}
 func (*PatchCoreRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_patch_core_4d35248ccadc4a2f, []int{0}
+	return fileDescriptor_d5e24b2c43c37899, []int{0}
 }
+
 func (m *PatchCoreRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_PatchCoreRequest.Unmarshal(m, b)
 }
 func (m *PatchCoreRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_PatchCoreRequest.Marshal(b, m, deterministic)
 }
-func (dst *PatchCoreRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_PatchCoreRequest.Merge(dst, src)
+func (m *PatchCoreRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PatchCoreRequest.Merge(m, src)
 }
 func (m *PatchCoreRequest) XXX_Size() int {
 	return xxx_messageInfo_PatchCoreRequest.Size(m)
@@ -76,7 +79,7 @@ func (m *PatchCoreRequest) GetState() state.CoreState {
 }
 
 type PatchCoreResponse struct {
-	Core                 *Core    `protobuf:"bytes,1,opt,name=core" json:"core,omitempty"`
+	Core                 *Core    `protobuf:"bytes,1,opt,name=core,proto3" json:"core,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -86,16 +89,17 @@ func (m *PatchCoreResponse) Reset()         { *m = PatchCoreResponse{} }
 func (m *PatchCoreResponse) String() string { return proto.CompactTextString(m) }
 func (*PatchCoreResponse) ProtoMessage()    {}
 func (*PatchCoreResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_patch_core_4d35248ccadc4a2f, []int{1}
+	return fileDescriptor_d5e24b2c43c37899, []int{1}
 }
+
 func (m *PatchCoreResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_PatchCoreResponse.Unmarshal(m, b)
 }
 func (m *PatchCoreResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_PatchCoreResponse.Marshal(b, m, deterministic)
 }
-func (dst *PatchCoreResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_PatchCoreResponse.Merge(dst, src)
+func (m *PatchCoreResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PatchCoreResponse.Merge(m, src)
 }
 func (m *PatchCoreResponse) XXX_Size() int {
 	return xxx_messageInfo_PatchCoreResponse.Size(m)
@@ -118,9 +122,9 @@ func init() {
 	proto.RegisterType((*PatchCoreResponse)(nil), "ai.metathings.service.cored.PatchCoreResponse")
 }
 
-func init() { proto.RegisterFile("patch_core.proto", fileDescriptor_patch_core_4d35248ccadc4a2f) }
+func init() { proto.RegisterFile("patch_core.proto", fileDescriptor_d5e24b2c43c37899) }
 
-var fileDescriptor_patch_core_4d35248ccadc4a2f = []byte{
+var fileDescriptor_d5e24b2c43c37899 = []byte{
 	// 305 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x91, 0xc1, 0x4e, 0x2a, 0x31,
 	0x14, 0x86, 0x33, 0x73, 0xb9, 0x2c, 0x6a, 0x62, 0x70, 0x56, 0x04, 0x0d, 0x22, 0x2b, 0x36, 0xb4,

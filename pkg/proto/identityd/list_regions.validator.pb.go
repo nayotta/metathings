@@ -3,7 +3,7 @@
 
 package identityd
 
-import go_proto_validators "github.com/mwitkow/go-proto-validators"
+import github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
@@ -17,8 +17,8 @@ var _ = math.Inf
 
 func (this *ListRegionsRequest) Validate() error {
 	if this.ParentRegionId != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.ParentRegionId); err != nil {
-			return go_proto_validators.FieldError("ParentRegionId", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.ParentRegionId); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("ParentRegionId", err)
 		}
 	}
 	return nil
@@ -26,8 +26,8 @@ func (this *ListRegionsRequest) Validate() error {
 func (this *ListRegionsResponse) Validate() error {
 	for _, item := range this.Regions {
 		if item != nil {
-			if err := go_proto_validators.CallValidatorIfExists(item); err != nil {
-				return go_proto_validators.FieldError("Regions", err)
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("Regions", err)
 			}
 		}
 	}

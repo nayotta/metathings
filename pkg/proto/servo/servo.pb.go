@@ -3,9 +3,11 @@
 
 package servo
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -31,6 +33,7 @@ var ServoState_name = map[int32]string{
 	1: "SERVO_STATE_ON",
 	2: "SERVO_STATE_OFF",
 }
+
 var ServoState_value = map[string]int32{
 	"SERVO_STATE_UNKNOWN": 0,
 	"SERVO_STATE_ON":      1,
@@ -40,18 +43,19 @@ var ServoState_value = map[string]int32{
 func (x ServoState) String() string {
 	return proto.EnumName(ServoState_name, int32(x))
 }
+
 func (ServoState) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_servo_71f4f25e98cf84e5, []int{0}
+	return fileDescriptor_7413bec3de114197, []int{0}
 }
 
 type Servo struct {
-	Name  string     `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
-	State ServoState `protobuf:"varint,2,opt,name=state,enum=ai.metathings.service.servo.ServoState" json:"state,omitempty"`
+	Name  string     `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	State ServoState `protobuf:"varint,2,opt,name=state,proto3,enum=ai.metathings.service.servo.ServoState" json:"state,omitempty"`
 	// angle range from min_angle to max_angle, default is [0, 180]
-	MinAngle float32 `protobuf:"fixed32,3,opt,name=min_angle,json=minAngle" json:"min_angle,omitempty"`
-	MaxAngle float32 `protobuf:"fixed32,4,opt,name=max_angle,json=maxAngle" json:"max_angle,omitempty"`
+	MinAngle float32 `protobuf:"fixed32,3,opt,name=min_angle,json=minAngle,proto3" json:"min_angle,omitempty"`
+	MaxAngle float32 `protobuf:"fixed32,4,opt,name=max_angle,json=maxAngle,proto3" json:"max_angle,omitempty"`
 	// current angle, from 0 to 180.
-	Angle                float32  `protobuf:"fixed32,5,opt,name=angle" json:"angle,omitempty"`
+	Angle                float32  `protobuf:"fixed32,5,opt,name=angle,proto3" json:"angle,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -61,16 +65,17 @@ func (m *Servo) Reset()         { *m = Servo{} }
 func (m *Servo) String() string { return proto.CompactTextString(m) }
 func (*Servo) ProtoMessage()    {}
 func (*Servo) Descriptor() ([]byte, []int) {
-	return fileDescriptor_servo_71f4f25e98cf84e5, []int{0}
+	return fileDescriptor_7413bec3de114197, []int{0}
 }
+
 func (m *Servo) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Servo.Unmarshal(m, b)
 }
 func (m *Servo) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Servo.Marshal(b, m, deterministic)
 }
-func (dst *Servo) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Servo.Merge(dst, src)
+func (m *Servo) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Servo.Merge(m, src)
 }
 func (m *Servo) XXX_Size() int {
 	return xxx_messageInfo_Servo.Size(m)
@@ -117,13 +122,13 @@ func (m *Servo) GetAngle() float32 {
 }
 
 func init() {
-	proto.RegisterType((*Servo)(nil), "ai.metathings.service.servo.Servo")
 	proto.RegisterEnum("ai.metathings.service.servo.ServoState", ServoState_name, ServoState_value)
+	proto.RegisterType((*Servo)(nil), "ai.metathings.service.servo.Servo")
 }
 
-func init() { proto.RegisterFile("servo.proto", fileDescriptor_servo_71f4f25e98cf84e5) }
+func init() { proto.RegisterFile("servo.proto", fileDescriptor_7413bec3de114197) }
 
-var fileDescriptor_servo_71f4f25e98cf84e5 = []byte{
+var fileDescriptor_7413bec3de114197 = []byte{
 	// 220 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xe2, 0x2e, 0x4e, 0x2d, 0x2a,
 	0xcb, 0xd7, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x92, 0x4e, 0xcc, 0xd4, 0xcb, 0x4d, 0x2d, 0x49,

@@ -3,10 +3,12 @@
 
 package identityd2
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import _ "github.com/mwitkow/go-proto-validators"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	_ "github.com/mwitkow/go-proto-validators"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -20,7 +22,7 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type GetCredentialRequest struct {
-	Credential           *OpCredential `protobuf:"bytes,1,opt,name=credential" json:"credential,omitempty"`
+	Credential           *OpCredential `protobuf:"bytes,1,opt,name=credential,proto3" json:"credential,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}      `json:"-"`
 	XXX_unrecognized     []byte        `json:"-"`
 	XXX_sizecache        int32         `json:"-"`
@@ -30,16 +32,17 @@ func (m *GetCredentialRequest) Reset()         { *m = GetCredentialRequest{} }
 func (m *GetCredentialRequest) String() string { return proto.CompactTextString(m) }
 func (*GetCredentialRequest) ProtoMessage()    {}
 func (*GetCredentialRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_get_credential_a76f70c280f20dc7, []int{0}
+	return fileDescriptor_0cfd402ca0433cf9, []int{0}
 }
+
 func (m *GetCredentialRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_GetCredentialRequest.Unmarshal(m, b)
 }
 func (m *GetCredentialRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_GetCredentialRequest.Marshal(b, m, deterministic)
 }
-func (dst *GetCredentialRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_GetCredentialRequest.Merge(dst, src)
+func (m *GetCredentialRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetCredentialRequest.Merge(m, src)
 }
 func (m *GetCredentialRequest) XXX_Size() int {
 	return xxx_messageInfo_GetCredentialRequest.Size(m)
@@ -58,7 +61,7 @@ func (m *GetCredentialRequest) GetCredential() *OpCredential {
 }
 
 type GetCredentialResponse struct {
-	Credential           *Credential `protobuf:"bytes,1,opt,name=credential" json:"credential,omitempty"`
+	Credential           *Credential `protobuf:"bytes,1,opt,name=credential,proto3" json:"credential,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}    `json:"-"`
 	XXX_unrecognized     []byte      `json:"-"`
 	XXX_sizecache        int32       `json:"-"`
@@ -68,16 +71,17 @@ func (m *GetCredentialResponse) Reset()         { *m = GetCredentialResponse{} }
 func (m *GetCredentialResponse) String() string { return proto.CompactTextString(m) }
 func (*GetCredentialResponse) ProtoMessage()    {}
 func (*GetCredentialResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_get_credential_a76f70c280f20dc7, []int{1}
+	return fileDescriptor_0cfd402ca0433cf9, []int{1}
 }
+
 func (m *GetCredentialResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_GetCredentialResponse.Unmarshal(m, b)
 }
 func (m *GetCredentialResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_GetCredentialResponse.Marshal(b, m, deterministic)
 }
-func (dst *GetCredentialResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_GetCredentialResponse.Merge(dst, src)
+func (m *GetCredentialResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetCredentialResponse.Merge(m, src)
 }
 func (m *GetCredentialResponse) XXX_Size() int {
 	return xxx_messageInfo_GetCredentialResponse.Size(m)
@@ -100,11 +104,9 @@ func init() {
 	proto.RegisterType((*GetCredentialResponse)(nil), "ai.metathings.service.identityd2.GetCredentialResponse")
 }
 
-func init() {
-	proto.RegisterFile("get_credential.proto", fileDescriptor_get_credential_a76f70c280f20dc7)
-}
+func init() { proto.RegisterFile("get_credential.proto", fileDescriptor_0cfd402ca0433cf9) }
 
-var fileDescriptor_get_credential_a76f70c280f20dc7 = []byte{
+var fileDescriptor_0cfd402ca0433cf9 = []byte{
 	// 208 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x12, 0x49, 0x4f, 0x2d, 0x89,
 	0x4f, 0x2e, 0x4a, 0x4d, 0x49, 0xcd, 0x2b, 0xc9, 0x4c, 0xcc, 0xd1, 0x2b, 0x28, 0xca, 0x2f, 0xc9,
