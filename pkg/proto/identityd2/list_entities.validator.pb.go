@@ -44,23 +44,17 @@ func (this *ListEntitiesRequest) Validate() error {
 			}
 		}
 	}
-<<<<<<< HEAD
-=======
 	if nil == this.Name {
 		return github_com_mwitkow_go_proto_validators.FieldError("Name", fmt.Errorf("message must exist"))
 	}
->>>>>>> origin/master
 	if this.Name != nil {
 		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Name); err != nil {
 			return github_com_mwitkow_go_proto_validators.FieldError("Name", err)
 		}
 	}
-<<<<<<< HEAD
-=======
 	if nil == this.Alias {
 		return github_com_mwitkow_go_proto_validators.FieldError("Alias", fmt.Errorf("message must exist"))
 	}
->>>>>>> origin/master
 	if this.Alias != nil {
 		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Alias); err != nil {
 			return github_com_mwitkow_go_proto_validators.FieldError("Alias", err)
