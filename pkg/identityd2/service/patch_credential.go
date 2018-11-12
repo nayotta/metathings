@@ -3,7 +3,7 @@ package metathings_identityd2_service
 import (
 	"context"
 	"errors"
-	
+
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
