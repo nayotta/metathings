@@ -16,9 +16,6 @@ var _ = fmt.Errorf
 var _ = math.Inf
 
 func (this *CreateGroupRequest) Validate() error {
-	if nil == this.Id {
-		return github_com_mwitkow_go_proto_validators.FieldError("Id", fmt.Errorf("message must exist"))
-	}
 	if this.Id != nil {
 		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Id); err != nil {
 			return github_com_mwitkow_go_proto_validators.FieldError("Id", err)
