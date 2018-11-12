@@ -10,13 +10,13 @@ RUN apt-get update
 
 RUN apt-get install -y build-essential git autoconf automake libtool unzip
 
-RUN git clone -b v3.6.1 --depth=1  https://github.com/google/protobuf &&\
-    cd protobuf &&\
-    ./autogen.sh &&\
-    ./configure --prefix=/usr &&\
-    make -j4 &&\
-    make install &&\
-    cd ../ &&\
+RUN git clone -b v3.6.1 --depth=1  https://github.com/google/protobuf && \
+    cd protobuf && \
+    ./autogen.sh && \
+    ./configure --prefix=/usr && \
+    make -j4 && \
+    make install && \
+    cd ../ && \
     rm -rf protobuf
 
 RUN go get github.com/mwitkow/go-proto-validators
@@ -25,22 +25,22 @@ RUN go get github.com/golang/protobuf/protoc-gen-go
 
 RUN go get github.com/mwitkow/go-proto-validators/protoc-gen-govalidators
 
-RUN mkdir -p src/golang.org/x &&\
-    cd src/golang.org/x &&\
-    git clone --depth=1 https://github.com/golang/sys &&\
+RUN mkdir -p src/golang.org/x && \
+    cd src/golang.org/x && \
+    git clone --depth=1 https://github.com/golang/sys && \
     git clone --depth=1 https://github.com/golang/net && \
-    git clone --depth=1 https://github.com/golang/text &&\
-    cd ../../ &&\
-    mkdir -p google.golang.org/ &&\
-    cd google.golang.org/ &&\
-    git clone --depth=1 https://github.com/google/go-genproto &&\
-    mv go-genproto genproto &&\
-    cd ../ &&\
-    git clone -b v1.16.0 --depth=1 https://github.com/grpc/grpc-go &&\
-    mv grpc-go google.golang.org/grpc &&\
-    go install google.golang.org/grpc &&\
+    git clone --depth=1 https://github.com/golang/text && \
+    cd ../../ && \
+    mkdir -p google.golang.org/ && \
+    cd google.golang.org/ && \
+    git clone --depth=1 https://github.com/google/go-genproto && \
+    mv go-genproto genproto && \
+    cd ../ && \
+    git clone -b v1.16.0 --depth=1 https://github.com/grpc/grpc-go && \
+    mv grpc-go google.golang.org/grpc && \
+    go install google.golang.org/grpc && \
     cd ../../../
 
-CMD mkdir -p src/github.com/nayotta/metathings &&\
-    cd src/github.com/nayotta/metathings &&\
+CMD mkdir -p src/github.com/nayotta/metathings && \
+    cd src/github.com/nayotta/metathings && \
     make protos
