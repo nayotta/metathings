@@ -3,10 +3,12 @@
 
 package cored
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import state "github.com/nayotta/metathings/pkg/proto/common/state"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	state "github.com/nayotta/metathings/pkg/proto/common/state"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -20,11 +22,11 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type Core struct {
-	Id                   string          `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	Name                 string          `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
-	ProjectId            string          `protobuf:"bytes,3,opt,name=project_id,json=projectId" json:"project_id,omitempty"`
-	OwnerId              string          `protobuf:"bytes,4,opt,name=owner_id,json=ownerId" json:"owner_id,omitempty"`
-	State                state.CoreState `protobuf:"varint,5,opt,name=state,enum=ai.metathings.state.CoreState" json:"state,omitempty"`
+	Id                   string          `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name                 string          `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	ProjectId            string          `protobuf:"bytes,3,opt,name=project_id,json=projectId,proto3" json:"project_id,omitempty"`
+	OwnerId              string          `protobuf:"bytes,4,opt,name=owner_id,json=ownerId,proto3" json:"owner_id,omitempty"`
+	State                state.CoreState `protobuf:"varint,5,opt,name=state,proto3,enum=ai.metathings.state.CoreState" json:"state,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}        `json:"-"`
 	XXX_unrecognized     []byte          `json:"-"`
 	XXX_sizecache        int32           `json:"-"`
@@ -34,16 +36,17 @@ func (m *Core) Reset()         { *m = Core{} }
 func (m *Core) String() string { return proto.CompactTextString(m) }
 func (*Core) ProtoMessage()    {}
 func (*Core) Descriptor() ([]byte, []int) {
-	return fileDescriptor_core_4a2bfb0e83b516ff, []int{0}
+	return fileDescriptor_f7e43720d1edc0fe, []int{0}
 }
+
 func (m *Core) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Core.Unmarshal(m, b)
 }
 func (m *Core) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Core.Marshal(b, m, deterministic)
 }
-func (dst *Core) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Core.Merge(dst, src)
+func (m *Core) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Core.Merge(m, src)
 }
 func (m *Core) XXX_Size() int {
 	return xxx_messageInfo_Core.Size(m)
@@ -93,9 +96,9 @@ func init() {
 	proto.RegisterType((*Core)(nil), "ai.metathings.service.cored.Core")
 }
 
-func init() { proto.RegisterFile("core.proto", fileDescriptor_core_4a2bfb0e83b516ff) }
+func init() { proto.RegisterFile("core.proto", fileDescriptor_f7e43720d1edc0fe) }
 
-var fileDescriptor_core_4a2bfb0e83b516ff = []byte{
+var fileDescriptor_f7e43720d1edc0fe = []byte{
 	// 218 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x5c, 0x4f, 0x41, 0x4e, 0x03, 0x31,
 	0x0c, 0x54, 0x96, 0x2d, 0x50, 0x1f, 0x7a, 0xc8, 0x29, 0x80, 0x40, 0x15, 0xa7, 0x9e, 0x12, 0x09,

@@ -143,10 +143,6 @@ func (self *MetathingsDevicedService) ListDevices(context.Context, *pb.ListDevic
 	panic("unimplemented")
 }
 
-func (self *MetathingsDevicedService) StreamCall(pb.DevicedService_StreamCallServer) error {
-	panic("unimplemented")
-}
-
 func NewMetathingsDevicedService(
 	opt *MetathingsDevicedServiceOption,
 	logger log.FieldLogger,

@@ -4,7 +4,7 @@
 package sensord
 
 import fmt "fmt"
-import go_proto_validators "github.com/mwitkow/go-proto-validators"
+import github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
 import proto "github.com/golang/protobuf/proto"
 import math "math"
 import _ "github.com/golang/protobuf/ptypes/wrappers"
@@ -17,17 +17,17 @@ var _ = math.Inf
 
 func (this *PublishRequest) Validate() error {
 	if nil == this.Session {
-		return go_proto_validators.FieldError("Session", fmt.Errorf("message must exist"))
+		return github_com_mwitkow_go_proto_validators.FieldError("Session", fmt.Errorf("message must exist"))
 	}
 	if this.Session != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Session); err != nil {
-			return go_proto_validators.FieldError("Session", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Session); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Session", err)
 		}
 	}
 	if oneOfNester, ok := this.GetPayload().(*PublishRequest_Data); ok {
 		if oneOfNester.Data != nil {
-			if err := go_proto_validators.CallValidatorIfExists(oneOfNester.Data); err != nil {
-				return go_proto_validators.FieldError("Data", err)
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.Data); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("Data", err)
 			}
 		}
 	}
@@ -36,8 +36,8 @@ func (this *PublishRequest) Validate() error {
 func (this *PublishRequests) Validate() error {
 	for _, item := range this.Requests {
 		if item != nil {
-			if err := go_proto_validators.CallValidatorIfExists(item); err != nil {
-				return go_proto_validators.FieldError("Requests", err)
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("Requests", err)
 			}
 		}
 	}
@@ -49,8 +49,8 @@ func (this *PublishResponse) Validate() error {
 func (this *PublishResponses) Validate() error {
 	for _, item := range this.Responses {
 		if item != nil {
-			if err := go_proto_validators.CallValidatorIfExists(item); err != nil {
-				return go_proto_validators.FieldError("Responses", err)
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("Responses", err)
 			}
 		}
 	}

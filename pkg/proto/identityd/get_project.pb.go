@@ -3,11 +3,13 @@
 
 package identityd
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import wrappers "github.com/golang/protobuf/ptypes/wrappers"
-import _ "github.com/mwitkow/go-proto-validators"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	wrappers "github.com/golang/protobuf/ptypes/wrappers"
+	_ "github.com/mwitkow/go-proto-validators"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -21,7 +23,7 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type GetProjectRequest struct {
-	ProjectId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=project_id,json=projectId" json:"project_id,omitempty"`
+	ProjectId            *wrappers.StringValue `protobuf:"bytes,1,opt,name=project_id,json=projectId,proto3" json:"project_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -31,16 +33,17 @@ func (m *GetProjectRequest) Reset()         { *m = GetProjectRequest{} }
 func (m *GetProjectRequest) String() string { return proto.CompactTextString(m) }
 func (*GetProjectRequest) ProtoMessage()    {}
 func (*GetProjectRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_get_project_62d969eb28fe4ae9, []int{0}
+	return fileDescriptor_490ac515ae42e17c, []int{0}
 }
+
 func (m *GetProjectRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_GetProjectRequest.Unmarshal(m, b)
 }
 func (m *GetProjectRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_GetProjectRequest.Marshal(b, m, deterministic)
 }
-func (dst *GetProjectRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_GetProjectRequest.Merge(dst, src)
+func (m *GetProjectRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetProjectRequest.Merge(m, src)
 }
 func (m *GetProjectRequest) XXX_Size() int {
 	return xxx_messageInfo_GetProjectRequest.Size(m)
@@ -59,7 +62,7 @@ func (m *GetProjectRequest) GetProjectId() *wrappers.StringValue {
 }
 
 type GetProjectResponse struct {
-	Project              *Project `protobuf:"bytes,1,opt,name=project" json:"project,omitempty"`
+	Project              *Project `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -69,16 +72,17 @@ func (m *GetProjectResponse) Reset()         { *m = GetProjectResponse{} }
 func (m *GetProjectResponse) String() string { return proto.CompactTextString(m) }
 func (*GetProjectResponse) ProtoMessage()    {}
 func (*GetProjectResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_get_project_62d969eb28fe4ae9, []int{1}
+	return fileDescriptor_490ac515ae42e17c, []int{1}
 }
+
 func (m *GetProjectResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_GetProjectResponse.Unmarshal(m, b)
 }
 func (m *GetProjectResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_GetProjectResponse.Marshal(b, m, deterministic)
 }
-func (dst *GetProjectResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_GetProjectResponse.Merge(dst, src)
+func (m *GetProjectResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetProjectResponse.Merge(m, src)
 }
 func (m *GetProjectResponse) XXX_Size() int {
 	return xxx_messageInfo_GetProjectResponse.Size(m)
@@ -101,9 +105,9 @@ func init() {
 	proto.RegisterType((*GetProjectResponse)(nil), "ai.metathings.service.identityd.GetProjectResponse")
 }
 
-func init() { proto.RegisterFile("get_project.proto", fileDescriptor_get_project_62d969eb28fe4ae9) }
+func init() { proto.RegisterFile("get_project.proto", fileDescriptor_490ac515ae42e17c) }
 
-var fileDescriptor_get_project_62d969eb28fe4ae9 = []byte{
+var fileDescriptor_490ac515ae42e17c = []byte{
 	// 242 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x90, 0x41, 0x4b, 0xf3, 0x40,
 	0x10, 0x86, 0xc9, 0x77, 0xe8, 0x87, 0x2b, 0x1e, 0x9a, 0x93, 0x14, 0xb1, 0xa5, 0xa7, 0x5e, 0x3a,

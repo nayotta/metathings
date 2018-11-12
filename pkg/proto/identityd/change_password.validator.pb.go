@@ -4,7 +4,7 @@
 package identityd
 
 import fmt "fmt"
-import go_proto_validators "github.com/mwitkow/go-proto-validators"
+import github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
 import proto "github.com/golang/protobuf/proto"
 import math "math"
 import _ "github.com/golang/protobuf/ptypes/wrappers"
@@ -17,27 +17,27 @@ var _ = math.Inf
 
 func (this *ChangePasswordRequest) Validate() error {
 	if nil == this.UserId {
-		return go_proto_validators.FieldError("UserId", fmt.Errorf("message must exist"))
+		return github_com_mwitkow_go_proto_validators.FieldError("UserId", fmt.Errorf("message must exist"))
 	}
 	if this.UserId != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.UserId); err != nil {
-			return go_proto_validators.FieldError("UserId", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.UserId); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("UserId", err)
 		}
 	}
 	if nil == this.OriginalPassword {
-		return go_proto_validators.FieldError("OriginalPassword", fmt.Errorf("message must exist"))
+		return github_com_mwitkow_go_proto_validators.FieldError("OriginalPassword", fmt.Errorf("message must exist"))
 	}
 	if this.OriginalPassword != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.OriginalPassword); err != nil {
-			return go_proto_validators.FieldError("OriginalPassword", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.OriginalPassword); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("OriginalPassword", err)
 		}
 	}
 	if nil == this.Password {
-		return go_proto_validators.FieldError("Password", fmt.Errorf("message must exist"))
+		return github_com_mwitkow_go_proto_validators.FieldError("Password", fmt.Errorf("message must exist"))
 	}
 	if this.Password != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Password); err != nil {
-			return go_proto_validators.FieldError("Password", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Password); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Password", err)
 		}
 	}
 	return nil

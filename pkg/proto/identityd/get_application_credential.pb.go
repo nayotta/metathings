@@ -3,11 +3,13 @@
 
 package identityd
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import wrappers "github.com/golang/protobuf/ptypes/wrappers"
-import _ "github.com/mwitkow/go-proto-validators"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	wrappers "github.com/golang/protobuf/ptypes/wrappers"
+	_ "github.com/mwitkow/go-proto-validators"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -21,8 +23,8 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type GetApplicationCredentialRequest struct {
-	UserId                  *wrappers.StringValue `protobuf:"bytes,1,opt,name=user_id,json=userId" json:"user_id,omitempty"`
-	ApplicationCredentialId *wrappers.StringValue `protobuf:"bytes,2,opt,name=application_credential_id,json=applicationCredentialId" json:"application_credential_id,omitempty"`
+	UserId                  *wrappers.StringValue `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	ApplicationCredentialId *wrappers.StringValue `protobuf:"bytes,2,opt,name=application_credential_id,json=applicationCredentialId,proto3" json:"application_credential_id,omitempty"`
 	XXX_NoUnkeyedLiteral    struct{}              `json:"-"`
 	XXX_unrecognized        []byte                `json:"-"`
 	XXX_sizecache           int32                 `json:"-"`
@@ -32,16 +34,17 @@ func (m *GetApplicationCredentialRequest) Reset()         { *m = GetApplicationC
 func (m *GetApplicationCredentialRequest) String() string { return proto.CompactTextString(m) }
 func (*GetApplicationCredentialRequest) ProtoMessage()    {}
 func (*GetApplicationCredentialRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_get_application_credential_c69056171f9f27b7, []int{0}
+	return fileDescriptor_3fc5420bbb88707c, []int{0}
 }
+
 func (m *GetApplicationCredentialRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_GetApplicationCredentialRequest.Unmarshal(m, b)
 }
 func (m *GetApplicationCredentialRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_GetApplicationCredentialRequest.Marshal(b, m, deterministic)
 }
-func (dst *GetApplicationCredentialRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_GetApplicationCredentialRequest.Merge(dst, src)
+func (m *GetApplicationCredentialRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetApplicationCredentialRequest.Merge(m, src)
 }
 func (m *GetApplicationCredentialRequest) XXX_Size() int {
 	return xxx_messageInfo_GetApplicationCredentialRequest.Size(m)
@@ -67,7 +70,7 @@ func (m *GetApplicationCredentialRequest) GetApplicationCredentialId() *wrappers
 }
 
 type GetApplicationCredentialResponse struct {
-	ApplicationCredential *ApplicationCredential `protobuf:"bytes,1,opt,name=application_credential,json=applicationCredential" json:"application_credential,omitempty"`
+	ApplicationCredential *ApplicationCredential `protobuf:"bytes,1,opt,name=application_credential,json=applicationCredential,proto3" json:"application_credential,omitempty"`
 	XXX_NoUnkeyedLiteral  struct{}               `json:"-"`
 	XXX_unrecognized      []byte                 `json:"-"`
 	XXX_sizecache         int32                  `json:"-"`
@@ -77,16 +80,17 @@ func (m *GetApplicationCredentialResponse) Reset()         { *m = GetApplication
 func (m *GetApplicationCredentialResponse) String() string { return proto.CompactTextString(m) }
 func (*GetApplicationCredentialResponse) ProtoMessage()    {}
 func (*GetApplicationCredentialResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_get_application_credential_c69056171f9f27b7, []int{1}
+	return fileDescriptor_3fc5420bbb88707c, []int{1}
 }
+
 func (m *GetApplicationCredentialResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_GetApplicationCredentialResponse.Unmarshal(m, b)
 }
 func (m *GetApplicationCredentialResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_GetApplicationCredentialResponse.Marshal(b, m, deterministic)
 }
-func (dst *GetApplicationCredentialResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_GetApplicationCredentialResponse.Merge(dst, src)
+func (m *GetApplicationCredentialResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetApplicationCredentialResponse.Merge(m, src)
 }
 func (m *GetApplicationCredentialResponse) XXX_Size() int {
 	return xxx_messageInfo_GetApplicationCredentialResponse.Size(m)
@@ -109,11 +113,9 @@ func init() {
 	proto.RegisterType((*GetApplicationCredentialResponse)(nil), "ai.metathings.service.identityd.GetApplicationCredentialResponse")
 }
 
-func init() {
-	proto.RegisterFile("get_application_credential.proto", fileDescriptor_get_application_credential_c69056171f9f27b7)
-}
+func init() { proto.RegisterFile("get_application_credential.proto", fileDescriptor_3fc5420bbb88707c) }
 
-var fileDescriptor_get_application_credential_c69056171f9f27b7 = []byte{
+var fileDescriptor_3fc5420bbb88707c = []byte{
 	// 279 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x91, 0xcd, 0x4a, 0xc3, 0x40,
 	0x14, 0x85, 0x49, 0x17, 0x15, 0xc6, 0x5d, 0xc0, 0xbf, 0x52, 0x4c, 0xe8, 0xca, 0x4d, 0x27, 0xa0,

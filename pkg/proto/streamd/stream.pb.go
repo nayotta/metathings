@@ -3,10 +3,12 @@
 
 package streamd
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import wrappers "github.com/golang/protobuf/ptypes/wrappers"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	wrappers "github.com/golang/protobuf/ptypes/wrappers"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -36,6 +38,7 @@ var StreamState_name = map[int32]string{
 	3: "STREAM_STATE_TERMINATING",
 	4: "STREAM_STATE_STOP",
 }
+
 var StreamState_value = map[string]int32{
 	"STREAM_STATE_UNKNOWN":     0,
 	"STREAM_STATE_RUNNING":     1,
@@ -47,8 +50,9 @@ var StreamState_value = map[string]int32{
 func (x StreamState) String() string {
 	return proto.EnumName(StreamState_name, int32(x))
 }
+
 func (StreamState) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_stream_3a21fce3764bcc22, []int{0}
+	return fileDescriptor_bb17ef3f514bfe54, []int{0}
 }
 
 type ConfigValue struct {
@@ -65,16 +69,17 @@ func (m *ConfigValue) Reset()         { *m = ConfigValue{} }
 func (m *ConfigValue) String() string { return proto.CompactTextString(m) }
 func (*ConfigValue) ProtoMessage()    {}
 func (*ConfigValue) Descriptor() ([]byte, []int) {
-	return fileDescriptor_stream_3a21fce3764bcc22, []int{0}
+	return fileDescriptor_bb17ef3f514bfe54, []int{0}
 }
+
 func (m *ConfigValue) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ConfigValue.Unmarshal(m, b)
 }
 func (m *ConfigValue) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_ConfigValue.Marshal(b, m, deterministic)
 }
-func (dst *ConfigValue) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ConfigValue.Merge(dst, src)
+func (m *ConfigValue) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ConfigValue.Merge(m, src)
 }
 func (m *ConfigValue) XXX_Size() int {
 	return xxx_messageInfo_ConfigValue.Size(m)
@@ -90,13 +95,15 @@ type isConfigValue_Value interface {
 }
 
 type ConfigValue_Double struct {
-	Double float64 `protobuf:"fixed64,1,opt,name=double,oneof"`
-}
-type ConfigValue_String_ struct {
-	String_ string `protobuf:"bytes,2,opt,name=string,oneof"`
+	Double float64 `protobuf:"fixed64,1,opt,name=double,proto3,oneof"`
 }
 
-func (*ConfigValue_Double) isConfigValue_Value()  {}
+type ConfigValue_String_ struct {
+	String_ string `protobuf:"bytes,2,opt,name=string,proto3,oneof"`
+}
+
+func (*ConfigValue_Double) isConfigValue_Value() {}
+
 func (*ConfigValue_String_) isConfigValue_Value() {}
 
 func (m *ConfigValue) GetValue() isConfigValue_Value {
@@ -186,12 +193,12 @@ func _ConfigValue_OneofSizer(msg proto.Message) (n int) {
 }
 
 type Stream struct {
-	Id                   string      `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	Name                 string      `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
-	OwnerId              string      `protobuf:"bytes,3,opt,name=owner_id,json=ownerId" json:"owner_id,omitempty"`
-	State                StreamState `protobuf:"varint,4,opt,name=state,enum=ai.metathings.service.streamd.StreamState" json:"state,omitempty"`
-	Sources              []*Source   `protobuf:"bytes,5,rep,name=sources" json:"sources,omitempty"`
-	Groups               []*Group    `protobuf:"bytes,6,rep,name=groups" json:"groups,omitempty"`
+	Id                   string      `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name                 string      `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	OwnerId              string      `protobuf:"bytes,3,opt,name=owner_id,json=ownerId,proto3" json:"owner_id,omitempty"`
+	State                StreamState `protobuf:"varint,4,opt,name=state,proto3,enum=ai.metathings.service.streamd.StreamState" json:"state,omitempty"`
+	Sources              []*Source   `protobuf:"bytes,5,rep,name=sources,proto3" json:"sources,omitempty"`
+	Groups               []*Group    `protobuf:"bytes,6,rep,name=groups,proto3" json:"groups,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}    `json:"-"`
 	XXX_unrecognized     []byte      `json:"-"`
 	XXX_sizecache        int32       `json:"-"`
@@ -201,16 +208,17 @@ func (m *Stream) Reset()         { *m = Stream{} }
 func (m *Stream) String() string { return proto.CompactTextString(m) }
 func (*Stream) ProtoMessage()    {}
 func (*Stream) Descriptor() ([]byte, []int) {
-	return fileDescriptor_stream_3a21fce3764bcc22, []int{1}
+	return fileDescriptor_bb17ef3f514bfe54, []int{1}
 }
+
 func (m *Stream) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Stream.Unmarshal(m, b)
 }
 func (m *Stream) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Stream.Marshal(b, m, deterministic)
 }
-func (dst *Stream) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Stream.Merge(dst, src)
+func (m *Stream) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Stream.Merge(m, src)
 }
 func (m *Stream) XXX_Size() int {
 	return xxx_messageInfo_Stream.Size(m)
@@ -264,10 +272,10 @@ func (m *Stream) GetGroups() []*Group {
 }
 
 type Upstream struct {
-	Id                   string                  `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	Name                 string                  `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
-	Alias                string                  `protobuf:"bytes,3,opt,name=alias" json:"alias,omitempty"`
-	Config               map[string]*ConfigValue `protobuf:"bytes,4,rep,name=config" json:"config,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	Id                   string                  `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name                 string                  `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Alias                string                  `protobuf:"bytes,3,opt,name=alias,proto3" json:"alias,omitempty"`
+	Config               map[string]*ConfigValue `protobuf:"bytes,4,rep,name=config,proto3" json:"config,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 	XXX_NoUnkeyedLiteral struct{}                `json:"-"`
 	XXX_unrecognized     []byte                  `json:"-"`
 	XXX_sizecache        int32                   `json:"-"`
@@ -277,16 +285,17 @@ func (m *Upstream) Reset()         { *m = Upstream{} }
 func (m *Upstream) String() string { return proto.CompactTextString(m) }
 func (*Upstream) ProtoMessage()    {}
 func (*Upstream) Descriptor() ([]byte, []int) {
-	return fileDescriptor_stream_3a21fce3764bcc22, []int{2}
+	return fileDescriptor_bb17ef3f514bfe54, []int{2}
 }
+
 func (m *Upstream) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Upstream.Unmarshal(m, b)
 }
 func (m *Upstream) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Upstream.Marshal(b, m, deterministic)
 }
-func (dst *Upstream) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Upstream.Merge(dst, src)
+func (m *Upstream) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Upstream.Merge(m, src)
 }
 func (m *Upstream) XXX_Size() int {
 	return xxx_messageInfo_Upstream.Size(m)
@@ -326,11 +335,11 @@ func (m *Upstream) GetConfig() map[string]*ConfigValue {
 }
 
 type Input struct {
-	Id                   string                  `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	Name                 string                  `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
-	Alias                string                  `protobuf:"bytes,3,opt,name=alias" json:"alias,omitempty"`
-	Symbol               string                  `protobuf:"bytes,4,opt,name=symbol" json:"symbol,omitempty"`
-	Config               map[string]*ConfigValue `protobuf:"bytes,5,rep,name=config" json:"config,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	Id                   string                  `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name                 string                  `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Alias                string                  `protobuf:"bytes,3,opt,name=alias,proto3" json:"alias,omitempty"`
+	Symbol               string                  `protobuf:"bytes,4,opt,name=symbol,proto3" json:"symbol,omitempty"`
+	Config               map[string]*ConfigValue `protobuf:"bytes,5,rep,name=config,proto3" json:"config,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 	XXX_NoUnkeyedLiteral struct{}                `json:"-"`
 	XXX_unrecognized     []byte                  `json:"-"`
 	XXX_sizecache        int32                   `json:"-"`
@@ -340,16 +349,17 @@ func (m *Input) Reset()         { *m = Input{} }
 func (m *Input) String() string { return proto.CompactTextString(m) }
 func (*Input) ProtoMessage()    {}
 func (*Input) Descriptor() ([]byte, []int) {
-	return fileDescriptor_stream_3a21fce3764bcc22, []int{3}
+	return fileDescriptor_bb17ef3f514bfe54, []int{3}
 }
+
 func (m *Input) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Input.Unmarshal(m, b)
 }
 func (m *Input) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Input.Marshal(b, m, deterministic)
 }
-func (dst *Input) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Input.Merge(dst, src)
+func (m *Input) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Input.Merge(m, src)
 }
 func (m *Input) XXX_Size() int {
 	return xxx_messageInfo_Input.Size(m)
@@ -396,11 +406,11 @@ func (m *Input) GetConfig() map[string]*ConfigValue {
 }
 
 type Output struct {
-	Id                   string                  `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	Name                 string                  `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
-	Alias                string                  `protobuf:"bytes,3,opt,name=alias" json:"alias,omitempty"`
-	Symbol               string                  `protobuf:"bytes,4,opt,name=symbol" json:"symbol,omitempty"`
-	Config               map[string]*ConfigValue `protobuf:"bytes,5,rep,name=config" json:"config,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	Id                   string                  `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name                 string                  `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Alias                string                  `protobuf:"bytes,3,opt,name=alias,proto3" json:"alias,omitempty"`
+	Symbol               string                  `protobuf:"bytes,4,opt,name=symbol,proto3" json:"symbol,omitempty"`
+	Config               map[string]*ConfigValue `protobuf:"bytes,5,rep,name=config,proto3" json:"config,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 	XXX_NoUnkeyedLiteral struct{}                `json:"-"`
 	XXX_unrecognized     []byte                  `json:"-"`
 	XXX_sizecache        int32                   `json:"-"`
@@ -410,16 +420,17 @@ func (m *Output) Reset()         { *m = Output{} }
 func (m *Output) String() string { return proto.CompactTextString(m) }
 func (*Output) ProtoMessage()    {}
 func (*Output) Descriptor() ([]byte, []int) {
-	return fileDescriptor_stream_3a21fce3764bcc22, []int{4}
+	return fileDescriptor_bb17ef3f514bfe54, []int{4}
 }
+
 func (m *Output) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Output.Unmarshal(m, b)
 }
 func (m *Output) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Output.Marshal(b, m, deterministic)
 }
-func (dst *Output) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Output.Merge(dst, src)
+func (m *Output) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Output.Merge(m, src)
 }
 func (m *Output) XXX_Size() int {
 	return xxx_messageInfo_Output.Size(m)
@@ -466,8 +477,8 @@ func (m *Output) GetConfig() map[string]*ConfigValue {
 }
 
 type Source struct {
-	Id                   string    `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	Upstream             *Upstream `protobuf:"bytes,2,opt,name=upstream" json:"upstream,omitempty"`
+	Id                   string    `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Upstream             *Upstream `protobuf:"bytes,2,opt,name=upstream,proto3" json:"upstream,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}  `json:"-"`
 	XXX_unrecognized     []byte    `json:"-"`
 	XXX_sizecache        int32     `json:"-"`
@@ -477,16 +488,17 @@ func (m *Source) Reset()         { *m = Source{} }
 func (m *Source) String() string { return proto.CompactTextString(m) }
 func (*Source) ProtoMessage()    {}
 func (*Source) Descriptor() ([]byte, []int) {
-	return fileDescriptor_stream_3a21fce3764bcc22, []int{5}
+	return fileDescriptor_bb17ef3f514bfe54, []int{5}
 }
+
 func (m *Source) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Source.Unmarshal(m, b)
 }
 func (m *Source) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Source.Marshal(b, m, deterministic)
 }
-func (dst *Source) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Source.Merge(dst, src)
+func (m *Source) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Source.Merge(m, src)
 }
 func (m *Source) XXX_Size() int {
 	return xxx_messageInfo_Source.Size(m)
@@ -512,9 +524,9 @@ func (m *Source) GetUpstream() *Upstream {
 }
 
 type Group struct {
-	Id                   string    `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	Inputs               []*Input  `protobuf:"bytes,2,rep,name=inputs" json:"inputs,omitempty"`
-	Outputs              []*Output `protobuf:"bytes,3,rep,name=outputs" json:"outputs,omitempty"`
+	Id                   string    `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Inputs               []*Input  `protobuf:"bytes,2,rep,name=inputs,proto3" json:"inputs,omitempty"`
+	Outputs              []*Output `protobuf:"bytes,3,rep,name=outputs,proto3" json:"outputs,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}  `json:"-"`
 	XXX_unrecognized     []byte    `json:"-"`
 	XXX_sizecache        int32     `json:"-"`
@@ -524,16 +536,17 @@ func (m *Group) Reset()         { *m = Group{} }
 func (m *Group) String() string { return proto.CompactTextString(m) }
 func (*Group) ProtoMessage()    {}
 func (*Group) Descriptor() ([]byte, []int) {
-	return fileDescriptor_stream_3a21fce3764bcc22, []int{6}
+	return fileDescriptor_bb17ef3f514bfe54, []int{6}
 }
+
 func (m *Group) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Group.Unmarshal(m, b)
 }
 func (m *Group) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Group.Marshal(b, m, deterministic)
 }
-func (dst *Group) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Group.Merge(dst, src)
+func (m *Group) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Group.Merge(m, src)
 }
 func (m *Group) XXX_Size() int {
 	return xxx_messageInfo_Group.Size(m)
@@ -566,10 +579,10 @@ func (m *Group) GetOutputs() []*Output {
 }
 
 type OpUpstream struct {
-	Id                   *wrappers.StringValue   `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	Name                 *wrappers.StringValue   `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
-	Alias                *wrappers.StringValue   `protobuf:"bytes,3,opt,name=alias" json:"alias,omitempty"`
-	Config               map[string]*ConfigValue `protobuf:"bytes,4,rep,name=config" json:"config,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	Id                   *wrappers.StringValue   `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name                 *wrappers.StringValue   `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Alias                *wrappers.StringValue   `protobuf:"bytes,3,opt,name=alias,proto3" json:"alias,omitempty"`
+	Config               map[string]*ConfigValue `protobuf:"bytes,4,rep,name=config,proto3" json:"config,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 	XXX_NoUnkeyedLiteral struct{}                `json:"-"`
 	XXX_unrecognized     []byte                  `json:"-"`
 	XXX_sizecache        int32                   `json:"-"`
@@ -579,16 +592,17 @@ func (m *OpUpstream) Reset()         { *m = OpUpstream{} }
 func (m *OpUpstream) String() string { return proto.CompactTextString(m) }
 func (*OpUpstream) ProtoMessage()    {}
 func (*OpUpstream) Descriptor() ([]byte, []int) {
-	return fileDescriptor_stream_3a21fce3764bcc22, []int{7}
+	return fileDescriptor_bb17ef3f514bfe54, []int{7}
 }
+
 func (m *OpUpstream) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_OpUpstream.Unmarshal(m, b)
 }
 func (m *OpUpstream) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_OpUpstream.Marshal(b, m, deterministic)
 }
-func (dst *OpUpstream) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_OpUpstream.Merge(dst, src)
+func (m *OpUpstream) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_OpUpstream.Merge(m, src)
 }
 func (m *OpUpstream) XXX_Size() int {
 	return xxx_messageInfo_OpUpstream.Size(m)
@@ -628,10 +642,10 @@ func (m *OpUpstream) GetConfig() map[string]*ConfigValue {
 }
 
 type OpInput struct {
-	Id                   *wrappers.StringValue   `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	Name                 *wrappers.StringValue   `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
-	Alias                *wrappers.StringValue   `protobuf:"bytes,3,opt,name=alias" json:"alias,omitempty"`
-	Config               map[string]*ConfigValue `protobuf:"bytes,4,rep,name=config" json:"config,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	Id                   *wrappers.StringValue   `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name                 *wrappers.StringValue   `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Alias                *wrappers.StringValue   `protobuf:"bytes,3,opt,name=alias,proto3" json:"alias,omitempty"`
+	Config               map[string]*ConfigValue `protobuf:"bytes,4,rep,name=config,proto3" json:"config,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 	XXX_NoUnkeyedLiteral struct{}                `json:"-"`
 	XXX_unrecognized     []byte                  `json:"-"`
 	XXX_sizecache        int32                   `json:"-"`
@@ -641,16 +655,17 @@ func (m *OpInput) Reset()         { *m = OpInput{} }
 func (m *OpInput) String() string { return proto.CompactTextString(m) }
 func (*OpInput) ProtoMessage()    {}
 func (*OpInput) Descriptor() ([]byte, []int) {
-	return fileDescriptor_stream_3a21fce3764bcc22, []int{8}
+	return fileDescriptor_bb17ef3f514bfe54, []int{8}
 }
+
 func (m *OpInput) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_OpInput.Unmarshal(m, b)
 }
 func (m *OpInput) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_OpInput.Marshal(b, m, deterministic)
 }
-func (dst *OpInput) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_OpInput.Merge(dst, src)
+func (m *OpInput) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_OpInput.Merge(m, src)
 }
 func (m *OpInput) XXX_Size() int {
 	return xxx_messageInfo_OpInput.Size(m)
@@ -690,10 +705,10 @@ func (m *OpInput) GetConfig() map[string]*ConfigValue {
 }
 
 type OpOutput struct {
-	Id                   *wrappers.StringValue   `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	Name                 *wrappers.StringValue   `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
-	Alias                *wrappers.StringValue   `protobuf:"bytes,3,opt,name=alias" json:"alias,omitempty"`
-	Config               map[string]*ConfigValue `protobuf:"bytes,4,rep,name=config" json:"config,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	Id                   *wrappers.StringValue   `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name                 *wrappers.StringValue   `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Alias                *wrappers.StringValue   `protobuf:"bytes,3,opt,name=alias,proto3" json:"alias,omitempty"`
+	Config               map[string]*ConfigValue `protobuf:"bytes,4,rep,name=config,proto3" json:"config,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 	XXX_NoUnkeyedLiteral struct{}                `json:"-"`
 	XXX_unrecognized     []byte                  `json:"-"`
 	XXX_sizecache        int32                   `json:"-"`
@@ -703,16 +718,17 @@ func (m *OpOutput) Reset()         { *m = OpOutput{} }
 func (m *OpOutput) String() string { return proto.CompactTextString(m) }
 func (*OpOutput) ProtoMessage()    {}
 func (*OpOutput) Descriptor() ([]byte, []int) {
-	return fileDescriptor_stream_3a21fce3764bcc22, []int{9}
+	return fileDescriptor_bb17ef3f514bfe54, []int{9}
 }
+
 func (m *OpOutput) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_OpOutput.Unmarshal(m, b)
 }
 func (m *OpOutput) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_OpOutput.Marshal(b, m, deterministic)
 }
-func (dst *OpOutput) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_OpOutput.Merge(dst, src)
+func (m *OpOutput) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_OpOutput.Merge(m, src)
 }
 func (m *OpOutput) XXX_Size() int {
 	return xxx_messageInfo_OpOutput.Size(m)
@@ -752,8 +768,8 @@ func (m *OpOutput) GetConfig() map[string]*ConfigValue {
 }
 
 type OpSource struct {
-	Id                   *wrappers.StringValue `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	Upstream             *OpUpstream           `protobuf:"bytes,2,opt,name=upstream" json:"upstream,omitempty"`
+	Id                   *wrappers.StringValue `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Upstream             *OpUpstream           `protobuf:"bytes,2,opt,name=upstream,proto3" json:"upstream,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -763,16 +779,17 @@ func (m *OpSource) Reset()         { *m = OpSource{} }
 func (m *OpSource) String() string { return proto.CompactTextString(m) }
 func (*OpSource) ProtoMessage()    {}
 func (*OpSource) Descriptor() ([]byte, []int) {
-	return fileDescriptor_stream_3a21fce3764bcc22, []int{10}
+	return fileDescriptor_bb17ef3f514bfe54, []int{10}
 }
+
 func (m *OpSource) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_OpSource.Unmarshal(m, b)
 }
 func (m *OpSource) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_OpSource.Marshal(b, m, deterministic)
 }
-func (dst *OpSource) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_OpSource.Merge(dst, src)
+func (m *OpSource) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_OpSource.Merge(m, src)
 }
 func (m *OpSource) XXX_Size() int {
 	return xxx_messageInfo_OpSource.Size(m)
@@ -798,9 +815,9 @@ func (m *OpSource) GetUpstream() *OpUpstream {
 }
 
 type OpGroup struct {
-	Id                   *wrappers.StringValue `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
-	Inputs               []*OpInput            `protobuf:"bytes,2,rep,name=inputs" json:"inputs,omitempty"`
-	Outputs              []*OpOutput           `protobuf:"bytes,3,rep,name=outputs" json:"outputs,omitempty"`
+	Id                   *wrappers.StringValue `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Inputs               []*OpInput            `protobuf:"bytes,2,rep,name=inputs,proto3" json:"inputs,omitempty"`
+	Outputs              []*OpOutput           `protobuf:"bytes,3,rep,name=outputs,proto3" json:"outputs,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -810,16 +827,17 @@ func (m *OpGroup) Reset()         { *m = OpGroup{} }
 func (m *OpGroup) String() string { return proto.CompactTextString(m) }
 func (*OpGroup) ProtoMessage()    {}
 func (*OpGroup) Descriptor() ([]byte, []int) {
-	return fileDescriptor_stream_3a21fce3764bcc22, []int{11}
+	return fileDescriptor_bb17ef3f514bfe54, []int{11}
 }
+
 func (m *OpGroup) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_OpGroup.Unmarshal(m, b)
 }
 func (m *OpGroup) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_OpGroup.Marshal(b, m, deterministic)
 }
-func (dst *OpGroup) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_OpGroup.Merge(dst, src)
+func (m *OpGroup) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_OpGroup.Merge(m, src)
 }
 func (m *OpGroup) XXX_Size() int {
 	return xxx_messageInfo_OpGroup.Size(m)
@@ -852,6 +870,7 @@ func (m *OpGroup) GetOutputs() []*OpOutput {
 }
 
 func init() {
+	proto.RegisterEnum("ai.metathings.service.streamd.StreamState", StreamState_name, StreamState_value)
 	proto.RegisterType((*ConfigValue)(nil), "ai.metathings.service.streamd.ConfigValue")
 	proto.RegisterType((*Stream)(nil), "ai.metathings.service.streamd.Stream")
 	proto.RegisterType((*Upstream)(nil), "ai.metathings.service.streamd.Upstream")
@@ -870,12 +889,11 @@ func init() {
 	proto.RegisterMapType((map[string]*ConfigValue)(nil), "ai.metathings.service.streamd.OpOutput.ConfigEntry")
 	proto.RegisterType((*OpSource)(nil), "ai.metathings.service.streamd.OpSource")
 	proto.RegisterType((*OpGroup)(nil), "ai.metathings.service.streamd.OpGroup")
-	proto.RegisterEnum("ai.metathings.service.streamd.StreamState", StreamState_name, StreamState_value)
 }
 
-func init() { proto.RegisterFile("stream.proto", fileDescriptor_stream_3a21fce3764bcc22) }
+func init() { proto.RegisterFile("stream.proto", fileDescriptor_bb17ef3f514bfe54) }
 
-var fileDescriptor_stream_3a21fce3764bcc22 = []byte{
+var fileDescriptor_bb17ef3f514bfe54 = []byte{
 	// 711 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xcc, 0x56, 0x4f, 0x6b, 0x13, 0x4f,
 	0x18, 0xee, 0x4e, 0x92, 0x4d, 0xfa, 0xe6, 0x47, 0xc9, 0x6f, 0x68, 0x65, 0x5b, 0xaa, 0x84, 0xa0,

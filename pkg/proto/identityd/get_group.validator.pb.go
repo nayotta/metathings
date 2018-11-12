@@ -4,7 +4,7 @@
 package identityd
 
 import fmt "fmt"
-import go_proto_validators "github.com/mwitkow/go-proto-validators"
+import github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
 import proto "github.com/golang/protobuf/proto"
 import math "math"
 import _ "github.com/golang/protobuf/ptypes/wrappers"
@@ -17,19 +17,19 @@ var _ = math.Inf
 
 func (this *GetGroupRequest) Validate() error {
 	if nil == this.GroupId {
-		return go_proto_validators.FieldError("GroupId", fmt.Errorf("message must exist"))
+		return github_com_mwitkow_go_proto_validators.FieldError("GroupId", fmt.Errorf("message must exist"))
 	}
 	if this.GroupId != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.GroupId); err != nil {
-			return go_proto_validators.FieldError("GroupId", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.GroupId); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("GroupId", err)
 		}
 	}
 	return nil
 }
 func (this *GetGroupResponse) Validate() error {
 	if this.Group != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Group); err != nil {
-			return go_proto_validators.FieldError("Group", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Group); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Group", err)
 		}
 	}
 	return nil

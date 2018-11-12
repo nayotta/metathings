@@ -3,11 +3,13 @@
 
 package streamd
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import wrappers "github.com/golang/protobuf/ptypes/wrappers"
-import _ "github.com/mwitkow/go-proto-validators"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	wrappers "github.com/golang/protobuf/ptypes/wrappers"
+	_ "github.com/mwitkow/go-proto-validators"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -21,7 +23,7 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type StartRequest struct {
-	Id                   *wrappers.StringValue `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
+	Id                   *wrappers.StringValue `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -31,16 +33,17 @@ func (m *StartRequest) Reset()         { *m = StartRequest{} }
 func (m *StartRequest) String() string { return proto.CompactTextString(m) }
 func (*StartRequest) ProtoMessage()    {}
 func (*StartRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_start_a55e6202ebad6cb0, []int{0}
+	return fileDescriptor_5c84144a9c93052f, []int{0}
 }
+
 func (m *StartRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_StartRequest.Unmarshal(m, b)
 }
 func (m *StartRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_StartRequest.Marshal(b, m, deterministic)
 }
-func (dst *StartRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_StartRequest.Merge(dst, src)
+func (m *StartRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StartRequest.Merge(m, src)
 }
 func (m *StartRequest) XXX_Size() int {
 	return xxx_messageInfo_StartRequest.Size(m)
@@ -59,7 +62,7 @@ func (m *StartRequest) GetId() *wrappers.StringValue {
 }
 
 type StartResponse struct {
-	Stream               *Stream  `protobuf:"bytes,1,opt,name=stream" json:"stream,omitempty"`
+	Stream               *Stream  `protobuf:"bytes,1,opt,name=stream,proto3" json:"stream,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -69,16 +72,17 @@ func (m *StartResponse) Reset()         { *m = StartResponse{} }
 func (m *StartResponse) String() string { return proto.CompactTextString(m) }
 func (*StartResponse) ProtoMessage()    {}
 func (*StartResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_start_a55e6202ebad6cb0, []int{1}
+	return fileDescriptor_5c84144a9c93052f, []int{1}
 }
+
 func (m *StartResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_StartResponse.Unmarshal(m, b)
 }
 func (m *StartResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_StartResponse.Marshal(b, m, deterministic)
 }
-func (dst *StartResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_StartResponse.Merge(dst, src)
+func (m *StartResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StartResponse.Merge(m, src)
 }
 func (m *StartResponse) XXX_Size() int {
 	return xxx_messageInfo_StartResponse.Size(m)
@@ -101,9 +105,9 @@ func init() {
 	proto.RegisterType((*StartResponse)(nil), "ai.metathings.service.streamd.StartResponse")
 }
 
-func init() { proto.RegisterFile("start.proto", fileDescriptor_start_a55e6202ebad6cb0) }
+func init() { proto.RegisterFile("start.proto", fileDescriptor_5c84144a9c93052f) }
 
-var fileDescriptor_start_a55e6202ebad6cb0 = []byte{
+var fileDescriptor_5c84144a9c93052f = []byte{
 	// 229 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x7c, 0x8f, 0x3d, 0x4f, 0xc3, 0x30,
 	0x10, 0x86, 0x95, 0x0c, 0x19, 0xdc, 0xb2, 0x64, 0x42, 0x15, 0x1f, 0x55, 0x25, 0x24, 0x96, 0xda,

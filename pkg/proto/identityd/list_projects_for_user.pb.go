@@ -3,11 +3,13 @@
 
 package identityd
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import wrappers "github.com/golang/protobuf/ptypes/wrappers"
-import _ "github.com/mwitkow/go-proto-validators"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	wrappers "github.com/golang/protobuf/ptypes/wrappers"
+	_ "github.com/mwitkow/go-proto-validators"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -21,7 +23,7 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type ListProjectsForUserRequest struct {
-	UserId               *wrappers.StringValue `protobuf:"bytes,1,opt,name=user_id,json=userId" json:"user_id,omitempty"`
+	UserId               *wrappers.StringValue `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -31,16 +33,17 @@ func (m *ListProjectsForUserRequest) Reset()         { *m = ListProjectsForUserR
 func (m *ListProjectsForUserRequest) String() string { return proto.CompactTextString(m) }
 func (*ListProjectsForUserRequest) ProtoMessage()    {}
 func (*ListProjectsForUserRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_list_projects_for_user_f37dc91d413774eb, []int{0}
+	return fileDescriptor_ab475ae0b4dfe528, []int{0}
 }
+
 func (m *ListProjectsForUserRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ListProjectsForUserRequest.Unmarshal(m, b)
 }
 func (m *ListProjectsForUserRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_ListProjectsForUserRequest.Marshal(b, m, deterministic)
 }
-func (dst *ListProjectsForUserRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ListProjectsForUserRequest.Merge(dst, src)
+func (m *ListProjectsForUserRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ListProjectsForUserRequest.Merge(m, src)
 }
 func (m *ListProjectsForUserRequest) XXX_Size() int {
 	return xxx_messageInfo_ListProjectsForUserRequest.Size(m)
@@ -59,7 +62,7 @@ func (m *ListProjectsForUserRequest) GetUserId() *wrappers.StringValue {
 }
 
 type ListProjectsForUserResponse struct {
-	Projects             []*Project `protobuf:"bytes,1,rep,name=projects" json:"projects,omitempty"`
+	Projects             []*Project `protobuf:"bytes,1,rep,name=projects,proto3" json:"projects,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}   `json:"-"`
 	XXX_unrecognized     []byte     `json:"-"`
 	XXX_sizecache        int32      `json:"-"`
@@ -69,16 +72,17 @@ func (m *ListProjectsForUserResponse) Reset()         { *m = ListProjectsForUser
 func (m *ListProjectsForUserResponse) String() string { return proto.CompactTextString(m) }
 func (*ListProjectsForUserResponse) ProtoMessage()    {}
 func (*ListProjectsForUserResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_list_projects_for_user_f37dc91d413774eb, []int{1}
+	return fileDescriptor_ab475ae0b4dfe528, []int{1}
 }
+
 func (m *ListProjectsForUserResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ListProjectsForUserResponse.Unmarshal(m, b)
 }
 func (m *ListProjectsForUserResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_ListProjectsForUserResponse.Marshal(b, m, deterministic)
 }
-func (dst *ListProjectsForUserResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ListProjectsForUserResponse.Merge(dst, src)
+func (m *ListProjectsForUserResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ListProjectsForUserResponse.Merge(m, src)
 }
 func (m *ListProjectsForUserResponse) XXX_Size() int {
 	return xxx_messageInfo_ListProjectsForUserResponse.Size(m)
@@ -101,11 +105,9 @@ func init() {
 	proto.RegisterType((*ListProjectsForUserResponse)(nil), "ai.metathings.service.identityd.ListProjectsForUserResponse")
 }
 
-func init() {
-	proto.RegisterFile("list_projects_for_user.proto", fileDescriptor_list_projects_for_user_f37dc91d413774eb)
-}
+func init() { proto.RegisterFile("list_projects_for_user.proto", fileDescriptor_ab475ae0b4dfe528) }
 
-var fileDescriptor_list_projects_for_user_f37dc91d413774eb = []byte{
+var fileDescriptor_ab475ae0b4dfe528 = []byte{
 	// 263 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x90, 0x31, 0x4b, 0xc3, 0x50,
 	0x10, 0xc7, 0x89, 0x42, 0x94, 0x14, 0x97, 0x4c, 0x25, 0x16, 0x1b, 0x3a, 0x65, 0xe9, 0x0b, 0x54,

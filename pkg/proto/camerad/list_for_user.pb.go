@@ -3,12 +3,14 @@
 
 package camerad
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import wrappers "github.com/golang/protobuf/ptypes/wrappers"
-import _ "github.com/mwitkow/go-proto-validators"
-import camera "github.com/nayotta/metathings/pkg/proto/camera"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	wrappers "github.com/golang/protobuf/ptypes/wrappers"
+	_ "github.com/mwitkow/go-proto-validators"
+	camera "github.com/nayotta/metathings/pkg/proto/camera"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -22,10 +24,10 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type ListForUserRequest struct {
-	Name                 *wrappers.StringValue `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
-	CoreId               *wrappers.StringValue `protobuf:"bytes,2,opt,name=core_id,json=coreId" json:"core_id,omitempty"`
-	EntityName           *wrappers.StringValue `protobuf:"bytes,3,opt,name=entity_name,json=entityName" json:"entity_name,omitempty"`
-	State                camera.CameraState    `protobuf:"varint,4,opt,name=state,enum=ai.metathings.service.camera.CameraState" json:"state,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	CoreId               *wrappers.StringValue `protobuf:"bytes,2,opt,name=core_id,json=coreId,proto3" json:"core_id,omitempty"`
+	EntityName           *wrappers.StringValue `protobuf:"bytes,3,opt,name=entity_name,json=entityName,proto3" json:"entity_name,omitempty"`
+	State                camera.CameraState    `protobuf:"varint,4,opt,name=state,proto3,enum=ai.metathings.service.camera.CameraState" json:"state,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -35,16 +37,17 @@ func (m *ListForUserRequest) Reset()         { *m = ListForUserRequest{} }
 func (m *ListForUserRequest) String() string { return proto.CompactTextString(m) }
 func (*ListForUserRequest) ProtoMessage()    {}
 func (*ListForUserRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_list_for_user_42ec5840d79075cd, []int{0}
+	return fileDescriptor_7eb8008bafc57221, []int{0}
 }
+
 func (m *ListForUserRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ListForUserRequest.Unmarshal(m, b)
 }
 func (m *ListForUserRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_ListForUserRequest.Marshal(b, m, deterministic)
 }
-func (dst *ListForUserRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ListForUserRequest.Merge(dst, src)
+func (m *ListForUserRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ListForUserRequest.Merge(m, src)
 }
 func (m *ListForUserRequest) XXX_Size() int {
 	return xxx_messageInfo_ListForUserRequest.Size(m)
@@ -84,7 +87,7 @@ func (m *ListForUserRequest) GetState() camera.CameraState {
 }
 
 type ListForUserResponse struct {
-	Cameras              []*Camera `protobuf:"bytes,1,rep,name=cameras" json:"cameras,omitempty"`
+	Cameras              []*Camera `protobuf:"bytes,1,rep,name=cameras,proto3" json:"cameras,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}  `json:"-"`
 	XXX_unrecognized     []byte    `json:"-"`
 	XXX_sizecache        int32     `json:"-"`
@@ -94,16 +97,17 @@ func (m *ListForUserResponse) Reset()         { *m = ListForUserResponse{} }
 func (m *ListForUserResponse) String() string { return proto.CompactTextString(m) }
 func (*ListForUserResponse) ProtoMessage()    {}
 func (*ListForUserResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_list_for_user_42ec5840d79075cd, []int{1}
+	return fileDescriptor_7eb8008bafc57221, []int{1}
 }
+
 func (m *ListForUserResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ListForUserResponse.Unmarshal(m, b)
 }
 func (m *ListForUserResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_ListForUserResponse.Marshal(b, m, deterministic)
 }
-func (dst *ListForUserResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ListForUserResponse.Merge(dst, src)
+func (m *ListForUserResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ListForUserResponse.Merge(m, src)
 }
 func (m *ListForUserResponse) XXX_Size() int {
 	return xxx_messageInfo_ListForUserResponse.Size(m)
@@ -126,9 +130,9 @@ func init() {
 	proto.RegisterType((*ListForUserResponse)(nil), "ai.metathings.service.camerad.ListForUserResponse")
 }
 
-func init() { proto.RegisterFile("list_for_user.proto", fileDescriptor_list_for_user_42ec5840d79075cd) }
+func init() { proto.RegisterFile("list_for_user.proto", fileDescriptor_7eb8008bafc57221) }
 
-var fileDescriptor_list_for_user_42ec5840d79075cd = []byte{
+var fileDescriptor_7eb8008bafc57221 = []byte{
 	// 322 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x91, 0xcf, 0x6b, 0xea, 0x40,
 	0x10, 0xc7, 0xc9, 0xd3, 0xa7, 0xb0, 0x3e, 0xde, 0x21, 0x5e, 0x82, 0xb4, 0x45, 0x84, 0x82, 0x3d,

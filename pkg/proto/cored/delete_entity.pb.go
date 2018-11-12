@@ -3,11 +3,13 @@
 
 package cored
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import wrappers "github.com/golang/protobuf/ptypes/wrappers"
-import _ "github.com/mwitkow/go-proto-validators"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	wrappers "github.com/golang/protobuf/ptypes/wrappers"
+	_ "github.com/mwitkow/go-proto-validators"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -21,7 +23,7 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type DeleteEntityRequest struct {
-	Id                   *wrappers.StringValue `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
+	Id                   *wrappers.StringValue `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -31,16 +33,17 @@ func (m *DeleteEntityRequest) Reset()         { *m = DeleteEntityRequest{} }
 func (m *DeleteEntityRequest) String() string { return proto.CompactTextString(m) }
 func (*DeleteEntityRequest) ProtoMessage()    {}
 func (*DeleteEntityRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_delete_entity_aebfd0b3daae1dcc, []int{0}
+	return fileDescriptor_8647a4975befbd14, []int{0}
 }
+
 func (m *DeleteEntityRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_DeleteEntityRequest.Unmarshal(m, b)
 }
 func (m *DeleteEntityRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_DeleteEntityRequest.Marshal(b, m, deterministic)
 }
-func (dst *DeleteEntityRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_DeleteEntityRequest.Merge(dst, src)
+func (m *DeleteEntityRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DeleteEntityRequest.Merge(m, src)
 }
 func (m *DeleteEntityRequest) XXX_Size() int {
 	return xxx_messageInfo_DeleteEntityRequest.Size(m)
@@ -62,9 +65,9 @@ func init() {
 	proto.RegisterType((*DeleteEntityRequest)(nil), "ai.metathings.service.cored.DeleteEntityRequest")
 }
 
-func init() { proto.RegisterFile("delete_entity.proto", fileDescriptor_delete_entity_aebfd0b3daae1dcc) }
+func init() { proto.RegisterFile("delete_entity.proto", fileDescriptor_8647a4975befbd14) }
 
-var fileDescriptor_delete_entity_aebfd0b3daae1dcc = []byte{
+var fileDescriptor_8647a4975befbd14 = []byte{
 	// 200 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x3c, 0x8e, 0xc1, 0x4a, 0x80, 0x40,
 	0x10, 0x86, 0xd1, 0x83, 0x07, 0xbb, 0xe9, 0x25, 0x2c, 0x4a, 0x3a, 0x75, 0x71, 0x16, 0x2a, 0x7a,

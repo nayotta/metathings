@@ -3,11 +3,13 @@
 
 package echo
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import wrappers "github.com/golang/protobuf/ptypes/wrappers"
-import _ "github.com/mwitkow/go-proto-validators"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	wrappers "github.com/golang/protobuf/ptypes/wrappers"
+	_ "github.com/mwitkow/go-proto-validators"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -21,7 +23,7 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type EchoRequest struct {
-	Text                 *wrappers.StringValue `protobuf:"bytes,1,opt,name=text" json:"text,omitempty"`
+	Text                 *wrappers.StringValue `protobuf:"bytes,1,opt,name=text,proto3" json:"text,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -31,16 +33,17 @@ func (m *EchoRequest) Reset()         { *m = EchoRequest{} }
 func (m *EchoRequest) String() string { return proto.CompactTextString(m) }
 func (*EchoRequest) ProtoMessage()    {}
 func (*EchoRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_echo_12554067e7943d56, []int{0}
+	return fileDescriptor_08134aea513e0001, []int{0}
 }
+
 func (m *EchoRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_EchoRequest.Unmarshal(m, b)
 }
 func (m *EchoRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_EchoRequest.Marshal(b, m, deterministic)
 }
-func (dst *EchoRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_EchoRequest.Merge(dst, src)
+func (m *EchoRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_EchoRequest.Merge(m, src)
 }
 func (m *EchoRequest) XXX_Size() int {
 	return xxx_messageInfo_EchoRequest.Size(m)
@@ -59,7 +62,7 @@ func (m *EchoRequest) GetText() *wrappers.StringValue {
 }
 
 type EchoResponse struct {
-	Text                 string   `protobuf:"bytes,1,opt,name=text" json:"text,omitempty"`
+	Text                 string   `protobuf:"bytes,1,opt,name=text,proto3" json:"text,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -69,16 +72,17 @@ func (m *EchoResponse) Reset()         { *m = EchoResponse{} }
 func (m *EchoResponse) String() string { return proto.CompactTextString(m) }
 func (*EchoResponse) ProtoMessage()    {}
 func (*EchoResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_echo_12554067e7943d56, []int{1}
+	return fileDescriptor_08134aea513e0001, []int{1}
 }
+
 func (m *EchoResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_EchoResponse.Unmarshal(m, b)
 }
 func (m *EchoResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_EchoResponse.Marshal(b, m, deterministic)
 }
-func (dst *EchoResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_EchoResponse.Merge(dst, src)
+func (m *EchoResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_EchoResponse.Merge(m, src)
 }
 func (m *EchoResponse) XXX_Size() int {
 	return xxx_messageInfo_EchoResponse.Size(m)
@@ -101,9 +105,9 @@ func init() {
 	proto.RegisterType((*EchoResponse)(nil), "ai.metathings.service.echo.EchoResponse")
 }
 
-func init() { proto.RegisterFile("echo.proto", fileDescriptor_echo_12554067e7943d56) }
+func init() { proto.RegisterFile("echo.proto", fileDescriptor_08134aea513e0001) }
 
-var fileDescriptor_echo_12554067e7943d56 = []byte{
+var fileDescriptor_08134aea513e0001 = []byte{
 	// 205 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x4c, 0x8d, 0x41, 0x4b, 0xc4, 0x30,
 	0x10, 0x46, 0xa9, 0xc8, 0x82, 0x59, 0x4f, 0x39, 0x49, 0x11, 0x5d, 0x7a, 0xf2, 0xd2, 0x09, 0x28,

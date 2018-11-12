@@ -3,11 +3,13 @@
 
 package identityd
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import wrappers "github.com/golang/protobuf/ptypes/wrappers"
-import _ "github.com/mwitkow/go-proto-validators"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	wrappers "github.com/golang/protobuf/ptypes/wrappers"
+	_ "github.com/mwitkow/go-proto-validators"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -21,13 +23,13 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type PatchUserRequest struct {
-	UserId           *wrappers.StringValue `protobuf:"bytes,1,opt,name=user_id,json=userId" json:"user_id,omitempty"`
-	DefaultProjectId *wrappers.StringValue `protobuf:"bytes,2,opt,name=default_project_id,json=defaultProjectId" json:"default_project_id,omitempty"`
+	UserId           *wrappers.StringValue `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	DefaultProjectId *wrappers.StringValue `protobuf:"bytes,2,opt,name=default_project_id,json=defaultProjectId,proto3" json:"default_project_id,omitempty"`
 	// Disable change name feature
 	// google.protobuf.StringValue name = 3;
-	Password             *wrappers.StringValue `protobuf:"bytes,4,opt,name=password" json:"password,omitempty"`
-	Enabled              *wrappers.BoolValue   `protobuf:"bytes,5,opt,name=enabled" json:"enabled,omitempty"`
-	Extra                map[string]string     `protobuf:"bytes,6,rep,name=extra" json:"extra,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	Password             *wrappers.StringValue `protobuf:"bytes,4,opt,name=password,proto3" json:"password,omitempty"`
+	Enabled              *wrappers.BoolValue   `protobuf:"bytes,5,opt,name=enabled,proto3" json:"enabled,omitempty"`
+	Extra                map[string]string     `protobuf:"bytes,6,rep,name=extra,proto3" json:"extra,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -37,16 +39,17 @@ func (m *PatchUserRequest) Reset()         { *m = PatchUserRequest{} }
 func (m *PatchUserRequest) String() string { return proto.CompactTextString(m) }
 func (*PatchUserRequest) ProtoMessage()    {}
 func (*PatchUserRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_patch_user_f249d949b7e5d4d8, []int{0}
+	return fileDescriptor_4dd44ab6db595f9f, []int{0}
 }
+
 func (m *PatchUserRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_PatchUserRequest.Unmarshal(m, b)
 }
 func (m *PatchUserRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_PatchUserRequest.Marshal(b, m, deterministic)
 }
-func (dst *PatchUserRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_PatchUserRequest.Merge(dst, src)
+func (m *PatchUserRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PatchUserRequest.Merge(m, src)
 }
 func (m *PatchUserRequest) XXX_Size() int {
 	return xxx_messageInfo_PatchUserRequest.Size(m)
@@ -93,7 +96,7 @@ func (m *PatchUserRequest) GetExtra() map[string]string {
 }
 
 type PatchUserResponse struct {
-	User                 *User    `protobuf:"bytes,1,opt,name=user" json:"user,omitempty"`
+	User                 *User    `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -103,16 +106,17 @@ func (m *PatchUserResponse) Reset()         { *m = PatchUserResponse{} }
 func (m *PatchUserResponse) String() string { return proto.CompactTextString(m) }
 func (*PatchUserResponse) ProtoMessage()    {}
 func (*PatchUserResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_patch_user_f249d949b7e5d4d8, []int{1}
+	return fileDescriptor_4dd44ab6db595f9f, []int{1}
 }
+
 func (m *PatchUserResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_PatchUserResponse.Unmarshal(m, b)
 }
 func (m *PatchUserResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_PatchUserResponse.Marshal(b, m, deterministic)
 }
-func (dst *PatchUserResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_PatchUserResponse.Merge(dst, src)
+func (m *PatchUserResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PatchUserResponse.Merge(m, src)
 }
 func (m *PatchUserResponse) XXX_Size() int {
 	return xxx_messageInfo_PatchUserResponse.Size(m)
@@ -136,9 +140,9 @@ func init() {
 	proto.RegisterType((*PatchUserResponse)(nil), "ai.metathings.service.identityd.PatchUserResponse")
 }
 
-func init() { proto.RegisterFile("patch_user.proto", fileDescriptor_patch_user_f249d949b7e5d4d8) }
+func init() { proto.RegisterFile("patch_user.proto", fileDescriptor_4dd44ab6db595f9f) }
 
-var fileDescriptor_patch_user_f249d949b7e5d4d8 = []byte{
+var fileDescriptor_4dd44ab6db595f9f = []byte{
 	// 393 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x91, 0xcd, 0x6e, 0xd4, 0x30,
 	0x14, 0x85, 0x95, 0x49, 0x26, 0xed, 0xb8, 0x9b, 0x60, 0xb1, 0x88, 0x22, 0x44, 0x47, 0x95, 0x90,

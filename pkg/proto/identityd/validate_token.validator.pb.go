@@ -3,7 +3,7 @@
 
 package identityd
 
-import go_proto_validators "github.com/mwitkow/go-proto-validators"
+import github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
@@ -17,8 +17,8 @@ var _ = math.Inf
 
 func (this *ValidateTokenResponse) Validate() error {
 	if this.Token != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Token); err != nil {
-			return go_proto_validators.FieldError("Token", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Token); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Token", err)
 		}
 	}
 	return nil

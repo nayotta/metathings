@@ -3,11 +3,13 @@
 
 package switcher
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import _ "github.com/golang/protobuf/ptypes/wrappers"
-import _ "github.com/mwitkow/go-proto-validators"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	_ "github.com/golang/protobuf/ptypes/wrappers"
+	_ "github.com/mwitkow/go-proto-validators"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -21,7 +23,7 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type TurnRequest struct {
-	State                SwitcherState `protobuf:"varint,1,opt,name=state,enum=ai.metathings.service.switcher.SwitcherState" json:"state,omitempty"`
+	State                SwitcherState `protobuf:"varint,1,opt,name=state,proto3,enum=ai.metathings.service.switcher.SwitcherState" json:"state,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}      `json:"-"`
 	XXX_unrecognized     []byte        `json:"-"`
 	XXX_sizecache        int32         `json:"-"`
@@ -31,16 +33,17 @@ func (m *TurnRequest) Reset()         { *m = TurnRequest{} }
 func (m *TurnRequest) String() string { return proto.CompactTextString(m) }
 func (*TurnRequest) ProtoMessage()    {}
 func (*TurnRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_turn_83a5c40d30fc9c74, []int{0}
+	return fileDescriptor_2aa817c8c01881f9, []int{0}
 }
+
 func (m *TurnRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_TurnRequest.Unmarshal(m, b)
 }
 func (m *TurnRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_TurnRequest.Marshal(b, m, deterministic)
 }
-func (dst *TurnRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_TurnRequest.Merge(dst, src)
+func (m *TurnRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TurnRequest.Merge(m, src)
 }
 func (m *TurnRequest) XXX_Size() int {
 	return xxx_messageInfo_TurnRequest.Size(m)
@@ -59,7 +62,7 @@ func (m *TurnRequest) GetState() SwitcherState {
 }
 
 type TurnResponse struct {
-	Switcher             *Switcher `protobuf:"bytes,1,opt,name=switcher" json:"switcher,omitempty"`
+	Switcher             *Switcher `protobuf:"bytes,1,opt,name=switcher,proto3" json:"switcher,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}  `json:"-"`
 	XXX_unrecognized     []byte    `json:"-"`
 	XXX_sizecache        int32     `json:"-"`
@@ -69,16 +72,17 @@ func (m *TurnResponse) Reset()         { *m = TurnResponse{} }
 func (m *TurnResponse) String() string { return proto.CompactTextString(m) }
 func (*TurnResponse) ProtoMessage()    {}
 func (*TurnResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_turn_83a5c40d30fc9c74, []int{1}
+	return fileDescriptor_2aa817c8c01881f9, []int{1}
 }
+
 func (m *TurnResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_TurnResponse.Unmarshal(m, b)
 }
 func (m *TurnResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_TurnResponse.Marshal(b, m, deterministic)
 }
-func (dst *TurnResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_TurnResponse.Merge(dst, src)
+func (m *TurnResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TurnResponse.Merge(m, src)
 }
 func (m *TurnResponse) XXX_Size() int {
 	return xxx_messageInfo_TurnResponse.Size(m)
@@ -101,9 +105,9 @@ func init() {
 	proto.RegisterType((*TurnResponse)(nil), "ai.metathings.service.switcher.TurnResponse")
 }
 
-func init() { proto.RegisterFile("turn.proto", fileDescriptor_turn_83a5c40d30fc9c74) }
+func init() { proto.RegisterFile("turn.proto", fileDescriptor_2aa817c8c01881f9) }
 
-var fileDescriptor_turn_83a5c40d30fc9c74 = []byte{
+var fileDescriptor_2aa817c8c01881f9 = []byte{
 	// 223 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x8e, 0xb1, 0x4e, 0xc3, 0x30,
 	0x10, 0x86, 0x15, 0x24, 0x2a, 0xe4, 0xa2, 0x0e, 0x99, 0x50, 0x87, 0x52, 0x75, 0xea, 0x12, 0x5b,

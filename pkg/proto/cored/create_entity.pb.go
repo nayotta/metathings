@@ -3,11 +3,13 @@
 
 package cored
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import wrappers "github.com/golang/protobuf/ptypes/wrappers"
-import _ "github.com/mwitkow/go-proto-validators"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	wrappers "github.com/golang/protobuf/ptypes/wrappers"
+	_ "github.com/mwitkow/go-proto-validators"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -21,10 +23,10 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type CreateEntityRequest struct {
-	CoreId               *wrappers.StringValue `protobuf:"bytes,1,opt,name=core_id,json=coreId" json:"core_id,omitempty"`
-	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
-	ServiceName          *wrappers.StringValue `protobuf:"bytes,3,opt,name=service_name,json=serviceName" json:"service_name,omitempty"`
-	Endpoint             *wrappers.StringValue `protobuf:"bytes,4,opt,name=endpoint" json:"endpoint,omitempty"`
+	CoreId               *wrappers.StringValue `protobuf:"bytes,1,opt,name=core_id,json=coreId,proto3" json:"core_id,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	ServiceName          *wrappers.StringValue `protobuf:"bytes,3,opt,name=service_name,json=serviceName,proto3" json:"service_name,omitempty"`
+	Endpoint             *wrappers.StringValue `protobuf:"bytes,4,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -34,16 +36,17 @@ func (m *CreateEntityRequest) Reset()         { *m = CreateEntityRequest{} }
 func (m *CreateEntityRequest) String() string { return proto.CompactTextString(m) }
 func (*CreateEntityRequest) ProtoMessage()    {}
 func (*CreateEntityRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_create_entity_55196caed6e5d2b8, []int{0}
+	return fileDescriptor_7096d1c9da9b69b6, []int{0}
 }
+
 func (m *CreateEntityRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_CreateEntityRequest.Unmarshal(m, b)
 }
 func (m *CreateEntityRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_CreateEntityRequest.Marshal(b, m, deterministic)
 }
-func (dst *CreateEntityRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CreateEntityRequest.Merge(dst, src)
+func (m *CreateEntityRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CreateEntityRequest.Merge(m, src)
 }
 func (m *CreateEntityRequest) XXX_Size() int {
 	return xxx_messageInfo_CreateEntityRequest.Size(m)
@@ -83,7 +86,7 @@ func (m *CreateEntityRequest) GetEndpoint() *wrappers.StringValue {
 }
 
 type CreateEntityResponse struct {
-	Entity               *Entity  `protobuf:"bytes,1,opt,name=entity" json:"entity,omitempty"`
+	Entity               *Entity  `protobuf:"bytes,1,opt,name=entity,proto3" json:"entity,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -93,16 +96,17 @@ func (m *CreateEntityResponse) Reset()         { *m = CreateEntityResponse{} }
 func (m *CreateEntityResponse) String() string { return proto.CompactTextString(m) }
 func (*CreateEntityResponse) ProtoMessage()    {}
 func (*CreateEntityResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_create_entity_55196caed6e5d2b8, []int{1}
+	return fileDescriptor_7096d1c9da9b69b6, []int{1}
 }
+
 func (m *CreateEntityResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_CreateEntityResponse.Unmarshal(m, b)
 }
 func (m *CreateEntityResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_CreateEntityResponse.Marshal(b, m, deterministic)
 }
-func (dst *CreateEntityResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CreateEntityResponse.Merge(dst, src)
+func (m *CreateEntityResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CreateEntityResponse.Merge(m, src)
 }
 func (m *CreateEntityResponse) XXX_Size() int {
 	return xxx_messageInfo_CreateEntityResponse.Size(m)
@@ -125,9 +129,9 @@ func init() {
 	proto.RegisterType((*CreateEntityResponse)(nil), "ai.metathings.service.cored.CreateEntityResponse")
 }
 
-func init() { proto.RegisterFile("create_entity.proto", fileDescriptor_create_entity_55196caed6e5d2b8) }
+func init() { proto.RegisterFile("create_entity.proto", fileDescriptor_7096d1c9da9b69b6) }
 
-var fileDescriptor_create_entity_55196caed6e5d2b8 = []byte{
+var fileDescriptor_7096d1c9da9b69b6 = []byte{
 	// 290 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x91, 0x41, 0x4b, 0xc3, 0x30,
 	0x18, 0x86, 0x69, 0x1d, 0x55, 0xb2, 0x9d, 0x3a, 0x0f, 0x65, 0x8a, 0x8e, 0x79, 0xf1, 0xb2, 0x54,

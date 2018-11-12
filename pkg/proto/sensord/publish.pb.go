@@ -3,11 +3,13 @@
 
 package sensord
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import wrappers "github.com/golang/protobuf/ptypes/wrappers"
-import _ "github.com/mwitkow/go-proto-validators"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	wrappers "github.com/golang/protobuf/ptypes/wrappers"
+	_ "github.com/mwitkow/go-proto-validators"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -21,7 +23,7 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type PublishRequest struct {
-	Session *wrappers.UInt64Value `protobuf:"bytes,1,opt,name=session" json:"session,omitempty"`
+	Session *wrappers.UInt64Value `protobuf:"bytes,1,opt,name=session,proto3" json:"session,omitempty"`
 	// Types that are valid to be assigned to Payload:
 	//	*PublishRequest_Data
 	Payload              isPublishRequest_Payload `protobuf_oneof:"payload"`
@@ -34,16 +36,17 @@ func (m *PublishRequest) Reset()         { *m = PublishRequest{} }
 func (m *PublishRequest) String() string { return proto.CompactTextString(m) }
 func (*PublishRequest) ProtoMessage()    {}
 func (*PublishRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_publish_6721f9f462056087, []int{0}
+	return fileDescriptor_34180b7635741fb2, []int{0}
 }
+
 func (m *PublishRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_PublishRequest.Unmarshal(m, b)
 }
 func (m *PublishRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_PublishRequest.Marshal(b, m, deterministic)
 }
-func (dst *PublishRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_PublishRequest.Merge(dst, src)
+func (m *PublishRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PublishRequest.Merge(m, src)
 }
 func (m *PublishRequest) XXX_Size() int {
 	return xxx_messageInfo_PublishRequest.Size(m)
@@ -54,12 +57,19 @@ func (m *PublishRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_PublishRequest proto.InternalMessageInfo
 
+func (m *PublishRequest) GetSession() *wrappers.UInt64Value {
+	if m != nil {
+		return m.Session
+	}
+	return nil
+}
+
 type isPublishRequest_Payload interface {
 	isPublishRequest_Payload()
 }
 
 type PublishRequest_Data struct {
-	Data *SensorData `protobuf:"bytes,2,opt,name=data,oneof"`
+	Data *SensorData `protobuf:"bytes,2,opt,name=data,proto3,oneof"`
 }
 
 func (*PublishRequest_Data) isPublishRequest_Payload() {}
@@ -67,13 +77,6 @@ func (*PublishRequest_Data) isPublishRequest_Payload() {}
 func (m *PublishRequest) GetPayload() isPublishRequest_Payload {
 	if m != nil {
 		return m.Payload
-	}
-	return nil
-}
-
-func (m *PublishRequest) GetSession() *wrappers.UInt64Value {
-	if m != nil {
-		return m.Session
 	}
 	return nil
 }
@@ -141,7 +144,7 @@ func _PublishRequest_OneofSizer(msg proto.Message) (n int) {
 }
 
 type PublishRequests struct {
-	Requests             []*PublishRequest `protobuf:"bytes,1,rep,name=requests" json:"requests,omitempty"`
+	Requests             []*PublishRequest `protobuf:"bytes,1,rep,name=requests,proto3" json:"requests,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
 	XXX_unrecognized     []byte            `json:"-"`
 	XXX_sizecache        int32             `json:"-"`
@@ -151,16 +154,17 @@ func (m *PublishRequests) Reset()         { *m = PublishRequests{} }
 func (m *PublishRequests) String() string { return proto.CompactTextString(m) }
 func (*PublishRequests) ProtoMessage()    {}
 func (*PublishRequests) Descriptor() ([]byte, []int) {
-	return fileDescriptor_publish_6721f9f462056087, []int{1}
+	return fileDescriptor_34180b7635741fb2, []int{1}
 }
+
 func (m *PublishRequests) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_PublishRequests.Unmarshal(m, b)
 }
 func (m *PublishRequests) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_PublishRequests.Marshal(b, m, deterministic)
 }
-func (dst *PublishRequests) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_PublishRequests.Merge(dst, src)
+func (m *PublishRequests) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PublishRequests.Merge(m, src)
 }
 func (m *PublishRequests) XXX_Size() int {
 	return xxx_messageInfo_PublishRequests.Size(m)
@@ -179,7 +183,7 @@ func (m *PublishRequests) GetRequests() []*PublishRequest {
 }
 
 type PublishResponse struct {
-	Session              uint64   `protobuf:"varint,1,opt,name=session" json:"session,omitempty"`
+	Session              uint64   `protobuf:"varint,1,opt,name=session,proto3" json:"session,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -189,16 +193,17 @@ func (m *PublishResponse) Reset()         { *m = PublishResponse{} }
 func (m *PublishResponse) String() string { return proto.CompactTextString(m) }
 func (*PublishResponse) ProtoMessage()    {}
 func (*PublishResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_publish_6721f9f462056087, []int{2}
+	return fileDescriptor_34180b7635741fb2, []int{2}
 }
+
 func (m *PublishResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_PublishResponse.Unmarshal(m, b)
 }
 func (m *PublishResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_PublishResponse.Marshal(b, m, deterministic)
 }
-func (dst *PublishResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_PublishResponse.Merge(dst, src)
+func (m *PublishResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PublishResponse.Merge(m, src)
 }
 func (m *PublishResponse) XXX_Size() int {
 	return xxx_messageInfo_PublishResponse.Size(m)
@@ -217,7 +222,7 @@ func (m *PublishResponse) GetSession() uint64 {
 }
 
 type PublishResponses struct {
-	Responses            []*PublishResponse `protobuf:"bytes,1,rep,name=responses" json:"responses,omitempty"`
+	Responses            []*PublishResponse `protobuf:"bytes,1,rep,name=responses,proto3" json:"responses,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}           `json:"-"`
 	XXX_unrecognized     []byte             `json:"-"`
 	XXX_sizecache        int32              `json:"-"`
@@ -227,16 +232,17 @@ func (m *PublishResponses) Reset()         { *m = PublishResponses{} }
 func (m *PublishResponses) String() string { return proto.CompactTextString(m) }
 func (*PublishResponses) ProtoMessage()    {}
 func (*PublishResponses) Descriptor() ([]byte, []int) {
-	return fileDescriptor_publish_6721f9f462056087, []int{3}
+	return fileDescriptor_34180b7635741fb2, []int{3}
 }
+
 func (m *PublishResponses) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_PublishResponses.Unmarshal(m, b)
 }
 func (m *PublishResponses) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_PublishResponses.Marshal(b, m, deterministic)
 }
-func (dst *PublishResponses) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_PublishResponses.Merge(dst, src)
+func (m *PublishResponses) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PublishResponses.Merge(m, src)
 }
 func (m *PublishResponses) XXX_Size() int {
 	return xxx_messageInfo_PublishResponses.Size(m)
@@ -261,9 +267,9 @@ func init() {
 	proto.RegisterType((*PublishResponses)(nil), "ai.metathings.service.sensord.PublishResponses")
 }
 
-func init() { proto.RegisterFile("publish.proto", fileDescriptor_publish_6721f9f462056087) }
+func init() { proto.RegisterFile("publish.proto", fileDescriptor_34180b7635741fb2) }
 
-var fileDescriptor_publish_6721f9f462056087 = []byte{
+var fileDescriptor_34180b7635741fb2 = []byte{
 	// 315 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x90, 0x4d, 0x4b, 0xf3, 0x40,
 	0x10, 0xc7, 0x9f, 0xf4, 0x29, 0xad, 0xdd, 0xfa, 0x46, 0x4e, 0xa1, 0xf8, 0x52, 0x72, 0xaa, 0x48,

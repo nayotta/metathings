@@ -93,10 +93,10 @@ func (m *ListDomainsRequest) GetChildren() []*OpDomain {
 }
 
 type ListDomainsResponse struct {
-	Domains              []*Domain `protobuf:"bytes,1,rep,name=domains,proto3" json:"domains,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}  `json:"-"`
-	XXX_unrecognized     []byte    `json:"-"`
-	XXX_sizecache        int32     `json:"-"`
+	Domain               *Domain  `protobuf:"bytes,1,opt,name=domain,proto3" json:"domain,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
 }
 
 func (m *ListDomainsResponse) Reset()         { *m = ListDomainsResponse{} }

@@ -3,7 +3,7 @@
 
 package core_agent
 
-import go_proto_validators "github.com/mwitkow/go-proto-validators"
+import github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
@@ -18,13 +18,13 @@ var _ = math.Inf
 
 func (this *ListEntitiesRequest) Validate() error {
 	if this.Name != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Name); err != nil {
-			return go_proto_validators.FieldError("Name", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Name); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Name", err)
 		}
 	}
 	if this.ServiceName != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.ServiceName); err != nil {
-			return go_proto_validators.FieldError("ServiceName", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.ServiceName); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("ServiceName", err)
 		}
 	}
 	return nil
@@ -32,8 +32,8 @@ func (this *ListEntitiesRequest) Validate() error {
 func (this *ListEntitiesResponse) Validate() error {
 	for _, item := range this.Entities {
 		if item != nil {
-			if err := go_proto_validators.CallValidatorIfExists(item); err != nil {
-				return go_proto_validators.FieldError("Entities", err)
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("Entities", err)
 			}
 		}
 	}

@@ -3,11 +3,13 @@
 
 package identityd
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import wrappers "github.com/golang/protobuf/ptypes/wrappers"
-import _ "github.com/mwitkow/go-proto-validators"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	wrappers "github.com/golang/protobuf/ptypes/wrappers"
+	_ "github.com/mwitkow/go-proto-validators"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -21,9 +23,9 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type RemoveRoleFromUserOnDomainRequest struct {
-	DomainId             *wrappers.StringValue `protobuf:"bytes,1,opt,name=domain_id,json=domainId" json:"domain_id,omitempty"`
-	UserId               *wrappers.StringValue `protobuf:"bytes,2,opt,name=user_id,json=userId" json:"user_id,omitempty"`
-	RoleId               *wrappers.StringValue `protobuf:"bytes,3,opt,name=role_id,json=roleId" json:"role_id,omitempty"`
+	DomainId             *wrappers.StringValue `protobuf:"bytes,1,opt,name=domain_id,json=domainId,proto3" json:"domain_id,omitempty"`
+	UserId               *wrappers.StringValue `protobuf:"bytes,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	RoleId               *wrappers.StringValue `protobuf:"bytes,3,opt,name=role_id,json=roleId,proto3" json:"role_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -33,16 +35,17 @@ func (m *RemoveRoleFromUserOnDomainRequest) Reset()         { *m = RemoveRoleFro
 func (m *RemoveRoleFromUserOnDomainRequest) String() string { return proto.CompactTextString(m) }
 func (*RemoveRoleFromUserOnDomainRequest) ProtoMessage()    {}
 func (*RemoveRoleFromUserOnDomainRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_remove_role_from_user_on_domain_408960f7a442257a, []int{0}
+	return fileDescriptor_18504af8efc1a782, []int{0}
 }
+
 func (m *RemoveRoleFromUserOnDomainRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_RemoveRoleFromUserOnDomainRequest.Unmarshal(m, b)
 }
 func (m *RemoveRoleFromUserOnDomainRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_RemoveRoleFromUserOnDomainRequest.Marshal(b, m, deterministic)
 }
-func (dst *RemoveRoleFromUserOnDomainRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_RemoveRoleFromUserOnDomainRequest.Merge(dst, src)
+func (m *RemoveRoleFromUserOnDomainRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_RemoveRoleFromUserOnDomainRequest.Merge(m, src)
 }
 func (m *RemoveRoleFromUserOnDomainRequest) XXX_Size() int {
 	return xxx_messageInfo_RemoveRoleFromUserOnDomainRequest.Size(m)
@@ -79,10 +82,10 @@ func init() {
 }
 
 func init() {
-	proto.RegisterFile("remove_role_from_user_on_domain.proto", fileDescriptor_remove_role_from_user_on_domain_408960f7a442257a)
+	proto.RegisterFile("remove_role_from_user_on_domain.proto", fileDescriptor_18504af8efc1a782)
 }
 
-var fileDescriptor_remove_role_from_user_on_domain_408960f7a442257a = []byte{
+var fileDescriptor_18504af8efc1a782 = []byte{
 	// 262 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x90, 0xc1, 0x4a, 0xc3, 0x40,
 	0x10, 0x86, 0x49, 0x85, 0xaa, 0xf1, 0x96, 0x53, 0x28, 0x62, 0xab, 0x20, 0x78, 0xe9, 0x06, 0x14,

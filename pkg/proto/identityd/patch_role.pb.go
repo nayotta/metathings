@@ -3,11 +3,13 @@
 
 package identityd
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import wrappers "github.com/golang/protobuf/ptypes/wrappers"
-import _ "github.com/mwitkow/go-proto-validators"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	wrappers "github.com/golang/protobuf/ptypes/wrappers"
+	_ "github.com/mwitkow/go-proto-validators"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -21,8 +23,8 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type PatchRoleRequest struct {
-	RoleId               *wrappers.StringValue `protobuf:"bytes,1,opt,name=role_id,json=roleId" json:"role_id,omitempty"`
-	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
+	RoleId               *wrappers.StringValue `protobuf:"bytes,1,opt,name=role_id,json=roleId,proto3" json:"role_id,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -32,16 +34,17 @@ func (m *PatchRoleRequest) Reset()         { *m = PatchRoleRequest{} }
 func (m *PatchRoleRequest) String() string { return proto.CompactTextString(m) }
 func (*PatchRoleRequest) ProtoMessage()    {}
 func (*PatchRoleRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_patch_role_1a67ef84a23c0d0f, []int{0}
+	return fileDescriptor_34226111b3a081c1, []int{0}
 }
+
 func (m *PatchRoleRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_PatchRoleRequest.Unmarshal(m, b)
 }
 func (m *PatchRoleRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_PatchRoleRequest.Marshal(b, m, deterministic)
 }
-func (dst *PatchRoleRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_PatchRoleRequest.Merge(dst, src)
+func (m *PatchRoleRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PatchRoleRequest.Merge(m, src)
 }
 func (m *PatchRoleRequest) XXX_Size() int {
 	return xxx_messageInfo_PatchRoleRequest.Size(m)
@@ -67,7 +70,7 @@ func (m *PatchRoleRequest) GetName() *wrappers.StringValue {
 }
 
 type PatchRoleResponse struct {
-	Role                 *Role    `protobuf:"bytes,1,opt,name=role" json:"role,omitempty"`
+	Role                 *Role    `protobuf:"bytes,1,opt,name=role,proto3" json:"role,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -77,16 +80,17 @@ func (m *PatchRoleResponse) Reset()         { *m = PatchRoleResponse{} }
 func (m *PatchRoleResponse) String() string { return proto.CompactTextString(m) }
 func (*PatchRoleResponse) ProtoMessage()    {}
 func (*PatchRoleResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_patch_role_1a67ef84a23c0d0f, []int{1}
+	return fileDescriptor_34226111b3a081c1, []int{1}
 }
+
 func (m *PatchRoleResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_PatchRoleResponse.Unmarshal(m, b)
 }
 func (m *PatchRoleResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_PatchRoleResponse.Marshal(b, m, deterministic)
 }
-func (dst *PatchRoleResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_PatchRoleResponse.Merge(dst, src)
+func (m *PatchRoleResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PatchRoleResponse.Merge(m, src)
 }
 func (m *PatchRoleResponse) XXX_Size() int {
 	return xxx_messageInfo_PatchRoleResponse.Size(m)
@@ -109,9 +113,9 @@ func init() {
 	proto.RegisterType((*PatchRoleResponse)(nil), "ai.metathings.service.identityd.PatchRoleResponse")
 }
 
-func init() { proto.RegisterFile("patch_role.proto", fileDescriptor_patch_role_1a67ef84a23c0d0f) }
+func init() { proto.RegisterFile("patch_role.proto", fileDescriptor_34226111b3a081c1) }
 
-var fileDescriptor_patch_role_1a67ef84a23c0d0f = []byte{
+var fileDescriptor_34226111b3a081c1 = []byte{
 	// 256 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x90, 0xc1, 0x4a, 0xc3, 0x40,
 	0x10, 0x86, 0x49, 0x29, 0x11, 0xd6, 0x4b, 0xcd, 0xa9, 0x14, 0xb1, 0xa5, 0x20, 0x78, 0xe9, 0x44,

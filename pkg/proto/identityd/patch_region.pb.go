@@ -3,11 +3,13 @@
 
 package identityd
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import wrappers "github.com/golang/protobuf/ptypes/wrappers"
-import _ "github.com/mwitkow/go-proto-validators"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	wrappers "github.com/golang/protobuf/ptypes/wrappers"
+	_ "github.com/mwitkow/go-proto-validators"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -21,9 +23,9 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type PatchRegionRequest struct {
-	RegionId             *wrappers.StringValue `protobuf:"bytes,1,opt,name=region_id,json=regionId" json:"region_id,omitempty"`
-	ParentRegionId       *wrappers.StringValue `protobuf:"bytes,2,opt,name=parent_region_id,json=parentRegionId" json:"parent_region_id,omitempty"`
-	Description          *wrappers.StringValue `protobuf:"bytes,3,opt,name=description" json:"description,omitempty"`
+	RegionId             *wrappers.StringValue `protobuf:"bytes,1,opt,name=region_id,json=regionId,proto3" json:"region_id,omitempty"`
+	ParentRegionId       *wrappers.StringValue `protobuf:"bytes,2,opt,name=parent_region_id,json=parentRegionId,proto3" json:"parent_region_id,omitempty"`
+	Description          *wrappers.StringValue `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -33,16 +35,17 @@ func (m *PatchRegionRequest) Reset()         { *m = PatchRegionRequest{} }
 func (m *PatchRegionRequest) String() string { return proto.CompactTextString(m) }
 func (*PatchRegionRequest) ProtoMessage()    {}
 func (*PatchRegionRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_patch_region_38a18f374cb5c4ae, []int{0}
+	return fileDescriptor_ddba39ce99dc13b0, []int{0}
 }
+
 func (m *PatchRegionRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_PatchRegionRequest.Unmarshal(m, b)
 }
 func (m *PatchRegionRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_PatchRegionRequest.Marshal(b, m, deterministic)
 }
-func (dst *PatchRegionRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_PatchRegionRequest.Merge(dst, src)
+func (m *PatchRegionRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PatchRegionRequest.Merge(m, src)
 }
 func (m *PatchRegionRequest) XXX_Size() int {
 	return xxx_messageInfo_PatchRegionRequest.Size(m)
@@ -75,7 +78,7 @@ func (m *PatchRegionRequest) GetDescription() *wrappers.StringValue {
 }
 
 type PatchRegionResponse struct {
-	Region               *Region  `protobuf:"bytes,1,opt,name=region" json:"region,omitempty"`
+	Region               *Region  `protobuf:"bytes,1,opt,name=region,proto3" json:"region,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -85,16 +88,17 @@ func (m *PatchRegionResponse) Reset()         { *m = PatchRegionResponse{} }
 func (m *PatchRegionResponse) String() string { return proto.CompactTextString(m) }
 func (*PatchRegionResponse) ProtoMessage()    {}
 func (*PatchRegionResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_patch_region_38a18f374cb5c4ae, []int{1}
+	return fileDescriptor_ddba39ce99dc13b0, []int{1}
 }
+
 func (m *PatchRegionResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_PatchRegionResponse.Unmarshal(m, b)
 }
 func (m *PatchRegionResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_PatchRegionResponse.Marshal(b, m, deterministic)
 }
-func (dst *PatchRegionResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_PatchRegionResponse.Merge(dst, src)
+func (m *PatchRegionResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PatchRegionResponse.Merge(m, src)
 }
 func (m *PatchRegionResponse) XXX_Size() int {
 	return xxx_messageInfo_PatchRegionResponse.Size(m)
@@ -117,9 +121,9 @@ func init() {
 	proto.RegisterType((*PatchRegionResponse)(nil), "ai.metathings.service.identityd.PatchRegionResponse")
 }
 
-func init() { proto.RegisterFile("patch_region.proto", fileDescriptor_patch_region_38a18f374cb5c4ae) }
+func init() { proto.RegisterFile("patch_region.proto", fileDescriptor_ddba39ce99dc13b0) }
 
-var fileDescriptor_patch_region_38a18f374cb5c4ae = []byte{
+var fileDescriptor_ddba39ce99dc13b0 = []byte{
 	// 281 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x91, 0xc1, 0x4b, 0xfb, 0x30,
 	0x14, 0x80, 0xe9, 0x7e, 0x30, 0x7e, 0x66, 0x22, 0x12, 0x2f, 0x63, 0x88, 0x1b, 0xbb, 0xe8, 0x65,

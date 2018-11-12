@@ -4,7 +4,7 @@
 package identityd
 
 import fmt "fmt"
-import go_proto_validators "github.com/mwitkow/go-proto-validators"
+import github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
 import proto "github.com/golang/protobuf/proto"
 import math "math"
 import _ "github.com/golang/protobuf/ptypes/wrappers"
@@ -17,19 +17,19 @@ var _ = math.Inf
 
 func (this *DeleteApplicationCredentialRequest) Validate() error {
 	if nil == this.UserId {
-		return go_proto_validators.FieldError("UserId", fmt.Errorf("message must exist"))
+		return github_com_mwitkow_go_proto_validators.FieldError("UserId", fmt.Errorf("message must exist"))
 	}
 	if this.UserId != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.UserId); err != nil {
-			return go_proto_validators.FieldError("UserId", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.UserId); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("UserId", err)
 		}
 	}
 	if nil == this.ApplicationCredentialId {
-		return go_proto_validators.FieldError("ApplicationCredentialId", fmt.Errorf("message must exist"))
+		return github_com_mwitkow_go_proto_validators.FieldError("ApplicationCredentialId", fmt.Errorf("message must exist"))
 	}
 	if this.ApplicationCredentialId != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.ApplicationCredentialId); err != nil {
-			return go_proto_validators.FieldError("ApplicationCredentialId", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.ApplicationCredentialId); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("ApplicationCredentialId", err)
 		}
 	}
 	return nil

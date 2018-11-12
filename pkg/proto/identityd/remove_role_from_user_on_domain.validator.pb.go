@@ -4,7 +4,7 @@
 package identityd
 
 import fmt "fmt"
-import go_proto_validators "github.com/mwitkow/go-proto-validators"
+import github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
 import proto "github.com/golang/protobuf/proto"
 import math "math"
 import _ "github.com/golang/protobuf/ptypes/wrappers"
@@ -17,27 +17,27 @@ var _ = math.Inf
 
 func (this *RemoveRoleFromUserOnDomainRequest) Validate() error {
 	if nil == this.DomainId {
-		return go_proto_validators.FieldError("DomainId", fmt.Errorf("message must exist"))
+		return github_com_mwitkow_go_proto_validators.FieldError("DomainId", fmt.Errorf("message must exist"))
 	}
 	if this.DomainId != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.DomainId); err != nil {
-			return go_proto_validators.FieldError("DomainId", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.DomainId); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("DomainId", err)
 		}
 	}
 	if nil == this.UserId {
-		return go_proto_validators.FieldError("UserId", fmt.Errorf("message must exist"))
+		return github_com_mwitkow_go_proto_validators.FieldError("UserId", fmt.Errorf("message must exist"))
 	}
 	if this.UserId != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.UserId); err != nil {
-			return go_proto_validators.FieldError("UserId", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.UserId); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("UserId", err)
 		}
 	}
 	if nil == this.RoleId {
-		return go_proto_validators.FieldError("RoleId", fmt.Errorf("message must exist"))
+		return github_com_mwitkow_go_proto_validators.FieldError("RoleId", fmt.Errorf("message must exist"))
 	}
 	if this.RoleId != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.RoleId); err != nil {
-			return go_proto_validators.FieldError("RoleId", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.RoleId); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("RoleId", err)
 		}
 	}
 	return nil

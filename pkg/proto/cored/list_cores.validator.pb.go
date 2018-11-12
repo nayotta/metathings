@@ -3,7 +3,7 @@
 
 package cored
 
-import go_proto_validators "github.com/mwitkow/go-proto-validators"
+import github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
@@ -18,18 +18,18 @@ var _ = math.Inf
 
 func (this *ListCoresRequest) Validate() error {
 	if this.Name != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Name); err != nil {
-			return go_proto_validators.FieldError("Name", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Name); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Name", err)
 		}
 	}
 	if this.ProjectId != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.ProjectId); err != nil {
-			return go_proto_validators.FieldError("ProjectId", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.ProjectId); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("ProjectId", err)
 		}
 	}
 	if this.OwnerId != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.OwnerId); err != nil {
-			return go_proto_validators.FieldError("OwnerId", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.OwnerId); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("OwnerId", err)
 		}
 	}
 	return nil
@@ -37,8 +37,8 @@ func (this *ListCoresRequest) Validate() error {
 func (this *ListCoresResponse) Validate() error {
 	for _, item := range this.Cores {
 		if item != nil {
-			if err := go_proto_validators.CallValidatorIfExists(item); err != nil {
-				return go_proto_validators.FieldError("Cores", err)
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("Cores", err)
 			}
 		}
 	}

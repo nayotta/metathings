@@ -3,11 +3,13 @@
 
 package motor
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import timestamp "github.com/golang/protobuf/ptypes/timestamp"
-import wrappers "github.com/golang/protobuf/ptypes/wrappers"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	timestamp "github.com/golang/protobuf/ptypes/timestamp"
+	wrappers "github.com/golang/protobuf/ptypes/wrappers"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -21,7 +23,7 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type StreamNormalMotorPingRequest struct {
-	Timestamp            *timestamp.Timestamp `protobuf:"bytes,1,opt,name=timestamp" json:"timestamp,omitempty"`
+	Timestamp            *timestamp.Timestamp `protobuf:"bytes,1,opt,name=timestamp,proto3" json:"timestamp,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}             `json:"-"`
 	XXX_unrecognized     []byte               `json:"-"`
 	XXX_sizecache        int32                `json:"-"`
@@ -31,16 +33,17 @@ func (m *StreamNormalMotorPingRequest) Reset()         { *m = StreamNormalMotorP
 func (m *StreamNormalMotorPingRequest) String() string { return proto.CompactTextString(m) }
 func (*StreamNormalMotorPingRequest) ProtoMessage()    {}
 func (*StreamNormalMotorPingRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_stream_normal_motor_5d9bd4fa956378a5, []int{0}
+	return fileDescriptor_c67be05e1f074b91, []int{0}
 }
+
 func (m *StreamNormalMotorPingRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_StreamNormalMotorPingRequest.Unmarshal(m, b)
 }
 func (m *StreamNormalMotorPingRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_StreamNormalMotorPingRequest.Marshal(b, m, deterministic)
 }
-func (dst *StreamNormalMotorPingRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_StreamNormalMotorPingRequest.Merge(dst, src)
+func (m *StreamNormalMotorPingRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StreamNormalMotorPingRequest.Merge(m, src)
 }
 func (m *StreamNormalMotorPingRequest) XXX_Size() int {
 	return xxx_messageInfo_StreamNormalMotorPingRequest.Size(m)
@@ -59,7 +62,7 @@ func (m *StreamNormalMotorPingRequest) GetTimestamp() *timestamp.Timestamp {
 }
 
 type StreamNormalMotorPingResponse struct {
-	Timestamp            *timestamp.Timestamp `protobuf:"bytes,1,opt,name=timestamp" json:"timestamp,omitempty"`
+	Timestamp            *timestamp.Timestamp `protobuf:"bytes,1,opt,name=timestamp,proto3" json:"timestamp,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}             `json:"-"`
 	XXX_unrecognized     []byte               `json:"-"`
 	XXX_sizecache        int32                `json:"-"`
@@ -69,16 +72,17 @@ func (m *StreamNormalMotorPingResponse) Reset()         { *m = StreamNormalMotor
 func (m *StreamNormalMotorPingResponse) String() string { return proto.CompactTextString(m) }
 func (*StreamNormalMotorPingResponse) ProtoMessage()    {}
 func (*StreamNormalMotorPingResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_stream_normal_motor_5d9bd4fa956378a5, []int{1}
+	return fileDescriptor_c67be05e1f074b91, []int{1}
 }
+
 func (m *StreamNormalMotorPingResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_StreamNormalMotorPingResponse.Unmarshal(m, b)
 }
 func (m *StreamNormalMotorPingResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_StreamNormalMotorPingResponse.Marshal(b, m, deterministic)
 }
-func (dst *StreamNormalMotorPingResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_StreamNormalMotorPingResponse.Merge(dst, src)
+func (m *StreamNormalMotorPingResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StreamNormalMotorPingResponse.Merge(m, src)
 }
 func (m *StreamNormalMotorPingResponse) XXX_Size() int {
 	return xxx_messageInfo_StreamNormalMotorPingResponse.Size(m)
@@ -97,7 +101,7 @@ func (m *StreamNormalMotorPingResponse) GetTimestamp() *timestamp.Timestamp {
 }
 
 type StreamNormalMotorSetSpeedRequest struct {
-	Speed                *wrappers.FloatValue `protobuf:"bytes,1,opt,name=speed" json:"speed,omitempty"`
+	Speed                *wrappers.FloatValue `protobuf:"bytes,1,opt,name=speed,proto3" json:"speed,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}             `json:"-"`
 	XXX_unrecognized     []byte               `json:"-"`
 	XXX_sizecache        int32                `json:"-"`
@@ -107,16 +111,17 @@ func (m *StreamNormalMotorSetSpeedRequest) Reset()         { *m = StreamNormalMo
 func (m *StreamNormalMotorSetSpeedRequest) String() string { return proto.CompactTextString(m) }
 func (*StreamNormalMotorSetSpeedRequest) ProtoMessage()    {}
 func (*StreamNormalMotorSetSpeedRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_stream_normal_motor_5d9bd4fa956378a5, []int{2}
+	return fileDescriptor_c67be05e1f074b91, []int{2}
 }
+
 func (m *StreamNormalMotorSetSpeedRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_StreamNormalMotorSetSpeedRequest.Unmarshal(m, b)
 }
 func (m *StreamNormalMotorSetSpeedRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_StreamNormalMotorSetSpeedRequest.Marshal(b, m, deterministic)
 }
-func (dst *StreamNormalMotorSetSpeedRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_StreamNormalMotorSetSpeedRequest.Merge(dst, src)
+func (m *StreamNormalMotorSetSpeedRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StreamNormalMotorSetSpeedRequest.Merge(m, src)
 }
 func (m *StreamNormalMotorSetSpeedRequest) XXX_Size() int {
 	return xxx_messageInfo_StreamNormalMotorSetSpeedRequest.Size(m)
@@ -135,7 +140,7 @@ func (m *StreamNormalMotorSetSpeedRequest) GetSpeed() *wrappers.FloatValue {
 }
 
 type StreamNormalMotorSetStateRequest struct {
-	State                MotorState `protobuf:"varint,1,opt,name=state,enum=ai.metathings.service.motor.MotorState" json:"state,omitempty"`
+	State                MotorState `protobuf:"varint,1,opt,name=state,proto3,enum=ai.metathings.service.motor.MotorState" json:"state,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}   `json:"-"`
 	XXX_unrecognized     []byte     `json:"-"`
 	XXX_sizecache        int32      `json:"-"`
@@ -145,16 +150,17 @@ func (m *StreamNormalMotorSetStateRequest) Reset()         { *m = StreamNormalMo
 func (m *StreamNormalMotorSetStateRequest) String() string { return proto.CompactTextString(m) }
 func (*StreamNormalMotorSetStateRequest) ProtoMessage()    {}
 func (*StreamNormalMotorSetStateRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_stream_normal_motor_5d9bd4fa956378a5, []int{3}
+	return fileDescriptor_c67be05e1f074b91, []int{3}
 }
+
 func (m *StreamNormalMotorSetStateRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_StreamNormalMotorSetStateRequest.Unmarshal(m, b)
 }
 func (m *StreamNormalMotorSetStateRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_StreamNormalMotorSetStateRequest.Marshal(b, m, deterministic)
 }
-func (dst *StreamNormalMotorSetStateRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_StreamNormalMotorSetStateRequest.Merge(dst, src)
+func (m *StreamNormalMotorSetStateRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StreamNormalMotorSetStateRequest.Merge(m, src)
 }
 func (m *StreamNormalMotorSetStateRequest) XXX_Size() int {
 	return xxx_messageInfo_StreamNormalMotorSetStateRequest.Size(m)
@@ -173,7 +179,7 @@ func (m *StreamNormalMotorSetStateRequest) GetState() MotorState {
 }
 
 type StreamNormalMotorRequest struct {
-	Session *wrappers.UInt64Value `protobuf:"bytes,1,opt,name=session" json:"session,omitempty"`
+	Session *wrappers.UInt64Value `protobuf:"bytes,1,opt,name=session,proto3" json:"session,omitempty"`
 	// Types that are valid to be assigned to Payload:
 	//	*StreamNormalMotorRequest_Ping
 	//	*StreamNormalMotorRequest_SetSpeed
@@ -187,16 +193,17 @@ func (m *StreamNormalMotorRequest) Reset()         { *m = StreamNormalMotorReque
 func (m *StreamNormalMotorRequest) String() string { return proto.CompactTextString(m) }
 func (*StreamNormalMotorRequest) ProtoMessage()    {}
 func (*StreamNormalMotorRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_stream_normal_motor_5d9bd4fa956378a5, []int{4}
+	return fileDescriptor_c67be05e1f074b91, []int{4}
 }
+
 func (m *StreamNormalMotorRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_StreamNormalMotorRequest.Unmarshal(m, b)
 }
 func (m *StreamNormalMotorRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_StreamNormalMotorRequest.Marshal(b, m, deterministic)
 }
-func (dst *StreamNormalMotorRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_StreamNormalMotorRequest.Merge(dst, src)
+func (m *StreamNormalMotorRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StreamNormalMotorRequest.Merge(m, src)
 }
 func (m *StreamNormalMotorRequest) XXX_Size() int {
 	return xxx_messageInfo_StreamNormalMotorRequest.Size(m)
@@ -207,30 +214,32 @@ func (m *StreamNormalMotorRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_StreamNormalMotorRequest proto.InternalMessageInfo
 
+func (m *StreamNormalMotorRequest) GetSession() *wrappers.UInt64Value {
+	if m != nil {
+		return m.Session
+	}
+	return nil
+}
+
 type isStreamNormalMotorRequest_Payload interface {
 	isStreamNormalMotorRequest_Payload()
 }
 
 type StreamNormalMotorRequest_Ping struct {
-	Ping *StreamNormalMotorPingRequest `protobuf:"bytes,2,opt,name=ping,oneof"`
-}
-type StreamNormalMotorRequest_SetSpeed struct {
-	SetSpeed *StreamNormalMotorSetSpeedRequest `protobuf:"bytes,3,opt,name=set_speed,json=setSpeed,oneof"`
+	Ping *StreamNormalMotorPingRequest `protobuf:"bytes,2,opt,name=ping,proto3,oneof"`
 }
 
-func (*StreamNormalMotorRequest_Ping) isStreamNormalMotorRequest_Payload()     {}
+type StreamNormalMotorRequest_SetSpeed struct {
+	SetSpeed *StreamNormalMotorSetSpeedRequest `protobuf:"bytes,3,opt,name=set_speed,json=setSpeed,proto3,oneof"`
+}
+
+func (*StreamNormalMotorRequest_Ping) isStreamNormalMotorRequest_Payload() {}
+
 func (*StreamNormalMotorRequest_SetSpeed) isStreamNormalMotorRequest_Payload() {}
 
 func (m *StreamNormalMotorRequest) GetPayload() isStreamNormalMotorRequest_Payload {
 	if m != nil {
 		return m.Payload
-	}
-	return nil
-}
-
-func (m *StreamNormalMotorRequest) GetSession() *wrappers.UInt64Value {
-	if m != nil {
-		return m.Session
 	}
 	return nil
 }
@@ -324,7 +333,7 @@ func _StreamNormalMotorRequest_OneofSizer(msg proto.Message) (n int) {
 }
 
 type StreamNormalMotorRequests struct {
-	Requests             []*StreamNormalMotorRequest `protobuf:"bytes,1,rep,name=requests" json:"requests,omitempty"`
+	Requests             []*StreamNormalMotorRequest `protobuf:"bytes,1,rep,name=requests,proto3" json:"requests,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}                    `json:"-"`
 	XXX_unrecognized     []byte                      `json:"-"`
 	XXX_sizecache        int32                       `json:"-"`
@@ -334,16 +343,17 @@ func (m *StreamNormalMotorRequests) Reset()         { *m = StreamNormalMotorRequ
 func (m *StreamNormalMotorRequests) String() string { return proto.CompactTextString(m) }
 func (*StreamNormalMotorRequests) ProtoMessage()    {}
 func (*StreamNormalMotorRequests) Descriptor() ([]byte, []int) {
-	return fileDescriptor_stream_normal_motor_5d9bd4fa956378a5, []int{5}
+	return fileDescriptor_c67be05e1f074b91, []int{5}
 }
+
 func (m *StreamNormalMotorRequests) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_StreamNormalMotorRequests.Unmarshal(m, b)
 }
 func (m *StreamNormalMotorRequests) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_StreamNormalMotorRequests.Marshal(b, m, deterministic)
 }
-func (dst *StreamNormalMotorRequests) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_StreamNormalMotorRequests.Merge(dst, src)
+func (m *StreamNormalMotorRequests) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StreamNormalMotorRequests.Merge(m, src)
 }
 func (m *StreamNormalMotorRequests) XXX_Size() int {
 	return xxx_messageInfo_StreamNormalMotorRequests.Size(m)
@@ -362,7 +372,7 @@ func (m *StreamNormalMotorRequests) GetRequests() []*StreamNormalMotorRequest {
 }
 
 type StreamNormalMotorResponse struct {
-	Session uint64 `protobuf:"varint,1,opt,name=session" json:"session,omitempty"`
+	Session uint64 `protobuf:"varint,1,opt,name=session,proto3" json:"session,omitempty"`
 	// Types that are valid to be assigned to Payload:
 	//	*StreamNormalMotorResponse_Ping
 	Payload              isStreamNormalMotorResponse_Payload `protobuf_oneof:"payload"`
@@ -375,16 +385,17 @@ func (m *StreamNormalMotorResponse) Reset()         { *m = StreamNormalMotorResp
 func (m *StreamNormalMotorResponse) String() string { return proto.CompactTextString(m) }
 func (*StreamNormalMotorResponse) ProtoMessage()    {}
 func (*StreamNormalMotorResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_stream_normal_motor_5d9bd4fa956378a5, []int{6}
+	return fileDescriptor_c67be05e1f074b91, []int{6}
 }
+
 func (m *StreamNormalMotorResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_StreamNormalMotorResponse.Unmarshal(m, b)
 }
 func (m *StreamNormalMotorResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_StreamNormalMotorResponse.Marshal(b, m, deterministic)
 }
-func (dst *StreamNormalMotorResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_StreamNormalMotorResponse.Merge(dst, src)
+func (m *StreamNormalMotorResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StreamNormalMotorResponse.Merge(m, src)
 }
 func (m *StreamNormalMotorResponse) XXX_Size() int {
 	return xxx_messageInfo_StreamNormalMotorResponse.Size(m)
@@ -395,12 +406,19 @@ func (m *StreamNormalMotorResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_StreamNormalMotorResponse proto.InternalMessageInfo
 
+func (m *StreamNormalMotorResponse) GetSession() uint64 {
+	if m != nil {
+		return m.Session
+	}
+	return 0
+}
+
 type isStreamNormalMotorResponse_Payload interface {
 	isStreamNormalMotorResponse_Payload()
 }
 
 type StreamNormalMotorResponse_Ping struct {
-	Ping *StreamNormalMotorPingResponse `protobuf:"bytes,2,opt,name=ping,oneof"`
+	Ping *StreamNormalMotorPingResponse `protobuf:"bytes,2,opt,name=ping,proto3,oneof"`
 }
 
 func (*StreamNormalMotorResponse_Ping) isStreamNormalMotorResponse_Payload() {}
@@ -410,13 +428,6 @@ func (m *StreamNormalMotorResponse) GetPayload() isStreamNormalMotorResponse_Pay
 		return m.Payload
 	}
 	return nil
-}
-
-func (m *StreamNormalMotorResponse) GetSession() uint64 {
-	if m != nil {
-		return m.Session
-	}
-	return 0
 }
 
 func (m *StreamNormalMotorResponse) GetPing() *StreamNormalMotorPingResponse {
@@ -491,11 +502,9 @@ func init() {
 	proto.RegisterType((*StreamNormalMotorResponse)(nil), "ai.metathings.service.motor.StreamNormalMotorResponse")
 }
 
-func init() {
-	proto.RegisterFile("stream_normal_motor.proto", fileDescriptor_stream_normal_motor_5d9bd4fa956378a5)
-}
+func init() { proto.RegisterFile("stream_normal_motor.proto", fileDescriptor_c67be05e1f074b91) }
 
-var fileDescriptor_stream_normal_motor_5d9bd4fa956378a5 = []byte{
+var fileDescriptor_c67be05e1f074b91 = []byte{
 	// 402 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xa4, 0x92, 0x4b, 0x8f, 0xd3, 0x30,
 	0x14, 0x85, 0x9b, 0x3e, 0x68, 0xeb, 0x4a, 0x2c, 0xb2, 0x4a, 0x1f, 0x40, 0x95, 0x0d, 0x5d, 0xb9,

@@ -3,7 +3,7 @@
 
 package sensord
 
-import go_proto_validators "github.com/mwitkow/go-proto-validators"
+import github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
@@ -18,23 +18,23 @@ var _ = math.Inf
 
 func (this *ListRequest) Validate() error {
 	if this.Name != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Name); err != nil {
-			return go_proto_validators.FieldError("Name", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Name); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Name", err)
 		}
 	}
 	if this.CoreId != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.CoreId); err != nil {
-			return go_proto_validators.FieldError("CoreId", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.CoreId); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("CoreId", err)
 		}
 	}
 	if this.EntityName != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.EntityName); err != nil {
-			return go_proto_validators.FieldError("EntityName", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.EntityName); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("EntityName", err)
 		}
 	}
 	if this.OwnerId != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.OwnerId); err != nil {
-			return go_proto_validators.FieldError("OwnerId", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.OwnerId); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("OwnerId", err)
 		}
 	}
 	return nil
@@ -42,8 +42,8 @@ func (this *ListRequest) Validate() error {
 func (this *ListResponse) Validate() error {
 	for _, item := range this.Sensors {
 		if item != nil {
-			if err := go_proto_validators.CallValidatorIfExists(item); err != nil {
-				return go_proto_validators.FieldError("Sensors", err)
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("Sensors", err)
 			}
 		}
 	}

@@ -3,9 +3,11 @@
 
 package camera
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -35,6 +37,7 @@ var CameraState_name = map[int32]string{
 	3: "CAMERA_STATE_TERMINATING",
 	4: "CAMERA_STATE_RUNNING",
 }
+
 var CameraState_value = map[string]int32{
 	"CAMERA_STATE_UNKNOWN":     0,
 	"CAMERA_STATE_STOP":        1,
@@ -46,17 +49,18 @@ var CameraState_value = map[string]int32{
 func (x CameraState) String() string {
 	return proto.EnumName(CameraState_name, int32(x))
 }
+
 func (CameraState) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_camera_953e8c915faee521, []int{0}
+	return fileDescriptor_2f444de3b23b55d1, []int{0}
 }
 
 type CameraConfig struct {
-	Url                  string   `protobuf:"bytes,1,opt,name=url" json:"url,omitempty"`
-	Device               string   `protobuf:"bytes,2,opt,name=device" json:"device,omitempty"`
-	Width                uint32   `protobuf:"varint,3,opt,name=width" json:"width,omitempty"`
-	Height               uint32   `protobuf:"varint,4,opt,name=height" json:"height,omitempty"`
-	Bitrate              uint32   `protobuf:"varint,5,opt,name=bitrate" json:"bitrate,omitempty"`
-	Framerate            uint32   `protobuf:"varint,6,opt,name=framerate" json:"framerate,omitempty"`
+	Url                  string   `protobuf:"bytes,1,opt,name=url,proto3" json:"url,omitempty"`
+	Device               string   `protobuf:"bytes,2,opt,name=device,proto3" json:"device,omitempty"`
+	Width                uint32   `protobuf:"varint,3,opt,name=width,proto3" json:"width,omitempty"`
+	Height               uint32   `protobuf:"varint,4,opt,name=height,proto3" json:"height,omitempty"`
+	Bitrate              uint32   `protobuf:"varint,5,opt,name=bitrate,proto3" json:"bitrate,omitempty"`
+	Framerate            uint32   `protobuf:"varint,6,opt,name=framerate,proto3" json:"framerate,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -66,16 +70,17 @@ func (m *CameraConfig) Reset()         { *m = CameraConfig{} }
 func (m *CameraConfig) String() string { return proto.CompactTextString(m) }
 func (*CameraConfig) ProtoMessage()    {}
 func (*CameraConfig) Descriptor() ([]byte, []int) {
-	return fileDescriptor_camera_953e8c915faee521, []int{0}
+	return fileDescriptor_2f444de3b23b55d1, []int{0}
 }
+
 func (m *CameraConfig) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_CameraConfig.Unmarshal(m, b)
 }
 func (m *CameraConfig) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_CameraConfig.Marshal(b, m, deterministic)
 }
-func (dst *CameraConfig) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CameraConfig.Merge(dst, src)
+func (m *CameraConfig) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CameraConfig.Merge(m, src)
 }
 func (m *CameraConfig) XXX_Size() int {
 	return xxx_messageInfo_CameraConfig.Size(m)
@@ -129,8 +134,8 @@ func (m *CameraConfig) GetFramerate() uint32 {
 }
 
 type Camera struct {
-	State                CameraState   `protobuf:"varint,1,opt,name=state,enum=ai.metathings.service.camera.CameraState" json:"state,omitempty"`
-	Config               *CameraConfig `protobuf:"bytes,2,opt,name=config" json:"config,omitempty"`
+	State                CameraState   `protobuf:"varint,1,opt,name=state,proto3,enum=ai.metathings.service.camera.CameraState" json:"state,omitempty"`
+	Config               *CameraConfig `protobuf:"bytes,2,opt,name=config,proto3" json:"config,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}      `json:"-"`
 	XXX_unrecognized     []byte        `json:"-"`
 	XXX_sizecache        int32         `json:"-"`
@@ -140,16 +145,17 @@ func (m *Camera) Reset()         { *m = Camera{} }
 func (m *Camera) String() string { return proto.CompactTextString(m) }
 func (*Camera) ProtoMessage()    {}
 func (*Camera) Descriptor() ([]byte, []int) {
-	return fileDescriptor_camera_953e8c915faee521, []int{1}
+	return fileDescriptor_2f444de3b23b55d1, []int{1}
 }
+
 func (m *Camera) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Camera.Unmarshal(m, b)
 }
 func (m *Camera) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Camera.Marshal(b, m, deterministic)
 }
-func (dst *Camera) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Camera.Merge(dst, src)
+func (m *Camera) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Camera.Merge(m, src)
 }
 func (m *Camera) XXX_Size() int {
 	return xxx_messageInfo_Camera.Size(m)
@@ -175,14 +181,14 @@ func (m *Camera) GetConfig() *CameraConfig {
 }
 
 func init() {
+	proto.RegisterEnum("ai.metathings.service.camera.CameraState", CameraState_name, CameraState_value)
 	proto.RegisterType((*CameraConfig)(nil), "ai.metathings.service.camera.CameraConfig")
 	proto.RegisterType((*Camera)(nil), "ai.metathings.service.camera.Camera")
-	proto.RegisterEnum("ai.metathings.service.camera.CameraState", CameraState_name, CameraState_value)
 }
 
-func init() { proto.RegisterFile("camera.proto", fileDescriptor_camera_953e8c915faee521) }
+func init() { proto.RegisterFile("camera.proto", fileDescriptor_2f444de3b23b55d1) }
 
-var fileDescriptor_camera_953e8c915faee521 = []byte{
+var fileDescriptor_2f444de3b23b55d1 = []byte{
 	// 310 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x91, 0x4f, 0x4f, 0x32, 0x31,
 	0x10, 0xc6, 0xdf, 0xf2, 0x67, 0xdf, 0x30, 0xa0, 0x59, 0x27, 0x60, 0x6a, 0xc2, 0x81, 0x70, 0x42,

@@ -3,10 +3,12 @@
 
 package camerad
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import camera "github.com/nayotta/metathings/pkg/proto/camera"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	camera "github.com/nayotta/metathings/pkg/proto/camera"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -20,8 +22,8 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type CallbackRequest struct {
-	Config               *OpConfig          `protobuf:"bytes,1,opt,name=config" json:"config,omitempty"`
-	State                camera.CameraState `protobuf:"varint,2,opt,name=state,enum=ai.metathings.service.camera.CameraState" json:"state,omitempty"`
+	Config               *OpConfig          `protobuf:"bytes,1,opt,name=config,proto3" json:"config,omitempty"`
+	State                camera.CameraState `protobuf:"varint,2,opt,name=state,proto3,enum=ai.metathings.service.camera.CameraState" json:"state,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}           `json:"-"`
 	XXX_unrecognized     []byte             `json:"-"`
 	XXX_sizecache        int32              `json:"-"`
@@ -31,16 +33,17 @@ func (m *CallbackRequest) Reset()         { *m = CallbackRequest{} }
 func (m *CallbackRequest) String() string { return proto.CompactTextString(m) }
 func (*CallbackRequest) ProtoMessage()    {}
 func (*CallbackRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_callback_7c04c3379df28184, []int{0}
+	return fileDescriptor_6cf7fe261a3a1c45, []int{0}
 }
+
 func (m *CallbackRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_CallbackRequest.Unmarshal(m, b)
 }
 func (m *CallbackRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_CallbackRequest.Marshal(b, m, deterministic)
 }
-func (dst *CallbackRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CallbackRequest.Merge(dst, src)
+func (m *CallbackRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CallbackRequest.Merge(m, src)
 }
 func (m *CallbackRequest) XXX_Size() int {
 	return xxx_messageInfo_CallbackRequest.Size(m)
@@ -69,9 +72,9 @@ func init() {
 	proto.RegisterType((*CallbackRequest)(nil), "ai.metathings.service.camerad.CallbackRequest")
 }
 
-func init() { proto.RegisterFile("callback.proto", fileDescriptor_callback_7c04c3379df28184) }
+func init() { proto.RegisterFile("callback.proto", fileDescriptor_6cf7fe261a3a1c45) }
 
-var fileDescriptor_callback_7c04c3379df28184 = []byte{
+var fileDescriptor_6cf7fe261a3a1c45 = []byte{
 	// 192 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xe2, 0x4b, 0x4e, 0xcc, 0xc9,
 	0x49, 0x4a, 0x4c, 0xce, 0xd6, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x92, 0x4d, 0xcc, 0xd4, 0xcb,
