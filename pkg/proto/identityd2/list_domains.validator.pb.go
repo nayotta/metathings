@@ -45,9 +45,11 @@ func (this *ListDomainsRequest) Validate() error {
 	return nil
 }
 func (this *ListDomainsResponse) Validate() error {
-	if this.Domain != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Domain); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Domain", err)
+	for _, item := range this.Domain {
+		if item != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("Domain", err)
+			}
 		}
 	}
 	return nil
