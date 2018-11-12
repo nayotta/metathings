@@ -37,7 +37,7 @@ clean:
 	$(RM) -rf $(CLEAN_PATHS)
 
 protos_from_docker:
-	$(DOCKER_EXE) run -it -v $(CUR_PATH):/go/src/github.com/nayotta/metathings nayotta/metathings-protobuf-maker
+	$(DOCKER_EXE) run --rm -v $(CUR_PATH):/go/src/github.com/nayotta/metathings nayotta/metathings-protobuf-maker
 
 protos:
 	$(MAKE) -C pkg/proto all
