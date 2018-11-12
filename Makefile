@@ -1,5 +1,7 @@
 RM=$(shell which rm)
 CLEAN_PATHS=./bin ./lib
+DOCKER_EXE=$(shell which docker)
+CUR_PATH=$(shell pwd)
 
 all: \
 	protos \
@@ -35,7 +37,7 @@ clean:
 	$(RM) -rf $(CLEAN_PATHS)
 
 protos:
-	$(MAKE) -C pkg/proto all
+	$(DOCKER_EXE) exec -it -v $(CUR_PATH)/../metathings:/go/src/github.com/nayotta/metathins nayotta/metathings-protobuf-build-test
 
 metathings_bin:
 	$(MAKE) -C cmd/metathings all
