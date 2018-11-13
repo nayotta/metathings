@@ -63,6 +63,47 @@ func (self *StorageImpl) get_device(id string) (*Device, error) {
 	return &dev, nil
 }
 
+func (self *StorageImpl) list_devices(dev *Device) ([]*Device, error) {
+	var err error
+	var devs_t []*Device
+
+	d := &Device{}
+	if dev.EntityId != nil {
+		d.EntityId = dev.EntityId
+	}
+
+	if dev.Kind != nil {
+		d.Kind = dev.Kind
+	}
+
+	if dev.State != nil {
+		d.State = dev.State
+	}
+
+	if dev.Name != nil {
+		d.Name = dev.Name
+	}
+
+	if dev.Alias != nil {
+		d.Alias = dev.Alias
+	}
+
+	if err = self.db.Select("id").Find(&devs_t, d).Error; err != nil {
+		return nil, err
+	}
+
+	var devs []*Device
+	for _, d = range devs_t {
+		if d, err = self.get_device(*d.Id); err != nil {
+			return nil, err
+		}
+
+		devs = append(devs, d)
+	}
+
+	return devs, nil
+}
+
 func (self *StorageImpl) CreateDevice(dev *Device) (*Device, error) {
 	var err error
 
@@ -133,8 +174,18 @@ func (self *StorageImpl) GetDevice(id string) (*Device, error) {
 	return dev, nil
 }
 
-func (self *StorageImpl) ListDevices(*Device) ([]*Device, error) {
-	panic("unimplemented")
+func (self *StorageImpl) ListDevices(dev *Device) ([]*Device, error) {
+	var devs []*Device
+	var err error
+
+	if devs, err = self.list_devices(dev); err != nil {
+		self.logger.WithError(err).Debugf("failed to list devices")
+		return nil, err
+	}
+
+	self.logger.Debugf("list devices")
+
+	return devs, nil
 }
 
 func (self *StorageImpl) GetDeviceByEntityId(ent_id string) (*Device, error) {
