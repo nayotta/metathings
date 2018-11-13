@@ -146,9 +146,17 @@ func (self *MetathingsDevicedService) ListDevices(context.Context, *pb.ListDevic
 func NewMetathingsDevicedService(
 	opt *MetathingsDevicedServiceOption,
 	logger log.FieldLogger,
+	storage storage.Storage,
+	enforcer identityd_policy.Enforcer,
+	vdr token_helper.TokenValidator,
+	cc connection.ConnectionCenter,
 ) (pb.DevicedServiceServer, error) {
 	return &MetathingsDevicedService{
-		opt:    opt,
-		logger: logger,
+		opt:      opt,
+		logger:   logger,
+		storage:  storage,
+		enforcer: enforcer,
+		vdr:      vdr,
+		cc:       cc,
 	}, nil
 }

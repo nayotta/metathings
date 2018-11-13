@@ -4,7 +4,6 @@ import "errors"
 
 var (
 	ErrUnknownStorageDriver = errors.New("unknown storage driver")
-	ErrInvalidArgument      = errors.New("invalid argument")
 )
 
 type Storage interface {
@@ -18,6 +17,10 @@ type StorageFactory func(...interface{}) (Storage, error)
 var storage_factories map[string]StorageFactory
 
 func register_storage_factory(name string, fty StorageFactory) {
+	if storage_factories == nil {
+		storage_factories = map[string]StorageFactory{}
+	}
+
 	storage_factories[name] = fty
 }
 

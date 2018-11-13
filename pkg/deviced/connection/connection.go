@@ -250,6 +250,10 @@ func (self *connectionCenter) StreamCall(pb.DevicedService_StreamCallServer) (St
 	panic("unimplemented")
 }
 
-func NewConnectionCenter() (ConnectionCenter, error) {
-	return &connectionCenter{}, nil
+func NewConnectionCenter(brfty BridgeFactory, storage Storage, logger log.FieldLogger) (ConnectionCenter, error) {
+	return &connectionCenter{
+		logger:  logger,
+		brfty:   brfty,
+		storage: storage,
+	}, nil
 }
