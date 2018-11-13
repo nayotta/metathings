@@ -113,10 +113,6 @@ func (self *StorageImpl) PatchDomain(id string, domain *Domain) (*Domain, error)
 	var dom *Domain
 	var domNew Domain
 
-	if dom, err = self.GetDomain(id); err != nil {
-		self.logger.WithError(err).Debugf("failed to get domain")
-		return nil, err
-	}
 	if domain.Alias != nil {
 		domNew.Alias = domain.Alias
 	}
@@ -124,7 +120,7 @@ func (self *StorageImpl) PatchDomain(id string, domain *Domain) (*Domain, error)
 		domNew.Extra = domain.Extra
 	}
 
-	if err = self.db.Model(dom).Update(domNew).Error; err != nil {
+	if err = self.db.Model(&Domain{Id: &id}).Update(domNew).Error; err != nil {
 		self.logger.WithError(err).Debugf("failed to patch domain")
 		return nil, err
 	}
@@ -283,11 +279,6 @@ func (self *StorageImpl) PatchRole(id string, role *Role) (*Role, error) {
 	var rol *Role
 	var rolNew Role
 
-	if rol, err = self.GetRole(id); err != nil {
-		self.logger.WithError(err).Debugf("failed to get role")
-		return nil, err
-	}
-
 	if role.Alias != nil {
 		rolNew.Alias = role.Alias
 	}
@@ -298,7 +289,7 @@ func (self *StorageImpl) PatchRole(id string, role *Role) (*Role, error) {
 		rolNew.Extra = role.Extra
 	}
 
-	if err = self.db.Model(rol).Update(rolNew).Error; err != nil {
+	if err = self.db.Model(&Role{Id: &id}).Update(rolNew).Error; err != nil {
 		self.logger.WithError(err).Debugf("failed to patch role")
 		return nil, err
 	}
@@ -503,11 +494,6 @@ func (self *StorageImpl) PatchEntity(id string, entity *Entity) (*Entity, error)
 	var ent *Entity
 	var entNew Entity
 
-	if ent, err = self.GetEntity(id); err != nil {
-		self.logger.WithError(err).Debugf("failed to get entity")
-		return nil, err
-	}
-
 	if entity.Alias != nil {
 		entNew.Alias = entity.Alias
 	}
@@ -518,7 +504,7 @@ func (self *StorageImpl) PatchEntity(id string, entity *Entity) (*Entity, error)
 		entNew.Extra = entity.Extra
 	}
 
-	if err = self.db.Model(ent).Update(entNew).Error; err != nil {
+	if err = self.db.Model(&Entity{Id: &id}).Update(entNew).Error; err != nil {
 		self.logger.WithError(err).Debugf("failed to patch entity")
 		return nil, err
 	}
@@ -777,11 +763,6 @@ func (self *StorageImpl) PatchGroup(id string, group *Group) (*Group, error) {
 	var grp *Group
 	var grpNew Group
 
-	if grp, err = self.GetGroup(id); err != nil {
-		self.logger.WithError(err).Debugf("failed to get group")
-		return nil, err
-	}
-
 	if group.Alias != nil {
 		grpNew.Alias = group.Alias
 	}
@@ -792,7 +773,7 @@ func (self *StorageImpl) PatchGroup(id string, group *Group) (*Group, error) {
 		grpNew.Extra = group.Extra
 	}
 
-	if err = self.db.Model(grp).Update(grpNew).Error; err != nil {
+	if err = self.db.Model(&Group{Id: &id}).Update(grpNew).Error; err != nil {
 		self.logger.WithError(err).Debugf("failed to patch group")
 		return nil, err
 	}
@@ -1070,11 +1051,6 @@ func (self *StorageImpl) PatchCredential(id string, credential *Credential) (*Cr
 	var cred *Credential
 	var credNew Credential
 
-	if cred, err = self.GetCredential(id); err != nil {
-		self.logger.WithError(err).Debugf("failed to get credential")
-		return nil, err
-	}
-
 	if credential.Alias != nil {
 		credNew.Alias = credential.Alias
 	}
@@ -1082,7 +1058,7 @@ func (self *StorageImpl) PatchCredential(id string, credential *Credential) (*Cr
 		credNew.Description = credential.Description
 	}
 
-	if err = self.db.Model(cred).Update(credNew).Error; err != nil {
+	if err = self.db.Model(&Credential{Id: &id}).Update(credNew).Error; err != nil {
 		self.logger.WithError(err).Debugf("failed to patch credential")
 		return nil, err
 	}
