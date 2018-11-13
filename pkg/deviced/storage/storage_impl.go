@@ -82,7 +82,14 @@ func (self *StorageImpl) CreateDevice(dev *Device) (*Device, error) {
 }
 
 func (self *StorageImpl) DeleteDevice(id string) error {
-	panic("unimplemented")
+	if err := self.db.Delete(&Device{}, "id = ?", id).Error; err != nil {
+		self.logger.WithError(err).Debugf("failed to delete device")
+		return err
+	}
+
+	self.logger.WithField("id", id).Debugf("delete device")
+
+	return nil
 }
 
 func (self *StorageImpl) PatchDevice(id string, device *Device) (*Device, error) {
