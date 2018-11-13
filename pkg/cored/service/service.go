@@ -117,9 +117,8 @@ func (srv *metathingsCoredService) AuthFuncOverride(ctx context.Context, fullMet
 	ctx = context.WithValue(ctx, "credential", token)
 
 	srv.logger.WithFields(log.Fields{
-		"method":   fullMethodName,
-		"user_id":  token.User.Id,
-		"username": token.User.Name,
+		"method":    fullMethodName,
+		"entity_id": token.Entity.Id,
 	}).Debugf("validate token")
 
 	return ctx, nil
