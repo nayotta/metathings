@@ -3,6 +3,8 @@ package metathings_deviced_storage
 import (
 	"github.com/jinzhu/gorm"
 	log "github.com/sirupsen/logrus"
+
+	identityd2_storage "github.com/nayotta/metathings/pkg/identityd2/storage"
 )
 
 type StorageImpl struct {
@@ -10,8 +12,55 @@ type StorageImpl struct {
 	logger log.FieldLogger
 }
 
+func (self *StorageImpl) get_module(id string) (*Module, error) {
+	var err error
+	var mdl Module
+
+	if err = self.db.First(&mdl, "id = ?", id).Error; err != nil {
+		return nil, err
+	}
+
+	mdl.Device = &Device{Id: mdl.DeviceId}
+	mdl.Entity = &identityd2_storage.Entity{Id: mdl.EntityId}
+
+	return &mdl, nil
+}
+
+func (self *StorageImpl) list_modules_by_device_id(id string) ([]*Module, error) {
+	var err error
+	var mdls_t []*Module
+
+	if err = self.db.Select("id").Find(&mdls_t, "device_id = ?", id).Error; err != nil {
+		return nil, err
+	}
+
+	mdls := []*Module{}
+	for _, m := range mdls_t {
+		if m, err = self.get_module(*m.Id); err != nil {
+			return nil, err
+		}
+
+		mdls = append(mdls, m)
+	}
+
+	return mdls, nil
+}
+
 func (self *StorageImpl) get_device(id string) (*Device, error) {
-	panic("unimplemented")
+	var err error
+	var dev Device
+
+	if err = self.db.First(&dev, "id = ?", id).Error; err != nil {
+		return nil, err
+	}
+
+	if dev.Modules, err = self.list_modules_by_device_id(id); err != nil {
+		return nil, err
+	}
+
+	dev.Entity = &identityd2_storage.Entity{Id: dev.EntityId}
+
+	return &dev, nil
 }
 
 func (self *StorageImpl) CreateDevice(dev *Device) (*Device, error) {
