@@ -120,7 +120,17 @@ func (self *StorageImpl) PatchDevice(id string, device *Device) (*Device, error)
 }
 
 func (self *StorageImpl) GetDevice(id string) (*Device, error) {
-	panic("unimplemented")
+	var dev *Device
+	var err error
+
+	if dev, err = self.get_device(id); err != nil {
+		self.logger.WithError(err).Debugf("failed to get device")
+		return nil, err
+	}
+
+	self.logger.WithField("id", id).Debugf("get device")
+
+	return dev, nil
 }
 
 func (self *StorageImpl) ListDevices(*Device) ([]*Device, error) {
