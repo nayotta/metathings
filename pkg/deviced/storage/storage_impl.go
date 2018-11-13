@@ -93,7 +93,30 @@ func (self *StorageImpl) DeleteDevice(id string) error {
 }
 
 func (self *StorageImpl) PatchDevice(id string, device *Device) (*Device, error) {
-	panic("unimplemented")
+	var err error
+	var dev Device
+
+	if device.Alias != nil {
+		dev.Alias = device.Alias
+	}
+
+	if device.State != nil {
+		dev.State = device.State
+	}
+
+	if err = self.db.Model(&Device{Id: &id}).Update(dev).Error; err != nil {
+		self.logger.WithError(err).Debugf("failed to patch device")
+		return nil, err
+	}
+
+	if device, err = self.get_device(id); err != nil {
+		self.logger.WithError(err).Debugf("failed to get device")
+		return nil, err
+	}
+
+	self.logger.WithField("id", id).Debugf("patch device")
+
+	return device, nil
 }
 
 func (self *StorageImpl) GetDevice(id string) (*Device, error) {
