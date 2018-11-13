@@ -73,9 +73,12 @@ func (self *MetathingsIdentitydService) CreateCredential(ctx context.Context, re
 		desc_str = req.GetDescription().GetValue()
 	}
 
+	now := time.Now()
 	var expires time.Time
 	if req.GetExpiresAt() != nil {
 		expires = pb_helper.ToTime(*req.GetExpiresAt())
+	} else {
+		expires = now.Add(self.opt.TokenExpire)
 	}
 
 	cred := &storage.Credential{
