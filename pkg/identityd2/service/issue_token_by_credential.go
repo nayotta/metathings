@@ -25,13 +25,11 @@ func (self *MetathingsIdentitydService) IssueTokenByCredential(ctx context.Conte
 
 	cred := req.GetCredential()
 
+	dom_id_str := ""
 	dom := cred.GetDomain()
-	if dom == nil || dom.GetId() == nil {
-		err = errors.New("credential.domain.id is empty")
-		self.logger.WithError(err).Warningf("failed to validate request data")
-		return nil, status.Errorf(codes.InvalidArgument, err.Error())
+	if dom != nil && dom.GetId() != nil {
+		dom_id_str = dom.GetId().GetValue()
 	}
-	dom_id_str := dom.GetId().GetValue()
 
 	cred_id := cred.GetId()
 	if cred_id == nil {
@@ -54,7 +52,7 @@ func (self *MetathingsIdentitydService) IssueTokenByCredential(ctx context.Conte
 		return nil, status.Errorf(codes.Unauthenticated, policy.ErrUnauthenticated.Error())
 	}
 
-	if !domain_in_credential(cred_s, dom_id_str) {
+	if dom_id_str != "" && !domain_in_credential(cred_s, dom_id_str) {
 		err = policy.ErrUnauthenticated
 		self.logger.WithError(err).Errorf("failed to match request domain id and credential domain id")
 		return nil, status.Errorf(codes.Unauthenticated, err.Error())
