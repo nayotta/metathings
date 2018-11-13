@@ -53,5 +53,5 @@ type Storage interface {
 }
 
 func NewStorage(driver, uri string, args ...interface{}) (Storage, error) {
-	panic("unimplemented")
+	return NewStorageImpl(driver, uri, args...)
 }
