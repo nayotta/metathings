@@ -35,7 +35,7 @@ func new_token(dom_id, ent_id, cred_id *string, expire time.Duration) *storage.T
 }
 
 const (
-	SECRET_LENGTH  = 32
+	SECRET_LENGTH  = 128
 	SECRET_LETTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 )
 
