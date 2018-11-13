@@ -46,21 +46,46 @@ func (self *StorageImpl) list_modules_by_device_id(id string) ([]*Module, error)
 	return mdls, nil
 }
 
-func (self *StorageImpl) get_device(id string) (*Device, error) {
+func (self *StorageImpl) internal_get_device(dev *Device) (*Device, error) {
 	var err error
-	var dev Device
 
-	if err = self.db.First(&dev, "id = ?", id).Error; err != nil {
-		return nil, err
-	}
-
-	if dev.Modules, err = self.list_modules_by_device_id(id); err != nil {
+	if dev.Modules, err = self.list_modules_by_device_id(*dev.Id); err != nil {
 		return nil, err
 	}
 
 	dev.Entity = &identityd2_storage.Entity{Id: dev.EntityId}
 
-	return &dev, nil
+	return dev, nil
+}
+
+func (self *StorageImpl) get_device(id string) (*Device, error) {
+	var err error
+	var dev *Device
+
+	if err = self.db.First(&dev, "id = ?", id).Error; err != nil {
+		return nil, err
+	}
+
+	if dev, err = self.internal_get_device(dev); err != nil {
+		return nil, err
+	}
+
+	return dev, nil
+}
+
+func (self *StorageImpl) get_device_by_entity_id(ent_id string) (*Device, error) {
+	var err error
+	var dev *Device
+
+	if err = self.db.First(&dev, "entity_id = ?", ent_id).Error; err != nil {
+		return nil, err
+	}
+
+	if dev, err = self.internal_get_device(dev); err != nil {
+		return nil, err
+	}
+
+	return dev, nil
 }
 
 func (self *StorageImpl) list_devices(dev *Device) ([]*Device, error) {
@@ -189,7 +214,17 @@ func (self *StorageImpl) ListDevices(dev *Device) ([]*Device, error) {
 }
 
 func (self *StorageImpl) GetDeviceByEntityId(ent_id string) (*Device, error) {
-	panic("unimplemented")
+	var dev *Device
+	var err error
+
+	if dev, err = self.get_device_by_entity_id(ent_id); err != nil {
+		self.logger.WithError(err).Debugf("failed to get device by entity id")
+		return nil, err
+	}
+
+	self.logger.WithField("entity_id", ent_id).Debugf("get device by entity id")
+
+	return dev, nil
 }
 
 func (self *StorageImpl) CreateModule(*Module) (*Module, error) {
