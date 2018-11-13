@@ -74,6 +74,8 @@ import:
   - keepalive
   - metadata
   - status
+- package: github.com/go-redis/redis
+  version: ~6.14.2
 testImport:
 - package: github.com/stretchr/testify
   version: ~1.2.2
