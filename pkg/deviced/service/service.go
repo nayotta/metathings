@@ -3,7 +3,6 @@ package metathings_deviced_service
 import (
 	"context"
 
-	"github.com/golang/protobuf/ptypes/empty"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -129,10 +128,6 @@ func (self *MetathingsDevicedService) AuthFuncOverride(ctx context.Context, full
 	}).Debugf("authorize token")
 
 	return new_ctx, nil
-}
-
-func (self *MetathingsDevicedService) DeleteDevice(context.Context, *pb.DeleteDeviceRequest) (*empty.Empty, error) {
-	panic("unimplemented")
 }
 
 func (self *MetathingsDevicedService) PatchDevice(context.Context, *pb.PatchDeviceRequest) (*pb.PatchDeviceResponse, error) {
