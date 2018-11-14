@@ -259,7 +259,30 @@ func (self *StorageImpl) DeleteModule(id string) error {
 }
 
 func (self *StorageImpl) PatchModule(id string, module *Module) (*Module, error) {
-	panic("unimplemented")
+	var err error
+	var mdl Module
+
+	if module.Alias != nil {
+		mdl.Alias = module.Alias
+	}
+
+	if module.State != nil {
+		mdl.State = module.State
+	}
+
+	if err = self.db.Model(&Module{Id: &id}).Update(mdl).Error; err != nil {
+		self.logger.WithError(err).Debugf("failed to patch module")
+		return nil, err
+	}
+
+	if module, err = self.get_module(id); err != nil {
+		self.logger.WithError(err).Debugf("failed to get module")
+		return nil, err
+	}
+
+	self.logger.WithField("id", id).Debugf("patch module")
+
+	return module, nil
 }
 
 func (self *StorageImpl) GetModule(id string) (*Module, error) {
