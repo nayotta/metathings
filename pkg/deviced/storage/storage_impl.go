@@ -246,7 +246,16 @@ func (self *StorageImpl) CreateModule(mdl *Module) (*Module, error) {
 }
 
 func (self *StorageImpl) DeleteModule(id string) error {
-	panic("unimplemented")
+	var err error
+
+	if err = self.db.Delete(&Module{}, "id = ?", id).Error; err != nil {
+		self.logger.WithError(err).Debugf("failed to delete module")
+		return err
+	}
+
+	self.logger.WithField("id", id).Debugf("delete module")
+
+	return nil
 }
 
 func (self *StorageImpl) PatchModule(id string, module *Module) (*Module, error) {
