@@ -25,6 +25,16 @@ func copy_device(x *storage.Device) *pb.Device {
 	return y
 }
 
+func copy_devices(xs []*storage.Device) []*pb.Device {
+	var ys []*pb.Device
+
+	for _, x := range xs {
+		ys = append(ys, copy_device(x))
+	}
+
+	return ys
+}
+
 func copy_module(x *storage.Module) *pb.Module {
 	y := &pb.Module{
 		Id:       *x.Id,
