@@ -227,8 +227,22 @@ func (self *StorageImpl) GetDeviceByEntityId(ent_id string) (*Device, error) {
 	return dev, nil
 }
 
-func (self *StorageImpl) CreateModule(*Module) (*Module, error) {
-	panic("unimplemented")
+func (self *StorageImpl) CreateModule(mdl *Module) (*Module, error) {
+	var err error
+
+	if err = self.db.Create(mdl).Error; err != nil {
+		self.logger.WithError(err).Debugf("failed to create module")
+		return nil, err
+	}
+
+	if mdl, err = self.get_module(*mdl.Id); err != nil {
+		self.logger.WithError(err).Debugf("failed to get module")
+		return nil, err
+	}
+
+	self.logger.WithField("id", *mdl.Id).Debugf("create module")
+
+	return mdl, nil
 }
 
 func (self *StorageImpl) DeleteModule(id string) error {
