@@ -46,6 +46,55 @@ func (self *StorageImpl) list_modules_by_device_id(id string) ([]*Module, error)
 	return mdls, nil
 }
 
+func (self *StorageImpl) list_modules(mdl *Module) ([]*Module, error) {
+	var err error
+	var mdls_t []*Module
+
+	m := &Module{}
+	if mdl.Id != nil {
+		m.Id = mdl.Id
+	}
+
+	if mdl.EntityId != nil {
+		m.EntityId = mdl.EntityId
+	}
+
+	if mdl.State != nil {
+		m.State = mdl.State
+	}
+
+	if mdl.DeviceId != nil {
+		m.DeviceId = mdl.DeviceId
+	}
+
+	if mdl.Endpoint != nil {
+		m.Endpoint = mdl.Endpoint
+	}
+
+	if mdl.Name != nil {
+		m.Name = mdl.Name
+	}
+
+	if mdl.Alias != nil {
+		m.Alias = mdl.Alias
+	}
+
+	if err = self.db.Select("id").Find(&mdls_t, m).Error; err != nil {
+		return nil, err
+	}
+
+	var mdls []*Module
+	for _, m = range mdls_t {
+		if m, err = self.get_module(*m.Id); err != nil {
+			return nil, err
+		}
+
+		mdls = append(mdls, m)
+	}
+
+	return mdls, nil
+}
+
 func (self *StorageImpl) internal_get_device(dev *Device) (*Device, error) {
 	var err error
 
@@ -93,6 +142,10 @@ func (self *StorageImpl) list_devices(dev *Device) ([]*Device, error) {
 	var devs_t []*Device
 
 	d := &Device{}
+	if dev.Id != nil {
+		d.Id = dev.Id
+	}
+
 	if dev.EntityId != nil {
 		d.EntityId = dev.EntityId
 	}
@@ -299,8 +352,18 @@ func (self *StorageImpl) GetModule(id string) (*Module, error) {
 	return mdl, nil
 }
 
-func (self *StorageImpl) ListModules(*Module) ([]*Module, error) {
-	panic("unimplemented")
+func (self *StorageImpl) ListModules(mdl *Module) ([]*Module, error) {
+	var mdls []*Module
+	var err error
+
+	if mdls, err = self.list_modules(mdl); err != nil {
+		self.logger.WithError(err).Debugf("failed to list modules")
+		return nil, err
+	}
+
+	self.logger.Debugf("list modules")
+
+	return mdls, nil
 }
 
 func new_db(s *StorageImpl, driver, uri string) error {
