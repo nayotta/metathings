@@ -286,7 +286,17 @@ func (self *StorageImpl) PatchModule(id string, module *Module) (*Module, error)
 }
 
 func (self *StorageImpl) GetModule(id string) (*Module, error) {
-	panic("unimplemented")
+	var mdl *Module
+	var err error
+
+	if mdl, err = self.get_module(id); err != nil {
+		self.logger.WithError(err).Debugf("failed to get module")
+		return nil, err
+	}
+
+	self.logger.WithField("id", id).Debugf("get module")
+
+	return mdl, nil
 }
 
 func (self *StorageImpl) ListModules(*Module) ([]*Module, error) {
