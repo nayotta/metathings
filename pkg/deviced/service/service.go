@@ -130,14 +130,6 @@ func (self *MetathingsDevicedService) AuthFuncOverride(ctx context.Context, full
 	return new_ctx, nil
 }
 
-func (self *MetathingsDevicedService) PatchDevice(context.Context, *pb.PatchDeviceRequest) (*pb.PatchDeviceResponse, error) {
-	panic("unimplemented")
-}
-
-func (self *MetathingsDevicedService) ListDevices(context.Context, *pb.ListDevicesRequest) (*pb.ListDevicesResponse, error) {
-	panic("unimplemented")
-}
-
 func NewMetathingsDevicedService(
 	opt *MetathingsDevicedServiceOption,
 	logger log.FieldLogger,
