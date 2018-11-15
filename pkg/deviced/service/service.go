@@ -7,6 +7,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
+	client_helper "github.com/nayotta/metathings/pkg/common/client"
 	context_helper "github.com/nayotta/metathings/pkg/common/context"
 	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
 	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
@@ -24,6 +25,8 @@ type MetathingsDevicedServiceOption struct {
 type MetathingsDevicedService struct {
 	grpc_helper.AuthorizationTokenParser
 
+	tknr     token_helper.Tokener
+	cli_fty  *client_helper.ClientFactory
 	opt      *MetathingsDevicedServiceOption
 	logger   log.FieldLogger
 	storage  storage.Storage
@@ -39,7 +42,7 @@ func (self *MetathingsDevicedService) get_device_by_context(ctx context.Context)
 
 	tkn = context_helper.ExtractToken(ctx)
 
-	if dev_s, err = self.storage.GetDeviceByEntityId(tkn.Entity.Id); err != nil {
+	if dev_s, err = self.storage.GetDevice(tkn.Entity.Id); err != nil {
 		return nil, err
 	}
 
@@ -137,6 +140,8 @@ func NewMetathingsDevicedService(
 	enforcer identityd_policy.Enforcer,
 	vdr token_helper.TokenValidator,
 	cc connection.ConnectionCenter,
+	tknr token_helper.Tokener,
+	cli_fty *client_helper.ClientFactory,
 ) (pb.DevicedServiceServer, error) {
 	return &MetathingsDevicedService{
 		opt:      opt,
@@ -145,5 +150,7 @@ func NewMetathingsDevicedService(
 		enforcer: enforcer,
 		vdr:      vdr,
 		cc:       cc,
+		tknr:     tknr,
+		cli_fty:  cli_fty,
 	}, nil
 }

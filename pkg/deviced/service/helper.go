@@ -6,7 +6,6 @@ import (
 	deviced_helper "github.com/nayotta/metathings/pkg/deviced/helper"
 	storage "github.com/nayotta/metathings/pkg/deviced/storage"
 	pb "github.com/nayotta/metathings/pkg/proto/deviced"
-	identityd_pb "github.com/nayotta/metathings/pkg/proto/identityd2"
 )
 
 func copy_device(x *storage.Device) *pb.Device {
@@ -17,9 +16,6 @@ func copy_device(x *storage.Device) *pb.Device {
 		Name:    *x.Name,
 		Alias:   *x.Alias,
 		Modules: copy_modules(x.Modules),
-		Entity: &identityd_pb.Entity{
-			Id: *x.EntityId,
-		},
 	}
 
 	return y
@@ -43,9 +39,6 @@ func copy_module(x *storage.Module) *pb.Module {
 		Endpoint: *x.Endpoint,
 		Name:     *x.Name,
 		Alias:    *x.Alias,
-		Entity: &identityd_pb.Entity{
-			Id: *x.EntityId,
-		},
 	}
 
 	return y

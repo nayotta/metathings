@@ -2,16 +2,90 @@ package metathings_deviced_service
 
 import (
 	"context"
+	"errors"
 
+	"github.com/golang/protobuf/ptypes/wrappers"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
+	context_helper "github.com/nayotta/metathings/pkg/common/context"
 	id_helper "github.com/nayotta/metathings/pkg/common/id"
+	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
 	deviced_helper "github.com/nayotta/metathings/pkg/deviced/helper"
 	storage "github.com/nayotta/metathings/pkg/deviced/storage"
+	pb_kind "github.com/nayotta/metathings/pkg/proto/constant/kind"
 	pb_state "github.com/nayotta/metathings/pkg/proto/constant/state"
 	pb "github.com/nayotta/metathings/pkg/proto/deviced"
+	identityd_pb "github.com/nayotta/metathings/pkg/proto/identityd2"
 )
+
+func (self *MetathingsDevicedService) ValidateCreateDevice(ctx context.Context, in interface{}) error {
+	return self.validate_chain(
+		[]interface{}{
+			func() (policy_helper.Validator, get_devicer) {
+				req := in.(*pb.CreateDeviceRequest)
+				return req, req
+			},
+		},
+		[]interface{}{
+			func(x get_devicer) error {
+				dev := x.GetDevice()
+
+				if dev.GetKind() == pb_kind.DeviceKind_DEVICE_KIND_UNKNOWN {
+					return errors.New("domain.kind is invalid value")
+				}
+
+				if dev.GetName() == nil {
+					return errors.New("domain.name is empty")
+				}
+
+				mdls := dev.GetModules()
+				if len(mdls) == 0 {
+					return errors.New("domain.modules too short")
+				}
+
+				for _, mdl := range mdls {
+					if mdl.GetEndpoint() == nil {
+						return errors.New("model.endpoint is empty")
+					}
+
+					if mdl.GetName() == nil {
+						return errors.New("model.name is empty")
+					}
+				}
+
+				return nil
+			},
+		},
+	)
+}
+
+func (self *MetathingsDevicedService) create_entity(ent_id, ent_name string) error {
+	cli, cfn, err := self.cli_fty.NewIdentityd2ServiceClient()
+	if err != nil {
+		return err
+	}
+	cfn()
+
+	ctx := context_helper.WithToken(context.Background(), self.tknr.GetToken())
+	req := &identityd_pb.CreateEntityRequest{
+		Id:   &wrappers.StringValue{Value: ent_id},
+		Name: &wrappers.StringValue{Value: ent_name},
+	}
+	if _, err = cli.CreateEntity(ctx, req); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (self *MetathingsDevicedService) create_device_entity(dev *storage.Device) error {
+	return self.create_entity(*dev.Id, "/deviced/device/"+*dev.Name)
+}
+
+func (self *MetathingsDevicedService) create_module_entity(mdl *storage.Module) error {
+	return self.create_entity(*mdl.Id, "/deviced/module/"+*mdl.Name)
+}
 
 func (self *MetathingsDevicedService) CreateDevice(ctx context.Context, req *pb.CreateDeviceRequest) (*pb.CreateDeviceResponse, error) {
 	var err error
@@ -25,7 +99,10 @@ func (self *MetathingsDevicedService) CreateDevice(ctx context.Context, req *pb.
 	dev_kind_str := deviced_helper.DEVICE_KIND_ENUMER.ToString(dev.GetKind())
 	dev_state_str := deviced_helper.DEVICE_STATE_ENUMER.ToString(pb_state.DeviceState_DEVICE_STATE_OFFLINE)
 	dev_name_str := dev.GetName().GetValue()
-	dev_alias_str := dev.GetAlias().GetValue()
+	dev_alias_str := dev_name_str
+	if dev.GetAlias() != nil {
+		dev_alias_str = dev.GetAlias().GetValue()
+	}
 
 	dev_s := &storage.Device{
 		Id:    &dev_id_str,
@@ -33,6 +110,11 @@ func (self *MetathingsDevicedService) CreateDevice(ctx context.Context, req *pb.
 		State: &dev_state_str,
 		Name:  &dev_name_str,
 		Alias: &dev_alias_str,
+	}
+
+	if err = self.create_device_entity(dev_s); err != nil {
+		self.logger.WithError(err).Errorf("failed to create entity for device")
+		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
 	for _, mdl := range dev.GetModules() {
@@ -43,12 +125,20 @@ func (self *MetathingsDevicedService) CreateDevice(ctx context.Context, req *pb.
 		mdl_state_str := deviced_helper.MODULE_STATE_ENUMER.ToString(pb_state.ModuleState_MODULE_STATE_OFFLINE)
 		mdl_name_str := mdl.GetName().GetValue()
 		mdl_alias_str := mdl.GetAlias().GetValue()
+		mdl_endpoint_str := mdl.GetEndpoint().GetValue()
 
 		mdl_s := &storage.Module{
-			Id:    &mdl_id_str,
-			State: &mdl_state_str,
-			Name:  &mdl_name_str,
-			Alias: &mdl_alias_str,
+			DeviceId: &dev_id_str,
+			Id:       &mdl_id_str,
+			State:    &mdl_state_str,
+			Name:     &mdl_name_str,
+			Alias:    &mdl_alias_str,
+			Endpoint: &mdl_endpoint_str,
+		}
+
+		if err = self.create_module_entity(mdl_s); err != nil {
+			self.logger.WithError(err).Errorf("failed to create entity for module")
+			return nil, status.Errorf(codes.Internal, err.Error())
 		}
 
 		if err = self.enforcer.AddObjectToKind(mdl_id_str, KIND_MODULE); err != nil {
