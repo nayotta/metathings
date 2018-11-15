@@ -3,8 +3,6 @@ package metathings_deviced_storage
 import (
 	"github.com/jinzhu/gorm"
 	log "github.com/sirupsen/logrus"
-
-	identityd2_storage "github.com/nayotta/metathings/pkg/identityd2/storage"
 )
 
 type StorageImpl struct {
@@ -21,7 +19,6 @@ func (self *StorageImpl) get_module(id string) (*Module, error) {
 	}
 
 	mdl.Device = &Device{Id: mdl.DeviceId}
-	mdl.Entity = &identityd2_storage.Entity{Id: mdl.EntityId}
 
 	return &mdl, nil
 }
@@ -53,10 +50,6 @@ func (self *StorageImpl) list_modules(mdl *Module) ([]*Module, error) {
 	m := &Module{}
 	if mdl.Id != nil {
 		m.Id = mdl.Id
-	}
-
-	if mdl.EntityId != nil {
-		m.EntityId = mdl.EntityId
 	}
 
 	if mdl.State != nil {
@@ -102,8 +95,6 @@ func (self *StorageImpl) internal_get_device(dev *Device) (*Device, error) {
 		return nil, err
 	}
 
-	dev.Entity = &identityd2_storage.Entity{Id: dev.EntityId}
-
 	return dev, nil
 }
 
@@ -122,21 +113,6 @@ func (self *StorageImpl) get_device(id string) (*Device, error) {
 	return dev, nil
 }
 
-func (self *StorageImpl) get_device_by_entity_id(ent_id string) (*Device, error) {
-	var err error
-	var dev *Device
-
-	if err = self.db.First(&dev, "entity_id = ?", ent_id).Error; err != nil {
-		return nil, err
-	}
-
-	if dev, err = self.internal_get_device(dev); err != nil {
-		return nil, err
-	}
-
-	return dev, nil
-}
-
 func (self *StorageImpl) list_devices(dev *Device) ([]*Device, error) {
 	var err error
 	var devs_t []*Device
@@ -144,10 +120,6 @@ func (self *StorageImpl) list_devices(dev *Device) ([]*Device, error) {
 	d := &Device{}
 	if dev.Id != nil {
 		d.Id = dev.Id
-	}
-
-	if dev.EntityId != nil {
-		d.EntityId = dev.EntityId
 	}
 
 	if dev.Kind != nil {
@@ -264,20 +236,6 @@ func (self *StorageImpl) ListDevices(dev *Device) ([]*Device, error) {
 	self.logger.Debugf("list devices")
 
 	return devs, nil
-}
-
-func (self *StorageImpl) GetDeviceByEntityId(ent_id string) (*Device, error) {
-	var dev *Device
-	var err error
-
-	if dev, err = self.get_device_by_entity_id(ent_id); err != nil {
-		self.logger.WithError(err).Debugf("failed to get device by entity id")
-		return nil, err
-	}
-
-	self.logger.WithField("entity_id", ent_id).Debugf("get device by entity id")
-
-	return dev, nil
 }
 
 func (self *StorageImpl) CreateModule(mdl *Module) (*Module, error) {

@@ -13,7 +13,6 @@ import "github.com/nayotta/metathings/pkg/proto/constant/state/module.proto";
 
 message Device {
 	string id = 1;
-	ai.metathings.service.identityd2.Entity entity = 19;
 	ai.metathings.constant.kind.DeviceKind kind = 2;
 	ai.metathings.constant.state.DeviceState state = 3;
 	string name = 4;
@@ -23,7 +22,6 @@ message Device {
 
 message OpDevice {
 	google.protobuf.StringValue id = 1;
-	ai.metathings.service.identityd2.Entity entity = 19;
 	ai.metathings.constant.kind.DeviceKind kind = 2;
 	ai.metathings.constant.state.DeviceState state = 3;
 	google.protobuf.StringValue name = 4;
@@ -33,7 +31,6 @@ message OpDevice {
 
 message Module {
 	string id = 1;
-	ai.metathings.service.identityd2.Entity entity = 19;
 	ai.metathings.constant.state.ModuleState state = 2;
 	string device_id = 3;
 	string endpoint = 4;
@@ -43,7 +40,6 @@ message Module {
 
 message OpModule {
 	google.protobuf.StringValue id = 1;
-	ai.metathings.service.identityd2.Entity entity = 19;
 	ai.metathings.constant.state.ModuleState state = 2;
 	google.protobuf.StringValue device_id = 3;
 	google.protobuf.StringValue endpoint = 4;

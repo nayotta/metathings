@@ -19,11 +19,6 @@ var _ = fmt.Errorf
 var _ = math.Inf
 
 func (this *Device) Validate() error {
-	if this.Entity != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Entity); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Entity", err)
-		}
-	}
 	for _, item := range this.Modules {
 		if item != nil {
 			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {
@@ -37,11 +32,6 @@ func (this *OpDevice) Validate() error {
 	if this.Id != nil {
 		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Id); err != nil {
 			return github_com_mwitkow_go_proto_validators.FieldError("Id", err)
-		}
-	}
-	if this.Entity != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Entity); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Entity", err)
 		}
 	}
 	if this.Name != nil {
@@ -64,22 +54,12 @@ func (this *OpDevice) Validate() error {
 	return nil
 }
 func (this *Module) Validate() error {
-	if this.Entity != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Entity); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Entity", err)
-		}
-	}
 	return nil
 }
 func (this *OpModule) Validate() error {
 	if this.Id != nil {
 		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Id); err != nil {
 			return github_com_mwitkow_go_proto_validators.FieldError("Id", err)
-		}
-	}
-	if this.Entity != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Entity); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Entity", err)
 		}
 	}
 	if this.DeviceId != nil {
