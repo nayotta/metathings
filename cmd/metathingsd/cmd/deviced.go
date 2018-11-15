@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"context"
+
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"go.uber.org/fx"
@@ -186,8 +188,12 @@ func runDeviced() error {
 		),
 	)
 
-	app.Run()
+	if err := app.Start(context.Background()); err != nil {
+		return err
+	}
+	defer app.Stop(context.Background())
 
+	<-app.Done()
 	if err := app.Err(); err != nil {
 		return err
 	}

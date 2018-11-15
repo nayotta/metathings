@@ -188,10 +188,7 @@ func initIdentityd2() error {
 	)
 
 	ctx := context.Background()
-	app.Start(ctx)
-	defer app.Stop(ctx)
-
-	if err := app.Err(); err != nil {
+	if err := app.Start(ctx); err != nil {
 		return err
 	}
 
@@ -217,8 +214,12 @@ func runIdentityd2() error {
 		),
 	)
 
-	app.Run()
+	if err := app.Start(context.Background()); err != nil {
+		return err
+	}
+	defer app.Stop(context.Background())
 
+	<-app.Done()
 	if err := app.Err(); err != nil {
 		return err
 	}

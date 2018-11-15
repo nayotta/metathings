@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"context"
+
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"go.uber.org/fx"
@@ -144,8 +146,11 @@ func runCamerad() error {
 		),
 	)
 
-	app.Run()
+	if err := app.Start(context.Background()); err != nil {
+		return err
+	}
 
+	<-app.Done()
 	if err := app.Err(); err != nil {
 		return err
 	}

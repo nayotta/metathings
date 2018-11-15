@@ -1,6 +1,10 @@
 package policy_helper
 
-import "go.uber.org/fx"
+import (
+	"context"
+
+	"go.uber.org/fx"
+)
 
 type Validator interface {
 	Validate() error
@@ -14,9 +18,7 @@ func ValidateChain(providers []interface{}, invokers []interface{}) error {
 		fx.Invoke(invokers...),
 	)
 
-	app.Run()
-
-	if err = app.Err(); err != nil {
+	if err = app.Start(context.Background()); err != nil {
 		return err
 	}
 
