@@ -5,5 +5,4 @@ set -e
 cd $(dirname $0)/..
 
 docker build -t nayotta/metathings-protobuf -f dockerfile/Dockerfile.protobuf .
-docker build -t nayotta/metathings-protobuf-maker -f dockerfile/Dockerfile.protobuf-maker .
 docker build -t nayotta/metathings-development -f dockerfile/Dockerfile.dev .
