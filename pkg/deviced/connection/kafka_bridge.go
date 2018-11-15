@@ -169,8 +169,12 @@ func new_kafka_bridge_factory(args ...interface{}) (BridgeFactory, error) {
 	}
 
 	opt := &kafkaBridgeFactoryOption{
-		ProducerConfig: map[string]string{},
-		ConsumerConfig: map[string]string{},
+		ProducerConfig: map[string]string{
+			"queue.buffering.max.ms": "100",
+		},
+		ConsumerConfig: map[string]string{
+			"topic.metadata.refresh.interval.ms": "3000",
+		},
 	}
 
 	for i := 0; i < len(args); i += 2 {
