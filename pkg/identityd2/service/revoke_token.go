@@ -35,12 +35,8 @@ func (self *MetathingsIdentitydService) RevokeToken(ctx context.Context, req *pb
 		return nil, status.Errorf(codes.FailedPrecondition, err.Error())
 	}
 
-	if err = self.enforcer.RemoveObjectFromKind(*tkn_s.Id, KIND_TOKEN); err != nil {
-		self.logger.WithError(err).Warningf("failed to remove token from kind in enforcer")
-	}
-
-	if err = self.storage.DeleteToken(*tkn_s.Id); err != nil {
-		self.logger.WithError(err).Errorf("failed to delete token in storage")
+	if err = self.revoke_token(*tkn_s.Id); err != nil {
+		self.logger.WithError(err).Errorf("failed to revoke token")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 

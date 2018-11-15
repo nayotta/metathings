@@ -99,6 +99,45 @@ func (self *MetathingsIdentitydService) add_token_to_kind_in_enforcer(tkn_id str
 	return nil
 }
 
+func (self *MetathingsIdentitydService) revoke_token(tkn_id string) error {
+	var err error
+
+	if err = self.enforcer.RemoveObjectFromKind(tkn_id, KIND_TOKEN); err != nil {
+		self.logger.WithError(err).WithField("id", tkn_id).Warningf("failed to remove token from kind in enforcer")
+	}
+
+	if err = self.storage.DeleteToken(tkn_id); err != nil {
+		self.logger.WithError(err).WithField("id", tkn_id).Warningf("failed to delete token in storage")
+		return err
+	}
+
+	return nil
+}
+
+func (self *MetathingsIdentitydService) is_invalid_token(tkn *storage.Token) bool {
+	is_invalid_token := false
+	defer func() {
+		if !is_invalid_token {
+			return
+		}
+
+		self.revoke_token(*tkn.Id)
+	}()
+
+	now := time.Now()
+	if tkn.ExpiresAt.Sub(now) > 0 {
+		self.logger.WithFields(log.Fields{
+			"token":      *tkn.Text,
+			"expired_at": *tkn.ExpiresAt,
+			"now":        now,
+		}).Debugf("token expired")
+		is_invalid_token = true
+		return true
+	}
+
+	return false
+}
+
 func (self *MetathingsIdentitydService) AuthFuncOverride(ctx context.Context, fullMethodName string) (context.Context, error) {
 	var tkn *storage.Token
 	var tkn_txt string
@@ -122,6 +161,10 @@ func (self *MetathingsIdentitydService) AuthFuncOverride(ctx context.Context, fu
 	if tkn, err = self.storage.GetTokenByText(tkn_txt); err != nil {
 		self.logger.WithError(err).Warningf("failed to get token in storage")
 		return ctx, err
+	}
+
+	if self.is_invalid_token(tkn) {
+		return ctx, policy.ErrUnauthenticated
 	}
 
 	new_ctx = context.WithValue(ctx, "token", tkn)
