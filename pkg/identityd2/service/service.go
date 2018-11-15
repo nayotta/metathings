@@ -115,23 +115,13 @@ func (self *MetathingsIdentitydService) revoke_token(tkn_id string) error {
 }
 
 func (self *MetathingsIdentitydService) is_invalid_token(tkn *storage.Token) bool {
-	is_invalid_token := false
-	defer func() {
-		if !is_invalid_token {
-			return
-		}
-
-		self.revoke_token(*tkn.Id)
-	}()
-
 	now := time.Now()
-	if tkn.ExpiresAt.Sub(now) > 0 {
+	if tkn.ExpiresAt.Sub(now) < 0 {
 		self.logger.WithFields(log.Fields{
 			"token":      *tkn.Text,
 			"expired_at": *tkn.ExpiresAt,
 			"now":        now,
 		}).Debugf("token expired")
-		is_invalid_token = true
 		return true
 	}
 
@@ -164,6 +154,9 @@ func (self *MetathingsIdentitydService) AuthFuncOverride(ctx context.Context, fu
 	}
 
 	if self.is_invalid_token(tkn) {
+		if err = self.revoke_token(*tkn.Id); err != nil {
+			self.logger.WithError(err).Warningf("failed to revoke token")
+		}
 		return ctx, policy.ErrUnauthenticated
 	}
 
