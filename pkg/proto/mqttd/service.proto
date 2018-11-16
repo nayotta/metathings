@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package ai.metathings.service.mqttd;
+option go_package = "mqttd";
+
+import "google/protobuf/empty.proto";
+
+import "create_device.proto";
+import "delete_device.proto";
+import "patch_device.proto";
+import "get_device.proto";
+import "list_devices.proto";
+import "show_device.proto";
+import "unary_call.proto";
+import "stream_call.proto";
+
+service MqttdSevice {
+    rpc CreateDevice (CreateDeviceRequest) returns (CreateDeviceResponse) {}
+    rpc DeleteDevice (DeleteDeviceRequest) returns (google.protobuf.Empty) {}
+    rpc PatchDevice (PatchDeviceRequest) returns (PatchDeviceResponse) {}
+    rpc GetDevice (GetDeviceRequest) returns (GetDeviceResponse) {}
+    rpc ListDevices(ListDevicesRequest) returns (ListDevicesResponse) {}
+
+    rpc ShowDevice(google.protobuf.Empty) returns (ShowDeviceResponse) {}
+
+    rpc UnaryCall(UnaryCallRequest) returns (UnaryCallResponse) {}
+    rpc StreamCall(StreamCallRequest) returns (StreamCallResponse) {}
+}

@@ -1,0 +1,20 @@
+
+syntax = "proto3";
+
+package ai.metathings.service.mqttd;
+
+import "google/protobuf/wrappers.proto";
+
+import "github.com/mwitkow/go-proto-validators/validator.proto";
+
+import "model.proto";
+
+message UnaryCallRequest {
+	OpDevice device = 1 [(validator.field) = {msg_exists: true}];
+	OpUnaryCallValue value = 2 [(validator.field) = {msg_exists: true}];
+}
+
+message UnaryCallResponse {
+	Device device = 1;
+	UnaryCallValue value = 2;
+}

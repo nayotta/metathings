@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package ai.metathings.service.mqttd;
+
+import "github.com/mwitkow/go-proto-validators/validator.proto";
+
+import "model.proto";
+
+message ListDevicesRequest {
+	OpDevice device = 1;
+}
+
+message ListDevicesResponse {
+	repeated Device devices = 1;
+}
