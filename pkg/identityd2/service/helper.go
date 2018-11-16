@@ -311,6 +311,10 @@ type domain_getter interface {
 	GetDomain() *pb.OpDomain
 }
 
+type credential_getter interface {
+	GetCredential() *pb.OpCredential
+}
+
 func ensure_get_domain_id(x domain_getter) error {
 	if x.GetDomain().GetId() == nil {
 		return errors.New("domain.id is empty")
