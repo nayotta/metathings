@@ -134,10 +134,6 @@ func (sev *MetathingsMqttdService) AuthFuncOverride(ctx context.Context, fullMet
 	return newCtx, nil
 }
 
-func (sev *MetathingsMqttdService) StreamCall(context.Context, *pb.StreamCallRequest) (*pb.StreamCallResponse, error) {
-
-}
-
 // NewMetathingsMqttdService NewMetathingsMqttdService
 func NewMetathingsMqttdService(
 	opt *Option,
