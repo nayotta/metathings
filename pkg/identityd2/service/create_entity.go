@@ -13,7 +13,7 @@ import (
 	pb "github.com/nayotta/metathings/pkg/proto/identityd2"
 )
 
-func (self *MetathingsIdentitydService) ValidateCreateDomain(ctx context.Context, in interface{}) error {
+func (self *MetathingsIdentitydService) ValidateCreateEntity(ctx context.Context, in interface{}) error {
 	return self.validate_chain(
 		[]interface{}{
 			func() (policy_helper.Validator, entity_getter) {

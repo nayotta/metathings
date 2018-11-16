@@ -2,18 +2,12 @@ syntax = "proto3";
 
 package ai.metathings.service.identityd2;
 
-import "google/protobuf/wrappers.proto";
-
 import "github.com/mwitkow/go-proto-validators/validator.proto";
 
 import "model.proto";
 
 message CreateDomainRequest {
-	google.protobuf.StringValue id = 1;
-	google.protobuf.StringValue name = 2 [(validator.field) = {msg_exists: true}];
-	google.protobuf.StringValue alias = 3 [(validator.field) = {msg_exists: true}];
-	OpDomain parent = 4 [(validator.field) = {msg_exists: true}];
-	map<string, google.protobuf.StringValue> extra = 5;
+	OpDomain domain = 1 [(validator.field) = {msg_exists: true}];
 }
 
 message CreateDomainResponse {
