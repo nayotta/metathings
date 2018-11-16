@@ -8,58 +8,82 @@ import (
 	"google.golang.org/grpc/status"
 
 	id_helper "github.com/nayotta/metathings/pkg/common/id"
+	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
 	storage "github.com/nayotta/metathings/pkg/identityd2/storage"
 	pb "github.com/nayotta/metathings/pkg/proto/identityd2"
 )
 
+func (self *MetathingsIdentitydService) ValidateCreateRole(ctx context.Context, in interface{}) error {
+	return self.validate_chain(
+		[]interface{}{
+			func() (policy_helper.Validator, role_getter) {
+				req := in.(*pb.CreateRoleRequest)
+				return req, req
+			},
+		},
+		[]interface{}{
+			func(x role_getter) error {
+				role := x.GetRole()
+
+				if role.GetDomain() == nil || role.GetDomain().GetId() == nil {
+					return errors.New("role.domain.id is empty")
+				}
+
+				if role.GetName() == nil {
+					return errors.New("role.name is empty")
+				}
+
+				return nil
+			},
+		},
+	)
+}
+
 func (self *MetathingsIdentitydService) CreateRole(ctx context.Context, req *pb.CreateRoleRequest) (*pb.CreateRoleResponse, error) {
-	var role *storage.Role
+	var role_s *storage.Role
 	var err error
 
-	if err = req.Validate(); err != nil {
-		self.logger.WithError(err).Warningf("failed to validate request data")
-		return nil, status.Errorf(codes.InvalidArgument, err.Error())
+	role := req.GetRole()
+
+	id_str := id_helper.NewId()
+	if role.GetId() != nil {
+		id_str = role.GetId().GetValue()
 	}
 
-	id := req.GetId().GetValue()
-	if id == "" {
-		id = id_helper.NewId()
+	dom_id_str := role.GetDomain().GetId().GetValue()
+	desc_str := ""
+	if role.GetDescription() != nil {
+		desc_str = role.GetDescription().GetValue()
+	}
+	extra_str := must_parse_extra(role.GetExtra())
+	name_str := role.GetName().GetValue()
+	alias_str := name_str
+	if role.GetAlias() != nil {
+		alias_str = role.GetAlias().GetValue()
 	}
 
-	dom_id := req.GetDomain().GetId().GetValue()
-	if dom_id == "" {
-		err = errors.New("domain.id is empty")
-		self.logger.WithError(err).Warningf("failed to validate request data")
-		return nil, status.Errorf(codes.InvalidArgument, err.Error())
-	}
-
-	description := req.GetDescription().GetValue()
-	extra_str := must_parse_extra(req.GetExtra())
-	name_str := req.Name.Value
-	alias_str := req.Alias.Value
-
-	if err = self.enforcer.AddObjectToKind(id, KIND_ROLE); err != nil {
+	if err = self.enforcer.AddObjectToKind(id_str, KIND_ROLE); err != nil {
 		self.logger.WithError(err).Errorf("failed to add object to kind in enforcer")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
-	role = &storage.Role{
-		Id:          &id,
-		DomainId:    &dom_id,
+	role_s = &storage.Role{
+		Id:          &id_str,
+		DomainId:    &dom_id_str,
 		Name:        &name_str,
 		Alias:       &alias_str,
-		Description: &description,
+		Description: &desc_str,
 		Extra:       &extra_str,
 	}
 
-	role, err = self.storage.CreateRole(role)
+	role_s, err = self.storage.CreateRole(role_s)
 	if err != nil {
 		self.logger.WithError(err).Errorf("failed to create role in storage")
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 
 	res := &pb.CreateRoleResponse{
-		Role: copy_role(role),
+		Role: copy_role(role_s),
 	}
 
 	self.logger.WithField("id", *role.Id).Infof("create role")

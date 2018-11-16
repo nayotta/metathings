@@ -315,6 +315,10 @@ type credential_getter interface {
 	GetCredential() *pb.OpCredential
 }
 
+type role_getter interface {
+	GetRole() *pb.OpRole
+}
+
 func ensure_get_domain_id(x domain_getter) error {
 	if x.GetDomain().GetId() == nil {
 		return errors.New("domain.id is empty")
