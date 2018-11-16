@@ -14,7 +14,7 @@ import "show_device.proto";
 import "unary_call.proto";
 import "stream_call.proto";
 
-service MqttdSevice {
+service MqttdService {
     rpc CreateDevice (CreateDeviceRequest) returns (CreateDeviceResponse) {}
     rpc DeleteDevice (DeleteDeviceRequest) returns (google.protobuf.Empty) {}
     rpc PatchDevice (PatchDeviceRequest) returns (PatchDeviceResponse) {}

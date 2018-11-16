@@ -3,10 +3,6 @@ package metathings_deviced_service
 import (
 	"context"
 
-	log "github.com/sirupsen/logrus"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
-
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
 	context_helper "github.com/nayotta/metathings/pkg/common/context"
 	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
@@ -17,6 +13,9 @@ import (
 	identityd_policy "github.com/nayotta/metathings/pkg/identityd2/policy"
 	pb "github.com/nayotta/metathings/pkg/proto/deviced"
 	identityd_pb "github.com/nayotta/metathings/pkg/proto/identityd2"
+	log "github.com/sirupsen/logrus"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type MetathingsDevicedServiceOption struct {

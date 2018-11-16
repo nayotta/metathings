@@ -26,29 +26,29 @@ const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 func init() { proto.RegisterFile("service.proto", fileDescriptor_a0b84a42fa06f626) }
 
 var fileDescriptor_a0b84a42fa06f626 = []byte{
-	// 345 bytes of a gzipped FileDescriptorProto
+	// 346 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x93, 0x51, 0x4f, 0xc2, 0x30,
 	0x14, 0x85, 0x79, 0x11, 0x63, 0xc1, 0x44, 0x47, 0xe2, 0xc3, 0x78, 0xe3, 0xdd, 0x0e, 0xf5, 0x1f,
 	0x08, 0xc6, 0x17, 0x4d, 0x8c, 0xc4, 0x98, 0xf0, 0x42, 0xca, 0xb8, 0x6e, 0x4b, 0x3a, 0x3a, 0xda,
-	0x3b, 0x09, 0x7f, 0xda, 0xdf, 0x60, 0x56, 0xd6, 0x52, 0x96, 0x38, 0xea, 0x23, 0xb7, 0xdf, 0xb9,
-	0xa7, 0xe7, 0x94, 0x91, 0x4b, 0x05, 0xf2, 0x3b, 0x8b, 0x81, 0x16, 0x52, 0xa0, 0x08, 0x86, 0x2c,
-	0xa3, 0x39, 0x20, 0xc3, 0x34, 0x5b, 0x27, 0x8a, 0x9a, 0xc3, 0x7c, 0x83, 0xb8, 0x0a, 0x87, 0x89,
-	0x10, 0x09, 0x87, 0x48, 0xa3, 0xcb, 0xf2, 0x2b, 0x82, 0xbc, 0xc0, 0xdd, 0x5e, 0x19, 0x0e, 0x62,
-	0x09, 0x0c, 0x61, 0xb1, 0x82, 0xc3, 0xba, 0x70, 0xb0, 0x02, 0x0e, 0xcd, 0x61, 0x50, 0x30, 0x8c,
-	0xd3, 0xe3, 0xd9, 0x55, 0x02, 0xd8, 0xa0, 0x78, 0xa6, 0xcc, 0x48, 0xd5, 0xb3, 0x6b, 0x95, 0x8a,
-	0x6d, 0x43, 0x58, 0xae, 0x99, 0xdc, 0x2d, 0x62, 0xc6, 0xb9, 0x85, 0x50, 0x02, 0xcb, 0x9d, 0xd1,
-	0xfd, 0x4f, 0x97, 0xf4, 0x5e, 0xab, 0x08, 0x33, 0x2d, 0x0d, 0x4a, 0xd2, 0x9f, 0xe8, 0xdb, 0x4e,
-	0xf7, 0xbf, 0xc7, 0xb4, 0x25, 0x36, 0x75, 0xd1, 0x77, 0xd8, 0x94, 0xa0, 0x30, 0xbc, 0xfb, 0x87,
-	0x42, 0x15, 0x62, 0xad, 0x60, 0xd4, 0x09, 0xe6, 0xa4, 0x3f, 0xd5, 0x7d, 0x78, 0xd9, 0xba, 0xa8,
-	0xb1, 0xbd, 0xa1, 0xfb, 0x27, 0xa0, 0xe6, 0x09, 0xe8, 0x53, 0xf5, 0x04, 0xa3, 0x4e, 0x20, 0x49,
-	0xef, 0xad, 0xaa, 0xb5, 0x5e, 0x1d, 0xb5, 0xae, 0x76, 0x48, 0xb3, 0x79, 0xec, 0x2f, 0xb0, 0x79,
-	0x38, 0xb9, 0x78, 0x06, 0xac, 0x1d, 0x6f, 0x5b, 0x17, 0x58, 0xce, 0xf8, 0x51, 0x5f, 0xdc, 0xba,
-	0x49, 0xd2, 0x7b, 0xc9, 0x54, 0x3d, 0x57, 0x27, 0x12, 0x3a, 0xa4, 0x5f, 0xc2, 0x23, 0x81, 0xf5,
-	0xfc, 0x24, 0x64, 0x96, 0x8a, 0x6d, 0x1d, 0xf1, 0x8f, 0xf6, 0xc3, 0xf6, 0xab, 0x1c, 0x16, 0x1c,
-	0x57, 0xf7, 0x51, 0xfd, 0x71, 0x27, 0x8c, 0xf3, 0x13, 0xd5, 0x59, 0xce, 0xaf, 0x3a, 0x07, 0xb7,
-	0x6e, 0x82, 0x90, 0x99, 0xfe, 0x28, 0xb4, 0x5d, 0xbb, 0xfe, 0x00, 0x1a, 0xbf, 0xc8, 0x9b, 0x37,
-	0x86, 0x8f, 0xe7, 0xf3, 0x33, 0x7d, 0xba, 0xec, 0xea, 0xaa, 0x1e, 0x7e, 0x03, 0x00, 0x00, 0xff,
-	0xff, 0x54, 0x40, 0x88, 0xe7, 0x67, 0x04, 0x00, 0x00,
+	0x3b, 0x09, 0xbf, 0xda, 0xbf, 0x60, 0x56, 0xd6, 0x52, 0x96, 0x38, 0xea, 0xeb, 0xed, 0x77, 0xcf,
+	0xe9, 0x39, 0xdd, 0xc8, 0xa5, 0x02, 0xf9, 0x9d, 0xc5, 0x40, 0x0b, 0x29, 0x50, 0x04, 0x43, 0x96,
+	0xd1, 0x1c, 0x90, 0x61, 0x9a, 0xad, 0x13, 0x45, 0xcd, 0x61, 0xbe, 0x41, 0x5c, 0x85, 0xc3, 0x44,
+	0x88, 0x84, 0x43, 0xa4, 0xd1, 0x65, 0xf9, 0x15, 0x41, 0x5e, 0xe0, 0x6e, 0xbf, 0x19, 0x0e, 0x62,
+	0x09, 0x0c, 0x61, 0xb1, 0x82, 0x83, 0x5c, 0x38, 0x58, 0x01, 0x87, 0xe6, 0x30, 0x28, 0x18, 0xc6,
+	0xe9, 0xf1, 0xec, 0x2a, 0x01, 0x6c, 0x50, 0x3c, 0x53, 0x66, 0xa4, 0xea, 0xd9, 0xb5, 0x4a, 0xc5,
+	0xb6, 0xb1, 0x58, 0xae, 0x99, 0xdc, 0x2d, 0x62, 0xc6, 0xb9, 0x85, 0x50, 0x02, 0xcb, 0x9d, 0xd1,
+	0xfd, 0x4f, 0x97, 0xf4, 0x5f, 0xab, 0x08, 0xb3, 0x7d, 0x9e, 0xa0, 0x24, 0xfd, 0x89, 0xbe, 0xee,
+	0x54, 0x6b, 0x05, 0x63, 0xda, 0x92, 0x9b, 0xba, 0xe8, 0x3b, 0x6c, 0x4a, 0x50, 0x18, 0xde, 0xfd,
+	0x63, 0x43, 0x15, 0x62, 0xad, 0x60, 0xd4, 0x09, 0xe6, 0xa4, 0x3f, 0xd5, 0x85, 0x78, 0xd9, 0xba,
+	0xa8, 0xb1, 0xbd, 0xa1, 0xfb, 0x37, 0xa0, 0xe6, 0x0d, 0xe8, 0x53, 0xf5, 0x06, 0xa3, 0x4e, 0x20,
+	0x49, 0xef, 0xad, 0xea, 0xb5, 0x96, 0x8e, 0x5a, 0xa5, 0x1d, 0xd2, 0x28, 0x8f, 0xfd, 0x17, 0x6c,
+	0x1e, 0x4e, 0x2e, 0x9e, 0x01, 0x6b, 0xc7, 0xdb, 0x56, 0x01, 0xcb, 0x19, 0x3f, 0xea, 0x8b, 0x5b,
+	0x37, 0x49, 0x7a, 0x2f, 0x99, 0xaa, 0xe7, 0xea, 0x44, 0x42, 0x87, 0xf4, 0x4b, 0x78, 0xb4, 0x60,
+	0x3d, 0x3f, 0x09, 0x99, 0xa5, 0x62, 0x5b, 0x47, 0xfc, 0xa3, 0xfd, 0xb0, 0xfd, 0x2a, 0x07, 0x81,
+	0xe3, 0xea, 0x3e, 0xaa, 0x2f, 0x77, 0xc2, 0x38, 0x3f, 0x51, 0x9d, 0xe5, 0xfc, 0xaa, 0x73, 0x70,
+	0xeb, 0x26, 0x08, 0x99, 0xe9, 0xbf, 0x42, 0xdb, 0xb5, 0xef, 0x1f, 0x40, 0xe3, 0x17, 0x79, 0xf3,
+	0xc6, 0xf0, 0xf1, 0x7c, 0x7e, 0xa6, 0x4f, 0x97, 0x5d, 0x5d, 0xd5, 0xc3, 0x6f, 0x00, 0x00, 0x00,
+	0xff, 0xff, 0xec, 0xb8, 0xdf, 0x08, 0x68, 0x04, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -59,10 +59,10 @@ var _ grpc.ClientConn
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion4
 
-// MqttdSeviceClient is the client API for MqttdSevice service.
+// MqttdServiceClient is the client API for MqttdService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
-type MqttdSeviceClient interface {
+type MqttdServiceClient interface {
 	CreateDevice(ctx context.Context, in *CreateDeviceRequest, opts ...grpc.CallOption) (*CreateDeviceResponse, error)
 	DeleteDevice(ctx context.Context, in *DeleteDeviceRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 	PatchDevice(ctx context.Context, in *PatchDeviceRequest, opts ...grpc.CallOption) (*PatchDeviceResponse, error)
@@ -73,88 +73,88 @@ type MqttdSeviceClient interface {
 	StreamCall(ctx context.Context, in *StreamCallRequest, opts ...grpc.CallOption) (*StreamCallResponse, error)
 }
 
-type mqttdSeviceClient struct {
+type mqttdServiceClient struct {
 	cc *grpc.ClientConn
 }
 
-func NewMqttdSeviceClient(cc *grpc.ClientConn) MqttdSeviceClient {
-	return &mqttdSeviceClient{cc}
+func NewMqttdServiceClient(cc *grpc.ClientConn) MqttdServiceClient {
+	return &mqttdServiceClient{cc}
 }
 
-func (c *mqttdSeviceClient) CreateDevice(ctx context.Context, in *CreateDeviceRequest, opts ...grpc.CallOption) (*CreateDeviceResponse, error) {
+func (c *mqttdServiceClient) CreateDevice(ctx context.Context, in *CreateDeviceRequest, opts ...grpc.CallOption) (*CreateDeviceResponse, error) {
 	out := new(CreateDeviceResponse)
-	err := c.cc.Invoke(ctx, "/ai.metathings.service.mqttd.MqttdSevice/CreateDevice", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.mqttd.MqttdService/CreateDevice", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *mqttdSeviceClient) DeleteDevice(ctx context.Context, in *DeleteDeviceRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+func (c *mqttdServiceClient) DeleteDevice(ctx context.Context, in *DeleteDeviceRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
 	out := new(empty.Empty)
-	err := c.cc.Invoke(ctx, "/ai.metathings.service.mqttd.MqttdSevice/DeleteDevice", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.mqttd.MqttdService/DeleteDevice", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *mqttdSeviceClient) PatchDevice(ctx context.Context, in *PatchDeviceRequest, opts ...grpc.CallOption) (*PatchDeviceResponse, error) {
+func (c *mqttdServiceClient) PatchDevice(ctx context.Context, in *PatchDeviceRequest, opts ...grpc.CallOption) (*PatchDeviceResponse, error) {
 	out := new(PatchDeviceResponse)
-	err := c.cc.Invoke(ctx, "/ai.metathings.service.mqttd.MqttdSevice/PatchDevice", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.mqttd.MqttdService/PatchDevice", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *mqttdSeviceClient) GetDevice(ctx context.Context, in *GetDeviceRequest, opts ...grpc.CallOption) (*GetDeviceResponse, error) {
+func (c *mqttdServiceClient) GetDevice(ctx context.Context, in *GetDeviceRequest, opts ...grpc.CallOption) (*GetDeviceResponse, error) {
 	out := new(GetDeviceResponse)
-	err := c.cc.Invoke(ctx, "/ai.metathings.service.mqttd.MqttdSevice/GetDevice", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.mqttd.MqttdService/GetDevice", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *mqttdSeviceClient) ListDevices(ctx context.Context, in *ListDevicesRequest, opts ...grpc.CallOption) (*ListDevicesResponse, error) {
+func (c *mqttdServiceClient) ListDevices(ctx context.Context, in *ListDevicesRequest, opts ...grpc.CallOption) (*ListDevicesResponse, error) {
 	out := new(ListDevicesResponse)
-	err := c.cc.Invoke(ctx, "/ai.metathings.service.mqttd.MqttdSevice/ListDevices", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.mqttd.MqttdService/ListDevices", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *mqttdSeviceClient) ShowDevice(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*ShowDeviceResponse, error) {
+func (c *mqttdServiceClient) ShowDevice(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*ShowDeviceResponse, error) {
 	out := new(ShowDeviceResponse)
-	err := c.cc.Invoke(ctx, "/ai.metathings.service.mqttd.MqttdSevice/ShowDevice", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.mqttd.MqttdService/ShowDevice", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *mqttdSeviceClient) UnaryCall(ctx context.Context, in *UnaryCallRequest, opts ...grpc.CallOption) (*UnaryCallResponse, error) {
+func (c *mqttdServiceClient) UnaryCall(ctx context.Context, in *UnaryCallRequest, opts ...grpc.CallOption) (*UnaryCallResponse, error) {
 	out := new(UnaryCallResponse)
-	err := c.cc.Invoke(ctx, "/ai.metathings.service.mqttd.MqttdSevice/UnaryCall", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.mqttd.MqttdService/UnaryCall", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *mqttdSeviceClient) StreamCall(ctx context.Context, in *StreamCallRequest, opts ...grpc.CallOption) (*StreamCallResponse, error) {
+func (c *mqttdServiceClient) StreamCall(ctx context.Context, in *StreamCallRequest, opts ...grpc.CallOption) (*StreamCallResponse, error) {
 	out := new(StreamCallResponse)
-	err := c.cc.Invoke(ctx, "/ai.metathings.service.mqttd.MqttdSevice/StreamCall", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.mqttd.MqttdService/StreamCall", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// MqttdSeviceServer is the server API for MqttdSevice service.
-type MqttdSeviceServer interface {
+// MqttdServiceServer is the server API for MqttdService service.
+type MqttdServiceServer interface {
 	CreateDevice(context.Context, *CreateDeviceRequest) (*CreateDeviceResponse, error)
 	DeleteDevice(context.Context, *DeleteDeviceRequest) (*empty.Empty, error)
 	PatchDevice(context.Context, *PatchDeviceRequest) (*PatchDeviceResponse, error)
@@ -165,189 +165,189 @@ type MqttdSeviceServer interface {
 	StreamCall(context.Context, *StreamCallRequest) (*StreamCallResponse, error)
 }
 
-func RegisterMqttdSeviceServer(s *grpc.Server, srv MqttdSeviceServer) {
-	s.RegisterService(&_MqttdSevice_serviceDesc, srv)
+func RegisterMqttdServiceServer(s *grpc.Server, srv MqttdServiceServer) {
+	s.RegisterService(&_MqttdService_serviceDesc, srv)
 }
 
-func _MqttdSevice_CreateDevice_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _MqttdService_CreateDevice_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateDeviceRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MqttdSeviceServer).CreateDevice(ctx, in)
+		return srv.(MqttdServiceServer).CreateDevice(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/ai.metathings.service.mqttd.MqttdSevice/CreateDevice",
+		FullMethod: "/ai.metathings.service.mqttd.MqttdService/CreateDevice",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MqttdSeviceServer).CreateDevice(ctx, req.(*CreateDeviceRequest))
+		return srv.(MqttdServiceServer).CreateDevice(ctx, req.(*CreateDeviceRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _MqttdSevice_DeleteDevice_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _MqttdService_DeleteDevice_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteDeviceRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MqttdSeviceServer).DeleteDevice(ctx, in)
+		return srv.(MqttdServiceServer).DeleteDevice(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/ai.metathings.service.mqttd.MqttdSevice/DeleteDevice",
+		FullMethod: "/ai.metathings.service.mqttd.MqttdService/DeleteDevice",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MqttdSeviceServer).DeleteDevice(ctx, req.(*DeleteDeviceRequest))
+		return srv.(MqttdServiceServer).DeleteDevice(ctx, req.(*DeleteDeviceRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _MqttdSevice_PatchDevice_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _MqttdService_PatchDevice_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(PatchDeviceRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MqttdSeviceServer).PatchDevice(ctx, in)
+		return srv.(MqttdServiceServer).PatchDevice(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/ai.metathings.service.mqttd.MqttdSevice/PatchDevice",
+		FullMethod: "/ai.metathings.service.mqttd.MqttdService/PatchDevice",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MqttdSeviceServer).PatchDevice(ctx, req.(*PatchDeviceRequest))
+		return srv.(MqttdServiceServer).PatchDevice(ctx, req.(*PatchDeviceRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _MqttdSevice_GetDevice_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _MqttdService_GetDevice_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetDeviceRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MqttdSeviceServer).GetDevice(ctx, in)
+		return srv.(MqttdServiceServer).GetDevice(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/ai.metathings.service.mqttd.MqttdSevice/GetDevice",
+		FullMethod: "/ai.metathings.service.mqttd.MqttdService/GetDevice",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MqttdSeviceServer).GetDevice(ctx, req.(*GetDeviceRequest))
+		return srv.(MqttdServiceServer).GetDevice(ctx, req.(*GetDeviceRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _MqttdSevice_ListDevices_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _MqttdService_ListDevices_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListDevicesRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MqttdSeviceServer).ListDevices(ctx, in)
+		return srv.(MqttdServiceServer).ListDevices(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/ai.metathings.service.mqttd.MqttdSevice/ListDevices",
+		FullMethod: "/ai.metathings.service.mqttd.MqttdService/ListDevices",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MqttdSeviceServer).ListDevices(ctx, req.(*ListDevicesRequest))
+		return srv.(MqttdServiceServer).ListDevices(ctx, req.(*ListDevicesRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _MqttdSevice_ShowDevice_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _MqttdService_ShowDevice_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(empty.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MqttdSeviceServer).ShowDevice(ctx, in)
+		return srv.(MqttdServiceServer).ShowDevice(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/ai.metathings.service.mqttd.MqttdSevice/ShowDevice",
+		FullMethod: "/ai.metathings.service.mqttd.MqttdService/ShowDevice",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MqttdSeviceServer).ShowDevice(ctx, req.(*empty.Empty))
+		return srv.(MqttdServiceServer).ShowDevice(ctx, req.(*empty.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _MqttdSevice_UnaryCall_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _MqttdService_UnaryCall_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UnaryCallRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MqttdSeviceServer).UnaryCall(ctx, in)
+		return srv.(MqttdServiceServer).UnaryCall(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/ai.metathings.service.mqttd.MqttdSevice/UnaryCall",
+		FullMethod: "/ai.metathings.service.mqttd.MqttdService/UnaryCall",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MqttdSeviceServer).UnaryCall(ctx, req.(*UnaryCallRequest))
+		return srv.(MqttdServiceServer).UnaryCall(ctx, req.(*UnaryCallRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _MqttdSevice_StreamCall_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _MqttdService_StreamCall_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(StreamCallRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MqttdSeviceServer).StreamCall(ctx, in)
+		return srv.(MqttdServiceServer).StreamCall(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/ai.metathings.service.mqttd.MqttdSevice/StreamCall",
+		FullMethod: "/ai.metathings.service.mqttd.MqttdService/StreamCall",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MqttdSeviceServer).StreamCall(ctx, req.(*StreamCallRequest))
+		return srv.(MqttdServiceServer).StreamCall(ctx, req.(*StreamCallRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-var _MqttdSevice_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "ai.metathings.service.mqttd.MqttdSevice",
-	HandlerType: (*MqttdSeviceServer)(nil),
+var _MqttdService_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "ai.metathings.service.mqttd.MqttdService",
+	HandlerType: (*MqttdServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "CreateDevice",
-			Handler:    _MqttdSevice_CreateDevice_Handler,
+			Handler:    _MqttdService_CreateDevice_Handler,
 		},
 		{
 			MethodName: "DeleteDevice",
-			Handler:    _MqttdSevice_DeleteDevice_Handler,
+			Handler:    _MqttdService_DeleteDevice_Handler,
 		},
 		{
 			MethodName: "PatchDevice",
-			Handler:    _MqttdSevice_PatchDevice_Handler,
+			Handler:    _MqttdService_PatchDevice_Handler,
 		},
 		{
 			MethodName: "GetDevice",
-			Handler:    _MqttdSevice_GetDevice_Handler,
+			Handler:    _MqttdService_GetDevice_Handler,
 		},
 		{
 			MethodName: "ListDevices",
-			Handler:    _MqttdSevice_ListDevices_Handler,
+			Handler:    _MqttdService_ListDevices_Handler,
 		},
 		{
 			MethodName: "ShowDevice",
-			Handler:    _MqttdSevice_ShowDevice_Handler,
+			Handler:    _MqttdService_ShowDevice_Handler,
 		},
 		{
 			MethodName: "UnaryCall",
-			Handler:    _MqttdSevice_UnaryCall_Handler,
+			Handler:    _MqttdService_UnaryCall_Handler,
 		},
 		{
 			MethodName: "StreamCall",
-			Handler:    _MqttdSevice_StreamCall_Handler,
+			Handler:    _MqttdService_StreamCall_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
