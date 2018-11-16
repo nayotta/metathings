@@ -134,10 +134,6 @@ func (sev *MetathingsMqttdService) AuthFuncOverride(ctx context.Context, fullMet
 	return newCtx, nil
 }
 
-func (sev *MetathingsMqttdService) ShowDevice(context.Context, *empty.Empty) (*pb.ShowDeviceResponse, error) {
-
-}
-
 func (sev *MetathingsMqttdService) UnaryCall(context.Context, *pb.UnaryCallRequest) (*pb.UnaryCallResponse, error) {
 
 }
