@@ -134,10 +134,6 @@ func (sev *MetathingsMqttdService) AuthFuncOverride(ctx context.Context, fullMet
 	return newCtx, nil
 }
 
-func (sev *MetathingsMqttdService) GetDevice(context.Context, *pb.GetDeviceRequest) (*pb.GetDeviceResponse, error) {
-
-}
-
 func (sev *MetathingsMqttdService) ListDevices(context.Context, *pb.ListDevicesRequest) (*pb.ListDevicesResponse, error) {
 
 }
