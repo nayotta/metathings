@@ -12,15 +12,15 @@ type StorageImpl struct {
 
 func (self *StorageImpl) get_module(id string) (*Module, error) {
 	var err error
-	var mdl Module
+	mdl := &Module{}
 
-	if err = self.db.First(&mdl, "id = ?", id).Error; err != nil {
+	if err = self.db.First(mdl, "id = ?", id).Error; err != nil {
 		return nil, err
 	}
 
 	mdl.Device = &Device{Id: mdl.DeviceId}
 
-	return &mdl, nil
+	return mdl, nil
 }
 
 func (self *StorageImpl) list_modules_by_device_id(id string) ([]*Module, error) {
@@ -100,9 +100,9 @@ func (self *StorageImpl) internal_get_device(dev *Device) (*Device, error) {
 
 func (self *StorageImpl) get_device(id string) (*Device, error) {
 	var err error
-	var dev *Device
+	dev := &Device{}
 
-	if err = self.db.First(&dev, "id = ?", id).Error; err != nil {
+	if err = self.db.First(dev, "id = ?", id).Error; err != nil {
 		return nil, err
 	}
 
@@ -324,6 +324,32 @@ func (self *StorageImpl) ListModules(mdl *Module) ([]*Module, error) {
 	return mdls, nil
 }
 
+func init_args(s *StorageImpl, args ...interface{}) error {
+	var key string
+	var ok bool
+
+	if len(args)%2 != 0 {
+		return InvalidArgument
+	}
+
+	for i := 0; i < len(args); i += 2 {
+		key, ok = args[i].(string)
+		if !ok {
+			return InvalidArgument
+		}
+
+		switch key {
+		case "logger":
+			s.logger, ok = args[i+1].(log.FieldLogger)
+			if !ok {
+				return InvalidArgument
+			}
+		}
+	}
+
+	return nil
+}
+
 func new_db(s *StorageImpl, driver, uri string) error {
 	var db *gorm.DB
 	var err error
@@ -349,6 +375,9 @@ func NewStorageImpl(driver, uri string, args ...interface{}) (*StorageImpl, erro
 	var err error
 
 	s := &StorageImpl{}
+	if err = init_args(s, args...); err != nil {
+		return nil, err
+	}
 
 	if err = new_db(s, driver, uri); err != nil {
 		return nil, err

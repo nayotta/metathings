@@ -1,6 +1,7 @@
 package metathings_deviced_storage
 
 import (
+	"fmt"
 	"time"
 )
 
@@ -29,6 +30,10 @@ type Module struct {
 	Alias    *string `gorm:"column:alias"`
 
 	Device *Device `gorm:"-"`
+}
+
+func (self *Module) String() string {
+	return fmt.Sprintf("{id=%v created_at=%v updated_at=%v state=%v device_id=%v endpoint=%v name=%v alias=%v}", *self.Id, self.CreatedAt, self.UpdatedAt, *self.State, *self.DeviceId, *self.Endpoint, *self.Name, *self.Alias)
 }
 
 type Storage interface {

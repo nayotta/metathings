@@ -17,7 +17,7 @@ import (
 func (self *MetathingsIdentitydService) ValidateDeleteDomain(ctx context.Context, in interface{}) error {
 	return self.validate_chain(
 		[]interface{}{
-			func() (policy_helper.Validator, get_domainer) {
+			func() (policy_helper.Validator, domain_getter) {
 				req := in.(*pb.DeleteDomainRequest)
 				return req, req
 			},
