@@ -10,12 +10,10 @@ import (
 
 func copyDevice(x *storage.Device) *pb.Device {
 	y := &pb.Device{
-		Id:      *x.Id,
-		Kind:    deviced_helper.DEVICE_KIND_ENUMER.ToValue(*x.Kind),
-		State:   deviced_helper.DEVICE_STATE_ENUMER.ToValue(*x.State),
+		Id:      *x.ID,
+		State:   deviced_helper.DEVICESTATEENUMER.ToValue(*x.State),
 		Name:    *x.Name,
 		Alias:   *x.Alias,
-		Modules: copy_modules(x.Modules),
 	}
 
 	return y
@@ -25,7 +23,7 @@ func copyDevices(xs []*storage.Device) []*pb.Device {
 	var ys []*pb.Device
 
 	for _, x := range xs {
-		ys = append(ys, copy_device(x))
+		ys = append(ys, copyDevice(x))
 	}
 
 	return ys
