@@ -111,6 +111,10 @@ func initIdentityd2() error {
 					OnStart: func(context.Context) error {
 						var err error
 
+						if err = enf.Initialize(); err != nil {
+							return err
+						}
+
 						dom_id_str := "default"
 						dom_name_str := "default"
 						dom_alias_str := "default"
@@ -128,6 +132,10 @@ func initIdentityd2() error {
 						}
 
 						if err = enf.AddGroup(dom_id_str, policy.UNGROUPED); err != nil {
+							return err
+						}
+
+						if err = enf.AddObjectToKind(dom_id_str, service.KIND_DOMAIN); err != nil {
 							return err
 						}
 

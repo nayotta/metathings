@@ -4,6 +4,8 @@ import (
 	"context"
 	"errors"
 
+	"github.com/casbin/casbin"
+
 	server "github.com/nayotta/metathings/pkg/policyd/casbin-server/server"
 	pb "github.com/nayotta/metathings/pkg/proto/policyd"
 )
@@ -71,6 +73,23 @@ func (self *MetathingsPolicydService) RemovePresetPolicy(ctx context.Context, in
 	}
 
 	return &pb.BoolReply{Res: true}, nil
+}
+
+func (self *MetathingsPolicydService) Initialize(ctx context.Context, in *pb.EmptyRequest) (*pb.EmptyReply, error) {
+	var e *casbin.Enforcer
+	var err error
+
+	if e, err = self.GetEnforcer(int(in.Handler)); err != nil {
+		return &pb.EmptyReply{}, err
+	}
+
+	if len(e.GetFilteredGroupingPolicy(1, "sysadmin")) == 0 {
+		if !e.AddPolicy("sysadmin", "any", "any", "any", "any") {
+			return &pb.EmptyReply{}, errors.New("initial failed")
+		}
+	}
+
+	return &pb.EmptyReply{}, nil
 }
 
 func NewMetathingsPolicydService(

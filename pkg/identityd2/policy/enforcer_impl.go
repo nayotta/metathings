@@ -23,6 +23,20 @@ func to_strings(x interface{}) ([]string, error) {
 	}
 }
 
+func (self *CasbinEnforcer) Initialize() error {
+	cli, cfn, err := self.cli_fty.NewPolicydServiceClient()
+	if err != nil {
+		return err
+	}
+	defer cfn()
+
+	if _, err = cli.Initialize(context.Background(), &pb.EmptyRequest{}); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (self *CasbinEnforcer) Enforce(domain, group, subject, object, action interface{}) error {
 	var doms, grps, subs, objs, acts []string
 	var err error

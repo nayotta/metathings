@@ -1,6 +1,7 @@
 package metathings_identityd2_policy
 
 type Enforcer interface {
+	Initialize() error
 	Enforce(domain, group, subject, object, action interface{}) error
 	AddGroup(domain, group string) error
 	RemoveGroup(domain, group string) error
