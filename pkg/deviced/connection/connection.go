@@ -17,11 +17,13 @@ import (
 type Connection interface {
 	Err(err ...error) error
 	Wait() chan bool
+	Close()
 }
 
 type connection struct {
-	err error
-	c   chan bool
+	err      error
+	c        chan bool
+	close_cb func()
 }
 
 func (self *connection) Err(err ...error) error {
@@ -33,6 +35,10 @@ func (self *connection) Err(err ...error) error {
 
 func (self *connection) Wait() chan bool {
 	return self.c
+}
+
+func (self *connection) Close() {
+	self.close_cb()
 }
 
 type StreamConnection interface {
@@ -84,6 +90,10 @@ func (self *connectionCenter) connection_loop(dev *storage.Device, conn Connecti
 		br2stm_quit <- false
 	}
 
+	self.logger.WithFields(log.Fields{
+		"devid": *dev.Id,
+		"brid":  br.Id(),
+	}).Debugf("connection loop")
 	wg.Wait()
 }
 
@@ -102,12 +112,22 @@ func (self *connectionCenter) br2stm(dev *storage.Device, conn Connection, br Br
 			}
 
 			wait <- false
+			self.logger.WithFields(log.Fields{
+				"#from": "bridge",
+				"#to":   "stream",
+				"devid": *dev.Id,
+			}).Debugf("connection closed")
 		}()
 
 		for {
 			if buf, err = br.Recv(); err != nil {
 				return
 			}
+			self.logger.WithFields(log.Fields{
+				"#from": "bridge",
+				"#to":   "stream",
+				"devid": *dev.Id,
+			}).Debugf("recv msg")
 
 			if err = proto.Unmarshal(buf, &req); err != nil {
 				return
@@ -116,6 +136,11 @@ func (self *connectionCenter) br2stm(dev *storage.Device, conn Connection, br Br
 			if err = stm.Send(&req); err != nil {
 				return
 			}
+			self.logger.WithFields(log.Fields{
+				"#from": "bridge",
+				"#to":   "stream",
+				"devid": *dev.Id,
+			}).Debugf("send msg")
 		}
 	}()
 
@@ -138,12 +163,22 @@ func (self *connectionCenter) stm2br(dev *storage.Device, conn Connection, br Br
 			}
 
 			wait <- false
+			self.logger.WithFields(log.Fields{
+				"#from": "stream",
+				"#to":   "bridge",
+				"devid": *dev.Id,
+			}).Debugf("connection closed")
 		}()
 
 		for {
 			if res, err = stm.Recv(); err != nil {
 				return
 			}
+			self.logger.WithFields(log.Fields{
+				"#from": "stream",
+				"#to":   "bridge",
+				"devid": *dev.Id,
+			}).Debugf("recv msg")
 
 			if res.GetUnaryCall() != nil {
 				if res_br, err = self.brfty.BuildBridge(*dev.Id, res.SessionId); err != nil {
@@ -160,6 +195,11 @@ func (self *connectionCenter) stm2br(dev *storage.Device, conn Connection, br Br
 			if err = res_br.Send(buf); err != nil {
 				return
 			}
+			self.logger.WithFields(log.Fields{
+				"#from": "stream",
+				"#to":   "bridge",
+				"devid": *dev.Id,
+			}).Debugf("send msg")
 		}
 	}()
 
@@ -176,15 +216,22 @@ func (self *connectionCenter) BuildConnection(dev *storage.Device, stm pb.Device
 		return nil, err
 	}
 	br_id := br.Id()
+	self.logger.WithField("brid", br_id).Debugf("build bridge")
 
 	err = self.storage.AddBridgeToDevice(dev_id, br_id)
 	if err != nil {
 		return nil, err
 	}
-	defer self.storage.RemoveBridgeFromDevice(dev_id, br_id)
+	self.logger.WithFields(log.Fields{
+		"brid":  br_id,
+		"devid": *dev.Id,
+	}).Debugf("add bridge to device")
 
 	conn := &connection{
 		c: make(chan bool),
+		close_cb: func() {
+			self.storage.RemoveBridgeFromDevice(dev_id, br_id)
+		},
 	}
 
 	go self.connection_loop(dev, conn, br, stm)
