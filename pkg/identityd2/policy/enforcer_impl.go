@@ -116,7 +116,7 @@ func (self *CasbinEnforcer) RemoveGroup(domain, group string) error {
 	return nil
 }
 
-func (self *CasbinEnforcer) add_grouping_policy(x, y string) error {
+func (self *CasbinEnforcer) add_grouping_policy(n, x, y string) error {
 	cli, cfn, err := self.cli_fty.NewPolicydServiceClient()
 	if err != nil {
 		return err
@@ -125,16 +125,17 @@ func (self *CasbinEnforcer) add_grouping_policy(x, y string) error {
 
 	req := &pb.PolicyRequest{
 		EnforcerHandler: 0,
+		PType:           n,
 		Params:          []string{x, y},
 	}
-	if _, err = cli.AddGroupingPolicy(context.Background(), req); err != nil {
+	if _, err = cli.AddNamedGroupingPolicy(context.Background(), req); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (self *CasbinEnforcer) remove_grouping_policy(x, y string) error {
+func (self *CasbinEnforcer) remove_grouping_policy(n, x, y string) error {
 	cli, cfn, err := self.cli_fty.NewPolicydServiceClient()
 	if err != nil {
 		return err
@@ -143,9 +144,10 @@ func (self *CasbinEnforcer) remove_grouping_policy(x, y string) error {
 
 	req := &pb.PolicyRequest{
 		EnforcerHandler: 0,
+		PType:           n,
 		Params:          []string{x, y},
 	}
-	if _, err = cli.RemoveGroupingPolicy(context.Background(), req); err != nil {
+	if _, err = cli.RemoveNamedGroupingPolicy(context.Background(), req); err != nil {
 		return err
 	}
 
@@ -153,19 +155,19 @@ func (self *CasbinEnforcer) remove_grouping_policy(x, y string) error {
 }
 
 func (self *CasbinEnforcer) AddSubjectToRole(subject, role string) error {
-	return self.add_grouping_policy(subject, role)
+	return self.add_grouping_policy("g", subject, role)
 }
 
 func (self *CasbinEnforcer) RemoveSubjectFromRole(subject, role string) error {
-	return self.remove_grouping_policy(subject, role)
+	return self.remove_grouping_policy("g", subject, role)
 }
 
 func (self *CasbinEnforcer) AddObjectToKind(object, kind string) error {
-	return self.add_grouping_policy(object, kind)
+	return self.add_grouping_policy("g2", object, kind)
 }
 
 func (self *CasbinEnforcer) RemoveObjectFromKind(object, kind string) error {
-	return self.remove_grouping_policy(object, kind)
+	return self.remove_grouping_policy("g2", object, kind)
 }
 
 func NewEnforcer(cli_fty *client_helper.ClientFactory) Enforcer {
