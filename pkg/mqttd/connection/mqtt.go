@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"net/url"
+	"time"
 
 	emitter "github.com/emitter-io/go"
 	log "github.com/sirupsen/logrus"
@@ -38,7 +39,7 @@ func (that *MqttBridgeOpt) presenceCallback(_ emitter.Emitter, msg emitter.Prese
 }
 
 // message callback
-func (that *MqttBridgeOpt) messageCallback(_ emitter.Emitter, msg emitter.Message) {
+func (that *MqttBridgeOpt) messageCallback(client emitter.Emitter, msg emitter.Message) {
 	fmt.Println("get message:", msg.Payload())
 }
 
@@ -61,6 +62,7 @@ func (that *MqttBridgeOpt) Pub(msg string) error {
 	}
 
 	r := that.client.Publish(that.secretKey, that.pubPath, msg)
+	fmt.Println("pub msg:", that.pubPath)
 	if r.Wait() && r.Error() != nil {
 		err = errors.New("mqtt failed pub")
 		that.logger.WithError(err).Errorf("mqtt failed pub")
@@ -75,6 +77,7 @@ func (that *MqttBridgeOpt) Sub() error {
 	var err error
 
 	r := that.client.Subscribe(that.secretKey, that.subPath)
+	fmt.Println("sub msg:", that.subPath)
 	if r.Wait() && r.Error() != nil {
 		err = errors.New("mqtt failed sub")
 		that.logger.WithError(err).Errorf("mqtt failed sub")
@@ -110,7 +113,6 @@ func (that *MqttBridgeOpt) InitMqttBridge() error {
 
 	opt := emitter.NewClientOptions()
 	opt.Servers = append(opt.Servers, that.server)
-	opt.ClientID = that.clientID
 
 	opt.SetOnKeyGenHandler(that.keygenCallback)
 	opt.SetOnMessageHandler(that.messageCallback)
@@ -132,6 +134,13 @@ func (that *MqttBridgeOpt) InitMqttBridge() error {
 		return err
 	}
 
+	// wait 5s for key response
+	for i := 0; i < 100; i++ {
+		if that.secretKey != "" {
+			break
+		}
+		time.Sleep(50 * time.Millisecond)
+	}
 	err = that.Sub()
 	if err != nil {
 		that.logger.WithError(err).Errorf("Sub failed")

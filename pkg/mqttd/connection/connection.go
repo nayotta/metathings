@@ -18,6 +18,5 @@ type connection struct {
 // MqttBridge MqttBridge interface
 type MqttBridge interface {
 	Pub(msg string) error
-	Sub() error
 	InitMqttBridge() error
 }
