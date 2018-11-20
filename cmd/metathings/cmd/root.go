@@ -7,8 +7,10 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 
+	cmd_contrib "github.com/nayotta/metathings/cmd/contrib"
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
 	cmd_helper "github.com/nayotta/metathings/pkg/common/cmd"
+	constant_helper "github.com/nayotta/metathings/pkg/common/constant"
 )
 
 const (
@@ -23,30 +25,20 @@ type _serviceConfigOptions struct {
 	Metathings _metathingsServiceOptions
 }
 
+// DEPRECATED(Peer): rename to _rootOption
 type _rootOptions struct {
-	cmd_helper.RootOptions  `mapstructure:",squash"`
-	cmd_helper.TokenOptions `mapstructure:",squash"`
-	ServiceConfig           _serviceConfigOptions `mapstructure:"service_config"`
+	cmd_helper.RootOptions `mapstructure:",squash"`
+	ServiceConfig          _serviceConfigOptions `mapstructure:"service_config"`
 }
 
 var (
 	root_opts *_rootOptions
+	base_opt  *cmd_contrib.BaseOption
 )
 
 var (
 	_cli_fty *client_helper.ClientFactory
 )
-
-func getClientFactory() *client_helper.ClientFactory {
-	if _cli_fty == nil {
-		_cli_fty, _ = client_helper.NewClientFactory(
-			client_helper.NewDefaultServiceConfigs(root_opts.ServiceConfig.Metathings.Address),
-			client_helper.WithInsecureOptionFunc(),
-		)
-	}
-
-	return _cli_fty
-}
 
 var (
 	RootCmd = &cobra.Command{
@@ -55,70 +47,6 @@ var (
 	}
 )
 
-type PreRunHook func()
-
-func preRunHooks(hooks ...PreRunHook) func(*cobra.Command, []string) {
-	return func(*cobra.Command, []string) {
-		for _, hook := range hooks {
-			hook()
-		}
-	}
-}
-
-func defaultPreRunHooks(hook PreRunHook, defaults ...PreRunHook) func(*cobra.Command, []string) {
-	if len(defaults) == 0 {
-		defaults = []PreRunHook{initialize}
-	}
-	if hook != nil {
-		defaults = append([]PreRunHook{hook}, defaults...)
-	}
-	return preRunHooks(defaults...)
-}
-
-func init() {
-	root_opts = &_rootOptions{}
-
-	cobra.OnInitialize(initConfig)
-	viper.AutomaticEnv()
-	viper.SetEnvPrefix(METATHINGS_PREFIX)
-	viper.SetEnvKeyReplacer(strings.NewReplacer("-", "_"))
-	viper.BindEnv("stage")
-
-	RootCmd.PersistentFlags().StringVarP(&root_opts.Config, "config", "c", "", "Config file")
-
-	RootCmd.PersistentFlags().BoolVar(&root_opts.Verbose, "verbose", false, "Verbose mode")
-
-	RootCmd.PersistentFlags().StringVar(&root_opts.Log.Level, "log-level", "info", "Logging Level[debug, info, warn, error]")
-
-	RootCmd.PersistentFlags().StringVar(&root_opts.ServiceConfig.Metathings.Address, "addr", "mt-api.nayotta.com", "Metathings Service Address")
-
-	RootCmd.PersistentFlags().StringVar(&root_opts.Token, "token", "", "MetaThings Token")
-	viper.BindPFlag("token", RootCmd.PersistentFlags().Lookup("token"))
-
-	RootCmd.PersistentFlags().StringVar(&root_opts.ApplicationCredential.Id, "application-credential-id", "", "MetaThings Application Credential ID")
-	viper.BindPFlag("application-credential-id", RootCmd.PersistentFlags().Lookup("application-credential-id"))
-
-	RootCmd.PersistentFlags().StringVar(&root_opts.ApplicationCredential.Secret, "application-credential-secret", "", "MetaThings Application Credential Secret")
-	viper.BindPFlag("application-credential-secret", RootCmd.PersistentFlags().Lookup("application-credential-secret"))
-}
-
-func initialize() {
-	token := viper.GetString("token")
-	if token != "" {
-		root_opts.Token = token
-	}
-
-	appCredId := viper.GetString("application-credential-id")
-	if appCredId != "" {
-		root_opts.ApplicationCredential.Id = appCredId
-	}
-
-	appCredSecret := viper.GetString("application-credential-secret")
-	if appCredSecret != "" {
-		root_opts.ApplicationCredential.Secret = appCredSecret
-	}
-}
-
 var _GLOBAL_INITIALED = false
 
 func initConfig() {
@@ -126,11 +54,32 @@ func initConfig() {
 		return
 	}
 
-	if root_opts.Config != "" {
-		viper.SetConfigFile(root_opts.Config)
+	cfg := base_opt.GetConfig()
+	if cfg != "" {
+		viper.SetConfigFile(cfg)
 		if err := viper.ReadInConfig(); err != nil {
 			log.WithError(err).Fatalf("failed to read config")
 		}
 	}
+
 	_GLOBAL_INITIALED = true
+}
+
+func init() {
+	opt := cmd_contrib.CreateBaseOption()
+	base_opt = &opt
+
+	cobra.OnInitialize(initConfig)
+	viper.AutomaticEnv()
+	viper.SetEnvPrefix(METATHINGS_PREFIX)
+	viper.SetEnvKeyReplacer(strings.NewReplacer("-", "_"))
+	viper.BindEnv("stage")
+
+	flags := RootCmd.PersistentFlags()
+
+	flags.StringVarP(base_opt.GetConfigP(), "config", "c", "", "Config file")
+	flags.BoolVar(base_opt.GetVerboseP(), "verbose", false, "Verbose mode")
+	flags.StringVar(base_opt.GetLevelP(), "log-level", "info", "Logging level[debug, info, warn, error]")
+
+	flags.StringVar(base_opt.GetServiceEndpoint(client_helper.DEFAULT_CONFIG).GetAddressP(), "addr", constant_helper.CONSTANT_METATHINGSD_DEFAULT_HOST, "MetaThings Service Address")
 }

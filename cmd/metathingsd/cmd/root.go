@@ -28,8 +28,8 @@ var (
 
 var (
 	RootCmd = &cobra.Command{
-		Use:   "metathings",
-		Short: "MetaThings Command Line Toolkits",
+		Use:   "metathingsd",
+		Short: "MetaThingsd Command Line Toolkits",
 	}
 )
 
@@ -52,9 +52,11 @@ func init() {
 	viper.SetEnvKeyReplacer(strings.NewReplacer("-", "_"))
 	viper.BindEnv("stage")
 
-	RootCmd.PersistentFlags().StringVarP(base_opt.GetConfigP(), "config", "c", "", "Config file")
-	RootCmd.PersistentFlags().BoolVar(base_opt.GetVerboseP(), "verbose", false, "Verbose mode")
-	RootCmd.PersistentFlags().StringVar(base_opt.GetLevelP(), "log-level", "info", "Logging Level[debug, info, warn, error]")
-	RootCmd.PersistentFlags().StringVar(base_opt.GetCredentialIdP(), "application-credential-id", "", "MetaThings Application Credential ID")
-	RootCmd.PersistentFlags().StringVar(base_opt.GetCredentialSecretP(), "application-credential-secret", "", "MetaThings Application Credential Secret")
+	flags := RootCmd.PersistentFlags()
+
+	flags.StringVarP(base_opt.GetConfigP(), "config", "c", "", "Config file")
+	flags.BoolVar(base_opt.GetVerboseP(), "verbose", false, "Verbose mode")
+	flags.StringVar(base_opt.GetLevelP(), "log-level", "info", "Logging Level[debug, info, warn, error]")
+	flags.StringVar(base_opt.GetCredentialIdP(), "application-credential-id", "", "MetaThings Application Credential ID")
+	flags.StringVar(base_opt.GetCredentialSecretP(), "application-credential-secret", "", "MetaThings Application Credential Secret")
 }

@@ -47,7 +47,7 @@ var (
 			cmd_helper.UnmarshalConfig(opt_t)
 			base_opt = &opt_t.BaseOption
 
-			init_cmd_option(opt_t, identityd2_opt)
+			init_service_cmd_option(opt_t, identityd2_opt)
 			opt_t.Init = identityd2_opt.Init
 
 			identityd2_opt = opt_t
