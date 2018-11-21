@@ -1,7 +1,6 @@
 package metathingsmqttdconnection
 
 import (
-	"errors"
 	"fmt"
 	"net/url"
 	"time"
@@ -77,20 +76,13 @@ func (that *MqttBridgeOpt) keygenCallback(_ emitter.Emitter, msg emitter.KeyGenR
 
 // Pub Publish
 func (that *MqttBridgeOpt) Pub(msg string, path string) error {
-	var err error
-
 	if msg == "" {
-		err = errors.New("mqtt failed pub blank msg")
-		that.logger.WithError(err).Errorf("mqtt failed pub blank msg")
-		return err
+		return ErrMqttMsgBlank
 	}
 
 	r := that.client.Publish(that.downKey, path, msg)
-	fmt.Println("pub msg:", path)
 	if r.Wait() && r.Error() != nil {
-		err = errors.New("mqtt failed pub")
-		that.logger.WithError(err).Errorf("mqtt failed pub")
-		return err
+		return ErrMqttPubFailed
 	}
 
 	return nil
@@ -98,36 +90,16 @@ func (that *MqttBridgeOpt) Pub(msg string, path string) error {
 
 // sub sub +/down/
 func (that *MqttBridgeOpt) sub(key, path string) error {
-	var err error
-
 	r := that.client.Subscribe(key, path)
-	fmt.Println("sub msg:", path)
 	if r.Wait() && r.Error() != nil {
-		err = errors.New("mqtt failed sub")
-		that.logger.WithError(err).Errorf("mqtt failed sub")
-		return err
+		return ErrMqttSubFailed
 	}
 
 	return nil
 }
 
-// GetUpKey get key for channel
-func (that *MqttBridgeOpt) GetUpKey() (string, error) {
-	var err error
-
-	if that.upKey == "" {
-		err = errors.New("no sercret key found")
-		that.logger.WithError(err).Errorf("no sercret key found")
-		return "", err
-	}
-
-	return that.upKey, nil
-}
-
 // createSecretKey async create
 func (that *MqttBridgeOpt) createSecretKey(path string) error {
-	var err error
-
 	req := &emitter.KeyGenRequest{
 		Key:     that.rootKey,
 		Channel: path,
@@ -137,9 +109,7 @@ func (that *MqttBridgeOpt) createSecretKey(path string) error {
 
 	r := that.client.GenerateKey(req)
 	if r.Wait() && r.Error() != nil {
-		err = errors.New("keygen failed")
-		that.logger.WithError(err).Errorf("keygen failed")
-		return err
+		return ErrMqttKeygenFailed
 	}
 
 	return nil
@@ -147,12 +117,8 @@ func (that *MqttBridgeOpt) createSecretKey(path string) error {
 
 //createUpKey
 func (that *MqttBridgeOpt) createUpKey() error {
-	var err error
-
-	//create key
-	err = that.createSecretKey("+/up/")
+	err := that.createSecretKey("+/up/")
 	if err != nil {
-		that.logger.WithError(err).Errorf("createUpKey failed")
 		return err
 	}
 
@@ -164,19 +130,13 @@ func (that *MqttBridgeOpt) createUpKey() error {
 		time.Sleep(50 * time.Millisecond)
 	}
 
-	err = errors.New("keygen failed")
-	that.logger.WithError(err).Errorf("keygen failed")
-	return err
+	return ErrMqttUpKeygenFailed
 }
 
 //createDownKey
 func (that *MqttBridgeOpt) createDownKey() error {
-	var err error
-
-	//create key
-	err = that.createSecretKey("+/down/")
+	err := that.createSecretKey("+/down/")
 	if err != nil {
-		that.logger.WithError(err).Errorf("createDownKey failed")
 		return err
 	}
 
@@ -188,19 +148,13 @@ func (that *MqttBridgeOpt) createDownKey() error {
 		time.Sleep(50 * time.Millisecond)
 	}
 
-	err = errors.New("keygen failed")
-	that.logger.WithError(err).Errorf("keygen failed")
-	return err
+	return ErrMqttDownKeygenFailed
 }
 
 //createStatusKey
 func (that *MqttBridgeOpt) createStatusKey() error {
-	var err error
-
-	//create key
-	err = that.createSecretKey("+/status/")
+	err := that.createSecretKey("+/status/")
 	if err != nil {
-		that.logger.WithError(err).Errorf("createStatusKey failed")
 		return err
 	}
 
@@ -212,9 +166,7 @@ func (that *MqttBridgeOpt) createStatusKey() error {
 		time.Sleep(50 * time.Millisecond)
 	}
 
-	err = errors.New("keygen failed")
-	that.logger.WithError(err).Errorf("keygen failed")
-	return err
+	return ErrMqttStatusKeygenFailed
 }
 
 // CloseBridge CloseBridge
@@ -240,38 +192,31 @@ func (that *MqttBridgeOpt) InitMqttBridge() error {
 	that.client = emitter.NewClient(opt)
 	handle := that.client.Connect()
 	if handle.Wait() && handle.Error() != nil {
-		err = errors.New("mqtt failed connect client")
-		that.logger.WithError(err).Errorf("mqtt failed connect client")
-		return err
+		return ErrMqttConnectFailed
 	}
 
 	err = that.createUpKey()
 	if err != nil {
-		that.logger.WithError(err).Errorf("create up key failed")
 		return err
 	}
 
 	err = that.createDownKey()
 	if err != nil {
-		that.logger.WithError(err).Errorf("create down key failed")
 		return err
 	}
 
 	err = that.createStatusKey()
 	if err != nil {
-		that.logger.WithError(err).Errorf("create status key failed")
 		return err
 	}
 
 	err = that.sub(that.upKey, "+/up/")
 	if err != nil {
-		that.logger.WithError(err).Errorf("Sub +/up/ failed")
 		return err
 	}
 
 	err = that.sub(that.statusKey, "+/status/")
 	if err != nil {
-		that.logger.WithError(err).Errorf("Sub +/status/ failed")
 		return err
 	}
 
