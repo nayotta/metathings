@@ -14,3 +14,7 @@ func NewId() string {
 func NewUint64Id() uint64 {
 	return rand.Uint64()
 }
+
+func NewNamedId(x string) string {
+	return strings.Replace(uuid.NewV5(uuid.Nil, x).String(), "-", "", -1)
+}
