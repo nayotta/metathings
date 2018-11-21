@@ -41,9 +41,13 @@ func (self *MetathingsIdentitydService) DeleteCredential(ctx context.Context, re
 	}
 
 	if len(tkns_s) > 0 {
-		err = errors.New("token issued by credential")
-		self.logger.WithError(err).Warningf("token issued by credential")
-		return nil, status.Errorf(codes.FailedPrecondition, err.Error())
+		for _, tkn_s := range tkns_s {
+			if err = self.storage.DeleteToken(*tkn_s.Id); err != nil {
+				self.logger.WithError(err).Errorf("failed to delete token in storage")
+				return nil, status.Errorf(codes.Internal, err.Error())
+			}
+		}
+		self.logger.WithField("credential_id", cred_id_str).Debugf("delete tokens by credential id")
 	}
 
 	if err = self.storage.DeleteCredential(cred_id_str); err != nil {

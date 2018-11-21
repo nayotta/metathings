@@ -105,6 +105,12 @@ func (self *connectionCenter) br2stm(dev *storage.Device, conn Connection, br Br
 		var req pb.ConnectRequest
 		var err error
 
+		logger := self.logger.WithFields(log.Fields{
+			"#from": "bridge",
+			"#to":   "stream",
+			"devid": *dev.Id,
+		})
+
 		defer wg.Done()
 		defer func() {
 			if err != nil {
@@ -112,35 +118,26 @@ func (self *connectionCenter) br2stm(dev *storage.Device, conn Connection, br Br
 			}
 
 			wait <- false
-			self.logger.WithFields(log.Fields{
-				"#from": "bridge",
-				"#to":   "stream",
-				"devid": *dev.Id,
-			}).Debugf("connection closed")
+			logger.Debugf("connection closed")
 		}()
 
 		for {
 			if buf, err = br.Recv(); err != nil {
+				logger.WithError(err).Debugf("failed to recv msg")
 				return
 			}
-			self.logger.WithFields(log.Fields{
-				"#from": "bridge",
-				"#to":   "stream",
-				"devid": *dev.Id,
-			}).Debugf("recv msg")
+			logger.Debugf("recv msg")
 
 			if err = proto.Unmarshal(buf, &req); err != nil {
+				logger.WithError(err).Debugf("failed to unmarshal response data")
 				return
 			}
 
 			if err = stm.Send(&req); err != nil {
+				logger.WithError(err).Debugf("failed to send msg")
 				return
 			}
-			self.logger.WithFields(log.Fields{
-				"#from": "bridge",
-				"#to":   "stream",
-				"devid": *dev.Id,
-			}).Debugf("send msg")
+			logger.Debugf("send msg")
 		}
 	}()
 
@@ -156,6 +153,12 @@ func (self *connectionCenter) stm2br(dev *storage.Device, conn Connection, br Br
 		var res_br Bridge
 		var err error
 
+		logger := self.logger.WithFields(log.Fields{
+			"#from": "stream",
+			"#to":   "bridge",
+			"devid": *dev.Id,
+		})
+
 		defer wg.Done()
 		defer func() {
 			if err != nil {
@@ -163,25 +166,19 @@ func (self *connectionCenter) stm2br(dev *storage.Device, conn Connection, br Br
 			}
 
 			wait <- false
-			self.logger.WithFields(log.Fields{
-				"#from": "stream",
-				"#to":   "bridge",
-				"devid": *dev.Id,
-			}).Debugf("connection closed")
+			logger.Debugf("connection closed")
 		}()
 
 		for {
 			if res, err = stm.Recv(); err != nil {
+				logger.Debugf("failed to recv msg")
 				return
 			}
-			self.logger.WithFields(log.Fields{
-				"#from": "stream",
-				"#to":   "bridge",
-				"devid": *dev.Id,
-			}).Debugf("recv msg")
+			logger.Debugf("recv msg")
 
 			if res.GetUnaryCall() != nil {
 				if res_br, err = self.brfty.BuildBridge(*dev.Id, res.SessionId); err != nil {
+					logger.WithError(err).Debugf("failed to build bridge for unary call")
 					return
 				}
 			} else {
@@ -189,17 +186,15 @@ func (self *connectionCenter) stm2br(dev *storage.Device, conn Connection, br Br
 			}
 
 			if buf, err = proto.Marshal(res); err != nil {
+				logger.WithError(err).Debugf("failed to marshal request data")
 				return
 			}
 
 			if err = res_br.Send(buf); err != nil {
+				logger.WithError(err).Debugf("failed to send msg")
 				return
 			}
-			self.logger.WithFields(log.Fields{
-				"#from": "stream",
-				"#to":   "bridge",
-				"devid": *dev.Id,
-			}).Debugf("send msg")
+			logger.Debugf("send msg")
 		}
 	}()
 

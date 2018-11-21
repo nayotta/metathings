@@ -54,6 +54,7 @@ func (self *kafkaBridge) init_consumer() error {
 	for key, val := range self.opt.ConsumerConfig {
 		cfg.SetKey(key, val)
 	}
+	cfg["group.id"] = self.Id()
 
 	consumer, err := kafka.NewConsumer(&cfg)
 	if err != nil {
@@ -70,7 +71,11 @@ func (self *kafkaBridge) Id() string {
 }
 
 func (self *kafkaBridge) Send(buf []byte) error {
-	self.init_producer()
+	var err error
+
+	if err = self.init_producer(); err != nil {
+		return err
+	}
 
 	msg := &kafka.Message{
 		TopicPartition: kafka.TopicPartition{
@@ -86,7 +91,11 @@ func (self *kafkaBridge) Send(buf []byte) error {
 }
 
 func (self *kafkaBridge) Recv() ([]byte, error) {
-	self.init_consumer()
+	var err error
+
+	if err = self.init_consumer(); err != nil {
+		return nil, err
+	}
 
 	for {
 		ev := <-self.consumer.Events()

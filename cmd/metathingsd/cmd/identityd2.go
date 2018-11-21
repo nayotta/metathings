@@ -205,6 +205,7 @@ func initIdentityd2() error {
 
 func runIdentityd2() error {
 	app := fx.New(
+		fx.NopLogger,
 		fx.Provide(
 			GetIdentityd2Options,
 			cmd_contrib.NewTransportCredentials,
