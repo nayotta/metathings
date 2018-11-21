@@ -19,4 +19,6 @@ type connection struct {
 type MqttBridge interface {
 	Pub(msg string) error
 	InitMqttBridge() error
+	GetSecretKey() (string, error)
+	CloseBridge()
 }

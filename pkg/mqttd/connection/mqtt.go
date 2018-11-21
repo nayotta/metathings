@@ -87,6 +87,20 @@ func (that *MqttBridgeOpt) Sub() error {
 	return nil
 }
 
+// GetSecretKey get key for channel
+func (that *MqttBridgeOpt) GetSecretKey() (string, error) {
+	var err error
+
+	if that.secretKey == "" {
+		err = errors.New("no sercret key found")
+		that.logger.WithError(err).Errorf("no sercret key found")
+		return "", err
+	}
+
+	return that.secretKey, nil
+}
+
+// createSecretKey async create
 func (that *MqttBridgeOpt) createSecretKey() error {
 	var err error
 
@@ -105,6 +119,13 @@ func (that *MqttBridgeOpt) createSecretKey() error {
 	}
 
 	return nil
+}
+
+// CloseBridge CloseBridge
+func (that *MqttBridgeOpt) CloseBridge() {
+	if that.client.IsConnected() == true {
+		that.client.Disconnect(0)
+	}
 }
 
 // InitMqttBridge InitMqttBridge
