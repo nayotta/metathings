@@ -17,7 +17,7 @@ type connection struct {
 
 // MqttBridge MqttBridge interface
 type MqttBridge interface {
-	Pub(msg string) error
+	Pub(msg string, path string) error
 	InitMqttBridge() error
 	CloseBridge()
 }

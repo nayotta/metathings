@@ -15,10 +15,9 @@ type MqttBridgeOpt struct {
 	server    *url.URL
 	rootKey   string
 	upKey     string
+	downKey   string
 	statusKey string
 	client    emitter.Emitter
-	pubPath   string
-	subPath   string
 	logger    log.FieldLogger
 	storage   Storage
 }
@@ -59,13 +58,17 @@ func (that *MqttBridgeOpt) messageCallback(client emitter.Emitter, msg emitter.M
 // generate key callback
 func (that *MqttBridgeOpt) keygenCallback(_ emitter.Emitter, msg emitter.KeyGenResponse) {
 	if msg.Status == 200 {
-		fmt.Println("keygen res:", msg.Key)
 		topicStr := msg.Channel
 		switch topicStr {
 		case "+/up/":
 			that.upKey = msg.Key
+			fmt.Println("upKey res:", msg.Key)
 		case "+/status/":
 			that.statusKey = msg.Key
+			fmt.Println("statusKey res:", msg.Key)
+		case "+/down/":
+			that.downKey = msg.Key
+			fmt.Println("downKey res:", msg.Key)
 		default:
 			// TODO(zh) device channel key
 		}
@@ -73,7 +76,7 @@ func (that *MqttBridgeOpt) keygenCallback(_ emitter.Emitter, msg emitter.KeyGenR
 }
 
 // Pub Publish
-func (that *MqttBridgeOpt) Pub(msg string) error {
+func (that *MqttBridgeOpt) Pub(msg string, path string) error {
 	var err error
 
 	if msg == "" {
@@ -82,8 +85,8 @@ func (that *MqttBridgeOpt) Pub(msg string) error {
 		return err
 	}
 
-	r := that.client.Publish(that.upKey, that.pubPath, msg)
-	fmt.Println("pub msg:", that.pubPath)
+	r := that.client.Publish(that.downKey, path, msg)
+	fmt.Println("pub msg:", path)
 	if r.Wait() && r.Error() != nil {
 		err = errors.New("mqtt failed pub")
 		that.logger.WithError(err).Errorf("mqtt failed pub")
@@ -156,12 +159,38 @@ func (that *MqttBridgeOpt) createUpKey() error {
 	// wait 5s for key response
 	for i := 0; i < 100; i++ {
 		if that.upKey != "" {
-			break
+			return nil
 		}
 		time.Sleep(50 * time.Millisecond)
 	}
 
-	return nil
+	err = errors.New("keygen failed")
+	that.logger.WithError(err).Errorf("keygen failed")
+	return err
+}
+
+//createDownKey
+func (that *MqttBridgeOpt) createDownKey() error {
+	var err error
+
+	//create key
+	err = that.createSecretKey("+/down/")
+	if err != nil {
+		that.logger.WithError(err).Errorf("createDownKey failed")
+		return err
+	}
+
+	// wait 5s for key response
+	for i := 0; i < 100; i++ {
+		if that.downKey != "" {
+			return nil
+		}
+		time.Sleep(50 * time.Millisecond)
+	}
+
+	err = errors.New("keygen failed")
+	that.logger.WithError(err).Errorf("keygen failed")
+	return err
 }
 
 //createStatusKey
@@ -178,12 +207,14 @@ func (that *MqttBridgeOpt) createStatusKey() error {
 	// wait 5s for key response
 	for i := 0; i < 100; i++ {
 		if that.statusKey != "" {
-			break
+			return nil
 		}
 		time.Sleep(50 * time.Millisecond)
 	}
 
-	return nil
+	err = errors.New("keygen failed")
+	that.logger.WithError(err).Errorf("keygen failed")
+	return err
 }
 
 // CloseBridge CloseBridge
@@ -220,6 +251,12 @@ func (that *MqttBridgeOpt) InitMqttBridge() error {
 		return err
 	}
 
+	err = that.createDownKey()
+	if err != nil {
+		that.logger.WithError(err).Errorf("create down key failed")
+		return err
+	}
+
 	err = that.createStatusKey()
 	if err != nil {
 		that.logger.WithError(err).Errorf("create status key failed")
@@ -245,23 +282,12 @@ func (that *MqttBridgeOpt) InitMqttBridge() error {
 func NewMqttBridge(
 	server *url.URL,
 	rootKey string,
-	pubPath string,
-	subPath string,
 	logger log.FieldLogger,
 	storage Storage,
 ) (MqttBridge, error) {
-	if pubPath == "" {
-		pubPath = "+/up/"
-	}
-	if subPath == "" {
-		subPath = "+/down/"
-	}
-
 	return &MqttBridgeOpt{
 		server:  server,
 		rootKey: rootKey,
-		pubPath: pubPath,
-		subPath: subPath,
 		logger:  logger,
 		storage: storage,
 	}, nil
