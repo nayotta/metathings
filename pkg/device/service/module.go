@@ -11,5 +11,5 @@ type Module interface {
 }
 
 type ModuleDatabase interface {
-	Lookup(component, module string) (Module, error)
+	Lookup(component, name string) (Module, error)
 }

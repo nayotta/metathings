@@ -49,6 +49,10 @@ func (self *MetathingsDevicedService) ValidateCreateDevice(ctx context.Context, 
 						return errors.New("model.endpoint is empty")
 					}
 
+					if mdl.GetComponent() == nil {
+						return errors.New("model.component is empty")
+					}
+
 					if mdl.GetName() == nil {
 						return errors.New("model.name is empty")
 					}
@@ -125,17 +129,19 @@ func (self *MetathingsDevicedService) CreateDevice(ctx context.Context, req *pb.
 			mdl_id_str = mdl.GetId().GetValue()
 		}
 		mdl_state_str := deviced_helper.MODULE_STATE_ENUMER.ToString(pb_state.ModuleState_MODULE_STATE_OFFLINE)
+		mdl_component_str := mdl.GetComponent().GetValue()
 		mdl_name_str := mdl.GetName().GetValue()
 		mdl_alias_str := mdl.GetAlias().GetValue()
 		mdl_endpoint_str := mdl.GetEndpoint().GetValue()
 
 		mdl_s := &storage.Module{
-			DeviceId: &dev_id_str,
-			Id:       &mdl_id_str,
-			State:    &mdl_state_str,
-			Name:     &mdl_name_str,
-			Alias:    &mdl_alias_str,
-			Endpoint: &mdl_endpoint_str,
+			DeviceId:  &dev_id_str,
+			Id:        &mdl_id_str,
+			State:     &mdl_state_str,
+			Component: &mdl_component_str,
+			Name:      &mdl_name_str,
+			Alias:     &mdl_alias_str,
+			Endpoint:  &mdl_endpoint_str,
 		}
 
 		if err = self.create_module_entity(mdl_s); err != nil {

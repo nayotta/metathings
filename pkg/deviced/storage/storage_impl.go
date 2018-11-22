@@ -64,6 +64,10 @@ func (self *StorageImpl) list_modules(mdl *Module) ([]*Module, error) {
 		m.Endpoint = mdl.Endpoint
 	}
 
+	if mdl.Component != nil {
+		m.Component = mdl.Component
+	}
+
 	if mdl.Name != nil {
 		m.Name = mdl.Name
 	}
