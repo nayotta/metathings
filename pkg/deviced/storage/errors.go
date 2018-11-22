@@ -1,4 +1,4 @@
-package metathings_identityd2_storage
+package metathings_deviced_storage
 
 import "errors"
 

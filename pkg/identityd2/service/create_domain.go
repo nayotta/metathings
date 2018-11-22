@@ -8,55 +8,75 @@ import (
 	"google.golang.org/grpc/status"
 
 	id_helper "github.com/nayotta/metathings/pkg/common/id"
+	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
 	storage "github.com/nayotta/metathings/pkg/identityd2/storage"
 	pb "github.com/nayotta/metathings/pkg/proto/identityd2"
 )
 
+func (self *MetathingsIdentitydService) ValidateCreateDomain(ctx context.Context, in interface{}) error {
+	return self.validate_chain(
+		[]interface{}{
+			func() (policy_helper.Validator, domain_getter) {
+				req := in.(*pb.CreateDomainRequest)
+				return req, req
+			},
+		},
+		[]interface{}{
+			func(x domain_getter) error {
+				dom := x.GetDomain()
+
+				if dom.GetParent() == nil || dom.GetParent().GetId() == nil || dom.GetParent().GetId().GetValue() == "" {
+					return errors.New("domain.parent.id is empty")
+				}
+
+				if dom.GetName() == nil {
+					return errors.New("domain.name is empty")
+				}
+
+				return nil
+			},
+		},
+	)
+}
+
 func (self *MetathingsIdentitydService) CreateDomain(ctx context.Context, req *pb.CreateDomainRequest) (*pb.CreateDomainResponse, error) {
-	var dom *storage.Domain
+	var dom_s *storage.Domain
 	var err error
 
-	if err = req.Validate(); err != nil {
-		self.logger.WithError(err).Warningf("failed to validate request data")
-		return nil, status.Errorf(codes.InvalidArgument, err.Error())
+	dom := req.GetDomain()
+
+	id_str := dom.GetId().GetValue()
+	if id_str == "" {
+		id_str = id_helper.NewId()
+	}
+	parent_id_str := dom.GetParent().GetId().GetValue()
+	extra_str := must_parse_extra(dom.GetExtra())
+	name_str := dom.GetName().GetValue()
+	alias_str := name_str
+	if dom.GetAlias() != nil {
+		alias_str = dom.GetAlias().GetValue()
 	}
 
-	parent_id := req.GetParent().GetId().GetValue()
-	if parent_id == "" {
-		err = errors.New("parent.id is empty")
-		self.logger.WithError(err).Warningf("failed to validate request data")
-		return nil, status.Errorf(codes.InvalidArgument, err.Error())
-	}
-
-	id := req.GetId().GetValue()
-	if id == "" {
-		id = id_helper.NewId()
-	}
-
-	extra_str := must_parse_extra(req.GetExtra())
-	name_str := req.Name.Value
-	alias_str := req.Alias.Value
-
-	if err = self.enforcer.AddObjectToKind(id, KIND_DOMAIN); err != nil {
+	if err = self.enforcer.AddObjectToKind(id_str, KIND_DOMAIN); err != nil {
 		self.logger.WithError(err).Errorf("failed to add domain to kind in enforcer")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
-	dom = &storage.Domain{
-		Id:       &id,
+	dom_s = &storage.Domain{
+		Id:       &id_str,
 		Name:     &name_str,
 		Alias:    &alias_str,
-		ParentId: &parent_id,
+		ParentId: &parent_id_str,
 		Extra:    &extra_str,
 	}
 
-	if dom, err = self.storage.CreateDomain(dom); err != nil {
+	if dom_s, err = self.storage.CreateDomain(dom_s); err != nil {
 		self.logger.WithError(err).Errorf("failed to create domain in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
 	res := &pb.CreateDomainResponse{
-		Domain: copy_domain(dom),
+		Domain: copy_domain(dom_s),
 	}
 
 	self.logger.WithField("id", *dom.Id).Infof("create domain")

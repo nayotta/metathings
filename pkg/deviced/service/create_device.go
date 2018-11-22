@@ -65,12 +65,14 @@ func (self *MetathingsDevicedService) create_entity(ent_id, ent_name string) err
 	if err != nil {
 		return err
 	}
-	cfn()
+	defer cfn()
 
 	ctx := context_helper.WithToken(context.Background(), self.tknr.GetToken())
 	req := &identityd_pb.CreateEntityRequest{
-		Id:   &wrappers.StringValue{Value: ent_id},
-		Name: &wrappers.StringValue{Value: ent_name},
+		Entity: &identityd_pb.OpEntity{
+			Id:   &wrappers.StringValue{Value: ent_id},
+			Name: &wrappers.StringValue{Value: ent_name},
+		},
 	}
 	if _, err = cli.CreateEntity(ctx, req); err != nil {
 		return err

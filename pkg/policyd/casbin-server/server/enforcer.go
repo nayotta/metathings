@@ -46,6 +46,10 @@ func (s *Server) getEnforcer(handle int) (*casbin.Enforcer, error) {
 	}
 }
 
+func (s *Server) GetEnforcer(handle int) (*casbin.Enforcer, error) {
+	return s.getEnforcer(handle)
+}
+
 func (s *Server) getAdapter(handle int) (persist.Adapter, error) {
 	if _, ok := s.adapterMap[handle]; ok {
 		return s.adapterMap[handle], nil

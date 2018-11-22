@@ -7,7 +7,6 @@ import fmt "fmt"
 import github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
 import proto "github.com/golang/protobuf/proto"
 import math "math"
-import _ "github.com/golang/protobuf/ptypes/wrappers"
 import _ "github.com/mwitkow/go-proto-validators"
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -16,54 +15,14 @@ var _ = fmt.Errorf
 var _ = math.Inf
 
 func (this *CreateEntityRequest) Validate() error {
-	if this.Id != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Id); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Id", err)
+	if nil == this.Entity {
+		return github_com_mwitkow_go_proto_validators.FieldError("Entity", fmt.Errorf("message must exist"))
+	}
+	if this.Entity != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Entity); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Entity", err)
 		}
 	}
-	for _, item := range this.Domains {
-		if item != nil {
-			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {
-				return github_com_mwitkow_go_proto_validators.FieldError("Domains", err)
-			}
-		}
-	}
-	for _, item := range this.Groups {
-		if item != nil {
-			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {
-				return github_com_mwitkow_go_proto_validators.FieldError("Groups", err)
-			}
-		}
-	}
-	for _, item := range this.Roles {
-		if item != nil {
-			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {
-				return github_com_mwitkow_go_proto_validators.FieldError("Roles", err)
-			}
-		}
-	}
-	if nil == this.Name {
-		return github_com_mwitkow_go_proto_validators.FieldError("Name", fmt.Errorf("message must exist"))
-	}
-	if this.Name != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Name); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Name", err)
-		}
-	}
-	if nil == this.Alias {
-		return github_com_mwitkow_go_proto_validators.FieldError("Alias", fmt.Errorf("message must exist"))
-	}
-	if this.Alias != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Alias); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Alias", err)
-		}
-	}
-	if this.Password != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Password); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Password", err)
-		}
-	}
-	// Validation of proto3 map<> fields is unsupported.
 	return nil
 }
 func (this *CreateEntityResponse) Validate() error {

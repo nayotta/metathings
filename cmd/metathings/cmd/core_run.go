@@ -24,7 +24,7 @@ var (
 	coreRunCmd = &cobra.Command{
 		Use:   "run",
 		Short: "Run a service in core runtime",
-		PreRun: defaultPreRunHooks(func() {
+		PreRun: cmd_helper.DefaultPreRunHooks(func() {
 			if root_opts.Config == "" {
 				return
 			}

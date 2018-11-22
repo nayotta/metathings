@@ -1,12 +1,12 @@
 package metathings_deviced_connection
 
 import (
-	"crypto/md5"
-	"encoding/hex"
 	"fmt"
 
 	"github.com/confluentinc/confluent-kafka-go/kafka"
 	log "github.com/sirupsen/logrus"
+
+	id_helper "github.com/nayotta/metathings/pkg/common/id"
 )
 
 type kafkaBridgeOption struct {
@@ -54,6 +54,7 @@ func (self *kafkaBridge) init_consumer() error {
 	for key, val := range self.opt.ConsumerConfig {
 		cfg.SetKey(key, val)
 	}
+	cfg["group.id"] = self.Id()
 
 	consumer, err := kafka.NewConsumer(&cfg)
 	if err != nil {
@@ -70,7 +71,11 @@ func (self *kafkaBridge) Id() string {
 }
 
 func (self *kafkaBridge) Send(buf []byte) error {
-	self.init_producer()
+	var err error
+
+	if err = self.init_producer(); err != nil {
+		return err
+	}
 
 	msg := &kafka.Message{
 		TopicPartition: kafka.TopicPartition{
@@ -86,7 +91,11 @@ func (self *kafkaBridge) Send(buf []byte) error {
 }
 
 func (self *kafkaBridge) Recv() ([]byte, error) {
-	self.init_consumer()
+	var err error
+
+	if err = self.init_consumer(); err != nil {
+		return nil, err
+	}
 
 	for {
 		ev := <-self.consumer.Events()
@@ -123,8 +132,7 @@ func bridge_id_to_symbol(id string) string {
 
 func (self *kafkaBridgeFactory) BuildBridge(device_id string, session int32) (Bridge, error) {
 	buf := fmt.Sprintf("device.%v.session.%v", device_id, session)
-	hash := md5.New()
-	id := hex.EncodeToString(hash.Sum([]byte(buf)))
+	id := id_helper.NewNamedId(buf)
 
 	opt := &kafkaBridgeOption{
 		ProducerConfig: self.opt.ProducerConfig,

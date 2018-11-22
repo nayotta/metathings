@@ -36,3 +36,13 @@ func CreateServiceBaseOption() ServiceBaseOption {
 		BaseOption: CreateBaseOption(),
 	}
 }
+
+type ClientBaseOption struct {
+	BaseOption `mapstructure:",squash"`
+}
+
+func CreateClientBaseOption() ClientBaseOption {
+	return ClientBaseOption{
+		BaseOption: CreateBaseOption(),
+	}
+}

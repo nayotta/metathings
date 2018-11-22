@@ -303,11 +303,27 @@ func domain_in_credential(cred *storage.Credential, dom_id string) bool {
 	return *cred.Domain.Id == dom_id
 }
 
-type get_domainer interface {
+type entity_getter interface {
+	GetEntity() *pb.OpEntity
+}
+
+type domain_getter interface {
 	GetDomain() *pb.OpDomain
 }
 
-func ensure_get_domain_id(x get_domainer) error {
+type credential_getter interface {
+	GetCredential() *pb.OpCredential
+}
+
+type role_getter interface {
+	GetRole() *pb.OpRole
+}
+
+type group_getter interface {
+	GetGroup() *pb.OpGroup
+}
+
+func ensure_get_domain_id(x domain_getter) error {
 	if x.GetDomain().GetId() == nil {
 		return errors.New("domain.id is empty")
 	}

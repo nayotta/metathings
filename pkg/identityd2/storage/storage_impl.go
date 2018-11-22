@@ -1271,20 +1271,20 @@ func init_args(s *StorageImpl, args ...interface{}) error {
 	var ok bool
 
 	if len(args)%2 != 0 {
-		return BadArgument
+		return InvalidArgument
 	}
 
 	for i := 0; i < len(args); i += 2 {
 		key, ok = args[i].(string)
 		if !ok {
-			return BadArgument
+			return InvalidArgument
 		}
 
 		switch key {
 		case "logger":
 			s.logger, ok = args[i+1].(log.FieldLogger)
 			if !ok {
-				return BadArgument
+				return InvalidArgument
 			}
 		}
 	}

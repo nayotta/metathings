@@ -47,7 +47,7 @@ var (
 			cmd_helper.UnmarshalConfig(opt_t)
 			base_opt = &opt_t.BaseOption
 
-			init_cmd_option(opt_t, identityd2_opt)
+			init_service_cmd_option(opt_t, identityd2_opt)
 			opt_t.Init = identityd2_opt.Init
 
 			identityd2_opt = opt_t
@@ -111,6 +111,10 @@ func initIdentityd2() error {
 					OnStart: func(context.Context) error {
 						var err error
 
+						if err = enf.Initialize(); err != nil {
+							return err
+						}
+
 						dom_id_str := "default"
 						dom_name_str := "default"
 						dom_alias_str := "default"
@@ -128,6 +132,10 @@ func initIdentityd2() error {
 						}
 
 						if err = enf.AddGroup(dom_id_str, policy.UNGROUPED); err != nil {
+							return err
+						}
+
+						if err = enf.AddObjectToKind(dom_id_str, service.KIND_DOMAIN); err != nil {
 							return err
 						}
 
@@ -197,6 +205,7 @@ func initIdentityd2() error {
 
 func runIdentityd2() error {
 	app := fx.New(
+		fx.NopLogger,
 		fx.Provide(
 			GetIdentityd2Options,
 			cmd_contrib.NewTransportCredentials,

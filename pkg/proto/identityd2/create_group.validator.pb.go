@@ -7,7 +7,6 @@ import fmt "fmt"
 import github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
 import proto "github.com/golang/protobuf/proto"
 import math "math"
-import _ "github.com/golang/protobuf/ptypes/wrappers"
 import _ "github.com/mwitkow/go-proto-validators"
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -16,41 +15,14 @@ var _ = fmt.Errorf
 var _ = math.Inf
 
 func (this *CreateGroupRequest) Validate() error {
-	if this.Id != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Id); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Id", err)
+	if nil == this.Group {
+		return github_com_mwitkow_go_proto_validators.FieldError("Group", fmt.Errorf("message must exist"))
+	}
+	if this.Group != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Group); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Group", err)
 		}
 	}
-	if nil == this.Domain {
-		return github_com_mwitkow_go_proto_validators.FieldError("Domain", fmt.Errorf("message must exist"))
-	}
-	if this.Domain != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Domain); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Domain", err)
-		}
-	}
-	if nil == this.Name {
-		return github_com_mwitkow_go_proto_validators.FieldError("Name", fmt.Errorf("message must exist"))
-	}
-	if this.Name != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Name); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Name", err)
-		}
-	}
-	if nil == this.Alias {
-		return github_com_mwitkow_go_proto_validators.FieldError("Alias", fmt.Errorf("message must exist"))
-	}
-	if this.Alias != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Alias); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Alias", err)
-		}
-	}
-	if this.Description != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Description); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Description", err)
-		}
-	}
-	// Validation of proto3 map<> fields is unsupported.
 	return nil
 }
 func (this *CreateGroupResponse) Validate() error {

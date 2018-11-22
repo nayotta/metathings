@@ -44,7 +44,7 @@ var (
 			cmd_helper.UnmarshalConfig(opt_t)
 			base_opt = &opt_t.BaseOption
 
-			init_cmd_option(opt_t, policyd_opt)
+			init_service_cmd_option(opt_t, policyd_opt)
 
 			if opt_t.ModelFile == "" {
 				opt_t.ModelFile = policyd_opt.ModelFile

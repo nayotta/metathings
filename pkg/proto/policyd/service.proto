@@ -27,8 +27,6 @@ service PolicydService {
   rpc LoadPolicy (EmptyRequest) returns (EmptyReply) {}
   rpc SavePolicy (EmptyRequest) returns (EmptyReply) {}
 
-  rpc AddPresetPolicy(PolicyRequest) returns (BoolReply) {}
-  rpc RemovePresetPolicy(PolicyRequest) returns (BoolReply) {}
   rpc AddPolicy (PolicyRequest) returns (BoolReply) {}
   rpc AddNamedPolicy (PolicyRequest) returns (BoolReply) {}
   rpc RemovePolicy (PolicyRequest) returns (BoolReply) {}
@@ -64,6 +62,10 @@ service PolicydService {
   rpc HasNamedPolicy (PolicyRequest) returns (BoolReply) {}
   rpc HasGroupingPolicy (PolicyRequest) returns (BoolReply) {}
   rpc HasNamedGroupingPolicy (PolicyRequest) returns (BoolReply) {}
+
+  rpc AddPresetPolicy(PolicyRequest) returns (BoolReply) {}
+  rpc RemovePresetPolicy(PolicyRequest) returns (BoolReply) {}
+  rpc Initialize(EmptyRequest) returns (EmptyReply) {}
 }
 
 message NewEnforcerRequest {

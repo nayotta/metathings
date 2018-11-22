@@ -37,7 +37,7 @@ var (
 	coreAgentdCmd = &cobra.Command{
 		Use:   "agentd",
 		Short: "Core Agent Service Daemon",
-		PreRun: defaultPreRunHooks(func() {
+		PreRun: cmd_helper.DefaultPreRunHooks(func() {
 			if root_opts.Config == "" {
 				return
 			}

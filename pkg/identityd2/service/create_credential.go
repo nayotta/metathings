@@ -10,82 +10,98 @@ import (
 
 	id_helper "github.com/nayotta/metathings/pkg/common/id"
 	passwd_helper "github.com/nayotta/metathings/pkg/common/passwd"
+	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
 	pb_helper "github.com/nayotta/metathings/pkg/common/protobuf"
 	storage "github.com/nayotta/metathings/pkg/identityd2/storage"
 	pb "github.com/nayotta/metathings/pkg/proto/identityd2"
 )
 
+func (self *MetathingsIdentitydService) ValidateCreateCredential(ctx context.Context, in interface{}) error {
+	return self.validate_chain(
+		[]interface{}{
+			func() (policy_helper.Validator, credential_getter) {
+				req := in.(*pb.CreateCredentialRequest)
+				return req, req
+			},
+		},
+		[]interface{}{
+			func(x credential_getter) error {
+				cred := x.GetCredential()
+
+				if cred.GetDomain() == nil || cred.GetDomain().GetId() == nil {
+					return errors.New("credential.domain.id is empty")
+				}
+
+				if cred.GetEntity() == nil || cred.GetEntity().GetId() == nil {
+					return errors.New("credential.entity.id is empty")
+				}
+
+				if cred.GetName() == nil {
+					return errors.New("credential.name is empty")
+				}
+
+				for _, r := range cred.GetRoles() {
+					if r.GetId() == nil {
+						return errors.New("credential.roles.id is empty")
+					}
+				}
+
+				return nil
+			},
+		},
+	)
+}
+
 func (self *MetathingsIdentitydService) CreateCredential(ctx context.Context, req *pb.CreateCredentialRequest) (*pb.CreateCredentialResponse, error) {
 	var err error
 
-	if err = req.Validate(); err != nil {
-		self.logger.WithError(err).Warningf("failed to validate request data")
-		return nil, status.Errorf(codes.InvalidArgument, err.Error())
-	}
+	cred := req.GetCredential()
 
 	id_str := id_helper.NewId()
-	if req.GetId() != nil && req.GetId().GetValue() != "" {
-		id_str = req.GetId().GetValue()
+	if cred.GetId() != nil {
+		id_str = cred.GetId().GetValue()
 	}
 
-	dom := req.GetDomain()
-	if dom.GetId() == nil || dom.GetId().GetValue() == "" {
-		err = errors.New("domain.id is empty")
-		self.logger.WithError(err).Warningf("failed to validate request data")
-		return nil, status.Errorf(codes.InvalidArgument, err.Error())
-	}
-	dom_id_str := dom.GetId().GetValue()
+	dom_id_str := cred.GetDomain().GetId().GetValue()
 
 	roles := []*storage.Role{}
-	for _, r := range req.GetRoles() {
-		if r.GetId() == nil || r.GetId().GetValue() == "" {
-			err = errors.New("role.id is empty")
-			self.logger.WithError(err).Warningf("failed to validate request data")
-			return nil, status.Errorf(codes.InvalidArgument, err.Error())
-		}
-
+	for _, r := range cred.GetRoles() {
 		roles = append(roles, &storage.Role{
 			Id: &r.Id.Value,
 		})
 	}
 
-	ent := req.GetEntity()
-	if ent.GetId() == nil || ent.GetId().GetValue() == "" {
-		err = errors.New("enity.id is empty")
-		self.logger.WithError(err).Warningf("failed to validate request data")
-		return nil, status.Errorf(codes.InvalidArgument, err.Error())
-	}
-	ent_id_str := ent.GetId().GetValue()
-
-	alias_str := req.Name.Value
-	if req.GetAlias() != nil {
-		alias_str = req.GetAlias().GetValue()
+	ent_id_str := cred.GetEntity().GetId().GetValue()
+	name_str := cred.GetName().GetValue()
+	alias_str := name_str
+	if cred.GetAlias() != nil {
+		alias_str = cred.GetAlias().GetValue()
 	}
 
 	srt_str := generate_secret()
-	if req.GetSecret() != nil {
-		srt_str = req.GetSecret().GetValue()
+	if cred.GetSecret() != nil {
+		srt_str = cred.GetSecret().GetValue()
 	}
 	srt_encode_str := passwd_helper.MustParsePassword(srt_str)
 
 	desc_str := ""
-	if req.GetDescription() != nil {
-		desc_str = req.GetDescription().GetValue()
+	if cred.GetDescription() != nil {
+		desc_str = cred.GetDescription().GetValue()
 	}
 
 	now := time.Now()
 	var expires time.Time
-	if req.GetExpiresAt() != nil {
-		expires = pb_helper.ToTime(*req.GetExpiresAt())
+	if cred.GetExpiresAt() != nil {
+		expires = pb_helper.ToTime(*cred.GetExpiresAt())
 	} else {
 		expires = now.Add(self.opt.TokenExpire)
 	}
 
-	cred := &storage.Credential{
+	cred_s := &storage.Credential{
 		Id:          &id_str,
 		DomainId:    &dom_id_str,
 		EntityId:    &ent_id_str,
-		Name:        &req.Name.Value,
+		Name:        &name_str,
 		Alias:       &alias_str,
 		Secret:      &srt_encode_str,
 		Description: &desc_str,
@@ -93,7 +109,7 @@ func (self *MetathingsIdentitydService) CreateCredential(ctx context.Context, re
 		Roles:       roles,
 	}
 
-	if cred, err = self.storage.CreateCredential(cred); err != nil {
+	if cred_s, err = self.storage.CreateCredential(cred_s); err != nil {
 		self.logger.WithError(err).Errorf("failed to create credential in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
@@ -101,10 +117,10 @@ func (self *MetathingsIdentitydService) CreateCredential(ctx context.Context, re
 	//return no encode secret string
 	//storage save the encode secret string
 	//should remember secret on response, you will nerver get no encode secret string in future
-	cred.Secret = &srt_str
+	cred_s.Secret = &srt_str
 
 	res := &pb.CreateCredentialResponse{
-		Credential: copy_credential(cred),
+		Credential: copy_credential(cred_s),
 	}
 
 	self.logger.WithField("id", id_str).Infof("create credential")

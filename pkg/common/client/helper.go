@@ -11,6 +11,7 @@ import (
 	camerad_pb "github.com/nayotta/metathings/pkg/proto/camerad"
 	agent_pb "github.com/nayotta/metathings/pkg/proto/core_agent"
 	cored_pb "github.com/nayotta/metathings/pkg/proto/cored"
+	deviced_pb "github.com/nayotta/metathings/pkg/proto/deviced"
 	echo_pb "github.com/nayotta/metathings/pkg/proto/echo"
 	identityd_pb "github.com/nayotta/metathings/pkg/proto/identityd"
 	identityd2_pb "github.com/nayotta/metathings/pkg/proto/identityd2"
@@ -31,6 +32,7 @@ const (
 	IDENTITYD2_CONFIG
 	IDENTITYD_CONFIG
 	CORED_CONFIG
+	DEVICED_CONFIG
 	CAMERAD_CONFIG
 	SENSORD_CONFIG
 	AGENT_CONFIG
@@ -237,6 +239,15 @@ func (f *ClientFactory) NewIdentityd2ServiceClient(opts ...grpc.DialOption) (ide
 	}
 
 	return identityd2_pb.NewIdentitydServiceClient(conn), func() { conn.Close() }, nil
+}
+
+func (f *ClientFactory) NewDevicedServiceClient(opts ...grpc.DialOption) (deviced_pb.DevicedServiceClient, CloseFn, error) {
+	conn, err := f.NewConnection(DEVICED_CONFIG, opts...)
+	if err != nil {
+		return nil, nil, nil
+	}
+
+	return deviced_pb.NewDevicedServiceClient(conn), func() { conn.Close() }, nil
 }
 
 func NewClientFactory(configs ServiceConfigs, optFn DialOptionFn) (*ClientFactory, error) {
