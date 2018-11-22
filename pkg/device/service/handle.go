@@ -38,12 +38,12 @@ func (self *MetathingsDeviceServiceImpl) handle_user_unary_request(req *deviced_
 	req_val := req.GetUnaryCall()
 	logger := self.logger.WithFields(log.Fields{
 		"#session":   req.GetSessionId(),
-		"#component": req_val.GetComponentName(),
-		"#module":    req_val.GetModuleName(),
-		"#method":    req_val.GetMethodName(),
+		"#component": req_val.GetComponent(),
+		"#name":      req_val.GetName(),
+		"#method":    req_val.GetMethod(),
 	})
 
-	mdl, err := self.mdl_db.Lookup(req_val.GetComponentName().GetValue(), req_val.GetModuleName().GetValue())
+	mdl, err := self.mdl_db.Lookup(req_val.GetComponent().GetValue(), req_val.GetName().GetValue())
 	if err != nil {
 		logger.WithError(err).Debugf("failed to lookup module in database")
 		return err

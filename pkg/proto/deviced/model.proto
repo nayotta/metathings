@@ -34,8 +34,9 @@ message Module {
 	ai.metathings.constant.state.ModuleState state = 2;
 	string device_id = 3;
 	string endpoint = 4;
-	string name = 5;
-	string alias = 6;
+	string component = 5;
+	string name = 6;
+	string alias = 7;
 }
 
 message OpModule {
@@ -43,8 +44,9 @@ message OpModule {
 	ai.metathings.constant.state.ModuleState state = 2;
 	google.protobuf.StringValue device_id = 3;
 	google.protobuf.StringValue endpoint = 4;
-	google.protobuf.StringValue name = 5;
-	google.protobuf.StringValue alias = 6;
+	google.protobuf.StringValue component = 5;
+	google.protobuf.StringValue name = 6;
+	google.protobuf.StringValue alias = 7;
 }
 
 message ErrorValue {
@@ -55,16 +57,16 @@ message ErrorValue {
 }
 
 message OpUnaryCallValue {
-	google.protobuf.StringValue module_name = 1;
-	google.protobuf.StringValue component_name = 2;
-	google.protobuf.StringValue method_name = 3;
+	google.protobuf.StringValue name = 1;
+	google.protobuf.StringValue component = 2;
+	google.protobuf.StringValue method = 3;
 	google.protobuf.Any value = 4;
 }
 
 message UnaryCallValue {
-	string module_name = 1;
-	string component_name = 2;
-	string method_name = 3;
+	string name = 1;
+	string component = 2;
+	string method = 3;
 	google.protobuf.Any value = 4;
 }
 
@@ -83,15 +85,15 @@ message StreamCallValue {
 }
 
 message OpStreamCallConfig {
-	google.protobuf.StringValue module_name = 1;
-	google.protobuf.StringValue component_name = 2;
-	google.protobuf.StringValue method_name = 3;
+	google.protobuf.StringValue name = 1;
+	google.protobuf.StringValue component = 2;
+	google.protobuf.StringValue method = 3;
 }
 
 message StreamCallConfig {
-	string module_name = 1;
-	string component_name = 2;
-	string method_name = 3;
+	string name = 1;
+	string component = 2;
+	string method = 3;
 }
 
 message OpStreamCallData {

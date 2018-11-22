@@ -72,6 +72,11 @@ func (this *OpModule) Validate() error {
 			return github_com_mwitkow_go_proto_validators.FieldError("Endpoint", err)
 		}
 	}
+	if this.Component != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Component); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Component", err)
+		}
+	}
 	if this.Name != nil {
 		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Name); err != nil {
 			return github_com_mwitkow_go_proto_validators.FieldError("Name", err)
@@ -88,19 +93,19 @@ func (this *ErrorValue) Validate() error {
 	return nil
 }
 func (this *OpUnaryCallValue) Validate() error {
-	if this.ModuleName != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.ModuleName); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("ModuleName", err)
+	if this.Name != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Name); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Name", err)
 		}
 	}
-	if this.ComponentName != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.ComponentName); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("ComponentName", err)
+	if this.Component != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Component); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Component", err)
 		}
 	}
-	if this.MethodName != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.MethodName); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("MethodName", err)
+	if this.Method != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Method); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Method", err)
 		}
 	}
 	if this.Value != nil {
@@ -153,19 +158,19 @@ func (this *StreamCallValue) Validate() error {
 	return nil
 }
 func (this *OpStreamCallConfig) Validate() error {
-	if this.ModuleName != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.ModuleName); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("ModuleName", err)
+	if this.Name != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Name); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Name", err)
 		}
 	}
-	if this.ComponentName != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.ComponentName); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("ComponentName", err)
+	if this.Component != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Component); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Component", err)
 		}
 	}
-	if this.MethodName != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.MethodName); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("MethodName", err)
+	if this.Method != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Method); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Method", err)
 		}
 	}
 	return nil
