@@ -13,6 +13,16 @@ import "list_devices.proto";
 import "show_device.proto";
 import "unary_call.proto";
 import "stream_call.proto";
+import "gpio_digital_write.proto";
+import "gpio_digital_read.proto";
+import "gpio_analog_write.proto";
+import "gpio_analog_read.proto";
+//import "pwm_write.proto";
+//import "pwm_read.proto";
+import "i2c_write.proto";
+import "i2c_read.proto";
+//import "seraial_write.proto";
+//import "serial_read.proto";
 
 service MqttdService {
     rpc CreateDevice (CreateDeviceRequest) returns (CreateDeviceResponse) {}
@@ -22,6 +32,22 @@ service MqttdService {
     rpc ListDevices(ListDevicesRequest) returns (ListDevicesResponse) {}
 
     rpc ShowDevice(google.protobuf.Empty) returns (ShowDeviceResponse) {}
+
+    rpc GpioDigitalWrite(GpioDigitalWriteRequest) returns (GpioDigitalWriteResponse) {}
+    rpc GpioDigitalRead(GpioDigitalReadRequest) returns (GpioDigitalReadResponse) {}
+    rpc GpioAnalogWrite(GpioAnalogWriteRequest) returns (GpioAnalogWriteResponse) {}
+    rpc GpioAnalogRead (GpioAnalogReadRequest) returns (GpioAnalogReadResponse) {}
+
+    // TODO(zh)
+    //rpc PwmWrite(PwmWriteRequest) returns (PwmWriteResponse) {}
+    //rpc PwmRead(PwmReadRequest) returns (PwmReadResponse) {}
+
+    rpc I2cWrite(I2cWriteRequest) returns (I2cWriteResponse) {}
+    rpc I2cread(I2cReadRequest) returns (I2cReadResponse) {}
+
+    // TODO(zh)
+    //rpc SerialWrite(SerialWriteRequest) returns (SerialWriteResponse) {}
+    //rpc SerialRead(SerialReadRequest) returns (SerialReadResponse) {}
 
     rpc UnaryCall(UnaryCallRequest) returns (UnaryCallResponse) {}
     rpc StreamCall(stream StreamCallRequest) returns (stream StreamCallResponse) {}

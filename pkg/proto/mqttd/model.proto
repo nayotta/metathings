@@ -53,3 +53,26 @@ message OpStreamCallValue {
     google.protobuf.StringValue method_name = 2;
     google.protobuf.Any Value = 3;
 }
+
+message GpioValue {
+    int32  pin = 1;
+    int32  value = 2;
+}
+
+message OpGpioValue {
+    google.protobuf.Int32Value pin = 1;
+}
+
+message I2cValue {
+    int32 bus= 1;
+    int32 addr = 2;
+    int32 index = 3;
+    int32 angle = 4;
+}
+
+message OpI2cValue {
+    google.protobuf.Int32Value bus= 1;
+    google.protobuf.Int32Value addr = 2;
+    google.protobuf.Int32Value index = 3;
+    google.protobuf.Int32Value angle = 4;
+}

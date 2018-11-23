@@ -93,3 +93,40 @@ func (this *OpStreamCallValue) Validate() error {
 	}
 	return nil
 }
+func (this *GpioValue) Validate() error {
+	return nil
+}
+func (this *OpGpioValue) Validate() error {
+	if this.Pin != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Pin); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Pin", err)
+		}
+	}
+	return nil
+}
+func (this *I2CValue) Validate() error {
+	return nil
+}
+func (this *OpI2CValue) Validate() error {
+	if this.Bus != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Bus); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Bus", err)
+		}
+	}
+	if this.Addr != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Addr); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Addr", err)
+		}
+	}
+	if this.Index != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Index); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Index", err)
+		}
+	}
+	if this.Angle != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Angle); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Angle", err)
+		}
+	}
+	return nil
+}
