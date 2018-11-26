@@ -12,7 +12,7 @@ import "get_device.proto";
 import "list_devices.proto";
 import "show_device.proto";
 import "unary_call.proto";
-//import "stream_call.proto";
+import "stream_call.proto";
 import "heartbeat.proto";
 import "gpio_digital_write.proto";
 //import "gpio_digital_read.proto";
@@ -54,7 +54,7 @@ service MqttdService {
     //rpc SerialRead(SerialReadRequest) returns (SerialReadResponse) {}
 
     rpc UnaryCall(UnaryCallRequest) returns (UnaryCallResponse) {}
-    //rpc StreamCall(stream StreamCallRequest) returns (stream StreamCallResponse) {}
+    rpc StreamCall(stream StreamCallRequest) returns (stream StreamCallResponse) {}
 
     //rpc Stream(stream StreamRequests) returns (stream StreamResponse) {}
 }

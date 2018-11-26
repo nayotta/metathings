@@ -18,7 +18,7 @@ import (
 // TODO(zh) heart beat make a lot connect, need reduce
 func (serv *MetathingsMqttdService) Hearbeat(ctx context.Context, req *pb.HeartbeatRequest) (*empty.Empty, error) {
 	entID := req.GetEntityId().GetValue()
-	ctx = context_helper.WithToken(ctx, serv.app_cred_mgr.GetToken())
+	ctx = context_helper.WithToken(ctx, serv.appCredMgr.GetToken())
 	cli, closeFn, err := serv.cliFty.NewCoredServiceClient()
 	if err != nil {
 		serv.logger.WithError(err).Errorf("failed to new core service client")
@@ -34,12 +34,13 @@ func (serv *MetathingsMqttdService) Hearbeat(ctx context.Context, req *pb.Heartb
 	})
 
 	r := &cored_pb.HeartbeatRequest{
-		Session:  &gpb.UInt64Value{Value: serv.heartbeat_session},
+		Session:  &gpb.UInt64Value{Value: serv.heartbeatSession},
 		Entities: ents,
 	}
 
 	_, err = cli.Heartbeat(ctx, r)
 	if err != nil {
+		serv.logger.WithError(err).Errorf("heart beat failed")
 		return &empty.Empty{}, err
 	}
 
