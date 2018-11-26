@@ -60,12 +60,6 @@ import:
   subpackages:
   - drivers/gpio
   - platforms/raspi
-- package: golang.org/x/crypto
-  subpackages:
-  - bcrypt
-- package: golang.org/x/net
-  subpackages:
-  - context
 - package: google.golang.org/grpc
   version: ~1.16.0
   subpackages:
