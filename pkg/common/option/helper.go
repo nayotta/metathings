@@ -1,6 +1,9 @@
 package option_helper
 
-import "fmt"
+import (
+	"errors"
+	"fmt"
+)
 
 type Option interface {
 	Set(string, interface{})
@@ -171,4 +174,34 @@ func Copy(x Option) Option {
 		o.Set(k, x.Get(k))
 	}
 	return o
+}
+
+var (
+	ErrInvalidArguments = errors.New("invalid arguments")
+)
+
+func Setopt(conds map[string]func(key string, val interface{}) error) func(...interface{}) error {
+	return func(args ...interface{}) error {
+		if len(args)%2 != 0 {
+			return ErrInvalidArguments
+		}
+
+		for i := 0; i < len(args); i += 2 {
+			key, ok := args[i].(string)
+			if !ok {
+				return ErrInvalidArguments
+			}
+			val := args[i+1]
+
+			cond, ok := conds[key]
+			if !ok {
+				return ErrInvalidArguments
+			}
+			if err := cond(key, val); err != nil {
+				return err
+			}
+		}
+
+		return nil
+	}
 }

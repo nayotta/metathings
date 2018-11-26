@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package ai.metathings.component;
+option go_package = "component";
+
+import "unary_call.proto";
+import "stream_call.proto";
+
+service ModuleService {
+	rpc UnaryCall(UnaryCallRequest) returns (UnaryCallResponse) {}
+	rpc StreamCall(stream StreamCallRequest) returns (stream StreamCallResponse) {}
+}

@@ -9,6 +9,7 @@ import (
 	constant_helper "github.com/nayotta/metathings/pkg/common/constant"
 	camera_pb "github.com/nayotta/metathings/pkg/proto/camera"
 	camerad_pb "github.com/nayotta/metathings/pkg/proto/camerad"
+	component_pb "github.com/nayotta/metathings/pkg/proto/component"
 	agent_pb "github.com/nayotta/metathings/pkg/proto/core_agent"
 	cored_pb "github.com/nayotta/metathings/pkg/proto/cored"
 	deviced_pb "github.com/nayotta/metathings/pkg/proto/deviced"
@@ -43,6 +44,7 @@ const (
 	SERVO_CONFIG
 	SENSOR_CONFIG
 	STREAMD_CONFIG
+	MODULE_CONFIG
 	OVERFLOW_CONFIG
 )
 
@@ -244,10 +246,19 @@ func (f *ClientFactory) NewIdentityd2ServiceClient(opts ...grpc.DialOption) (ide
 func (f *ClientFactory) NewDevicedServiceClient(opts ...grpc.DialOption) (deviced_pb.DevicedServiceClient, CloseFn, error) {
 	conn, err := f.NewConnection(DEVICED_CONFIG, opts...)
 	if err != nil {
-		return nil, nil, nil
+		return nil, nil, err
 	}
 
 	return deviced_pb.NewDevicedServiceClient(conn), func() { conn.Close() }, nil
+}
+
+func (f *ClientFactory) NewModuleSerivceClient(opts ...grpc.DialOption) (component_pb.ModuleServiceClient, CloseFn, error) {
+	conn, err := f.NewConnection(MODULE_CONFIG, opts...)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return component_pb.NewModuleServiceClient(conn), func() { conn.Close() }, nil
 }
 
 func NewClientFactory(configs ServiceConfigs, optFn DialOptionFn) (*ClientFactory, error) {
