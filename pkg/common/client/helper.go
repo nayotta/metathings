@@ -65,6 +65,7 @@ var (
 		"servo",
 		"sensor",
 		"streamd",
+		"module",
 		"overflow",
 	}
 )

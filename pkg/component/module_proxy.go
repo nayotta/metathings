@@ -37,9 +37,9 @@ func NewModuleProxy(name string, args ...interface{}) (ModuleProxy, error) {
 }
 
 func register_module_proxy_factory(name string, fty ModuleProxyFactory) {
-	module_proxy_factories[name] = fty
-}
+	if module_proxy_factories == nil {
+		module_proxy_factories = make(map[string]ModuleProxyFactory)
+	}
 
-func init() {
-	module_proxy_factories = make(map[string]ModuleProxyFactory)
+	module_proxy_factories[name] = fty
 }
