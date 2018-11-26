@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"strings"
 
-	"google.golang.org/grpc"
-
 	constant_helper "github.com/nayotta/metathings/pkg/common/constant"
 	camera_pb "github.com/nayotta/metathings/pkg/proto/camera"
 	camerad_pb "github.com/nayotta/metathings/pkg/proto/camerad"
@@ -17,12 +15,14 @@ import (
 	identityd_pb "github.com/nayotta/metathings/pkg/proto/identityd"
 	identityd2_pb "github.com/nayotta/metathings/pkg/proto/identityd2"
 	motor_pb "github.com/nayotta/metathings/pkg/proto/motor"
+	mqttd_pb "github.com/nayotta/metathings/pkg/proto/mqttd"
 	policyd_pb "github.com/nayotta/metathings/pkg/proto/policyd"
 	sensor_pb "github.com/nayotta/metathings/pkg/proto/sensor"
 	sensord_pb "github.com/nayotta/metathings/pkg/proto/sensord"
 	servo_pb "github.com/nayotta/metathings/pkg/proto/servo"
 	streamd_pb "github.com/nayotta/metathings/pkg/proto/streamd"
 	switcher_pb "github.com/nayotta/metathings/pkg/proto/switcher"
+	"google.golang.org/grpc"
 )
 
 type ClientType int32
@@ -45,6 +45,7 @@ const (
 	SENSOR_CONFIG
 	STREAMD_CONFIG
 	MODULE_CONFIG
+	MQTTD_CONFIG
 	OVERFLOW_CONFIG
 )
 
@@ -261,6 +262,14 @@ func (f *ClientFactory) NewModuleSerivceClient(opts ...grpc.DialOption) (compone
 	return component_pb.NewModuleServiceClient(conn), func() { conn.Close() }, nil
 }
 
+func (f *ClientFactory) NewMqttdServiceClient(opts ...grpc.DialOption) (mqttd_pb.MqttdServiceClient, CloseFn, error) {
+	conn, err := f.NewConnection(MQTTD_CONFIG, opts...)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return mqttd_pb.NewMqttdServiceClient(conn), func() { conn.Close() }, nil
+}
 func NewClientFactory(configs ServiceConfigs, optFn DialOptionFn) (*ClientFactory, error) {
 	if _, ok := configs[DEFAULT_CONFIG]; !ok {
 		return nil, ErrMissingDefaultConfig

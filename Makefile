@@ -16,6 +16,7 @@ all: \
 	servo_plugins \
 	sensor_drivers \
 	sensor_plugins \
+	mqttd_plugins\
 	metathings_bin \
 	metathingsd_bin
 
@@ -31,6 +32,7 @@ build_agent: \
 	servo_plugins \
 	sensor_drivers \
 	sensor_plugins \
+	mqttd_plugins\
 	metathings_bin
 
 clean:
@@ -80,6 +82,9 @@ sensor_drivers:
 
 sensor_plugins:
 	$(MAKE) -C pkg/sensor/plugin all
+
+mqttd_plugins:
+    $(MAKE) -C pkg/mqttd/plugin all
 
 build_docker_images:
 	./script/metathings_build.sh
