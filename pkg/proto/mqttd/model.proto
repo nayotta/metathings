@@ -60,7 +60,9 @@ message GpioValue {
 }
 
 message OpGpioValue {
-    google.protobuf.Int32Value pin = 1;
+    google.protobuf.StringValue device_id = 1;
+    google.protobuf.Int32Value pin = 2;
+    google.protobuf.Int32Value value = 3;
 }
 
 message I2cValue {
@@ -71,8 +73,9 @@ message I2cValue {
 }
 
 message OpI2cValue {
-    google.protobuf.Int32Value bus= 1;
-    google.protobuf.Int32Value addr = 2;
-    google.protobuf.Int32Value index = 3;
-    google.protobuf.Int32Value angle = 4;
+    google.protobuf.StringValue device_id = 1;
+    google.protobuf.Int32Value bus= 2;
+    google.protobuf.Int32Value addr = 3;
+    google.protobuf.Int32Value index = 4;
+    google.protobuf.Int32Value angle = 5;
 }

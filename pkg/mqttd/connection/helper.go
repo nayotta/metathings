@@ -1,6 +1,7 @@
 package metathingsmqttdconnection
 
 import (
+	"fmt"
 	"math/rand"
 	"strings"
 )
@@ -25,4 +26,9 @@ func getTopicType(topic string) string {
 	}
 
 	return ""
+}
+
+// EncodeDownPath EncodeDownPath
+func EncodeDownPath(deviceID string, msgType string) string {
+	return fmt.Sprintf("%s/down/%s", deviceID, msgType)
 }

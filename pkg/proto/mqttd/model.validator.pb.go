@@ -97,9 +97,19 @@ func (this *GpioValue) Validate() error {
 	return nil
 }
 func (this *OpGpioValue) Validate() error {
+	if this.DeviceId != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.DeviceId); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("DeviceId", err)
+		}
+	}
 	if this.Pin != nil {
 		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Pin); err != nil {
 			return github_com_mwitkow_go_proto_validators.FieldError("Pin", err)
+		}
+	}
+	if this.Value != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Value); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Value", err)
 		}
 	}
 	return nil
@@ -108,6 +118,11 @@ func (this *I2CValue) Validate() error {
 	return nil
 }
 func (this *OpI2CValue) Validate() error {
+	if this.DeviceId != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.DeviceId); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("DeviceId", err)
+		}
+	}
 	if this.Bus != nil {
 		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Bus); err != nil {
 			return github_com_mwitkow_go_proto_validators.FieldError("Bus", err)

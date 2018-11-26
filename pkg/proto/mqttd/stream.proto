@@ -1,0 +1,73 @@
+syntax = "proto3";
+
+package ai.metathings.service.mqttd;
+
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/timestamp.proto";
+
+import "github.com/mwitkow/go-proto-validators/validator.proto";
+
+import "model.proto";
+
+message StreamPingRequest {
+	google.protobuf.Timestamp timestamp = 1 [(validator.field) = {msg_exists: true}];
+}
+
+message StreamPingResponse {
+	google.protobuf.Timestamp timestamp = 1;
+}
+
+message StreamGpioDigitalWriteRequest {
+    google.protobuf.Int32Value pin = 1 [(validator.field) = {msg_exists: true}];
+    google.protobuf.Int32Value value = 2 [(validator.field) = {msg_exists: true}];
+}
+
+message StreamGpioDigitalReadRequest {
+	google.protobuf.Int32Value pin = 1 [(validator.field) = {msg_exists: true}];
+}
+
+message StreamGpioAnalogWriteRequest {
+    google.protobuf.Int32Value pin = 1 [(validator.field) = {msg_exists: true}];
+    google.protobuf.Int32Value value = 2 [(validator.field) = {msg_exists: true}];
+}
+
+message StreamGpioAnalogReadRequest {
+    google.protobuf.Int32Value pin = 1 [(validator.field) = {msg_exists: true}];
+}
+
+message StreamI2cWriteRequest {
+    google.protobuf.Int32Value bus= 1 [(validator.field) = {msg_exists: true}];
+    google.protobuf.Int32Value addr = 2 [(validator.field) = {msg_exists: true}];
+    google.protobuf.Int32Value index = 3 [(validator.field) = {msg_exists: true}];
+    google.protobuf.Int32Value angle = 4 [(validator.field) = {msg_exists: true}];
+}
+
+message StreamI2cReadRequest {
+    google.protobuf.Int32Value bus= 1 [(validator.field) = {msg_exists: true}];
+    google.protobuf.Int32Value addr = 2 [(validator.field) = {msg_exists: true}];
+    google.protobuf.Int32Value index = 3 [(validator.field) = {msg_exists: true}];
+}
+
+message StreamRequest {
+	google.protobuf.UInt64Value session = 1 [(validator.field) = {msg_exists: true}];
+	oneof payload {
+		StreamPingRequest ping = 2;
+		StreamGpioDigitalWriteRequest gpio_digital_write = 3;
+        StreamGpioDigitalReadRequest gpio_digital_read = 4;
+        StreamGpioAnalogWriteRequest gpio_analog_write = 5;
+        StreamGpioAnalogReadRequest  gpio_analog_read = 6;
+        StreamI2cWriteRequest i2c_write = 7;
+        StreamI2cReadRequest i2c_read = 8;
+	}
+}
+
+message StreamRequests {
+	repeated StreamRequest requests = 1;
+}
+
+message StreamResponse {
+	uint64 session = 1;
+	oneof payload {
+		StreamPingResponse ping = 2;
+	}
+}

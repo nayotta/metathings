@@ -3,13 +3,13 @@ package metathingsmqttdservice
 import (
 	"context"
 
-	"github.com/golang/protobuf/ptypes/empty"
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
 	context_helper "github.com/nayotta/metathings/pkg/common/context"
 	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
 	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
 	token_helper "github.com/nayotta/metathings/pkg/common/token"
 	identityd_policy "github.com/nayotta/metathings/pkg/identityd2/policy"
+	connection "github.com/nayotta/metathings/pkg/mqttd/connection"
 	storage "github.com/nayotta/metathings/pkg/mqttd/storage"
 	identityd_pb "github.com/nayotta/metathings/pkg/proto/identityd2"
 	pb "github.com/nayotta/metathings/pkg/proto/mqttd"
@@ -33,6 +33,7 @@ type MetathingsMqttdService struct {
 	storage  storage.Storage
 	enforcer identityd_policy.Enforcer
 	vdr      token_helper.TokenValidator
+	cc       connection.MqttBridge
 }
 
 func (sev *MetathingsMqttdService) getDeviceByContext(ctx context.Context) (*storage.Device, error) {
@@ -143,6 +144,7 @@ func NewMetathingsMqttdService(
 	vdr token_helper.TokenValidator,
 	tknr token_helper.Tokener,
 	cliFty *client_helper.ClientFactory,
+	cc connection.MqttBridge,
 ) (pb.MqttdServiceServer, error) {
 	return &MetathingsMqttdService{
 		opt:      opt,
@@ -152,5 +154,6 @@ func NewMetathingsMqttdService(
 		vdr:      vdr,
 		tknr:     tknr,
 		cliFty:   cliFty,
+		cc:       cc,
 	}, nil
 }

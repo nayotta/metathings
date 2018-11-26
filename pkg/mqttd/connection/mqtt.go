@@ -59,13 +59,13 @@ func (that *MqttBridgeOpt) keygenCallback(_ emitter.Emitter, msg emitter.KeyGenR
 	if msg.Status == 200 {
 		topicStr := msg.Channel
 		switch topicStr {
-		case "+/up/":
+		case "+/up/#/":
 			that.upKey = msg.Key
 			fmt.Println("upKey res:", msg.Key)
-		case "+/status/":
+		case "+/status/#/":
 			that.statusKey = msg.Key
 			fmt.Println("statusKey res:", msg.Key)
-		case "+/down/":
+		case "+/down/#/":
 			that.downKey = msg.Key
 			fmt.Println("downKey res:", msg.Key)
 		default:
@@ -75,8 +75,8 @@ func (that *MqttBridgeOpt) keygenCallback(_ emitter.Emitter, msg emitter.KeyGenR
 }
 
 // Pub Publish
-func (that *MqttBridgeOpt) Pub(msg string, path string) error {
-	if msg == "" {
+func (that *MqttBridgeOpt) Pub(msg []byte, path string) error {
+	if msg == nil {
 		return ErrMqttMsgBlank
 	}
 
@@ -117,7 +117,7 @@ func (that *MqttBridgeOpt) createSecretKey(path string) error {
 
 //createUpKey
 func (that *MqttBridgeOpt) createUpKey() error {
-	err := that.createSecretKey("+/up/")
+	err := that.createSecretKey("+/up/#/")
 	if err != nil {
 		return err
 	}
@@ -135,7 +135,7 @@ func (that *MqttBridgeOpt) createUpKey() error {
 
 //createDownKey
 func (that *MqttBridgeOpt) createDownKey() error {
-	err := that.createSecretKey("+/down/")
+	err := that.createSecretKey("+/down/#/")
 	if err != nil {
 		return err
 	}
@@ -153,7 +153,7 @@ func (that *MqttBridgeOpt) createDownKey() error {
 
 //createStatusKey
 func (that *MqttBridgeOpt) createStatusKey() error {
-	err := that.createSecretKey("+/status/")
+	err := that.createSecretKey("+/status/#/")
 	if err != nil {
 		return err
 	}

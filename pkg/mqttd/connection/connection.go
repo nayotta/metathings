@@ -17,7 +17,13 @@ type connection struct {
 
 // MqttBridge MqttBridge interface
 type MqttBridge interface {
-	Pub(msg string, path string) error
+	Pub(msg []byte, path string) error
 	InitMqttBridge() error
 	CloseBridge()
 }
+
+// GpioType GpioType
+var GpioType = "gpio"
+
+// I2cType I2cType
+var I2cType = "i2c"

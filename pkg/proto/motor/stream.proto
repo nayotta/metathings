@@ -35,7 +35,7 @@ message StreamSetSpeedRequest {
 message StreamRequest {
 	google.protobuf.UInt64Value session = 1 [(validator.field) = {msg_exists: true}];
 	oneof payload {
-	        StreamPingRequest ping = 2;
+	    StreamPingRequest ping = 2;
 		StreamSetStateRequest set_state = 3;
 		StreamSetDirectionRequest set_direction = 4;
 		StreamSetSpeedRequest set_speed = 5;

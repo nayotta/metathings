@@ -23,6 +23,7 @@ import "i2c_write.proto";
 import "i2c_read.proto";
 //import "seraial_write.proto";
 //import "serial_read.proto";
+import "stream.proto";
 
 service MqttdService {
     rpc CreateDevice (CreateDeviceRequest) returns (CreateDeviceResponse) {}
@@ -51,4 +52,6 @@ service MqttdService {
 
     rpc UnaryCall(UnaryCallRequest) returns (UnaryCallResponse) {}
     rpc StreamCall(stream StreamCallRequest) returns (stream StreamCallResponse) {}
+
+    rpc Stream(stream StreamRequests) returns (stream StreamResponse) {}
 }
