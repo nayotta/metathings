@@ -26,41 +26,32 @@ const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 func init() { proto.RegisterFile("service.proto", fileDescriptor_a0b84a42fa06f626) }
 
 var fileDescriptor_a0b84a42fa06f626 = []byte{
-	// 541 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x95, 0xdf, 0x6a, 0xdb, 0x30,
-	0x14, 0xc6, 0xdb, 0x8b, 0xb5, 0x9b, 0x9a, 0xfe, 0x99, 0x0a, 0xdd, 0x70, 0xef, 0x7a, 0x35, 0x58,
-	0xeb, 0x64, 0x4e, 0xf7, 0x00, 0x5b, 0x33, 0x4a, 0x61, 0x83, 0xd1, 0x30, 0x0a, 0xbd, 0x09, 0xaa,
-	0x7d, 0x6a, 0x0b, 0x94, 0xc8, 0x95, 0x94, 0x85, 0x32, 0x18, 0xec, 0x91, 0xf6, 0x86, 0xc3, 0x92,
-	0xa5, 0xc8, 0x86, 0xd9, 0xca, 0x65, 0xce, 0xf9, 0x7d, 0xe7, 0xd3, 0x39, 0x52, 0x8e, 0xd1, 0xbe,
-	0x04, 0xf1, 0x93, 0xa6, 0x10, 0x97, 0x82, 0x2b, 0x8e, 0x4f, 0x09, 0x8d, 0xe7, 0xa0, 0x88, 0x2a,
-	0xe8, 0x22, 0x97, 0xb1, 0x4d, 0xce, 0x9f, 0x94, 0xca, 0xa2, 0xd3, 0x9c, 0xf3, 0x9c, 0xc1, 0x50,
-	0xa3, 0x0f, 0xcb, 0xc7, 0x21, 0xcc, 0x4b, 0xf5, 0x6c, 0x94, 0xd1, 0x71, 0x2a, 0x80, 0x28, 0x98,
-	0x65, 0xb0, 0x2e, 0x17, 0x1d, 0x67, 0xc0, 0xa0, 0x1d, 0xc4, 0x25, 0x51, 0x69, 0xd1, 0x8c, 0x1d,
-	0xe5, 0xa0, 0x5a, 0x14, 0xa3, 0xd2, 0x86, 0x64, 0x1d, 0x7b, 0x2d, 0x0b, 0xbe, 0x6a, 0x09, 0x97,
-	0x0b, 0x22, 0x9e, 0x67, 0x29, 0x61, 0xcc, 0x41, 0x4a, 0x00, 0x99, 0xfb, 0xa1, 0xb7, 0x79, 0x49,
-	0xf9, 0x2c, 0xa3, 0x39, 0x55, 0x84, 0xcd, 0x56, 0x82, 0x2a, 0x2b, 0x7f, 0xd3, 0xc8, 0x08, 0x20,
-	0x59, 0x23, 0x41, 0x16, 0x84, 0xf1, 0xbc, 0xa1, 0x38, 0xf1, 0x13, 0x9e, 0xe0, 0x90, 0x26, 0x69,
-	0x03, 0x3c, 0xa8, 0x02, 0x1e, 0x30, 0x30, 0xe7, 0x32, 0xbf, 0x92, 0xbf, 0xfb, 0x68, 0xf0, 0xad,
-	0x9a, 0xea, 0xd4, 0x8c, 0x18, 0x2f, 0xd1, 0xe0, 0x4a, 0x4f, 0x70, 0xa2, 0xdb, 0xc3, 0xa3, 0xb8,
-	0xe3, 0x2a, 0x62, 0x1f, 0xbd, 0x85, 0xa7, 0x25, 0x48, 0x15, 0x7d, 0xd8, 0x40, 0x21, 0x4b, 0xbe,
-	0x90, 0x70, 0xb6, 0x85, 0xef, 0xd1, 0x60, 0xa2, 0xef, 0x28, 0xc8, 0xd6, 0x47, 0xad, 0xed, 0x49,
-	0x6c, 0x9e, 0x45, 0x6c, 0x9f, 0x45, 0xfc, 0xa5, 0x7a, 0x16, 0x67, 0x5b, 0x58, 0xa0, 0xbd, 0xef,
-	0xd5, 0x55, 0xd7, 0xa5, 0x87, 0x9d, 0xa5, 0x3d, 0xd2, 0x56, 0x1e, 0x85, 0x0b, 0x5c, 0x3f, 0x0c,
-	0xbd, 0xba, 0x06, 0x55, 0x3b, 0x5e, 0x74, 0x16, 0x70, 0x9c, 0xf5, 0x8b, 0x43, 0x71, 0xe7, 0x26,
-	0xd0, 0xde, 0x57, 0x2a, 0xeb, 0xb8, 0xec, 0xe9, 0xd0, 0x23, 0xc3, 0x3a, 0x6c, 0x08, 0x9c, 0xe7,
-	0x1d, 0x42, 0xd3, 0x82, 0xaf, 0xea, 0x16, 0xff, 0x33, 0xfd, 0xa8, 0xfb, 0x28, 0xeb, 0x02, 0x5e,
-	0xe1, 0x3f, 0xdb, 0xe8, 0xe8, 0xba, 0xa4, 0x7c, 0x62, 0xfe, 0x0d, 0x77, 0xd5, 0x5b, 0xc6, 0x97,
-	0xdd, 0x33, 0x69, 0xe1, 0xb6, 0xaf, 0x8f, 0x1b, 0xaa, 0xdc, 0x19, 0x7e, 0xa3, 0x43, 0x2f, 0x7b,
-	0x0b, 0x24, 0xc3, 0xe3, 0xd0, 0x5a, 0x15, 0x6d, 0x0f, 0x70, 0xb9, 0x99, 0xa8, 0xed, 0xff, 0x49,
-	0xff, 0xbd, 0xcd, 0x04, 0xfa, 0xfd, 0x3d, 0x3a, 0xdc, 0xbf, 0x21, 0x72, 0xfe, 0xbf, 0xd0, 0xc1,
-	0x3a, 0xa9, 0xdb, 0x4f, 0x02, 0x2b, 0xf9, 0xdd, 0x8f, 0x37, 0xd2, 0x38, 0x73, 0x8a, 0x5e, 0xde,
-	0x24, 0xa9, 0xe9, 0xfa, 0xbc, 0xb3, 0x84, 0xc5, 0xac, 0xe1, 0x45, 0x20, 0xed, 0xac, 0x1e, 0xd1,
-	0xee, 0x4d, 0x52, 0x7d, 0x31, 0x32, 0xfc, 0xbe, 0x4f, 0xeb, 0x77, 0x76, 0x1e, 0x06, 0xfb, 0xeb,
-	0xe0, 0x47, 0xf5, 0x81, 0xb8, 0x22, 0x8c, 0xf5, 0xac, 0x03, 0xc7, 0x85, 0xad, 0x03, 0x0f, 0x77,
-	0x6e, 0x12, 0xa1, 0xa9, 0x5e, 0xf2, 0xda, 0xae, 0x5b, 0xbf, 0x06, 0xad, 0xdf, 0x30, 0x98, 0xb7,
-	0x86, 0xef, 0xb6, 0x47, 0xdb, 0xb8, 0x40, 0x3b, 0x26, 0xd7, 0x33, 0x49, 0x03, 0xd5, 0x66, 0x32,
-	0x0a, 0x83, 0x7d, 0xa7, 0xcf, 0xbb, 0xf7, 0x2f, 0x74, 0xf6, 0x61, 0x47, 0x2f, 0x9b, 0xf1, 0xbf,
-	0x00, 0x00, 0x00, 0xff, 0xff, 0x0c, 0xa7, 0x39, 0xb9, 0x3d, 0x08, 0x00, 0x00,
+	// 390 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x53, 0xdf, 0x4e, 0xfa, 0x30,
+	0x18, 0xe5, 0x77, 0xf1, 0x93, 0x50, 0x30, 0xe2, 0x48, 0x8c, 0x19, 0x77, 0xdc, 0x5b, 0xf0, 0xdf,
+	0x0b, 0x08, 0x06, 0x2f, 0x34, 0x31, 0xa2, 0x21, 0xe1, 0x66, 0x29, 0xdb, 0xe7, 0xd6, 0xa4, 0xd0,
+	0xd1, 0x76, 0x12, 0x2e, 0x7d, 0x4b, 0x1f, 0xc7, 0x6c, 0x6b, 0xc7, 0x58, 0xe2, 0x36, 0x6e, 0x4f,
+	0xcf, 0xf9, 0x4e, 0xcf, 0xf9, 0x5a, 0x74, 0x2a, 0x41, 0x7c, 0x51, 0x17, 0x70, 0x28, 0xb8, 0xe2,
+	0x56, 0x9f, 0x50, 0xbc, 0x02, 0x45, 0x54, 0x40, 0xd7, 0xbe, 0xc4, 0xe6, 0x70, 0xb5, 0x51, 0xca,
+	0xb3, 0xfb, 0x3e, 0xe7, 0x3e, 0x83, 0x61, 0x42, 0x5d, 0x46, 0x9f, 0x43, 0x58, 0x85, 0x6a, 0x97,
+	0x2a, 0xed, 0x9e, 0x2b, 0x80, 0x28, 0x70, 0x3c, 0xd8, 0x8f, 0xb3, 0x7b, 0x1e, 0x30, 0x28, 0x82,
+	0x56, 0x48, 0x94, 0x1b, 0x1c, 0x62, 0x5d, 0x1f, 0x54, 0x81, 0xc5, 0xa8, 0x34, 0x90, 0xd4, 0xd8,
+	0xb9, 0x0c, 0xf8, 0xb6, 0x20, 0x8c, 0xd6, 0x44, 0xec, 0x1c, 0x97, 0x30, 0xa6, 0x91, 0xb3, 0x00,
+	0x88, 0x50, 0x4b, 0x20, 0x4a, 0x03, 0x97, 0x7e, 0x48, 0xb9, 0xe3, 0x51, 0x9f, 0x2a, 0xc2, 0x9c,
+	0xad, 0xa0, 0x4a, 0x8b, 0x6f, 0x7e, 0x9a, 0xa8, 0xf3, 0x12, 0x47, 0x9b, 0xa5, 0x39, 0xad, 0x08,
+	0x75, 0xc6, 0x49, 0x8c, 0x49, 0xe2, 0x61, 0x8d, 0x70, 0x49, 0x1f, 0x38, 0x4f, 0x7d, 0x83, 0x4d,
+	0x04, 0x52, 0xd9, 0xd7, 0x47, 0x28, 0x64, 0xc8, 0xd7, 0x12, 0x06, 0x0d, 0x6b, 0x81, 0x3a, 0x93,
+	0xa4, 0xa8, 0x5a, 0xb6, 0x79, 0xaa, 0xb1, 0xbd, 0xc0, 0xe9, 0x6e, 0xb0, 0xd9, 0x0d, 0x7e, 0x8c,
+	0x77, 0x33, 0x68, 0x58, 0x02, 0xb5, 0x5f, 0xe3, 0xbe, 0xf5, 0xe8, 0x61, 0xe9, 0xe8, 0x1c, 0xd3,
+	0x4c, 0x1e, 0xd5, 0x17, 0x64, 0x79, 0x18, 0x6a, 0x4d, 0x41, 0x69, 0xc7, 0xab, 0xd2, 0x01, 0x19,
+	0xcf, 0xf8, 0xe1, 0xba, 0xf4, 0xcc, 0x4d, 0xa0, 0xf6, 0x33, 0x95, 0x1a, 0x97, 0x15, 0x09, 0x73,
+	0xcc, 0x7a, 0x09, 0x0f, 0x04, 0x99, 0xe7, 0x3b, 0x6a, 0x3d, 0x99, 0x67, 0x56, 0x91, 0x30, 0xe3,
+	0x55, 0xef, 0x6a, 0x8e, 0xd0, 0x2c, 0xe0, 0x5b, 0x5d, 0xdc, 0x1f, 0x3c, 0xbb, 0x3c, 0xe0, 0x7e,
+	0x40, 0xee, 0xba, 0xdf, 0xff, 0x50, 0x77, 0x1a, 0x52, 0x3e, 0x49, 0x3f, 0xc1, 0x3c, 0xfe, 0x03,
+	0xd6, 0x5d, 0x79, 0xd3, 0x05, 0xba, 0xb9, 0xfd, 0xfd, 0x91, 0xaa, 0xfc, 0xa3, 0xf8, 0x88, 0xff,
+	0xea, 0x98, 0x30, 0x56, 0x51, 0x59, 0xc6, 0xab, 0xf7, 0x28, 0x72, 0x74, 0xe3, 0xf6, 0xd0, 0x5c,
+	0xfc, 0x4f, 0x0e, 0x97, 0x27, 0x49, 0x7b, 0xb7, 0xbf, 0x01, 0x00, 0x00, 0xff, 0xff, 0xfc, 0xf4,
+	0x6a, 0x36, 0xe9, 0x04, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -80,16 +71,10 @@ type MqttdServiceClient interface {
 	PatchDevice(ctx context.Context, in *PatchDeviceRequest, opts ...grpc.CallOption) (*PatchDeviceResponse, error)
 	GetDevice(ctx context.Context, in *GetDeviceRequest, opts ...grpc.CallOption) (*GetDeviceResponse, error)
 	ListDevices(ctx context.Context, in *ListDevicesRequest, opts ...grpc.CallOption) (*ListDevicesResponse, error)
+	Heartbeat(ctx context.Context, in *HeartbeatRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 	ShowDevice(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*ShowDeviceResponse, error)
 	GpioDigitalWrite(ctx context.Context, in *GpioDigitalWriteRequest, opts ...grpc.CallOption) (*GpioDigitalWriteResponse, error)
-	GpioDigitalRead(ctx context.Context, in *GpioDigitalReadRequest, opts ...grpc.CallOption) (*GpioDigitalReadResponse, error)
-	GpioAnalogWrite(ctx context.Context, in *GpioAnalogWriteRequest, opts ...grpc.CallOption) (*GpioAnalogWriteResponse, error)
-	GpioAnalogRead(ctx context.Context, in *GpioAnalogReadRequest, opts ...grpc.CallOption) (*GpioAnalogReadResponse, error)
-	I2CWrite(ctx context.Context, in *I2CWriteRequest, opts ...grpc.CallOption) (*I2CWriteResponse, error)
-	I2Cread(ctx context.Context, in *I2CReadRequest, opts ...grpc.CallOption) (*I2CReadResponse, error)
 	UnaryCall(ctx context.Context, in *UnaryCallRequest, opts ...grpc.CallOption) (*UnaryCallResponse, error)
-	StreamCall(ctx context.Context, opts ...grpc.CallOption) (MqttdService_StreamCallClient, error)
-	Stream(ctx context.Context, opts ...grpc.CallOption) (MqttdService_StreamClient, error)
 }
 
 type mqttdServiceClient struct {
@@ -145,6 +130,15 @@ func (c *mqttdServiceClient) ListDevices(ctx context.Context, in *ListDevicesReq
 	return out, nil
 }
 
+func (c *mqttdServiceClient) Heartbeat(ctx context.Context, in *HeartbeatRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.mqttd.MqttdService/Heartbeat", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *mqttdServiceClient) ShowDevice(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*ShowDeviceResponse, error) {
 	out := new(ShowDeviceResponse)
 	err := c.cc.Invoke(ctx, "/ai.metathings.service.mqttd.MqttdService/ShowDevice", in, out, opts...)
@@ -163,51 +157,6 @@ func (c *mqttdServiceClient) GpioDigitalWrite(ctx context.Context, in *GpioDigit
 	return out, nil
 }
 
-func (c *mqttdServiceClient) GpioDigitalRead(ctx context.Context, in *GpioDigitalReadRequest, opts ...grpc.CallOption) (*GpioDigitalReadResponse, error) {
-	out := new(GpioDigitalReadResponse)
-	err := c.cc.Invoke(ctx, "/ai.metathings.service.mqttd.MqttdService/GpioDigitalRead", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *mqttdServiceClient) GpioAnalogWrite(ctx context.Context, in *GpioAnalogWriteRequest, opts ...grpc.CallOption) (*GpioAnalogWriteResponse, error) {
-	out := new(GpioAnalogWriteResponse)
-	err := c.cc.Invoke(ctx, "/ai.metathings.service.mqttd.MqttdService/GpioAnalogWrite", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *mqttdServiceClient) GpioAnalogRead(ctx context.Context, in *GpioAnalogReadRequest, opts ...grpc.CallOption) (*GpioAnalogReadResponse, error) {
-	out := new(GpioAnalogReadResponse)
-	err := c.cc.Invoke(ctx, "/ai.metathings.service.mqttd.MqttdService/GpioAnalogRead", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *mqttdServiceClient) I2CWrite(ctx context.Context, in *I2CWriteRequest, opts ...grpc.CallOption) (*I2CWriteResponse, error) {
-	out := new(I2CWriteResponse)
-	err := c.cc.Invoke(ctx, "/ai.metathings.service.mqttd.MqttdService/I2cWrite", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *mqttdServiceClient) I2Cread(ctx context.Context, in *I2CReadRequest, opts ...grpc.CallOption) (*I2CReadResponse, error) {
-	out := new(I2CReadResponse)
-	err := c.cc.Invoke(ctx, "/ai.metathings.service.mqttd.MqttdService/I2cread", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *mqttdServiceClient) UnaryCall(ctx context.Context, in *UnaryCallRequest, opts ...grpc.CallOption) (*UnaryCallResponse, error) {
 	out := new(UnaryCallResponse)
 	err := c.cc.Invoke(ctx, "/ai.metathings.service.mqttd.MqttdService/UnaryCall", in, out, opts...)
@@ -217,68 +166,6 @@ func (c *mqttdServiceClient) UnaryCall(ctx context.Context, in *UnaryCallRequest
 	return out, nil
 }
 
-func (c *mqttdServiceClient) StreamCall(ctx context.Context, opts ...grpc.CallOption) (MqttdService_StreamCallClient, error) {
-	stream, err := c.cc.NewStream(ctx, &_MqttdService_serviceDesc.Streams[0], "/ai.metathings.service.mqttd.MqttdService/StreamCall", opts...)
-	if err != nil {
-		return nil, err
-	}
-	x := &mqttdServiceStreamCallClient{stream}
-	return x, nil
-}
-
-type MqttdService_StreamCallClient interface {
-	Send(*StreamCallRequest) error
-	Recv() (*StreamCallResponse, error)
-	grpc.ClientStream
-}
-
-type mqttdServiceStreamCallClient struct {
-	grpc.ClientStream
-}
-
-func (x *mqttdServiceStreamCallClient) Send(m *StreamCallRequest) error {
-	return x.ClientStream.SendMsg(m)
-}
-
-func (x *mqttdServiceStreamCallClient) Recv() (*StreamCallResponse, error) {
-	m := new(StreamCallResponse)
-	if err := x.ClientStream.RecvMsg(m); err != nil {
-		return nil, err
-	}
-	return m, nil
-}
-
-func (c *mqttdServiceClient) Stream(ctx context.Context, opts ...grpc.CallOption) (MqttdService_StreamClient, error) {
-	stream, err := c.cc.NewStream(ctx, &_MqttdService_serviceDesc.Streams[1], "/ai.metathings.service.mqttd.MqttdService/Stream", opts...)
-	if err != nil {
-		return nil, err
-	}
-	x := &mqttdServiceStreamClient{stream}
-	return x, nil
-}
-
-type MqttdService_StreamClient interface {
-	Send(*StreamRequests) error
-	Recv() (*StreamResponse, error)
-	grpc.ClientStream
-}
-
-type mqttdServiceStreamClient struct {
-	grpc.ClientStream
-}
-
-func (x *mqttdServiceStreamClient) Send(m *StreamRequests) error {
-	return x.ClientStream.SendMsg(m)
-}
-
-func (x *mqttdServiceStreamClient) Recv() (*StreamResponse, error) {
-	m := new(StreamResponse)
-	if err := x.ClientStream.RecvMsg(m); err != nil {
-		return nil, err
-	}
-	return m, nil
-}
-
 // MqttdServiceServer is the server API for MqttdService service.
 type MqttdServiceServer interface {
 	CreateDevice(context.Context, *CreateDeviceRequest) (*CreateDeviceResponse, error)
@@ -286,16 +173,10 @@ type MqttdServiceServer interface {
 	PatchDevice(context.Context, *PatchDeviceRequest) (*PatchDeviceResponse, error)
 	GetDevice(context.Context, *GetDeviceRequest) (*GetDeviceResponse, error)
 	ListDevices(context.Context, *ListDevicesRequest) (*ListDevicesResponse, error)
+	Heartbeat(context.Context, *HeartbeatRequest) (*empty.Empty, error)
 	ShowDevice(context.Context, *empty.Empty) (*ShowDeviceResponse, error)
 	GpioDigitalWrite(context.Context, *GpioDigitalWriteRequest) (*GpioDigitalWriteResponse, error)
-	GpioDigitalRead(context.Context, *GpioDigitalReadRequest) (*GpioDigitalReadResponse, error)
-	GpioAnalogWrite(context.Context, *GpioAnalogWriteRequest) (*GpioAnalogWriteResponse, error)
-	GpioAnalogRead(context.Context, *GpioAnalogReadRequest) (*GpioAnalogReadResponse, error)
-	I2CWrite(context.Context, *I2CWriteRequest) (*I2CWriteResponse, error)
-	I2Cread(context.Context, *I2CReadRequest) (*I2CReadResponse, error)
 	UnaryCall(context.Context, *UnaryCallRequest) (*UnaryCallResponse, error)
-	StreamCall(MqttdService_StreamCallServer) error
-	Stream(MqttdService_StreamServer) error
 }
 
 func RegisterMqttdServiceServer(s *grpc.Server, srv MqttdServiceServer) {
@@ -392,6 +273,24 @@ func _MqttdService_ListDevices_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MqttdService_Heartbeat_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(HeartbeatRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MqttdServiceServer).Heartbeat(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ai.metathings.service.mqttd.MqttdService/Heartbeat",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MqttdServiceServer).Heartbeat(ctx, req.(*HeartbeatRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _MqttdService_ShowDevice_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(empty.Empty)
 	if err := dec(in); err != nil {
@@ -428,96 +327,6 @@ func _MqttdService_GpioDigitalWrite_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
-func _MqttdService_GpioDigitalRead_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GpioDigitalReadRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MqttdServiceServer).GpioDigitalRead(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/ai.metathings.service.mqttd.MqttdService/GpioDigitalRead",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MqttdServiceServer).GpioDigitalRead(ctx, req.(*GpioDigitalReadRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _MqttdService_GpioAnalogWrite_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GpioAnalogWriteRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MqttdServiceServer).GpioAnalogWrite(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/ai.metathings.service.mqttd.MqttdService/GpioAnalogWrite",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MqttdServiceServer).GpioAnalogWrite(ctx, req.(*GpioAnalogWriteRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _MqttdService_GpioAnalogRead_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GpioAnalogReadRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MqttdServiceServer).GpioAnalogRead(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/ai.metathings.service.mqttd.MqttdService/GpioAnalogRead",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MqttdServiceServer).GpioAnalogRead(ctx, req.(*GpioAnalogReadRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _MqttdService_I2CWrite_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(I2CWriteRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MqttdServiceServer).I2CWrite(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/ai.metathings.service.mqttd.MqttdService/I2CWrite",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MqttdServiceServer).I2CWrite(ctx, req.(*I2CWriteRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _MqttdService_I2Cread_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(I2CReadRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MqttdServiceServer).I2Cread(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/ai.metathings.service.mqttd.MqttdService/I2Cread",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MqttdServiceServer).I2Cread(ctx, req.(*I2CReadRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _MqttdService_UnaryCall_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UnaryCallRequest)
 	if err := dec(in); err != nil {
@@ -534,58 +343,6 @@ func _MqttdService_UnaryCall_Handler(srv interface{}, ctx context.Context, dec f
 		return srv.(MqttdServiceServer).UnaryCall(ctx, req.(*UnaryCallRequest))
 	}
 	return interceptor(ctx, in, info, handler)
-}
-
-func _MqttdService_StreamCall_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(MqttdServiceServer).StreamCall(&mqttdServiceStreamCallServer{stream})
-}
-
-type MqttdService_StreamCallServer interface {
-	Send(*StreamCallResponse) error
-	Recv() (*StreamCallRequest, error)
-	grpc.ServerStream
-}
-
-type mqttdServiceStreamCallServer struct {
-	grpc.ServerStream
-}
-
-func (x *mqttdServiceStreamCallServer) Send(m *StreamCallResponse) error {
-	return x.ServerStream.SendMsg(m)
-}
-
-func (x *mqttdServiceStreamCallServer) Recv() (*StreamCallRequest, error) {
-	m := new(StreamCallRequest)
-	if err := x.ServerStream.RecvMsg(m); err != nil {
-		return nil, err
-	}
-	return m, nil
-}
-
-func _MqttdService_Stream_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(MqttdServiceServer).Stream(&mqttdServiceStreamServer{stream})
-}
-
-type MqttdService_StreamServer interface {
-	Send(*StreamResponse) error
-	Recv() (*StreamRequests, error)
-	grpc.ServerStream
-}
-
-type mqttdServiceStreamServer struct {
-	grpc.ServerStream
-}
-
-func (x *mqttdServiceStreamServer) Send(m *StreamResponse) error {
-	return x.ServerStream.SendMsg(m)
-}
-
-func (x *mqttdServiceStreamServer) Recv() (*StreamRequests, error) {
-	m := new(StreamRequests)
-	if err := x.ServerStream.RecvMsg(m); err != nil {
-		return nil, err
-	}
-	return m, nil
 }
 
 var _MqttdService_serviceDesc = grpc.ServiceDesc{
@@ -613,6 +370,10 @@ var _MqttdService_serviceDesc = grpc.ServiceDesc{
 			Handler:    _MqttdService_ListDevices_Handler,
 		},
 		{
+			MethodName: "Heartbeat",
+			Handler:    _MqttdService_Heartbeat_Handler,
+		},
+		{
 			MethodName: "ShowDevice",
 			Handler:    _MqttdService_ShowDevice_Handler,
 		},
@@ -621,43 +382,10 @@ var _MqttdService_serviceDesc = grpc.ServiceDesc{
 			Handler:    _MqttdService_GpioDigitalWrite_Handler,
 		},
 		{
-			MethodName: "GpioDigitalRead",
-			Handler:    _MqttdService_GpioDigitalRead_Handler,
-		},
-		{
-			MethodName: "GpioAnalogWrite",
-			Handler:    _MqttdService_GpioAnalogWrite_Handler,
-		},
-		{
-			MethodName: "GpioAnalogRead",
-			Handler:    _MqttdService_GpioAnalogRead_Handler,
-		},
-		{
-			MethodName: "I2cWrite",
-			Handler:    _MqttdService_I2CWrite_Handler,
-		},
-		{
-			MethodName: "I2cread",
-			Handler:    _MqttdService_I2Cread_Handler,
-		},
-		{
 			MethodName: "UnaryCall",
 			Handler:    _MqttdService_UnaryCall_Handler,
 		},
 	},
-	Streams: []grpc.StreamDesc{
-		{
-			StreamName:    "StreamCall",
-			Handler:       _MqttdService_StreamCall_Handler,
-			ServerStreams: true,
-			ClientStreams: true,
-		},
-		{
-			StreamName:    "Stream",
-			Handler:       _MqttdService_Stream_Handler,
-			ServerStreams: true,
-			ClientStreams: true,
-		},
-	},
+	Streams:  []grpc.StreamDesc{},
 	Metadata: "service.proto",
 }

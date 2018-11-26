@@ -7,8 +7,6 @@ import "google/protobuf/timestamp.proto";
 
 import "github.com/mwitkow/go-proto-validators/validator.proto";
 
-import "model.proto";
-
 message StreamPingRequest {
 	google.protobuf.Timestamp timestamp = 1 [(validator.field) = {msg_exists: true}];
 }

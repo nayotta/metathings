@@ -2,7 +2,9 @@ package metathingsmqttdservice
 
 import (
 	"context"
+	"math/rand"
 
+	app_cred_mgr "github.com/nayotta/metathings/pkg/common/application_credential_manager"
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
 	context_helper "github.com/nayotta/metathings/pkg/common/context"
 	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
@@ -25,6 +27,7 @@ type Option struct {
 // MetathingsMqttdService MetathingsMqttdService struct
 type MetathingsMqttdService struct {
 	grpc_helper.AuthorizationTokenParser
+	app_cred_mgr app_cred_mgr.ApplicationCredentialManager
 
 	tknr     token_helper.Tokener
 	cliFty   *client_helper.ClientFactory
@@ -34,6 +37,8 @@ type MetathingsMqttdService struct {
 	enforcer identityd_policy.Enforcer
 	vdr      token_helper.TokenValidator
 	cc       connection.MqttBridge
+
+	heartbeat_session uint64
 }
 
 func (sev *MetathingsMqttdService) getDeviceByContext(ctx context.Context) (*storage.Device, error) {
@@ -146,14 +151,22 @@ func NewMetathingsMqttdService(
 	cliFty *client_helper.ClientFactory,
 	cc connection.MqttBridge,
 ) (pb.MqttdServiceServer, error) {
+	app_cred_mgr, err := app_cred_mgr.NewApplicationCredentialManager(
+		cliFty,
+		opts.application_credential_id,
+		opts.application_credential_secret,
+	)
+
 	return &MetathingsMqttdService{
-		opt:      opt,
-		logger:   logger,
-		storage:  storage,
-		enforcer: enforcer,
-		vdr:      vdr,
-		tknr:     tknr,
-		cliFty:   cliFty,
-		cc:       cc,
+		opt:               opt,
+		app_cred_mgr:      app_cred_mgr,
+		logger:            logger,
+		storage:           storage,
+		enforcer:          enforcer,
+		vdr:               vdr,
+		tknr:              tknr,
+		cliFty:            cliFty,
+		cc:                cc,
+		heartbeat_session: rand.Uint64(),
 	}, nil
 }
