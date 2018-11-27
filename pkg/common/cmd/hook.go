@@ -41,3 +41,11 @@ func Run(service string, fn func() error) func(cmd *cobra.Command, args []string
 		}
 	}
 }
+
+func RunWithArgs(service string, fn func(args []string) error) func(cmd *cobra.Command, args []string) {
+	return func(cmd *cobra.Command, args []string) {
+		if err := fn(args); err != nil {
+			log.WithError(err).Fatalf("failed to run with args %v", service)
+		}
+	}
+}

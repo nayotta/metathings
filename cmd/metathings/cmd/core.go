@@ -7,7 +7,7 @@ import (
 var (
 	coreCmd = &cobra.Command{
 		Use:   "core",
-		Short: "Core Toolkits",
+		Short: "Core Toolkits (deprecated)",
 	}
 )
 

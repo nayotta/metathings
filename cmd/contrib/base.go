@@ -46,3 +46,15 @@ func CreateClientBaseOption() ClientBaseOption {
 		BaseOption: CreateBaseOption(),
 	}
 }
+
+type ModuleBaseOption struct {
+	BaseOption                `mapstructure:",squash"`
+	ListenOption              `mapstructure:",squash"`
+	TransportCredentialOption `mapstructure:",squash"`
+}
+
+func CreateModuleBaseOption() ModuleBaseOption {
+	return ModuleBaseOption{
+		BaseOption: CreateBaseOption(),
+	}
+}

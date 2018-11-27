@@ -2,7 +2,7 @@ package metathings_component
 
 type Component interface {
 	Name() string
-	NewModule(args ...interface{}) (Module, error)
+	RunModule(args ...interface{}) error
 }
 
-type NewComponent func(args ...interface{}) (Component, error)
+type NewComponent func() (Component, error)
