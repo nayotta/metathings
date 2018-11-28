@@ -39,6 +39,10 @@ func (self *GrpcModuleWrapper) UnaryCall(ctx context.Context, req *pb.UnaryCallR
 	return res, nil
 }
 
-func (self *GrpcModuleWrapper) StreamCall(ctx context.Context) (pb.ModuleService_StreamCallClient, error) {
+func (self *GrpcModuleWrapper) StreamCall(pb.ModuleService_StreamCallServer) error {
 	panic("unimplemented")
+}
+
+func NewGrpcModuleWrapper(target interface{}) *GrpcModuleWrapper {
+	return &GrpcModuleWrapper{target: target}
 }

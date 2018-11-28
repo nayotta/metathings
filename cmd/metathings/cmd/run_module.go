@@ -55,7 +55,7 @@ func load_component_from_url(uri string) (component.Component, error) {
 
 	switch u.Scheme {
 	case "file":
-		return load_component_from_file(u.Path)
+		return load_component_from_file(u.Host + u.Path)
 	}
 
 	return nil, component.ErrInvalidArguments
@@ -72,7 +72,7 @@ func load_component_from_file(path string) (component.Component, error) {
 		return nil, err
 	}
 
-	cmp, err := sym.(component.NewComponent)()
+	cmp, err := (*(sym.(*component.NewComponent)))()
 	if err != nil {
 		return nil, err
 	}
@@ -80,23 +80,42 @@ func load_component_from_file(path string) (component.Component, error) {
 	return cmp, nil
 }
 
-func run_module(args []string) error {
+func load_components(libraries []string) (map[string]component.Component, error) {
 	components := map[string]component.Component{}
 
-	for _, uri := range run_module_opt.Libraries {
+	for _, uri := range libraries {
 		cmp, err := load_component_from_url(uri)
 		if err != nil {
-			return err
+			return nil, err
 		}
 		components[cmp.Name()] = cmp
 	}
+
+	return components, nil
+}
+
+func run_module(args []string) error {
+	components, err := load_components(run_module_opt.Libraries)
 
 	cmp, ok := components[run_module_opt.Component]
 	if !ok {
 		return component.ErrNotFound
 	}
 
-	return cmp.RunModule(args)
+	mdl, err := cmp.NewModule(args)
+
+	if err = mdl.Start(); err != nil {
+		return err
+	}
+	defer mdl.Stop()
+
+	<-cmd_helper.Done()
+
+	if err = mdl.Err(); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func init() {
