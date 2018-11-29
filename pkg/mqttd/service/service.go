@@ -289,6 +289,10 @@ func NewMetathingsMqttdService(
 		opt.application_credential_secret,
 	)
 
+	if err != nil {
+		log.WithError(err).Errorf("failed to NewApplicationCredentialManager")
+	}
+
 	return &MetathingsMqttdService{
 		opt:              opt,
 		appCredMgr:       appCredMgr,

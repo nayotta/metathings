@@ -5,7 +5,6 @@ import (
 
 	"github.com/golang/protobuf/ptypes/empty"
 	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
-	storage "github.com/nayotta/metathings/pkg/mqttd/storage"
 	pb "github.com/nayotta/metathings/pkg/proto/mqttd"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -31,11 +30,10 @@ func (serv *MetathingsMqttdService) AuthorizeDeleteDevice(ctx context.Context, i
 
 // DeleteDevice DeleteDevice
 func (serv *MetathingsMqttdService) DeleteDevice(ctx context.Context, req *pb.DeleteDeviceRequest) (*empty.Empty, error) {
-	var dev *storage.Device
 	var err error
 
 	devIDStr := req.GetDevice().GetId().GetValue()
-	if dev, err = serv.storage.GetDevice(devIDStr); err != nil {
+	if _, err := serv.storage.GetDevice(devIDStr); err != nil {
 		serv.logger.WithError(err).Errorf("failed to get device in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}

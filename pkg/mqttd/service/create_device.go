@@ -49,8 +49,10 @@ func (serv *MetathingsMqttdService) createEntity(entID, entName string) error {
 
 	ctx := context_helper.WithToken(context.Background(), serv.tknr.GetToken())
 	req := &identityd_pb.CreateEntityRequest{
-		Id:   &wrappers.StringValue{Value: entID},
-		Name: &wrappers.StringValue{Value: entName},
+		Entity: &identityd_pb.OpEntity{
+			Id:   &wrappers.StringValue{Value: entID},
+			Name: &wrappers.StringValue{Value: entName},
+		},
 	}
 	if _, err = cli.CreateEntity(ctx, req); err != nil {
 		return err

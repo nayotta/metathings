@@ -14,10 +14,9 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-// Hearbeat Hearbeat
+// Heartbeat Heartbeat
 // TODO(zh) heart beat make a lot connect, need reduce
 func (serv *MetathingsMqttdService) Heartbeat(ctx context.Context, req *pb.HeartbeatRequest) (*empty.Empty, error) {
-	entID := req.GetEntityId().GetValue()
 	ctx = context_helper.WithToken(ctx, serv.appCredMgr.GetToken())
 	cli, closeFn, err := serv.cliFty.NewCoredServiceClient()
 	if err != nil {

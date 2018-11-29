@@ -43,7 +43,7 @@ var (
 
 			optT := NewMqttdOption()
 			cmd_helper.UnmarshalConfig(&optT)
-			baseOpt = &optT.BaseOption
+			base_opt = &optT.BaseOption
 
 			init_service_cmd_option(optT, mqttdOpts)
 			mqttdOpts = optT
@@ -68,13 +68,13 @@ func GetMqttdOptions() (
 	cmd_contrib.ServiceEndpointsOptioner,
 	cmd_contrib.CredentialOptioner,
 ) {
-	return mqttdOpt,
-		mqttdOpt,
-		mqttdOpt,
-		mqttdOpt,
-		mqttdOpt,
-		mqttdOpt,
-		mqttdOpt
+	return mqttdOpts,
+		mqttdOpts,
+		mqttdOpts,
+		mqttdOpts,
+		mqttdOpts,
+		mqttdOpts,
+		mqttdOpts
 }
 
 // NewMqttdStorage NewMqttdStorage
@@ -125,7 +125,6 @@ func init() {
 	flags.StringVar(mqttdOpts.GetStorage().GetUriP(), "storage-uri", "", "MetaThings Mqttd Service Storage URI")
 	flags.StringVar(mqttdOpts.GetCertFileP(), "cert-file", "certs/server.crt", "MetaThings Mqttd Service Credential File")
 	flags.StringVar(mqttdOpts.GetKeyFileP(), "key-file", "certs/server.key", "MetaThings Mqttd Service Key File")
-	flags.StringVar(&mqttdOpts.AgentdConfig.Id, "core-id", "", "Core(mqttd) ID")
 
 	RootCmd.AddCommand(mqttdCmd)
 }

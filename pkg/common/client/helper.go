@@ -67,6 +67,7 @@ var (
 		"sensor",
 		"streamd",
 		"module",
+		"mqttd",
 		"overflow",
 	}
 )
