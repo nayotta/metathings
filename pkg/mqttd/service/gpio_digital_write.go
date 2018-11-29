@@ -11,7 +11,7 @@ import (
 )
 
 // GpioDigitalWrite GpioDigitalWrite
-func (serv *MetathingsMqttdService) GpioDigitalWrite(ctx context.Context, req *pb.GpioDigitalWriteRequest) (*pb.GpioDigitalReadResponse, error) {
+func (serv *MetathingsMqttdService) GpioDigitalWrite(ctx context.Context, req *pb.GpioDigitalWriteRequest) (*pb.GpioDigitalWriteResponse, error) {
 	var err error
 
 	gpio := req.GetGpio()
