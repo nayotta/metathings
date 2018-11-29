@@ -3,7 +3,7 @@
 
 package deviced
 
-import github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
+import go_proto_validators "github.com/mwitkow/go-proto-validators"
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
@@ -15,8 +15,8 @@ var _ = math.Inf
 
 func (this *ShowDeviceResponse) Validate() error {
 	if this.Device != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Device); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Device", err)
+		if err := go_proto_validators.CallValidatorIfExists(this.Device); err != nil {
+			return go_proto_validators.FieldError("Device", err)
 		}
 	}
 	return nil

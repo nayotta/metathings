@@ -3,16 +3,15 @@
 
 package deviced
 
-import (
-	fmt "fmt"
-	proto "github.com/golang/protobuf/proto"
-	any "github.com/golang/protobuf/ptypes/any"
-	wrappers "github.com/golang/protobuf/ptypes/wrappers"
-	kind "github.com/nayotta/metathings/pkg/proto/constant/kind"
-	state "github.com/nayotta/metathings/pkg/proto/constant/state"
-	_ "github.com/nayotta/metathings/pkg/proto/identityd2"
-	math "math"
-)
+import proto "github.com/golang/protobuf/proto"
+import fmt "fmt"
+import math "math"
+import any "github.com/golang/protobuf/ptypes/any"
+import timestamp "github.com/golang/protobuf/ptypes/timestamp"
+import wrappers "github.com/golang/protobuf/ptypes/wrappers"
+import kind "github.com/nayotta/metathings/pkg/proto/constant/kind"
+import state "github.com/nayotta/metathings/pkg/proto/constant/state"
+import _ "github.com/nayotta/metathings/pkg/proto/identityd2"
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -26,32 +25,32 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type Device struct {
-	Id                   string            `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Kind                 kind.DeviceKind   `protobuf:"varint,2,opt,name=kind,proto3,enum=ai.metathings.constant.kind.DeviceKind" json:"kind,omitempty"`
-	State                state.DeviceState `protobuf:"varint,3,opt,name=state,proto3,enum=ai.metathings.constant.state.DeviceState" json:"state,omitempty"`
-	Name                 string            `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
-	Alias                string            `protobuf:"bytes,5,opt,name=alias,proto3" json:"alias,omitempty"`
-	Modules              []*Module         `protobuf:"bytes,6,rep,name=modules,proto3" json:"modules,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
-	XXX_unrecognized     []byte            `json:"-"`
-	XXX_sizecache        int32             `json:"-"`
+	Id                   string               `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
+	Kind                 kind.DeviceKind      `protobuf:"varint,2,opt,name=kind,enum=ai.metathings.constant.kind.DeviceKind" json:"kind,omitempty"`
+	State                state.DeviceState    `protobuf:"varint,3,opt,name=state,enum=ai.metathings.constant.state.DeviceState" json:"state,omitempty"`
+	Name                 string               `protobuf:"bytes,4,opt,name=name" json:"name,omitempty"`
+	Alias                string               `protobuf:"bytes,5,opt,name=alias" json:"alias,omitempty"`
+	Modules              []*Module            `protobuf:"bytes,6,rep,name=modules" json:"modules,omitempty"`
+	HeartbeatAt          *timestamp.Timestamp `protobuf:"bytes,7,opt,name=heartbeat_at,json=heartbeatAt" json:"heartbeat_at,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}             `json:"-"`
+	XXX_unrecognized     []byte               `json:"-"`
+	XXX_sizecache        int32                `json:"-"`
 }
 
 func (m *Device) Reset()         { *m = Device{} }
 func (m *Device) String() string { return proto.CompactTextString(m) }
 func (*Device) ProtoMessage()    {}
 func (*Device) Descriptor() ([]byte, []int) {
-	return fileDescriptor_4c16552f9fdb66d8, []int{0}
+	return fileDescriptor_model_990009f19fd442a8, []int{0}
 }
-
 func (m *Device) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Device.Unmarshal(m, b)
 }
 func (m *Device) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Device.Marshal(b, m, deterministic)
 }
-func (m *Device) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Device.Merge(m, src)
+func (dst *Device) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Device.Merge(dst, src)
 }
 func (m *Device) XXX_Size() int {
 	return xxx_messageInfo_Device.Size(m)
@@ -104,13 +103,21 @@ func (m *Device) GetModules() []*Module {
 	return nil
 }
 
+func (m *Device) GetHeartbeatAt() *timestamp.Timestamp {
+	if m != nil {
+		return m.HeartbeatAt
+	}
+	return nil
+}
+
 type OpDevice struct {
-	Id                   *wrappers.StringValue `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Kind                 kind.DeviceKind       `protobuf:"varint,2,opt,name=kind,proto3,enum=ai.metathings.constant.kind.DeviceKind" json:"kind,omitempty"`
-	State                state.DeviceState     `protobuf:"varint,3,opt,name=state,proto3,enum=ai.metathings.constant.state.DeviceState" json:"state,omitempty"`
-	Name                 *wrappers.StringValue `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
-	Alias                *wrappers.StringValue `protobuf:"bytes,5,opt,name=alias,proto3" json:"alias,omitempty"`
-	Modules              []*OpModule           `protobuf:"bytes,6,rep,name=modules,proto3" json:"modules,omitempty"`
+	Id                   *wrappers.StringValue `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
+	Kind                 kind.DeviceKind       `protobuf:"varint,2,opt,name=kind,enum=ai.metathings.constant.kind.DeviceKind" json:"kind,omitempty"`
+	State                state.DeviceState     `protobuf:"varint,3,opt,name=state,enum=ai.metathings.constant.state.DeviceState" json:"state,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,4,opt,name=name" json:"name,omitempty"`
+	Alias                *wrappers.StringValue `protobuf:"bytes,5,opt,name=alias" json:"alias,omitempty"`
+	Modules              []*OpModule           `protobuf:"bytes,6,rep,name=modules" json:"modules,omitempty"`
+	HeartbeatAt          *timestamp.Timestamp  `protobuf:"bytes,7,opt,name=heartbeat_at,json=heartbeatAt" json:"heartbeat_at,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -120,17 +127,16 @@ func (m *OpDevice) Reset()         { *m = OpDevice{} }
 func (m *OpDevice) String() string { return proto.CompactTextString(m) }
 func (*OpDevice) ProtoMessage()    {}
 func (*OpDevice) Descriptor() ([]byte, []int) {
-	return fileDescriptor_4c16552f9fdb66d8, []int{1}
+	return fileDescriptor_model_990009f19fd442a8, []int{1}
 }
-
 func (m *OpDevice) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_OpDevice.Unmarshal(m, b)
 }
 func (m *OpDevice) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_OpDevice.Marshal(b, m, deterministic)
 }
-func (m *OpDevice) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_OpDevice.Merge(m, src)
+func (dst *OpDevice) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_OpDevice.Merge(dst, src)
 }
 func (m *OpDevice) XXX_Size() int {
 	return xxx_messageInfo_OpDevice.Size(m)
@@ -183,34 +189,41 @@ func (m *OpDevice) GetModules() []*OpModule {
 	return nil
 }
 
+func (m *OpDevice) GetHeartbeatAt() *timestamp.Timestamp {
+	if m != nil {
+		return m.HeartbeatAt
+	}
+	return nil
+}
+
 type Module struct {
-	Id                   string            `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	State                state.ModuleState `protobuf:"varint,2,opt,name=state,proto3,enum=ai.metathings.constant.state.ModuleState" json:"state,omitempty"`
-	DeviceId             string            `protobuf:"bytes,3,opt,name=device_id,json=deviceId,proto3" json:"device_id,omitempty"`
-	Endpoint             string            `protobuf:"bytes,4,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
-	Component            string            `protobuf:"bytes,5,opt,name=component,proto3" json:"component,omitempty"`
-	Name                 string            `protobuf:"bytes,6,opt,name=name,proto3" json:"name,omitempty"`
-	Alias                string            `protobuf:"bytes,7,opt,name=alias,proto3" json:"alias,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
-	XXX_unrecognized     []byte            `json:"-"`
-	XXX_sizecache        int32             `json:"-"`
+	Id                   string               `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
+	State                state.ModuleState    `protobuf:"varint,2,opt,name=state,enum=ai.metathings.constant.state.ModuleState" json:"state,omitempty"`
+	DeviceId             string               `protobuf:"bytes,3,opt,name=device_id,json=deviceId" json:"device_id,omitempty"`
+	Endpoint             string               `protobuf:"bytes,4,opt,name=endpoint" json:"endpoint,omitempty"`
+	Component            string               `protobuf:"bytes,5,opt,name=component" json:"component,omitempty"`
+	Name                 string               `protobuf:"bytes,6,opt,name=name" json:"name,omitempty"`
+	Alias                string               `protobuf:"bytes,7,opt,name=alias" json:"alias,omitempty"`
+	HeartbeatAt          *timestamp.Timestamp `protobuf:"bytes,8,opt,name=heartbeat_at,json=heartbeatAt" json:"heartbeat_at,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}             `json:"-"`
+	XXX_unrecognized     []byte               `json:"-"`
+	XXX_sizecache        int32                `json:"-"`
 }
 
 func (m *Module) Reset()         { *m = Module{} }
 func (m *Module) String() string { return proto.CompactTextString(m) }
 func (*Module) ProtoMessage()    {}
 func (*Module) Descriptor() ([]byte, []int) {
-	return fileDescriptor_4c16552f9fdb66d8, []int{2}
+	return fileDescriptor_model_990009f19fd442a8, []int{2}
 }
-
 func (m *Module) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Module.Unmarshal(m, b)
 }
 func (m *Module) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_Module.Marshal(b, m, deterministic)
 }
-func (m *Module) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Module.Merge(m, src)
+func (dst *Module) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Module.Merge(dst, src)
 }
 func (m *Module) XXX_Size() int {
 	return xxx_messageInfo_Module.Size(m)
@@ -270,14 +283,22 @@ func (m *Module) GetAlias() string {
 	return ""
 }
 
+func (m *Module) GetHeartbeatAt() *timestamp.Timestamp {
+	if m != nil {
+		return m.HeartbeatAt
+	}
+	return nil
+}
+
 type OpModule struct {
-	Id                   *wrappers.StringValue `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	State                state.ModuleState     `protobuf:"varint,2,opt,name=state,proto3,enum=ai.metathings.constant.state.ModuleState" json:"state,omitempty"`
-	DeviceId             *wrappers.StringValue `protobuf:"bytes,3,opt,name=device_id,json=deviceId,proto3" json:"device_id,omitempty"`
-	Endpoint             *wrappers.StringValue `protobuf:"bytes,4,opt,name=endpoint,proto3" json:"endpoint,omitempty"`
-	Component            *wrappers.StringValue `protobuf:"bytes,5,opt,name=component,proto3" json:"component,omitempty"`
-	Name                 *wrappers.StringValue `protobuf:"bytes,6,opt,name=name,proto3" json:"name,omitempty"`
-	Alias                *wrappers.StringValue `protobuf:"bytes,7,opt,name=alias,proto3" json:"alias,omitempty"`
+	Id                   *wrappers.StringValue `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
+	State                state.ModuleState     `protobuf:"varint,2,opt,name=state,enum=ai.metathings.constant.state.ModuleState" json:"state,omitempty"`
+	DeviceId             *wrappers.StringValue `protobuf:"bytes,3,opt,name=device_id,json=deviceId" json:"device_id,omitempty"`
+	Endpoint             *wrappers.StringValue `protobuf:"bytes,4,opt,name=endpoint" json:"endpoint,omitempty"`
+	Component            *wrappers.StringValue `protobuf:"bytes,5,opt,name=component" json:"component,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,6,opt,name=name" json:"name,omitempty"`
+	Alias                *wrappers.StringValue `protobuf:"bytes,7,opt,name=alias" json:"alias,omitempty"`
+	HeartbeatAt          *timestamp.Timestamp  `protobuf:"bytes,8,opt,name=heartbeat_at,json=heartbeatAt" json:"heartbeat_at,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -287,17 +308,16 @@ func (m *OpModule) Reset()         { *m = OpModule{} }
 func (m *OpModule) String() string { return proto.CompactTextString(m) }
 func (*OpModule) ProtoMessage()    {}
 func (*OpModule) Descriptor() ([]byte, []int) {
-	return fileDescriptor_4c16552f9fdb66d8, []int{3}
+	return fileDescriptor_model_990009f19fd442a8, []int{3}
 }
-
 func (m *OpModule) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_OpModule.Unmarshal(m, b)
 }
 func (m *OpModule) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_OpModule.Marshal(b, m, deterministic)
 }
-func (m *OpModule) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_OpModule.Merge(m, src)
+func (dst *OpModule) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_OpModule.Merge(dst, src)
 }
 func (m *OpModule) XXX_Size() int {
 	return xxx_messageInfo_OpModule.Size(m)
@@ -357,11 +377,18 @@ func (m *OpModule) GetAlias() *wrappers.StringValue {
 	return nil
 }
 
+func (m *OpModule) GetHeartbeatAt() *timestamp.Timestamp {
+	if m != nil {
+		return m.HeartbeatAt
+	}
+	return nil
+}
+
 type ErrorValue struct {
-	Name                 string   `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	ServiceName          string   `protobuf:"bytes,2,opt,name=service_name,json=serviceName,proto3" json:"service_name,omitempty"`
-	MethodName           string   `protobuf:"bytes,3,opt,name=method_name,json=methodName,proto3" json:"method_name,omitempty"`
-	Context              string   `protobuf:"bytes,4,opt,name=context,proto3" json:"context,omitempty"`
+	Name                 string   `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
+	ServiceName          string   `protobuf:"bytes,2,opt,name=service_name,json=serviceName" json:"service_name,omitempty"`
+	MethodName           string   `protobuf:"bytes,3,opt,name=method_name,json=methodName" json:"method_name,omitempty"`
+	Context              string   `protobuf:"bytes,4,opt,name=context" json:"context,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -371,17 +398,16 @@ func (m *ErrorValue) Reset()         { *m = ErrorValue{} }
 func (m *ErrorValue) String() string { return proto.CompactTextString(m) }
 func (*ErrorValue) ProtoMessage()    {}
 func (*ErrorValue) Descriptor() ([]byte, []int) {
-	return fileDescriptor_4c16552f9fdb66d8, []int{4}
+	return fileDescriptor_model_990009f19fd442a8, []int{4}
 }
-
 func (m *ErrorValue) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ErrorValue.Unmarshal(m, b)
 }
 func (m *ErrorValue) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_ErrorValue.Marshal(b, m, deterministic)
 }
-func (m *ErrorValue) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ErrorValue.Merge(m, src)
+func (dst *ErrorValue) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ErrorValue.Merge(dst, src)
 }
 func (m *ErrorValue) XXX_Size() int {
 	return xxx_messageInfo_ErrorValue.Size(m)
@@ -421,10 +447,10 @@ func (m *ErrorValue) GetContext() string {
 }
 
 type OpUnaryCallValue struct {
-	Name                 *wrappers.StringValue `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	Component            *wrappers.StringValue `protobuf:"bytes,2,opt,name=component,proto3" json:"component,omitempty"`
-	Method               *wrappers.StringValue `protobuf:"bytes,3,opt,name=method,proto3" json:"method,omitempty"`
-	Value                *any.Any              `protobuf:"bytes,4,opt,name=value,proto3" json:"value,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
+	Component            *wrappers.StringValue `protobuf:"bytes,2,opt,name=component" json:"component,omitempty"`
+	Method               *wrappers.StringValue `protobuf:"bytes,3,opt,name=method" json:"method,omitempty"`
+	Value                *any.Any              `protobuf:"bytes,4,opt,name=value" json:"value,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -434,17 +460,16 @@ func (m *OpUnaryCallValue) Reset()         { *m = OpUnaryCallValue{} }
 func (m *OpUnaryCallValue) String() string { return proto.CompactTextString(m) }
 func (*OpUnaryCallValue) ProtoMessage()    {}
 func (*OpUnaryCallValue) Descriptor() ([]byte, []int) {
-	return fileDescriptor_4c16552f9fdb66d8, []int{5}
+	return fileDescriptor_model_990009f19fd442a8, []int{5}
 }
-
 func (m *OpUnaryCallValue) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_OpUnaryCallValue.Unmarshal(m, b)
 }
 func (m *OpUnaryCallValue) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_OpUnaryCallValue.Marshal(b, m, deterministic)
 }
-func (m *OpUnaryCallValue) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_OpUnaryCallValue.Merge(m, src)
+func (dst *OpUnaryCallValue) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_OpUnaryCallValue.Merge(dst, src)
 }
 func (m *OpUnaryCallValue) XXX_Size() int {
 	return xxx_messageInfo_OpUnaryCallValue.Size(m)
@@ -484,10 +509,10 @@ func (m *OpUnaryCallValue) GetValue() *any.Any {
 }
 
 type UnaryCallValue struct {
-	Name                 string   `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	Component            string   `protobuf:"bytes,2,opt,name=component,proto3" json:"component,omitempty"`
-	Method               string   `protobuf:"bytes,3,opt,name=method,proto3" json:"method,omitempty"`
-	Value                *any.Any `protobuf:"bytes,4,opt,name=value,proto3" json:"value,omitempty"`
+	Name                 string   `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
+	Component            string   `protobuf:"bytes,2,opt,name=component" json:"component,omitempty"`
+	Method               string   `protobuf:"bytes,3,opt,name=method" json:"method,omitempty"`
+	Value                *any.Any `protobuf:"bytes,4,opt,name=value" json:"value,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -497,17 +522,16 @@ func (m *UnaryCallValue) Reset()         { *m = UnaryCallValue{} }
 func (m *UnaryCallValue) String() string { return proto.CompactTextString(m) }
 func (*UnaryCallValue) ProtoMessage()    {}
 func (*UnaryCallValue) Descriptor() ([]byte, []int) {
-	return fileDescriptor_4c16552f9fdb66d8, []int{6}
+	return fileDescriptor_model_990009f19fd442a8, []int{6}
 }
-
 func (m *UnaryCallValue) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_UnaryCallValue.Unmarshal(m, b)
 }
 func (m *UnaryCallValue) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_UnaryCallValue.Marshal(b, m, deterministic)
 }
-func (m *UnaryCallValue) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_UnaryCallValue.Merge(m, src)
+func (dst *UnaryCallValue) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_UnaryCallValue.Merge(dst, src)
 }
 func (m *UnaryCallValue) XXX_Size() int {
 	return xxx_messageInfo_UnaryCallValue.Size(m)
@@ -560,17 +584,16 @@ func (m *OpStreamCallValue) Reset()         { *m = OpStreamCallValue{} }
 func (m *OpStreamCallValue) String() string { return proto.CompactTextString(m) }
 func (*OpStreamCallValue) ProtoMessage()    {}
 func (*OpStreamCallValue) Descriptor() ([]byte, []int) {
-	return fileDescriptor_4c16552f9fdb66d8, []int{7}
+	return fileDescriptor_model_990009f19fd442a8, []int{7}
 }
-
 func (m *OpStreamCallValue) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_OpStreamCallValue.Unmarshal(m, b)
 }
 func (m *OpStreamCallValue) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_OpStreamCallValue.Marshal(b, m, deterministic)
 }
-func (m *OpStreamCallValue) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_OpStreamCallValue.Merge(m, src)
+func (dst *OpStreamCallValue) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_OpStreamCallValue.Merge(dst, src)
 }
 func (m *OpStreamCallValue) XXX_Size() int {
 	return xxx_messageInfo_OpStreamCallValue.Size(m)
@@ -586,16 +609,14 @@ type isOpStreamCallValue_Union interface {
 }
 
 type OpStreamCallValue_Config struct {
-	Config *OpStreamCallConfig `protobuf:"bytes,1,opt,name=config,proto3,oneof"`
+	Config *OpStreamCallConfig `protobuf:"bytes,1,opt,name=config,oneof"`
 }
-
 type OpStreamCallValue_Data struct {
-	Data *OpStreamCallData `protobuf:"bytes,2,opt,name=data,proto3,oneof"`
+	Data *OpStreamCallData `protobuf:"bytes,2,opt,name=data,oneof"`
 }
 
 func (*OpStreamCallValue_Config) isOpStreamCallValue_Union() {}
-
-func (*OpStreamCallValue_Data) isOpStreamCallValue_Union() {}
+func (*OpStreamCallValue_Data) isOpStreamCallValue_Union()   {}
 
 func (m *OpStreamCallValue) GetUnion() isOpStreamCallValue_Union {
 	if m != nil {
@@ -706,17 +727,16 @@ func (m *StreamCallValue) Reset()         { *m = StreamCallValue{} }
 func (m *StreamCallValue) String() string { return proto.CompactTextString(m) }
 func (*StreamCallValue) ProtoMessage()    {}
 func (*StreamCallValue) Descriptor() ([]byte, []int) {
-	return fileDescriptor_4c16552f9fdb66d8, []int{8}
+	return fileDescriptor_model_990009f19fd442a8, []int{8}
 }
-
 func (m *StreamCallValue) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_StreamCallValue.Unmarshal(m, b)
 }
 func (m *StreamCallValue) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_StreamCallValue.Marshal(b, m, deterministic)
 }
-func (m *StreamCallValue) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_StreamCallValue.Merge(m, src)
+func (dst *StreamCallValue) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StreamCallValue.Merge(dst, src)
 }
 func (m *StreamCallValue) XXX_Size() int {
 	return xxx_messageInfo_StreamCallValue.Size(m)
@@ -732,16 +752,14 @@ type isStreamCallValue_Union interface {
 }
 
 type StreamCallValue_Config struct {
-	Config *StreamCallConfig `protobuf:"bytes,1,opt,name=config,proto3,oneof"`
+	Config *StreamCallConfig `protobuf:"bytes,1,opt,name=config,oneof"`
 }
-
 type StreamCallValue_Data struct {
-	Data *StreamCallData `protobuf:"bytes,2,opt,name=data,proto3,oneof"`
+	Data *StreamCallData `protobuf:"bytes,2,opt,name=data,oneof"`
 }
 
 func (*StreamCallValue_Config) isStreamCallValue_Union() {}
-
-func (*StreamCallValue_Data) isStreamCallValue_Union() {}
+func (*StreamCallValue_Data) isStreamCallValue_Union()   {}
 
 func (m *StreamCallValue) GetUnion() isStreamCallValue_Union {
 	if m != nil {
@@ -839,9 +857,9 @@ func _StreamCallValue_OneofSizer(msg proto.Message) (n int) {
 }
 
 type OpStreamCallConfig struct {
-	Name                 *wrappers.StringValue `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	Component            *wrappers.StringValue `protobuf:"bytes,2,opt,name=component,proto3" json:"component,omitempty"`
-	Method               *wrappers.StringValue `protobuf:"bytes,3,opt,name=method,proto3" json:"method,omitempty"`
+	Name                 *wrappers.StringValue `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
+	Component            *wrappers.StringValue `protobuf:"bytes,2,opt,name=component" json:"component,omitempty"`
+	Method               *wrappers.StringValue `protobuf:"bytes,3,opt,name=method" json:"method,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -851,17 +869,16 @@ func (m *OpStreamCallConfig) Reset()         { *m = OpStreamCallConfig{} }
 func (m *OpStreamCallConfig) String() string { return proto.CompactTextString(m) }
 func (*OpStreamCallConfig) ProtoMessage()    {}
 func (*OpStreamCallConfig) Descriptor() ([]byte, []int) {
-	return fileDescriptor_4c16552f9fdb66d8, []int{9}
+	return fileDescriptor_model_990009f19fd442a8, []int{9}
 }
-
 func (m *OpStreamCallConfig) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_OpStreamCallConfig.Unmarshal(m, b)
 }
 func (m *OpStreamCallConfig) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_OpStreamCallConfig.Marshal(b, m, deterministic)
 }
-func (m *OpStreamCallConfig) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_OpStreamCallConfig.Merge(m, src)
+func (dst *OpStreamCallConfig) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_OpStreamCallConfig.Merge(dst, src)
 }
 func (m *OpStreamCallConfig) XXX_Size() int {
 	return xxx_messageInfo_OpStreamCallConfig.Size(m)
@@ -894,9 +911,9 @@ func (m *OpStreamCallConfig) GetMethod() *wrappers.StringValue {
 }
 
 type StreamCallConfig struct {
-	Name                 string   `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	Component            string   `protobuf:"bytes,2,opt,name=component,proto3" json:"component,omitempty"`
-	Method               string   `protobuf:"bytes,3,opt,name=method,proto3" json:"method,omitempty"`
+	Name                 string   `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
+	Component            string   `protobuf:"bytes,2,opt,name=component" json:"component,omitempty"`
+	Method               string   `protobuf:"bytes,3,opt,name=method" json:"method,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -906,17 +923,16 @@ func (m *StreamCallConfig) Reset()         { *m = StreamCallConfig{} }
 func (m *StreamCallConfig) String() string { return proto.CompactTextString(m) }
 func (*StreamCallConfig) ProtoMessage()    {}
 func (*StreamCallConfig) Descriptor() ([]byte, []int) {
-	return fileDescriptor_4c16552f9fdb66d8, []int{10}
+	return fileDescriptor_model_990009f19fd442a8, []int{10}
 }
-
 func (m *StreamCallConfig) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_StreamCallConfig.Unmarshal(m, b)
 }
 func (m *StreamCallConfig) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_StreamCallConfig.Marshal(b, m, deterministic)
 }
-func (m *StreamCallConfig) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_StreamCallConfig.Merge(m, src)
+func (dst *StreamCallConfig) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StreamCallConfig.Merge(dst, src)
 }
 func (m *StreamCallConfig) XXX_Size() int {
 	return xxx_messageInfo_StreamCallConfig.Size(m)
@@ -949,7 +965,7 @@ func (m *StreamCallConfig) GetMethod() string {
 }
 
 type OpStreamCallData struct {
-	Value                *any.Any `protobuf:"bytes,1,opt,name=value,proto3" json:"value,omitempty"`
+	Value                *any.Any `protobuf:"bytes,1,opt,name=value" json:"value,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -959,17 +975,16 @@ func (m *OpStreamCallData) Reset()         { *m = OpStreamCallData{} }
 func (m *OpStreamCallData) String() string { return proto.CompactTextString(m) }
 func (*OpStreamCallData) ProtoMessage()    {}
 func (*OpStreamCallData) Descriptor() ([]byte, []int) {
-	return fileDescriptor_4c16552f9fdb66d8, []int{11}
+	return fileDescriptor_model_990009f19fd442a8, []int{11}
 }
-
 func (m *OpStreamCallData) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_OpStreamCallData.Unmarshal(m, b)
 }
 func (m *OpStreamCallData) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_OpStreamCallData.Marshal(b, m, deterministic)
 }
-func (m *OpStreamCallData) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_OpStreamCallData.Merge(m, src)
+func (dst *OpStreamCallData) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_OpStreamCallData.Merge(dst, src)
 }
 func (m *OpStreamCallData) XXX_Size() int {
 	return xxx_messageInfo_OpStreamCallData.Size(m)
@@ -988,7 +1003,7 @@ func (m *OpStreamCallData) GetValue() *any.Any {
 }
 
 type StreamCallData struct {
-	Value                *any.Any `protobuf:"bytes,1,opt,name=value,proto3" json:"value,omitempty"`
+	Value                *any.Any `protobuf:"bytes,1,opt,name=value" json:"value,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -998,17 +1013,16 @@ func (m *StreamCallData) Reset()         { *m = StreamCallData{} }
 func (m *StreamCallData) String() string { return proto.CompactTextString(m) }
 func (*StreamCallData) ProtoMessage()    {}
 func (*StreamCallData) Descriptor() ([]byte, []int) {
-	return fileDescriptor_4c16552f9fdb66d8, []int{12}
+	return fileDescriptor_model_990009f19fd442a8, []int{12}
 }
-
 func (m *StreamCallData) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_StreamCallData.Unmarshal(m, b)
 }
 func (m *StreamCallData) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_StreamCallData.Marshal(b, m, deterministic)
 }
-func (m *StreamCallData) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_StreamCallData.Merge(m, src)
+func (dst *StreamCallData) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StreamCallData.Merge(dst, src)
 }
 func (m *StreamCallData) XXX_Size() int {
 	return xxx_messageInfo_StreamCallData.Size(m)
@@ -1042,56 +1056,59 @@ func init() {
 	proto.RegisterType((*StreamCallData)(nil), "ai.metathings.service.deviced.StreamCallData")
 }
 
-func init() { proto.RegisterFile("model.proto", fileDescriptor_4c16552f9fdb66d8) }
+func init() { proto.RegisterFile("model.proto", fileDescriptor_model_990009f19fd442a8) }
 
-var fileDescriptor_4c16552f9fdb66d8 = []byte{
-	// 756 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xd4, 0x94, 0xcd, 0x6e, 0xd3, 0x4e,
-	0x14, 0xc5, 0x6b, 0x37, 0x1f, 0xcd, 0xcd, 0x5f, 0xf9, 0x17, 0xab, 0x42, 0x21, 0x14, 0x28, 0x96,
-	0x50, 0x0b, 0x02, 0xbb, 0x04, 0x16, 0x7c, 0xa9, 0x55, 0x9b, 0x56, 0x6a, 0x55, 0x41, 0x24, 0x57,
-	0xb0, 0x40, 0x48, 0xd5, 0x34, 0x33, 0x4d, 0x47, 0x8d, 0x67, 0x2c, 0x67, 0x52, 0xc8, 0x06, 0x89,
-	0x0d, 0x6b, 0x9e, 0x83, 0x15, 0x4b, 0x9e, 0x85, 0x0d, 0x12, 0x4f, 0x82, 0x3c, 0x33, 0x49, 0x6c,
-	0xa7, 0xd4, 0x49, 0x61, 0x01, 0xab, 0xd8, 0x77, 0xee, 0xb9, 0x73, 0xe6, 0x37, 0xc7, 0x81, 0xb2,
-	0xcf, 0x31, 0xe9, 0x38, 0x41, 0xc8, 0x05, 0xb7, 0xae, 0x21, 0xea, 0xf8, 0x44, 0x20, 0x71, 0x4c,
-	0x59, 0xbb, 0xeb, 0x74, 0x49, 0x78, 0x4a, 0x5b, 0xc4, 0xc1, 0x24, 0xfa, 0xc1, 0xb5, 0xeb, 0x6d,
-	0xce, 0xdb, 0x1d, 0xe2, 0xca, 0xe6, 0xc3, 0xde, 0x91, 0xfb, 0x36, 0x44, 0x41, 0x40, 0xc2, 0xae,
-	0x92, 0xd7, 0xae, 0xa4, 0xd7, 0x11, 0xeb, 0xeb, 0xa5, 0xb5, 0x36, 0x15, 0xc7, 0xbd, 0x43, 0xa7,
-	0xc5, 0x7d, 0x97, 0xa1, 0x3e, 0x17, 0x02, 0xb9, 0xa3, 0x9d, 0xdc, 0xe0, 0xa4, 0xad, 0x54, 0x2e,
-	0xc5, 0x84, 0x09, 0x2a, 0xfa, 0xb8, 0xee, 0xc6, 0x9c, 0xd5, 0x1a, 0x93, 0xea, 0x5b, 0x9c, 0x75,
-	0x05, 0x62, 0xc2, 0xed, 0x0a, 0x24, 0x88, 0xab, 0xac, 0xeb, 0x21, 0x9b, 0x53, 0x0f, 0x39, 0xa1,
-	0x0c, 0x27, 0x67, 0x5c, 0xd4, 0x88, 0xcf, 0x71, 0xaf, 0xa3, 0x87, 0xd8, 0x1f, 0x4c, 0x28, 0x6c,
-	0xc9, 0xa9, 0x56, 0x05, 0x4c, 0x8a, 0xab, 0xc6, 0x92, 0xb1, 0x52, 0xf2, 0x4c, 0x8a, 0xad, 0xa7,
-	0x90, 0x8b, 0x36, 0xad, 0x9a, 0x4b, 0xc6, 0x4a, 0xa5, 0xbe, 0xec, 0x24, 0x6f, 0x64, 0x30, 0xd4,
-	0x89, 0x7a, 0x1c, 0x35, 0x62, 0x8f, 0x32, 0xec, 0x49, 0x91, 0xb5, 0x0e, 0x79, 0xb9, 0x5b, 0x75,
-	0x56, 0xaa, 0x6f, 0xff, 0x4a, 0x2d, 0x9b, 0xb4, 0x7c, 0x3f, 0x7a, 0xf6, 0x94, 0xce, 0xb2, 0x20,
-	0xc7, 0x90, 0x4f, 0xaa, 0x39, 0xe9, 0x47, 0x3e, 0x5b, 0x0b, 0x90, 0x47, 0x1d, 0x8a, 0xba, 0xd5,
-	0xbc, 0x2c, 0xaa, 0x17, 0x6b, 0x1d, 0x8a, 0xea, 0x48, 0xdd, 0x6a, 0x61, 0x69, 0x76, 0xa5, 0x5c,
-	0xbf, 0xe5, 0x9c, 0x1b, 0x1e, 0xe7, 0xb9, 0xec, 0xf6, 0x06, 0x2a, 0xfb, 0xbb, 0x09, 0x73, 0xcd,
-	0x40, 0x53, 0xb8, 0x3b, 0xa4, 0x50, 0xae, 0x2f, 0x3a, 0x2a, 0x46, 0xce, 0x20, 0x46, 0xce, 0xbe,
-	0x08, 0x29, 0x6b, 0xbf, 0x42, 0x9d, 0x1e, 0xf9, 0x0b, 0x18, 0xad, 0xc6, 0x18, 0x65, 0xb9, 0x55,
-	0x04, 0xeb, 0x71, 0x82, 0x59, 0x12, 0xcd, 0x77, 0x23, 0xcd, 0x77, 0x39, 0x83, 0x6f, 0x33, 0x48,
-	0x13, 0xfe, 0x66, 0x40, 0x41, 0xd5, 0xc6, 0x52, 0x36, 0x84, 0x60, 0x4e, 0x02, 0x41, 0x0d, 0x49,
-	0x40, 0xb8, 0x0a, 0x25, 0xb5, 0xf1, 0x01, 0xc5, 0x92, 0x64, 0xc9, 0x9b, 0x53, 0x85, 0x5d, 0x6c,
-	0xd5, 0x60, 0x8e, 0x30, 0x1c, 0x70, 0xca, 0x84, 0x4e, 0xd2, 0xf0, 0xdd, 0x5a, 0x84, 0x52, 0x8b,
-	0xfb, 0x01, 0x67, 0x84, 0x09, 0x9d, 0xa8, 0x51, 0x61, 0x98, 0xbf, 0xc2, 0x59, 0xf9, 0x2b, 0xc6,
-	0xf2, 0x67, 0x7f, 0x9a, 0x8d, 0xe2, 0xa3, 0x8f, 0x37, 0x5d, 0x7c, 0x7e, 0xfb, 0xf0, 0x8f, 0xd3,
-	0x87, 0xcf, 0xda, 0x75, 0x84, 0xe6, 0x51, 0x0a, 0x4d, 0xa6, 0x72, 0x08, 0xee, 0x49, 0x1a, 0x5c,
-	0x96, 0x34, 0x86, 0x75, 0x35, 0x86, 0x75, 0xca, 0xc8, 0x16, 0x27, 0x8e, 0xac, 0xfd, 0x1e, 0x60,
-	0x3b, 0x0c, 0x79, 0x28, 0x8b, 0xc3, 0xab, 0x34, 0x62, 0x57, 0x79, 0x13, 0xfe, 0xd3, 0xb1, 0x3d,
-	0x90, 0x6b, 0xa6, 0x5c, 0x2b, 0xeb, 0xda, 0x8b, 0xa8, 0xe5, 0x06, 0x94, 0x7d, 0x22, 0x8e, 0x39,
-	0x56, 0x1d, 0x2a, 0x5a, 0xa0, 0x4a, 0xb2, 0xa1, 0x0a, 0xc5, 0x16, 0x67, 0x82, 0xbc, 0x1b, 0x64,
-	0x6b, 0xf0, 0x6a, 0xff, 0x30, 0x60, 0xbe, 0x19, 0xbc, 0x64, 0x28, 0xec, 0x37, 0x50, 0xa7, 0xa3,
-	0x6c, 0xac, 0xc6, 0x6c, 0x4c, 0x76, 0xf4, 0x04, 0x68, 0x73, 0x3a, 0xd0, 0x0f, 0xa1, 0xa0, 0xac,
-	0x4e, 0x14, 0x0b, 0xdd, 0x6b, 0xdd, 0x81, 0xfc, 0x69, 0x54, 0xd0, 0x89, 0x58, 0x18, 0x13, 0x6d,
-	0xb0, 0xbe, 0xa7, 0x5a, 0xec, 0x8f, 0x06, 0x54, 0x52, 0x47, 0x3c, 0x8b, 0xf4, 0x62, 0xfa, 0x10,
-	0x89, 0xcf, 0xec, 0x72, 0xc2, 0x66, 0xe9, 0x42, 0x46, 0xbe, 0x18, 0x70, 0xa9, 0x19, 0xec, 0x8b,
-	0x90, 0x20, 0x7f, 0xe4, 0x65, 0x0f, 0x0a, 0x2d, 0xce, 0x8e, 0x68, 0x5b, 0x03, 0xbf, 0x9f, 0xf9,
-	0xaf, 0x35, 0x9a, 0xd0, 0x90, 0xc2, 0x9d, 0x19, 0x4f, 0x8f, 0xb0, 0xb6, 0x21, 0x87, 0x91, 0x40,
-	0xfa, 0x12, 0xdc, 0x29, 0x46, 0x6d, 0x21, 0x81, 0x76, 0x66, 0x3c, 0x29, 0xdf, 0x2c, 0x42, 0xbe,
-	0xc7, 0x28, 0x67, 0xf6, 0x67, 0x03, 0xfe, 0x4f, 0x1b, 0xde, 0x4d, 0x19, 0xce, 0xda, 0xe5, 0x1c,
-	0xbb, 0x8d, 0x84, 0xdd, 0x7b, 0x13, 0x0f, 0x3a, 0xdb, 0xec, 0x57, 0x03, 0xac, 0x71, 0x3a, 0xff,
-	0x42, 0x9e, 0xed, 0x37, 0x30, 0x3f, 0xe6, 0xfb, 0x8f, 0x85, 0xd4, 0x5e, 0x8b, 0xbe, 0xf2, 0x24,
-	0xbd, 0x51, 0x70, 0x8d, 0xec, 0xe0, 0x3e, 0x83, 0xca, 0xc5, 0xd5, 0x9b, 0xa5, 0xd7, 0x45, 0x7d,
-	0x83, 0x87, 0x05, 0xb9, 0xfe, 0xe0, 0x67, 0x00, 0x00, 0x00, 0xff, 0xff, 0x07, 0xa4, 0x5e, 0x0d,
-	0x43, 0x0b, 0x00, 0x00,
+var fileDescriptor_model_990009f19fd442a8 = []byte{
+	// 809 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xd4, 0x54, 0xcd, 0x6e, 0xdb, 0x46,
+	0x18, 0x34, 0x69, 0xfd, 0x7e, 0x32, 0x54, 0x97, 0x30, 0x0a, 0x56, 0x75, 0x6b, 0x55, 0x40, 0x61,
+	0xb5, 0x68, 0x49, 0x57, 0xed, 0xa1, 0xcd, 0x8f, 0x0d, 0x5b, 0x36, 0x60, 0xc3, 0x48, 0x04, 0xd0,
+	0x49, 0x0e, 0x41, 0x00, 0x63, 0x25, 0xae, 0xa5, 0x85, 0xc5, 0x5d, 0x82, 0x5c, 0x39, 0xd1, 0x25,
+	0xc7, 0xbc, 0x43, 0x2e, 0x79, 0x80, 0x9c, 0x72, 0xcc, 0x31, 0x6f, 0x90, 0x77, 0xc8, 0x93, 0x04,
+	0xda, 0x5d, 0x49, 0x24, 0xe5, 0x98, 0x92, 0xed, 0x43, 0x72, 0xb2, 0xb8, 0xfb, 0xcd, 0xec, 0xec,
+	0xcc, 0xac, 0xa1, 0xe4, 0x31, 0x17, 0xf7, 0x2d, 0x3f, 0x60, 0x9c, 0x19, 0x3f, 0x23, 0x62, 0x79,
+	0x98, 0x23, 0xde, 0x23, 0xb4, 0x1b, 0x5a, 0x21, 0x0e, 0x2e, 0x48, 0x07, 0x5b, 0x2e, 0x1e, 0xfd,
+	0x71, 0x2b, 0xbf, 0x74, 0x19, 0xeb, 0xf6, 0xb1, 0x2d, 0x86, 0xdb, 0x83, 0x33, 0xfb, 0x79, 0x80,
+	0x7c, 0x1f, 0x07, 0xa1, 0x84, 0x57, 0x7e, 0x4c, 0xee, 0x23, 0x3a, 0x54, 0x5b, 0x1b, 0xc9, 0x2d,
+	0x4e, 0x3c, 0x1c, 0x72, 0xe4, 0xf9, 0x6a, 0x60, 0xbb, 0x4b, 0x78, 0x6f, 0xd0, 0xb6, 0x3a, 0xcc,
+	0xb3, 0x29, 0x1a, 0x32, 0xce, 0x91, 0x3d, 0x95, 0x62, 0xfb, 0xe7, 0x5d, 0x89, 0xb5, 0x89, 0x8b,
+	0x29, 0x27, 0x7c, 0xe8, 0x36, 0xec, 0x88, 0xf4, 0x4a, 0x73, 0x5e, 0x7c, 0x87, 0xd1, 0x90, 0x23,
+	0xca, 0xed, 0x90, 0x23, 0x8e, 0x6d, 0x79, 0x37, 0x45, 0xb2, 0xb7, 0x30, 0xc9, 0x39, 0xa1, 0x6e,
+	0x9c, 0xe3, 0xba, 0x42, 0x3c, 0xe6, 0x0e, 0xfa, 0x8a, 0xa4, 0xf6, 0x41, 0x87, 0xdc, 0xbe, 0x60,
+	0x35, 0xca, 0xa0, 0x13, 0xd7, 0xd4, 0xaa, 0x5a, 0xbd, 0xe8, 0xe8, 0xc4, 0x35, 0xee, 0x42, 0x66,
+	0x74, 0xa8, 0xa9, 0x57, 0xb5, 0x7a, 0xb9, 0xb1, 0x69, 0xc5, 0x23, 0x1b, 0x93, 0x5a, 0xa3, 0x19,
+	0x4b, 0x52, 0x1c, 0x13, 0xea, 0x3a, 0x02, 0x64, 0xec, 0x40, 0x56, 0x9c, 0x66, 0x2e, 0x0b, 0xf4,
+	0xef, 0x5f, 0x42, 0x8b, 0x21, 0x05, 0x3f, 0x19, 0xfd, 0x76, 0x24, 0xce, 0x30, 0x20, 0x43, 0x91,
+	0x87, 0xcd, 0x8c, 0xd0, 0x23, 0x7e, 0x1b, 0x6b, 0x90, 0x45, 0x7d, 0x82, 0x42, 0x33, 0x2b, 0x16,
+	0xe5, 0x87, 0xb1, 0x03, 0x79, 0x79, 0xa5, 0xd0, 0xcc, 0x55, 0x97, 0xeb, 0xa5, 0xc6, 0x6f, 0xd6,
+	0x95, 0xed, 0xb2, 0x1e, 0x88, 0x69, 0x67, 0x8c, 0x32, 0xee, 0xc3, 0x4a, 0x0f, 0xa3, 0x80, 0xb7,
+	0x31, 0xe2, 0xa7, 0x88, 0x9b, 0xf9, 0xaa, 0x56, 0x2f, 0x35, 0x2a, 0x96, 0x6c, 0x92, 0x35, 0x6e,
+	0x92, 0xf5, 0x68, 0xdc, 0x24, 0xa7, 0x34, 0x99, 0xdf, 0xe5, 0xb5, 0x37, 0xcb, 0x50, 0x68, 0xf9,
+	0xca, 0xc4, 0x3f, 0x27, 0x26, 0x96, 0x1a, 0xeb, 0x33, 0x0c, 0x27, 0x3c, 0x20, 0xb4, 0xfb, 0x04,
+	0xf5, 0x07, 0xf8, 0x2b, 0xb0, 0x78, 0x2b, 0x62, 0x71, 0x9a, 0x5a, 0x19, 0x40, 0x23, 0x1a, 0x40,
+	0x1a, 0x44, 0xc5, 0xb3, 0x9b, 0x8c, 0x67, 0x33, 0x25, 0x9e, 0x96, 0x7f, 0xcb, 0x01, 0xbd, 0xd6,
+	0x21, 0x27, 0x29, 0x67, 0x3a, 0x3e, 0xf1, 0x50, 0x9f, 0xc7, 0x43, 0x49, 0x12, 0xf3, 0xf0, 0x27,
+	0x28, 0x4a, 0xdd, 0xa7, 0xc4, 0x15, 0x41, 0x14, 0x9d, 0x82, 0x5c, 0x38, 0x72, 0x8d, 0x0a, 0x14,
+	0x30, 0x75, 0x7d, 0x46, 0x28, 0x57, 0x3d, 0x9e, 0x7c, 0x1b, 0xeb, 0x50, 0xec, 0x30, 0xcf, 0x67,
+	0x14, 0x53, 0xae, 0xfa, 0x3c, 0x5d, 0x98, 0xb4, 0x3f, 0x77, 0x59, 0xfb, 0xf3, 0xd1, 0xf6, 0x27,
+	0xbd, 0x29, 0x2c, 0xe6, 0xcd, 0x47, 0x51, 0x5e, 0xe5, 0xce, 0x62, 0xe5, 0xbd, 0xb1, 0x77, 0xff,
+	0x27, 0xbd, 0x4b, 0x3b, 0x75, 0xea, 0xec, 0x7f, 0x09, 0x67, 0x53, 0x91, 0x13, 0xdf, 0xef, 0x24,
+	0x7d, 0x4f, 0x83, 0x46, 0x52, 0xd9, 0x8a, 0xa4, 0xb2, 0xe0, 0x83, 0xc9, 0xcf, 0xff, 0x60, 0x6e,
+	0x98, 0xe8, 0x4b, 0x80, 0x83, 0x20, 0x60, 0x81, 0xe0, 0x9c, 0x14, 0x49, 0x8b, 0x14, 0xe9, 0x57,
+	0x58, 0x51, 0x6f, 0xee, 0x54, 0xec, 0xe9, 0x62, 0xaf, 0xa4, 0xd6, 0x1e, 0x8e, 0x46, 0x36, 0xa0,
+	0xe4, 0x61, 0xde, 0x63, 0xae, 0x9c, 0x90, 0xc5, 0x06, 0xb9, 0x24, 0x06, 0x4c, 0xc8, 0x77, 0x18,
+	0xe5, 0xf8, 0xc5, 0xb8, 0xd9, 0xe3, 0xcf, 0xda, 0x27, 0x0d, 0x56, 0x5b, 0xfe, 0x63, 0x8a, 0x82,
+	0x61, 0x13, 0xf5, 0xfb, 0x52, 0xc6, 0x56, 0x44, 0xc6, 0x7c, 0xce, 0xc5, 0x72, 0xd2, 0x17, 0xcb,
+	0xe9, 0x5f, 0xc8, 0x49, 0xa9, 0x73, 0xb5, 0x4a, 0xcd, 0x1a, 0x7f, 0x40, 0xf6, 0x62, 0xb4, 0xa0,
+	0x0a, 0xb5, 0x36, 0x03, 0xda, 0xa5, 0x43, 0x47, 0x8e, 0xd4, 0x5e, 0x69, 0x50, 0x4e, 0x5c, 0xf1,
+	0x32, 0xa7, 0xd7, 0x93, 0x97, 0x88, 0x3d, 0xf2, 0x1f, 0x62, 0x32, 0x8b, 0xd7, 0x12, 0xf2, 0x4e,
+	0x83, 0xef, 0x5b, 0xfe, 0x09, 0x0f, 0x30, 0xf2, 0xa6, 0x5a, 0x8e, 0x21, 0xd7, 0x61, 0xf4, 0x8c,
+	0x74, 0x95, 0xe1, 0x7f, 0xa7, 0xfe, 0xcb, 0x9d, 0x32, 0x34, 0x05, 0xf0, 0x70, 0xc9, 0x51, 0x14,
+	0xc6, 0x01, 0x64, 0x5c, 0xc4, 0x91, 0x0a, 0xc1, 0x5e, 0x80, 0x6a, 0x1f, 0x71, 0x74, 0xb8, 0xe4,
+	0x08, 0xf8, 0x5e, 0x1e, 0xb2, 0x03, 0x4a, 0x18, 0xad, 0xbd, 0xd5, 0xe0, 0xbb, 0xa4, 0xe0, 0xa3,
+	0x84, 0xe0, 0xb4, 0x53, 0xae, 0x90, 0xdb, 0x8c, 0xc9, 0xfd, 0x6b, 0x6e, 0xa2, 0xcb, 0xc5, 0xbe,
+	0xd7, 0xc0, 0x98, 0x75, 0xe7, 0x5b, 0xe8, 0x73, 0xed, 0x19, 0xac, 0xce, 0xe8, 0xbe, 0xb5, 0x92,
+	0xd6, 0xb6, 0x47, 0xaf, 0x3c, 0xee, 0xde, 0xb4, 0xb8, 0x5a, 0x7a, 0x71, 0xef, 0x41, 0xf9, 0xfa,
+	0xe8, 0xbd, 0xe2, 0xd3, 0xbc, 0x4a, 0xb0, 0x9d, 0x13, 0xfb, 0xff, 0x7c, 0x0e, 0x00, 0x00, 0xff,
+	0xff, 0x13, 0x33, 0xb1, 0x55, 0x60, 0x0c, 0x00, 0x00,
 }

@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package ai.metathings.service.device;
+
+import "google/protobuf/wrappers.proto";
+
+import "github.com/mwitkow/go-proto-validators/validator.proto";
+
+import "github.com/nayotta/metathings/pkg/proto/deviced/model.proto";
+
+message HeartbeatRequest {
+	ai.metathings.service.deviced.OpModule module = 1 [(validator.field) = {msg_exists: true}];
+}

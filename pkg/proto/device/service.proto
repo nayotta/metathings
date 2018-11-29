@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package ai.metathings.service.device;
+
+import "google/protobuf/empty.proto";
+
+import "heartbeat.proto";
+
+service DeviceService {
+	rpc Heartbeat(HeartbeatRequest) returns (google.protobuf.Empty) {}
+}

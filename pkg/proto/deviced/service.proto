@@ -13,6 +13,7 @@ import "list_devices.proto";
 
 import "show_device.proto";
 import "connect.proto";
+import "heartbeat.proto";
 
 import "unary_call.proto";
 import "stream_call.proto";
@@ -27,6 +28,7 @@ service DevicedService {
 	// internal device only
 	rpc ShowDevice(google.protobuf.Empty) returns (ShowDeviceResponse) {}
 	rpc Connect(stream ConnectResponse) returns (stream ConnectRequest) {}
+	rpc Heartbeat(HeartbeatRequest) returns (google.protobuf.Empty) {}
 
 	rpc UnaryCall(UnaryCallRequest) returns (UnaryCallResponse) {}
 	rpc StreamCall(stream StreamCallRequest) returns (stream StreamCallResponse) {}

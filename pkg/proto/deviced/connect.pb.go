@@ -3,13 +3,11 @@
 
 package deviced
 
-import (
-	fmt "fmt"
-	proto "github.com/golang/protobuf/proto"
-	wrappers "github.com/golang/protobuf/ptypes/wrappers"
-	_ "github.com/mwitkow/go-proto-validators"
-	math "math"
-)
+import proto "github.com/golang/protobuf/proto"
+import fmt "fmt"
+import math "math"
+import wrappers "github.com/golang/protobuf/ptypes/wrappers"
+import _ "github.com/mwitkow/go-proto-validators"
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -35,7 +33,6 @@ var ConnectMessageKind_name = map[int32]string{
 	1: "CONNECT_MESSAGE_KIND_SYSTEM",
 	2: "CONNECT_MESSAGE_KIND_USER",
 }
-
 var ConnectMessageKind_value = map[string]int32{
 	"CONNECT_MESSAGE_KIND_UNKNOWN": 0,
 	"CONNECT_MESSAGE_KIND_SYSTEM":  1,
@@ -45,14 +42,13 @@ var ConnectMessageKind_value = map[string]int32{
 func (x ConnectMessageKind) String() string {
 	return proto.EnumName(ConnectMessageKind_name, int32(x))
 }
-
 func (ConnectMessageKind) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_778b7e3040344da6, []int{0}
+	return fileDescriptor_connect_340e7805e2f38c82, []int{0}
 }
 
 type ConnectResponse struct {
-	SessionId int32              `protobuf:"varint,1,opt,name=session_id,json=sessionId,proto3" json:"session_id,omitempty"`
-	Kind      ConnectMessageKind `protobuf:"varint,2,opt,name=kind,proto3,enum=ai.metathings.service.deviced.ConnectMessageKind" json:"kind,omitempty"`
+	SessionId int32              `protobuf:"varint,1,opt,name=session_id,json=sessionId" json:"session_id,omitempty"`
+	Kind      ConnectMessageKind `protobuf:"varint,2,opt,name=kind,enum=ai.metathings.service.deviced.ConnectMessageKind" json:"kind,omitempty"`
 	// Types that are valid to be assigned to Union:
 	//	*ConnectResponse_UnaryCall
 	//	*ConnectResponse_StreamCall
@@ -67,17 +63,16 @@ func (m *ConnectResponse) Reset()         { *m = ConnectResponse{} }
 func (m *ConnectResponse) String() string { return proto.CompactTextString(m) }
 func (*ConnectResponse) ProtoMessage()    {}
 func (*ConnectResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_778b7e3040344da6, []int{0}
+	return fileDescriptor_connect_340e7805e2f38c82, []int{0}
 }
-
 func (m *ConnectResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ConnectResponse.Unmarshal(m, b)
 }
 func (m *ConnectResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_ConnectResponse.Marshal(b, m, deterministic)
 }
-func (m *ConnectResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ConnectResponse.Merge(m, src)
+func (dst *ConnectResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ConnectResponse.Merge(dst, src)
 }
 func (m *ConnectResponse) XXX_Size() int {
 	return xxx_messageInfo_ConnectResponse.Size(m)
@@ -87,6 +82,31 @@ func (m *ConnectResponse) XXX_DiscardUnknown() {
 }
 
 var xxx_messageInfo_ConnectResponse proto.InternalMessageInfo
+
+type isConnectResponse_Union interface {
+	isConnectResponse_Union()
+}
+
+type ConnectResponse_UnaryCall struct {
+	UnaryCall *UnaryCallValue `protobuf:"bytes,3,opt,name=unary_call,json=unaryCall,oneof"`
+}
+type ConnectResponse_StreamCall struct {
+	StreamCall *StreamCallValue `protobuf:"bytes,4,opt,name=stream_call,json=streamCall,oneof"`
+}
+type ConnectResponse_Err struct {
+	Err *ErrorValue `protobuf:"bytes,9,opt,name=err,oneof"`
+}
+
+func (*ConnectResponse_UnaryCall) isConnectResponse_Union()  {}
+func (*ConnectResponse_StreamCall) isConnectResponse_Union() {}
+func (*ConnectResponse_Err) isConnectResponse_Union()        {}
+
+func (m *ConnectResponse) GetUnion() isConnectResponse_Union {
+	if m != nil {
+		return m.Union
+	}
+	return nil
+}
 
 func (m *ConnectResponse) GetSessionId() int32 {
 	if m != nil {
@@ -100,35 +120,6 @@ func (m *ConnectResponse) GetKind() ConnectMessageKind {
 		return m.Kind
 	}
 	return ConnectMessageKind_CONNECT_MESSAGE_KIND_UNKNOWN
-}
-
-type isConnectResponse_Union interface {
-	isConnectResponse_Union()
-}
-
-type ConnectResponse_UnaryCall struct {
-	UnaryCall *UnaryCallValue `protobuf:"bytes,3,opt,name=unary_call,json=unaryCall,proto3,oneof"`
-}
-
-type ConnectResponse_StreamCall struct {
-	StreamCall *StreamCallValue `protobuf:"bytes,4,opt,name=stream_call,json=streamCall,proto3,oneof"`
-}
-
-type ConnectResponse_Err struct {
-	Err *ErrorValue `protobuf:"bytes,9,opt,name=err,proto3,oneof"`
-}
-
-func (*ConnectResponse_UnaryCall) isConnectResponse_Union() {}
-
-func (*ConnectResponse_StreamCall) isConnectResponse_Union() {}
-
-func (*ConnectResponse_Err) isConnectResponse_Union() {}
-
-func (m *ConnectResponse) GetUnion() isConnectResponse_Union {
-	if m != nil {
-		return m.Union
-	}
-	return nil
 }
 
 func (m *ConnectResponse) GetUnaryCall() *UnaryCallValue {
@@ -246,8 +237,8 @@ func _ConnectResponse_OneofSizer(msg proto.Message) (n int) {
 }
 
 type ConnectRequest struct {
-	SessionId *wrappers.Int32Value `protobuf:"bytes,1,opt,name=session_id,json=sessionId,proto3" json:"session_id,omitempty"`
-	Kind      ConnectMessageKind   `protobuf:"varint,2,opt,name=kind,proto3,enum=ai.metathings.service.deviced.ConnectMessageKind" json:"kind,omitempty"`
+	SessionId *wrappers.Int32Value `protobuf:"bytes,1,opt,name=session_id,json=sessionId" json:"session_id,omitempty"`
+	Kind      ConnectMessageKind   `protobuf:"varint,2,opt,name=kind,enum=ai.metathings.service.deviced.ConnectMessageKind" json:"kind,omitempty"`
 	// Types that are valid to be assigned to Union:
 	//	*ConnectRequest_UnaryCall
 	//	*ConnectRequest_StreamCall
@@ -261,17 +252,16 @@ func (m *ConnectRequest) Reset()         { *m = ConnectRequest{} }
 func (m *ConnectRequest) String() string { return proto.CompactTextString(m) }
 func (*ConnectRequest) ProtoMessage()    {}
 func (*ConnectRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_778b7e3040344da6, []int{1}
+	return fileDescriptor_connect_340e7805e2f38c82, []int{1}
 }
-
 func (m *ConnectRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ConnectRequest.Unmarshal(m, b)
 }
 func (m *ConnectRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_ConnectRequest.Marshal(b, m, deterministic)
 }
-func (m *ConnectRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ConnectRequest.Merge(m, src)
+func (dst *ConnectRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ConnectRequest.Merge(dst, src)
 }
 func (m *ConnectRequest) XXX_Size() int {
 	return xxx_messageInfo_ConnectRequest.Size(m)
@@ -281,6 +271,27 @@ func (m *ConnectRequest) XXX_DiscardUnknown() {
 }
 
 var xxx_messageInfo_ConnectRequest proto.InternalMessageInfo
+
+type isConnectRequest_Union interface {
+	isConnectRequest_Union()
+}
+
+type ConnectRequest_UnaryCall struct {
+	UnaryCall *OpUnaryCallValue `protobuf:"bytes,3,opt,name=unary_call,json=unaryCall,oneof"`
+}
+type ConnectRequest_StreamCall struct {
+	StreamCall *OpStreamCallValue `protobuf:"bytes,4,opt,name=stream_call,json=streamCall,oneof"`
+}
+
+func (*ConnectRequest_UnaryCall) isConnectRequest_Union()  {}
+func (*ConnectRequest_StreamCall) isConnectRequest_Union() {}
+
+func (m *ConnectRequest) GetUnion() isConnectRequest_Union {
+	if m != nil {
+		return m.Union
+	}
+	return nil
+}
 
 func (m *ConnectRequest) GetSessionId() *wrappers.Int32Value {
 	if m != nil {
@@ -294,29 +305,6 @@ func (m *ConnectRequest) GetKind() ConnectMessageKind {
 		return m.Kind
 	}
 	return ConnectMessageKind_CONNECT_MESSAGE_KIND_UNKNOWN
-}
-
-type isConnectRequest_Union interface {
-	isConnectRequest_Union()
-}
-
-type ConnectRequest_UnaryCall struct {
-	UnaryCall *OpUnaryCallValue `protobuf:"bytes,3,opt,name=unary_call,json=unaryCall,proto3,oneof"`
-}
-
-type ConnectRequest_StreamCall struct {
-	StreamCall *OpStreamCallValue `protobuf:"bytes,4,opt,name=stream_call,json=streamCall,proto3,oneof"`
-}
-
-func (*ConnectRequest_UnaryCall) isConnectRequest_Union() {}
-
-func (*ConnectRequest_StreamCall) isConnectRequest_Union() {}
-
-func (m *ConnectRequest) GetUnion() isConnectRequest_Union {
-	if m != nil {
-		return m.Union
-	}
-	return nil
 }
 
 func (m *ConnectRequest) GetUnaryCall() *OpUnaryCallValue {
@@ -408,14 +396,14 @@ func _ConnectRequest_OneofSizer(msg proto.Message) (n int) {
 }
 
 func init() {
-	proto.RegisterEnum("ai.metathings.service.deviced.ConnectMessageKind", ConnectMessageKind_name, ConnectMessageKind_value)
 	proto.RegisterType((*ConnectResponse)(nil), "ai.metathings.service.deviced.ConnectResponse")
 	proto.RegisterType((*ConnectRequest)(nil), "ai.metathings.service.deviced.ConnectRequest")
+	proto.RegisterEnum("ai.metathings.service.deviced.ConnectMessageKind", ConnectMessageKind_name, ConnectMessageKind_value)
 }
 
-func init() { proto.RegisterFile("connect.proto", fileDescriptor_778b7e3040344da6) }
+func init() { proto.RegisterFile("connect.proto", fileDescriptor_connect_340e7805e2f38c82) }
 
-var fileDescriptor_778b7e3040344da6 = []byte{
+var fileDescriptor_connect_340e7805e2f38c82 = []byte{
 	// 445 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xa4, 0x91, 0xdf, 0x6e, 0xd3, 0x30,
 	0x14, 0x87, 0x97, 0xec, 0x0f, 0xaa, 0x2b, 0x46, 0xe5, 0xab, 0xb2, 0x51, 0x16, 0xed, 0xaa, 0x20,
