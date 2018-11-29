@@ -37,6 +37,12 @@ func (serv *MetathingsMqttdService) GpioDigitalWrite(ctx context.Context, req *p
 	}
 
 	//TODO(zh) ACK need
+	res := &pb.GpioDigitalWriteResponse{
+		Gpio: &pb.GpioValue{
+			Pin:   gpio.GetPin().GetValue(),
+			Value: gpio.GetValue().GetValue(),
+		},
+	}
 
-	return nil, nil
+	return res, nil
 }

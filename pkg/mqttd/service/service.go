@@ -25,8 +25,8 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-// Option MetathingsMqttdServiceOption struct
-type Option struct {
+// MetathingsDevicedServiceOption MetathingsMqttdServiceOption struct
+type MetathingsMqttdServiceOption struct {
 	metathings_addr string
 	logLevel        string
 
@@ -55,7 +55,7 @@ type MetathingsMqttdService struct {
 
 	tknr     token_helper.Tokener
 	cliFty   *client_helper.ClientFactory
-	opt      *Option
+	opt      *MetathingsMqttdServiceOption
 	logger   log.FieldLogger
 	storage  storage.Storage
 	enforcer identityd_policy.Enforcer
@@ -128,6 +128,9 @@ func (sev *MetathingsMqttdService) isIgnoreMethod(md *grpc_helper.MethodDescript
 
 // AuthFuncOverride AuthFuncOverride
 func (sev *MetathingsMqttdService) AuthFuncOverride(ctx context.Context, fullMethodName string) (context.Context, error) {
+	//debug here
+	return ctx, nil
+
 	var tkn *identityd_pb.Token
 	var tknTxt string
 	var newCtx context.Context
@@ -274,12 +277,12 @@ func (sev *MetathingsMqttdService) dispatch(ctx context.Context, req *cored_pb.S
 
 // NewMetathingsMqttdService NewMetathingsMqttdService
 func NewMetathingsMqttdService(
-	opt *Option,
+	opt *MetathingsMqttdServiceOption,
 	logger log.FieldLogger,
 	storage storage.Storage,
-	enforcer identityd_policy.Enforcer,
-	vdr token_helper.TokenValidator,
-	tknr token_helper.Tokener,
+	//enforcer identityd_policy.Enforcer,
+	//vdr token_helper.TokenValidator,
+	//tknr token_helper.Tokener,
 	cliFty *client_helper.ClientFactory,
 	cc connection.MqttBridge,
 ) (pb.MqttdServiceServer, error) {
@@ -294,13 +297,14 @@ func NewMetathingsMqttdService(
 	}
 
 	return &MetathingsMqttdService{
-		opt:              opt,
-		appCredMgr:       appCredMgr,
-		logger:           logger,
-		storage:          storage,
-		enforcer:         enforcer,
-		vdr:              vdr,
-		tknr:             tknr,
+		opt:        opt,
+		appCredMgr: appCredMgr,
+		logger:     logger,
+		storage:    storage,
+		//debug here
+		//enforcer:         enforcer,
+		//vdr:              vdr,
+		//tknr:             tknr,
 		cliFty:           cliFty,
 		cc:               cc,
 		heartbeatSession: rand.Uint64(),

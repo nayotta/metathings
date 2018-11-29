@@ -224,16 +224,51 @@ func (that *MqttBridgeOpt) InitMqttBridge() error {
 }
 
 // NewMqttBridge new mqtt client bridge
-func NewMqttBridge(
-	server *url.URL,
-	rootKey string,
-	logger log.FieldLogger,
-	storage Storage,
-) (MqttBridge, error) {
+func NewMqttBridge(args []interface{}) (MqttBridge, error) {
+	var ok bool
+	var err error
+	var key string
+	var val interface{}
+	var server *url.URL
+	var rootKey string
+	var logger log.FieldLogger
+
+	if len(args)%2 != 0 {
+		return nil, ErrInvalidArgument
+	}
+
+	for i := 0; i < len(args); i += 2 {
+		key, ok = args[i].(string)
+		if !ok {
+			return nil, ErrInvalidArgument
+		}
+		val = args[i+1]
+
+		switch key {
+		case "url":
+			urlStr, ok := val.(string)
+			if !ok {
+				return nil, ErrInvalidArgument
+			}
+
+			server, err = url.Parse(urlStr)
+			if err != nil {
+				return nil, ErrInvalidArgument
+			}
+		case "rootkey":
+			rootKey, ok = val.(string)
+			if !ok {
+				return nil, ErrInvalidArgument
+			}
+		case "logger":
+			if logger, ok = args[i+1].(log.FieldLogger); !ok {
+				return nil, ErrInvalidArgument
+			}
+		}
+	}
 	return &MqttBridgeOpt{
 		server:  server,
 		rootKey: rootKey,
 		logger:  logger,
-		storage: storage,
 	}, nil
 }
