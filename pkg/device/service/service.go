@@ -1,6 +1,8 @@
 package metathings_device_service
 
 import (
+	"time"
+
 	log "github.com/sirupsen/logrus"
 
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
@@ -15,7 +17,9 @@ type MetathingsDeviceService interface {
 	Err() error
 }
 
-type MetathingsDeviceServiceOption struct{}
+type MetathingsDeviceServiceOption struct {
+	ModuleAliveTimeout time.Duration
+}
 
 type MetathingsDeviceServiceImpl struct {
 	tknr    token_helper.Tokener

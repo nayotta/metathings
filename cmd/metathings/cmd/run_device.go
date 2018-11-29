@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"context"
+	"time"
 
 	"github.com/spf13/cobra"
 	"go.uber.org/fx"
@@ -57,7 +58,9 @@ func GetRunDeviceOptions() (
 }
 
 func NewMetathingsDeviceServiceOption(opt *RunDeviceOption) *service.MetathingsDeviceServiceOption {
-	return &service.MetathingsDeviceServiceOption{}
+	return &service.MetathingsDeviceServiceOption{
+		ModuleAliveTimeout: 60 * time.Second,
+	}
 }
 
 func run_device() error {

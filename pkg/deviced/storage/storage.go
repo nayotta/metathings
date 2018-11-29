@@ -9,10 +9,11 @@ type Device struct {
 	CreatedAt time.Time
 	UpdatedAt time.Time
 
-	Kind  *string `gorm:"column:kind"`
-	State *string `gorm:"column:state"`
-	Name  *string `gorm:"column:name"`
-	Alias *string `gorm:"column:alias"`
+	HeartbeatAt *time.Time
+	Kind        *string `gorm:"column:kind"`
+	State       *string `gorm:"column:state"`
+	Name        *string `gorm:"column:name"`
+	Alias       *string `gorm:"column:alias"`
 
 	Modules []*Module `gorm:"-"`
 }
@@ -22,12 +23,13 @@ type Module struct {
 	CreatedAt time.Time
 	UpdatedAt time.Time
 
-	State     *string `gorm:"column:state"`
-	DeviceId  *string `gorm:"column:device_id"`
-	Endpoint  *string `gorm:"column:endpoint"`
-	Component *string `gorm:"column:component"`
-	Name      *string `gorm:"column:name"`
-	Alias     *string `gorm:"column:alias"`
+	HeartbeatAt *time.Time
+	State       *string `gorm:"column:state"`
+	DeviceId    *string `gorm:"column:device_id"`
+	Endpoint    *string `gorm:"column:endpoint"`
+	Component   *string `gorm:"column:component"`
+	Name        *string `gorm:"column:name"`
+	Alias       *string `gorm:"column:alias"`
 
 	Device *Device `gorm:"-"`
 }
