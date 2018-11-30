@@ -88,6 +88,7 @@ func (self *MetathingsDeviceServiceImpl) heartbeat_once() {
 	_, err = cli.Heartbeat(ctx, req)
 	if err != nil {
 		self.logger.WithError(err).Warningf("failed to heartbeat")
+		return
 	}
 
 	self.logger.WithFields(log.Fields{
