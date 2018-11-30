@@ -1,10 +1,7 @@
 package metathings_device_service
 
 import (
-	"context"
-
 	"github.com/golang/protobuf/ptypes/empty"
-	context_helper "github.com/nayotta/metathings/pkg/common/context"
 	deviced_pb "github.com/nayotta/metathings/pkg/proto/deviced"
 )
 
@@ -13,25 +10,25 @@ func (self *MetathingsDeviceServiceImpl) start() error {
 	var show_device_res *deviced_pb.ShowDeviceResponse
 	var err error
 
-	tkn_txt_str := self.tknr.GetToken()
 	cli, self.conn_cfn, err = self.cli_fty.NewDevicedServiceClient()
 	if err != nil {
 		return err
 	}
 
-	ctx := context_helper.WithToken(context.Background(), tkn_txt_str)
+	ctx := self.context_with_token()
 	self.conn_stm, err = cli.Connect(ctx)
 	if err != nil {
 		return err
 	}
 
-	ctx = context_helper.WithToken(context.Background(), tkn_txt_str)
+	ctx = self.context_with_token()
 	show_device_res, err = cli.ShowDevice(ctx, &empty.Empty{})
 	if err != nil {
 		return err
 	}
 
 	self.mdl_db = NewModuleDatabase(show_device_res.GetDevice().GetModules(), self.opt.ModuleAliveTimeout)
+	self.info = show_device_res.GetDevice()
 
 	go self.heartbeat_loop()
 	go self.main_loop()

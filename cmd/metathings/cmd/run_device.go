@@ -60,6 +60,7 @@ func GetRunDeviceOptions() (
 func NewMetathingsDeviceServiceOption(opt *RunDeviceOption) *service.MetathingsDeviceServiceOption {
 	return &service.MetathingsDeviceServiceOption{
 		ModuleAliveTimeout: 60 * time.Second,
+		HeartbeatInterval:  30 * time.Second,
 	}
 }
 

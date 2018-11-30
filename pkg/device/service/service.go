@@ -1,11 +1,13 @@
 package metathings_device_service
 
 import (
+	"context"
 	"time"
 
 	log "github.com/sirupsen/logrus"
 
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
+	context_helper "github.com/nayotta/metathings/pkg/common/context"
 	token_helper "github.com/nayotta/metathings/pkg/common/token"
 	deviced_pb "github.com/nayotta/metathings/pkg/proto/deviced"
 )
@@ -19,6 +21,7 @@ type MetathingsDeviceService interface {
 
 type MetathingsDeviceServiceOption struct {
 	ModuleAliveTimeout time.Duration
+	HeartbeatInterval  time.Duration
 }
 
 type MetathingsDeviceServiceImpl struct {
@@ -27,13 +30,14 @@ type MetathingsDeviceServiceImpl struct {
 	logger  log.FieldLogger
 	opt     *MetathingsDeviceServiceOption
 
+	info     *deviced_pb.Device
 	mdl_db   ModuleDatabase
 	conn_stm deviced_pb.DevicedService_ConnectClient
 	conn_cfn client_helper.CloseFn
 }
 
-func (self *MetathingsDeviceServiceImpl) Stop() error {
-	panic("unimplemented")
+func (self *MetathingsDeviceServiceImpl) context_with_token() context.Context {
+	return context_helper.WithToken(context.Background(), self.tknr.GetToken())
 }
 
 func (self *MetathingsDeviceServiceImpl) Wait() chan bool {

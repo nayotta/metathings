@@ -11,6 +11,7 @@ type Module interface {
 	Id() string
 	Heartbeat()
 	IsAlive() bool
+	HeartbeatAt() time.Time
 
 	UnaryCall(context.Context, *deviced_pb.OpUnaryCallValue) (*deviced_pb.UnaryCallValue, error)
 }
@@ -27,6 +28,10 @@ func (self *ModuleImpl) Id() string {
 
 func (self *ModuleImpl) Heartbeat() {
 	self.heartbeat_at = time.Now()
+}
+
+func (self *ModuleImpl) HeartbeatAt() time.Time {
+	return self.heartbeat_at
 }
 
 func (self *ModuleImpl) IsAlive() bool {
