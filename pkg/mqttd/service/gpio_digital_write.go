@@ -11,15 +11,31 @@ import (
 )
 
 // GpioDigitalWrite GpioDigitalWrite
-func (serv *MetathingsMqttdService) GpioDigitalWrite(ctx context.Context, req *pb.GpioDigitalWriteRequest) (*pb.GpioDigitalWriteResponse, error) {
+func (serv *MetathingsMqttdService) GpioDigitalWrite(ctx context.Context, req *pb.MqttRequest) (*pb.MqttResponse, error) {
 	var err error
 
-	gpio := req.GetGpio()
-	devID := gpio.GetDeviceId().GetValue()
+	reqType := req.GetType()
+	if reqType != pb.MessageReqType_REQ_GPIO_DIGITAL {
+		serv.logger.WithError(ErrUnsupportRequestType).Errorf("failed to get gpio digital req")
+		return nil, status.Errorf(codes.Internal, ErrUnsupportRequestType.Error())
+	}
 
-	dat := &pb.GpioValue{
-		Pin:   gpio.GetPin().GetValue(),
-		Value: gpio.GetValue().GetValue(),
+	gpio, ok := req.GetPayload().(*pb.MqttRequest_GpioDigital)
+	if !ok {
+		serv.logger.WithError(err).Errorf("failed to get gpio digital payload")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
+	devID := req.GetDeviceId().GetValue()
+
+	dat := &pb.MqttDeviceRequest{
+		Type: reqType,
+		Payload: &pb.MqttDeviceRequest_GpioDigital{
+			GpioDigital: &pb.GpioDigitalPayload{
+				Pin:   gpio.GpioDigital.GetPin().GetValue(),
+				Value: gpio.GpioDigital.GetValue().GetValue(),
+			},
+		},
 	}
 
 	msg, err := proto.Marshal(dat)
@@ -28,7 +44,7 @@ func (serv *MetathingsMqttdService) GpioDigitalWrite(ctx context.Context, req *p
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
-	path := conn.EncodeDownPath(devID, conn.GpioType)
+	path := conn.EncodeDownPath(devID)
 
 	err = serv.cc.Pub(msg, path)
 	if err != nil {
@@ -37,10 +53,13 @@ func (serv *MetathingsMqttdService) GpioDigitalWrite(ctx context.Context, req *p
 	}
 
 	//TODO(zh) ACK need
-	res := &pb.GpioDigitalWriteResponse{
-		Gpio: &pb.GpioValue{
-			Pin:   gpio.GetPin().GetValue(),
-			Value: gpio.GetValue().GetValue(),
+	res := &pb.MqttResponse{
+		Type: pb.MessageResType_RES_GPIO_DIGITAL,
+		Payload: &pb.MqttResponse_GpioDigital{
+			GpioDigital: &pb.GpioDigitalPayload{
+				Pin:   gpio.GpioDigital.GetPin().GetValue(),
+				Value: gpio.GpioDigital.GetValue().GetValue(),
+			},
 		},
 	}
 

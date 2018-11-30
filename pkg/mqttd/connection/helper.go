@@ -29,6 +29,6 @@ func getTopicType(topic string) string {
 }
 
 // EncodeDownPath EncodeDownPath
-func EncodeDownPath(deviceID string, msgType string) string {
-	return fmt.Sprintf("%s/down/%s", deviceID, msgType)
+func EncodeDownPath(deviceID string) string {
+	return fmt.Sprintf("%s/down/", deviceID)
 }

@@ -21,9 +21,3 @@ type MqttBridge interface {
 	InitMqttBridge() error
 	CloseBridge()
 }
-
-// GpioType GpioType
-var GpioType = "gpio"
-
-// I2cType I2cType
-var I2cType = "i2c"

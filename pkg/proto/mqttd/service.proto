@@ -14,7 +14,7 @@ import "show_device.proto";
 import "unary_call.proto";
 import "stream_call.proto";
 import "heartbeat.proto";
-import "gpio_digital_write.proto";
+import "model.proto";
 //import "gpio_digital_read.proto";
 //import "gpio_analog_write.proto";
 //import "gpio_analog_read.proto";
@@ -37,7 +37,7 @@ service MqttdService {
 
     rpc ShowDevice(google.protobuf.Empty) returns (ShowDeviceResponse) {}
 
-    rpc GpioDigitalWrite(GpioDigitalWriteRequest) returns (GpioDigitalWriteResponse) {}
+    rpc GpioDigitalWrite(MqttRequest) returns (MqttResponse) {}
     //rpc GpioDigitalRead(GpioDigitalReadRequest) returns (GpioDigitalReadResponse) {}
     //rpc GpioAnalogWrite(GpioAnalogWriteRequest) returns (GpioAnalogWriteResponse) {}
     //rpc GpioAnalogRead (GpioAnalogReadRequest) returns (GpioAnalogReadResponse) {}

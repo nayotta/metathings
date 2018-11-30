@@ -8,6 +8,7 @@ import (
 	proto "github.com/golang/protobuf/proto"
 	any "github.com/golang/protobuf/ptypes/any"
 	wrappers "github.com/golang/protobuf/ptypes/wrappers"
+	_ "github.com/mwitkow/go-proto-validators"
 	state "github.com/nayotta/metathings/pkg/proto/constant/state"
 	_ "github.com/nayotta/metathings/pkg/proto/identityd2"
 	math "math"
@@ -24,6 +25,637 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
+type MessageReqType int32
+
+const (
+	MessageReqType_REQ_MESSAGE_UNKNOWN MessageReqType = 0
+	MessageReqType_REQ_GPIO_DIGITAL    MessageReqType = 1
+	MessageReqType_REQ_GPIO_ANALOG     MessageReqType = 2
+	MessageReqType_REQ_I2C             MessageReqType = 3
+)
+
+var MessageReqType_name = map[int32]string{
+	0: "REQ_MESSAGE_UNKNOWN",
+	1: "REQ_GPIO_DIGITAL",
+	2: "REQ_GPIO_ANALOG",
+	3: "REQ_I2C",
+}
+
+var MessageReqType_value = map[string]int32{
+	"REQ_MESSAGE_UNKNOWN": 0,
+	"REQ_GPIO_DIGITAL":    1,
+	"REQ_GPIO_ANALOG":     2,
+	"REQ_I2C":             3,
+}
+
+func (x MessageReqType) String() string {
+	return proto.EnumName(MessageReqType_name, int32(x))
+}
+
+func (MessageReqType) EnumDescriptor() ([]byte, []int) {
+	return fileDescriptor_4c16552f9fdb66d8, []int{0}
+}
+
+type MessageResType int32
+
+const (
+	MessageResType_RES_MESSAGE_UNKNOWN MessageResType = 0
+	MessageResType_RES_GPIO_DIGITAL    MessageResType = 1
+	MessageResType_RES_GPIO_ANALOG     MessageResType = 2
+	MessageResType_RES_I2C             MessageResType = 3
+)
+
+var MessageResType_name = map[int32]string{
+	0: "RES_MESSAGE_UNKNOWN",
+	1: "RES_GPIO_DIGITAL",
+	2: "RES_GPIO_ANALOG",
+	3: "RES_I2C",
+}
+
+var MessageResType_value = map[string]int32{
+	"RES_MESSAGE_UNKNOWN": 0,
+	"RES_GPIO_DIGITAL":    1,
+	"RES_GPIO_ANALOG":     2,
+	"RES_I2C":             3,
+}
+
+func (x MessageResType) String() string {
+	return proto.EnumName(MessageResType_name, int32(x))
+}
+
+func (MessageResType) EnumDescriptor() ([]byte, []int) {
+	return fileDescriptor_4c16552f9fdb66d8, []int{1}
+}
+
+type MqttRequest struct {
+	DeviceId *wrappers.StringValue `protobuf:"bytes,1,opt,name=device_id,json=deviceId,proto3" json:"device_id,omitempty"`
+	Type     MessageReqType        `protobuf:"varint,2,opt,name=type,proto3,enum=ai.metathings.service.mqttd.MessageReqType" json:"type,omitempty"`
+	// Types that are valid to be assigned to Payload:
+	//	*MqttRequest_GpioDigital
+	//	*MqttRequest_GpioAnalog
+	//	*MqttRequest_I2C
+	Payload              isMqttRequest_Payload `protobuf_oneof:"payload"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
+}
+
+func (m *MqttRequest) Reset()         { *m = MqttRequest{} }
+func (m *MqttRequest) String() string { return proto.CompactTextString(m) }
+func (*MqttRequest) ProtoMessage()    {}
+func (*MqttRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_4c16552f9fdb66d8, []int{0}
+}
+
+func (m *MqttRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_MqttRequest.Unmarshal(m, b)
+}
+func (m *MqttRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_MqttRequest.Marshal(b, m, deterministic)
+}
+func (m *MqttRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MqttRequest.Merge(m, src)
+}
+func (m *MqttRequest) XXX_Size() int {
+	return xxx_messageInfo_MqttRequest.Size(m)
+}
+func (m *MqttRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_MqttRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MqttRequest proto.InternalMessageInfo
+
+func (m *MqttRequest) GetDeviceId() *wrappers.StringValue {
+	if m != nil {
+		return m.DeviceId
+	}
+	return nil
+}
+
+func (m *MqttRequest) GetType() MessageReqType {
+	if m != nil {
+		return m.Type
+	}
+	return MessageReqType_REQ_MESSAGE_UNKNOWN
+}
+
+type isMqttRequest_Payload interface {
+	isMqttRequest_Payload()
+}
+
+type MqttRequest_GpioDigital struct {
+	GpioDigital *OpGpioDigitalPayload `protobuf:"bytes,3,opt,name=gpio_digital,json=gpioDigital,proto3,oneof"`
+}
+
+type MqttRequest_GpioAnalog struct {
+	GpioAnalog *OpGpioAnalogPayload `protobuf:"bytes,4,opt,name=gpio_analog,json=gpioAnalog,proto3,oneof"`
+}
+
+type MqttRequest_I2C struct {
+	I2C *OpI2CPayload `protobuf:"bytes,5,opt,name=i2c,proto3,oneof"`
+}
+
+func (*MqttRequest_GpioDigital) isMqttRequest_Payload() {}
+
+func (*MqttRequest_GpioAnalog) isMqttRequest_Payload() {}
+
+func (*MqttRequest_I2C) isMqttRequest_Payload() {}
+
+func (m *MqttRequest) GetPayload() isMqttRequest_Payload {
+	if m != nil {
+		return m.Payload
+	}
+	return nil
+}
+
+func (m *MqttRequest) GetGpioDigital() *OpGpioDigitalPayload {
+	if x, ok := m.GetPayload().(*MqttRequest_GpioDigital); ok {
+		return x.GpioDigital
+	}
+	return nil
+}
+
+func (m *MqttRequest) GetGpioAnalog() *OpGpioAnalogPayload {
+	if x, ok := m.GetPayload().(*MqttRequest_GpioAnalog); ok {
+		return x.GpioAnalog
+	}
+	return nil
+}
+
+func (m *MqttRequest) GetI2C() *OpI2CPayload {
+	if x, ok := m.GetPayload().(*MqttRequest_I2C); ok {
+		return x.I2C
+	}
+	return nil
+}
+
+// XXX_OneofFuncs is for the internal use of the proto package.
+func (*MqttRequest) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) error, func(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error), func(msg proto.Message) (n int), []interface{}) {
+	return _MqttRequest_OneofMarshaler, _MqttRequest_OneofUnmarshaler, _MqttRequest_OneofSizer, []interface{}{
+		(*MqttRequest_GpioDigital)(nil),
+		(*MqttRequest_GpioAnalog)(nil),
+		(*MqttRequest_I2C)(nil),
+	}
+}
+
+func _MqttRequest_OneofMarshaler(msg proto.Message, b *proto.Buffer) error {
+	m := msg.(*MqttRequest)
+	// payload
+	switch x := m.Payload.(type) {
+	case *MqttRequest_GpioDigital:
+		b.EncodeVarint(3<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.GpioDigital); err != nil {
+			return err
+		}
+	case *MqttRequest_GpioAnalog:
+		b.EncodeVarint(4<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.GpioAnalog); err != nil {
+			return err
+		}
+	case *MqttRequest_I2C:
+		b.EncodeVarint(5<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.I2C); err != nil {
+			return err
+		}
+	case nil:
+	default:
+		return fmt.Errorf("MqttRequest.Payload has unexpected type %T", x)
+	}
+	return nil
+}
+
+func _MqttRequest_OneofUnmarshaler(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error) {
+	m := msg.(*MqttRequest)
+	switch tag {
+	case 3: // payload.gpio_digital
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(OpGpioDigitalPayload)
+		err := b.DecodeMessage(msg)
+		m.Payload = &MqttRequest_GpioDigital{msg}
+		return true, err
+	case 4: // payload.gpio_analog
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(OpGpioAnalogPayload)
+		err := b.DecodeMessage(msg)
+		m.Payload = &MqttRequest_GpioAnalog{msg}
+		return true, err
+	case 5: // payload.i2c
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(OpI2CPayload)
+		err := b.DecodeMessage(msg)
+		m.Payload = &MqttRequest_I2C{msg}
+		return true, err
+	default:
+		return false, nil
+	}
+}
+
+func _MqttRequest_OneofSizer(msg proto.Message) (n int) {
+	m := msg.(*MqttRequest)
+	// payload
+	switch x := m.Payload.(type) {
+	case *MqttRequest_GpioDigital:
+		s := proto.Size(x.GpioDigital)
+		n += 1 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *MqttRequest_GpioAnalog:
+		s := proto.Size(x.GpioAnalog)
+		n += 1 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *MqttRequest_I2C:
+		s := proto.Size(x.I2C)
+		n += 1 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case nil:
+	default:
+		panic(fmt.Sprintf("proto: unexpected type %T in oneof", x))
+	}
+	return n
+}
+
+type MqttResponse struct {
+	Type MessageResType `protobuf:"varint,1,opt,name=type,proto3,enum=ai.metathings.service.mqttd.MessageResType" json:"type,omitempty"`
+	// Types that are valid to be assigned to Payload:
+	//	*MqttResponse_GpioDigital
+	//	*MqttResponse_GpioAnalog
+	//	*MqttResponse_I2C
+	Payload              isMqttResponse_Payload `protobuf_oneof:"payload"`
+	XXX_NoUnkeyedLiteral struct{}               `json:"-"`
+	XXX_unrecognized     []byte                 `json:"-"`
+	XXX_sizecache        int32                  `json:"-"`
+}
+
+func (m *MqttResponse) Reset()         { *m = MqttResponse{} }
+func (m *MqttResponse) String() string { return proto.CompactTextString(m) }
+func (*MqttResponse) ProtoMessage()    {}
+func (*MqttResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_4c16552f9fdb66d8, []int{1}
+}
+
+func (m *MqttResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_MqttResponse.Unmarshal(m, b)
+}
+func (m *MqttResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_MqttResponse.Marshal(b, m, deterministic)
+}
+func (m *MqttResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MqttResponse.Merge(m, src)
+}
+func (m *MqttResponse) XXX_Size() int {
+	return xxx_messageInfo_MqttResponse.Size(m)
+}
+func (m *MqttResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MqttResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MqttResponse proto.InternalMessageInfo
+
+func (m *MqttResponse) GetType() MessageResType {
+	if m != nil {
+		return m.Type
+	}
+	return MessageResType_RES_MESSAGE_UNKNOWN
+}
+
+type isMqttResponse_Payload interface {
+	isMqttResponse_Payload()
+}
+
+type MqttResponse_GpioDigital struct {
+	GpioDigital *GpioDigitalPayload `protobuf:"bytes,2,opt,name=gpio_digital,json=gpioDigital,proto3,oneof"`
+}
+
+type MqttResponse_GpioAnalog struct {
+	GpioAnalog *GpioAnalogPayload `protobuf:"bytes,3,opt,name=gpio_analog,json=gpioAnalog,proto3,oneof"`
+}
+
+type MqttResponse_I2C struct {
+	I2C *I2CPayload `protobuf:"bytes,4,opt,name=i2c,proto3,oneof"`
+}
+
+func (*MqttResponse_GpioDigital) isMqttResponse_Payload() {}
+
+func (*MqttResponse_GpioAnalog) isMqttResponse_Payload() {}
+
+func (*MqttResponse_I2C) isMqttResponse_Payload() {}
+
+func (m *MqttResponse) GetPayload() isMqttResponse_Payload {
+	if m != nil {
+		return m.Payload
+	}
+	return nil
+}
+
+func (m *MqttResponse) GetGpioDigital() *GpioDigitalPayload {
+	if x, ok := m.GetPayload().(*MqttResponse_GpioDigital); ok {
+		return x.GpioDigital
+	}
+	return nil
+}
+
+func (m *MqttResponse) GetGpioAnalog() *GpioAnalogPayload {
+	if x, ok := m.GetPayload().(*MqttResponse_GpioAnalog); ok {
+		return x.GpioAnalog
+	}
+	return nil
+}
+
+func (m *MqttResponse) GetI2C() *I2CPayload {
+	if x, ok := m.GetPayload().(*MqttResponse_I2C); ok {
+		return x.I2C
+	}
+	return nil
+}
+
+// XXX_OneofFuncs is for the internal use of the proto package.
+func (*MqttResponse) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) error, func(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error), func(msg proto.Message) (n int), []interface{}) {
+	return _MqttResponse_OneofMarshaler, _MqttResponse_OneofUnmarshaler, _MqttResponse_OneofSizer, []interface{}{
+		(*MqttResponse_GpioDigital)(nil),
+		(*MqttResponse_GpioAnalog)(nil),
+		(*MqttResponse_I2C)(nil),
+	}
+}
+
+func _MqttResponse_OneofMarshaler(msg proto.Message, b *proto.Buffer) error {
+	m := msg.(*MqttResponse)
+	// payload
+	switch x := m.Payload.(type) {
+	case *MqttResponse_GpioDigital:
+		b.EncodeVarint(2<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.GpioDigital); err != nil {
+			return err
+		}
+	case *MqttResponse_GpioAnalog:
+		b.EncodeVarint(3<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.GpioAnalog); err != nil {
+			return err
+		}
+	case *MqttResponse_I2C:
+		b.EncodeVarint(4<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.I2C); err != nil {
+			return err
+		}
+	case nil:
+	default:
+		return fmt.Errorf("MqttResponse.Payload has unexpected type %T", x)
+	}
+	return nil
+}
+
+func _MqttResponse_OneofUnmarshaler(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error) {
+	m := msg.(*MqttResponse)
+	switch tag {
+	case 2: // payload.gpio_digital
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(GpioDigitalPayload)
+		err := b.DecodeMessage(msg)
+		m.Payload = &MqttResponse_GpioDigital{msg}
+		return true, err
+	case 3: // payload.gpio_analog
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(GpioAnalogPayload)
+		err := b.DecodeMessage(msg)
+		m.Payload = &MqttResponse_GpioAnalog{msg}
+		return true, err
+	case 4: // payload.i2c
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(I2CPayload)
+		err := b.DecodeMessage(msg)
+		m.Payload = &MqttResponse_I2C{msg}
+		return true, err
+	default:
+		return false, nil
+	}
+}
+
+func _MqttResponse_OneofSizer(msg proto.Message) (n int) {
+	m := msg.(*MqttResponse)
+	// payload
+	switch x := m.Payload.(type) {
+	case *MqttResponse_GpioDigital:
+		s := proto.Size(x.GpioDigital)
+		n += 1 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *MqttResponse_GpioAnalog:
+		s := proto.Size(x.GpioAnalog)
+		n += 1 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *MqttResponse_I2C:
+		s := proto.Size(x.I2C)
+		n += 1 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case nil:
+	default:
+		panic(fmt.Sprintf("proto: unexpected type %T in oneof", x))
+	}
+	return n
+}
+
+type MqttDeviceRequest struct {
+	Type MessageReqType `protobuf:"varint,2,opt,name=type,proto3,enum=ai.metathings.service.mqttd.MessageReqType" json:"type,omitempty"`
+	// Types that are valid to be assigned to Payload:
+	//	*MqttDeviceRequest_GpioDigital
+	//	*MqttDeviceRequest_GpioAnalog
+	//	*MqttDeviceRequest_I2C
+	Payload              isMqttDeviceRequest_Payload `protobuf_oneof:"payload"`
+	XXX_NoUnkeyedLiteral struct{}                    `json:"-"`
+	XXX_unrecognized     []byte                      `json:"-"`
+	XXX_sizecache        int32                       `json:"-"`
+}
+
+func (m *MqttDeviceRequest) Reset()         { *m = MqttDeviceRequest{} }
+func (m *MqttDeviceRequest) String() string { return proto.CompactTextString(m) }
+func (*MqttDeviceRequest) ProtoMessage()    {}
+func (*MqttDeviceRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_4c16552f9fdb66d8, []int{2}
+}
+
+func (m *MqttDeviceRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_MqttDeviceRequest.Unmarshal(m, b)
+}
+func (m *MqttDeviceRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_MqttDeviceRequest.Marshal(b, m, deterministic)
+}
+func (m *MqttDeviceRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MqttDeviceRequest.Merge(m, src)
+}
+func (m *MqttDeviceRequest) XXX_Size() int {
+	return xxx_messageInfo_MqttDeviceRequest.Size(m)
+}
+func (m *MqttDeviceRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_MqttDeviceRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MqttDeviceRequest proto.InternalMessageInfo
+
+func (m *MqttDeviceRequest) GetType() MessageReqType {
+	if m != nil {
+		return m.Type
+	}
+	return MessageReqType_REQ_MESSAGE_UNKNOWN
+}
+
+type isMqttDeviceRequest_Payload interface {
+	isMqttDeviceRequest_Payload()
+}
+
+type MqttDeviceRequest_GpioDigital struct {
+	GpioDigital *GpioDigitalPayload `protobuf:"bytes,3,opt,name=gpio_digital,json=gpioDigital,proto3,oneof"`
+}
+
+type MqttDeviceRequest_GpioAnalog struct {
+	GpioAnalog *GpioAnalogPayload `protobuf:"bytes,4,opt,name=gpio_analog,json=gpioAnalog,proto3,oneof"`
+}
+
+type MqttDeviceRequest_I2C struct {
+	I2C *I2CPayload `protobuf:"bytes,5,opt,name=i2c,proto3,oneof"`
+}
+
+func (*MqttDeviceRequest_GpioDigital) isMqttDeviceRequest_Payload() {}
+
+func (*MqttDeviceRequest_GpioAnalog) isMqttDeviceRequest_Payload() {}
+
+func (*MqttDeviceRequest_I2C) isMqttDeviceRequest_Payload() {}
+
+func (m *MqttDeviceRequest) GetPayload() isMqttDeviceRequest_Payload {
+	if m != nil {
+		return m.Payload
+	}
+	return nil
+}
+
+func (m *MqttDeviceRequest) GetGpioDigital() *GpioDigitalPayload {
+	if x, ok := m.GetPayload().(*MqttDeviceRequest_GpioDigital); ok {
+		return x.GpioDigital
+	}
+	return nil
+}
+
+func (m *MqttDeviceRequest) GetGpioAnalog() *GpioAnalogPayload {
+	if x, ok := m.GetPayload().(*MqttDeviceRequest_GpioAnalog); ok {
+		return x.GpioAnalog
+	}
+	return nil
+}
+
+func (m *MqttDeviceRequest) GetI2C() *I2CPayload {
+	if x, ok := m.GetPayload().(*MqttDeviceRequest_I2C); ok {
+		return x.I2C
+	}
+	return nil
+}
+
+// XXX_OneofFuncs is for the internal use of the proto package.
+func (*MqttDeviceRequest) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) error, func(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error), func(msg proto.Message) (n int), []interface{}) {
+	return _MqttDeviceRequest_OneofMarshaler, _MqttDeviceRequest_OneofUnmarshaler, _MqttDeviceRequest_OneofSizer, []interface{}{
+		(*MqttDeviceRequest_GpioDigital)(nil),
+		(*MqttDeviceRequest_GpioAnalog)(nil),
+		(*MqttDeviceRequest_I2C)(nil),
+	}
+}
+
+func _MqttDeviceRequest_OneofMarshaler(msg proto.Message, b *proto.Buffer) error {
+	m := msg.(*MqttDeviceRequest)
+	// payload
+	switch x := m.Payload.(type) {
+	case *MqttDeviceRequest_GpioDigital:
+		b.EncodeVarint(3<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.GpioDigital); err != nil {
+			return err
+		}
+	case *MqttDeviceRequest_GpioAnalog:
+		b.EncodeVarint(4<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.GpioAnalog); err != nil {
+			return err
+		}
+	case *MqttDeviceRequest_I2C:
+		b.EncodeVarint(5<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.I2C); err != nil {
+			return err
+		}
+	case nil:
+	default:
+		return fmt.Errorf("MqttDeviceRequest.Payload has unexpected type %T", x)
+	}
+	return nil
+}
+
+func _MqttDeviceRequest_OneofUnmarshaler(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error) {
+	m := msg.(*MqttDeviceRequest)
+	switch tag {
+	case 3: // payload.gpio_digital
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(GpioDigitalPayload)
+		err := b.DecodeMessage(msg)
+		m.Payload = &MqttDeviceRequest_GpioDigital{msg}
+		return true, err
+	case 4: // payload.gpio_analog
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(GpioAnalogPayload)
+		err := b.DecodeMessage(msg)
+		m.Payload = &MqttDeviceRequest_GpioAnalog{msg}
+		return true, err
+	case 5: // payload.i2c
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(I2CPayload)
+		err := b.DecodeMessage(msg)
+		m.Payload = &MqttDeviceRequest_I2C{msg}
+		return true, err
+	default:
+		return false, nil
+	}
+}
+
+func _MqttDeviceRequest_OneofSizer(msg proto.Message) (n int) {
+	m := msg.(*MqttDeviceRequest)
+	// payload
+	switch x := m.Payload.(type) {
+	case *MqttDeviceRequest_GpioDigital:
+		s := proto.Size(x.GpioDigital)
+		n += 1 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *MqttDeviceRequest_GpioAnalog:
+		s := proto.Size(x.GpioAnalog)
+		n += 1 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *MqttDeviceRequest_I2C:
+		s := proto.Size(x.I2C)
+		n += 1 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case nil:
+	default:
+		panic(fmt.Sprintf("proto: unexpected type %T in oneof", x))
+	}
+	return n
+}
+
 type Device struct {
 	Id                   string            `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	Name                 string            `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
@@ -38,7 +670,7 @@ func (m *Device) Reset()         { *m = Device{} }
 func (m *Device) String() string { return proto.CompactTextString(m) }
 func (*Device) ProtoMessage()    {}
 func (*Device) Descriptor() ([]byte, []int) {
-	return fileDescriptor_4c16552f9fdb66d8, []int{0}
+	return fileDescriptor_4c16552f9fdb66d8, []int{3}
 }
 
 func (m *Device) XXX_Unmarshal(b []byte) error {
@@ -101,7 +733,7 @@ func (m *OpDevice) Reset()         { *m = OpDevice{} }
 func (m *OpDevice) String() string { return proto.CompactTextString(m) }
 func (*OpDevice) ProtoMessage()    {}
 func (*OpDevice) Descriptor() ([]byte, []int) {
-	return fileDescriptor_4c16552f9fdb66d8, []int{1}
+	return fileDescriptor_4c16552f9fdb66d8, []int{4}
 }
 
 func (m *OpDevice) XXX_Unmarshal(b []byte) error {
@@ -164,7 +796,7 @@ func (m *ErrorValue) Reset()         { *m = ErrorValue{} }
 func (m *ErrorValue) String() string { return proto.CompactTextString(m) }
 func (*ErrorValue) ProtoMessage()    {}
 func (*ErrorValue) Descriptor() ([]byte, []int) {
-	return fileDescriptor_4c16552f9fdb66d8, []int{2}
+	return fileDescriptor_4c16552f9fdb66d8, []int{5}
 }
 
 func (m *ErrorValue) XXX_Unmarshal(b []byte) error {
@@ -226,7 +858,7 @@ func (m *UnaryCallValue) Reset()         { *m = UnaryCallValue{} }
 func (m *UnaryCallValue) String() string { return proto.CompactTextString(m) }
 func (*UnaryCallValue) ProtoMessage()    {}
 func (*UnaryCallValue) Descriptor() ([]byte, []int) {
-	return fileDescriptor_4c16552f9fdb66d8, []int{3}
+	return fileDescriptor_4c16552f9fdb66d8, []int{6}
 }
 
 func (m *UnaryCallValue) XXX_Unmarshal(b []byte) error {
@@ -281,7 +913,7 @@ func (m *OpUnaryCallValue) Reset()         { *m = OpUnaryCallValue{} }
 func (m *OpUnaryCallValue) String() string { return proto.CompactTextString(m) }
 func (*OpUnaryCallValue) ProtoMessage()    {}
 func (*OpUnaryCallValue) Descriptor() ([]byte, []int) {
-	return fileDescriptor_4c16552f9fdb66d8, []int{4}
+	return fileDescriptor_4c16552f9fdb66d8, []int{7}
 }
 
 func (m *OpUnaryCallValue) XXX_Unmarshal(b []byte) error {
@@ -336,7 +968,7 @@ func (m *StreamCallValue) Reset()         { *m = StreamCallValue{} }
 func (m *StreamCallValue) String() string { return proto.CompactTextString(m) }
 func (*StreamCallValue) ProtoMessage()    {}
 func (*StreamCallValue) Descriptor() ([]byte, []int) {
-	return fileDescriptor_4c16552f9fdb66d8, []int{5}
+	return fileDescriptor_4c16552f9fdb66d8, []int{8}
 }
 
 func (m *StreamCallValue) XXX_Unmarshal(b []byte) error {
@@ -391,7 +1023,7 @@ func (m *OpStreamCallValue) Reset()         { *m = OpStreamCallValue{} }
 func (m *OpStreamCallValue) String() string { return proto.CompactTextString(m) }
 func (*OpStreamCallValue) ProtoMessage()    {}
 func (*OpStreamCallValue) Descriptor() ([]byte, []int) {
-	return fileDescriptor_4c16552f9fdb66d8, []int{6}
+	return fileDescriptor_4c16552f9fdb66d8, []int{9}
 }
 
 func (m *OpStreamCallValue) XXX_Unmarshal(b []byte) error {
@@ -433,7 +1065,7 @@ func (m *OpStreamCallValue) GetValue() *any.Any {
 	return nil
 }
 
-type GpioValue struct {
+type GpioDigitalPayload struct {
 	Pin                  int32    `protobuf:"varint,1,opt,name=pin,proto3" json:"pin,omitempty"`
 	Value                int32    `protobuf:"varint,2,opt,name=value,proto3" json:"value,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
@@ -441,101 +1073,187 @@ type GpioValue struct {
 	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *GpioValue) Reset()         { *m = GpioValue{} }
-func (m *GpioValue) String() string { return proto.CompactTextString(m) }
-func (*GpioValue) ProtoMessage()    {}
-func (*GpioValue) Descriptor() ([]byte, []int) {
-	return fileDescriptor_4c16552f9fdb66d8, []int{7}
+func (m *GpioDigitalPayload) Reset()         { *m = GpioDigitalPayload{} }
+func (m *GpioDigitalPayload) String() string { return proto.CompactTextString(m) }
+func (*GpioDigitalPayload) ProtoMessage()    {}
+func (*GpioDigitalPayload) Descriptor() ([]byte, []int) {
+	return fileDescriptor_4c16552f9fdb66d8, []int{10}
 }
 
-func (m *GpioValue) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_GpioValue.Unmarshal(m, b)
+func (m *GpioDigitalPayload) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GpioDigitalPayload.Unmarshal(m, b)
 }
-func (m *GpioValue) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_GpioValue.Marshal(b, m, deterministic)
+func (m *GpioDigitalPayload) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GpioDigitalPayload.Marshal(b, m, deterministic)
 }
-func (m *GpioValue) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_GpioValue.Merge(m, src)
+func (m *GpioDigitalPayload) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GpioDigitalPayload.Merge(m, src)
 }
-func (m *GpioValue) XXX_Size() int {
-	return xxx_messageInfo_GpioValue.Size(m)
+func (m *GpioDigitalPayload) XXX_Size() int {
+	return xxx_messageInfo_GpioDigitalPayload.Size(m)
 }
-func (m *GpioValue) XXX_DiscardUnknown() {
-	xxx_messageInfo_GpioValue.DiscardUnknown(m)
+func (m *GpioDigitalPayload) XXX_DiscardUnknown() {
+	xxx_messageInfo_GpioDigitalPayload.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_GpioValue proto.InternalMessageInfo
+var xxx_messageInfo_GpioDigitalPayload proto.InternalMessageInfo
 
-func (m *GpioValue) GetPin() int32 {
+func (m *GpioDigitalPayload) GetPin() int32 {
 	if m != nil {
 		return m.Pin
 	}
 	return 0
 }
 
-func (m *GpioValue) GetValue() int32 {
+func (m *GpioDigitalPayload) GetValue() int32 {
 	if m != nil {
 		return m.Value
 	}
 	return 0
 }
 
-type OpGpioValue struct {
-	DeviceId             *wrappers.StringValue `protobuf:"bytes,1,opt,name=device_id,json=deviceId,proto3" json:"device_id,omitempty"`
-	Pin                  *wrappers.Int32Value  `protobuf:"bytes,2,opt,name=pin,proto3" json:"pin,omitempty"`
-	Value                *wrappers.Int32Value  `protobuf:"bytes,3,opt,name=value,proto3" json:"value,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
-	XXX_unrecognized     []byte                `json:"-"`
-	XXX_sizecache        int32                 `json:"-"`
+type OpGpioDigitalPayload struct {
+	Pin                  *wrappers.Int32Value `protobuf:"bytes,1,opt,name=pin,proto3" json:"pin,omitempty"`
+	Value                *wrappers.Int32Value `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}             `json:"-"`
+	XXX_unrecognized     []byte               `json:"-"`
+	XXX_sizecache        int32                `json:"-"`
 }
 
-func (m *OpGpioValue) Reset()         { *m = OpGpioValue{} }
-func (m *OpGpioValue) String() string { return proto.CompactTextString(m) }
-func (*OpGpioValue) ProtoMessage()    {}
-func (*OpGpioValue) Descriptor() ([]byte, []int) {
-	return fileDescriptor_4c16552f9fdb66d8, []int{8}
+func (m *OpGpioDigitalPayload) Reset()         { *m = OpGpioDigitalPayload{} }
+func (m *OpGpioDigitalPayload) String() string { return proto.CompactTextString(m) }
+func (*OpGpioDigitalPayload) ProtoMessage()    {}
+func (*OpGpioDigitalPayload) Descriptor() ([]byte, []int) {
+	return fileDescriptor_4c16552f9fdb66d8, []int{11}
 }
 
-func (m *OpGpioValue) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_OpGpioValue.Unmarshal(m, b)
+func (m *OpGpioDigitalPayload) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_OpGpioDigitalPayload.Unmarshal(m, b)
 }
-func (m *OpGpioValue) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_OpGpioValue.Marshal(b, m, deterministic)
+func (m *OpGpioDigitalPayload) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_OpGpioDigitalPayload.Marshal(b, m, deterministic)
 }
-func (m *OpGpioValue) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_OpGpioValue.Merge(m, src)
+func (m *OpGpioDigitalPayload) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_OpGpioDigitalPayload.Merge(m, src)
 }
-func (m *OpGpioValue) XXX_Size() int {
-	return xxx_messageInfo_OpGpioValue.Size(m)
+func (m *OpGpioDigitalPayload) XXX_Size() int {
+	return xxx_messageInfo_OpGpioDigitalPayload.Size(m)
 }
-func (m *OpGpioValue) XXX_DiscardUnknown() {
-	xxx_messageInfo_OpGpioValue.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_OpGpioValue proto.InternalMessageInfo
-
-func (m *OpGpioValue) GetDeviceId() *wrappers.StringValue {
-	if m != nil {
-		return m.DeviceId
-	}
-	return nil
+func (m *OpGpioDigitalPayload) XXX_DiscardUnknown() {
+	xxx_messageInfo_OpGpioDigitalPayload.DiscardUnknown(m)
 }
 
-func (m *OpGpioValue) GetPin() *wrappers.Int32Value {
+var xxx_messageInfo_OpGpioDigitalPayload proto.InternalMessageInfo
+
+func (m *OpGpioDigitalPayload) GetPin() *wrappers.Int32Value {
 	if m != nil {
 		return m.Pin
 	}
 	return nil
 }
 
-func (m *OpGpioValue) GetValue() *wrappers.Int32Value {
+func (m *OpGpioDigitalPayload) GetValue() *wrappers.Int32Value {
 	if m != nil {
 		return m.Value
 	}
 	return nil
 }
 
-type I2CValue struct {
+type GpioAnalogPayload struct {
+	Pin                  int32    `protobuf:"varint,1,opt,name=pin,proto3" json:"pin,omitempty"`
+	Value                float32  `protobuf:"fixed32,2,opt,name=value,proto3" json:"value,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *GpioAnalogPayload) Reset()         { *m = GpioAnalogPayload{} }
+func (m *GpioAnalogPayload) String() string { return proto.CompactTextString(m) }
+func (*GpioAnalogPayload) ProtoMessage()    {}
+func (*GpioAnalogPayload) Descriptor() ([]byte, []int) {
+	return fileDescriptor_4c16552f9fdb66d8, []int{12}
+}
+
+func (m *GpioAnalogPayload) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GpioAnalogPayload.Unmarshal(m, b)
+}
+func (m *GpioAnalogPayload) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GpioAnalogPayload.Marshal(b, m, deterministic)
+}
+func (m *GpioAnalogPayload) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GpioAnalogPayload.Merge(m, src)
+}
+func (m *GpioAnalogPayload) XXX_Size() int {
+	return xxx_messageInfo_GpioAnalogPayload.Size(m)
+}
+func (m *GpioAnalogPayload) XXX_DiscardUnknown() {
+	xxx_messageInfo_GpioAnalogPayload.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GpioAnalogPayload proto.InternalMessageInfo
+
+func (m *GpioAnalogPayload) GetPin() int32 {
+	if m != nil {
+		return m.Pin
+	}
+	return 0
+}
+
+func (m *GpioAnalogPayload) GetValue() float32 {
+	if m != nil {
+		return m.Value
+	}
+	return 0
+}
+
+type OpGpioAnalogPayload struct {
+	Pin                  *wrappers.Int32Value `protobuf:"bytes,1,opt,name=pin,proto3" json:"pin,omitempty"`
+	Value                *wrappers.FloatValue `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}             `json:"-"`
+	XXX_unrecognized     []byte               `json:"-"`
+	XXX_sizecache        int32                `json:"-"`
+}
+
+func (m *OpGpioAnalogPayload) Reset()         { *m = OpGpioAnalogPayload{} }
+func (m *OpGpioAnalogPayload) String() string { return proto.CompactTextString(m) }
+func (*OpGpioAnalogPayload) ProtoMessage()    {}
+func (*OpGpioAnalogPayload) Descriptor() ([]byte, []int) {
+	return fileDescriptor_4c16552f9fdb66d8, []int{13}
+}
+
+func (m *OpGpioAnalogPayload) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_OpGpioAnalogPayload.Unmarshal(m, b)
+}
+func (m *OpGpioAnalogPayload) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_OpGpioAnalogPayload.Marshal(b, m, deterministic)
+}
+func (m *OpGpioAnalogPayload) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_OpGpioAnalogPayload.Merge(m, src)
+}
+func (m *OpGpioAnalogPayload) XXX_Size() int {
+	return xxx_messageInfo_OpGpioAnalogPayload.Size(m)
+}
+func (m *OpGpioAnalogPayload) XXX_DiscardUnknown() {
+	xxx_messageInfo_OpGpioAnalogPayload.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_OpGpioAnalogPayload proto.InternalMessageInfo
+
+func (m *OpGpioAnalogPayload) GetPin() *wrappers.Int32Value {
+	if m != nil {
+		return m.Pin
+	}
+	return nil
+}
+
+func (m *OpGpioAnalogPayload) GetValue() *wrappers.FloatValue {
+	if m != nil {
+		return m.Value
+	}
+	return nil
+}
+
+type I2CPayload struct {
 	Bus                  int32    `protobuf:"varint,1,opt,name=bus,proto3" json:"bus,omitempty"`
 	Addr                 int32    `protobuf:"varint,2,opt,name=addr,proto3" json:"addr,omitempty"`
 	Index                int32    `protobuf:"varint,3,opt,name=index,proto3" json:"index,omitempty"`
@@ -545,124 +1263,116 @@ type I2CValue struct {
 	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *I2CValue) Reset()         { *m = I2CValue{} }
-func (m *I2CValue) String() string { return proto.CompactTextString(m) }
-func (*I2CValue) ProtoMessage()    {}
-func (*I2CValue) Descriptor() ([]byte, []int) {
-	return fileDescriptor_4c16552f9fdb66d8, []int{9}
+func (m *I2CPayload) Reset()         { *m = I2CPayload{} }
+func (m *I2CPayload) String() string { return proto.CompactTextString(m) }
+func (*I2CPayload) ProtoMessage()    {}
+func (*I2CPayload) Descriptor() ([]byte, []int) {
+	return fileDescriptor_4c16552f9fdb66d8, []int{14}
 }
 
-func (m *I2CValue) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_I2CValue.Unmarshal(m, b)
+func (m *I2CPayload) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_I2CPayload.Unmarshal(m, b)
 }
-func (m *I2CValue) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_I2CValue.Marshal(b, m, deterministic)
+func (m *I2CPayload) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_I2CPayload.Marshal(b, m, deterministic)
 }
-func (m *I2CValue) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_I2CValue.Merge(m, src)
+func (m *I2CPayload) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_I2CPayload.Merge(m, src)
 }
-func (m *I2CValue) XXX_Size() int {
-	return xxx_messageInfo_I2CValue.Size(m)
+func (m *I2CPayload) XXX_Size() int {
+	return xxx_messageInfo_I2CPayload.Size(m)
 }
-func (m *I2CValue) XXX_DiscardUnknown() {
-	xxx_messageInfo_I2CValue.DiscardUnknown(m)
+func (m *I2CPayload) XXX_DiscardUnknown() {
+	xxx_messageInfo_I2CPayload.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_I2CValue proto.InternalMessageInfo
+var xxx_messageInfo_I2CPayload proto.InternalMessageInfo
 
-func (m *I2CValue) GetBus() int32 {
+func (m *I2CPayload) GetBus() int32 {
 	if m != nil {
 		return m.Bus
 	}
 	return 0
 }
 
-func (m *I2CValue) GetAddr() int32 {
+func (m *I2CPayload) GetAddr() int32 {
 	if m != nil {
 		return m.Addr
 	}
 	return 0
 }
 
-func (m *I2CValue) GetIndex() int32 {
+func (m *I2CPayload) GetIndex() int32 {
 	if m != nil {
 		return m.Index
 	}
 	return 0
 }
 
-func (m *I2CValue) GetAngle() int32 {
+func (m *I2CPayload) GetAngle() int32 {
 	if m != nil {
 		return m.Angle
 	}
 	return 0
 }
 
-type OpI2CValue struct {
-	DeviceId             *wrappers.StringValue `protobuf:"bytes,1,opt,name=device_id,json=deviceId,proto3" json:"device_id,omitempty"`
-	Bus                  *wrappers.Int32Value  `protobuf:"bytes,2,opt,name=bus,proto3" json:"bus,omitempty"`
-	Addr                 *wrappers.Int32Value  `protobuf:"bytes,3,opt,name=addr,proto3" json:"addr,omitempty"`
-	Index                *wrappers.Int32Value  `protobuf:"bytes,4,opt,name=index,proto3" json:"index,omitempty"`
-	Angle                *wrappers.Int32Value  `protobuf:"bytes,5,opt,name=angle,proto3" json:"angle,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
-	XXX_unrecognized     []byte                `json:"-"`
-	XXX_sizecache        int32                 `json:"-"`
+type OpI2CPayload struct {
+	Bus                  *wrappers.Int32Value `protobuf:"bytes,1,opt,name=bus,proto3" json:"bus,omitempty"`
+	Addr                 *wrappers.Int32Value `protobuf:"bytes,2,opt,name=addr,proto3" json:"addr,omitempty"`
+	Index                *wrappers.Int32Value `protobuf:"bytes,3,opt,name=index,proto3" json:"index,omitempty"`
+	Angle                *wrappers.Int32Value `protobuf:"bytes,4,opt,name=angle,proto3" json:"angle,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}             `json:"-"`
+	XXX_unrecognized     []byte               `json:"-"`
+	XXX_sizecache        int32                `json:"-"`
 }
 
-func (m *OpI2CValue) Reset()         { *m = OpI2CValue{} }
-func (m *OpI2CValue) String() string { return proto.CompactTextString(m) }
-func (*OpI2CValue) ProtoMessage()    {}
-func (*OpI2CValue) Descriptor() ([]byte, []int) {
-	return fileDescriptor_4c16552f9fdb66d8, []int{10}
+func (m *OpI2CPayload) Reset()         { *m = OpI2CPayload{} }
+func (m *OpI2CPayload) String() string { return proto.CompactTextString(m) }
+func (*OpI2CPayload) ProtoMessage()    {}
+func (*OpI2CPayload) Descriptor() ([]byte, []int) {
+	return fileDescriptor_4c16552f9fdb66d8, []int{15}
 }
 
-func (m *OpI2CValue) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_OpI2CValue.Unmarshal(m, b)
+func (m *OpI2CPayload) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_OpI2CPayload.Unmarshal(m, b)
 }
-func (m *OpI2CValue) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_OpI2CValue.Marshal(b, m, deterministic)
+func (m *OpI2CPayload) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_OpI2CPayload.Marshal(b, m, deterministic)
 }
-func (m *OpI2CValue) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_OpI2CValue.Merge(m, src)
+func (m *OpI2CPayload) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_OpI2CPayload.Merge(m, src)
 }
-func (m *OpI2CValue) XXX_Size() int {
-	return xxx_messageInfo_OpI2CValue.Size(m)
+func (m *OpI2CPayload) XXX_Size() int {
+	return xxx_messageInfo_OpI2CPayload.Size(m)
 }
-func (m *OpI2CValue) XXX_DiscardUnknown() {
-	xxx_messageInfo_OpI2CValue.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_OpI2CValue proto.InternalMessageInfo
-
-func (m *OpI2CValue) GetDeviceId() *wrappers.StringValue {
-	if m != nil {
-		return m.DeviceId
-	}
-	return nil
+func (m *OpI2CPayload) XXX_DiscardUnknown() {
+	xxx_messageInfo_OpI2CPayload.DiscardUnknown(m)
 }
 
-func (m *OpI2CValue) GetBus() *wrappers.Int32Value {
+var xxx_messageInfo_OpI2CPayload proto.InternalMessageInfo
+
+func (m *OpI2CPayload) GetBus() *wrappers.Int32Value {
 	if m != nil {
 		return m.Bus
 	}
 	return nil
 }
 
-func (m *OpI2CValue) GetAddr() *wrappers.Int32Value {
+func (m *OpI2CPayload) GetAddr() *wrappers.Int32Value {
 	if m != nil {
 		return m.Addr
 	}
 	return nil
 }
 
-func (m *OpI2CValue) GetIndex() *wrappers.Int32Value {
+func (m *OpI2CPayload) GetIndex() *wrappers.Int32Value {
 	if m != nil {
 		return m.Index
 	}
 	return nil
 }
 
-func (m *OpI2CValue) GetAngle() *wrappers.Int32Value {
+func (m *OpI2CPayload) GetAngle() *wrappers.Int32Value {
 	if m != nil {
 		return m.Angle
 	}
@@ -670,6 +1380,11 @@ func (m *OpI2CValue) GetAngle() *wrappers.Int32Value {
 }
 
 func init() {
+	proto.RegisterEnum("ai.metathings.service.mqttd.MessageReqType", MessageReqType_name, MessageReqType_value)
+	proto.RegisterEnum("ai.metathings.service.mqttd.MessageResType", MessageResType_name, MessageResType_value)
+	proto.RegisterType((*MqttRequest)(nil), "ai.metathings.service.mqttd.MqttRequest")
+	proto.RegisterType((*MqttResponse)(nil), "ai.metathings.service.mqttd.MqttResponse")
+	proto.RegisterType((*MqttDeviceRequest)(nil), "ai.metathings.service.mqttd.MqttDeviceRequest")
 	proto.RegisterType((*Device)(nil), "ai.metathings.service.mqttd.Device")
 	proto.RegisterType((*OpDevice)(nil), "ai.metathings.service.mqttd.OpDevice")
 	proto.RegisterType((*ErrorValue)(nil), "ai.metathings.service.mqttd.ErrorValue")
@@ -677,52 +1392,77 @@ func init() {
 	proto.RegisterType((*OpUnaryCallValue)(nil), "ai.metathings.service.mqttd.OpUnaryCallValue")
 	proto.RegisterType((*StreamCallValue)(nil), "ai.metathings.service.mqttd.StreamCallValue")
 	proto.RegisterType((*OpStreamCallValue)(nil), "ai.metathings.service.mqttd.OpStreamCallValue")
-	proto.RegisterType((*GpioValue)(nil), "ai.metathings.service.mqttd.GpioValue")
-	proto.RegisterType((*OpGpioValue)(nil), "ai.metathings.service.mqttd.OpGpioValue")
-	proto.RegisterType((*I2CValue)(nil), "ai.metathings.service.mqttd.I2cValue")
-	proto.RegisterType((*OpI2CValue)(nil), "ai.metathings.service.mqttd.OpI2cValue")
+	proto.RegisterType((*GpioDigitalPayload)(nil), "ai.metathings.service.mqttd.GpioDigitalPayload")
+	proto.RegisterType((*OpGpioDigitalPayload)(nil), "ai.metathings.service.mqttd.OpGpioDigitalPayload")
+	proto.RegisterType((*GpioAnalogPayload)(nil), "ai.metathings.service.mqttd.GpioAnalogPayload")
+	proto.RegisterType((*OpGpioAnalogPayload)(nil), "ai.metathings.service.mqttd.OpGpioAnalogPayload")
+	proto.RegisterType((*I2CPayload)(nil), "ai.metathings.service.mqttd.I2cPayload")
+	proto.RegisterType((*OpI2CPayload)(nil), "ai.metathings.service.mqttd.OpI2cPayload")
 }
 
 func init() { proto.RegisterFile("model.proto", fileDescriptor_4c16552f9fdb66d8) }
 
 var fileDescriptor_4c16552f9fdb66d8 = []byte{
-	// 598 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xcc, 0x55, 0x4d, 0x6f, 0xd3, 0x30,
-	0x18, 0x56, 0xb2, 0x65, 0x5b, 0xdf, 0xa2, 0x31, 0xa2, 0x1d, 0x4a, 0x87, 0x60, 0xe4, 0x34, 0x10,
-	0x24, 0x6b, 0x7a, 0xe2, 0x00, 0x08, 0x06, 0x42, 0xbd, 0x50, 0x29, 0x15, 0x1c, 0x10, 0xd2, 0xe4,
-	0xd6, 0x26, 0xb5, 0x48, 0xec, 0xcc, 0x71, 0xc7, 0x7a, 0xe1, 0xc2, 0x99, 0x3f, 0xc2, 0x05, 0xfe,
-	0x11, 0x7f, 0x05, 0xe5, 0x75, 0xd2, 0x85, 0x56, 0xa8, 0x11, 0x20, 0xc4, 0xcd, 0x7e, 0xf3, 0x3c,
-	0x7e, 0x3e, 0x92, 0xba, 0xd0, 0x4e, 0x25, 0x65, 0x89, 0x9f, 0x29, 0xa9, 0xa5, 0x7b, 0x40, 0xb8,
-	0x9f, 0x32, 0x4d, 0xf4, 0x94, 0x8b, 0x38, 0xf7, 0x73, 0xa6, 0xce, 0xf9, 0x84, 0xf9, 0xe9, 0x99,
-	0xd6, 0xb4, 0x7b, 0x33, 0x96, 0x32, 0x4e, 0x58, 0x80, 0xd0, 0xf1, 0xec, 0x5d, 0xf0, 0x41, 0x91,
-	0x2c, 0x63, 0x2a, 0x37, 0xe4, 0xee, 0xf5, 0xe5, 0xe7, 0x44, 0xcc, 0xcb, 0x47, 0x8f, 0x62, 0xae,
-	0xa7, 0xb3, 0xb1, 0x3f, 0x91, 0x69, 0x20, 0xc8, 0x5c, 0x6a, 0x4d, 0x82, 0x4b, 0x9d, 0x20, 0x7b,
-	0x1f, 0x1b, 0x56, 0xc0, 0x29, 0x13, 0x9a, 0xeb, 0x39, 0x0d, 0x83, 0x9a, 0xaf, 0xee, 0x49, 0x53,
-	0xfe, 0x44, 0x8a, 0x5c, 0x13, 0xa1, 0x83, 0x5c, 0x13, 0xcd, 0x02, 0xca, 0xd0, 0x3f, 0x3e, 0xf3,
-	0x3e, 0x59, 0xb0, 0xf5, 0x0c, 0x07, 0xee, 0x2e, 0xd8, 0x9c, 0x76, 0xac, 0x43, 0xeb, 0xa8, 0x15,
-	0xd9, 0x9c, 0xba, 0x2e, 0x6c, 0x0a, 0x92, 0xb2, 0x8e, 0x8d, 0x13, 0x5c, 0xbb, 0xfb, 0xe0, 0x90,
-	0x84, 0x93, 0xbc, 0xb3, 0x81, 0x43, 0xb3, 0x71, 0x1f, 0x83, 0x83, 0x47, 0x77, 0x36, 0x0f, 0xad,
-	0xa3, 0xdd, 0xf0, 0x8e, 0xff, 0x73, 0x63, 0x95, 0xbe, 0x8f, 0x20, 0xdf, 0xc8, 0x8d, 0x8a, 0x75,
-	0x64, 0x78, 0xde, 0x77, 0x0b, 0x76, 0x86, 0x59, 0xe9, 0xe3, 0xde, 0xc2, 0x47, 0x3b, 0xbc, 0xe1,
-	0x9b, 0xfe, 0xfc, 0xaa, 0x3f, 0x7f, 0xa4, 0x15, 0x17, 0xf1, 0x6b, 0x92, 0xcc, 0x18, 0xba, 0x3c,
-	0xae, 0xb9, 0x5c, 0x87, 0x37, 0x19, 0xc2, 0x7a, 0x86, 0x75, 0x94, 0xbf, 0x95, 0xf0, 0x23, 0xc0,
-	0x73, 0xa5, 0xa4, 0xc2, 0x53, 0x17, 0xd5, 0x5a, 0xb5, 0x6a, 0x6f, 0xc3, 0x95, 0xf2, 0xd3, 0x3a,
-	0xad, 0xd5, 0xde, 0x2e, 0x67, 0x2f, 0x0b, 0xc8, 0x2d, 0x68, 0xa7, 0x4c, 0x4f, 0x25, 0x35, 0x08,
-	0xf3, 0x0e, 0xc0, 0x8c, 0x10, 0xd0, 0x81, 0xed, 0x89, 0x14, 0x9a, 0x5d, 0x68, 0x34, 0xda, 0x8a,
-	0xaa, 0xad, 0x77, 0x06, 0xbb, 0xaf, 0x04, 0x51, 0xf3, 0x13, 0x92, 0x24, 0xbf, 0xf6, 0xb0, 0x24,
-	0x60, 0xaf, 0x08, 0xdc, 0x05, 0x07, 0xd9, 0x65, 0x77, 0xfb, 0x2b, 0xdd, 0x3d, 0x11, 0xf3, 0xc8,
-	0x40, 0xbc, 0xaf, 0x16, 0xec, 0x0d, 0xb3, 0x25, 0xd5, 0xe3, 0x9a, 0x6a, 0xb3, 0xd7, 0xf5, 0x70,
-	0xd5, 0xd3, 0x3a, 0xe2, 0xef, 0x3a, 0x56, 0x70, 0x75, 0xa4, 0x15, 0x23, 0xe9, 0x3f, 0x6c, 0xe9,
-	0x9b, 0x05, 0xd7, 0x86, 0xd9, 0xb2, 0xec, 0x7f, 0x5d, 0x53, 0x1f, 0x5a, 0x2f, 0x32, 0x2e, 0x8d,
-	0xd3, 0x3d, 0xd8, 0xc8, 0xb8, 0x40, 0xa3, 0x4e, 0x54, 0x2c, 0x8b, 0x3b, 0xe2, 0x1c, 0x8f, 0xb2,
-	0x71, 0x66, 0x36, 0xde, 0x17, 0x0b, 0xda, 0xc3, 0xec, 0x92, 0xf7, 0x00, 0x5a, 0xe6, 0x22, 0x3a,
-	0x6d, 0xf8, 0x63, 0xdf, 0x31, 0xf0, 0x01, 0x75, 0xef, 0x1b, 0x49, 0x13, 0xf1, 0x60, 0x85, 0x34,
-	0x10, 0xba, 0x1f, 0x1a, 0x0e, 0xfa, 0xe9, 0x55, 0x7e, 0x36, 0xd6, 0x13, 0x4a, 0xb3, 0x6f, 0x61,
-	0x67, 0x10, 0x4e, 0x16, 0x01, 0xc7, 0xb3, 0xbc, 0x0a, 0x38, 0x9e, 0xe5, 0xc5, 0x37, 0x41, 0x28,
-	0x55, 0x65, 0x3e, 0x5c, 0x17, 0xa1, 0xb9, 0xa0, 0xec, 0x02, 0x45, 0x9c, 0xc8, 0x6c, 0xf0, 0xba,
-	0x14, 0x71, 0x62, 0xae, 0x0d, 0x27, 0x32, 0x1b, 0xef, 0xb3, 0x0d, 0x30, 0xcc, 0x16, 0x02, 0x7f,
-	0xd6, 0x44, 0xe1, 0xad, 0x49, 0x13, 0x85, 0xf1, 0xa0, 0x34, 0xde, 0xa0, 0x08, 0x93, 0xaa, 0x57,
-	0xa5, 0xda, 0x6c, 0x50, 0x9d, 0x89, 0xdc, 0xab, 0x22, 0x3b, 0x0d, 0x28, 0x88, 0x7c, 0xba, 0xfd,
-	0xc6, 0xc1, 0x3f, 0xd3, 0xf1, 0x16, 0x82, 0xfa, 0x3f, 0x02, 0x00, 0x00, 0xff, 0xff, 0xe3, 0x13,
-	0x54, 0xfc, 0x7f, 0x07, 0x00, 0x00,
+	// 963 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xcc, 0x56, 0xdd, 0x72, 0xdb, 0x44,
+	0x14, 0xae, 0xe4, 0x28, 0xa9, 0x8f, 0x33, 0xae, 0xb3, 0xc9, 0x0c, 0x26, 0x65, 0x68, 0xf0, 0x0d,
+	0xa5, 0x10, 0x29, 0x51, 0x67, 0xb8, 0x29, 0xa5, 0xe3, 0xfc, 0x60, 0x3c, 0x34, 0x76, 0x2b, 0xa5,
+	0x65, 0x86, 0x0b, 0x3c, 0x6b, 0x6b, 0x51, 0x76, 0x2a, 0xef, 0xca, 0xd2, 0x3a, 0x89, 0x6f, 0xb8,
+	0xe1, 0x05, 0x78, 0x13, 0x78, 0x04, 0x5e, 0x80, 0x3b, 0xee, 0x3b, 0xc3, 0x93, 0x30, 0xda, 0x95,
+	0x6d, 0xc5, 0x76, 0xad, 0x00, 0x1e, 0x86, 0xbb, 0xfd, 0x39, 0xe7, 0xfb, 0xbe, 0xf3, 0x9d, 0xf5,
+	0x91, 0xa1, 0xd4, 0xe7, 0x1e, 0x09, 0xcc, 0x30, 0xe2, 0x82, 0xa3, 0xfb, 0x98, 0x9a, 0x7d, 0x22,
+	0xb0, 0xb8, 0xa0, 0xcc, 0x8f, 0xcd, 0x98, 0x44, 0x97, 0xb4, 0x47, 0xcc, 0xfe, 0x40, 0x08, 0x6f,
+	0xf7, 0x43, 0x9f, 0x73, 0x3f, 0x20, 0x96, 0x0c, 0xed, 0x0e, 0x7f, 0xb0, 0xae, 0x22, 0x1c, 0x86,
+	0x24, 0x8a, 0x55, 0xf2, 0xee, 0xfb, 0xb3, 0xf7, 0x98, 0x8d, 0xd2, 0xab, 0x2f, 0x7d, 0x2a, 0x2e,
+	0x86, 0x5d, 0xb3, 0xc7, 0xfb, 0x16, 0xc3, 0x23, 0x2e, 0x04, 0xb6, 0xa6, 0x3c, 0x56, 0xf8, 0xc6,
+	0x57, 0x59, 0x16, 0xf5, 0x08, 0x13, 0x54, 0x8c, 0x3c, 0xdb, 0xca, 0xe8, 0xda, 0x3d, 0xbe, 0x6d,
+	0x7e, 0x8f, 0xb3, 0x58, 0x60, 0x26, 0xac, 0x58, 0x60, 0x41, 0x2c, 0x8f, 0x48, 0xfd, 0x0a, 0xe4,
+	0xf3, 0x0c, 0x48, 0xff, 0x8a, 0x8a, 0x37, 0xfc, 0xca, 0xf2, 0xf9, 0xbe, 0xbc, 0xdc, 0xbf, 0xc4,
+	0x01, 0xf5, 0xb0, 0xe0, 0x51, 0x6c, 0x4d, 0x96, 0x2a, 0xaf, 0xf6, 0x73, 0x01, 0x4a, 0x67, 0x03,
+	0x21, 0x1c, 0x32, 0x18, 0x92, 0x58, 0xa0, 0x3a, 0x14, 0x15, 0x6e, 0x87, 0x7a, 0x55, 0x6d, 0x4f,
+	0x7b, 0x58, 0xb2, 0x3f, 0x30, 0x55, 0xed, 0xe6, 0xb8, 0x76, 0xd3, 0x15, 0x11, 0x65, 0xfe, 0x6b,
+	0x1c, 0x0c, 0xc9, 0xd1, 0xfa, 0x9f, 0x6f, 0x1f, 0xe8, 0x7b, 0x9a, 0x73, 0x57, 0xa5, 0x35, 0x3d,
+	0xd4, 0x80, 0x35, 0x31, 0x0a, 0x49, 0x55, 0xdf, 0xd3, 0x1e, 0x96, 0xed, 0x4f, 0xcd, 0x25, 0xb6,
+	0x9b, 0x67, 0x24, 0x8e, 0xb1, 0x4f, 0x1c, 0x32, 0x38, 0x1f, 0x85, 0x53, 0x30, 0x09, 0x80, 0x5e,
+	0xc3, 0xa6, 0x1f, 0x52, 0xde, 0xf1, 0xa8, 0x4f, 0x05, 0x0e, 0xaa, 0x05, 0x29, 0xe7, 0x70, 0x29,
+	0x60, 0x3b, 0x6c, 0x84, 0x94, 0x9f, 0xa8, 0x8c, 0x17, 0x78, 0x14, 0x70, 0xec, 0x7d, 0x7d, 0xc7,
+	0x29, 0xf9, 0xd3, 0x53, 0xe4, 0x82, 0xdc, 0x76, 0x30, 0xc3, 0x01, 0xf7, 0xab, 0x6b, 0x12, 0xf6,
+	0xe0, 0x16, 0xb0, 0x75, 0x99, 0x30, 0x45, 0x05, 0x7f, 0x72, 0x88, 0x9e, 0x42, 0x81, 0xda, 0xbd,
+	0xaa, 0x21, 0xc1, 0x3e, 0xc9, 0x01, 0x6b, 0xda, 0xbd, 0x29, 0x4a, 0x92, 0x77, 0x54, 0x84, 0x8d,
+	0x50, 0x9d, 0xd4, 0x7e, 0xd3, 0x61, 0x53, 0xb5, 0x24, 0x0e, 0x39, 0x8b, 0x09, 0x7a, 0x96, 0x1a,
+	0xaa, 0xfd, 0x1d, 0x43, 0xe3, 0xc4, 0xd0, 0xd4, 0xc8, 0xf3, 0x19, 0x23, 0x75, 0x29, 0xd2, 0x5a,
+	0x0a, 0x94, 0x6f, 0xe3, 0xcb, 0x9b, 0x36, 0xaa, 0xee, 0x98, 0xb9, 0xa0, 0xcb, 0x4c, 0x7c, 0xa2,
+	0x4c, 0x54, 0x1d, 0xf9, 0x78, 0x29, 0xd4, 0x52, 0x0b, 0x7f, 0xd7, 0x61, 0x2b, 0xb1, 0xf0, 0x44,
+	0xbe, 0xc9, 0xf1, 0xdb, 0x5e, 0xd9, 0xc3, 0x3c, 0x5f, 0xf8, 0x30, 0x57, 0xec, 0xe7, 0xda, 0xea,
+	0xfc, 0x34, 0xfe, 0xad, 0x9f, 0x3f, 0x69, 0xb0, 0xae, 0xbc, 0x44, 0x65, 0xd0, 0xd3, 0xc9, 0x50,
+	0x74, 0x74, 0xea, 0x21, 0x04, 0x6b, 0x0c, 0xf7, 0x95, 0xa9, 0x45, 0x47, 0xae, 0xd1, 0x0e, 0x18,
+	0x38, 0xa0, 0x38, 0x96, 0xc6, 0x14, 0x1d, 0xb5, 0x41, 0xcf, 0xc0, 0x90, 0x83, 0x4b, 0x56, 0x56,
+	0x9e, 0xfb, 0x8d, 0x8c, 0xa7, 0x9b, 0x29, 0x83, 0x4c, 0x45, 0xe7, 0x26, 0x6b, 0x47, 0xe5, 0xd5,
+	0xde, 0x6a, 0x70, 0xb7, 0x1d, 0xa6, 0x3a, 0x3e, 0x9b, 0xe8, 0xc8, 0x99, 0x50, 0x52, 0xe5, 0x41,
+	0x46, 0x65, 0x5e, 0xbc, 0xaa, 0xc1, 0xce, 0xd6, 0x90, 0x97, 0xb2, 0xaa, 0x0a, 0x7f, 0x04, 0x38,
+	0x8d, 0x22, 0x1e, 0x49, 0xd4, 0x89, 0xb5, 0x5a, 0xc6, 0xda, 0x8f, 0x60, 0x33, 0xed, 0x5b, 0x27,
+	0x63, 0x7b, 0x29, 0x3d, 0x6b, 0x25, 0x21, 0x0f, 0xa0, 0xd4, 0x27, 0xe2, 0x82, 0x7b, 0x2a, 0x42,
+	0xf5, 0x00, 0xd4, 0x91, 0x0c, 0xa8, 0xc2, 0x46, 0x8f, 0x33, 0x41, 0xae, 0x85, 0x14, 0x5a, 0x74,
+	0xc6, 0xdb, 0xda, 0x00, 0xca, 0xaf, 0x18, 0x8e, 0x46, 0xc7, 0x38, 0x08, 0xde, 0xad, 0x61, 0x86,
+	0x40, 0x9f, 0x23, 0x78, 0x04, 0x86, 0xcc, 0x4e, 0xbd, 0xdb, 0x99, 0xf3, 0xae, 0xce, 0x46, 0x8e,
+	0x0a, 0xa9, 0xfd, 0xa2, 0x41, 0xa5, 0x1d, 0xce, 0xb0, 0x1e, 0x64, 0x58, 0x6f, 0xd7, 0xae, 0xa7,
+	0xf3, 0x9a, 0xf2, 0x12, 0xff, 0xa9, 0xe2, 0x08, 0xee, 0xb9, 0x22, 0x22, 0xb8, 0xff, 0x1f, 0xba,
+	0xf4, 0xab, 0x06, 0x5b, 0xed, 0x70, 0x96, 0xf6, 0x7f, 0x6d, 0xd3, 0x17, 0x80, 0xe6, 0x67, 0x1e,
+	0xaa, 0x40, 0x21, 0xa4, 0x4c, 0x2a, 0x36, 0x9c, 0x64, 0x99, 0x0c, 0x8b, 0x4b, 0x89, 0xa9, 0xcb,
+	0x33, 0xb5, 0xa9, 0x5d, 0xc3, 0xce, 0xa2, 0x4f, 0x39, 0xda, 0x9f, 0xe6, 0x97, 0xec, 0xfb, 0x73,
+	0xfc, 0x4d, 0x26, 0x1e, 0xdb, 0x4a, 0xb7, 0x04, 0x3f, 0xcc, 0x82, 0xe7, 0x24, 0xa4, 0xcc, 0x4f,
+	0x60, 0x6b, 0x6e, 0xac, 0xe6, 0xc9, 0xd6, 0xc7, 0xc9, 0x57, 0xb0, 0xbd, 0xe0, 0xaf, 0xc2, 0xca,
+	0x55, 0x7f, 0x15, 0x70, 0x2c, 0x6e, 0xa8, 0xfe, 0x1e, 0x60, 0x3a, 0xc1, 0x13, 0xb9, 0xdd, 0x61,
+	0x3c, 0x96, 0xdb, 0x1d, 0xc6, 0xc9, 0x0b, 0xc5, 0x9e, 0x17, 0xa5, 0x26, 0xcb, 0x75, 0x52, 0x02,
+	0x65, 0x1e, 0xb9, 0x96, 0xdd, 0x34, 0x1c, 0xb5, 0x91, 0xc3, 0x9b, 0xf9, 0x81, 0x1a, 0x62, 0x86,
+	0xa3, 0x36, 0xb5, 0x3f, 0x34, 0xd8, 0xcc, 0xfe, 0x6f, 0x49, 0x4a, 0x1a, 0x53, 0xe4, 0x95, 0x94,
+	0xf0, 0x5b, 0x19, 0xfe, 0x9c, 0x78, 0x25, 0xee, 0x30, 0x2b, 0x2e, 0xaf, 0x73, 0x4a, 0xf9, 0x61,
+	0x56, 0x79, 0x5e, 0x8a, 0x8c, 0x7c, 0x84, 0xa1, 0x7c, 0xf3, 0x4b, 0x8f, 0xde, 0x83, 0x6d, 0xe7,
+	0xf4, 0x65, 0xe7, 0xec, 0xd4, 0x75, 0xeb, 0x8d, 0xd3, 0xce, 0xab, 0xd6, 0x37, 0xad, 0xf6, 0xb7,
+	0xad, 0xca, 0x1d, 0xb4, 0x03, 0x95, 0xe4, 0xa2, 0xf1, 0xa2, 0xd9, 0xee, 0x9c, 0x34, 0x1b, 0xcd,
+	0xf3, 0xfa, 0xf3, 0x8a, 0x86, 0xb6, 0xe1, 0xde, 0xe4, 0xb4, 0xde, 0xaa, 0x3f, 0x6f, 0x37, 0x2a,
+	0x3a, 0x2a, 0xc1, 0x46, 0x72, 0xd8, 0xb4, 0x8f, 0x2b, 0x85, 0x1b, 0x14, 0xf1, 0x94, 0xc2, 0x7d,
+	0x17, 0x85, 0xbb, 0x90, 0xc2, 0x5d, 0x44, 0xe1, 0x2a, 0x8a, 0xa3, 0x8d, 0xef, 0x0c, 0xf9, 0x11,
+	0xef, 0xae, 0xcb, 0x52, 0x1f, 0xff, 0x15, 0x00, 0x00, 0xff, 0xff, 0x65, 0xb8, 0x34, 0x91, 0xf8,
+	0x0c, 0x00, 0x00,
 }

@@ -84,7 +84,7 @@ sensor_plugins:
 	$(MAKE) -C pkg/sensor/plugin all
 
 mqttd_plugins:
-    $(MAKE) -C pkg/mqttd/plugin all
+	$(MAKE) -C pkg/mqttd/plugin all
 
 build_docker_images:
 	./script/metathings_build.sh
