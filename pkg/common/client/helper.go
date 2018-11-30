@@ -12,6 +12,7 @@ import (
 	component_pb "github.com/nayotta/metathings/pkg/proto/component"
 	agent_pb "github.com/nayotta/metathings/pkg/proto/core_agent"
 	cored_pb "github.com/nayotta/metathings/pkg/proto/cored"
+	device_pb "github.com/nayotta/metathings/pkg/proto/device"
 	deviced_pb "github.com/nayotta/metathings/pkg/proto/deviced"
 	echo_pb "github.com/nayotta/metathings/pkg/proto/echo"
 	identityd_pb "github.com/nayotta/metathings/pkg/proto/identityd"
@@ -34,6 +35,7 @@ const (
 	IDENTITYD_CONFIG
 	CORED_CONFIG
 	DEVICED_CONFIG
+	DEVICE_CONFIG
 	CAMERAD_CONFIG
 	SENSORD_CONFIG
 	AGENT_CONFIG
@@ -55,6 +57,8 @@ var (
 		"identityd2",
 		"identityd",
 		"cored",
+		"deviced",
+		"device",
 		"camerad",
 		"sensord",
 		"agent",
@@ -251,6 +255,15 @@ func (f *ClientFactory) NewDevicedServiceClient(opts ...grpc.DialOption) (device
 	}
 
 	return deviced_pb.NewDevicedServiceClient(conn), func() { conn.Close() }, nil
+}
+
+func (f *ClientFactory) NewDeviceServiceClient(opts ...grpc.DialOption) (device_pb.DeviceServiceClient, CloseFn, error) {
+	conn, err := f.NewConnection(DEVICE_CONFIG, opts...)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return device_pb.NewDeviceServiceClient(conn), func() { conn.Close() }, nil
 }
 
 func (f *ClientFactory) NewModuleSerivceClient(opts ...grpc.DialOption) (component_pb.ModuleServiceClient, CloseFn, error) {

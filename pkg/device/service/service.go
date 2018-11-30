@@ -40,6 +40,10 @@ func (self *MetathingsDeviceServiceImpl) context_with_token() context.Context {
 	return context_helper.WithToken(context.Background(), self.tknr.GetToken())
 }
 
+func (self *MetathingsDeviceServiceImpl) Stop() error {
+	panic("unimplemented")
+}
+
 func (self *MetathingsDeviceServiceImpl) Wait() chan bool {
 	panic("unimplemented")
 }
