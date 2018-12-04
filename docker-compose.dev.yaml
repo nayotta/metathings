@@ -34,6 +34,8 @@ services:
     - metathings-backend
     expose:
     - "4001"
+    ports:
+    - "4001:4001"
     restart: on-failure
 
   identityd2:
@@ -51,6 +53,8 @@ services:
     - metathings-backend
     expose:
     - "5000"
+    ports:
+    - "5000:5000"
     restart: on-failure
 
   cored:
