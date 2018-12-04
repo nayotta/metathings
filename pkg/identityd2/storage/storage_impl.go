@@ -1,6 +1,8 @@
 package metathings_identityd2_storage
 
 import (
+	"time"
+
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	log "github.com/sirupsen/logrus"
@@ -203,8 +205,10 @@ func (self *StorageImpl) get_role(id string) (*Role, error) {
 		return nil, err
 	}
 
-	role.Domain = &Domain{
-		Id: role.DomainId,
+	if role.DomainId != nil {
+		role.Domain = &Domain{
+			Id: role.DomainId,
+		}
 	}
 
 	return &role, nil
@@ -1220,6 +1224,18 @@ func (self *StorageImpl) DeleteToken(id string) error {
 	}
 
 	self.logger.WithField("id", id).Debugf("delete token")
+
+	return nil
+}
+
+func (self *StorageImpl) RefreshToken(id string, expires_at time.Time) error {
+	var err error
+
+	if err = self.db.Model(&Token{Id: &id}).Update(&Token{ExpiresAt: &expires_at}).Error; err != nil {
+		return err
+	}
+
+	self.logger.WithFields(log.Fields{"id": id, "expires_at": expires_at}).Debugf("refresh token")
 
 	return nil
 }

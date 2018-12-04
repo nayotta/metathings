@@ -65,12 +65,25 @@ func must_parse_extra(x map[string]*wrappers.StringValue) string {
 	return string(buf)
 }
 
-func copy_extra(x string) map[string]string {
+func copy_extra(x *string) map[string]string {
+	if x == nil {
+		return map[string]string{}
+	}
+
 	y := map[string]string{}
-	if err := json.Unmarshal([]byte(x), &y); err != nil {
+	if err := json.Unmarshal([]byte(*x), &y); err != nil {
 		y = map[string]string{}
 	}
+
 	return y
+}
+
+func copy_string(x *string) string {
+	if x == nil {
+		return ""
+	}
+
+	return *x
 }
 
 func copy_domain_children(xs []*storage.Domain) []*pb.Domain {
@@ -99,22 +112,25 @@ func copy_domain(x *storage.Domain) *pb.Domain {
 		Alias:    *x.Alias,
 		Parent:   parent,
 		Children: copy_domain_children(x.Children),
-		Extra:    copy_extra(*x.Extra),
+		Extra:    copy_extra(x.Extra),
 	}
 
 	return y
 }
 
 func copy_role(x *storage.Role) *pb.Role {
+	var dom *pb.Domain
+	if x.Domain != nil {
+		dom = &pb.Domain{Id: *x.Domain.Id}
+	}
+
 	y := &pb.Role{
-		Id: *x.Id,
-		Domain: &pb.Domain{
-			Id: *x.Domain.Id,
-		},
+		Id:          *x.Id,
+		Domain:      dom,
 		Name:        *x.Name,
 		Alias:       *x.Alias,
-		Description: *x.Description,
-		Extra:       copy_extra(*x.Extra),
+		Description: copy_string(x.Description),
+		Extra:       copy_extra(x.Extra),
 	}
 
 	return y
@@ -149,7 +165,7 @@ func copy_entity(x *storage.Entity) *pb.Entity {
 		Roles:   roles,
 		Name:    *x.Name,
 		Alias:   *x.Alias,
-		Extra:   copy_extra(*x.Extra),
+		Extra:   copy_extra(x.Extra),
 	}
 
 	return y
@@ -180,7 +196,7 @@ func copy_group(x *storage.Group) *pb.Group {
 		Name:        *x.Name,
 		Alias:       *x.Alias,
 		Description: *x.Description,
-		Extra:       copy_extra(*x.Extra),
+		Extra:       copy_extra(x.Extra),
 	}
 
 	return y
