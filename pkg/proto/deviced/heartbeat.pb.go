@@ -3,10 +3,12 @@
 
 package deviced
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import _ "github.com/mwitkow/go-proto-validators"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	_ "github.com/mwitkow/go-proto-validators"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -20,7 +22,7 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type HeartbeatRequest struct {
-	Device               *OpDevice `protobuf:"bytes,1,opt,name=device" json:"device,omitempty"`
+	Device               *OpDevice `protobuf:"bytes,1,opt,name=device,proto3" json:"device,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}  `json:"-"`
 	XXX_unrecognized     []byte    `json:"-"`
 	XXX_sizecache        int32     `json:"-"`
@@ -30,16 +32,17 @@ func (m *HeartbeatRequest) Reset()         { *m = HeartbeatRequest{} }
 func (m *HeartbeatRequest) String() string { return proto.CompactTextString(m) }
 func (*HeartbeatRequest) ProtoMessage()    {}
 func (*HeartbeatRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_heartbeat_5032d6575e81037f, []int{0}
+	return fileDescriptor_3c667767fb9826a9, []int{0}
 }
+
 func (m *HeartbeatRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_HeartbeatRequest.Unmarshal(m, b)
 }
 func (m *HeartbeatRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_HeartbeatRequest.Marshal(b, m, deterministic)
 }
-func (dst *HeartbeatRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_HeartbeatRequest.Merge(dst, src)
+func (m *HeartbeatRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_HeartbeatRequest.Merge(m, src)
 }
 func (m *HeartbeatRequest) XXX_Size() int {
 	return xxx_messageInfo_HeartbeatRequest.Size(m)
@@ -61,9 +64,9 @@ func init() {
 	proto.RegisterType((*HeartbeatRequest)(nil), "ai.metathings.service.deviced.HeartbeatRequest")
 }
 
-func init() { proto.RegisterFile("heartbeat.proto", fileDescriptor_heartbeat_5032d6575e81037f) }
+func init() { proto.RegisterFile("heartbeat.proto", fileDescriptor_3c667767fb9826a9) }
 
-var fileDescriptor_heartbeat_5032d6575e81037f = []byte{
+var fileDescriptor_3c667767fb9826a9 = []byte{
 	// 174 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xe2, 0xcf, 0x48, 0x4d, 0x2c,
 	0x2a, 0x49, 0x4a, 0x4d, 0x2c, 0xd1, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x92, 0x4d, 0xcc, 0xd4,

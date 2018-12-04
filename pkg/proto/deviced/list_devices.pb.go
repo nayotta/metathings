@@ -3,10 +3,12 @@
 
 package deviced
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import _ "github.com/mwitkow/go-proto-validators"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	_ "github.com/mwitkow/go-proto-validators"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -20,7 +22,7 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type ListDevicesRequest struct {
-	Device               *OpDevice `protobuf:"bytes,1,opt,name=device" json:"device,omitempty"`
+	Device               *OpDevice `protobuf:"bytes,1,opt,name=device,proto3" json:"device,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}  `json:"-"`
 	XXX_unrecognized     []byte    `json:"-"`
 	XXX_sizecache        int32     `json:"-"`
@@ -30,16 +32,17 @@ func (m *ListDevicesRequest) Reset()         { *m = ListDevicesRequest{} }
 func (m *ListDevicesRequest) String() string { return proto.CompactTextString(m) }
 func (*ListDevicesRequest) ProtoMessage()    {}
 func (*ListDevicesRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_list_devices_4da8af68c4fcc09a, []int{0}
+	return fileDescriptor_901fa66e1cf2d87a, []int{0}
 }
+
 func (m *ListDevicesRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ListDevicesRequest.Unmarshal(m, b)
 }
 func (m *ListDevicesRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_ListDevicesRequest.Marshal(b, m, deterministic)
 }
-func (dst *ListDevicesRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ListDevicesRequest.Merge(dst, src)
+func (m *ListDevicesRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ListDevicesRequest.Merge(m, src)
 }
 func (m *ListDevicesRequest) XXX_Size() int {
 	return xxx_messageInfo_ListDevicesRequest.Size(m)
@@ -58,7 +61,7 @@ func (m *ListDevicesRequest) GetDevice() *OpDevice {
 }
 
 type ListDevicesResponse struct {
-	Devices              []*Device `protobuf:"bytes,1,rep,name=devices" json:"devices,omitempty"`
+	Devices              []*Device `protobuf:"bytes,1,rep,name=devices,proto3" json:"devices,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}  `json:"-"`
 	XXX_unrecognized     []byte    `json:"-"`
 	XXX_sizecache        int32     `json:"-"`
@@ -68,16 +71,17 @@ func (m *ListDevicesResponse) Reset()         { *m = ListDevicesResponse{} }
 func (m *ListDevicesResponse) String() string { return proto.CompactTextString(m) }
 func (*ListDevicesResponse) ProtoMessage()    {}
 func (*ListDevicesResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_list_devices_4da8af68c4fcc09a, []int{1}
+	return fileDescriptor_901fa66e1cf2d87a, []int{1}
 }
+
 func (m *ListDevicesResponse) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ListDevicesResponse.Unmarshal(m, b)
 }
 func (m *ListDevicesResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_ListDevicesResponse.Marshal(b, m, deterministic)
 }
-func (dst *ListDevicesResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ListDevicesResponse.Merge(dst, src)
+func (m *ListDevicesResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ListDevicesResponse.Merge(m, src)
 }
 func (m *ListDevicesResponse) XXX_Size() int {
 	return xxx_messageInfo_ListDevicesResponse.Size(m)
@@ -100,9 +104,9 @@ func init() {
 	proto.RegisterType((*ListDevicesResponse)(nil), "ai.metathings.service.deviced.ListDevicesResponse")
 }
 
-func init() { proto.RegisterFile("list_devices.proto", fileDescriptor_list_devices_4da8af68c4fcc09a) }
+func init() { proto.RegisterFile("list_devices.proto", fileDescriptor_901fa66e1cf2d87a) }
 
-var fileDescriptor_list_devices_4da8af68c4fcc09a = []byte{
+var fileDescriptor_901fa66e1cf2d87a = []byte{
 	// 202 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x12, 0xca, 0xc9, 0x2c, 0x2e,
 	0x89, 0x4f, 0x49, 0x2d, 0xcb, 0x4c, 0x4e, 0x2d, 0xd6, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x92,

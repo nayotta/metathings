@@ -3,12 +3,14 @@
 
 package ai_metathings_service_device
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import _ "github.com/golang/protobuf/ptypes/wrappers"
-import _ "github.com/mwitkow/go-proto-validators"
-import deviced "github.com/nayotta/metathings/pkg/proto/deviced"
+import (
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
+	_ "github.com/golang/protobuf/ptypes/wrappers"
+	_ "github.com/mwitkow/go-proto-validators"
+	deviced "github.com/nayotta/metathings/pkg/proto/deviced"
+	math "math"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -22,7 +24,7 @@ var _ = math.Inf
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type HeartbeatRequest struct {
-	Module               *deviced.OpModule `protobuf:"bytes,1,opt,name=module" json:"module,omitempty"`
+	Module               *deviced.OpModule `protobuf:"bytes,1,opt,name=module,proto3" json:"module,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
 	XXX_unrecognized     []byte            `json:"-"`
 	XXX_sizecache        int32             `json:"-"`
@@ -32,16 +34,17 @@ func (m *HeartbeatRequest) Reset()         { *m = HeartbeatRequest{} }
 func (m *HeartbeatRequest) String() string { return proto.CompactTextString(m) }
 func (*HeartbeatRequest) ProtoMessage()    {}
 func (*HeartbeatRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_heartbeat_aa4e44827bc805b9, []int{0}
+	return fileDescriptor_3c667767fb9826a9, []int{0}
 }
+
 func (m *HeartbeatRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_HeartbeatRequest.Unmarshal(m, b)
 }
 func (m *HeartbeatRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_HeartbeatRequest.Marshal(b, m, deterministic)
 }
-func (dst *HeartbeatRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_HeartbeatRequest.Merge(dst, src)
+func (m *HeartbeatRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_HeartbeatRequest.Merge(m, src)
 }
 func (m *HeartbeatRequest) XXX_Size() int {
 	return xxx_messageInfo_HeartbeatRequest.Size(m)
@@ -63,9 +66,9 @@ func init() {
 	proto.RegisterType((*HeartbeatRequest)(nil), "ai.metathings.service.device.HeartbeatRequest")
 }
 
-func init() { proto.RegisterFile("heartbeat.proto", fileDescriptor_heartbeat_aa4e44827bc805b9) }
+func init() { proto.RegisterFile("heartbeat.proto", fileDescriptor_3c667767fb9826a9) }
 
-var fileDescriptor_heartbeat_aa4e44827bc805b9 = []byte{
+var fileDescriptor_3c667767fb9826a9 = []byte{
 	// 222 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x7c, 0x8f, 0x3f, 0x4b, 0x04, 0x31,
 	0x10, 0xc5, 0x59, 0x8b, 0x2d, 0xd6, 0x42, 0xb9, 0x4a, 0x0e, 0xd1, 0xc3, 0x46, 0x9b, 0xcb, 0x80,

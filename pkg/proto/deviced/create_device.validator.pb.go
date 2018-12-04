@@ -4,7 +4,7 @@
 package deviced
 
 import fmt "fmt"
-import go_proto_validators "github.com/mwitkow/go-proto-validators"
+import github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
 import proto "github.com/golang/protobuf/proto"
 import math "math"
 import _ "github.com/mwitkow/go-proto-validators"
@@ -16,19 +16,19 @@ var _ = math.Inf
 
 func (this *CreateDeviceRequest) Validate() error {
 	if nil == this.Device {
-		return go_proto_validators.FieldError("Device", fmt.Errorf("message must exist"))
+		return github_com_mwitkow_go_proto_validators.FieldError("Device", fmt.Errorf("message must exist"))
 	}
 	if this.Device != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Device); err != nil {
-			return go_proto_validators.FieldError("Device", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Device); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Device", err)
 		}
 	}
 	return nil
 }
 func (this *CreateDeviceResponse) Validate() error {
 	if this.Device != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Device); err != nil {
-			return go_proto_validators.FieldError("Device", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Device); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Device", err)
 		}
 	}
 	return nil
