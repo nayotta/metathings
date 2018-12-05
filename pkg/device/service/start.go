@@ -27,7 +27,7 @@ func (self *MetathingsDeviceServiceImpl) start() error {
 		return err
 	}
 
-	self.mdl_db = NewModuleDatabase(show_device_res.GetDevice().GetModules(), self.opt.ModuleAliveTimeout)
+	self.mdl_db = NewModuleDatabase(show_device_res.GetDevice().GetModules(), self.opt.ModuleAliveTimeout, self.logger)
 	self.info = show_device_res.GetDevice()
 
 	go self.heartbeat_loop()

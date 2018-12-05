@@ -199,6 +199,10 @@ func (self *StorageImpl) PatchDevice(id string, device *Device) (*Device, error)
 		dev.State = device.State
 	}
 
+	if device.HeartbeatAt != nil {
+		dev.HeartbeatAt = device.HeartbeatAt
+	}
+
 	if err = self.db.Model(&Device{Id: &id}).Update(dev).Error; err != nil {
 		self.logger.WithError(err).Debugf("failed to patch device")
 		return nil, err
@@ -283,6 +287,10 @@ func (self *StorageImpl) PatchModule(id string, module *Module) (*Module, error)
 
 	if module.State != nil {
 		mdl.State = module.State
+	}
+
+	if module.HeartbeatAt != nil {
+		mdl.HeartbeatAt = module.HeartbeatAt
 	}
 
 	if err = self.db.Model(&Module{Id: &id}).Update(mdl).Error; err != nil {

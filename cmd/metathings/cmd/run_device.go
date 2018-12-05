@@ -10,6 +10,7 @@ import (
 	cmd_contrib "github.com/nayotta/metathings/cmd/contrib"
 	cmd_helper "github.com/nayotta/metathings/pkg/common/cmd"
 	service "github.com/nayotta/metathings/pkg/device/service"
+	pb "github.com/nayotta/metathings/pkg/proto/device"
 )
 
 type RunDeviceOption struct {
@@ -50,8 +51,12 @@ func GetRunDeviceOptions() (
 	cmd_contrib.LoggerOptioner,
 	cmd_contrib.ServiceEndpointsOptioner,
 	cmd_contrib.CredentialOptioner,
+	cmd_contrib.ListenOptioner,
+	cmd_contrib.TransportCredentialOptioner,
 ) {
 	return run_device_opt,
+		run_device_opt,
+		run_device_opt,
 		run_device_opt,
 		run_device_opt,
 		run_device_opt
@@ -75,6 +80,12 @@ func run_device() error {
 			cmd_contrib.NewTokener,
 			NewMetathingsDeviceServiceOption,
 			service.NewMetathingsDeviceService,
+			func(x service.MetathingsDeviceService) pb.DeviceServiceServer {
+				return x
+			},
+			cmd_contrib.NewTransportCredentials,
+			cmd_contrib.NewListener,
+			cmd_contrib.NewGrpcServer,
 		),
 		fx.Invoke(
 			func(lc fx.Lifecycle, srv service.MetathingsDeviceService) error {
@@ -89,6 +100,7 @@ func run_device() error {
 
 				return nil
 			},
+			pb.RegisterDeviceServiceServer,
 		),
 	)
 

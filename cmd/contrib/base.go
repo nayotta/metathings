@@ -38,7 +38,9 @@ func CreateServiceBaseOption() ServiceBaseOption {
 }
 
 type ClientBaseOption struct {
-	BaseOption `mapstructure:",squash"`
+	BaseOption                `mapstructure:",squash"`
+	ListenOption              `mapstructure:",squash"`
+	TransportCredentialOption `mapstructure:",squash"`
 }
 
 func CreateClientBaseOption() ClientBaseOption {

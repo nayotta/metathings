@@ -9,10 +9,12 @@ import (
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
 	context_helper "github.com/nayotta/metathings/pkg/common/context"
 	token_helper "github.com/nayotta/metathings/pkg/common/token"
+	pb "github.com/nayotta/metathings/pkg/proto/device"
 	deviced_pb "github.com/nayotta/metathings/pkg/proto/deviced"
 )
 
 type MetathingsDeviceService interface {
+	pb.DeviceServiceServer
 	Start() error
 	Stop() error
 	Wait() chan bool

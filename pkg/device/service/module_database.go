@@ -4,6 +4,8 @@ import (
 	"errors"
 	"time"
 
+	log "github.com/sirupsen/logrus"
+
 	deviced_pb "github.com/nayotta/metathings/pkg/proto/deviced"
 )
 
@@ -17,6 +19,8 @@ type ModuleDatabase interface {
 }
 
 type ModuleDatabaseImpl struct {
+	logger log.FieldLogger
+
 	modules map[string]map[string]Module
 }
 
@@ -46,8 +50,13 @@ func (self *ModuleDatabaseImpl) All() []Module {
 	return modules
 }
 
-func NewModuleDatabase(modules []*deviced_pb.Module, alive_timeout time.Duration) ModuleDatabase {
+func NewModuleDatabase(
+	modules []*deviced_pb.Module,
+	alive_timeout time.Duration,
+	logger log.FieldLogger,
+) ModuleDatabase {
 	db := &ModuleDatabaseImpl{
+		logger:  logger,
 		modules: make(map[string]map[string]Module),
 	}
 
@@ -61,6 +70,10 @@ func NewModuleDatabase(modules []*deviced_pb.Module, alive_timeout time.Duration
 		}
 
 		db.modules[component][name] = NewModule(m, alive_timeout)
+		logger.WithFields(log.Fields{
+			"name":      name,
+			"component": component,
+		}).Debugf("register module to database")
 	}
 
 	return db

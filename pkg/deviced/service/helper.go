@@ -33,12 +33,13 @@ func copy_devices(xs []*storage.Device) []*pb.Device {
 
 func copy_module(x *storage.Module) *pb.Module {
 	y := &pb.Module{
-		Id:       *x.Id,
-		State:    deviced_helper.MODULE_STATE_ENUMER.ToValue(*x.State),
-		DeviceId: *x.DeviceId,
-		Endpoint: *x.Endpoint,
-		Name:     *x.Name,
-		Alias:    *x.Alias,
+		Id:        *x.Id,
+		State:     deviced_helper.MODULE_STATE_ENUMER.ToValue(*x.State),
+		DeviceId:  *x.DeviceId,
+		Endpoint:  *x.Endpoint,
+		Component: *x.Component,
+		Name:      *x.Name,
+		Alias:     *x.Alias,
 	}
 
 	return y
