@@ -217,6 +217,151 @@ func (sev *MetathingsMqttdService) serveOnStream(stream cored_pb.CoredService_St
 	}
 }
 
+func (sev *MetathingsMqttdService) dispatchSystem(ctx context.Context, req *cored_pb.StreamRequest) (*cored_pb.StreamResponse, error) {
+	switch req.Payload.(type) {
+	case *cored_pb.StreamRequest_StreamCall:
+		return sev.dispatchSystemStream(ctx, req)
+	default:
+		return nil, ErrUnsupportMessageType
+	}
+}
+
+func (sev *MetathingsMqttdService) dispatchSystemStream(ctx context.Context, req *cored_pb.StreamRequest) (*cored_pb.StreamResponse, error) {
+	payload := req.Payload.(*cored_pb.StreamRequest_StreamCall)
+
+	switch payload.StreamCall.Payload.(type) {
+	case *cored_pb.StreamCallRequestPayload_Config:
+		return sev.dispatchSystemStreamConfig(ctx, req)
+	default:
+		return nil, ErrUnsupportMessageType
+	}
+}
+
+func (sev *MetathingsMqttdService) dispatchSystemStreamConfig(ctx context.Context, req *cored_pb.StreamRequest) (*cored_pb.StreamResponse, error) {
+	payload := req.Payload.(*cored_pb.StreamRequest_StreamCall)
+	config := payload.StreamCall.Payload.(*cored_pb.StreamCallRequestPayload_Config)
+	name := config.Config.Name.Value
+	serviceName := config.Config.ServiceName.Value
+	methodName := config.Config.MethodName.Value
+
+	dp, ok := sev.getDispatcherPlugin(name, serviceName)
+	if !ok {
+		return nil, ErrPluginNotFound
+	}
+
+	estm, err := dp.StreamCall(methodName, ctx)
+	if err != nil {
+		return nil, err
+	}
+	sev.logger.Debugf("build streaming to entity for stream call")
+
+	cli, cfn, err := sev.cliFty.NewCoredServiceClient(GRPCKEEPALIVE)
+	if err != nil {
+		return nil, err
+	}
+	// dont close connect here, cause it will be used by other goroutines.
+
+	cstmCtx := context_helper.NewOutgoingContext(
+		context.Background(),
+		context_helper.WithTokenOp(sev.appCredMgr.GetToken()),
+		context_helper.WithSessionIdOp(req.SessionId.Value))
+	cstm, err := cli.Stream(cstmCtx)
+	if err != nil {
+		return nil, err
+	}
+	sev.logger.Debugf("build streaming to core for stream call")
+
+	clear := func() {
+		cfn()
+		estm.Close()
+	}
+
+	// TODO(Peer): pass context to entity.
+	// core -> entity
+	go func() {
+		defer clear()
+		for {
+			creq, err := cstm.Recv()
+			if err != nil {
+				sev.handleGRPCError(err, "failed to recv stream data from core")
+				return
+			}
+			sev.logger.Debugf("recv data from core")
+
+			stmCall, ok := creq.Payload.(*cored_pb.StreamRequest_StreamCall)
+			if !ok {
+				sev.logger.WithField("stage", "StreamRequest_StreamCall").Errorf("failed to convert request type")
+				continue
+			}
+
+			dat, ok := stmCall.StreamCall.Payload.(*cored_pb.StreamCallRequestPayload_Data)
+			if !ok {
+				sev.logger.WithField("stage", "StreamCallRequestPayload_Data").Errorf("failed to convert request type")
+				continue
+			}
+
+			req := dat.Data.Value
+			// TODO(zh) send to driver
+			err = estm.Send(req)
+			if err != nil {
+				sev.handleGRPCError(err, "failed to send data to entity")
+				return
+			}
+			sev.logger.Debugf("send data to entity")
+		}
+	}()
+
+	// entity -> core
+	// TODO(zh) mqttd select chan to send
+	go func() {
+		defer clear()
+		for {
+			ereq, err := estm.Recv()
+			if err != nil {
+				sev.handleGRPCError(err, "failed to recv data from entity")
+				return
+			}
+			sev.logger.Debugf("recv data from entity")
+
+			res := &cored_pb.StreamResponse{
+				MessageType: cored_pb.StreamMessageType_STREAM_MESSAGE_TYPE_USER,
+				Payload: &cored_pb.StreamResponse_StreamCall{
+					StreamCall: &cored_pb.StreamCallResponsePayload{
+						Payload: &cored_pb.StreamCallResponsePayload_Data{
+							Data: &cored_pb.StreamCallDataResponse{
+								Value: ereq,
+							},
+						},
+					},
+				},
+			}
+
+			err = cstm.Send(res)
+			if err != nil {
+				sev.handleGRPCError(err, "failed to send data to core")
+				return
+			}
+			sev.logger.Debugf("send data to core")
+		}
+	}()
+
+	return &cored_pb.StreamResponse{
+		SessionId:   req.SessionId.Value,
+		MessageType: req.MessageType,
+		Payload: &cored_pb.StreamResponse_StreamCall{
+			StreamCall: &cored_pb.StreamCallResponsePayload{
+				Payload: &cored_pb.StreamCallResponsePayload_Config{
+					Config: &cored_pb.StreamCallConfigResponse{
+						Name:        name,
+						ServiceName: serviceName,
+						MethodName:  methodName,
+					},
+				},
+			},
+		},
+	}, nil
+}
+
 func (sev *MetathingsMqttdService) dispatchUser(ctx context.Context, req *cored_pb.StreamRequest) (*cored_pb.StreamResponse, error) {
 	payload, ok := req.Payload.(*cored_pb.StreamRequest_UnaryCall)
 	if !ok {
@@ -270,6 +415,8 @@ func (sev *MetathingsMqttdService) dispatch(ctx context.Context, req *cored_pb.S
 	switch req.MessageType {
 	case cored_pb.StreamMessageType_STREAM_MESSAGE_TYPE_USER:
 		return sev.dispatchUser(ctx, req)
+	case cored_pb.StreamMessageType_STREAM_MESSAGE_TYPE_SYSTEM:
+		return sev.dispatchSystem(ctx, req)
 	default:
 		return nil, ErrUnsupportMessageType
 	}

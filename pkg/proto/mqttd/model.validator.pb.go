@@ -74,30 +74,6 @@ func (this *MqttResponse) Validate() error {
 	}
 	return nil
 }
-func (this *MqttDeviceRequest) Validate() error {
-	if oneOfNester, ok := this.GetPayload().(*MqttDeviceRequest_GpioDigital); ok {
-		if oneOfNester.GpioDigital != nil {
-			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.GpioDigital); err != nil {
-				return github_com_mwitkow_go_proto_validators.FieldError("GpioDigital", err)
-			}
-		}
-	}
-	if oneOfNester, ok := this.GetPayload().(*MqttDeviceRequest_GpioAnalog); ok {
-		if oneOfNester.GpioAnalog != nil {
-			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.GpioAnalog); err != nil {
-				return github_com_mwitkow_go_proto_validators.FieldError("GpioAnalog", err)
-			}
-		}
-	}
-	if oneOfNester, ok := this.GetPayload().(*MqttDeviceRequest_I2C); ok {
-		if oneOfNester.I2C != nil {
-			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.I2C); err != nil {
-				return github_com_mwitkow_go_proto_validators.FieldError("I2C", err)
-			}
-		}
-	}
-	return nil
-}
 func (this *Device) Validate() error {
 	return nil
 }
@@ -174,9 +150,6 @@ func (this *OpStreamCallValue) Validate() error {
 	}
 	return nil
 }
-func (this *GpioDigitalPayload) Validate() error {
-	return nil
-}
 func (this *OpGpioDigitalPayload) Validate() error {
 	if this.Pin != nil {
 		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Pin); err != nil {
@@ -190,9 +163,6 @@ func (this *OpGpioDigitalPayload) Validate() error {
 	}
 	return nil
 }
-func (this *GpioAnalogPayload) Validate() error {
-	return nil
-}
 func (this *OpGpioAnalogPayload) Validate() error {
 	if this.Pin != nil {
 		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Pin); err != nil {
@@ -204,9 +174,6 @@ func (this *OpGpioAnalogPayload) Validate() error {
 			return github_com_mwitkow_go_proto_validators.FieldError("Value", err)
 		}
 	}
-	return nil
-}
-func (this *I2CPayload) Validate() error {
 	return nil
 }
 func (this *OpI2CPayload) Validate() error {
