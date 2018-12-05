@@ -93,7 +93,7 @@ func (self *connectionCenter) connection_loop(dev *storage.Device, conn Connecti
 	self.logger.WithFields(log.Fields{
 		"devid": *dev.Id,
 		"brid":  br.Id(),
-	}).Debugf("connection loop")
+	}).Debugf("quit connection loop")
 	wg.Wait()
 }
 
@@ -248,14 +248,20 @@ func (self *connectionCenter) UnaryCall(dev *storage.Device, req *pb.OpUnaryCall
 	if br_ids, err = self.storage.ListBridgesFromDevice(dev_id); err != nil {
 		return nil, err
 	}
+	self.logger.WithFields(log.Fields{
+		"bridges": br_ids,
+		"device":  dev_id,
+	}).Debugf("list bridges from device")
 
 	if conn_br, err = self.brfty.GetBridge(br_ids[0]); err != nil {
 		return nil, err
 	}
+	self.logger.WithField("bridge", br_ids[0]).Debugf("get bridge")
 
 	if sess_br, err = self.brfty.BuildBridge(dev_id, conn_req_sess); err != nil {
 		return nil, err
 	}
+	self.logger.WithField("bridge", sess_br.Id()).Debugf("build recv bridge")
 
 	conn_req := &pb.ConnectRequest{
 		SessionId: &wrappers.Int32Value{Value: conn_req_sess},
@@ -268,18 +274,22 @@ func (self *connectionCenter) UnaryCall(dev *storage.Device, req *pb.OpUnaryCall
 	if buf, err = proto.Marshal(conn_req); err != nil {
 		return nil, err
 	}
+	self.logger.Debugf("marshal request")
 
 	if err = conn_br.Send(buf); err != nil {
 		return nil, err
 	}
+	self.logger.Debugf("send request")
 
 	if buf, err = sess_br.Recv(); err != nil {
 		return nil, err
 	}
+	self.logger.Debugf("recv response")
 
 	if err = proto.Unmarshal(buf, &conn_res); err != nil {
 		return nil, err
 	}
+	self.logger.Debugf("unmarshal response")
 
 	if ucv = conn_res.GetUnaryCall(); ucv == nil {
 		return nil, ErrUnexpectedResponse
