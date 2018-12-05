@@ -8,6 +8,7 @@ import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
 import _ "github.com/golang/protobuf/ptypes/any"
+import _ "github.com/golang/protobuf/ptypes/timestamp"
 import _ "github.com/golang/protobuf/ptypes/wrappers"
 import _ "github.com/nayotta/metathings/pkg/proto/constant/kind"
 import _ "github.com/nayotta/metathings/pkg/proto/constant/state"
@@ -24,6 +25,11 @@ func (this *Device) Validate() error {
 			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {
 				return github_com_mwitkow_go_proto_validators.FieldError("Modules", err)
 			}
+		}
+	}
+	if this.HeartbeatAt != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.HeartbeatAt); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("HeartbeatAt", err)
 		}
 	}
 	return nil
@@ -51,9 +57,19 @@ func (this *OpDevice) Validate() error {
 			}
 		}
 	}
+	if this.HeartbeatAt != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.HeartbeatAt); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("HeartbeatAt", err)
+		}
+	}
 	return nil
 }
 func (this *Module) Validate() error {
+	if this.HeartbeatAt != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.HeartbeatAt); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("HeartbeatAt", err)
+		}
+	}
 	return nil
 }
 func (this *OpModule) Validate() error {
@@ -85,6 +101,11 @@ func (this *OpModule) Validate() error {
 	if this.Alias != nil {
 		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Alias); err != nil {
 			return github_com_mwitkow_go_proto_validators.FieldError("Alias", err)
+		}
+	}
+	if this.HeartbeatAt != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.HeartbeatAt); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("HeartbeatAt", err)
 		}
 	}
 	return nil

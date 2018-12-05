@@ -5,6 +5,7 @@ option go_package = "deviced";
 
 import "google/protobuf/wrappers.proto";
 import "google/protobuf/any.proto";
+import "google/protobuf/timestamp.proto";
 
 import "github.com/nayotta/metathings/pkg/proto/identityd2/model.proto";
 import "github.com/nayotta/metathings/pkg/proto/constant/state/device.proto";
@@ -18,6 +19,7 @@ message Device {
 	string name = 4;
 	string alias = 5;
 	repeated Module modules = 6;
+	google.protobuf.Timestamp heartbeat_at = 7;
 }
 
 message OpDevice {
@@ -27,6 +29,7 @@ message OpDevice {
 	google.protobuf.StringValue name = 4;
 	google.protobuf.StringValue alias = 5;
 	repeated OpModule modules = 6;
+	google.protobuf.Timestamp heartbeat_at = 7;
 }
 
 message Module {
@@ -37,6 +40,7 @@ message Module {
 	string component = 5;
 	string name = 6;
 	string alias = 7;
+	google.protobuf.Timestamp heartbeat_at = 8;
 }
 
 message OpModule {
@@ -47,6 +51,7 @@ message OpModule {
 	google.protobuf.StringValue component = 5;
 	google.protobuf.StringValue name = 6;
 	google.protobuf.StringValue alias = 7;
+	google.protobuf.Timestamp heartbeat_at = 8;
 }
 
 message ErrorValue {

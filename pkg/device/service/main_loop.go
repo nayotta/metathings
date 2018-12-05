@@ -22,5 +22,7 @@ func (self *MetathingsDeviceServiceImpl) main_loop() {
 			"session": req.SessionId,
 			"kind":    req.Kind,
 		}).Debugf("recv msg")
+
+		go self.handle(req)
 	}
 }

@@ -6,6 +6,7 @@ import (
 	"github.com/nayotta/viper"
 	log "github.com/sirupsen/logrus"
 
+	cmd_contrib "github.com/nayotta/metathings/cmd/contrib"
 	net_helper "github.com/nayotta/metathings/pkg/common/net"
 )
 
@@ -26,7 +27,7 @@ func GetFromStage(vs ...*viper.Viper) *viper.Viper {
 		v = vs[0]
 	}
 
-	stage := GetStageFromEnv()
+	stage := GetStageFromEnv(v)
 	v = v.Sub(stage)
 	return v
 }
@@ -51,4 +52,17 @@ func getEndpointAuto(typ, host, listen string) string {
 func getEndpointManual(typ, host, listen string) string {
 	port := strings.SplitAfter(listen, ":")[1]
 	return host + ":" + port
+}
+
+func LoadConfigFile(opt cmd_contrib.ConfigOptioner, v *viper.Viper) func() {
+	return func() {
+		if opt.GetConfig() == "" {
+			return
+		}
+
+		v.SetConfigFile(opt.GetConfig())
+		if err := v.ReadInConfig(); err != nil {
+			log.WithError(err).Fatalf("failed to read config")
+		}
+	}
 }

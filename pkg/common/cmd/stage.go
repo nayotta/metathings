@@ -2,8 +2,16 @@ package cmd_helper
 
 import "github.com/nayotta/viper"
 
-func GetStageFromEnv() string {
-	stage := viper.GetString("stage")
+func GetStageFromEnv(vs ...*viper.Viper) string {
+	var v *viper.Viper
+
+	if len(vs) > 0 {
+		v = vs[0]
+	} else {
+		v = viper.GetViper()
+	}
+
+	stage := v.GetString("stage")
 	if stage == "" {
 		stage = "dev"
 	}

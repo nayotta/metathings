@@ -176,6 +176,7 @@ type Storage interface {
 
 	CreateToken(*Token) (*Token, error)
 	DeleteToken(id string) error
+	RefreshToken(id string, expires_at time.Time) error
 	GetTokenByText(text string) (*Token, error)
 	GetToken(id string) (*Token, error)
 	ListTokens(*Token) ([]*Token, error)

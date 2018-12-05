@@ -128,6 +128,13 @@ func (self *MetathingsIdentitydService) is_invalid_token(tkn *storage.Token) boo
 	return false
 }
 
+func (self *MetathingsIdentitydService) is_refreshable_token(tkn *storage.Token) bool {
+	return tkn.ExpiresAt.Sub(time.Now()) < time.Duration(.25*float64(self.opt.TokenExpire))
+}
+
+func (self *MetathingsIdentitydService) refresh_token(tkn *storage.Token) {
+}
+
 func (self *MetathingsIdentitydService) AuthFuncOverride(ctx context.Context, fullMethodName string) (context.Context, error) {
 	var tkn *storage.Token
 	var tkn_txt string
@@ -158,6 +165,10 @@ func (self *MetathingsIdentitydService) AuthFuncOverride(ctx context.Context, fu
 			self.logger.WithError(err).Warningf("failed to revoke token")
 		}
 		return ctx, policy.ErrUnauthenticated
+	}
+
+	if self.is_refreshable_token(tkn) {
+		self.refresh_token(tkn)
 	}
 
 	new_ctx = context.WithValue(ctx, "token", tkn)

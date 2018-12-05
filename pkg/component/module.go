@@ -1,5 +1,7 @@
 package metathings_component
 
 type Module interface {
-	Serve() error
+	Start() error
+	Stop() error
+	Err() error
 }
