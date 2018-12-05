@@ -14,6 +14,7 @@ func ValidateChain(providers []interface{}, invokers []interface{}) error {
 	var err error
 
 	app := fx.New(
+		fx.NopLogger,
 		fx.Provide(providers...),
 		fx.Invoke(invokers...),
 	)
