@@ -283,7 +283,7 @@ func (f *ClientFactory) NewMqttdServiceClient(opts ...grpc.DialOption) (mqttd_pb
 		return nil, nil, err
 	}
 
-	return mqttd_pb.NewMqttdServiceClient(conn), func() { conn.Close() }, nil
+	return mqttd_pb.NewMqttdServiceClient(conn), conn.Close, nil
 }
 func NewClientFactory(configs ServiceConfigs, optFn DialOptionFn) (*ClientFactory, error) {
 	if _, ok := configs[DEFAULT_CONFIG]; !ok {

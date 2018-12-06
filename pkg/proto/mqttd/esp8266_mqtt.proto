@@ -1,0 +1,59 @@
+syntax = "proto3";
+
+message MqttDeviceRequest {
+    int64 session_id = 1;
+    oneof payload {
+        GpioDigitalPayload gpio_digital = 2;
+        GpioAnalogPayload gpio_analog = 3;
+        I2cPayload i2c = 4;
+    };
+}
+
+message MqttDeviceResponse {
+    int64 session_id = 1;
+    oneof payload {
+        GpioDigitalPayloadRes gpio_digital = 2;
+        GpioAnalogPayloadRes gpio_analog = 3;
+        I2cPayloadRes i2c = 4;
+        ErrBadArgsRes bad_args = 99;
+    }
+}
+
+message ErrBadArgsRes {
+    int32 code = 1;
+    string text = 2;
+}
+
+message GpioDigitalPayload {
+    int32  pin = 1;
+    int32  value = 2;
+}
+
+message GpioDigitalPayloadRes {
+    int32  pin = 1;
+    int32  value = 2;
+}
+
+message GpioAnalogPayload {
+    int32  pin = 1;
+    float  value = 2;
+}
+
+message GpioAnalogPayloadRes {
+    int32  pin = 1;
+    float  value = 2;
+}
+
+message I2cPayload {
+    int32 bus= 1;
+    int32 addr = 2;
+    int32 index = 3;
+    int32 angle = 4;
+}
+
+message I2cPayloadRes {
+    int32 bus= 1;
+    int32 addr = 2;
+    int32 index = 3;
+    int32 angle = 4;
+}
