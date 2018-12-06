@@ -3,9 +3,9 @@
 
 package mqttd
 
-import fmt "fmt"
 import github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
 import proto "github.com/golang/protobuf/proto"
+import fmt "fmt"
 import math "math"
 import _ "github.com/golang/protobuf/ptypes/any"
 import _ "github.com/golang/protobuf/ptypes/wrappers"
@@ -18,62 +18,6 @@ var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
 
-func (this *MqttRequest) Validate() error {
-	if nil == this.DeviceId {
-		return github_com_mwitkow_go_proto_validators.FieldError("DeviceId", fmt.Errorf("message must exist"))
-	}
-	if this.DeviceId != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.DeviceId); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("DeviceId", err)
-		}
-	}
-	if oneOfNester, ok := this.GetPayload().(*MqttRequest_GpioDigital); ok {
-		if oneOfNester.GpioDigital != nil {
-			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.GpioDigital); err != nil {
-				return github_com_mwitkow_go_proto_validators.FieldError("GpioDigital", err)
-			}
-		}
-	}
-	if oneOfNester, ok := this.GetPayload().(*MqttRequest_GpioAnalog); ok {
-		if oneOfNester.GpioAnalog != nil {
-			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.GpioAnalog); err != nil {
-				return github_com_mwitkow_go_proto_validators.FieldError("GpioAnalog", err)
-			}
-		}
-	}
-	if oneOfNester, ok := this.GetPayload().(*MqttRequest_I2C); ok {
-		if oneOfNester.I2C != nil {
-			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.I2C); err != nil {
-				return github_com_mwitkow_go_proto_validators.FieldError("I2C", err)
-			}
-		}
-	}
-	return nil
-}
-func (this *MqttResponse) Validate() error {
-	if oneOfNester, ok := this.GetPayload().(*MqttResponse_GpioDigital); ok {
-		if oneOfNester.GpioDigital != nil {
-			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.GpioDigital); err != nil {
-				return github_com_mwitkow_go_proto_validators.FieldError("GpioDigital", err)
-			}
-		}
-	}
-	if oneOfNester, ok := this.GetPayload().(*MqttResponse_GpioAnalog); ok {
-		if oneOfNester.GpioAnalog != nil {
-			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.GpioAnalog); err != nil {
-				return github_com_mwitkow_go_proto_validators.FieldError("GpioAnalog", err)
-			}
-		}
-	}
-	if oneOfNester, ok := this.GetPayload().(*MqttResponse_I2C); ok {
-		if oneOfNester.I2C != nil {
-			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.I2C); err != nil {
-				return github_com_mwitkow_go_proto_validators.FieldError("I2C", err)
-			}
-		}
-	}
-	return nil
-}
 func (this *Device) Validate() error {
 	return nil
 }
@@ -98,32 +42,6 @@ func (this *OpDevice) Validate() error {
 func (this *ErrorValue) Validate() error {
 	return nil
 }
-func (this *UnaryCallValue) Validate() error {
-	if this.Value != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Value); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Value", err)
-		}
-	}
-	return nil
-}
-func (this *OpUnaryCallValue) Validate() error {
-	if this.Name != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Name); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Name", err)
-		}
-	}
-	if this.MethodName != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.MethodName); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("MethodName", err)
-		}
-	}
-	if this.Value != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Value); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Value", err)
-		}
-	}
-	return nil
-}
 func (this *StreamCallValue) Validate() error {
 	if this.Value != nil {
 		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Value); err != nil {
@@ -146,55 +64,6 @@ func (this *OpStreamCallValue) Validate() error {
 	if this.Value != nil {
 		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Value); err != nil {
 			return github_com_mwitkow_go_proto_validators.FieldError("Value", err)
-		}
-	}
-	return nil
-}
-func (this *OpGpioDigitalPayload) Validate() error {
-	if this.Pin != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Pin); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Pin", err)
-		}
-	}
-	if this.Value != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Value); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Value", err)
-		}
-	}
-	return nil
-}
-func (this *OpGpioAnalogPayload) Validate() error {
-	if this.Pin != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Pin); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Pin", err)
-		}
-	}
-	if this.Value != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Value); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Value", err)
-		}
-	}
-	return nil
-}
-func (this *OpI2CPayload) Validate() error {
-	if this.Bus != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Bus); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Bus", err)
-		}
-	}
-	if this.Addr != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Addr); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Addr", err)
-		}
-	}
-	if this.Index != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Index); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Index", err)
-		}
-	}
-	if this.Angle != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Angle); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Angle", err)
 		}
 	}
 	return nil

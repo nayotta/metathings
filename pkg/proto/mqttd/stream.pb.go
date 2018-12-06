@@ -101,317 +101,18 @@ func (m *StreamPingResponse) GetTimestamp() *timestamp.Timestamp {
 	return nil
 }
 
-type StreamGpioDigitalWriteRequest struct {
-	Pin                  *wrappers.Int32Value `protobuf:"bytes,1,opt,name=pin,proto3" json:"pin,omitempty"`
-	Value                *wrappers.Int32Value `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}             `json:"-"`
-	XXX_unrecognized     []byte               `json:"-"`
-	XXX_sizecache        int32                `json:"-"`
-}
-
-func (m *StreamGpioDigitalWriteRequest) Reset()         { *m = StreamGpioDigitalWriteRequest{} }
-func (m *StreamGpioDigitalWriteRequest) String() string { return proto.CompactTextString(m) }
-func (*StreamGpioDigitalWriteRequest) ProtoMessage()    {}
-func (*StreamGpioDigitalWriteRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_bb17ef3f514bfe54, []int{2}
-}
-
-func (m *StreamGpioDigitalWriteRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_StreamGpioDigitalWriteRequest.Unmarshal(m, b)
-}
-func (m *StreamGpioDigitalWriteRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_StreamGpioDigitalWriteRequest.Marshal(b, m, deterministic)
-}
-func (m *StreamGpioDigitalWriteRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_StreamGpioDigitalWriteRequest.Merge(m, src)
-}
-func (m *StreamGpioDigitalWriteRequest) XXX_Size() int {
-	return xxx_messageInfo_StreamGpioDigitalWriteRequest.Size(m)
-}
-func (m *StreamGpioDigitalWriteRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_StreamGpioDigitalWriteRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_StreamGpioDigitalWriteRequest proto.InternalMessageInfo
-
-func (m *StreamGpioDigitalWriteRequest) GetPin() *wrappers.Int32Value {
-	if m != nil {
-		return m.Pin
-	}
-	return nil
-}
-
-func (m *StreamGpioDigitalWriteRequest) GetValue() *wrappers.Int32Value {
-	if m != nil {
-		return m.Value
-	}
-	return nil
-}
-
-type StreamGpioDigitalReadRequest struct {
-	Pin                  *wrappers.Int32Value `protobuf:"bytes,1,opt,name=pin,proto3" json:"pin,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}             `json:"-"`
-	XXX_unrecognized     []byte               `json:"-"`
-	XXX_sizecache        int32                `json:"-"`
-}
-
-func (m *StreamGpioDigitalReadRequest) Reset()         { *m = StreamGpioDigitalReadRequest{} }
-func (m *StreamGpioDigitalReadRequest) String() string { return proto.CompactTextString(m) }
-func (*StreamGpioDigitalReadRequest) ProtoMessage()    {}
-func (*StreamGpioDigitalReadRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_bb17ef3f514bfe54, []int{3}
-}
-
-func (m *StreamGpioDigitalReadRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_StreamGpioDigitalReadRequest.Unmarshal(m, b)
-}
-func (m *StreamGpioDigitalReadRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_StreamGpioDigitalReadRequest.Marshal(b, m, deterministic)
-}
-func (m *StreamGpioDigitalReadRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_StreamGpioDigitalReadRequest.Merge(m, src)
-}
-func (m *StreamGpioDigitalReadRequest) XXX_Size() int {
-	return xxx_messageInfo_StreamGpioDigitalReadRequest.Size(m)
-}
-func (m *StreamGpioDigitalReadRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_StreamGpioDigitalReadRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_StreamGpioDigitalReadRequest proto.InternalMessageInfo
-
-func (m *StreamGpioDigitalReadRequest) GetPin() *wrappers.Int32Value {
-	if m != nil {
-		return m.Pin
-	}
-	return nil
-}
-
-type StreamGpioAnalogWriteRequest struct {
-	Pin                  *wrappers.Int32Value `protobuf:"bytes,1,opt,name=pin,proto3" json:"pin,omitempty"`
-	Value                *wrappers.Int32Value `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}             `json:"-"`
-	XXX_unrecognized     []byte               `json:"-"`
-	XXX_sizecache        int32                `json:"-"`
-}
-
-func (m *StreamGpioAnalogWriteRequest) Reset()         { *m = StreamGpioAnalogWriteRequest{} }
-func (m *StreamGpioAnalogWriteRequest) String() string { return proto.CompactTextString(m) }
-func (*StreamGpioAnalogWriteRequest) ProtoMessage()    {}
-func (*StreamGpioAnalogWriteRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_bb17ef3f514bfe54, []int{4}
-}
-
-func (m *StreamGpioAnalogWriteRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_StreamGpioAnalogWriteRequest.Unmarshal(m, b)
-}
-func (m *StreamGpioAnalogWriteRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_StreamGpioAnalogWriteRequest.Marshal(b, m, deterministic)
-}
-func (m *StreamGpioAnalogWriteRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_StreamGpioAnalogWriteRequest.Merge(m, src)
-}
-func (m *StreamGpioAnalogWriteRequest) XXX_Size() int {
-	return xxx_messageInfo_StreamGpioAnalogWriteRequest.Size(m)
-}
-func (m *StreamGpioAnalogWriteRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_StreamGpioAnalogWriteRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_StreamGpioAnalogWriteRequest proto.InternalMessageInfo
-
-func (m *StreamGpioAnalogWriteRequest) GetPin() *wrappers.Int32Value {
-	if m != nil {
-		return m.Pin
-	}
-	return nil
-}
-
-func (m *StreamGpioAnalogWriteRequest) GetValue() *wrappers.Int32Value {
-	if m != nil {
-		return m.Value
-	}
-	return nil
-}
-
-type StreamGpioAnalogReadRequest struct {
-	Pin                  *wrappers.Int32Value `protobuf:"bytes,1,opt,name=pin,proto3" json:"pin,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}             `json:"-"`
-	XXX_unrecognized     []byte               `json:"-"`
-	XXX_sizecache        int32                `json:"-"`
-}
-
-func (m *StreamGpioAnalogReadRequest) Reset()         { *m = StreamGpioAnalogReadRequest{} }
-func (m *StreamGpioAnalogReadRequest) String() string { return proto.CompactTextString(m) }
-func (*StreamGpioAnalogReadRequest) ProtoMessage()    {}
-func (*StreamGpioAnalogReadRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_bb17ef3f514bfe54, []int{5}
-}
-
-func (m *StreamGpioAnalogReadRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_StreamGpioAnalogReadRequest.Unmarshal(m, b)
-}
-func (m *StreamGpioAnalogReadRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_StreamGpioAnalogReadRequest.Marshal(b, m, deterministic)
-}
-func (m *StreamGpioAnalogReadRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_StreamGpioAnalogReadRequest.Merge(m, src)
-}
-func (m *StreamGpioAnalogReadRequest) XXX_Size() int {
-	return xxx_messageInfo_StreamGpioAnalogReadRequest.Size(m)
-}
-func (m *StreamGpioAnalogReadRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_StreamGpioAnalogReadRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_StreamGpioAnalogReadRequest proto.InternalMessageInfo
-
-func (m *StreamGpioAnalogReadRequest) GetPin() *wrappers.Int32Value {
-	if m != nil {
-		return m.Pin
-	}
-	return nil
-}
-
-type StreamI2CWriteRequest struct {
-	Bus                  *wrappers.Int32Value `protobuf:"bytes,1,opt,name=bus,proto3" json:"bus,omitempty"`
-	Addr                 *wrappers.Int32Value `protobuf:"bytes,2,opt,name=addr,proto3" json:"addr,omitempty"`
-	Index                *wrappers.Int32Value `protobuf:"bytes,3,opt,name=index,proto3" json:"index,omitempty"`
-	Angle                *wrappers.Int32Value `protobuf:"bytes,4,opt,name=angle,proto3" json:"angle,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}             `json:"-"`
-	XXX_unrecognized     []byte               `json:"-"`
-	XXX_sizecache        int32                `json:"-"`
-}
-
-func (m *StreamI2CWriteRequest) Reset()         { *m = StreamI2CWriteRequest{} }
-func (m *StreamI2CWriteRequest) String() string { return proto.CompactTextString(m) }
-func (*StreamI2CWriteRequest) ProtoMessage()    {}
-func (*StreamI2CWriteRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_bb17ef3f514bfe54, []int{6}
-}
-
-func (m *StreamI2CWriteRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_StreamI2CWriteRequest.Unmarshal(m, b)
-}
-func (m *StreamI2CWriteRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_StreamI2CWriteRequest.Marshal(b, m, deterministic)
-}
-func (m *StreamI2CWriteRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_StreamI2CWriteRequest.Merge(m, src)
-}
-func (m *StreamI2CWriteRequest) XXX_Size() int {
-	return xxx_messageInfo_StreamI2CWriteRequest.Size(m)
-}
-func (m *StreamI2CWriteRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_StreamI2CWriteRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_StreamI2CWriteRequest proto.InternalMessageInfo
-
-func (m *StreamI2CWriteRequest) GetBus() *wrappers.Int32Value {
-	if m != nil {
-		return m.Bus
-	}
-	return nil
-}
-
-func (m *StreamI2CWriteRequest) GetAddr() *wrappers.Int32Value {
-	if m != nil {
-		return m.Addr
-	}
-	return nil
-}
-
-func (m *StreamI2CWriteRequest) GetIndex() *wrappers.Int32Value {
-	if m != nil {
-		return m.Index
-	}
-	return nil
-}
-
-func (m *StreamI2CWriteRequest) GetAngle() *wrappers.Int32Value {
-	if m != nil {
-		return m.Angle
-	}
-	return nil
-}
-
-type StreamI2CReadRequest struct {
-	Bus                  *wrappers.Int32Value `protobuf:"bytes,1,opt,name=bus,proto3" json:"bus,omitempty"`
-	Addr                 *wrappers.Int32Value `protobuf:"bytes,2,opt,name=addr,proto3" json:"addr,omitempty"`
-	Index                *wrappers.Int32Value `protobuf:"bytes,3,opt,name=index,proto3" json:"index,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}             `json:"-"`
-	XXX_unrecognized     []byte               `json:"-"`
-	XXX_sizecache        int32                `json:"-"`
-}
-
-func (m *StreamI2CReadRequest) Reset()         { *m = StreamI2CReadRequest{} }
-func (m *StreamI2CReadRequest) String() string { return proto.CompactTextString(m) }
-func (*StreamI2CReadRequest) ProtoMessage()    {}
-func (*StreamI2CReadRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_bb17ef3f514bfe54, []int{7}
-}
-
-func (m *StreamI2CReadRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_StreamI2CReadRequest.Unmarshal(m, b)
-}
-func (m *StreamI2CReadRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_StreamI2CReadRequest.Marshal(b, m, deterministic)
-}
-func (m *StreamI2CReadRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_StreamI2CReadRequest.Merge(m, src)
-}
-func (m *StreamI2CReadRequest) XXX_Size() int {
-	return xxx_messageInfo_StreamI2CReadRequest.Size(m)
-}
-func (m *StreamI2CReadRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_StreamI2CReadRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_StreamI2CReadRequest proto.InternalMessageInfo
-
-func (m *StreamI2CReadRequest) GetBus() *wrappers.Int32Value {
-	if m != nil {
-		return m.Bus
-	}
-	return nil
-}
-
-func (m *StreamI2CReadRequest) GetAddr() *wrappers.Int32Value {
-	if m != nil {
-		return m.Addr
-	}
-	return nil
-}
-
-func (m *StreamI2CReadRequest) GetIndex() *wrappers.Int32Value {
-	if m != nil {
-		return m.Index
-	}
-	return nil
-}
-
 type StreamRequest struct {
-	Session *wrappers.UInt64Value `protobuf:"bytes,1,opt,name=session,proto3" json:"session,omitempty"`
-	// Types that are valid to be assigned to Payload:
-	//	*StreamRequest_Ping
-	//	*StreamRequest_GpioDigitalWrite
-	//	*StreamRequest_GpioDigitalRead
-	//	*StreamRequest_GpioAnalogWrite
-	//	*StreamRequest_GpioAnalogRead
-	//	*StreamRequest_I2CWrite
-	//	*StreamRequest_I2CRead
-	Payload              isStreamRequest_Payload `protobuf_oneof:"payload"`
-	XXX_NoUnkeyedLiteral struct{}                `json:"-"`
-	XXX_unrecognized     []byte                  `json:"-"`
-	XXX_sizecache        int32                   `json:"-"`
+	Session              *wrappers.UInt64Value `protobuf:"bytes,1,opt,name=session,proto3" json:"session,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
 func (m *StreamRequest) Reset()         { *m = StreamRequest{} }
 func (m *StreamRequest) String() string { return proto.CompactTextString(m) }
 func (*StreamRequest) ProtoMessage()    {}
 func (*StreamRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_bb17ef3f514bfe54, []int{8}
+	return fileDescriptor_bb17ef3f514bfe54, []int{2}
 }
 
 func (m *StreamRequest) XXX_Unmarshal(b []byte) error {
@@ -439,277 +140,6 @@ func (m *StreamRequest) GetSession() *wrappers.UInt64Value {
 	return nil
 }
 
-type isStreamRequest_Payload interface {
-	isStreamRequest_Payload()
-}
-
-type StreamRequest_Ping struct {
-	Ping *StreamPingRequest `protobuf:"bytes,2,opt,name=ping,proto3,oneof"`
-}
-
-type StreamRequest_GpioDigitalWrite struct {
-	GpioDigitalWrite *StreamGpioDigitalWriteRequest `protobuf:"bytes,3,opt,name=gpio_digital_write,json=gpioDigitalWrite,proto3,oneof"`
-}
-
-type StreamRequest_GpioDigitalRead struct {
-	GpioDigitalRead *StreamGpioDigitalReadRequest `protobuf:"bytes,4,opt,name=gpio_digital_read,json=gpioDigitalRead,proto3,oneof"`
-}
-
-type StreamRequest_GpioAnalogWrite struct {
-	GpioAnalogWrite *StreamGpioAnalogWriteRequest `protobuf:"bytes,5,opt,name=gpio_analog_write,json=gpioAnalogWrite,proto3,oneof"`
-}
-
-type StreamRequest_GpioAnalogRead struct {
-	GpioAnalogRead *StreamGpioAnalogReadRequest `protobuf:"bytes,6,opt,name=gpio_analog_read,json=gpioAnalogRead,proto3,oneof"`
-}
-
-type StreamRequest_I2CWrite struct {
-	I2CWrite *StreamI2CWriteRequest `protobuf:"bytes,7,opt,name=i2c_write,json=i2cWrite,proto3,oneof"`
-}
-
-type StreamRequest_I2CRead struct {
-	I2CRead *StreamI2CReadRequest `protobuf:"bytes,8,opt,name=i2c_read,json=i2cRead,proto3,oneof"`
-}
-
-func (*StreamRequest_Ping) isStreamRequest_Payload() {}
-
-func (*StreamRequest_GpioDigitalWrite) isStreamRequest_Payload() {}
-
-func (*StreamRequest_GpioDigitalRead) isStreamRequest_Payload() {}
-
-func (*StreamRequest_GpioAnalogWrite) isStreamRequest_Payload() {}
-
-func (*StreamRequest_GpioAnalogRead) isStreamRequest_Payload() {}
-
-func (*StreamRequest_I2CWrite) isStreamRequest_Payload() {}
-
-func (*StreamRequest_I2CRead) isStreamRequest_Payload() {}
-
-func (m *StreamRequest) GetPayload() isStreamRequest_Payload {
-	if m != nil {
-		return m.Payload
-	}
-	return nil
-}
-
-func (m *StreamRequest) GetPing() *StreamPingRequest {
-	if x, ok := m.GetPayload().(*StreamRequest_Ping); ok {
-		return x.Ping
-	}
-	return nil
-}
-
-func (m *StreamRequest) GetGpioDigitalWrite() *StreamGpioDigitalWriteRequest {
-	if x, ok := m.GetPayload().(*StreamRequest_GpioDigitalWrite); ok {
-		return x.GpioDigitalWrite
-	}
-	return nil
-}
-
-func (m *StreamRequest) GetGpioDigitalRead() *StreamGpioDigitalReadRequest {
-	if x, ok := m.GetPayload().(*StreamRequest_GpioDigitalRead); ok {
-		return x.GpioDigitalRead
-	}
-	return nil
-}
-
-func (m *StreamRequest) GetGpioAnalogWrite() *StreamGpioAnalogWriteRequest {
-	if x, ok := m.GetPayload().(*StreamRequest_GpioAnalogWrite); ok {
-		return x.GpioAnalogWrite
-	}
-	return nil
-}
-
-func (m *StreamRequest) GetGpioAnalogRead() *StreamGpioAnalogReadRequest {
-	if x, ok := m.GetPayload().(*StreamRequest_GpioAnalogRead); ok {
-		return x.GpioAnalogRead
-	}
-	return nil
-}
-
-func (m *StreamRequest) GetI2CWrite() *StreamI2CWriteRequest {
-	if x, ok := m.GetPayload().(*StreamRequest_I2CWrite); ok {
-		return x.I2CWrite
-	}
-	return nil
-}
-
-func (m *StreamRequest) GetI2CRead() *StreamI2CReadRequest {
-	if x, ok := m.GetPayload().(*StreamRequest_I2CRead); ok {
-		return x.I2CRead
-	}
-	return nil
-}
-
-// XXX_OneofFuncs is for the internal use of the proto package.
-func (*StreamRequest) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) error, func(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error), func(msg proto.Message) (n int), []interface{}) {
-	return _StreamRequest_OneofMarshaler, _StreamRequest_OneofUnmarshaler, _StreamRequest_OneofSizer, []interface{}{
-		(*StreamRequest_Ping)(nil),
-		(*StreamRequest_GpioDigitalWrite)(nil),
-		(*StreamRequest_GpioDigitalRead)(nil),
-		(*StreamRequest_GpioAnalogWrite)(nil),
-		(*StreamRequest_GpioAnalogRead)(nil),
-		(*StreamRequest_I2CWrite)(nil),
-		(*StreamRequest_I2CRead)(nil),
-	}
-}
-
-func _StreamRequest_OneofMarshaler(msg proto.Message, b *proto.Buffer) error {
-	m := msg.(*StreamRequest)
-	// payload
-	switch x := m.Payload.(type) {
-	case *StreamRequest_Ping:
-		b.EncodeVarint(2<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Ping); err != nil {
-			return err
-		}
-	case *StreamRequest_GpioDigitalWrite:
-		b.EncodeVarint(3<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.GpioDigitalWrite); err != nil {
-			return err
-		}
-	case *StreamRequest_GpioDigitalRead:
-		b.EncodeVarint(4<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.GpioDigitalRead); err != nil {
-			return err
-		}
-	case *StreamRequest_GpioAnalogWrite:
-		b.EncodeVarint(5<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.GpioAnalogWrite); err != nil {
-			return err
-		}
-	case *StreamRequest_GpioAnalogRead:
-		b.EncodeVarint(6<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.GpioAnalogRead); err != nil {
-			return err
-		}
-	case *StreamRequest_I2CWrite:
-		b.EncodeVarint(7<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.I2CWrite); err != nil {
-			return err
-		}
-	case *StreamRequest_I2CRead:
-		b.EncodeVarint(8<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.I2CRead); err != nil {
-			return err
-		}
-	case nil:
-	default:
-		return fmt.Errorf("StreamRequest.Payload has unexpected type %T", x)
-	}
-	return nil
-}
-
-func _StreamRequest_OneofUnmarshaler(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error) {
-	m := msg.(*StreamRequest)
-	switch tag {
-	case 2: // payload.ping
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(StreamPingRequest)
-		err := b.DecodeMessage(msg)
-		m.Payload = &StreamRequest_Ping{msg}
-		return true, err
-	case 3: // payload.gpio_digital_write
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(StreamGpioDigitalWriteRequest)
-		err := b.DecodeMessage(msg)
-		m.Payload = &StreamRequest_GpioDigitalWrite{msg}
-		return true, err
-	case 4: // payload.gpio_digital_read
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(StreamGpioDigitalReadRequest)
-		err := b.DecodeMessage(msg)
-		m.Payload = &StreamRequest_GpioDigitalRead{msg}
-		return true, err
-	case 5: // payload.gpio_analog_write
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(StreamGpioAnalogWriteRequest)
-		err := b.DecodeMessage(msg)
-		m.Payload = &StreamRequest_GpioAnalogWrite{msg}
-		return true, err
-	case 6: // payload.gpio_analog_read
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(StreamGpioAnalogReadRequest)
-		err := b.DecodeMessage(msg)
-		m.Payload = &StreamRequest_GpioAnalogRead{msg}
-		return true, err
-	case 7: // payload.i2c_write
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(StreamI2CWriteRequest)
-		err := b.DecodeMessage(msg)
-		m.Payload = &StreamRequest_I2CWrite{msg}
-		return true, err
-	case 8: // payload.i2c_read
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(StreamI2CReadRequest)
-		err := b.DecodeMessage(msg)
-		m.Payload = &StreamRequest_I2CRead{msg}
-		return true, err
-	default:
-		return false, nil
-	}
-}
-
-func _StreamRequest_OneofSizer(msg proto.Message) (n int) {
-	m := msg.(*StreamRequest)
-	// payload
-	switch x := m.Payload.(type) {
-	case *StreamRequest_Ping:
-		s := proto.Size(x.Ping)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *StreamRequest_GpioDigitalWrite:
-		s := proto.Size(x.GpioDigitalWrite)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *StreamRequest_GpioDigitalRead:
-		s := proto.Size(x.GpioDigitalRead)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *StreamRequest_GpioAnalogWrite:
-		s := proto.Size(x.GpioAnalogWrite)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *StreamRequest_GpioAnalogRead:
-		s := proto.Size(x.GpioAnalogRead)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *StreamRequest_I2CWrite:
-		s := proto.Size(x.I2CWrite)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *StreamRequest_I2CRead:
-		s := proto.Size(x.I2CRead)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case nil:
-	default:
-		panic(fmt.Sprintf("proto: unexpected type %T in oneof", x))
-	}
-	return n
-}
-
 type StreamRequests struct {
 	Requests             []*StreamRequest `protobuf:"bytes,1,rep,name=requests,proto3" json:"requests,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}         `json:"-"`
@@ -721,7 +151,7 @@ func (m *StreamRequests) Reset()         { *m = StreamRequests{} }
 func (m *StreamRequests) String() string { return proto.CompactTextString(m) }
 func (*StreamRequests) ProtoMessage()    {}
 func (*StreamRequests) Descriptor() ([]byte, []int) {
-	return fileDescriptor_bb17ef3f514bfe54, []int{9}
+	return fileDescriptor_bb17ef3f514bfe54, []int{3}
 }
 
 func (m *StreamRequests) XXX_Unmarshal(b []byte) error {
@@ -763,7 +193,7 @@ func (m *StreamResponse) Reset()         { *m = StreamResponse{} }
 func (m *StreamResponse) String() string { return proto.CompactTextString(m) }
 func (*StreamResponse) ProtoMessage()    {}
 func (*StreamResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_bb17ef3f514bfe54, []int{10}
+	return fileDescriptor_bb17ef3f514bfe54, []int{4}
 }
 
 func (m *StreamResponse) XXX_Unmarshal(b []byte) error {
@@ -873,12 +303,6 @@ func _StreamResponse_OneofSizer(msg proto.Message) (n int) {
 func init() {
 	proto.RegisterType((*StreamPingRequest)(nil), "ai.metathings.service.mqttd.StreamPingRequest")
 	proto.RegisterType((*StreamPingResponse)(nil), "ai.metathings.service.mqttd.StreamPingResponse")
-	proto.RegisterType((*StreamGpioDigitalWriteRequest)(nil), "ai.metathings.service.mqttd.StreamGpioDigitalWriteRequest")
-	proto.RegisterType((*StreamGpioDigitalReadRequest)(nil), "ai.metathings.service.mqttd.StreamGpioDigitalReadRequest")
-	proto.RegisterType((*StreamGpioAnalogWriteRequest)(nil), "ai.metathings.service.mqttd.StreamGpioAnalogWriteRequest")
-	proto.RegisterType((*StreamGpioAnalogReadRequest)(nil), "ai.metathings.service.mqttd.StreamGpioAnalogReadRequest")
-	proto.RegisterType((*StreamI2CWriteRequest)(nil), "ai.metathings.service.mqttd.StreamI2cWriteRequest")
-	proto.RegisterType((*StreamI2CReadRequest)(nil), "ai.metathings.service.mqttd.StreamI2cReadRequest")
 	proto.RegisterType((*StreamRequest)(nil), "ai.metathings.service.mqttd.StreamRequest")
 	proto.RegisterType((*StreamRequests)(nil), "ai.metathings.service.mqttd.StreamRequests")
 	proto.RegisterType((*StreamResponse)(nil), "ai.metathings.service.mqttd.StreamResponse")
@@ -887,45 +311,26 @@ func init() {
 func init() { proto.RegisterFile("stream.proto", fileDescriptor_bb17ef3f514bfe54) }
 
 var fileDescriptor_bb17ef3f514bfe54 = []byte{
-	// 629 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xd4, 0x95, 0xdd, 0x6e, 0xd3, 0x3e,
-	0x18, 0xc6, 0x9b, 0xad, 0xeb, 0x87, 0xf7, 0xff, 0x8f, 0xcd, 0x02, 0x29, 0x6a, 0x07, 0xab, 0x72,
-	0x34, 0x21, 0x2d, 0x11, 0x19, 0x8c, 0x8d, 0x03, 0x04, 0xd3, 0x80, 0xf6, 0x64, 0x82, 0xb0, 0x02,
-	0x67, 0x93, 0xdb, 0x18, 0xcf, 0x90, 0xc4, 0x59, 0xec, 0xb4, 0x20, 0x71, 0x11, 0x70, 0x49, 0x5c,
-	0x09, 0x12, 0x27, 0x5c, 0x05, 0x12, 0x8a, 0xf3, 0xd1, 0x24, 0x15, 0x28, 0x11, 0x48, 0x88, 0xb3,
-	0xc8, 0xaf, 0x9f, 0xdf, 0xfb, 0x3c, 0x96, 0x5f, 0x07, 0xfc, 0xc7, 0x45, 0x80, 0x91, 0xab, 0xfb,
-	0x01, 0x13, 0x0c, 0xf6, 0x11, 0xd5, 0x5d, 0x2c, 0x90, 0xb8, 0xa0, 0x1e, 0xe1, 0x3a, 0xc7, 0xc1,
-	0x8c, 0x4e, 0xb1, 0xee, 0x5e, 0x0a, 0x61, 0xf7, 0x6e, 0x10, 0xc6, 0x88, 0x83, 0x0d, 0xb9, 0x75,
-	0x12, 0xbe, 0x36, 0xe6, 0x01, 0xf2, 0x7d, 0x1c, 0xf0, 0x58, 0xdc, 0xdb, 0x29, 0xd7, 0x05, 0x75,
-	0x31, 0x17, 0xc8, 0xf5, 0x93, 0x0d, 0x07, 0x84, 0x8a, 0x8b, 0x70, 0xa2, 0x4f, 0x99, 0x6b, 0xb8,
-	0x73, 0x2a, 0xde, 0xb2, 0xb9, 0x41, 0xd8, 0x9e, 0x2c, 0xee, 0xcd, 0x90, 0x43, 0x6d, 0x24, 0x58,
-	0xc0, 0x8d, 0xec, 0x33, 0xd6, 0x69, 0x63, 0xb0, 0xf5, 0x5c, 0xba, 0x7c, 0x4a, 0x3d, 0x62, 0xe1,
-	0xcb, 0x10, 0x73, 0x01, 0x1f, 0x80, 0x6e, 0xc6, 0x57, 0x95, 0x81, 0xb2, 0xbb, 0x6e, 0xf6, 0xf4,
-	0xd8, 0x81, 0x9e, 0x3a, 0xd0, 0xcf, 0xd2, 0x1d, 0xc7, 0xad, 0xaf, 0x5f, 0x76, 0x56, 0x06, 0x8a,
-	0xb5, 0x10, 0x69, 0xa7, 0x00, 0xe6, 0xb1, 0xdc, 0x67, 0x1e, 0xc7, 0xf0, 0xb0, 0x16, 0x37, 0xcf,
-	0xfb, 0xa4, 0x80, 0xeb, 0x31, 0xf0, 0x89, 0x4f, 0xd9, 0x09, 0x25, 0x54, 0x20, 0xe7, 0x65, 0x40,
-	0x05, 0x4e, 0x3d, 0xdf, 0x01, 0xab, 0x3e, 0xf5, 0x12, 0x6a, 0x7f, 0x89, 0x3a, 0xf2, 0xc4, 0xbe,
-	0xf9, 0x02, 0x39, 0x21, 0xce, 0xec, 0x46, 0xfb, 0xe1, 0x11, 0x58, 0x9b, 0x45, 0xab, 0xea, 0x4a,
-	0x75, 0x61, 0xac, 0xd0, 0xc6, 0x60, 0x7b, 0xc9, 0x92, 0x85, 0x91, 0xfd, 0x7b, 0x8e, 0xb4, 0x8f,
-	0x4a, 0x9e, 0xfb, 0xd0, 0x43, 0x0e, 0x23, 0x7f, 0x39, 0xe9, 0x19, 0xe8, 0x97, 0x1d, 0xfd, 0x81,
-	0xa0, 0xdf, 0x15, 0x70, 0x2d, 0xc6, 0x8e, 0xcc, 0x69, 0x39, 0xe1, 0x24, 0xe4, 0xb5, 0x80, 0x93,
-	0x90, 0xc3, 0xbb, 0xa0, 0x89, 0x6c, 0x3b, 0xa8, 0x13, 0x50, 0x0a, 0xa2, 0xa3, 0xa1, 0x9e, 0x8d,
-	0xdf, 0xa9, 0xab, 0x35, 0x8e, 0x46, 0x2a, 0x22, 0x29, 0xf2, 0x88, 0x83, 0xd5, 0x66, 0x0d, 0xa9,
-	0x54, 0x68, 0x9f, 0x15, 0x70, 0x35, 0xcb, 0x5f, 0x3a, 0xcf, 0x7f, 0x24, 0xbe, 0xf6, 0x6d, 0x0d,
-	0xfc, 0x1f, 0x67, 0x48, 0xcd, 0xdf, 0x07, 0x6d, 0x8e, 0x39, 0xa7, 0x2c, 0xbd, 0x10, 0xdb, 0x4b,
-	0xb8, 0xf1, 0xc8, 0x13, 0x07, 0xb7, 0x8b, 0xbc, 0x54, 0x04, 0x4f, 0x40, 0xd3, 0xa7, 0x1e, 0x49,
-	0x52, 0xe8, 0xfa, 0x2f, 0x5e, 0x4d, 0x7d, 0xe9, 0xe5, 0x1a, 0x36, 0x2c, 0xa9, 0x86, 0x6f, 0x00,
-	0x24, 0x3e, 0x65, 0xe7, 0x76, 0x3c, 0x96, 0xe7, 0xf3, 0xe8, 0x7a, 0x25, 0xf9, 0xee, 0x55, 0x60,
-	0xfe, 0xe4, 0x95, 0x19, 0x36, 0xac, 0x4d, 0x52, 0x2a, 0x41, 0x02, 0xb6, 0x0a, 0xbd, 0x02, 0x8c,
-	0xec, 0xe4, 0x3a, 0x1c, 0xd5, 0x6b, 0x95, 0xbb, 0x04, 0xc3, 0x86, 0x75, 0x85, 0x14, 0x2b, 0x59,
-	0x23, 0x24, 0x27, 0x30, 0xc9, 0xb4, 0x56, 0xab, 0xd1, 0xf2, 0x73, 0x92, 0x36, 0xca, 0x55, 0xa0,
-	0x0d, 0x36, 0xf3, 0x8d, 0x64, 0xa0, 0x96, 0xec, 0x73, 0x58, 0xab, 0x4f, 0x31, 0xcf, 0x06, 0x29,
-	0x14, 0xe0, 0x33, 0xd0, 0xa5, 0xe6, 0x34, 0x89, 0xd1, 0x96, 0x78, 0xb3, 0x02, 0xbe, 0xf4, 0x58,
-	0x0c, 0x1b, 0x56, 0x87, 0x26, 0x4b, 0xf0, 0x14, 0x44, 0xdf, 0xb1, 0xe1, 0x8e, 0x24, 0xde, 0xaa,
-	0x46, 0x2c, 0x3a, 0x6d, 0xd3, 0x78, 0xe5, 0xb8, 0x0b, 0xda, 0x3e, 0x7a, 0xef, 0x30, 0x64, 0x6b,
-	0xaf, 0xc0, 0x46, 0xe1, 0xa2, 0x73, 0xf8, 0x18, 0x74, 0x82, 0xe4, 0x5b, 0x55, 0x06, 0xab, 0xbb,
-	0xeb, 0xe6, 0xcd, 0x0a, 0xcd, 0x12, 0xb9, 0x95, 0x69, 0xb5, 0x0f, 0x0b, 0x72, 0xf2, 0x9f, 0x54,
-	0x8b, 0x33, 0xd4, 0x5c, 0x4c, 0xc7, 0xa3, 0xc2, 0x74, 0x18, 0x95, 0xa7, 0x23, 0x06, 0xa7, 0xe3,
-	0x91, 0xcb, 0x35, 0x69, 0xc9, 0xb1, 0xdc, 0xff, 0x11, 0x00, 0x00, 0xff, 0xff, 0x8e, 0x6f, 0x16,
-	0x6c, 0xad, 0x08, 0x00, 0x00,
+	// 329 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x91, 0x5f, 0x4b, 0x3a, 0x41,
+	0x14, 0x40, 0x7f, 0xeb, 0x4f, 0x34, 0xc7, 0x0a, 0xda, 0xa7, 0xc5, 0x22, 0x65, 0x9f, 0x24, 0x70,
+	0x16, 0x2c, 0xa4, 0xa7, 0x08, 0xa1, 0xa8, 0x97, 0x8a, 0x2d, 0xa3, 0xd7, 0x51, 0xa7, 0x71, 0x68,
+	0x67, 0x67, 0x9c, 0x7b, 0x57, 0x09, 0xfa, 0xae, 0x41, 0x9f, 0x24, 0xd8, 0x7f, 0x6a, 0x41, 0xd4,
+	0xdb, 0xc0, 0xdc, 0x73, 0xf6, 0xdc, 0x1d, 0xb2, 0x0d, 0x68, 0x39, 0x53, 0xd4, 0x58, 0x8d, 0xda,
+	0xdd, 0x67, 0x92, 0x2a, 0x8e, 0x0c, 0x67, 0x32, 0x16, 0x40, 0x81, 0xdb, 0x85, 0x9c, 0x70, 0xaa,
+	0xe6, 0x88, 0xd3, 0xd6, 0xa1, 0xd0, 0x5a, 0x44, 0x3c, 0x48, 0x47, 0xc7, 0xc9, 0x73, 0xb0, 0xb4,
+	0xcc, 0x18, 0x6e, 0x21, 0x83, 0x5b, 0xed, 0xaf, 0xf7, 0x28, 0x15, 0x07, 0x64, 0xca, 0xe4, 0x03,
+	0x03, 0x21, 0x71, 0x96, 0x8c, 0xe9, 0x44, 0xab, 0x40, 0x2d, 0x25, 0xbe, 0xe8, 0x65, 0x20, 0x74,
+	0x2f, 0xbd, 0xec, 0x2d, 0x58, 0x24, 0xa7, 0x0c, 0xb5, 0x85, 0xa0, 0x3c, 0x66, 0x9c, 0x3f, 0x22,
+	0x7b, 0xf7, 0x69, 0xe5, 0x9d, 0x8c, 0x45, 0xc8, 0xe7, 0x09, 0x07, 0x74, 0xcf, 0x49, 0xa3, 0xf4,
+	0x7b, 0x4e, 0xc7, 0xe9, 0x36, 0xfb, 0x2d, 0x9a, 0x15, 0xd0, 0xa2, 0x80, 0x3e, 0x14, 0x13, 0xc3,
+	0xda, 0xc7, 0x7b, 0xbb, 0xd2, 0x71, 0xc2, 0x15, 0xe4, 0xdf, 0x10, 0x77, 0x5d, 0x0b, 0x46, 0xc7,
+	0xc0, 0xdd, 0xd3, 0x3f, 0x79, 0xd7, 0x7d, 0xb7, 0x64, 0x27, 0xf3, 0x15, 0x89, 0x67, 0xa4, 0x0e,
+	0x1c, 0x40, 0xea, 0x38, 0x17, 0x1d, 0x7c, 0x13, 0x8d, 0xae, 0x63, 0x1c, 0x9c, 0x3c, 0xb2, 0x28,
+	0xe1, 0x65, 0x62, 0x01, 0xf9, 0x4f, 0x64, 0x77, 0x43, 0x08, 0xee, 0x25, 0xd9, 0xb2, 0xf9, 0xd9,
+	0x73, 0x3a, 0xff, 0xbb, 0xcd, 0xfe, 0x11, 0xfd, 0xe1, 0xc9, 0xe8, 0x06, 0x1e, 0x96, 0xac, 0xff,
+	0xb6, 0x32, 0xe7, 0x6b, 0x7b, 0x9b, 0xad, 0xd5, 0xb2, 0xc2, 0xbd, 0x20, 0x55, 0x23, 0x63, 0xe1,
+	0x55, 0xd2, 0x15, 0x82, 0x5f, 0x7c, 0x6f, 0xfd, 0x7f, 0x5e, 0xfd, 0x0b, 0x53, 0x7c, 0xd8, 0x20,
+	0x75, 0xc3, 0x5e, 0x23, 0xcd, 0xa6, 0xe3, 0x5a, 0xba, 0xfe, 0xf1, 0x67, 0x00, 0x00, 0x00, 0xff,
+	0xff, 0x8a, 0x38, 0xb2, 0x91, 0x7c, 0x02, 0x00, 0x00,
 }

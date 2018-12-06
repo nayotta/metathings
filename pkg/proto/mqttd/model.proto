@@ -11,39 +11,6 @@ import "github.com/nayotta/metathings/pkg/proto/constant/state/device.proto";
 import "github.com/mwitkow/go-proto-validators/validator.proto";
 import "esp8266_mqtt.proto";
 
-enum MessageReqType {
-    REQ_MESSAGE_UNKNOWN = 0;
-    REQ_GPIO_DIGITAL = 1;
-    REQ_GPIO_ANALOG = 2;
-    REQ_I2C = 3;
-}
-
-enum MessageResType {
-    RES_MESSAGE_UNKNOWN = 0;
-    RES_GPIO_DIGITAL = 1;
-    RES_GPIO_ANALOG = 2;
-    RES_I2C = 3;
-}
-
-message MqttRequest {
-    google.protobuf.StringValue device_id = 1 [(validator.field) = {msg_exists: true}];
-    MessageReqType type = 2 [(validator.field) = {msg_exists: true}];
-    oneof payload {
-        OpGpioDigitalPayload gpio_digital = 3;
-        OpGpioAnalogPayload gpio_analog = 4; 
-        OpI2cPayload i2c =5;
-    };
-}
-
-message MqttResponse {
-    MessageResType type = 1;
-    oneof payload {
-        GpioDigitalPayload gpio_digital = 2;
-        GpioAnalogPayload gpio_analog = 3;
-        I2cPayload i2c = 4;
-    };
-}
-
 message Device {
     string id = 1;
     string name = 2;
@@ -65,18 +32,6 @@ message ErrorValue {
     string context = 4;
 }
 
-message UnaryCallValue {
-    string name = 1;
-    string method_name = 2;
-    google.protobuf.Any Value = 3;
-}
-
-message OpUnaryCallValue {
-    google.protobuf.StringValue name = 1;
-    google.protobuf.StringValue method_name = 2;
-    google.protobuf.Any Value = 3;
-}
-
 message StreamCallValue {
     string name = 1;
     string method_name = 2;
@@ -87,21 +42,4 @@ message OpStreamCallValue {
     google.protobuf.StringValue name = 1;
     google.protobuf.StringValue method_name = 2;
     google.protobuf.Any Value = 3;
-}
-
-message OpGpioDigitalPayload {
-    google.protobuf.Int32Value pin = 1;
-    google.protobuf.Int32Value value = 2;
-}
-
-message OpGpioAnalogPayload {
-    google.protobuf.Int32Value pin = 1;
-    google.protobuf.FloatValue value = 2;
-}
-
-message OpI2cPayload {
-    google.protobuf.Int32Value bus= 1;
-    google.protobuf.Int32Value addr = 2;
-    google.protobuf.Int32Value index = 3;
-    google.protobuf.Int32Value angle = 4;
 }
