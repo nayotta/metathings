@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"sync"
 
-	"github.com/gogo/protobuf/proto"
+	"github.com/golang/protobuf/proto"
 	"github.com/golang/protobuf/ptypes/wrappers"
 	"github.com/grpc-ecosystem/go-grpc-middleware/util/metautils"
 	log "github.com/sirupsen/logrus"
@@ -101,8 +101,6 @@ func (self *connectionCenter) br2stm(dev *storage.Device, conn Connection, br Br
 	wait := make(chan bool)
 
 	go func() {
-		var buf []byte
-		var req pb.ConnectRequest
 		var err error
 
 		logger := self.logger.WithFields(log.Fields{
@@ -111,17 +109,20 @@ func (self *connectionCenter) br2stm(dev *storage.Device, conn Connection, br Br
 			"devid": *dev.Id,
 		})
 
-		defer wg.Done()
 		defer func() {
 			if err != nil {
 				conn.Err(err)
 			}
 
 			wait <- false
+			wg.Done()
 			logger.Debugf("connection closed")
 		}()
 
 		for {
+			var buf []byte
+			var req pb.ConnectRequest
+
 			if buf, err = br.Recv(); err != nil {
 				logger.WithError(err).Debugf("failed to recv msg")
 				return
@@ -148,9 +149,6 @@ func (self *connectionCenter) stm2br(dev *storage.Device, conn Connection, br Br
 	wait := make(chan bool)
 
 	go func() {
-		var buf []byte
-		var res *pb.ConnectResponse
-		var res_br Bridge
 		var err error
 
 		logger := self.logger.WithFields(log.Fields{
@@ -159,19 +157,23 @@ func (self *connectionCenter) stm2br(dev *storage.Device, conn Connection, br Br
 			"devid": *dev.Id,
 		})
 
-		defer wg.Done()
 		defer func() {
 			if err != nil {
 				conn.Err(err)
 			}
 
 			wait <- false
+			wg.Done()
 			logger.Debugf("connection closed")
 		}()
 
 		for {
+			var buf []byte
+			var res *pb.ConnectResponse
+			var res_br Bridge
+
 			if res, err = stm.Recv(); err != nil {
-				logger.Debugf("failed to recv msg")
+				logger.WithError(err).Debugf("failed to recv msg")
 				return
 			}
 			logger.Debugf("recv msg")

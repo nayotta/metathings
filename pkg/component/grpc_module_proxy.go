@@ -22,6 +22,7 @@ type GrpcModuleServiceClientFactoryImpl struct {
 }
 
 func (self *GrpcModuleServiceClientFactoryImpl) NewModuleServiceClient(opts ...grpc.DialOption) (pb.ModuleServiceClient, client_helper.CloseFn, error) {
+	opts = append([]grpc.DialOption{grpc.WithInsecure()}, opts...)
 	conn, err := grpc.Dial(self.Address, opts...)
 	if err != nil {
 		return nil, nil, err
@@ -82,7 +83,7 @@ func (self *GrpcModuleProxyFactory) NewModuleProxy(args ...interface{}) (ModuleP
 			}
 			return nil
 		},
-	})(args); err != nil {
+	})(args...); err != nil {
 		return nil, err
 	}
 

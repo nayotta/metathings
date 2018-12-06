@@ -10,6 +10,7 @@ import (
 	"github.com/golang/protobuf/ptypes/any"
 	component "github.com/nayotta/metathings/pkg/component"
 	deviced_pb "github.com/nayotta/metathings/pkg/proto/deviced"
+	log "github.com/sirupsen/logrus"
 )
 
 var (
@@ -27,6 +28,7 @@ type Module interface {
 }
 
 type ModuleImpl struct {
+	logger        log.FieldLogger
 	module        *deviced_pb.Module
 	proxy         component.ModuleProxy
 	heartbeat_at  time.Time
@@ -53,7 +55,7 @@ func (self *ModuleImpl) init_proxy() error {
 	var err error
 
 	if self.proxy == nil {
-		self.proxy, err = new_module_proxy_by_endpoint(self.module.Endpoint)
+		self.proxy, err = self.new_module_proxy_by_endpoint(self.module.Endpoint)
 		if err != nil {
 			return err
 		}
@@ -82,15 +84,7 @@ func (self *ModuleImpl) UnaryCall(ctx context.Context, req *deviced_pb.OpUnaryCa
 	}, nil
 }
 
-func NewModule(module *deviced_pb.Module, alive_timeout time.Duration) Module {
-	return &ModuleImpl{
-		module:        module,
-		heartbeat_at:  time.Time{},
-		alive_timeout: alive_timeout,
-	}
-}
-
-func new_module_proxy_by_endpoint(ep string) (component.ModuleProxy, error) {
+func (self *ModuleImpl) new_module_proxy_by_endpoint(ep string) (component.ModuleProxy, error) {
 	u, err := url.Parse(ep)
 	if err != nil {
 		return nil, err
@@ -108,8 +102,19 @@ func new_module_proxy_by_endpoint(ep string) (component.ModuleProxy, error) {
 
 	switch proxy_driver {
 	case "grpc":
-		return component.NewModuleProxy(proxy_driver, component.NewGrpcModuleServiceClientFactory(u.Host))
+		return component.NewModuleProxy(proxy_driver,
+			"logger", self.logger,
+			"client_factory", component.NewGrpcModuleServiceClientFactory(u.Host))
 	}
 
 	return nil, ErrInvalidModuleProxyDriver
+}
+
+func NewModule(logger log.FieldLogger, module *deviced_pb.Module, alive_timeout time.Duration) Module {
+	return &ModuleImpl{
+		logger:        logger,
+		module:        module,
+		heartbeat_at:  time.Time{},
+		alive_timeout: alive_timeout,
+	}
 }

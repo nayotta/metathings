@@ -69,7 +69,7 @@ func NewModuleDatabase(
 			db.modules[component] = make(map[string]Module)
 		}
 
-		db.modules[component][name] = NewModule(m, alive_timeout)
+		db.modules[component][name] = NewModule(db.logger, m, alive_timeout)
 		logger.WithFields(log.Fields{
 			"name":      name,
 			"component": component,

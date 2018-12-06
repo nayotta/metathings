@@ -19,8 +19,8 @@ func (self *MetathingsDeviceServiceImpl) main_loop() {
 		}
 
 		self.logger.WithFields(log.Fields{
-			"session": req.SessionId,
-			"kind":    req.Kind,
+			"session": req.GetSessionId().GetValue(),
+			"kind":    req.GetKind(),
 		}).Debugf("recv msg")
 
 		go self.handle(req)

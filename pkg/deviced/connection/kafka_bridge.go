@@ -213,10 +213,20 @@ func new_kafka_bridge_factory(args ...interface{}) (BridgeFactory, error) {
 			return nil
 		},
 		"brokers": func(key string, val interface{}) error {
-			var brokers []string
-			brokers, ok = val.([]string)
+			var vals []interface{}
+			vals, ok = val.([]interface{})
 			if !ok {
 				return ErrInvalidArgument
+			}
+
+			var broker string
+			var brokers []string
+			for _, v := range vals {
+				broker, ok = v.(string)
+				if !ok {
+					return ErrInvalidArgument
+				}
+				brokers = append(brokers, broker)
 			}
 
 			servers := strings.Join(brokers, ",")

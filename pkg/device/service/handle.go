@@ -30,20 +30,27 @@ func (self *MetathingsDeviceServiceImpl) handle_user_request(req *deviced_pb.Con
 	case *deviced_pb.ConnectRequest_StreamCall:
 		panic("unimplemented")
 	default:
+		self.logger.WithField("union", req.Union).Debugf("unsupported union type")
 		panic("unimplemented")
 	}
 }
 
 func (self *MetathingsDeviceServiceImpl) handle_user_unary_request(req *deviced_pb.ConnectRequest) error {
 	req_val := req.GetUnaryCall()
+	sess := req.GetSessionId().GetValue()
+	kind := req.GetKind()
+	component := req_val.GetComponent().GetValue()
+	name := req_val.GetName().GetValue()
+	method := req_val.GetName().GetValue()
+
 	logger := self.logger.WithFields(log.Fields{
-		"#session":   req.GetSessionId(),
-		"#component": req_val.GetComponent(),
-		"#name":      req_val.GetName(),
-		"#method":    req_val.GetMethod(),
+		"#session":   sess,
+		"#component": component,
+		"#name":      name,
+		"#method":    method,
 	})
 
-	mdl, err := self.mdl_db.Lookup(req_val.GetComponent().GetValue(), req_val.GetName().GetValue())
+	mdl, err := self.mdl_db.Lookup(component, name)
 	if err != nil {
 		logger.WithError(err).Debugf("failed to lookup module in database")
 		return err
@@ -58,8 +65,8 @@ func (self *MetathingsDeviceServiceImpl) handle_user_unary_request(req *deviced_
 	logger.Debugf("unary call in module")
 
 	res := &deviced_pb.ConnectResponse{
-		SessionId: req.GetSessionId().GetValue(),
-		Kind:      req.GetKind(),
+		SessionId: sess,
+		Kind:      kind,
 		Union: &deviced_pb.ConnectResponse_UnaryCall{
 			UnaryCall: res_val,
 		},
