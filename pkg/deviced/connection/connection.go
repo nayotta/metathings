@@ -74,6 +74,11 @@ func (self *connectionCenter) connection_loop(dev *storage.Device, conn Connecti
 	dev_id := *dev.Id
 	br_id := br.Id()
 
+	logger := self.logger.WithFields(log.Fields{
+		"devid": dev_id,
+		"brid":  br_id,
+	})
+
 	wg := &sync.WaitGroup{}
 	wg.Add(2)
 
@@ -92,20 +97,15 @@ func (self *connectionCenter) connection_loop(dev *storage.Device, conn Connecti
 		br2stm_quit <- false
 	}
 
+	logger.Debugf("waiting for disconnect")
 	wg.Wait()
 
 	if err = self.storage.RemoveBridgeFromDevice(dev_id, br_id); err != nil {
 		self.logger.WithError(err).Errorf("failed to remove bridge from device")
 	}
-	self.logger.WithFields(log.Fields{
-		"devid": dev_id,
-		"brid":  br_id,
-	}).Debugf("remove bridge from device")
+	logger.Debugf("remove bridge from device")
 
-	self.logger.WithFields(log.Fields{
-		"devid": dev_id,
-		"brid":  br_id,
-	}).Debugf("quit connection loop")
+	logger.Debugf("quit connection loop")
 
 }
 
