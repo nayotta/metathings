@@ -23,7 +23,18 @@ type MqttBridgeOpt struct {
 
 // connect callback
 func (that *MqttBridgeOpt) connectCallback(_ emitter.Emitter) {
+	var err error
+
 	fmt.Println("get connect")
+	err = that.sub(that.upKey, "+/up/")
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	err = that.sub(that.statusKey, "+/status/")
+	if err != nil {
+		fmt.Println(err.Error())
+	}
 }
 
 // connect lost callback

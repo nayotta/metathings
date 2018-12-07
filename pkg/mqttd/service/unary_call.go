@@ -23,7 +23,7 @@ func (serv *MetathingsMqttdService) UnaryCall(ctx context.Context, req *pb.Unary
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
-	//TODO(zh) mqtt UnaryCall
+	//TODO(zh) mqtt UnaryCall need ack
 
 	res := &pb.UnaryCallResponse{
 		Payload: req.GetPayload(),
