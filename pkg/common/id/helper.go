@@ -1,10 +1,11 @@
 package common
 
 import (
-	"math/rand"
 	"strings"
 
 	uuid "github.com/satori/go.uuid"
+
+	"github.com/nayotta/metathings/pkg/common/rand"
 )
 
 func NewId() string {
@@ -12,7 +13,7 @@ func NewId() string {
 }
 
 func NewUint64Id() uint64 {
-	return rand.Uint64()
+	return rand_helper.Uint64()
 }
 
 func NewNamedId(x string) string {

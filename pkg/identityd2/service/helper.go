@@ -3,13 +3,13 @@ package metathings_identityd2_service
 import (
 	"encoding/json"
 	"errors"
-	"math/rand"
 	"time"
 
 	"github.com/golang/protobuf/ptypes/wrappers"
 
 	id_helper "github.com/nayotta/metathings/pkg/common/id"
 	pb_helper "github.com/nayotta/metathings/pkg/common/protobuf"
+	rand_helper "github.com/nayotta/metathings/pkg/common/rand"
 	storage "github.com/nayotta/metathings/pkg/identityd2/storage"
 	pb "github.com/nayotta/metathings/pkg/proto/identityd2"
 )
@@ -43,7 +43,7 @@ func generate_secret() string {
 	buf := make([]byte, SECRET_LENGTH)
 
 	for i := 0; i < SECRET_LENGTH; i++ {
-		buf[i] = SECRET_LETTERS[rand.Intn(len(SECRET_LETTERS))]
+		buf[i] = SECRET_LETTERS[rand_helper.Intn(len(SECRET_LETTERS))]
 	}
 
 	return string(buf)
