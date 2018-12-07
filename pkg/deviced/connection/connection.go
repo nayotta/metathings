@@ -27,7 +27,7 @@ type connection struct {
 }
 
 func (self *connection) Err(err ...error) error {
-	if len(err) > 0 {
+	if len(err) > 0 && self.err != nil {
 		self.err = err[0]
 	}
 	return self.err
@@ -80,13 +80,11 @@ func (self *connectionCenter) connection_loop(dev *storage.Device, conn Connecti
 
 	br2stm_wait := self.br2stm(dev, conn, br, stm, br2stm_quit, wg)
 	stm2br_wait := self.stm2br(dev, conn, br, stm, stm2br_quit, wg)
-	defer close(br2stm_wait)
-	defer close(stm2br_wait)
 
 	select {
 	case <-br2stm_wait:
 		stm2br_quit <- false
-	case <-stm2br_quit:
+	case <-stm2br_wait:
 		br2stm_quit <- false
 	}
 
@@ -114,20 +112,23 @@ func (self *connectionCenter) br2stm(dev *storage.Device, conn Connection, br Br
 				conn.Err(err)
 			}
 
-			wait <- false
+			close(wait)
 			wg.Done()
 			logger.Debugf("connection closed")
 		}()
 
+		abr := NewAsyncBridgeWrapper(br)
 		for {
 			var buf []byte
 			var req pb.ConnectRequest
 
-			if buf, err = br.Recv(); err != nil {
-				logger.WithError(err).Debugf("failed to recv msg")
+			select {
+			case <-quit:
+				logger.Debugf("quit signal from stm2br")
 				return
+			case buf = <-abr.Recv():
+				logger.Debugf("recv msg")
 			}
-			logger.Debugf("recv msg")
 
 			if err = proto.Unmarshal(buf, &req); err != nil {
 				logger.WithError(err).Debugf("failed to unmarshal response data")
@@ -162,7 +163,7 @@ func (self *connectionCenter) stm2br(dev *storage.Device, conn Connection, br Br
 				conn.Err(err)
 			}
 
-			wait <- false
+			close(wait)
 			wg.Done()
 			logger.Debugf("connection closed")
 		}()
@@ -192,11 +193,13 @@ func (self *connectionCenter) stm2br(dev *storage.Device, conn Connection, br Br
 				return
 			}
 
-			if err = res_br.Send(buf); err != nil {
-				logger.WithError(err).Debugf("failed to send msg")
-				return
+			abr := NewAsyncBridgeWrapper(res_br)
+			select {
+			case <-quit:
+				logger.Debugf("quit signal from br2stm")
+			case abr.Send() <- buf:
+				logger.Debugf("send msg")
 			}
-			logger.Debugf("send msg")
 		}
 	}()
 
