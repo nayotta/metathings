@@ -70,6 +70,10 @@ func (self *connectionCenter) get_session_from_context(ctx context.Context) int3
 }
 
 func (self *connectionCenter) connection_loop(dev *storage.Device, conn Connection, br Bridge, stm pb.DevicedService_ConnectServer) {
+	var err error
+	dev_id := *dev.Id
+	br_id := br.Id()
+
 	wg := &sync.WaitGroup{}
 	wg.Add(2)
 
@@ -88,11 +92,21 @@ func (self *connectionCenter) connection_loop(dev *storage.Device, conn Connecti
 		br2stm_quit <- false
 	}
 
-	self.logger.WithFields(log.Fields{
-		"devid": *dev.Id,
-		"brid":  br.Id(),
-	}).Debugf("quit connection loop")
 	wg.Wait()
+
+	if err = self.storage.RemoveBridgeFromDevice(dev_id, br_id); err != nil {
+		self.logger.WithError(err).Errorf("failed to remove bridge from device")
+	}
+	self.logger.WithFields(log.Fields{
+		"devid": dev_id,
+		"brid":  br_id,
+	}).Debugf("remove bridge from device")
+
+	self.logger.WithFields(log.Fields{
+		"devid": dev_id,
+		"brid":  br_id,
+	}).Debugf("quit connection loop")
+
 }
 
 func (self *connectionCenter) br2stm(dev *storage.Device, conn Connection, br Bridge, stm pb.DevicedService_ConnectServer, quit chan bool, wg *sync.WaitGroup) chan bool {
