@@ -2,6 +2,7 @@ package context_helper
 
 import (
 	"context"
+	"fmt"
 
 	"google.golang.org/grpc/metadata"
 
@@ -23,6 +24,13 @@ func WithTokenOp(token string) func(metadata.MD) metadata.MD {
 func WithSessionIdOp(sess_id string) func(metadata.MD) metadata.MD {
 	return func(md metadata.MD) metadata.MD {
 		md.Append("session-id", sess_id)
+		return md
+	}
+}
+
+func WithSessionOp(sess int64) func(metadata.MD) metadata.MD {
+	return func(md metadata.MD) metadata.MD {
+		md.Append("session", fmt.Sprintf("%v", sess))
 		return md
 	}
 }

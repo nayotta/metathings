@@ -1,13 +1,11 @@
 package metathings_device_service
 
 import (
-	"context"
 	"time"
 
 	log "github.com/sirupsen/logrus"
 
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
-	context_helper "github.com/nayotta/metathings/pkg/common/context"
 	token_helper "github.com/nayotta/metathings/pkg/common/token"
 	pb "github.com/nayotta/metathings/pkg/proto/device"
 	deviced_pb "github.com/nayotta/metathings/pkg/proto/deviced"
@@ -36,10 +34,6 @@ type MetathingsDeviceServiceImpl struct {
 	mdl_db   ModuleDatabase
 	conn_stm deviced_pb.DevicedService_ConnectClient
 	conn_cfn client_helper.CloseFn
-}
-
-func (self *MetathingsDeviceServiceImpl) context_with_token() context.Context {
-	return context_helper.WithToken(context.Background(), self.tknr.GetToken())
 }
 
 func (self *MetathingsDeviceServiceImpl) Stop() error {

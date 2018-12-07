@@ -10,6 +10,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
+	context_helper "github.com/nayotta/metathings/pkg/common/context"
 	protobuf_helper "github.com/nayotta/metathings/pkg/common/protobuf"
 	state_pb "github.com/nayotta/metathings/pkg/proto/constant/state"
 	pb "github.com/nayotta/metathings/pkg/proto/device"
@@ -52,8 +53,7 @@ func (self *MetathingsDeviceServiceImpl) heartbeat_once() {
 	}
 	defer cfn()
 
-	ctx := self.context_with_token()
-
+	ctx := context_helper.WithToken(context.Background(), self.tknr.GetToken())
 	now := time.Now()
 	pb_now := protobuf_helper.FromTime(now)
 	pb_mdls := []*deviced_pb.OpModule{}

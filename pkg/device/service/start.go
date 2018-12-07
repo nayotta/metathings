@@ -1,7 +1,12 @@
 package metathings_device_service
 
 import (
+	"context"
+
 	"github.com/golang/protobuf/ptypes/empty"
+
+	context_helper "github.com/nayotta/metathings/pkg/common/context"
+	rand_helper "github.com/nayotta/metathings/pkg/common/rand"
 	deviced_pb "github.com/nayotta/metathings/pkg/proto/deviced"
 )
 
@@ -15,13 +20,17 @@ func (self *MetathingsDeviceServiceImpl) start() error {
 		return err
 	}
 
-	ctx := self.context_with_token()
+	ctx := context_helper.NewOutgoingContext(
+		context.Background(),
+		context_helper.WithTokenOp(self.tknr.GetToken()),
+		context_helper.WithSessionOp(rand_helper.Int63()),
+	)
 	self.conn_stm, err = cli.Connect(ctx)
 	if err != nil {
 		return err
 	}
 
-	ctx = self.context_with_token()
+	ctx = context_helper.WithToken(context.Background(), self.tknr.GetToken())
 	show_device_res, err = cli.ShowDevice(ctx, &empty.Empty{})
 	if err != nil {
 		return err
