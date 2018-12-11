@@ -22,7 +22,8 @@ func (serv *MetathingsMqttdService) StreamCall(stream pb.MqttdService_StreamCall
 		if err = conn.Err(); err != nil {
 			serv.logger.WithError(err).Errorf("stream call error")
 			return status.Errorf(codes.Internal, err.Error())
-		}*/
+		}
+	*/
 
 	return nil
 }
