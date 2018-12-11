@@ -78,14 +78,14 @@ message UnaryCallValue {
 message OpStreamCallValue {
 	oneof union {
 		OpStreamCallConfig config = 1;
-		OpStreamCallData data = 2;
+		google.protobuf.Any value = 2;
 	}
 }
 
 message StreamCallValue {
 	oneof union {
 		StreamCallConfig config = 1;
-		StreamCallData data = 2;
+		google.protobuf.Any value = 2;
 	}
 }
 
@@ -99,12 +99,4 @@ message StreamCallConfig {
 	string name = 1;
 	string component = 2;
 	string method = 3;
-}
-
-message OpStreamCallData {
-	google.protobuf.Any value = 1;
-}
-
-message StreamCallData {
-	google.protobuf.Any value = 1;
 }

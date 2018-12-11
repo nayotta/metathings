@@ -25,6 +25,12 @@ type Module interface {
 	HeartbeatAt() time.Time
 
 	UnaryCall(context.Context, *deviced_pb.OpUnaryCallValue) (*deviced_pb.UnaryCallValue, error)
+	StreamCall(context.Context, *deviced_pb.OpStreamCallValue) (ModuleStream, error)
+}
+
+type ModuleStream interface {
+	Send(*deviced_pb.OpStreamCallValue) error
+	Recv() (*deviced_pb.StreamCallValue, error)
 }
 
 type ModuleImpl struct {
@@ -82,6 +88,10 @@ func (self *ModuleImpl) UnaryCall(ctx context.Context, req *deviced_pb.OpUnaryCa
 		Method:    req.GetMethod().GetValue(),
 		Value:     val,
 	}, nil
+}
+
+func (self *ModuleImpl) StreamCall(ctx context.Context, req *deviced_pb.OpStreamCallValue) (ModuleStream, error) {
+	panic("unimplemented")
 }
 
 func (self *ModuleImpl) new_module_proxy_by_endpoint(ep string) (component.ModuleProxy, error) {

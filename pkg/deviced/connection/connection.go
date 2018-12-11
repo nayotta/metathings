@@ -45,6 +45,10 @@ type StreamConnection interface {
 	Connection
 }
 
+type streamConnection struct {
+	connection
+}
+
 type ConnectionCenter interface {
 	BuildConnection(*storage.Device, pb.DevicedService_ConnectServer) (Connection, error)
 	UnaryCall(*storage.Device, *pb.OpUnaryCallValue) (*pb.UnaryCallValue, error)
@@ -293,6 +297,7 @@ func (self *connectionCenter) UnaryCall(dev *storage.Device, req *pb.OpUnaryCall
 	if buf, err = proto.Marshal(conn_req); err != nil {
 		return nil, err
 	}
+
 	self.logger.Debugf("marshal request")
 
 	if err = conn_br.Send(buf); err != nil {
@@ -317,14 +322,47 @@ func (self *connectionCenter) UnaryCall(dev *storage.Device, req *pb.OpUnaryCall
 	return ucv, nil
 }
 
-func (self *connectionCenter) StreamCall(pb.DevicedService_StreamCallServer) (StreamConnection, error) {
+func (self *connectionCenter) StreamCall(stm pb.DevicedService_StreamCallServer) (StreamConnection, error) {
+
+	// var req *pb.StreamCallRequest
+	// var dev_s *storage.Device
+	// var ep string
+	// var err error
+
+	// if req, err = stm.Recv(); err != nil {
+	// 	return nil, err
+	// }
+
+	// dev := req.GetDevice()
+	// dev_id := dev.GetId().GetValue()
+	// if dev_s, err = self.service_storage.GetDevice(dev_id); err != nil {
+	// 	self.logger.WithError(err).Debugf("failed to get device in storage")
+	// 	return nil, err
+	// }
+
+	// req_val := req.GetValue()
+	// cfg := req_val.GetConfig()
+	// if cfg == nil {
+	// 	return nil, ErrInvalidArgument
+	// }
+
+	// component := cfg.GetComponent().GetValue()
+	// name := cfg.GetName().GetValue()
+	// method := cfg.GetMethod().GetValue()
+
+	// for _, mdl := range dev_s.Modules {
+	// 	if *mdl.Name == name {
+	// 		ep = *mdl.Endpoint
+	// 	}
+	// }
+
 	panic("unimplemented")
 }
 
-func NewConnectionCenter(brfty BridgeFactory, storage Storage, logger log.FieldLogger) (ConnectionCenter, error) {
+func NewConnectionCenter(brfty BridgeFactory, stor Storage, logger log.FieldLogger) (ConnectionCenter, error) {
 	return &connectionCenter{
 		logger:  logger,
 		brfty:   brfty,
-		storage: storage,
+		storage: stor,
 	}, nil
 }
