@@ -4,21 +4,16 @@ import (
 	"context"
 	"errors"
 
-	"github.com/golang/protobuf/ptypes/any"
+	deviced_pb "github.com/nayotta/metathings/pkg/proto/deviced"
 )
 
 var (
 	ErrUnknownModuleProxyDriver = errors.New("unknown module proxy driver")
 )
 
-type ModuleProxyStream interface {
-	Recv() (*any.Any, error)
-	Send(*any.Any) error
-}
-
 type ModuleProxy interface {
-	UnaryCall(ctx context.Context, method string, value *any.Any) (*any.Any, error)
-	StreamCall(ctx context.Context, method string) (ModuleProxyStream, error)
+	UnaryCall(ctx context.Context, req *deviced_pb.OpUnaryCallValue) (*deviced_pb.UnaryCallValue, error)
+	StreamCall(ctx context.Context, stm deviced_pb.DevicedService_ConnectClient) error
 }
 
 type ModuleProxyFactory interface {

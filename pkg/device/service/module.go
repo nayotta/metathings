@@ -25,7 +25,7 @@ type Module interface {
 	HeartbeatAt() time.Time
 
 	UnaryCall(context.Context, *deviced_pb.OpUnaryCallValue) (*deviced_pb.UnaryCallValue, error)
-	StreamCall(context.Context, *deviced_pb.OpStreamCallValue) (ModuleStream, error)
+	StreamCall(context.Context, deviced_pb.DevicedService_ConnectClient) error
 }
 
 type ModuleStream interface {
@@ -78,7 +78,7 @@ func (self *ModuleImpl) UnaryCall(ctx context.Context, req *deviced_pb.OpUnaryCa
 		return nil, err
 	}
 
-	if val, err = self.proxy.UnaryCall(ctx, req.GetMethod().GetValue(), req.GetValue()); err != nil {
+	if val, err = self.proxy.UnaryCall(ctx, req); err != nil {
 		return nil, err
 	}
 
@@ -90,7 +90,7 @@ func (self *ModuleImpl) UnaryCall(ctx context.Context, req *deviced_pb.OpUnaryCa
 	}, nil
 }
 
-func (self *ModuleImpl) StreamCall(ctx context.Context, req *deviced_pb.OpStreamCallValue) (ModuleStream, error) {
+func (self *ModuleImpl) StreamCall(ctx context.Context, upstm deviced_pb.DevicedService_ConnectClient) error {
 	panic("unimplemented")
 }
 

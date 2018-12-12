@@ -6,7 +6,6 @@ import (
 	"reflect"
 
 	"github.com/golang/protobuf/ptypes/any"
-	"google.golang.org/grpc"
 
 	pb "github.com/nayotta/metathings/pkg/proto/component"
 )
@@ -15,16 +14,10 @@ var (
 	ErrHandleUnimplemented = errors.New("handle unimplemented")
 )
 
-type GrpcModuleStream interface {
-	Send(*any.Any) error
-	Recv() (*any.Any, error)
-	grpc.ServerStream
-}
-
 type GrpcModuleWrapper struct {
 	target              interface{}
 	unary_method_cache  map[string]func(context.Context, *any.Any) (*any.Any, error)
-	stream_method_cache map[string]func(pb.ModuleService_StreamCallServer) (GrpcModuleStream, error)
+	stream_method_cache map[string]func(pb.ModuleService_StreamCallServer) error
 }
 
 func (self *GrpcModuleWrapper) lookup_unary_method(meth string) (func(context.Context, *any.Any) (*any.Any, error), error) {
@@ -49,7 +42,7 @@ func (self *GrpcModuleWrapper) lookup_unary_method(meth string) (func(context.Co
 	return fn, nil
 }
 
-func (self *GrpcModuleWrapper) lookup_stream_method(meth string) (func(pb.ModuleService_StreamCallServer) (GrpcModuleStream, error), error) {
+func (self *GrpcModuleWrapper) lookup_stream_method(meth string) (func(pb.ModuleService_StreamCallServer) error, error) {
 	fn, ok := self.stream_method_cache[meth]
 	if ok {
 		return fn, nil
@@ -61,7 +54,7 @@ func (self *GrpcModuleWrapper) lookup_stream_method(meth string) (func(pb.Module
 		return nil, ErrHandleUnimplemented
 	}
 
-	fn, ok = ref_fn.Interface().(func(pb.ModuleService_StreamCallServer) (GrpcModuleStream, error))
+	fn, ok = ref_fn.Interface().(func(pb.ModuleService_StreamCallServer) error)
 	if !ok {
 		return nil, ErrHandleUnimplemented
 	}
@@ -109,60 +102,13 @@ func (self *GrpcModuleWrapper) StreamCall(upstm pb.ModuleService_StreamCallServe
 		return err
 	}
 
-	downstm, err := fn(upstm)
-	if err != nil {
-		return err
-	}
-
-	go self.up2down(upstm, downstm)
-	go self.down2up(upstm, downstm)
-
-	return nil
-}
-
-func (self *GrpcModuleWrapper) up2down(upstm pb.ModuleService_StreamCallServer, downstm GrpcModuleStream) {
-	var upreq *pb.StreamCallRequest
-	var downreq *any.Any
-	var err error
-
-	for {
-		if upreq, err = upstm.Recv(); err != nil {
-			return
-		}
-
-		downreq = upreq.GetData().GetValue()
-		if err = downstm.Send(downreq); err != nil {
-			return
-		}
-	}
-}
-
-func (self *GrpcModuleWrapper) down2up(upstm pb.ModuleService_StreamCallServer, downstm GrpcModuleStream) {
-	var upres *pb.StreamCallResponse
-	var downres *any.Any
-	var err error
-
-	for {
-		if downres, err = downstm.Recv(); err != nil {
-			return
-		}
-
-		upres = &pb.StreamCallResponse{
-			Response: &pb.StreamCallResponse_Data{
-				Data: &pb.StreamCallDataResponse{Value: downres},
-			},
-		}
-
-		if err = upstm.Send(upres); err != nil {
-			return
-		}
-	}
+	return fn(upstm)
 }
 
 func NewGrpcModuleWrapper(target interface{}) *GrpcModuleWrapper {
 	return &GrpcModuleWrapper{
 		target:              target,
 		unary_method_cache:  make(map[string]func(context.Context, *any.Any) (*any.Any, error)),
-		stream_method_cache: make(map[string]func(pb.ModuleService_StreamCallServer) (GrpcModuleStream, error)),
+		stream_method_cache: make(map[string]func(pb.ModuleService_StreamCallServer) error),
 	}
 }
