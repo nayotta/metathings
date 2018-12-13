@@ -8,9 +8,10 @@ import (
 	"time"
 
 	"github.com/golang/protobuf/ptypes/any"
+	log "github.com/sirupsen/logrus"
+
 	component "github.com/nayotta/metathings/pkg/component"
 	deviced_pb "github.com/nayotta/metathings/pkg/proto/deviced"
-	log "github.com/sirupsen/logrus"
 )
 
 var (
@@ -78,7 +79,7 @@ func (self *ModuleImpl) UnaryCall(ctx context.Context, req *deviced_pb.OpUnaryCa
 		return nil, err
 	}
 
-	if val, err = self.proxy.UnaryCall(ctx, req); err != nil {
+	if val, err = self.proxy.UnaryCall(ctx, req.GetMethod().GetValue(), req.GetValue()); err != nil {
 		return nil, err
 	}
 
@@ -91,7 +92,27 @@ func (self *ModuleImpl) UnaryCall(ctx context.Context, req *deviced_pb.OpUnaryCa
 }
 
 func (self *ModuleImpl) StreamCall(ctx context.Context, upstm deviced_pb.DevicedService_ConnectClient) error {
-	panic("unimplemented")
+	var req *deviced_pb.ConnectRequest
+	var err error
+
+	if err = self.init_proxy(); err != nil {
+		return err
+	}
+
+	if req, err = upstm.Recv(); err != nil {
+		return err
+	}
+
+	sess := req.GetSessionId().GetValue()
+	cfg := req.GetStreamCall().GetConfig()
+	method := cfg.GetMethod().GetValue()
+	mpstm := component.NewModuleProxyStream(upstm, sess)
+
+	if err = self.proxy.StreamCall(ctx, method, mpstm); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (self *ModuleImpl) new_module_proxy_by_endpoint(ep string) (component.ModuleProxy, error) {

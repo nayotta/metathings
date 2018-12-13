@@ -3,6 +3,7 @@ package metathings_component
 import (
 	"context"
 
+	"github.com/golang/protobuf/ptypes/any"
 	"github.com/golang/protobuf/ptypes/wrappers"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
@@ -40,36 +41,26 @@ type GrpcModuleProxy struct {
 	logger  log.FieldLogger
 }
 
-func (self *GrpcModuleProxy) UnaryCall(ctx context.Context, req *deviced_pb.OpUnaryCallValue) (*deviced_pb.UnaryCallValue, error) {
-	method := req.GetMethod().GetValue()
-	value := req.GetValue()
-
+func (self *GrpcModuleProxy) UnaryCall(ctx context.Context, method string, value *any.Any) (*any.Any, error) {
 	cli, cfn, err := self.cli_fty.NewModuleServiceClient()
 	if err != nil {
 		return nil, err
 	}
 	defer cfn()
 
-	mdl_req := &pb.UnaryCallRequest{
+	req := &pb.UnaryCallRequest{
 		Method: &wrappers.StringValue{Value: method},
 		Value:  value,
 	}
-	mdl_res, err := cli.UnaryCall(ctx, mdl_req)
+	res, err := cli.UnaryCall(ctx, req)
 	if err != nil {
 		return nil, err
 	}
 
-	res := &deviced_pb.UnaryCallValue{
-		Component: req.GetComponent().GetValue(),
-		Name:      req.GetName().GetValue(),
-		Method:    req.GetMethod().GetValue(),
-		Value:     mdl_res.GetValue(),
-	}
-
-	return res, nil
+	return res.GetValue(), nil
 }
 
-func (self *GrpcModuleProxy) StreamCall(ctx context.Context, upstm deviced_pb.DevicedService_ConnectClient) error {
+func (self *GrpcModuleProxy) StreamCall(ctx context.Context, method string, upstm ModuleProxyStream) error {
 	cli, cfn, err := self.cli_fty.NewModuleServiceClient()
 	if err != nil {
 		self.logger.WithError(err).Debugf("failed to new module service client")
@@ -82,30 +73,29 @@ func (self *GrpcModuleProxy) StreamCall(ctx context.Context, upstm deviced_pb.De
 		self.logger.WithError(err).Debugf("failed to start stream call")
 		return err
 	}
+	self.logger.Debugf("connect to module service(downstream)")
 
-	cfg_req, err := self.recv_cfg_msg(upstm)
-	if err != nil {
-		self.logger.WithError(err).Debugf("failed to recv config msg")
-		return err
-	}
-
-	err = self.init_downstream(downstm, cfg_req.GetStreamCall().GetConfig())
+	err = self.init_downstream(downstm, method)
 	if err != nil {
 		self.logger.WithError(err).Debugf("failed to initial downstream")
 		return err
 	}
+	self.logger.Debugf("downstream initialized")
 
 	up2down_wait := make(chan bool)
 	down2up_wait := make(chan bool)
 	go self.stm_up2down(upstm, downstm, up2down_wait)
-	go self.stm_down2up(upstm, downstm, cfg_req, down2up_wait)
+	go self.stm_down2up(upstm, downstm, down2up_wait)
 
+	self.logger.Debugf("stream call started")
 	select {
 	case <-up2down_wait:
 	case <-down2up_wait:
 	}
 
-	panic("unimplemented")
+	self.logger.Debugf("stream call done")
+
+	return nil
 }
 
 func (self *GrpcModuleProxy) recv_cfg_msg(stm deviced_pb.DevicedService_ConnectClient) (*deviced_pb.ConnectRequest, error) {
@@ -125,38 +115,38 @@ func (self *GrpcModuleProxy) recv_cfg_msg(stm deviced_pb.DevicedService_ConnectC
 	return req, nil
 }
 
-func (self *GrpcModuleProxy) init_downstream(stm pb.ModuleService_StreamCallClient, cfg *deviced_pb.OpStreamCallConfig) error {
+func (self *GrpcModuleProxy) init_downstream(stm pb.ModuleService_StreamCallClient, method string) error {
 	var err error
 
-	cfg_req := &pb.StreamCallRequest{
+	cfg := &pb.StreamCallRequest{
 		Request: &pb.StreamCallRequest_Config{
 			Config: &pb.StreamCallConfigRequest{
-				Method: cfg.GetMethod(),
+				Method: &wrappers.StringValue{Value: method},
 			},
 		},
 	}
 
-	if err = stm.Send(cfg_req); err != nil {
+	if err = stm.Send(cfg); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (self *GrpcModuleProxy) stm_up2down(upstm deviced_pb.DevicedService_ConnectClient, downstm pb.ModuleService_StreamCallClient, wait chan bool) {
-	var upreq *deviced_pb.ConnectRequest
+func (self *GrpcModuleProxy) stm_up2down(upstm ModuleProxyStream, downstm pb.ModuleService_StreamCallClient, wait chan bool) {
+	var val *any.Any
 	var err error
 
 	defer close(wait)
 	for {
-		if upreq, err = upstm.Recv(); err != nil {
+		if val, err = upstm.Recv(); err != nil {
 			return
 		}
 
 		downreq := &pb.StreamCallRequest{
 			Request: &pb.StreamCallRequest_Data{
 				Data: &pb.StreamCallDataRequest{
-					Value: upreq.GetStreamCall().GetValue(),
+					Value: val,
 				},
 			},
 		}
@@ -167,12 +157,9 @@ func (self *GrpcModuleProxy) stm_up2down(upstm deviced_pb.DevicedService_Connect
 	}
 }
 
-func (self *GrpcModuleProxy) stm_down2up(upstm deviced_pb.DevicedService_ConnectClient, downstm pb.ModuleService_StreamCallClient, cfg_req *deviced_pb.ConnectRequest, wait chan bool) {
+func (self *GrpcModuleProxy) stm_down2up(upstm ModuleProxyStream, downstm pb.ModuleService_StreamCallClient, wait chan bool) {
 	var downres *pb.StreamCallResponse
 	var err error
-
-	kind := cfg_req.GetKind()
-	sess := cfg_req.GetSessionId().GetValue()
 
 	defer close(wait)
 	for {
@@ -180,19 +167,7 @@ func (self *GrpcModuleProxy) stm_down2up(upstm deviced_pb.DevicedService_Connect
 			return
 		}
 
-		upres := &deviced_pb.ConnectResponse{
-			Kind:      kind,
-			SessionId: sess,
-			Union: &deviced_pb.ConnectResponse_StreamCall{
-				StreamCall: &deviced_pb.StreamCallValue{
-					Union: &deviced_pb.StreamCallValue_Value{
-						Value: downres.GetData().GetValue(),
-					},
-				},
-			},
-		}
-
-		if err = upstm.Send(upres); err != nil {
+		if err = upstm.Send(downres.GetData().GetValue()); err != nil {
 			return
 		}
 	}
