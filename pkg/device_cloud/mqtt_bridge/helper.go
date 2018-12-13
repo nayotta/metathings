@@ -3,7 +3,9 @@ package metathingsdevicecloudmqttbridge
 import (
 	"fmt"
 	"math/rand"
+	"strconv"
 	"strings"
+	"time"
 )
 
 func generateSession() int32 {
@@ -31,4 +33,12 @@ func getTopicType(topic string) string {
 // EncodeDownPath EncodeDownPath
 func EncodeDownPath(deviceID string) string {
 	return fmt.Sprintf("%s/down/", deviceID)
+}
+
+//
+func newSessionID() (string, int) {
+	rand.Seed(time.Now().UnixNano())
+	sessionID := rand.Intn(899999) + 100000
+
+	return strconv.Itoa(sessionID), sessionID
 }

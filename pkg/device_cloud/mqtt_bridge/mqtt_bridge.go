@@ -4,6 +4,7 @@ import (
 	"net/url"
 
 	emitter "github.com/emitter-io/go"
+	pb "github.com/nayotta/metathings/pkg/proto/device_cloud"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -15,7 +16,7 @@ type MqttBridge interface {
 	InitMqttBridge() error
 	KeyGen()
 	HeartBeatSelect()
-	UnaryCall()
+	UnaryCall(req *pb.UnaryCallRequest) (*pb.UnaryCallResponse, error)
 	StreamCall()
 }
 
@@ -42,8 +43,6 @@ func (that *mqttBridge) GetHost() (*url.URL, error) {
 	}
 	return that.host, nil
 }
-
-func (that *mqttBridge) UnaryCall() {}
 
 func (that *mqttBridge) StreamCall() {}
 
