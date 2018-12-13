@@ -1,7 +1,6 @@
 package metathingsdevicecloudmqttbridge
 
 import (
-	"fmt"
 	"time"
 
 	emitter "github.com/emitter-io/go"
@@ -18,7 +17,6 @@ type unaryCallCenter struct {
 }
 
 func (that *unaryCallCenter) unaryCallMsgCallback(client emitter.Emitter, msg emitter.Message) {
-	fmt.Println("debug msg arrived")
 	if msg.Topic() != that.topic {
 		that.unaryCallChan <- ErrUnexpectedResponse
 	}
@@ -47,9 +45,7 @@ func (that *mqttBridge) UnaryCall(req *pb.UnaryCallRequest) (*pb.UnaryCallRespon
 
 	cpID := req.GetComponentId().GetValue()
 	sessionIDStr, sessionID := newSessionID()
-	//debug here
-	//sessionIDStr = "100000"
-	//sessionID = 100000
+
 	topicUp := cpID + "/up/" + sessionIDStr + "/"
 	topicDown := cpID + "/down/"
 	unaryCallClient := newUnaryCallCenter(0, unarycallChan, topicUp)
@@ -64,14 +60,12 @@ func (that *mqttBridge) UnaryCall(req *pb.UnaryCallRequest) (*pb.UnaryCallRespon
 		return nil, ErrMqttConnectFailed
 	}
 	defer client.Disconnect(0)
-	fmt.Println("debug 1")
 
 	r := client.Subscribe(that.upKey, topicUp)
 	if r.Wait() && r.Error() != nil {
 		return nil, ErrMqttSubFailed
 	}
 
-	fmt.Printf("debug 2, up=%s, down=%s\n", topicUp, topicDown)
 	msg := req.GetPayload().GetValue()
 
 	err = proto.Unmarshal(msg, &reqPayload)
@@ -88,7 +82,6 @@ func (that *mqttBridge) UnaryCall(req *pb.UnaryCallRequest) (*pb.UnaryCallRespon
 	if r.Wait() && r.Error() != nil {
 		return nil, ErrMqttPubFailed
 	}
-	fmt.Println("debug 3")
 
 	select {
 	case err = <-unarycallChan:
