@@ -297,7 +297,6 @@ func (self *connectionCenter) UnaryCall(dev *storage.Device, req *pb.OpUnaryCall
 	if buf, err = proto.Marshal(conn_req); err != nil {
 		return nil, err
 	}
-
 	self.logger.Debugf("marshal request")
 
 	if err = conn_br.Send(buf); err != nil {
@@ -323,7 +322,193 @@ func (self *connectionCenter) UnaryCall(dev *storage.Device, req *pb.OpUnaryCall
 }
 
 func (self *connectionCenter) StreamCall(dev *storage.Device, cfg *pb.OpStreamCallConfig, stm pb.DevicedService_StreamCallServer) error {
-	panic("unimplemented")
+	var br_ids []string
+	var conn_br Bridge
+	var sess_br Bridge
+	var buf []byte
+	var cfg_res pb.ConnectResponse
+	var err error
+	dev_id := *dev.Id
+	sess := generate_session()
+
+	if br_ids, err = self.storage.ListBridgesFromDevice(dev_id); err != nil {
+		self.logger.WithError(err).WithField("device_id", dev_id).Debugf("failed to get bridge")
+		return err
+	}
+
+	if conn_br, err = self.brfty.GetBridge(br_ids[0]); err != nil {
+		self.logger.WithError(err).Debugf("failed to get bridge from bridge factory")
+		return err
+	}
+
+	if sess_br, err = self.brfty.BuildBridge(dev_id, sess); err != nil {
+		self.logger.WithError(err).Debugf("failed to build bridge")
+		return err
+	}
+
+	cfg_req := &pb.ConnectRequest{
+		SessionId: &wrappers.Int32Value{Value: sess},
+		Kind:      pb.ConnectMessageKind_CONNECT_MESSAGE_KIND_USER,
+		Union: &pb.ConnectRequest_StreamCall{
+			StreamCall: &pb.OpStreamCallValue{
+				Union: &pb.OpStreamCallValue_Config{
+					Config: cfg,
+				},
+			},
+		},
+	}
+
+	if buf, err = proto.Marshal(cfg_req); err != nil {
+		self.logger.WithError(err).Debugf("failed to marshal config msg")
+		return err
+	}
+
+	if err = conn_br.Send(buf); err != nil {
+		self.logger.WithError(err).Debugf("failed to send config request")
+		return err
+	}
+
+	if buf, err = sess_br.Recv(); err != nil {
+		self.logger.WithError(err).Debugf("failed to recv config response")
+		return err
+	}
+
+	if err = proto.Unmarshal(buf, &cfg_res); err != nil {
+		self.logger.WithError(err).Debugf("failed to unmarshal config msg")
+		return err
+	}
+
+	cfg_val := cfg_res.GetStreamCall().GetConfig()
+	if cfg_res.GetSessionId() != sess ||
+		cfg_val.GetName() != cfg.GetName().GetValue() ||
+		cfg_val.GetComponent() != cfg.GetComponent().GetValue() ||
+		cfg_val.GetMethod() != cfg.GetMethod().GetValue() {
+		err = ErrUnexpectedResponse
+		self.logger.WithError(err).WithFields(log.Fields{}).Debugf("unexpected config response")
+		return err
+	}
+
+	up2down_wait := self.stm_up2down(dev, cfg_val, sess, stm, sess_br, &err)
+	down2up_wait := self.stm_down2up(dev, cfg_val, sess, stm, sess_br, &err)
+
+	select {
+	case <-up2down_wait:
+	case <-down2up_wait:
+	}
+
+	if err != nil {
+		self.logger.WithError(err).Debugf("streaming error")
+		return err
+	}
+
+	return nil
+}
+
+func (self *connectionCenter) stm_up2down(dev *storage.Device, cfg *pb.StreamCallConfig, sess int32, upstm pb.DevicedService_StreamCallServer, downstm Bridge, perr *error) chan bool {
+	wait := make(chan bool)
+	go func() {
+		var err error
+
+		logger := self.logger.WithFields(log.Fields{
+			"#from":      "upstream",
+			"#to":        "downstrea",
+			"devid":      *dev.Id,
+			"#method":    cfg.GetMethod(),
+			"#component": cfg.GetComponent(),
+			"#name":      cfg.GetName(),
+		})
+
+		defer func() {
+			if *perr == nil && err != nil {
+				*perr = err
+			}
+			close(wait)
+		}()
+		for {
+			var buf []byte
+			var up_req *pb.StreamCallRequest
+
+			if up_req, err = upstm.Recv(); err != nil {
+				logger.WithError(err).Debugf("failed to recv msg")
+				return
+			}
+			logger.Debugf("recv msg")
+
+			down_req := &pb.ConnectRequest{
+				SessionId: &wrappers.Int32Value{Value: sess},
+				Kind:      pb.ConnectMessageKind_CONNECT_MESSAGE_KIND_USER,
+				Union: &pb.ConnectRequest_StreamCall{
+					StreamCall: up_req.GetValue(),
+				},
+			}
+
+			if buf, err = proto.Marshal(down_req); err != nil {
+				logger.WithError(err).Debugf("failed to marshal request")
+				return
+			}
+			logger.Debugf("marshal request")
+
+			if err = downstm.Send(buf); err != nil {
+				logger.WithError(err).Debugf("failed to send msg")
+				return
+			}
+			logger.Debugf("send request")
+		}
+	}()
+
+	return wait
+}
+
+func (self *connectionCenter) stm_down2up(dev *storage.Device, cfg *pb.StreamCallConfig, sess int32, upstm pb.DevicedService_StreamCallServer, downstm Bridge, perr *error) chan bool {
+	wait := make(chan bool)
+	go func() {
+		var err error
+
+		logger := self.logger.WithFields(log.Fields{
+			"#from":      "downstream",
+			"#to":        "upstream",
+			"devid":      *dev.Id,
+			"#method":    cfg.GetMethod(),
+			"#component": cfg.GetComponent(),
+			"#name":      cfg.GetName(),
+		})
+
+		defer func() {
+			if *perr == nil && err != nil {
+				*perr = err
+			}
+			close(wait)
+		}()
+		for {
+			var buf []byte
+			var down_res pb.ConnectResponse
+
+			if buf, err = downstm.Recv(); err != nil {
+				logger.WithError(err).Debugf("failed to recv msg")
+				return
+			}
+			logger.Debugf("recv msg")
+
+			if err = proto.Unmarshal(buf, &down_res); err != nil {
+				logger.WithError(err).Debugf("failed to unmarshal response")
+				return
+			}
+			logger.Debugf("unmarshal response")
+
+			up_res := &pb.StreamCallResponse{
+				Device: &pb.Device{Id: *dev.Id},
+				Value:  down_res.GetStreamCall(),
+			}
+
+			if err = upstm.Send(up_res); err != nil {
+				logger.WithError(err).Debugf("failed to send response")
+				return
+			}
+			logger.Debugf("send response")
+		}
+	}()
+
+	return wait
 }
 
 func NewConnectionCenter(brfty BridgeFactory, stor Storage, logger log.FieldLogger) (ConnectionCenter, error) {
