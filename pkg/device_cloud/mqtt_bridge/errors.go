@@ -41,5 +41,11 @@ var ErrMqttStreamCallConfigError = errors.New("mqtt streamcall config error")
 // ErrMqttStreamCallHearBeatTimeoutError ErrMqttStreamCallHearBeatTimeoutError
 var ErrMqttStreamCallHearBeatTimeoutError = errors.New("mqtt streamcall heartbeat timeout")
 
+// ErrMqttStreamCallRecvError ErrMqttStreamCallRecvError
+var ErrMqttStreamCallRecvError = errors.New("mqtt streamcall recv Errror")
+
+// ErrMqttStreamCallSendError ErrMqttStreamCallSendError
+var ErrMqttStreamCallSendError = errors.New("mqtt streamcall Send Errror")
+
 // ErrMqttDisconnectedError ErrMqttDisconnectedError
 var ErrMqttDisconnectedError = errors.New("mqtt connection disconnected")

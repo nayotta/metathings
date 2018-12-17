@@ -1,7 +1,6 @@
 package metathingsdevicecloudmqttbridge
 
 import (
-	"fmt"
 	"net/url"
 	"time"
 
@@ -9,6 +8,7 @@ import (
 	"github.com/golang/protobuf/proto"
 	"github.com/golang/protobuf/ptypes/any"
 	pb "github.com/nayotta/metathings/pkg/proto/device_cloud"
+	log "github.com/sirupsen/logrus"
 )
 
 type streamCallCenter struct {
@@ -22,6 +22,7 @@ type streamCallCenter struct {
 	streamConfigChan   chan interface{}
 	timeout            time.Duration
 
+	componentID    string
 	topicSession   string
 	topicHeartBeat string
 	topicNotify    string
@@ -35,29 +36,33 @@ type streamCallCenter struct {
 	heartbeat         time.Time
 	heartbeatInterval time.Duration
 	heartbeatTimeout  time.Duration
+
+	logger log.FieldLogger
 }
 
 func (that *streamCallCenter) streamCallMsgCallback(client emitter.Emitter, msg emitter.Message) {
 	switch msg.Topic() {
 	case that.topicSession:
 		that.streamMsgChan <- msg.Payload()
+		that.logger.WithField("component_id", that.componentID).Debugf("mqtt session response recv")
 		break
 	case that.topicNotify:
 		that.streamMsgChan <- msg.Payload()
+		that.logger.WithField("component_id", that.componentID).Debugf("mqtt notify response recv")
 		break
 	case that.topicHeartBeat:
 		that.heartbeat = time.Now()
-		fmt.Println("heartbeat res at:", time.Now())
+		that.logger.WithField("component_id", that.componentID).Debugf("heatbeat recv")
 		that.streamConfigChan <- nil
 		break
 	default:
-		that.streamCallRecvChan <- ErrUnexpectedResponse
+		that.logger.WithField("component_id", that.componentID).WithError(ErrUnexpectedResponse).Errorf("unknown streamcall message:%v", msg.Topic())
 		that.streamCallSendChan <- ErrUnexpectedResponse
 	}
 }
 
 func (that *streamCallCenter) streamCallDisconnectCallback(client emitter.Emitter, err error) {
-	that.streamCallRecvChan <- ErrMqttDisconnectedError
+	that.logger.WithField("component_id", that.componentID).WithError(ErrMqttDisconnectedError).Errorf("mqtt disconnected")
 	that.streamCallSendChan <- ErrMqttDisconnectedError
 }
 
@@ -80,8 +85,11 @@ func (that *streamCallCenter) streamCallHeartBeat() error {
 
 	r := that.client.Publish(that.downKey, that.topicDown, msg)
 	if r.Wait() && r.Error() != nil {
+		that.logger.WithField("component_id", that.componentID).WithError(ErrMqttPubFailed).Errorf("heatbeat pub failed")
 		return ErrMqttPubFailed
 	}
+
+	that.logger.WithField("component_id", that.componentID).Debugf("heatbeat pub")
 
 	return nil
 }
@@ -89,13 +97,10 @@ func (that *streamCallCenter) streamCallHeartBeat() error {
 // StreamCallHeartBeatLoop heartbeat loop for stream(if any improve??)
 func (that *streamCallCenter) StreamCallHeartBeatLoop() {
 	go func() {
-
-		defer fmt.Println("heartbeat loop send deinit")
-
 		for {
 			err := that.streamCallHeartBeat()
-			fmt.Println("heartbeat req at:", time.Now())
 			if err != nil {
+				that.logger.WithField("component_id", that.componentID).WithError(err).Errorf("heatbeat failed")
 				return
 			}
 			select {
@@ -108,12 +113,10 @@ func (that *streamCallCenter) StreamCallHeartBeatLoop() {
 	}()
 
 	go func() {
-		defer fmt.Println("heartbeat loop check deinit")
 		for {
 			if time.Now().Sub(that.heartbeat) >= that.heartbeatTimeout {
-				that.streamCallRecvChan <- ErrMqttStreamCallHearBeatTimeoutError
+				that.logger.WithField("component_id", that.componentID).WithError(ErrMqttStreamCallHearBeatTimeoutError).Errorf("heatbeat timeout")
 				that.streamCallSendChan <- ErrMqttStreamCallHearBeatTimeoutError
-				fmt.Println("heartbeat check error", time.Now())
 				return
 			}
 			select {
@@ -131,18 +134,21 @@ func (that *streamCallCenter) SubStreamTopic() error {
 	// sub session channel
 	r := that.client.Subscribe(that.upKey, that.topicSession)
 	if r.Wait() && r.Error() != nil {
+		that.logger.WithField("component_id", that.componentID).WithError(ErrMqttSubFailed).Errorf("sub failed")
 		return ErrMqttSubFailed
 	}
 
 	// sub notify channel
 	r = that.client.Subscribe(that.upKey, that.topicNotify)
 	if r.Wait() && r.Error() != nil {
+		that.logger.WithField("component_id", that.componentID).WithError(ErrMqttSubFailed).Errorf("sub failed")
 		return ErrMqttSubFailed
 	}
 
 	// sub heartbeat channel
 	r = that.client.Subscribe(that.statusKey, that.topicHeartBeat)
 	if r.Wait() && r.Error() != nil {
+		that.logger.WithField("component_id", that.componentID).WithError(ErrMqttSubFailed).Errorf("sub failed")
 		return ErrMqttSubFailed
 	}
 
@@ -162,6 +168,7 @@ func (that *streamCallCenter) ConnectMqtt() error {
 
 	that.handle = that.client.Connect()
 	if that.handle.Wait() && that.handle.Error() != nil {
+		that.logger.WithField("component_id", that.componentID).WithError(ErrMqttConnectFailed).Errorf("connect mqtt failed")
 		return ErrMqttConnectFailed
 	}
 
@@ -175,16 +182,20 @@ func (that *streamCallCenter) PubMsg(msg []byte) error {
 
 	err = proto.Unmarshal(msg, &reqPayload)
 	if err != nil {
+		that.logger.WithField("component_id", that.componentID).WithError(err).Errorf("proto unmarshal failed")
 		return err
 	}
 	reqPayload.SessionId = that.sessionID
 	msg, err = proto.Marshal(&reqPayload)
 	if err != nil {
+		that.logger.WithField("component_id", that.componentID).WithError(err).Errorf("proto marshal failed")
 		return err
 	}
 
 	r := that.client.Publish(that.downKey, that.topicDown, msg)
 	if r.Wait() && r.Error() != nil {
+		err = ErrMqttPubFailed
+		that.logger.WithField("component_id", that.componentID).WithError(err).Errorf("mqtt pub failed")
 		return err
 	}
 
@@ -204,7 +215,7 @@ func newStreamCallCenter(mqttBr *mqttBridge, componentID string) *streamCallCent
 	streamConfigChan := make(chan interface{})
 
 	topicSession := componentID + "/up/" + sessionIDStr + "/"
-	topicNotify := componentID + "/up/"
+	topicNotify := componentID + "/up/notify/"
 	topicDown := componentID + "/down/"
 	topicHeartBeat := componentID + "/status/" + sessionIDStr + "/"
 
@@ -217,6 +228,8 @@ func newStreamCallCenter(mqttBr *mqttBridge, componentID string) *streamCallCent
 	heartbeatInterval := 10 * time.Second
 	heartbeatTimeout := 30 * time.Second
 
+	loggerBr := mqttBr.logger
+
 	return &streamCallCenter{
 		host:               host,
 		timeout:            timeout,
@@ -225,6 +238,7 @@ func newStreamCallCenter(mqttBr *mqttBridge, componentID string) *streamCallCent
 		streamCallSendChan: streamcallSendChan,
 		streamMsgChan:      streamMsgChan,
 		streamConfigChan:   streamConfigChan,
+		componentID:        componentID,
 		topicSession:       topicSession,
 		topicNotify:        topicNotify,
 		topicDown:          topicDown,
@@ -236,74 +250,64 @@ func newStreamCallCenter(mqttBr *mqttBridge, componentID string) *streamCallCent
 		heartbeatChan:      heartbeatChan,
 		heartbeatInterval:  heartbeatInterval,
 		heartbeatTimeout:   heartbeatTimeout,
+		logger:             loggerBr,
 	}
 }
 
 func (that *mqttBridge) StreamCall(stm pb.DeviceCloudService_StreamCallServer) error {
 	var err error
 
-	fmt.Println("device_cloud streamcall")
-	defer fmt.Println("streamcall deinit")
-
 	req, err := stm.Recv()
 	if err != nil {
+		that.logger.WithError(err).Errorf("stream recv failed")
 		return ErrMqttStreamCallConfigError
 	}
 
 	cpID := req.GetComponentId().GetValue()
 
 	// init
-	fmt.Printf("init ID:%v\n", cpID)
 	streamCallClient := newStreamCallCenter(that, cpID)
 
 	// connect mqtt
-	fmt.Println("connect mqtt")
 	err = streamCallClient.ConnectMqtt()
 	if err != nil {
+		that.logger.WithField("component_id", cpID).WithError(err).Errorf("mqtt connect failed")
 		return err
 	}
-	defer streamCallClient.client.Disconnect(0)
+	defer func() {
+		that.logger.WithField("component_id", cpID).Debugf("mqtt client disconnect")
+		streamCallClient.client.Disconnect(0)
+	}()
 
 	// Sub
-	fmt.Println("sub mqtt")
 	err = streamCallClient.SubStreamTopic()
 	if err != nil {
+		that.logger.WithField("component_id", cpID).WithError(err).Errorf("mqtt sub failed")
 		return err
 	}
 
 	// heartbeat loop
-	fmt.Println("heartbeat loop")
 	streamCallClient.StreamCallHeartBeatLoop()
-	defer func() {
-		streamCallClient.heartbeatChan <- nil
-		streamCallClient.streamCallRecvChan <- nil
-		streamCallClient.streamCallSendChan <- nil
-	}()
 
 	// wait config ok signal
-	fmt.Println("wait config ok signal")
 	select {
 	case <-streamCallClient.streamConfigChan:
 		break
 	case <-time.After(streamCallClient.timeout):
-		fmt.Println("wait config ok signal timeout")
-		streamCallClient.heartbeatChan <- nil
+		that.logger.WithField("component_id", cpID).WithError(err).Errorf("stream config timeout")
 		return ErrMqttRequestTimeout
 	}
 
 	errs := make(chan error)
 
-	fmt.Println("stream loop")
 	// send loop
 	go func() {
 		var err error
 		var req *pb.StreamCallRequest
 
 		defer func() {
-			fmt.Println("sent loop deinit")
 			streamCallClient.heartbeatChan <- nil
 			streamCallClient.streamCallRecvChan <- nil
-			streamCallClient.streamCallSendChan <- nil
 			errs <- err
 		}()
 
@@ -314,13 +318,13 @@ func (that *mqttBridge) StreamCall(stm pb.DeviceCloudService_StreamCallServer) e
 			select {
 			case req = <-recvCh:
 				if req == nil {
-					fmt.Println("send loop close err")
+					err = ErrMqttStreamCallRecvError
+					that.logger.WithField("component_id", cpID).WithError(err).Errorf("streamcall recv error")
 					return
 				}
-				fmt.Println("stream request msg", req)
+				that.logger.WithField("component_id", cpID).Debugf("message to be send")
 				break
-			case err := <-streamCallClient.streamCallRecvChan:
-				fmt.Printf("send loop close, err:%v\n", err)
+			case err = <-streamCallClient.streamCallSendChan:
 				return
 			}
 
@@ -328,7 +332,7 @@ func (that *mqttBridge) StreamCall(stm pb.DeviceCloudService_StreamCallServer) e
 
 			err = streamCallClient.PubMsg(msg)
 			if err != nil {
-				fmt.Println("send loop close send error")
+				that.logger.WithField("component_id", cpID).WithError(err).Errorf("mqtt pub failed")
 				return
 			}
 		}
@@ -339,8 +343,8 @@ func (that *mqttBridge) StreamCall(stm pb.DeviceCloudService_StreamCallServer) e
 		var err error
 
 		defer func() {
-			fmt.Println("recieve loop deinit")
 			streamCallClient.heartbeatChan <- nil
+			streamCallClient.streamCallSendChan <- nil
 			errs <- err
 		}()
 
@@ -349,18 +353,16 @@ func (that *mqttBridge) StreamCall(stm pb.DeviceCloudService_StreamCallServer) e
 			case <-streamCallClient.streamConfigChan:
 				continue
 			case msg := <-streamCallClient.streamMsgChan:
-				fmt.Println("stream response msg")
 				err = stm.Send(&pb.StreamCallResponse{
 					Payload: &any.Any{
 						Value: msg,
 					},
 				})
 				if err != nil {
-					fmt.Printf("pub error:%v\n", err)
+					that.logger.WithField("component_id", cpID).WithError(err).Errorf("streamcall send failed")
 					return
 				}
-			case err = <-streamCallClient.streamCallSendChan:
-				fmt.Println("recieve loop close")
+			case err = <-streamCallClient.streamCallRecvChan:
 				return
 			}
 		}
@@ -368,11 +370,8 @@ func (that *mqttBridge) StreamCall(stm pb.DeviceCloudService_StreamCallServer) e
 
 	err = <-errs
 	if err != nil {
-		fmt.Printf("stream error:%v\n", err)
 		return err
 	}
-
-	fmt.Println("stream loop done")
 
 	return nil
 }
