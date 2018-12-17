@@ -35,7 +35,7 @@ func EncodeDownPath(deviceID string) string {
 	return fmt.Sprintf("%s/down/", deviceID)
 }
 
-//
+// newSessionID
 func newSessionID() (string, int) {
 	rand.Seed(time.Now().UnixNano())
 	sessionID := rand.Intn(899999) + 100000

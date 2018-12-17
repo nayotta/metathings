@@ -34,3 +34,9 @@ var ErrMqttConnectFailed = errors.New("mqtt connect failed")
 
 // ErrMqttRequestTimeout ErrMqttRequestTimeout
 var ErrMqttRequestTimeout = errors.New("mqtt request timeout")
+
+// ErrMqttStreamCallConfigError ErrMqttStreamCallConfigError
+var ErrMqttStreamCallConfigError = errors.New("mqtt streamcall config error")
+
+// ErrMqttStreamCallHearBeatTimeoutError ErrMqttStreamCallHearBeatTimeoutError
+var ErrMqttStreamCallHearBeatTimeoutError = errors.New("mqtt streamcall heartbeat timeout")

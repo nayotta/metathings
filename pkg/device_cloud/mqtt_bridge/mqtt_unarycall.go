@@ -1,6 +1,7 @@
 package metathingsdevicecloudmqttbridge
 
 import (
+	"context"
 	"time"
 
 	emitter "github.com/emitter-io/go"
@@ -37,7 +38,7 @@ func newUnaryCallCenter(timeout time.Duration, unaryCallChan chan error, topic s
 	}
 }
 
-func (that *mqttBridge) UnaryCall(req *pb.UnaryCallRequest) (*pb.UnaryCallResponse, error) {
+func (that *mqttBridge) UnaryCall(ctx context.Context, req *pb.UnaryCallRequest) (*pb.UnaryCallResponse, error) {
 	var err error
 	var unarycallChan chan error
 	var reqPayload pb.MqttDeviceRequest
@@ -72,7 +73,7 @@ func (that *mqttBridge) UnaryCall(req *pb.UnaryCallRequest) (*pb.UnaryCallRespon
 	if err != nil {
 		return nil, err
 	}
-	reqPayload.SessionId = (int64)(sessionID)
+	reqPayload.SessionId = (int32)(sessionID)
 	msg, err = proto.Marshal(&reqPayload)
 	if err != nil {
 		return nil, err

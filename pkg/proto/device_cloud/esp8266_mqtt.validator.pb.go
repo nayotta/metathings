@@ -35,10 +35,24 @@ func (this *MqttDeviceRequest) Validate() error {
 			}
 		}
 	}
+	if oneOfNester, ok := this.GetPayload().(*MqttDeviceRequest_Heartbeat); ok {
+		if oneOfNester.Heartbeat != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.Heartbeat); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("Heartbeat", err)
+			}
+		}
+	}
 	if oneOfNester, ok := this.GetPayload().(*MqttDeviceRequest_RunTime); ok {
 		if oneOfNester.RunTime != nil {
 			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.RunTime); err != nil {
 				return github_com_mwitkow_go_proto_validators.FieldError("RunTime", err)
+			}
+		}
+	}
+	if oneOfNester, ok := this.GetPayload().(*MqttDeviceRequest_Config); ok {
+		if oneOfNester.Config != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.Config); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("Config", err)
 			}
 		}
 	}
@@ -87,6 +101,19 @@ func (this *MqttDeviceResponse) Validate() error {
 			}
 		}
 	}
+	if oneOfNester, ok := this.GetPayload().(*MqttDeviceResponse_Config); ok {
+		if oneOfNester.Config != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.Config); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("Config", err)
+			}
+		}
+	}
+	return nil
+}
+func (this *ConfigRes) Validate() error {
+	return nil
+}
+func (this *ConfigPayload) Validate() error {
 	return nil
 }
 func (this *RunTimeRes) Validate() error {
@@ -99,6 +126,9 @@ func (this *ErrBadArgsRes) Validate() error {
 	return nil
 }
 func (this *Heartbeat) Validate() error {
+	return nil
+}
+func (this *HeartbeatRes) Validate() error {
 	return nil
 }
 func (this *GpioDigitalPayload) Validate() error {

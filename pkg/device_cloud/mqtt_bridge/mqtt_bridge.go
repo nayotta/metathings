@@ -1,6 +1,7 @@
 package metathingsdevicecloudmqttbridge
 
 import (
+	"context"
 	"net/url"
 
 	emitter "github.com/emitter-io/go"
@@ -16,8 +17,8 @@ type MqttBridge interface {
 	InitMqttBridge() error
 	KeyGen()
 	HeartBeatSelect()
-	UnaryCall(req *pb.UnaryCallRequest) (*pb.UnaryCallResponse, error)
-	StreamCall()
+	UnaryCall(ctx context.Context, req *pb.UnaryCallRequest) (*pb.UnaryCallResponse, error)
+	StreamCall(stm pb.DeviceCloudService_StreamCallServer) error
 }
 
 type mqttBridge struct {
@@ -43,8 +44,6 @@ func (that *mqttBridge) GetHost() (*url.URL, error) {
 	}
 	return that.host, nil
 }
-
-func (that *mqttBridge) StreamCall() {}
 
 // NewMqttBridge NewMqttBridge
 func NewMqttBridge(args []interface{}) (MqttBridge, error) {

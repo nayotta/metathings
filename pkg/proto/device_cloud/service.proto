@@ -5,13 +5,13 @@ option go_package = "device_cloud";
 
 import "unary_call.proto";
 import "stream_call.proto";
-import "gen_key.proto";
-import "heartbeat_select.proto";
+//import "gen_key.proto";
+//import "heartbeat_select.proto";
 
 service DeviceCloudService {
     rpc UnaryCall(UnaryCallRequest) returns (UnaryCallResponse) {}
     rpc StreamCall(stream StreamCallRequest) returns (stream StreamCallResponse) {}
 
-    rpc GenKey(GenKeyRequest) returns (GenKeyResponse){}
-    rpc HeartBeatSelect(HeartBeatSelectRequest) returns (HeartBeatSelectResponse) {}
+    //rpc KeyGen(GenKeyRequest) returns (GenKeyResponse){}
+    //rpc HeartBeatSelect(HeartBeatSelectRequest) returns (HeartBeatSelectResponse) {}
 }

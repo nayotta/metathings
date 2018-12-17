@@ -49,7 +49,7 @@ func (that *mqttBridge) messageCallback(client emitter.Emitter, msg emitter.Mess
 		case "up":
 			fmt.Printf("up from device:%s message:%s\n", deviceID, msg.Payload())
 		case "status":
-			fmt.Printf("status from device:%s message:%s\n", deviceID, msg.Payload())
+			//fmt.Printf("status from device:%s message:%s\n", deviceID, msg.Payload())
 		default:
 			fmt.Printf("unknown message type:%s\n", msgType)
 		}
