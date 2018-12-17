@@ -23,7 +23,7 @@ func (self *MetathingsDeviceServiceImpl) start() error {
 	ctx := context_helper.NewOutgoingContext(
 		context.Background(),
 		context_helper.WithTokenOp(self.tknr.GetToken()),
-		context_helper.WithSessionOp(rand_helper.Int63()),
+		context_helper.WithSessionOp(rand_helper.Int31()),
 	)
 	self.conn_stm, err = cli.Connect(ctx)
 	if err != nil {

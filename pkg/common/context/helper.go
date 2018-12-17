@@ -28,7 +28,7 @@ func WithSessionIdOp(sess_id string) func(metadata.MD) metadata.MD {
 	}
 }
 
-func WithSessionOp(sess int64) func(metadata.MD) metadata.MD {
+func WithSessionOp(sess int32) func(metadata.MD) metadata.MD {
 	return func(md metadata.MD) metadata.MD {
 		md.Append("session", fmt.Sprintf("%v", sess))
 		return md

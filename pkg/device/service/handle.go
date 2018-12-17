@@ -3,6 +3,8 @@ package metathings_device_service
 import (
 	"context"
 
+	client_helper "github.com/nayotta/metathings/pkg/common/client"
+	context_helper "github.com/nayotta/metathings/pkg/common/context"
 	deviced_pb "github.com/nayotta/metathings/pkg/proto/deviced"
 	log "github.com/sirupsen/logrus"
 )
@@ -28,7 +30,7 @@ func (self *MetathingsDeviceServiceImpl) handle_user_request(req *deviced_pb.Con
 	case *deviced_pb.ConnectRequest_UnaryCall:
 		return self.handle_user_unary_request(req)
 	case *deviced_pb.ConnectRequest_StreamCall:
-		panic("unimplemented")
+		return self.handle_user_stream_request(req)
 	default:
 		self.logger.WithField("union", req.Union).Debugf("unsupported union type")
 		panic("unimplemented")
@@ -78,6 +80,60 @@ func (self *MetathingsDeviceServiceImpl) handle_user_unary_request(req *deviced_
 		return err
 	}
 	logger.Debugf("send msg")
+
+	return nil
+}
+
+func (self *MetathingsDeviceServiceImpl) handle_user_stream_request(req *deviced_pb.ConnectRequest) error {
+	var cli deviced_pb.DevicedServiceClient
+	var cfn client_helper.CloseFn
+	var stm deviced_pb.DevicedService_ConnectClient
+	var err error
+
+	req_val := req.GetStreamCall()
+	sess := req.GetSessionId().GetValue()
+	cfg := req_val.GetConfig()
+	name := cfg.GetName().GetValue()
+	component := cfg.GetComponent().GetValue()
+	method := cfg.GetMethod().GetValue()
+
+	logger := self.logger.WithFields(log.Fields{
+		"#session":   sess,
+		"#component": component,
+		"#name":      name,
+		"#method":    method,
+	})
+
+	if cli, cfn, err = self.cli_fty.NewDevicedServiceClient(); err != nil {
+		logger.WithError(err).Debugf("failed to new deviced service client")
+		return err
+	}
+	defer cfn()
+
+	ctx := context_helper.NewOutgoingContext(
+		context.Background(),
+		context_helper.WithTokenOp(self.tknr.GetToken()),
+		context_helper.WithSessionOp(sess),
+	)
+
+	if stm, err = cli.Connect(ctx); err != nil {
+		logger.WithError(err).Debugf("failed to connect to deviced service")
+		return err
+	}
+
+	mdl, err := self.mdl_db.Lookup(component, name)
+	if err != nil {
+		logger.WithError(err).Debugf("failed to lookup module in database")
+		return err
+	}
+
+	err = mdl.StreamCall(context.Background(), stm)
+	if err != nil {
+		logger.WithError(err).Debugf("failed to stream call")
+		return err
+	}
+
+	logger.Debugf("startm closed")
 
 	return nil
 }

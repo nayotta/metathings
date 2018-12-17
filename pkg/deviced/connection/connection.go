@@ -45,10 +45,14 @@ type StreamConnection interface {
 	Connection
 }
 
+type streamConnection struct {
+	connection
+}
+
 type ConnectionCenter interface {
 	BuildConnection(*storage.Device, pb.DevicedService_ConnectServer) (Connection, error)
 	UnaryCall(*storage.Device, *pb.OpUnaryCallValue) (*pb.UnaryCallValue, error)
-	StreamCall(pb.DevicedService_StreamCallServer) (StreamConnection, error)
+	StreamCall(*storage.Device, *pb.OpStreamCallConfig, pb.DevicedService_StreamCallServer) error
 }
 
 type connectionCenter struct {
@@ -293,6 +297,7 @@ func (self *connectionCenter) UnaryCall(dev *storage.Device, req *pb.OpUnaryCall
 	if buf, err = proto.Marshal(conn_req); err != nil {
 		return nil, err
 	}
+
 	self.logger.Debugf("marshal request")
 
 	if err = conn_br.Send(buf); err != nil {
@@ -317,14 +322,14 @@ func (self *connectionCenter) UnaryCall(dev *storage.Device, req *pb.OpUnaryCall
 	return ucv, nil
 }
 
-func (self *connectionCenter) StreamCall(pb.DevicedService_StreamCallServer) (StreamConnection, error) {
+func (self *connectionCenter) StreamCall(dev *storage.Device, cfg *pb.OpStreamCallConfig, stm pb.DevicedService_StreamCallServer) error {
 	panic("unimplemented")
 }
 
-func NewConnectionCenter(brfty BridgeFactory, storage Storage, logger log.FieldLogger) (ConnectionCenter, error) {
+func NewConnectionCenter(brfty BridgeFactory, stor Storage, logger log.FieldLogger) (ConnectionCenter, error) {
 	return &connectionCenter{
 		logger:  logger,
 		brfty:   brfty,
-		storage: storage,
+		storage: stor,
 	}, nil
 }

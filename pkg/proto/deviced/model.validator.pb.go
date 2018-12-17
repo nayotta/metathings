@@ -152,10 +152,10 @@ func (this *OpStreamCallValue) Validate() error {
 			}
 		}
 	}
-	if oneOfNester, ok := this.GetUnion().(*OpStreamCallValue_Data); ok {
-		if oneOfNester.Data != nil {
-			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.Data); err != nil {
-				return github_com_mwitkow_go_proto_validators.FieldError("Data", err)
+	if oneOfNester, ok := this.GetUnion().(*OpStreamCallValue_Value); ok {
+		if oneOfNester.Value != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.Value); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("Value", err)
 			}
 		}
 	}
@@ -169,10 +169,10 @@ func (this *StreamCallValue) Validate() error {
 			}
 		}
 	}
-	if oneOfNester, ok := this.GetUnion().(*StreamCallValue_Data); ok {
-		if oneOfNester.Data != nil {
-			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.Data); err != nil {
-				return github_com_mwitkow_go_proto_validators.FieldError("Data", err)
+	if oneOfNester, ok := this.GetUnion().(*StreamCallValue_Value); ok {
+		if oneOfNester.Value != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.Value); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("Value", err)
 			}
 		}
 	}
@@ -197,21 +197,5 @@ func (this *OpStreamCallConfig) Validate() error {
 	return nil
 }
 func (this *StreamCallConfig) Validate() error {
-	return nil
-}
-func (this *OpStreamCallData) Validate() error {
-	if this.Value != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Value); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Value", err)
-		}
-	}
-	return nil
-}
-func (this *StreamCallData) Validate() error {
-	if this.Value != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Value); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Value", err)
-		}
-	}
 	return nil
 }
