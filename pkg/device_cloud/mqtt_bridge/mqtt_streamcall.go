@@ -12,14 +12,15 @@ import (
 )
 
 type streamCallCenter struct {
-	client           emitter.Emitter
-	handle           emitter.Token
-	host             *url.URL
-	sessionID        int32
-	streamCallChan   chan error
-	streamMsgChan    chan []byte
-	streamConfigChan chan interface{}
-	timeout          time.Duration
+	client             emitter.Emitter
+	handle             emitter.Token
+	host               *url.URL
+	sessionID          int32
+	streamCallSendChan chan error
+	streamCallRecvChan chan error
+	streamMsgChan      chan []byte
+	streamConfigChan   chan interface{}
+	timeout            time.Duration
 
 	topicSession   string
 	topicHeartBeat string
@@ -37,7 +38,6 @@ type streamCallCenter struct {
 }
 
 func (that *streamCallCenter) streamCallMsgCallback(client emitter.Emitter, msg emitter.Message) {
-	fmt.Println("callback get msg")
 	switch msg.Topic() {
 	case that.topicSession:
 		that.streamMsgChan <- msg.Payload()
@@ -51,12 +51,14 @@ func (that *streamCallCenter) streamCallMsgCallback(client emitter.Emitter, msg 
 		that.streamConfigChan <- nil
 		break
 	default:
-		that.streamCallChan <- ErrUnexpectedResponse
+		that.streamCallRecvChan <- ErrUnexpectedResponse
+		that.streamCallSendChan <- ErrUnexpectedResponse
 	}
 }
 
 func (that *streamCallCenter) streamCallDisconnectCallback(client emitter.Emitter, err error) {
-	fmt.Printf("streamcall mqtt disconnect:%v\n", err)
+	that.streamCallRecvChan <- ErrMqttDisconnectedError
+	that.streamCallSendChan <- ErrMqttDisconnectedError
 }
 
 func (that *streamCallCenter) streamCallHeartBeat() error {
@@ -109,7 +111,8 @@ func (that *streamCallCenter) StreamCallHeartBeatLoop() {
 		defer fmt.Println("heartbeat loop check deinit")
 		for {
 			if time.Now().Sub(that.heartbeat) >= that.heartbeatTimeout {
-				that.streamCallChan <- ErrMqttStreamCallHearBeatTimeoutError
+				that.streamCallRecvChan <- ErrMqttStreamCallHearBeatTimeoutError
+				that.streamCallSendChan <- ErrMqttStreamCallHearBeatTimeoutError
 				fmt.Println("heartbeat check error", time.Now())
 				return
 			}
@@ -195,7 +198,8 @@ func newStreamCallCenter(mqttBr *mqttBridge, componentID string) *streamCallCent
 
 	host := mqttBr.host
 
-	streamcallChan := make(chan error)
+	streamcallRecvChan := make(chan error)
+	streamcallSendChan := make(chan error)
 	streamMsgChan := make(chan []byte)
 	streamConfigChan := make(chan interface{})
 
@@ -214,23 +218,24 @@ func newStreamCallCenter(mqttBr *mqttBridge, componentID string) *streamCallCent
 	heartbeatTimeout := 30 * time.Second
 
 	return &streamCallCenter{
-		host:              host,
-		timeout:           timeout,
-		sessionID:         (int32)(sessionID),
-		streamCallChan:    streamcallChan,
-		streamMsgChan:     streamMsgChan,
-		streamConfigChan:  streamConfigChan,
-		topicSession:      topicSession,
-		topicNotify:       topicNotify,
-		topicDown:         topicDown,
-		topicHeartBeat:    topicHeartBeat,
-		downKey:           downKey,
-		upKey:             upKey,
-		statusKey:         statusKey,
-		heartbeat:         heartbeat,
-		heartbeatChan:     heartbeatChan,
-		heartbeatInterval: heartbeatInterval,
-		heartbeatTimeout:  heartbeatTimeout,
+		host:               host,
+		timeout:            timeout,
+		sessionID:          (int32)(sessionID),
+		streamCallRecvChan: streamcallRecvChan,
+		streamCallSendChan: streamcallSendChan,
+		streamMsgChan:      streamMsgChan,
+		streamConfigChan:   streamConfigChan,
+		topicSession:       topicSession,
+		topicNotify:        topicNotify,
+		topicDown:          topicDown,
+		topicHeartBeat:     topicHeartBeat,
+		downKey:            downKey,
+		upKey:              upKey,
+		statusKey:          statusKey,
+		heartbeat:          heartbeat,
+		heartbeatChan:      heartbeatChan,
+		heartbeatInterval:  heartbeatInterval,
+		heartbeatTimeout:   heartbeatTimeout,
 	}
 }
 
@@ -271,7 +276,8 @@ func (that *mqttBridge) StreamCall(stm pb.DeviceCloudService_StreamCallServer) e
 	streamCallClient.StreamCallHeartBeatLoop()
 	defer func() {
 		streamCallClient.heartbeatChan <- nil
-		streamCallClient.streamCallChan <- nil
+		streamCallClient.streamCallRecvChan <- nil
+		streamCallClient.streamCallSendChan <- nil
 	}()
 
 	// wait config ok signal
@@ -296,22 +302,26 @@ func (that *mqttBridge) StreamCall(stm pb.DeviceCloudService_StreamCallServer) e
 		defer func() {
 			fmt.Println("sent loop deinit")
 			streamCallClient.heartbeatChan <- nil
-			streamCallClient.streamCallChan <- nil
+			streamCallClient.streamCallRecvChan <- nil
+			streamCallClient.streamCallSendChan <- nil
 			errs <- err
 		}()
 
+		recvStm := NewAsyncDeviceCloudGrpc(stm)
+		recvCh := recvStm.Recv()
+
 		for {
-			req, err = stm.Recv()
-			if err != nil {
-				fmt.Println("send loop close err")
-				return
-			}
-			fmt.Println("stream request msg", time.Now(), streamCallClient.client.IsConnected())
 			select {
-			case err := <-streamCallClient.streamCallChan:
+			case req = <-recvCh:
+				if req == nil {
+					fmt.Println("send loop close err")
+					return
+				}
+				fmt.Println("stream request msg", req)
+				break
+			case err := <-streamCallClient.streamCallRecvChan:
 				fmt.Printf("send loop close, err:%v\n", err)
 				return
-			default:
 			}
 
 			msg := req.GetPayload().GetValue()
@@ -349,7 +359,7 @@ func (that *mqttBridge) StreamCall(stm pb.DeviceCloudService_StreamCallServer) e
 					fmt.Printf("pub error:%v\n", err)
 					return
 				}
-			case err = <-streamCallClient.streamCallChan:
+			case err = <-streamCallClient.streamCallSendChan:
 				fmt.Println("recieve loop close")
 				return
 			}
