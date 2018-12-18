@@ -40,29 +40,37 @@ type streamCallCenter struct {
 	logger log.FieldLogger
 }
 
+func (that *streamCallCenter) logE(err error, text string) {
+	that.logger.WithField("component_id", that.componentID).WithField("session_id", that.sessionID).WithError(err).Errorf(text)
+}
+
+func (that *streamCallCenter) logD(text string) {
+	that.logger.WithField("component_id", that.componentID).WithField("session_id", that.sessionID).Debugf(text)
+}
+
 func (that *streamCallCenter) streamCallMsgCallback(client emitter.Emitter, msg emitter.Message) {
 	switch msg.Topic() {
 	case that.topicSession:
 		that.streamMsgChan <- msg.Payload()
-		that.logger.WithField("component_id", that.componentID).Debugf("mqtt session response recv")
+		that.logD("mqtt session response recv")
 		break
 	case that.topicNotify:
 		that.streamMsgChan <- msg.Payload()
-		that.logger.WithField("component_id", that.componentID).Debugf("mqtt notify response recv")
+		that.logD("mqtt notify response recv")
 		break
 	case that.topicHeartBeat:
 		that.heartbeat = time.Now()
-		that.logger.WithField("component_id", that.componentID).Debugf("heatbeat recv")
+		that.logD("heatbeat recv")
 		that.streamConfigChan <- nil
 		break
 	default:
-		that.logger.WithField("component_id", that.componentID).WithError(ErrUnexpectedResponse).Errorf("unknown streamcall message:%v", msg.Topic())
+		that.logE(ErrUnexpectedResponse, "unknown streamcall message")
 		that.streamCallSendChan <- ErrUnexpectedResponse
 	}
 }
 
 func (that *streamCallCenter) streamCallDisconnectCallback(client emitter.Emitter, err error) {
-	that.logger.WithField("component_id", that.componentID).WithError(ErrMqttDisconnectedError).Errorf("mqtt disconnected")
+	that.logE(ErrMqttDisconnectedError, "mqtt disconnected")
 	that.streamCallSendChan <- ErrMqttDisconnectedError
 }
 
@@ -85,11 +93,11 @@ func (that *streamCallCenter) streamCallHeartBeat() error {
 
 	r := that.client.Publish(that.downKey, that.topicDown, msg)
 	if r.Wait() && r.Error() != nil {
-		that.logger.WithField("component_id", that.componentID).WithError(ErrMqttPubFailed).Errorf("heatbeat pub failed")
+		that.logE(ErrMqttPubFailed, "heatbeat pub failed")
 		return ErrMqttPubFailed
 	}
 
-	that.logger.WithField("component_id", that.componentID).Debugf("heatbeat pub")
+	that.logD("heatbeat pub")
 
 	return nil
 }
@@ -100,7 +108,7 @@ func (that *streamCallCenter) StreamCallHeartBeatLoop() {
 		for {
 			err := that.streamCallHeartBeat()
 			if err != nil {
-				that.logger.WithField("component_id", that.componentID).WithError(err).Errorf("heatbeat failed")
+				that.logE(err, "heatbeat failed")
 				return
 			}
 			select {
@@ -115,7 +123,7 @@ func (that *streamCallCenter) StreamCallHeartBeatLoop() {
 	go func() {
 		for {
 			if time.Now().Sub(that.heartbeat) >= that.heartbeatTimeout {
-				that.logger.WithField("component_id", that.componentID).WithError(ErrMqttStreamCallHearBeatTimeoutError).Errorf("heatbeat timeout")
+				that.logE(ErrMqttStreamCallHearBeatTimeoutError, "heatbeat timeout")
 				that.streamCallSendChan <- ErrMqttStreamCallHearBeatTimeoutError
 				return
 			}
@@ -134,21 +142,21 @@ func (that *streamCallCenter) SubStreamTopic() error {
 	// sub session channel
 	r := that.client.Subscribe(that.upKey, that.topicSession)
 	if r.Wait() && r.Error() != nil {
-		that.logger.WithField("component_id", that.componentID).WithError(ErrMqttSubFailed).Errorf("sub failed")
+		that.logE(ErrMqttSubFailed, "sub failed")
 		return ErrMqttSubFailed
 	}
 
 	// sub notify channel
 	r = that.client.Subscribe(that.upKey, that.topicNotify)
 	if r.Wait() && r.Error() != nil {
-		that.logger.WithField("component_id", that.componentID).WithError(ErrMqttSubFailed).Errorf("sub failed")
+		that.logE(ErrMqttSubFailed, "sub failed")
 		return ErrMqttSubFailed
 	}
 
 	// sub heartbeat channel
 	r = that.client.Subscribe(that.statusKey, that.topicHeartBeat)
 	if r.Wait() && r.Error() != nil {
-		that.logger.WithField("component_id", that.componentID).WithError(ErrMqttSubFailed).Errorf("sub failed")
+		that.logE(ErrMqttSubFailed, "sub failed")
 		return ErrMqttSubFailed
 	}
 
@@ -168,7 +176,7 @@ func (that *streamCallCenter) ConnectMqtt() error {
 
 	that.handle = that.client.Connect()
 	if that.handle.Wait() && that.handle.Error() != nil {
-		that.logger.WithField("component_id", that.componentID).WithError(ErrMqttConnectFailed).Errorf("connect mqtt failed")
+		that.logE(ErrMqttConnectFailed, "connect mqtt failed")
 		return ErrMqttConnectFailed
 	}
 
@@ -182,20 +190,20 @@ func (that *streamCallCenter) PubMsg(msg []byte) error {
 
 	err = proto.Unmarshal(msg, &reqPayload)
 	if err != nil {
-		that.logger.WithField("component_id", that.componentID).WithError(err).Errorf("proto unmarshal failed")
+		that.logE(err, "proto unmarshal failed")
 		return err
 	}
 	reqPayload.SessionId = that.sessionID
 	msg, err = proto.Marshal(&reqPayload)
 	if err != nil {
-		that.logger.WithField("component_id", that.componentID).WithError(err).Errorf("proto marshal failed")
+		that.logE(err, "proto marshal failed")
 		return err
 	}
 
 	r := that.client.Publish(that.downKey, that.topicDown, msg)
 	if r.Wait() && r.Error() != nil {
 		err = ErrMqttPubFailed
-		that.logger.WithField("component_id", that.componentID).WithError(err).Errorf("mqtt pub failed")
+		that.logE(err, "mqtt pub failed")
 		return err
 	}
 
