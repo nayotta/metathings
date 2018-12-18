@@ -206,7 +206,3 @@ func (that *mqttBridge) InitMqttBridge() error {
 func (that *mqttBridge) HeartBeatSelect() {
 
 }
-
-func (that *mqttBridge) KeyGen() {
-
-}

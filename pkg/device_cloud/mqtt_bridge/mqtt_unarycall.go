@@ -85,45 +85,54 @@ func (that *unaryCallCenter) subUnaryCallTopic() error {
 	return nil
 }
 
-func (that *unaryCallCenter) PubMsg(msg []byte) error {
+func (that *unaryCallCenter) PubMsgAndWaitRes(msg []byte) ([]byte, error) {
 	var err error
 	var reqPayload pb.MqttDeviceRequest
 
 	// connect mqtt broker
 	err = that.connectMqtt()
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	// sub topic
 	err = that.subUnaryCallTopic()
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	// msg add seesionid
 	err = proto.Unmarshal(msg, &reqPayload)
 	if err != nil {
 		that.logE(err, "proto unmarshal failed")
-		return err
+		return nil, err
 	}
 
 	reqPayload.SessionId = (int32)(that.sessionID)
 	sendMsg, err := proto.Marshal(&reqPayload)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	// pub msg
 	r := that.client.Publish(that.downKey, that.topicDown, sendMsg)
 	if r.Wait() && r.Error() != nil {
 		that.logE(ErrMqttPubFailed, "mqtt pub failed")
-		return ErrMqttPubFailed
+		return nil, ErrMqttPubFailed
 	}
 
 	that.logD("unarycall pub")
 
-	return nil
+	select {
+	case err = <-that.unaryCallChan:
+		if err != nil {
+			return nil, err
+		}
+		return that.resMsg, nil
+	case <-time.After(that.timeout):
+		that.logE(ErrMqttRequestTimeout, "wait unarycall response timeout")
+		return nil, ErrMqttRequestTimeout
+	}
 }
 
 func newUnaryCallCenter(mqttBr *mqttBridge, componentID string) (*unaryCallCenter, error) {
@@ -159,24 +168,14 @@ func (that *mqttBridge) UnaryCall(ctx context.Context, req *pb.UnaryCallRequest)
 		return nil, err
 	}
 
-	err = unaryCallClient.PubMsg(msg)
+	resMsg, err := unaryCallClient.PubMsgAndWaitRes(msg)
 	if err != nil {
 		return nil, err
 	}
 
-	select {
-	case err = <-unaryCallClient.unaryCallChan:
-		if err != nil {
-			return nil, err
-		}
-
-		return &pb.UnaryCallResponse{
-			Payload: &any.Any{
-				Value: unaryCallClient.resMsg,
-			},
-		}, nil
-	case <-time.After(unaryCallClient.timeout):
-		that.logger.WithField("component_id", cpID).WithField("session_id", unaryCallClient.sessionID).WithError(ErrMqttRequestTimeout).Errorf("wait unarycall response timeout")
-		return nil, ErrMqttRequestTimeout
-	}
+	return &pb.UnaryCallResponse{
+		Payload: &any.Any{
+			Value: resMsg,
+		},
+	}, nil
 }

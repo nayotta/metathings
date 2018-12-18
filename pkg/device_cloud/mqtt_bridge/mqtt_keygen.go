@@ -1,96 +1,151 @@
 package metathingsdevicecloudmqttbridge
 
 import (
+	"context"
+	"net/url"
 	"time"
 
 	emitter "github.com/emitter-io/go"
+	pb "github.com/nayotta/metathings/pkg/proto/device_cloud"
+	log "github.com/sirupsen/logrus"
 )
 
-// KeygenCenter KeygenCenter
-type KeygenCenter interface {
-	KeyGen(bridge MqttBridge) (string, error)
+type keygenCenter struct {
+	client     emitter.Emitter
+	host       *url.URL
+	keygenChan chan error
+	retKey     string
+	timeout    time.Duration
+
+	componentID string
+	topic       string
+	rootkey     string
+
+	logger log.FieldLogger
 }
 
-type keygenCenter struct {
-	topic      string
-	timeout    time.Duration
-	kengenChan chan error
-	key        string
+func (that *keygenCenter) logE(err error, text string) {
+	that.logger.WithField("component_id", that.componentID).WithError(err).Errorf(text)
+}
+
+func (that *keygenCenter) logD(text string) {
+	that.logger.WithField("component_id", that.componentID).Debugf(text)
 }
 
 func (that *keygenCenter) keygenCallback(_ emitter.Emitter, msg emitter.KeyGenResponse) {
 	if msg.Status != 200 {
-		that.kengenChan <- ErrUnexpectedResponse
+		that.logE(ErrUnexpectedResponse, "keygen ret code not 200")
+		that.keygenChan <- ErrUnexpectedResponse
 	}
 
 	if msg.Channel != that.topic {
-		that.kengenChan <- ErrMqttKeygenFailed
+		that.logE(ErrMqttKeygenFailed, "keygen topic not match")
+		that.keygenChan <- ErrMqttKeygenFailed
 	}
 
-	that.key = msg.Key
-	that.kengenChan <- nil
+	that.retKey = msg.Key
+	that.client.Disconnect(0)
+	that.keygenChan <- nil
+}
+
+func (that *keygenCenter) keygenDisconnectCallback(client emitter.Emitter, err error) {
+	that.logE(ErrMqttDisconnectedError, "mqtt broker unexcept disconnect")
+	that.keygenChan <- ErrMqttDisconnectedError
+}
+
+func (that *keygenCenter) connectMqtt() error {
+	opt := emitter.NewClientOptions()
+	opt.PingTimeout = 5 * time.Second
+	opt.ConnectTimeout = 3 * time.Second
+	opt.Servers = append(opt.Servers, that.host)
+	opt.SetOnKeyGenHandler(that.keygenCallback)
+	opt.SetOnConnectionLostHandler(that.keygenDisconnectCallback)
+
+	that.client = emitter.NewClient(opt)
+
+	handle := that.client.Connect()
+	if handle.Wait() && handle.Error() != nil {
+		that.logE(ErrMqttConnectFailed, "connect mqtt failed")
+		return ErrMqttConnectFailed
+	}
+
+	return nil
 }
 
 // KeyGen KeyGen
-func (that *keygenCenter) KeyGen(bridge MqttBridge) (string, error) {
+func (that *keygenCenter) KeyGen() (string, error) {
 	var err error
 
-	opt := emitter.NewClientOptions()
-	host, err := bridge.GetHost()
+	err = that.connectMqtt()
 	if err != nil {
-		return "", ErrInvalidArgument
+		return "", err
 	}
-	rootkey, err := bridge.GetRootKey()
-
-	if err != nil {
-		return "", ErrInvalidArgument
-	}
-	opt.Servers = append(opt.Servers, host)
-	opt.SetOnKeyGenHandler(that.keygenCallback)
-	client := emitter.NewClient(opt)
-	handle := client.Connect()
-	if handle.Wait() && handle.Error() != nil {
-		return "", ErrMqttConnectFailed
-	}
-	defer client.Disconnect(0)
-
-	that.kengenChan = make(chan error)
 
 	req := &emitter.KeyGenRequest{
-		Key:     rootkey,
+		Key:     that.rootkey,
 		Channel: that.topic,
 		Type:    "rwslp",
 		TTL:     0,
 	}
 
-	r := client.GenerateKey(req)
+	that.logD("keygen request")
+	r := that.client.GenerateKey(req)
 	if r.Wait() && r.Error() != nil {
+		that.logE(ErrMqttKeygenFailed, "mqtt keygen error")
 		return "", ErrMqttKeygenFailed
 	}
 
 	select {
-	case err := <-that.kengenChan:
+	case err := <-that.keygenChan:
 		if err != nil {
 			return "", err
 		}
-		return that.key, nil
+		that.logD("keygen success")
+		return that.retKey, nil
 	case <-time.After(that.timeout):
+		that.logE(ErrMqttRequestTimeout, "keygen timeout")
 		return "", ErrMqttRequestTimeout
 	}
 }
 
-// NewKeygen NewKeygen
-func NewKeygen(timeout time.Duration, topic string) (KeygenCenter, error) {
-	if timeout <= 0 {
-		timeout = 10 * time.Second
-	}
+func newKeygenCenter(mqttBr *mqttBridge, componentID string) (*keygenCenter, error) {
+	timeout := 10 * time.Second
 
-	if topic == "" {
+	keygenChan := make(chan error)
+
+	if componentID == "" {
+		mqttBr.logger.WithField("component_id", componentID).WithError(ErrInvalidArgument).Errorf("component_id null")
 		return nil, ErrInvalidArgument
 	}
+	topic := componentID + "/#/"
 
 	return &keygenCenter{
-		timeout: timeout,
-		topic:   topic,
+		host:        mqttBr.host,
+		keygenChan:  keygenChan,
+		timeout:     timeout,
+		componentID: componentID,
+		topic:       topic,
+		rootkey:     mqttBr.rootKey,
+		logger:      mqttBr.logger,
+	}, nil
+}
+
+func (that *mqttBridge) KeyGen(ctx context.Context, req *pb.GenKeyRequest) (*pb.GenKeyResponse, error) {
+	var err error
+
+	cpID := req.GetComponentId().GetValue()
+
+	keygenClient, err := newKeygenCenter(that, cpID)
+	if err != nil {
+		return nil, err
+	}
+
+	retKey, err := keygenClient.KeyGen()
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.GenKeyResponse{
+		Key:     retKey,
 	}, nil
 }

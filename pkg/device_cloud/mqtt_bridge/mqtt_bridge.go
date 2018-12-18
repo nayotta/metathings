@@ -15,7 +15,7 @@ type MqttBridge interface {
 	GetHost() (*url.URL, error)
 
 	InitMqttBridge() error
-	KeyGen()
+	KeyGen(context.Context, *pb.GenKeyRequest) (*pb.GenKeyResponse, error)
 	HeartBeatSelect()
 	UnaryCall(ctx context.Context, req *pb.UnaryCallRequest) (*pb.UnaryCallResponse, error)
 	StreamCall(stm pb.DeviceCloudService_StreamCallServer) error
