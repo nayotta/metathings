@@ -80,7 +80,7 @@ func (that *streamCallCenter) streamCallHeartBeat() error {
 
 	msg, err := proto.Marshal(req)
 	if err != nil {
-		return ErrInvalidArgument
+		return err
 	}
 
 	r := that.client.Publish(that.downKey, that.topicDown, msg)
