@@ -15,6 +15,7 @@ type MqttBridge interface {
 	GetHost() (*url.URL, error)
 
 	InitMqttBridge() error
+	InitHeartBeatLoop() error
 	KeyGen(context.Context, *pb.GenKeyRequest) (*pb.GenKeyResponse, error)
 	HeartBeatSelect()
 	UnaryCall(ctx context.Context, req *pb.UnaryCallRequest) (*pb.UnaryCallResponse, error)
@@ -22,13 +23,13 @@ type MqttBridge interface {
 }
 
 type mqttBridge struct {
-	host         *url.URL
-	rootKey      string
-	upKey        string
-	downKey      string
-	statusKey    string
-	configClient emitter.Emitter
-	logger       log.FieldLogger
+	host          *url.URL
+	rootKey       string
+	upKey         string
+	downKey       string
+	statusUpKey   string
+	configClient  emitter.Emitter
+	logger        log.FieldLogger
 }
 
 func (that *mqttBridge) GetRootKey() (string, error) {

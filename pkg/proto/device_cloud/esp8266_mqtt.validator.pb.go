@@ -42,6 +42,20 @@ func (this *MqttDeviceRequest) Validate() error {
 			}
 		}
 	}
+	if oneOfNester, ok := this.GetPayload().(*MqttDeviceRequest_HeartbeatSelectRes); ok {
+		if oneOfNester.HeartbeatSelectRes != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.HeartbeatSelectRes); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("HeartbeatSelectRes", err)
+			}
+		}
+	}
+	if oneOfNester, ok := this.GetPayload().(*MqttDeviceRequest_HeartbeatRes); ok {
+		if oneOfNester.HeartbeatRes != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.HeartbeatRes); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("HeartbeatRes", err)
+			}
+		}
+	}
 	if oneOfNester, ok := this.GetPayload().(*MqttDeviceRequest_RunTime); ok {
 		if oneOfNester.RunTime != nil {
 			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.RunTime); err != nil {
@@ -87,10 +101,24 @@ func (this *MqttDeviceResponse) Validate() error {
 			}
 		}
 	}
+	if oneOfNester, ok := this.GetPayload().(*MqttDeviceResponse_HeartbeatSelectReq); ok {
+		if oneOfNester.HeartbeatSelectReq != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.HeartbeatSelectReq); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("HeartbeatSelectReq", err)
+			}
+		}
+	}
 	if oneOfNester, ok := this.GetPayload().(*MqttDeviceResponse_Heartbeat); ok {
 		if oneOfNester.Heartbeat != nil {
 			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.Heartbeat); err != nil {
 				return github_com_mwitkow_go_proto_validators.FieldError("Heartbeat", err)
+			}
+		}
+	}
+	if oneOfNester, ok := this.GetPayload().(*MqttDeviceResponse_HeartbeatReq); ok {
+		if oneOfNester.HeartbeatReq != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.HeartbeatReq); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("HeartbeatReq", err)
 			}
 		}
 	}
@@ -129,6 +157,15 @@ func (this *Heartbeat) Validate() error {
 	return nil
 }
 func (this *HeartbeatRes) Validate() error {
+	return nil
+}
+func (this *HeartbeatReq) Validate() error {
+	return nil
+}
+func (this *HeartbeatSelectRes) Validate() error {
+	return nil
+}
+func (this *HeartbeatSelectReq) Validate() error {
 	return nil
 }
 func (this *GpioDigitalPayload) Validate() error {

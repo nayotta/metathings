@@ -28,9 +28,9 @@ type streamCallCenter struct {
 	topicNotify    string
 	topicDown      string
 
-	downKey   string
-	upKey     string
-	statusKey string
+	downKey     string
+	upKey       string
+	statusUpKey string
 
 	heartbeatChan     chan interface{}
 	heartbeat         time.Time
@@ -154,7 +154,7 @@ func (that *streamCallCenter) SubStreamTopic() error {
 	}
 
 	// sub heartbeat channel
-	r = that.client.Subscribe(that.statusKey, that.topicHeartBeat)
+	r = that.client.Subscribe(that.statusUpKey, that.topicHeartBeat)
 	if r.Wait() && r.Error() != nil {
 		that.logE(ErrMqttSubFailed, "sub failed")
 		return ErrMqttSubFailed
@@ -229,7 +229,7 @@ func newStreamCallCenter(mqttBr *mqttBridge, componentID string) *streamCallCent
 
 	downKey := mqttBr.downKey
 	upKey := mqttBr.upKey
-	statusKey := mqttBr.statusKey
+	statusUpKey := mqttBr.statusUpKey
 
 	heartbeat := time.Now()
 	heartbeatChan := make(chan interface{})
@@ -253,7 +253,7 @@ func newStreamCallCenter(mqttBr *mqttBridge, componentID string) *streamCallCent
 		topicHeartBeat:     topicHeartBeat,
 		downKey:            downKey,
 		upKey:              upKey,
-		statusKey:          statusKey,
+		statusUpKey:        statusUpKey,
 		heartbeat:          heartbeat,
 		heartbeatChan:      heartbeatChan,
 		heartbeatInterval:  heartbeatInterval,

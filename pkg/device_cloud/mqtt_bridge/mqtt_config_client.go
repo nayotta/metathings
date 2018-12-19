@@ -7,55 +7,6 @@ import (
 	emitter "github.com/emitter-io/go"
 )
 
-// sub sub +/down/
-func (that *mqttBridge) Sub(key, path string) error {
-	r := that.configClient.Subscribe(key, path)
-	if r.Wait() && r.Error() != nil {
-		return ErrMqttSubFailed
-	}
-
-	return nil
-}
-
-// connect callback
-func (that *mqttBridge) connectCallback(_ emitter.Emitter) {
-	var err error
-
-	fmt.Println("get connect")
-
-	err = that.Sub(that.statusKey, "+/status/")
-	if err != nil {
-		fmt.Println(err.Error())
-	}
-}
-
-// connect lost callback
-func (that *mqttBridge) connectLostCallback(_ emitter.Emitter, err error) {
-	fmt.Println("lost connect:", err)
-}
-
-// presence callback
-func (that *mqttBridge) presenceCallback(_ emitter.Emitter, msg emitter.PresenceEvent) {
-}
-
-// message callback All message process here
-func (that *mqttBridge) messageCallback(client emitter.Emitter, msg emitter.Message) {
-	topicStr := msg.Topic()
-	deviceID := getTopicDeviceID(topicStr)
-	msgType := getTopicType(topicStr)
-
-	go func() {
-		switch msgType {
-		case "up":
-			fmt.Printf("up from device:%s message:%s\n", deviceID, msg.Payload())
-		case "status":
-			//fmt.Printf("status from device:%s message:%s\n", deviceID, msg.Payload())
-		default:
-			fmt.Printf("unknown message type:%s\n", msgType)
-		}
-	}()
-}
-
 // generate key callback
 func (that *mqttBridge) keygenCallback(_ emitter.Emitter, msg emitter.KeyGenResponse) {
 	if msg.Status == 200 {
@@ -64,9 +15,9 @@ func (that *mqttBridge) keygenCallback(_ emitter.Emitter, msg emitter.KeyGenResp
 		case "+/up/#/":
 			that.upKey = msg.Key
 			fmt.Println("upKey res:", msg.Key)
-		case "+/status/#/":
-			that.statusKey = msg.Key
-			fmt.Println("statusKey res:", msg.Key)
+		case "+/statusup/#/":
+			that.statusUpKey = msg.Key
+			fmt.Println("statusUpKey res:", msg.Key)
 		case "+/down/#/":
 			that.downKey = msg.Key
 			fmt.Println("downKey res:", msg.Key)
@@ -74,20 +25,6 @@ func (that *mqttBridge) keygenCallback(_ emitter.Emitter, msg emitter.KeyGenResp
 			// TODO(zh) device channel key
 		}
 	}
-}
-
-// Pub Publish
-func (that *mqttBridge) Pub(msg []byte, path string) error {
-	if msg == nil {
-		return ErrMqttMsgBlank
-	}
-
-	r := that.configClient.Publish(that.downKey, path, msg)
-	if r.Wait() && r.Error() != nil {
-		return ErrMqttPubFailed
-	}
-
-	return nil
 }
 
 // createSecretKey async create
@@ -143,16 +80,16 @@ func (that *mqttBridge) createDownKey() error {
 	return ErrMqttDownKeygenFailed
 }
 
-//createStatusKey
-func (that *mqttBridge) createStatusKey() error {
-	err := that.createSecretKey("+/status/#/")
+//createStatusUpKey
+func (that *mqttBridge) createStatusUpKey() error {
+	err := that.createSecretKey("+/statusup/#/")
 	if err != nil {
 		return err
 	}
 
 	// wait 5s for key response
 	for i := 0; i < 100; i++ {
-		if that.statusKey != "" {
+		if that.statusUpKey != "" {
 			return nil
 		}
 		time.Sleep(50 * time.Millisecond)
@@ -169,10 +106,6 @@ func (that *mqttBridge) InitMqttBridge() error {
 	opt.Servers = append(opt.Servers, that.host)
 
 	opt.SetOnKeyGenHandler(that.keygenCallback)
-	opt.SetOnMessageHandler(that.messageCallback)
-	opt.SetOnConnectHandler(that.connectCallback)
-	opt.SetOnPresenceHandler(that.presenceCallback)
-	opt.SetOnConnectionLostHandler(that.connectLostCallback)
 
 	that.configClient = emitter.NewClient(opt)
 	handle := that.configClient.Connect()
@@ -190,12 +123,7 @@ func (that *mqttBridge) InitMqttBridge() error {
 		return err
 	}
 
-	err = that.createStatusKey()
-	if err != nil {
-		return err
-	}
-
-	err = that.Sub(that.statusKey, "+/status/")
+	err = that.createStatusUpKey()
 	if err != nil {
 		return err
 	}

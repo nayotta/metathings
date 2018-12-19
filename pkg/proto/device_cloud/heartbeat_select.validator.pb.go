@@ -7,6 +7,7 @@ import fmt "fmt"
 import github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
 import proto "github.com/golang/protobuf/proto"
 import math "math"
+import _ "github.com/golang/protobuf/ptypes/any"
 import _ "github.com/golang/protobuf/ptypes/wrappers"
 import _ "github.com/mwitkow/go-proto-validators"
 
@@ -24,8 +25,21 @@ func (this *HeartBeatSelectRequest) Validate() error {
 			return github_com_mwitkow_go_proto_validators.FieldError("ComponentId", err)
 		}
 	}
+	if nil == this.Payload {
+		return github_com_mwitkow_go_proto_validators.FieldError("Payload", fmt.Errorf("message must exist"))
+	}
+	if this.Payload != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Payload); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Payload", err)
+		}
+	}
 	return nil
 }
 func (this *HeartBeatSelectResponse) Validate() error {
+	if this.Payload != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Payload); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Payload", err)
+		}
+	}
 	return nil
 }

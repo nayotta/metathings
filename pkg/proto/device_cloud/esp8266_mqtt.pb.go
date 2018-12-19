@@ -27,6 +27,8 @@ type MqttDeviceRequest struct {
 	//	*MqttDeviceRequest_GpioAnalog
 	//	*MqttDeviceRequest_I2C
 	//	*MqttDeviceRequest_Heartbeat
+	//	*MqttDeviceRequest_HeartbeatSelectRes
+	//	*MqttDeviceRequest_HeartbeatRes
 	//	*MqttDeviceRequest_RunTime
 	//	*MqttDeviceRequest_Config
 	Payload              isMqttDeviceRequest_Payload `protobuf_oneof:"payload"`
@@ -87,12 +89,20 @@ type MqttDeviceRequest_Heartbeat struct {
 	Heartbeat *Heartbeat `protobuf:"bytes,100,opt,name=heartbeat,proto3,oneof"`
 }
 
+type MqttDeviceRequest_HeartbeatSelectRes struct {
+	HeartbeatSelectRes *HeartbeatSelectRes `protobuf:"bytes,101,opt,name=heartbeat_select_res,json=heartbeatSelectRes,proto3,oneof"`
+}
+
+type MqttDeviceRequest_HeartbeatRes struct {
+	HeartbeatRes *HeartbeatRes `protobuf:"bytes,102,opt,name=heartbeat_res,json=heartbeatRes,proto3,oneof"`
+}
+
 type MqttDeviceRequest_RunTime struct {
-	RunTime *RunTimePayload `protobuf:"bytes,101,opt,name=run_time,json=runTime,proto3,oneof"`
+	RunTime *RunTimePayload `protobuf:"bytes,103,opt,name=run_time,json=runTime,proto3,oneof"`
 }
 
 type MqttDeviceRequest_Config struct {
-	Config *ConfigPayload `protobuf:"bytes,102,opt,name=config,proto3,oneof"`
+	Config *ConfigPayload `protobuf:"bytes,104,opt,name=config,proto3,oneof"`
 }
 
 func (*MqttDeviceRequest_GpioDigital) isMqttDeviceRequest_Payload() {}
@@ -102,6 +112,10 @@ func (*MqttDeviceRequest_GpioAnalog) isMqttDeviceRequest_Payload() {}
 func (*MqttDeviceRequest_I2C) isMqttDeviceRequest_Payload() {}
 
 func (*MqttDeviceRequest_Heartbeat) isMqttDeviceRequest_Payload() {}
+
+func (*MqttDeviceRequest_HeartbeatSelectRes) isMqttDeviceRequest_Payload() {}
+
+func (*MqttDeviceRequest_HeartbeatRes) isMqttDeviceRequest_Payload() {}
 
 func (*MqttDeviceRequest_RunTime) isMqttDeviceRequest_Payload() {}
 
@@ -142,6 +156,20 @@ func (m *MqttDeviceRequest) GetHeartbeat() *Heartbeat {
 	return nil
 }
 
+func (m *MqttDeviceRequest) GetHeartbeatSelectRes() *HeartbeatSelectRes {
+	if x, ok := m.GetPayload().(*MqttDeviceRequest_HeartbeatSelectRes); ok {
+		return x.HeartbeatSelectRes
+	}
+	return nil
+}
+
+func (m *MqttDeviceRequest) GetHeartbeatRes() *HeartbeatRes {
+	if x, ok := m.GetPayload().(*MqttDeviceRequest_HeartbeatRes); ok {
+		return x.HeartbeatRes
+	}
+	return nil
+}
+
 func (m *MqttDeviceRequest) GetRunTime() *RunTimePayload {
 	if x, ok := m.GetPayload().(*MqttDeviceRequest_RunTime); ok {
 		return x.RunTime
@@ -163,6 +191,8 @@ func (*MqttDeviceRequest) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buf
 		(*MqttDeviceRequest_GpioAnalog)(nil),
 		(*MqttDeviceRequest_I2C)(nil),
 		(*MqttDeviceRequest_Heartbeat)(nil),
+		(*MqttDeviceRequest_HeartbeatSelectRes)(nil),
+		(*MqttDeviceRequest_HeartbeatRes)(nil),
 		(*MqttDeviceRequest_RunTime)(nil),
 		(*MqttDeviceRequest_Config)(nil),
 	}
@@ -192,13 +222,23 @@ func _MqttDeviceRequest_OneofMarshaler(msg proto.Message, b *proto.Buffer) error
 		if err := b.EncodeMessage(x.Heartbeat); err != nil {
 			return err
 		}
-	case *MqttDeviceRequest_RunTime:
+	case *MqttDeviceRequest_HeartbeatSelectRes:
 		b.EncodeVarint(101<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.HeartbeatSelectRes); err != nil {
+			return err
+		}
+	case *MqttDeviceRequest_HeartbeatRes:
+		b.EncodeVarint(102<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.HeartbeatRes); err != nil {
+			return err
+		}
+	case *MqttDeviceRequest_RunTime:
+		b.EncodeVarint(103<<3 | proto.WireBytes)
 		if err := b.EncodeMessage(x.RunTime); err != nil {
 			return err
 		}
 	case *MqttDeviceRequest_Config:
-		b.EncodeVarint(102<<3 | proto.WireBytes)
+		b.EncodeVarint(104<<3 | proto.WireBytes)
 		if err := b.EncodeMessage(x.Config); err != nil {
 			return err
 		}
@@ -244,7 +284,23 @@ func _MqttDeviceRequest_OneofUnmarshaler(msg proto.Message, tag, wire int, b *pr
 		err := b.DecodeMessage(msg)
 		m.Payload = &MqttDeviceRequest_Heartbeat{msg}
 		return true, err
-	case 101: // payload.run_time
+	case 101: // payload.heartbeat_select_res
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(HeartbeatSelectRes)
+		err := b.DecodeMessage(msg)
+		m.Payload = &MqttDeviceRequest_HeartbeatSelectRes{msg}
+		return true, err
+	case 102: // payload.heartbeat_res
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(HeartbeatRes)
+		err := b.DecodeMessage(msg)
+		m.Payload = &MqttDeviceRequest_HeartbeatRes{msg}
+		return true, err
+	case 103: // payload.run_time
 		if wire != proto.WireBytes {
 			return true, proto.ErrInternalBadWireType
 		}
@@ -252,7 +308,7 @@ func _MqttDeviceRequest_OneofUnmarshaler(msg proto.Message, tag, wire int, b *pr
 		err := b.DecodeMessage(msg)
 		m.Payload = &MqttDeviceRequest_RunTime{msg}
 		return true, err
-	case 102: // payload.config
+	case 104: // payload.config
 		if wire != proto.WireBytes {
 			return true, proto.ErrInternalBadWireType
 		}
@@ -289,6 +345,16 @@ func _MqttDeviceRequest_OneofSizer(msg proto.Message) (n int) {
 		n += 2 // tag and wire
 		n += proto.SizeVarint(uint64(s))
 		n += s
+	case *MqttDeviceRequest_HeartbeatSelectRes:
+		s := proto.Size(x.HeartbeatSelectRes)
+		n += 2 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *MqttDeviceRequest_HeartbeatRes:
+		s := proto.Size(x.HeartbeatRes)
+		n += 2 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
 	case *MqttDeviceRequest_RunTime:
 		s := proto.Size(x.RunTime)
 		n += 2 // tag and wire
@@ -312,7 +378,9 @@ type MqttDeviceResponse struct {
 	//	*MqttDeviceResponse_GpioAnalog
 	//	*MqttDeviceResponse_I2C
 	//	*MqttDeviceResponse_BadArgs
+	//	*MqttDeviceResponse_HeartbeatSelectReq
 	//	*MqttDeviceResponse_Heartbeat
+	//	*MqttDeviceResponse_HeartbeatReq
 	//	*MqttDeviceResponse_RunTime
 	//	*MqttDeviceResponse_Config
 	Payload              isMqttDeviceResponse_Payload `protobuf_oneof:"payload"`
@@ -366,16 +434,24 @@ type MqttDeviceResponse_BadArgs struct {
 	BadArgs *ErrBadArgsRes `protobuf:"bytes,99,opt,name=bad_args,json=badArgs,proto3,oneof"`
 }
 
+type MqttDeviceResponse_HeartbeatSelectReq struct {
+	HeartbeatSelectReq *HeartbeatSelectReq `protobuf:"bytes,100,opt,name=heartbeat_select_req,json=heartbeatSelectReq,proto3,oneof"`
+}
+
 type MqttDeviceResponse_Heartbeat struct {
-	Heartbeat *HeartbeatRes `protobuf:"bytes,100,opt,name=heartbeat,proto3,oneof"`
+	Heartbeat *HeartbeatRes `protobuf:"bytes,101,opt,name=heartbeat,proto3,oneof"`
+}
+
+type MqttDeviceResponse_HeartbeatReq struct {
+	HeartbeatReq *HeartbeatReq `protobuf:"bytes,102,opt,name=heartbeat_req,json=heartbeatReq,proto3,oneof"`
 }
 
 type MqttDeviceResponse_RunTime struct {
-	RunTime *RunTimeRes `protobuf:"bytes,101,opt,name=run_time,json=runTime,proto3,oneof"`
+	RunTime *RunTimeRes `protobuf:"bytes,103,opt,name=run_time,json=runTime,proto3,oneof"`
 }
 
 type MqttDeviceResponse_Config struct {
-	Config *ConfigRes `protobuf:"bytes,102,opt,name=config,proto3,oneof"`
+	Config *ConfigRes `protobuf:"bytes,104,opt,name=config,proto3,oneof"`
 }
 
 func (*MqttDeviceResponse_GpioDigital) isMqttDeviceResponse_Payload() {}
@@ -386,7 +462,11 @@ func (*MqttDeviceResponse_I2C) isMqttDeviceResponse_Payload() {}
 
 func (*MqttDeviceResponse_BadArgs) isMqttDeviceResponse_Payload() {}
 
+func (*MqttDeviceResponse_HeartbeatSelectReq) isMqttDeviceResponse_Payload() {}
+
 func (*MqttDeviceResponse_Heartbeat) isMqttDeviceResponse_Payload() {}
+
+func (*MqttDeviceResponse_HeartbeatReq) isMqttDeviceResponse_Payload() {}
 
 func (*MqttDeviceResponse_RunTime) isMqttDeviceResponse_Payload() {}
 
@@ -427,9 +507,23 @@ func (m *MqttDeviceResponse) GetBadArgs() *ErrBadArgsRes {
 	return nil
 }
 
+func (m *MqttDeviceResponse) GetHeartbeatSelectReq() *HeartbeatSelectReq {
+	if x, ok := m.GetPayload().(*MqttDeviceResponse_HeartbeatSelectReq); ok {
+		return x.HeartbeatSelectReq
+	}
+	return nil
+}
+
 func (m *MqttDeviceResponse) GetHeartbeat() *HeartbeatRes {
 	if x, ok := m.GetPayload().(*MqttDeviceResponse_Heartbeat); ok {
 		return x.Heartbeat
+	}
+	return nil
+}
+
+func (m *MqttDeviceResponse) GetHeartbeatReq() *HeartbeatReq {
+	if x, ok := m.GetPayload().(*MqttDeviceResponse_HeartbeatReq); ok {
+		return x.HeartbeatReq
 	}
 	return nil
 }
@@ -455,7 +549,9 @@ func (*MqttDeviceResponse) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Bu
 		(*MqttDeviceResponse_GpioAnalog)(nil),
 		(*MqttDeviceResponse_I2C)(nil),
 		(*MqttDeviceResponse_BadArgs)(nil),
+		(*MqttDeviceResponse_HeartbeatSelectReq)(nil),
 		(*MqttDeviceResponse_Heartbeat)(nil),
+		(*MqttDeviceResponse_HeartbeatReq)(nil),
 		(*MqttDeviceResponse_RunTime)(nil),
 		(*MqttDeviceResponse_Config)(nil),
 	}
@@ -485,18 +581,28 @@ func _MqttDeviceResponse_OneofMarshaler(msg proto.Message, b *proto.Buffer) erro
 		if err := b.EncodeMessage(x.BadArgs); err != nil {
 			return err
 		}
-	case *MqttDeviceResponse_Heartbeat:
+	case *MqttDeviceResponse_HeartbeatSelectReq:
 		b.EncodeVarint(100<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.HeartbeatSelectReq); err != nil {
+			return err
+		}
+	case *MqttDeviceResponse_Heartbeat:
+		b.EncodeVarint(101<<3 | proto.WireBytes)
 		if err := b.EncodeMessage(x.Heartbeat); err != nil {
 			return err
 		}
+	case *MqttDeviceResponse_HeartbeatReq:
+		b.EncodeVarint(102<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.HeartbeatReq); err != nil {
+			return err
+		}
 	case *MqttDeviceResponse_RunTime:
-		b.EncodeVarint(101<<3 | proto.WireBytes)
+		b.EncodeVarint(103<<3 | proto.WireBytes)
 		if err := b.EncodeMessage(x.RunTime); err != nil {
 			return err
 		}
 	case *MqttDeviceResponse_Config:
-		b.EncodeVarint(102<<3 | proto.WireBytes)
+		b.EncodeVarint(104<<3 | proto.WireBytes)
 		if err := b.EncodeMessage(x.Config); err != nil {
 			return err
 		}
@@ -542,7 +648,15 @@ func _MqttDeviceResponse_OneofUnmarshaler(msg proto.Message, tag, wire int, b *p
 		err := b.DecodeMessage(msg)
 		m.Payload = &MqttDeviceResponse_BadArgs{msg}
 		return true, err
-	case 100: // payload.heartbeat
+	case 100: // payload.heartbeat_select_req
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(HeartbeatSelectReq)
+		err := b.DecodeMessage(msg)
+		m.Payload = &MqttDeviceResponse_HeartbeatSelectReq{msg}
+		return true, err
+	case 101: // payload.heartbeat
 		if wire != proto.WireBytes {
 			return true, proto.ErrInternalBadWireType
 		}
@@ -550,7 +664,15 @@ func _MqttDeviceResponse_OneofUnmarshaler(msg proto.Message, tag, wire int, b *p
 		err := b.DecodeMessage(msg)
 		m.Payload = &MqttDeviceResponse_Heartbeat{msg}
 		return true, err
-	case 101: // payload.run_time
+	case 102: // payload.heartbeat_req
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(HeartbeatReq)
+		err := b.DecodeMessage(msg)
+		m.Payload = &MqttDeviceResponse_HeartbeatReq{msg}
+		return true, err
+	case 103: // payload.run_time
 		if wire != proto.WireBytes {
 			return true, proto.ErrInternalBadWireType
 		}
@@ -558,7 +680,7 @@ func _MqttDeviceResponse_OneofUnmarshaler(msg proto.Message, tag, wire int, b *p
 		err := b.DecodeMessage(msg)
 		m.Payload = &MqttDeviceResponse_RunTime{msg}
 		return true, err
-	case 102: // payload.config
+	case 104: // payload.config
 		if wire != proto.WireBytes {
 			return true, proto.ErrInternalBadWireType
 		}
@@ -595,8 +717,18 @@ func _MqttDeviceResponse_OneofSizer(msg proto.Message) (n int) {
 		n += 2 // tag and wire
 		n += proto.SizeVarint(uint64(s))
 		n += s
+	case *MqttDeviceResponse_HeartbeatSelectReq:
+		s := proto.Size(x.HeartbeatSelectReq)
+		n += 2 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
 	case *MqttDeviceResponse_Heartbeat:
 		s := proto.Size(x.Heartbeat)
+		n += 2 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *MqttDeviceResponse_HeartbeatReq:
+		s := proto.Size(x.HeartbeatReq)
 		n += 2 // tag and wire
 		n += proto.SizeVarint(uint64(s))
 		n += s
@@ -906,6 +1038,123 @@ func (m *HeartbeatRes) GetStatus() int32 {
 	return 0
 }
 
+type HeartbeatReq struct {
+	Status               int32    `protobuf:"varint,1,opt,name=status,proto3" json:"status,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *HeartbeatReq) Reset()         { *m = HeartbeatReq{} }
+func (m *HeartbeatReq) String() string { return proto.CompactTextString(m) }
+func (*HeartbeatReq) ProtoMessage()    {}
+func (*HeartbeatReq) Descriptor() ([]byte, []int) {
+	return fileDescriptor_16cef6ccd09761b2, []int{9}
+}
+
+func (m *HeartbeatReq) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_HeartbeatReq.Unmarshal(m, b)
+}
+func (m *HeartbeatReq) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_HeartbeatReq.Marshal(b, m, deterministic)
+}
+func (m *HeartbeatReq) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_HeartbeatReq.Merge(m, src)
+}
+func (m *HeartbeatReq) XXX_Size() int {
+	return xxx_messageInfo_HeartbeatReq.Size(m)
+}
+func (m *HeartbeatReq) XXX_DiscardUnknown() {
+	xxx_messageInfo_HeartbeatReq.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_HeartbeatReq proto.InternalMessageInfo
+
+func (m *HeartbeatReq) GetStatus() int32 {
+	if m != nil {
+		return m.Status
+	}
+	return 0
+}
+
+type HeartbeatSelectRes struct {
+	Status               int32    `protobuf:"varint,1,opt,name=status,proto3" json:"status,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *HeartbeatSelectRes) Reset()         { *m = HeartbeatSelectRes{} }
+func (m *HeartbeatSelectRes) String() string { return proto.CompactTextString(m) }
+func (*HeartbeatSelectRes) ProtoMessage()    {}
+func (*HeartbeatSelectRes) Descriptor() ([]byte, []int) {
+	return fileDescriptor_16cef6ccd09761b2, []int{10}
+}
+
+func (m *HeartbeatSelectRes) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_HeartbeatSelectRes.Unmarshal(m, b)
+}
+func (m *HeartbeatSelectRes) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_HeartbeatSelectRes.Marshal(b, m, deterministic)
+}
+func (m *HeartbeatSelectRes) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_HeartbeatSelectRes.Merge(m, src)
+}
+func (m *HeartbeatSelectRes) XXX_Size() int {
+	return xxx_messageInfo_HeartbeatSelectRes.Size(m)
+}
+func (m *HeartbeatSelectRes) XXX_DiscardUnknown() {
+	xxx_messageInfo_HeartbeatSelectRes.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_HeartbeatSelectRes proto.InternalMessageInfo
+
+func (m *HeartbeatSelectRes) GetStatus() int32 {
+	if m != nil {
+		return m.Status
+	}
+	return 0
+}
+
+type HeartbeatSelectReq struct {
+	Status               int32    `protobuf:"varint,1,opt,name=status,proto3" json:"status,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *HeartbeatSelectReq) Reset()         { *m = HeartbeatSelectReq{} }
+func (m *HeartbeatSelectReq) String() string { return proto.CompactTextString(m) }
+func (*HeartbeatSelectReq) ProtoMessage()    {}
+func (*HeartbeatSelectReq) Descriptor() ([]byte, []int) {
+	return fileDescriptor_16cef6ccd09761b2, []int{11}
+}
+
+func (m *HeartbeatSelectReq) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_HeartbeatSelectReq.Unmarshal(m, b)
+}
+func (m *HeartbeatSelectReq) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_HeartbeatSelectReq.Marshal(b, m, deterministic)
+}
+func (m *HeartbeatSelectReq) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_HeartbeatSelectReq.Merge(m, src)
+}
+func (m *HeartbeatSelectReq) XXX_Size() int {
+	return xxx_messageInfo_HeartbeatSelectReq.Size(m)
+}
+func (m *HeartbeatSelectReq) XXX_DiscardUnknown() {
+	xxx_messageInfo_HeartbeatSelectReq.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_HeartbeatSelectReq proto.InternalMessageInfo
+
+func (m *HeartbeatSelectReq) GetStatus() int32 {
+	if m != nil {
+		return m.Status
+	}
+	return 0
+}
+
 type GpioDigitalPayload struct {
 	Pin                  int32    `protobuf:"varint,1,opt,name=pin,proto3" json:"pin,omitempty"`
 	Value                int32    `protobuf:"varint,2,opt,name=value,proto3" json:"value,omitempty"`
@@ -918,7 +1167,7 @@ func (m *GpioDigitalPayload) Reset()         { *m = GpioDigitalPayload{} }
 func (m *GpioDigitalPayload) String() string { return proto.CompactTextString(m) }
 func (*GpioDigitalPayload) ProtoMessage()    {}
 func (*GpioDigitalPayload) Descriptor() ([]byte, []int) {
-	return fileDescriptor_16cef6ccd09761b2, []int{9}
+	return fileDescriptor_16cef6ccd09761b2, []int{12}
 }
 
 func (m *GpioDigitalPayload) XXX_Unmarshal(b []byte) error {
@@ -965,7 +1214,7 @@ func (m *GpioDigitalPayloadRes) Reset()         { *m = GpioDigitalPayloadRes{} }
 func (m *GpioDigitalPayloadRes) String() string { return proto.CompactTextString(m) }
 func (*GpioDigitalPayloadRes) ProtoMessage()    {}
 func (*GpioDigitalPayloadRes) Descriptor() ([]byte, []int) {
-	return fileDescriptor_16cef6ccd09761b2, []int{10}
+	return fileDescriptor_16cef6ccd09761b2, []int{13}
 }
 
 func (m *GpioDigitalPayloadRes) XXX_Unmarshal(b []byte) error {
@@ -1012,7 +1261,7 @@ func (m *GpioAnalogPayload) Reset()         { *m = GpioAnalogPayload{} }
 func (m *GpioAnalogPayload) String() string { return proto.CompactTextString(m) }
 func (*GpioAnalogPayload) ProtoMessage()    {}
 func (*GpioAnalogPayload) Descriptor() ([]byte, []int) {
-	return fileDescriptor_16cef6ccd09761b2, []int{11}
+	return fileDescriptor_16cef6ccd09761b2, []int{14}
 }
 
 func (m *GpioAnalogPayload) XXX_Unmarshal(b []byte) error {
@@ -1059,7 +1308,7 @@ func (m *GpioAnalogPayloadRes) Reset()         { *m = GpioAnalogPayloadRes{} }
 func (m *GpioAnalogPayloadRes) String() string { return proto.CompactTextString(m) }
 func (*GpioAnalogPayloadRes) ProtoMessage()    {}
 func (*GpioAnalogPayloadRes) Descriptor() ([]byte, []int) {
-	return fileDescriptor_16cef6ccd09761b2, []int{12}
+	return fileDescriptor_16cef6ccd09761b2, []int{15}
 }
 
 func (m *GpioAnalogPayloadRes) XXX_Unmarshal(b []byte) error {
@@ -1108,7 +1357,7 @@ func (m *I2CPayload) Reset()         { *m = I2CPayload{} }
 func (m *I2CPayload) String() string { return proto.CompactTextString(m) }
 func (*I2CPayload) ProtoMessage()    {}
 func (*I2CPayload) Descriptor() ([]byte, []int) {
-	return fileDescriptor_16cef6ccd09761b2, []int{13}
+	return fileDescriptor_16cef6ccd09761b2, []int{16}
 }
 
 func (m *I2CPayload) XXX_Unmarshal(b []byte) error {
@@ -1171,7 +1420,7 @@ func (m *I2CPayloadRes) Reset()         { *m = I2CPayloadRes{} }
 func (m *I2CPayloadRes) String() string { return proto.CompactTextString(m) }
 func (*I2CPayloadRes) ProtoMessage()    {}
 func (*I2CPayloadRes) Descriptor() ([]byte, []int) {
-	return fileDescriptor_16cef6ccd09761b2, []int{14}
+	return fileDescriptor_16cef6ccd09761b2, []int{17}
 }
 
 func (m *I2CPayloadRes) XXX_Unmarshal(b []byte) error {
@@ -1230,6 +1479,9 @@ func init() {
 	proto.RegisterType((*ErrBadArgsRes)(nil), "ErrBadArgsRes")
 	proto.RegisterType((*Heartbeat)(nil), "Heartbeat")
 	proto.RegisterType((*HeartbeatRes)(nil), "HeartbeatRes")
+	proto.RegisterType((*HeartbeatReq)(nil), "HeartbeatReq")
+	proto.RegisterType((*HeartbeatSelectRes)(nil), "HeartbeatSelectRes")
+	proto.RegisterType((*HeartbeatSelectReq)(nil), "HeartbeatSelectReq")
 	proto.RegisterType((*GpioDigitalPayload)(nil), "GpioDigitalPayload")
 	proto.RegisterType((*GpioDigitalPayloadRes)(nil), "GpioDigitalPayloadRes")
 	proto.RegisterType((*GpioAnalogPayload)(nil), "GpioAnalogPayload")
@@ -1241,42 +1493,47 @@ func init() {
 func init() { proto.RegisterFile("esp8266_mqtt.proto", fileDescriptor_16cef6ccd09761b2) }
 
 var fileDescriptor_16cef6ccd09761b2 = []byte{
-	// 591 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x94, 0x5d, 0x6f, 0xd3, 0x3c,
-	0x14, 0xc7, 0xd7, 0x76, 0x59, 0xd7, 0xd3, 0x97, 0xe7, 0x99, 0xd9, 0xa6, 0xdc, 0x20, 0xa6, 0xb4,
-	0x82, 0x8a, 0x97, 0x5c, 0x14, 0x31, 0x55, 0x1a, 0x02, 0x6d, 0x0c, 0xd1, 0x5d, 0x20, 0xa1, 0xc0,
-	0x35, 0x91, 0x1b, 0x7b, 0xc1, 0xa2, 0x4d, 0x5c, 0xdb, 0x9d, 0xe0, 0x73, 0xf2, 0x1d, 0xf8, 0x1c,
-	0xc8, 0x76, 0x9a, 0xa4, 0x4b, 0x26, 0x76, 0xc1, 0xdd, 0x39, 0x7f, 0xff, 0x8f, 0x63, 0xff, 0xce,
-	0x71, 0x00, 0x51, 0xc9, 0xa7, 0x93, 0xd3, 0xd3, 0x70, 0xb9, 0x52, 0xca, 0xe7, 0x22, 0x55, 0xa9,
-	0xf7, 0xab, 0x09, 0x07, 0x1f, 0x57, 0x4a, 0x5d, 0xd2, 0x1b, 0x16, 0xd1, 0x80, 0xae, 0xd6, 0x54,
-	0x2a, 0xf4, 0x10, 0x40, 0x52, 0x29, 0x59, 0x9a, 0x84, 0x8c, 0xb8, 0x8d, 0x93, 0xc6, 0xd8, 0x09,
-	0x3a, 0x99, 0x72, 0x45, 0xd0, 0x14, 0x7a, 0x31, 0x67, 0x69, 0x48, 0x58, 0xcc, 0x14, 0x5e, 0xb8,
-	0xcd, 0x93, 0xc6, 0xb8, 0x3b, 0x79, 0xe0, 0x7f, 0xe0, 0x2c, 0xbd, 0xb4, 0xda, 0x27, 0xfc, 0x73,
-	0x91, 0x62, 0x32, 0xdb, 0x09, 0xba, 0x71, 0xa1, 0xa2, 0x57, 0x60, 0xd2, 0x10, 0x27, 0x78, 0x91,
-	0xc6, 0x6e, 0xcb, 0x14, 0x22, 0x53, 0x78, 0x6e, 0xa4, 0xa2, 0x0e, 0xe2, 0x5c, 0x44, 0x8f, 0xa0,
-	0xc5, 0x26, 0x91, 0xbb, 0x6b, 0xec, 0x5d, 0xff, 0x6a, 0x12, 0x15, 0x3e, 0xbd, 0x82, 0x9e, 0x42,
-	0xe7, 0x1b, 0xc5, 0x42, 0xcd, 0x29, 0x56, 0x2e, 0x31, 0x36, 0xf0, 0x67, 0x1b, 0x65, 0xb6, 0x13,
-	0x14, 0xcb, 0xe8, 0x39, 0xec, 0x8b, 0x75, 0x12, 0x2a, 0xb6, 0xa4, 0x2e, 0x35, 0xd6, 0xff, 0xfc,
-	0x60, 0x9d, 0x7c, 0x61, 0x4b, 0x5a, 0xec, 0xda, 0x16, 0x56, 0x41, 0x63, 0xd8, 0x8b, 0xd2, 0xe4,
-	0x9a, 0xc5, 0xee, 0xb5, 0xf1, 0x0e, 0xfc, 0x77, 0x26, 0x2d, 0xac, 0xd9, 0xfa, 0x45, 0x07, 0xda,
-	0xdc, 0x8a, 0xde, 0xef, 0x26, 0xa0, 0x32, 0x55, 0xc9, 0xd3, 0x44, 0x52, 0x74, 0x56, 0xcb, 0xed,
-	0xb8, 0x86, 0x5b, 0x40, 0xe5, 0x6d, 0x74, 0xd3, 0x3a, 0x74, 0x47, 0x55, 0x74, 0xb6, 0xb4, 0x4c,
-	0xcf, 0x2b, 0xd3, 0x1b, 0x94, 0xe8, 0x59, 0xab, 0x01, 0xf8, 0x0c, 0xf6, 0xe7, 0x98, 0x84, 0x58,
-	0xc4, 0xd2, 0x8d, 0x32, 0xe3, 0x7b, 0x21, 0x2e, 0x30, 0x39, 0x17, 0xb1, 0xb4, 0xc6, 0xf6, 0xdc,
-	0x66, 0xe8, 0x45, 0x95, 0x76, 0xbf, 0xa0, 0x6d, 0xcd, 0x25, 0xe0, 0xe3, 0x0a, 0xf0, 0xee, 0x06,
-	0x78, 0xb6, 0xf1, 0x06, 0xf6, 0xe8, 0x16, 0x6c, 0xc8, 0x60, 0x5b, 0x5b, 0x0d, 0xe8, 0x21, 0x74,
-	0x72, 0x07, 0x3a, 0xce, 0xab, 0xed, 0xc4, 0x66, 0x99, 0xf7, 0x04, 0xfa, 0x5b, 0x3d, 0xbb, 0xd3,
-	0xf8, 0x1d, 0xa0, 0x38, 0x17, 0x42, 0xb0, 0x6b, 0x8e, 0xac, 0x3d, 0xad, 0xc0, 0xc4, 0x68, 0x04,
-	0x03, 0xcc, 0x79, 0x28, 0x15, 0x16, 0xca, 0x5e, 0xa8, 0x69, 0x56, 0x7b, 0x98, 0xf3, 0xcf, 0x5a,
-	0x34, 0xd7, 0x18, 0x42, 0x5f, 0xd0, 0xc2, 0x23, 0x4d, 0xb3, 0x9c, 0xa0, 0x97, 0x89, 0xda, 0x23,
-	0xbd, 0x11, 0x0c, 0xb6, 0xa7, 0x6e, 0xeb, 0x83, 0x8e, 0xfd, 0xa0, 0x37, 0x84, 0xfe, 0x56, 0x1b,
-	0xb4, 0x29, 0x4a, 0x49, 0x6e, 0xd2, 0xb1, 0xa6, 0x90, 0xd3, 0xd7, 0x97, 0x93, 0x0a, 0xab, 0xb5,
-	0xdc, 0x5c, 0xce, 0x66, 0xde, 0x63, 0xe8, 0x95, 0x5b, 0x74, 0xa7, 0xef, 0x35, 0xa0, 0xea, 0x3c,
-	0xa2, 0xff, 0xa1, 0xc5, 0x59, 0x92, 0x59, 0x75, 0x88, 0x0e, 0xc1, 0xb9, 0xc1, 0x8b, 0xb5, 0x25,
-	0xe0, 0x04, 0x36, 0xf1, 0xde, 0xc2, 0x51, 0xed, 0x34, 0xdf, 0x7b, 0x83, 0x33, 0x38, 0xa8, 0x8c,
-	0xf4, 0xdf, 0x8a, 0x9b, 0x9b, 0xe2, 0x37, 0x70, 0x58, 0xf7, 0x1e, 0xee, 0x5d, 0xff, 0x15, 0xa0,
-	0x78, 0x1d, 0xba, 0x6a, 0x9e, 0xe3, 0xd1, 0xa1, 0x86, 0x8f, 0x09, 0x11, 0xd9, 0x89, 0x4d, 0xac,
-	0x77, 0x62, 0x09, 0xa1, 0x3f, 0xb2, 0x26, 0xdb, 0x44, 0xab, 0x38, 0x89, 0x17, 0xd4, 0xbc, 0x3a,
-	0x27, 0xb0, 0x89, 0x87, 0xa1, 0xbf, 0xf5, 0xfa, 0xfe, 0xfd, 0x27, 0xe6, 0x7b, 0xe6, 0xbf, 0xfe,
-	0xf2, 0x4f, 0x00, 0x00, 0x00, 0xff, 0xff, 0xc9, 0x64, 0x58, 0xb5, 0xed, 0x05, 0x00, 0x00,
+	// 671 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x95, 0x5d, 0x4f, 0x13, 0x4d,
+	0x14, 0xc7, 0x81, 0x52, 0xa0, 0xa7, 0x2f, 0xcf, 0xc3, 0x11, 0xc8, 0xde, 0x18, 0xc9, 0x42, 0xb4,
+	0x51, 0xec, 0x45, 0x55, 0x42, 0x82, 0xd1, 0x80, 0x18, 0xca, 0x85, 0x89, 0x59, 0xbc, 0x76, 0x33,
+	0xdd, 0x1d, 0xb6, 0x13, 0xcb, 0xbe, 0xcc, 0x4c, 0x89, 0x7e, 0x4d, 0xbf, 0x83, 0xdf, 0xc3, 0xcc,
+	0x4b, 0x77, 0xb7, 0xec, 0x36, 0x62, 0xe2, 0xdd, 0x9c, 0x33, 0xff, 0xff, 0xd9, 0x39, 0xfd, 0x9d,
+	0x99, 0x02, 0x52, 0x91, 0x9e, 0x0c, 0x8f, 0x8f, 0xfd, 0xdb, 0x4c, 0xca, 0x41, 0xca, 0x13, 0x99,
+	0xb8, 0x3f, 0x1b, 0xb0, 0xfd, 0x29, 0x93, 0xf2, 0x82, 0xde, 0xb1, 0x80, 0x7a, 0x34, 0x9b, 0x51,
+	0x21, 0xf1, 0x31, 0x80, 0xa0, 0x42, 0xb0, 0x24, 0xf6, 0x59, 0xe8, 0xac, 0xee, 0xaf, 0xf6, 0x9b,
+	0x5e, 0xcb, 0x66, 0xae, 0x42, 0x3c, 0x81, 0x4e, 0x94, 0xb2, 0xc4, 0x0f, 0x59, 0xc4, 0x24, 0x99,
+	0x3a, 0x6b, 0xfb, 0xab, 0xfd, 0xf6, 0xf0, 0xd1, 0xe0, 0x32, 0x65, 0xc9, 0x85, 0xc9, 0x7d, 0x26,
+	0x3f, 0xa6, 0x09, 0x09, 0x47, 0x2b, 0x5e, 0x3b, 0x2a, 0xb2, 0xf8, 0x06, 0x74, 0xe8, 0x93, 0x98,
+	0x4c, 0x93, 0xc8, 0x69, 0x68, 0x23, 0x6a, 0xe3, 0x99, 0x4e, 0x15, 0x3e, 0x88, 0xf2, 0x24, 0x3e,
+	0x81, 0x06, 0x1b, 0x06, 0xce, 0xba, 0x96, 0xb7, 0x07, 0x57, 0xc3, 0xa0, 0xd0, 0xa9, 0x1d, 0x7c,
+	0x0e, 0xad, 0x09, 0x25, 0x5c, 0x8e, 0x29, 0x91, 0x4e, 0xa8, 0x65, 0x30, 0x18, 0xcd, 0x33, 0xa3,
+	0x15, 0xaf, 0xd8, 0xc6, 0x4b, 0xd8, 0xc9, 0x03, 0x5f, 0xd0, 0x29, 0x0d, 0xa4, 0xcf, 0xa9, 0x70,
+	0xa8, 0xed, 0x22, 0xb7, 0x5d, 0xeb, 0x3d, 0x8f, 0x8a, 0xd1, 0x8a, 0x87, 0x93, 0x4a, 0x16, 0x5f,
+	0x43, 0xb7, 0x28, 0xa4, 0x2a, 0xdc, 0xe8, 0x0a, 0xdd, 0xa2, 0x82, 0xf1, 0x76, 0x26, 0xa5, 0x18,
+	0x8f, 0x60, 0x8b, 0xcf, 0x62, 0x5f, 0xb2, 0x5b, 0xea, 0x44, 0xda, 0xf0, 0xdf, 0xc0, 0x9b, 0xc5,
+	0x5f, 0xd8, 0x2d, 0x2d, 0x9a, 0xda, 0xe4, 0x26, 0x83, 0x7d, 0xd8, 0x08, 0x92, 0xf8, 0x86, 0x45,
+	0xce, 0x44, 0x6b, 0x7b, 0x83, 0x0f, 0x3a, 0x2c, 0xa4, 0x76, 0xff, 0xbc, 0x05, 0x9b, 0xa9, 0x49,
+	0xba, 0xbf, 0x1a, 0x80, 0x65, 0xa8, 0x22, 0x4d, 0x62, 0x41, 0xf1, 0xb4, 0x16, 0xdb, 0x5e, 0x0d,
+	0x36, 0x73, 0xee, 0x05, 0x72, 0x27, 0x75, 0xe4, 0x76, 0xab, 0xe4, 0x8c, 0xb5, 0x0c, 0xcf, 0x2d,
+	0xc3, 0xeb, 0x95, 0xe0, 0x19, 0xa9, 0xe6, 0xf7, 0x02, 0xb6, 0xc6, 0x24, 0xf4, 0x09, 0x8f, 0x84,
+	0x13, 0x58, 0xe1, 0x47, 0xce, 0xcf, 0x49, 0x78, 0xc6, 0x23, 0x61, 0x84, 0x9b, 0x63, 0x13, 0x2d,
+	0x01, 0x98, 0x59, 0xee, 0x35, 0x00, 0xb3, 0x5a, 0x80, 0x19, 0xbe, 0x2c, 0x4f, 0x0d, 0xad, 0x87,
+	0x57, 0x1a, 0x9c, 0x7b, 0xbc, 0xb3, 0x3a, 0xde, 0xd9, 0x3d, 0xde, 0x19, 0xf6, 0x2b, 0xbc, 0xdb,
+	0x73, 0xde, 0xb6, 0xaf, 0x39, 0xeb, 0xc3, 0x7b, 0xac, 0xc1, 0xb2, 0x36, 0xb2, 0x1a, 0xce, 0x07,
+	0xd0, 0xca, 0x15, 0xb8, 0x97, 0xbb, 0xcd, 0x7d, 0xb5, 0x91, 0xfb, 0x0c, 0xba, 0x0b, 0x23, 0xb3,
+	0x54, 0xf8, 0x0d, 0xa0, 0x38, 0x17, 0x22, 0xac, 0xeb, 0x23, 0x2b, 0x4d, 0xc3, 0xd3, 0x6b, 0x3c,
+	0x84, 0x1e, 0x49, 0x53, 0x5f, 0x48, 0xc2, 0xa5, 0x69, 0x68, 0x4d, 0xef, 0x76, 0x48, 0x9a, 0x5e,
+	0xab, 0xa4, 0x6e, 0xe3, 0x00, 0xba, 0x9c, 0x16, 0x1a, 0xa1, 0x67, 0xa5, 0xe9, 0x75, 0x6c, 0x52,
+	0x69, 0x84, 0x7b, 0x08, 0xbd, 0xc5, 0xa1, 0x5f, 0xf8, 0x60, 0xd3, 0x7c, 0xd0, 0x3d, 0x80, 0xee,
+	0xc2, 0x14, 0x28, 0x51, 0x90, 0x84, 0xb9, 0x48, 0xad, 0xd5, 0xaf, 0x90, 0x03, 0x50, 0xcd, 0x09,
+	0x49, 0xe4, 0x4c, 0xcc, 0x9b, 0x33, 0x91, 0xfb, 0x14, 0x3a, 0x65, 0xb0, 0x0f, 0xd4, 0x65, 0x4b,
+	0x75, 0x47, 0x80, 0xd5, 0x77, 0xe2, 0xaf, 0xd4, 0xcb, 0x6b, 0xbf, 0x05, 0xac, 0x5e, 0x49, 0xfc,
+	0x1f, 0x1a, 0x29, 0x8b, 0xad, 0x54, 0x2d, 0x71, 0x07, 0x9a, 0x77, 0x64, 0x3a, 0x33, 0x14, 0x9a,
+	0x9e, 0x09, 0xdc, 0xf7, 0xb0, 0x5b, 0x7b, 0xa1, 0x1f, 0x5c, 0xe0, 0x14, 0xb6, 0x2b, 0xb7, 0xfa,
+	0x4f, 0xe6, 0xb5, 0xb9, 0xf9, 0x1d, 0xec, 0xd4, 0x3d, 0x09, 0x0f, 0xf6, 0x7f, 0x05, 0x28, 0x1e,
+	0x08, 0xe5, 0x1a, 0xe7, 0x3f, 0x8f, 0x5a, 0xaa, 0x01, 0x20, 0x61, 0xc8, 0xed, 0x89, 0xf5, 0x5a,
+	0x55, 0x62, 0x71, 0x48, 0xbf, 0xdb, 0x41, 0x33, 0x81, 0xca, 0x92, 0x38, 0x9a, 0x52, 0xfd, 0xf0,
+	0x34, 0x3d, 0x13, 0xb8, 0x04, 0xba, 0x0b, 0x0f, 0xd0, 0xbf, 0xff, 0xc4, 0x78, 0x43, 0xff, 0xb3,
+	0xbe, 0xfa, 0x1d, 0x00, 0x00, 0xff, 0xff, 0x55, 0x14, 0x83, 0xfd, 0x6f, 0x07, 0x00, 0x00,
 }

@@ -7,8 +7,10 @@ message MqttDeviceRequest {
         GpioAnalogPayload gpio_analog = 3;
         I2cPayload i2c = 4;
         Heartbeat heartbeat = 100;
-        RunTimePayload run_time = 101;
-        ConfigPayload config = 102;
+        HeartbeatSelectRes heartbeat_select_res = 101;
+        HeartbeatRes heartbeat_res = 102;
+        RunTimePayload run_time = 103;
+        ConfigPayload config = 104;
     };
 }
 
@@ -18,9 +20,11 @@ message MqttDeviceResponse {
         GpioAnalogPayloadRes gpio_analog = 3;
         I2cPayloadRes i2c = 4;
         ErrBadArgsRes bad_args = 99;
-        HeartbeatRes heartbeat = 100;
-        RunTimeRes run_time = 101;
-        ConfigRes config = 102;
+        HeartbeatSelectReq heartbeat_select_req = 100;
+        HeartbeatRes heartbeat = 101;
+        HeartbeatReq heartbeat_req = 102;
+        RunTimeRes run_time = 103;
+        ConfigRes config = 104;
     }
 }
 
@@ -51,6 +55,18 @@ message Heartbeat {
 }
 
 message HeartbeatRes {
+    int32 status = 1;
+}
+
+message HeartbeatReq {
+    int32 status = 1;
+}
+
+message HeartbeatSelectRes {
+    int32 status = 1;
+}
+
+message HeartbeatSelectReq {
     int32 status = 1;
 }
 

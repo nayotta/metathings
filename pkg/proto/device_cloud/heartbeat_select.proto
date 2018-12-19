@@ -3,13 +3,15 @@ syntax = "proto3";
 package ai.metathings.service.device_cloud;
 
 import "google/protobuf/wrappers.proto";
-
+import "google/protobuf/any.proto";
 import "github.com/mwitkow/go-proto-validators/validator.proto";
 
 message HeartBeatSelectRequest {
     google.protobuf.StringValue component_id = 1 [(validator.field) = {msg_exists: true}];
+    google.protobuf.Any payload = 2 [(validator.field) = {msg_exists: true}];
 }
 
 message HeartBeatSelectResponse {
-    int32 res_code = 1;
+    int32 session_id = 1;
+    google.protobuf.Any payload = 2;
 }
