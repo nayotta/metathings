@@ -1,7 +1,6 @@
 package metathingsdevicecloudmqttbridge
 
 import (
-	"fmt"
 	"time"
 
 	emitter "github.com/emitter-io/go"
@@ -14,15 +13,10 @@ func (that *mqttBridge) keygenCallback(_ emitter.Emitter, msg emitter.KeyGenResp
 		switch topicStr {
 		case "+/up/#/":
 			that.upKey = msg.Key
-			fmt.Println("upKey res:", msg.Key)
 		case "+/statusup/#/":
 			that.statusUpKey = msg.Key
-			fmt.Println("statusUpKey res:", msg.Key)
 		case "+/down/#/":
 			that.downKey = msg.Key
-			fmt.Println("downKey res:", msg.Key)
-		default:
-			// TODO(zh) device channel key
 		}
 	}
 }
