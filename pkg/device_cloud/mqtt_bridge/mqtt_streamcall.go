@@ -225,7 +225,7 @@ func newStreamCallCenter(mqttBr *mqttBridge, componentID string) *streamCallCent
 	topicSession := componentID + "/up/" + sessionIDStr + "/"
 	topicNotify := componentID + "/up/notify/"
 	topicDown := componentID + "/down/"
-	topicHeartBeat := componentID + "/status/" + sessionIDStr + "/"
+	topicHeartBeat := componentID + "/statusup/" + sessionIDStr + "/"
 
 	downKey := mqttBr.downKey
 	upKey := mqttBr.upKey
