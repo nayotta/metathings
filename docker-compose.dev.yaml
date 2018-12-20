@@ -57,6 +57,26 @@ services:
     - "5000:5000"
     restart: on-failure
 
+  deviced:
+    environment:
+    - MTD_STAGE=dev
+    build:
+      context: .
+      dockerfile: dockerfile/Dockerfile.deviced.dev
+    image: nayotta/metathings-deviced-development
+    volumes:
+    - .:/go/src/github.com/nayotta/metathings
+    - ./data/storage:/var/metathings/storage
+    - ./etc:/etc/metathings
+    networks:
+    - metathings-backend
+    - metathings-kafka
+    expose:
+    - "5001"
+    ports:
+    - "5001:5001"
+    restart: on-failure
+
   cored:
     environment:
     - MTD_STAGE=dev
