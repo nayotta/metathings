@@ -216,7 +216,7 @@ func (self *connectionCenter) stm2br(dev *storage.Device, conn Connection, br Br
 			case <-quit:
 				logger.Debugf("quit signal from br2stm")
 			case abr.Send() <- buf:
-				logger.Debugf("send msg")
+				logger.WithField("bridge", res_br.Id()).Debugf("send msg")
 			}
 		}
 	}()
@@ -279,11 +279,13 @@ func (self *connectionCenter) UnaryCall(dev *storage.Device, req *pb.OpUnaryCall
 	if conn_br, err = self.brfty.GetBridge(br_ids[0]); err != nil {
 		return nil, err
 	}
+	defer conn_br.Close()
 	self.logger.WithField("bridge", br_ids[0]).Debugf("get bridge")
 
 	if sess_br, err = self.brfty.BuildBridge(dev_id, conn_req_sess); err != nil {
 		return nil, err
 	}
+	defer sess_br.Close()
 	self.logger.WithField("bridge", sess_br.Id()).Debugf("build recv bridge")
 
 	conn_req := &pb.ConnectRequest{
@@ -335,16 +337,25 @@ func (self *connectionCenter) StreamCall(dev *storage.Device, cfg *pb.OpStreamCa
 		self.logger.WithError(err).WithField("device_id", dev_id).Debugf("failed to get bridge")
 		return err
 	}
+	self.logger.WithFields(log.Fields{
+		"device":  dev_id,
+		"bridges": br_ids,
+	}).Debugf("list bridges from device")
 
 	if conn_br, err = self.brfty.GetBridge(br_ids[0]); err != nil {
 		self.logger.WithError(err).Debugf("failed to get bridge from bridge factory")
 		return err
 	}
+	self.logger.WithField("bridge", br_ids[0]).Debugf("get bridge")
 
 	if sess_br, err = self.brfty.BuildBridge(dev_id, sess); err != nil {
 		self.logger.WithError(err).Debugf("failed to build bridge")
 		return err
 	}
+	self.logger.WithFields(log.Fields{
+		"device":  dev_id,
+		"session": sess,
+	}).Debugf("build bridge")
 
 	cfg_req := &pb.ConnectRequest{
 		SessionId: &wrappers.Int32Value{Value: sess},
@@ -367,6 +378,7 @@ func (self *connectionCenter) StreamCall(dev *storage.Device, cfg *pb.OpStreamCa
 		self.logger.WithError(err).Debugf("failed to send config request")
 		return err
 	}
+	self.logger.Debugf("send config request to device")
 
 	if buf, err = sess_br.Recv(); err != nil {
 		self.logger.WithError(err).Debugf("failed to recv config response")
@@ -387,6 +399,7 @@ func (self *connectionCenter) StreamCall(dev *storage.Device, cfg *pb.OpStreamCa
 		self.logger.WithError(err).WithFields(log.Fields{}).Debugf("unexpected config response")
 		return err
 	}
+	self.logger.Debugf("recv config response from device")
 
 	up2down_wait := self.stm_up2down(dev, cfg_val, sess, stm, sess_br, &err)
 	down2up_wait := self.stm_down2up(dev, cfg_val, sess, stm, sess_br, &err)
@@ -400,6 +413,7 @@ func (self *connectionCenter) StreamCall(dev *storage.Device, cfg *pb.OpStreamCa
 		self.logger.WithError(err).Debugf("streaming error")
 		return err
 	}
+	self.logger.Debugf("streaming closed")
 
 	return nil
 }

@@ -17,6 +17,7 @@ func (self *MetathingsDevicedService) StreamCall(stm pb.DevicedService_StreamCal
 		self.logger.WithError(err).Errorf("failed to recv config msg")
 		return status.Errorf(codes.Internal, err.Error())
 	}
+	self.logger.Debugf("recv config msg")
 
 	cfg := req.GetValue().GetConfig()
 	dev_id_str := req.GetDevice().GetId().GetValue()

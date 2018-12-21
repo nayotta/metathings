@@ -12,6 +12,7 @@ type Bridge interface {
 	Id() string
 	Send([]byte) error
 	Recv() ([]byte, error)
+	Close() error
 }
 
 type BridgeFactory interface {
