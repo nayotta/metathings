@@ -1,0 +1,5 @@
+FROM nayotta/metathingsd
+
+COPY ./etc/deviced.yaml /etc/metathings/deviced.yaml
+COPY ./script/deviced_start.sh /usr/local/sbin/deviced_start.sh
+CMD /usr/local/sbin/deviced_start.sh

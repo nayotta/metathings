@@ -26,6 +26,10 @@ static_resources:
                 route:
                   cluster: identityd2
               - match:
+                  prefix: "/ai.metathings.service.deviced.DevicedService"
+                route:
+                  cluster: deviced
+              - match:
                   prefix: "/ai.metathings.service.cored.CoredService"
                 route:
                   cluster: cored
@@ -67,6 +71,15 @@ static_resources:
     - socket_address:
         address: identityd2
         port_value: 5000
+  - name: deviced
+    connect_timeout: 5s
+    type: strict_dns
+    lb_policy: round_robin
+    http2_protocol_options: {}
+    hosts:
+    - socket_address:
+        address: deviced
+        port_value: 5001
   - name: cored
     connect_timeout: 5s
     type: strict_dns

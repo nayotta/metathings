@@ -49,6 +49,22 @@ services:
     - "5000"
     restart: on-failure
 
+  deviced:
+    environment:
+    - MTD_STAGE=debug
+    build:
+      context: .
+      dockerfile: dockerfile/Dockerfile.deviced
+    image: nayotta/deviced
+    volumes:
+    - ./etc/deviced.yaml:/etc/metathings/deviced.yaml
+    networks:
+    - metathings-backend
+    - metathings-kafka
+    expose:
+    - "5001"
+    restart: on-failure
+
   cored:
     environment:
     - MTD_STAGE=debug

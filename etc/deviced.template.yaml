@@ -1,0 +1,18 @@
+dev:
+  listen: 127.0.0.1:5001
+  verbose: true
+  log:
+    level: debug
+  storage:
+    driver: sqlite3
+    uri: <storage-uri>
+  service_endpoint:
+    default:
+      address: <metathings-address>
+  connection_center:
+    storage:
+      name: <storage-driver>
+      # ...
+    bridge:
+      name: <bridge-driver>
+      # ...

@@ -3,30 +3,54 @@ package metathings_deviced_connection
 type AsyncBridgeWrapper interface {
 	Send() chan []byte
 	Recv() chan []byte
+	Err() error
+	Close() error
 }
 
 type AsyncBridgeWrapperImpl struct {
-	br Bridge
+	br      Bridge
+	sender  chan []byte
+	reciver chan []byte
+	err     error
 }
 
 func (self *AsyncBridgeWrapperImpl) Send() chan []byte {
-	ch := make(chan []byte)
 	go func() {
-		buf := <-ch
-		self.br.Send(buf)
+		buf := <-self.sender
+		self.err = self.br.Send(buf)
 	}()
-	return ch
+	return self.sender
 }
 
 func (self *AsyncBridgeWrapperImpl) Recv() chan []byte {
-	ch := make(chan []byte)
 	go func() {
-		buf, _ := self.br.Recv()
-		ch <- buf
+		var buf []byte
+		buf, self.err = self.br.Recv()
+		if self.err != nil {
+			self.reciver <- []byte{}
+			return
+		}
+		self.reciver <- buf
 	}()
-	return ch
+	return self.reciver
+}
+
+func (self *AsyncBridgeWrapperImpl) Err() error {
+	return self.err
+}
+
+func (self *AsyncBridgeWrapperImpl) Close() error {
+	close(self.sender)
+	close(self.reciver)
+	return nil
 }
 
 func NewAsyncBridgeWrapper(br Bridge) AsyncBridgeWrapper {
-	return &AsyncBridgeWrapperImpl{br: br}
+	abr := &AsyncBridgeWrapperImpl{
+		br:      br,
+		sender:  make(chan []byte, 16),
+		reciver: make(chan []byte, 16),
+	}
+
+	return abr
 }

@@ -45,6 +45,7 @@ func (self *kafkaBridge) init_producer() error {
 	}
 
 	self.producer = producer
+	self.logger.WithField("config", cfg).Debugf("init producer")
 
 	return nil
 }
@@ -59,7 +60,7 @@ func (self *kafkaBridge) init_consumer() error {
 		cfg.SetKey(key, val)
 	}
 	cfg["group.id"] = self.Id()
-	cfg["topic.metadata.refresh.interval.ms"] = 30
+	// cfg["topic.metadata.refresh.interval.ms"] = 100
 	cfg["session.timeout.ms"] = 6000
 	cfg["socket.blocking.max.ms"] = 300
 	cfg["go.events.channel.enable"] = true
@@ -77,6 +78,11 @@ func (self *kafkaBridge) init_consumer() error {
 	}
 
 	self.consumer = consumer
+	self.logger.WithFields(log.Fields{
+		"topic":  self.symbol,
+		"group":  self.Id(),
+		"config": cfg,
+	}).Debugf("init consumer")
 
 	return nil
 }
@@ -100,8 +106,10 @@ func (self *kafkaBridge) Send(buf []byte) error {
 		Value: buf,
 	}
 
+	logger := self.logger.WithField("#event", "send")
+
 	self.producer.ProduceChannel() <- msg
-	self.logger.WithField("topic", self.symbol).Debugf("send msg")
+	logger.WithField("topic", self.symbol).Debugf("send msg")
 
 	return nil
 }
@@ -113,31 +121,35 @@ func (self *kafkaBridge) Recv() ([]byte, error) {
 		return nil, err
 	}
 
+	logger := self.logger.WithField("#event", "recv")
+
 	for {
 		ev := <-self.consumer.Events()
 		switch e := ev.(type) {
 		case kafka.AssignedPartitions:
-			self.logger.Debugf("assigned partitions")
+			logger.Debugf("assigned partitions")
 			self.consumer.Assign(e.Partitions)
 		case kafka.RevokedPartitions:
-			self.logger.Debugf("revoked partitions")
+			logger.Debugf("revoked partitions")
 			self.consumer.Unassign()
 		case kafka.Error:
-			self.logger.WithError(e).Debugf("kafka error")
+			logger.WithError(e).Debugf("kafka error")
 			return nil, ErrUnexpectedResponse
 		case kafka.PartitionEOF:
-			self.logger.Debugf("partition eof")
+			logger.Debugf("partition eof")
 		case kafka.OffsetsCommitted:
-			self.logger.Debugf("offsets committed")
+			logger.Debugf("offsets committed")
 		case *kafka.Message:
-			self.logger.WithField("topic", self.symbol).Debugf("recv msg")
+			logger.WithField("topic", self.symbol).Debugf("recv msg")
 			return e.Value, nil
 		default:
-			self.logger.Debugf("unexpected response")
+			logger.Debugf("unexpected kafka event")
 			return nil, ErrUnexpectedResponse
 		}
 	}
 }
+
+func (self *kafkaBridge) Close() error { return nil }
 
 type kafkaBridgeFactoryOption struct {
 	ProducerConfig map[string]string
@@ -154,23 +166,8 @@ func bridge_id_to_symbol(id string) string {
 }
 
 func (self *kafkaBridgeFactory) BuildBridge(device_id string, session int32) (Bridge, error) {
-	buf := fmt.Sprintf("device.%v.session.%v", device_id, session)
-	id := id_helper.NewNamedId(buf)
-
-	opt := &kafkaBridgeOption{
-		ProducerConfig: self.opt.ProducerConfig,
-		ConsumerConfig: self.opt.ConsumerConfig,
-	}
-
-	br := &kafkaBridge{
-		opt:    opt,
-		logger: self.logger.WithField("bridge", id),
-
-		id:     id,
-		symbol: bridge_id_to_symbol(id),
-	}
-
-	return br, nil
+	id := id_helper.NewNamedId(fmt.Sprintf("device.%v.session.%v", device_id, session))
+	return self.GetBridge(id)
 }
 
 func (self *kafkaBridgeFactory) GetBridge(id string) (Bridge, error) {
