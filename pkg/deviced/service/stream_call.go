@@ -1,6 +1,7 @@
 package metathings_deviced_service
 
 import (
+	deviced_helper "github.com/nayotta/metathings/pkg/deviced/helper"
 	storage "github.com/nayotta/metathings/pkg/deviced/storage"
 	kind "github.com/nayotta/metathings/pkg/proto/constant/kind"
 	pb "github.com/nayotta/metathings/pkg/proto/deviced"
@@ -27,7 +28,7 @@ func (self *MetathingsDevicedService) StreamCall(stm pb.DevicedService_StreamCal
 	}
 
 	// dispatch mqtt
-	if *dev_s.Kind == kind.DeviceKind_DEVICE_KIND_SIMPLE.String() {
+	if *dev_s.Kind == deviced_helper.DEVICE_KIND_ENUMER.ToString(kind.DeviceKind_DEVICE_KIND_SIMPLE) {
 		if err = self.mqttBr.StreamCallForDeviced(*dev_s.Id, stm); err != nil {
 			self.logger.WithError(err).Errorf("failed to simple kind stream call")
 			return status.Errorf(codes.Internal, err.Error())

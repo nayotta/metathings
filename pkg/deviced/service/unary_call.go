@@ -3,6 +3,7 @@ package metathings_deviced_service
 import (
 	"context"
 
+	deviced_helper "github.com/nayotta/metathings/pkg/deviced/helper"
 	storage "github.com/nayotta/metathings/pkg/deviced/storage"
 	kind "github.com/nayotta/metathings/pkg/proto/constant/kind"
 	pb "github.com/nayotta/metathings/pkg/proto/deviced"
@@ -22,7 +23,7 @@ func (self *MetathingsDevicedService) UnaryCall(ctx context.Context, req *pb.Una
 	}
 
 	// dispatch mqtt
-	if *dev_s.Kind == kind.DeviceKind_DEVICE_KIND_SIMPLE.String() {
+	if *dev_s.Kind == deviced_helper.DEVICE_KIND_ENUMER.ToString(kind.DeviceKind_DEVICE_KIND_SIMPLE) {
 		val, err = self.mqttBr.UnaryCallForDeviced(dev_s, req.GetValue())
 		if err != nil {
 			self.logger.WithError(err).Errorf("failed to simple kind unary call")

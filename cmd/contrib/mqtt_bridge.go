@@ -7,7 +7,7 @@ type MqttBridgeOptioner interface {
 	SetBroker(string)
 
 	GetRootkeyP() *string
-	GetRookey() string
+	GetRootkey() string
 	SetRootKey(string)
 }
 
@@ -39,8 +39,8 @@ func (that *MqttBridgeOption) GetRootkeyP() *string {
 	return &that.MqttBridge.Rootkey
 }
 
-// GetRookey GetRookey
-func (that *MqttBridgeOption) GetRookey() string {
+// GetRootkey GetRootkey
+func (that *MqttBridgeOption) GetRootkey() string {
 	return that.MqttBridge.Rootkey
 }
 

@@ -168,7 +168,7 @@ func NewConnectionCenter(opt *DevicedOption, logger log.FieldLogger) (connection
 }
 
 // NewMqttBridgeCenter NewMqttBridgeCenter
-func NewMqttBridgeCenter(opt *cmd_contrib.MqttBridgeOptioner, logger log.FieldLogger) (device_cloud.MqttBridge, error) {
+func NewMqttBridgeCenter(opt cmd_contrib.MqttBridgeOptioner, logger log.FieldLogger) (device_cloud.MqttBridge, error) {
 	br, err := device_cloud.NewMqttBridge("broker", opt.GetBroker(), "rootkey", opt.GetRootkey(), "logger", logger)
 	if err != nil {
 		return nil, err
