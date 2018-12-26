@@ -178,6 +178,11 @@ func NewMqttBridgeCenter(opt *cmd_contrib.MqttBridgeOptioner, logger log.FieldLo
 		return nil, err
 	}
 
+	err = br.InitHeartBeatLoop()
+	if err != nil {
+		return nil, err
+	}
+
 	return br, nil
 }
 
