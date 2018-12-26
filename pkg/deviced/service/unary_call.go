@@ -22,7 +22,7 @@ func (self *MetathingsDevicedService) UnaryCall(ctx context.Context, req *pb.Una
 	}
 
 	// dispatch mqtt
-	if dev_s.Kind == kind.DeviceKind_DEVICE_KIND_SIMPLE {
+	if *dev_s.Kind == kind.DeviceKind_DEVICE_KIND_SIMPLE.String() {
 		val, err = self.mqttBr.UnaryCallForDeviced(dev_s, req.GetValue())
 		if err != nil {
 			self.logger.WithError(err).Errorf("failed to simple kind unary call")

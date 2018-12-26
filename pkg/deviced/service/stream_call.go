@@ -27,7 +27,7 @@ func (self *MetathingsDevicedService) StreamCall(stm pb.DevicedService_StreamCal
 	}
 
 	// dispatch mqtt
-	if dev_s.Kind == kind.DeviceKind_DEVICE_KIND_SIMPLE {
+	if *dev_s.Kind == kind.DeviceKind_DEVICE_KIND_SIMPLE.String() {
 		if err = self.mqttBr.StreamCallForDeviced(*dev_s.Id, stm); err != nil {
 			self.logger.WithError(err).Errorf("failed to simple kind stream call")
 			return status.Errorf(codes.Internal, err.Error())
