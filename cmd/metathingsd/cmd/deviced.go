@@ -168,7 +168,17 @@ func NewConnectionCenter(opt *DevicedOption, logger log.FieldLogger) (connection
 
 // NewMqttBridgeCenter NewMqttBridgeCenter
 func NewMqttBridgeCenter(opt *cmd_contrib.MqttBridgeOptioner, logger log.FieldLogger) (device_cloud.MqttBridge, error) {
-	device_cloud.NewMqttBridge("broker", opt.GetBroker, "rootkey", opt.GetRootkey, "logger", logger)
+	br, err := device_cloud.NewMqttBridge("broker", opt.GetBroker, "rootkey", opt.GetRootkey, "logger", logger)
+	if err != nil {
+		return nil, err
+	}
+
+	err = br.InitMqttBridge()
+	if err != nil {
+		return nil, err
+	}
+
+	return br, nil
 }
 
 func NewMetathingsDevicedServiceOption(opt *DevicedOption) *service.MetathingsDevicedServiceOption {
