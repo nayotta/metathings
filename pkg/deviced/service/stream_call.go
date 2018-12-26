@@ -1,11 +1,11 @@
 package metathings_deviced_service
 
 import (
+	storage "github.com/nayotta/metathings/pkg/deviced/storage"
+	kind "github.com/nayotta/metathings/pkg/proto/constant/kind"
+	pb "github.com/nayotta/metathings/pkg/proto/deviced"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-
-	storage "github.com/nayotta/metathings/pkg/deviced/storage"
-	pb "github.com/nayotta/metathings/pkg/proto/deviced"
 )
 
 func (self *MetathingsDevicedService) StreamCall(stm pb.DevicedService_StreamCallServer) error {
@@ -26,9 +26,17 @@ func (self *MetathingsDevicedService) StreamCall(stm pb.DevicedService_StreamCal
 		return status.Errorf(codes.Internal, err.Error())
 	}
 
-	if err = self.cc.StreamCall(dev_s, cfg, stm); err != nil {
-		self.logger.WithError(err).Errorf("failed to stream call")
-		return status.Errorf(codes.Internal, err.Error())
+	// dispatch mqtt
+	if dev_s.Kind == kind.DeviceKind_DEVICE_KIND_SIMPLE {
+		if err = self.mqttBr.StreamCallForDeviced(*dev_s.Id, stm); err != nil {
+			self.logger.WithError(err).Errorf("failed to simple kind stream call")
+			return status.Errorf(codes.Internal, err.Error())
+		}
+	} else {
+		if err = self.cc.StreamCall(dev_s, cfg, stm); err != nil {
+			self.logger.WithError(err).Errorf("failed to stream call")
+			return status.Errorf(codes.Internal, err.Error())
+		}
 	}
 
 	self.logger.Debugf("stream call done")

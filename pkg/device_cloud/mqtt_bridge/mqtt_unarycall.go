@@ -9,6 +9,8 @@ import (
 	"github.com/golang/protobuf/proto"
 	"github.com/golang/protobuf/ptypes/any"
 	pb "github.com/nayotta/metathings/pkg/proto/device_cloud"
+	deviced_pb "github.com/nayotta/metathings/pkg/proto/deviced"
+	deviced_storage "github.com/nayotta/metathings/pkg/deviced/storage"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -20,7 +22,7 @@ type unaryCallCenter struct {
 	resMsg        []byte
 	timeout       time.Duration
 
-	componentID  string
+	deviceID  string
 	topicSession string
 	topicDown    string
 
@@ -31,11 +33,11 @@ type unaryCallCenter struct {
 }
 
 func (that *unaryCallCenter) logE(err error, text string) {
-	that.logger.WithField("component_id", that.componentID).WithField("session_id", that.sessionID).WithError(err).Errorf(text)
+	that.logger.WithField("device_id", that.deviceID).WithField("session_id", that.sessionID).WithError(err).Errorf(text)
 }
 
 func (that *unaryCallCenter) logD(text string) {
-	that.logger.WithField("component_id", that.componentID).WithField("session_id", that.sessionID).Debugf(text)
+	that.logger.WithField("device_id", that.deviceID).WithField("session_id", that.sessionID).Debugf(text)
 }
 
 func (that *unaryCallCenter) unaryCallMsgCallback(client emitter.Emitter, msg emitter.Message) {
@@ -135,20 +137,20 @@ func (that *unaryCallCenter) PubMsgAndWaitRes(msg []byte) ([]byte, error) {
 	}
 }
 
-func newUnaryCallCenter(mqttBr *mqttBridge, componentID string) (*unaryCallCenter, error) {
+func newUnaryCallCenter(mqttBr *mqttBridge, deviceID string) (*unaryCallCenter, error) {
 	unaryCallChan := make(chan error)
 	timeout := 10 * time.Second
 
 	sessionIDStr, sessionID := newSessionID()
-	topicSession := componentID + "/up/" + sessionIDStr + "/"
-	topicDown := componentID + "/down/"
+	topicSession := deviceID + "/up/" + sessionIDStr + "/"
+	topicDown := deviceID + "/down/"
 
 	return &unaryCallCenter{
 		host:          mqttBr.host,
 		sessionID:     sessionID,
 		unaryCallChan: unaryCallChan,
 		timeout:       timeout,
-		componentID:   componentID,
+		deviceID:   deviceID,
 		topicSession:  topicSession,
 		topicDown:     topicDown,
 		downKey:       mqttBr.downKey,
@@ -160,10 +162,10 @@ func newUnaryCallCenter(mqttBr *mqttBridge, componentID string) (*unaryCallCente
 func (that *mqttBridge) UnaryCall(ctx context.Context, req *pb.UnaryCallRequest) (*pb.UnaryCallResponse, error) {
 	var err error
 
-	cpID := req.GetComponentId().GetValue()
+	devID := req.GetComponentId().GetValue()
 	msg := req.GetPayload().GetValue()
 
-	unaryCallClient, err := newUnaryCallCenter(that, cpID)
+	unaryCallClient, err := newUnaryCallCenter(that, devID)
 	if err != nil {
 		return nil, err
 	}
@@ -175,6 +177,30 @@ func (that *mqttBridge) UnaryCall(ctx context.Context, req *pb.UnaryCallRequest)
 
 	return &pb.UnaryCallResponse{
 		Payload: &any.Any{
+			Value: resMsg,
+		},
+	}, nil
+}
+
+func (that *mqttBridge) UnaryCallForDeviced(dev *deviced_storage.Device, req *deviced_pb.OpUnaryCallValue) (*deviced_pb.UnaryCallValue, error) {
+	var err error
+
+	msg := req.GetValue().GetValue()
+	unaryCallClient, err := newUnaryCallCenter(that, *dev.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	resMsg, err := unaryCallClient.PubMsgAndWaitRes(msg)
+	if err != nil {
+		return nil, err
+	}
+
+	return &deviced_pb.UnaryCallValue{
+		Name:      req.GetName().GetValue(),
+		Component: req.GetComponent().GetValue(),
+		Method:    req.GetMethod().GetValue(),
+		Value: &any.Any{
 			Value: resMsg,
 		},
 	}, nil

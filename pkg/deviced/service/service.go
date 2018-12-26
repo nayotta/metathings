@@ -3,20 +3,20 @@ package metathings_deviced_service
 import (
 	"context"
 
-	log "github.com/sirupsen/logrus"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
-
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
 	context_helper "github.com/nayotta/metathings/pkg/common/context"
 	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
 	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
 	token_helper "github.com/nayotta/metathings/pkg/common/token"
+	device_cloud "github.com/nayotta/metathings/pkg/device_cloud/mqtt_bridge"
 	connection "github.com/nayotta/metathings/pkg/deviced/connection"
 	storage "github.com/nayotta/metathings/pkg/deviced/storage"
 	identityd_policy "github.com/nayotta/metathings/pkg/identityd2/policy"
 	pb "github.com/nayotta/metathings/pkg/proto/deviced"
 	identityd_pb "github.com/nayotta/metathings/pkg/proto/identityd2"
+	log "github.com/sirupsen/logrus"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type MetathingsDevicedServiceOption struct {
@@ -33,6 +33,7 @@ type MetathingsDevicedService struct {
 	enforcer identityd_policy.Enforcer
 	vdr      token_helper.TokenValidator
 	cc       connection.ConnectionCenter
+	mqttBr   device_cloud.MqttBridge
 }
 
 func (self *MetathingsDevicedService) get_device_by_context(ctx context.Context) (*storage.Device, error) {
@@ -142,6 +143,7 @@ func NewMetathingsDevicedService(
 	cc connection.ConnectionCenter,
 	tknr token_helper.Tokener,
 	cli_fty *client_helper.ClientFactory,
+	mqttBr device_cloud.MqttBridge,
 ) (pb.DevicedServiceServer, error) {
 	return &MetathingsDevicedService{
 		opt:      opt,
@@ -152,5 +154,6 @@ func NewMetathingsDevicedService(
 		cc:       cc,
 		tknr:     tknr,
 		cli_fty:  cli_fty,
+		mqttBr:   mqttBr,
 	}, nil
 }

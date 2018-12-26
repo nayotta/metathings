@@ -5,7 +5,9 @@ import (
 	"net/url"
 
 	emitter "github.com/emitter-io/go"
+	deviced_storage "github.com/nayotta/metathings/pkg/deviced/storage"
 	pb "github.com/nayotta/metathings/pkg/proto/device_cloud"
+	deviced_pb "github.com/nayotta/metathings/pkg/proto/deviced"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -18,18 +20,20 @@ type MqttBridge interface {
 	InitHeartBeatLoop() error
 	KeyGen(context.Context, *pb.GenKeyRequest) (*pb.GenKeyResponse, error)
 	HeartBeatSelect()
-	UnaryCall(ctx context.Context, req *pb.UnaryCallRequest) (*pb.UnaryCallResponse, error)
-	StreamCall(stm pb.DeviceCloudService_StreamCallServer) error
+	UnaryCall(context.Context, *pb.UnaryCallRequest) (*pb.UnaryCallResponse, error)
+	UnaryCallForDeviced(*deviced_storage.Device, *deviced_pb.OpUnaryCallValue) (*deviced_pb.UnaryCallValue, error)
+	StreamCall(pb.DeviceCloudService_StreamCallServer) error
+	StreamCallForDeviced(string, deviced_pb.DevicedService_StreamCallServer) error
 }
 
 type mqttBridge struct {
-	host          *url.URL
-	rootKey       string
-	upKey         string
-	downKey       string
-	statusUpKey   string
-	configClient  emitter.Emitter
-	logger        log.FieldLogger
+	host         *url.URL
+	rootKey      string
+	upKey        string
+	downKey      string
+	statusUpKey  string
+	configClient emitter.Emitter
+	logger       log.FieldLogger
 }
 
 func (that *mqttBridge) GetRootKey() (string, error) {
@@ -68,7 +72,7 @@ func NewMqttBridge(args []interface{}) (MqttBridge, error) {
 		val = args[i+1]
 
 		switch key {
-		case "url":
+		case "broker":
 			urlStr, ok := val.(string)
 			if !ok {
 				return nil, ErrInvalidArgument

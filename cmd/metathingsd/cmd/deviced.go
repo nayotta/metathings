@@ -3,18 +3,18 @@ package cmd
 import (
 	"context"
 
-	log "github.com/sirupsen/logrus"
-	"github.com/spf13/cobra"
-	"go.uber.org/fx"
-
 	cmd_contrib "github.com/nayotta/metathings/cmd/contrib"
 	cmd_helper "github.com/nayotta/metathings/pkg/common/cmd"
 	token_helper "github.com/nayotta/metathings/pkg/common/token"
+	device_cloud "github.com/nayotta/metathings/pkg/device_cloud/mqtt_bridge"
 	connection "github.com/nayotta/metathings/pkg/deviced/connection"
 	service "github.com/nayotta/metathings/pkg/deviced/service"
 	storage "github.com/nayotta/metathings/pkg/deviced/storage"
 	policy "github.com/nayotta/metathings/pkg/identityd2/policy"
 	pb "github.com/nayotta/metathings/pkg/proto/deviced"
+	log "github.com/sirupsen/logrus"
+	"github.com/spf13/cobra"
+	"go.uber.org/fx"
 )
 
 type DevicedOption struct {
@@ -90,8 +90,10 @@ func GetDevicedOptions() (
 	cmd_contrib.LoggerOptioner,
 	cmd_contrib.ServiceEndpointsOptioner,
 	cmd_contrib.CredentialOptioner,
+	cmd_contrib.MqttBridgeOptioner,
 ) {
 	return deviced_opt,
+		deviced_opt,
 		deviced_opt,
 		deviced_opt,
 		deviced_opt,
@@ -164,6 +166,11 @@ func NewConnectionCenter(opt *DevicedOption, logger log.FieldLogger) (connection
 	return cc, nil
 }
 
+// NewMqttBridgeCenter NewMqttBridgeCenter
+func NewMqttBridgeCenter(opt *cmd_contrib.MqttBridgeOptioner, logger log.FieldLogger) (device_cloud.MqttBridge, error) {
+	device_cloud.NewMqttBridge("broker", opt.GetBroker, "rootkey", opt.GetRootkey, "logger", logger)
+}
+
 func NewMetathingsDevicedServiceOption(opt *DevicedOption) *service.MetathingsDevicedServiceOption {
 	return &service.MetathingsDevicedServiceOption{}
 }
@@ -182,6 +189,7 @@ func runDeviced() error {
 			token_helper.NewTokenValidator,
 			NewConnectionCenter,
 			NewDevicedStorage,
+			NewMqttBridgeCenter,
 			NewMetathingsDevicedServiceOption,
 			policy.NewEnforcer,
 			service.NewMetathingsDevicedService,

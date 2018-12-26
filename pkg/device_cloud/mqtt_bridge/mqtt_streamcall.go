@@ -8,6 +8,7 @@ import (
 	"github.com/golang/protobuf/proto"
 	"github.com/golang/protobuf/ptypes/any"
 	pb "github.com/nayotta/metathings/pkg/proto/device_cloud"
+	deviced_pb "github.com/nayotta/metathings/pkg/proto/deviced"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -41,11 +42,11 @@ type streamCallCenter struct {
 }
 
 func (that *streamCallCenter) logE(err error, text string) {
-	that.logger.WithField("component_id", that.componentID).WithField("session_id", that.sessionID).WithError(err).Errorf(text)
+	that.logger.WithField("device_id", that.componentID).WithField("session_id", that.sessionID).WithError(err).Errorf(text)
 }
 
 func (that *streamCallCenter) logD(text string) {
-	that.logger.WithField("component_id", that.componentID).WithField("session_id", that.sessionID).Debugf(text)
+	that.logger.WithField("device_id", that.componentID).WithField("session_id", that.sessionID).Debugf(text)
 }
 
 func (that *streamCallCenter) streamCallMsgCallback(client emitter.Emitter, msg emitter.Message) {
@@ -271,26 +272,26 @@ func (that *mqttBridge) StreamCall(stm pb.DeviceCloudService_StreamCallServer) e
 		return ErrMqttStreamCallConfigError
 	}
 
-	cpID := req.GetComponentId().GetValue()
+	devID := req.GetComponentId().GetValue()
 
 	// init
-	streamCallClient := newStreamCallCenter(that, cpID)
+	streamCallClient := newStreamCallCenter(that, devID)
 
 	// connect mqtt
 	err = streamCallClient.ConnectMqtt()
 	if err != nil {
-		that.logger.WithField("component_id", cpID).WithError(err).Errorf("mqtt connect failed")
+		that.logger.WithField("device_id", devID).WithError(err).Errorf("mqtt connect failed")
 		return err
 	}
 	defer func() {
-		that.logger.WithField("component_id", cpID).Debugf("mqtt client disconnect")
+		that.logger.WithField("device_id", devID).Debugf("mqtt client disconnect")
 		streamCallClient.client.Disconnect(0)
 	}()
 
 	// Sub
 	err = streamCallClient.SubStreamTopic()
 	if err != nil {
-		that.logger.WithField("component_id", cpID).WithError(err).Errorf("mqtt sub failed")
+		that.logger.WithField("device_id", devID).WithError(err).Errorf("mqtt sub failed")
 		return err
 	}
 
@@ -302,7 +303,7 @@ func (that *mqttBridge) StreamCall(stm pb.DeviceCloudService_StreamCallServer) e
 	case <-streamCallClient.streamConfigChan:
 		break
 	case <-time.After(streamCallClient.timeout):
-		that.logger.WithField("component_id", cpID).WithError(err).Errorf("stream config timeout")
+		that.logger.WithField("device_id", devID).WithError(err).Errorf("stream config timeout")
 		return ErrMqttRequestTimeout
 	}
 
@@ -327,10 +328,10 @@ func (that *mqttBridge) StreamCall(stm pb.DeviceCloudService_StreamCallServer) e
 			case req = <-recvCh:
 				if req == nil {
 					err = ErrMqttStreamCallRecvError
-					that.logger.WithField("component_id", cpID).WithError(err).Errorf("streamcall recv error")
+					that.logger.WithField("device_id", devID).WithError(err).Errorf("streamcall recv error")
 					return
 				}
-				that.logger.WithField("component_id", cpID).Debugf("message to be send")
+				that.logger.WithField("device_id", devID).Debugf("message to be send")
 				break
 			case err = <-streamCallClient.streamCallSendChan:
 				return
@@ -340,7 +341,7 @@ func (that *mqttBridge) StreamCall(stm pb.DeviceCloudService_StreamCallServer) e
 
 			err = streamCallClient.PubMsg(msg)
 			if err != nil {
-				that.logger.WithField("component_id", cpID).WithError(err).Errorf("mqtt pub failed")
+				that.logger.WithField("device_id", devID).WithError(err).Errorf("mqtt pub failed")
 				return
 			}
 		}
@@ -367,7 +368,125 @@ func (that *mqttBridge) StreamCall(stm pb.DeviceCloudService_StreamCallServer) e
 					},
 				})
 				if err != nil {
-					that.logger.WithField("component_id", cpID).WithError(err).Errorf("streamcall send failed")
+					that.logger.WithField("device_id", devID).WithError(err).Errorf("streamcall send failed")
+					return
+				}
+			case err = <-streamCallClient.streamCallRecvChan:
+				return
+			}
+		}
+	}()
+
+	err = <-errs
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (that *mqttBridge) StreamCallForDeviced(devID string, stm deviced_pb.DevicedService_StreamCallServer) error {
+	var err error
+
+	// init
+	streamCallClient := newStreamCallCenter(that, devID)
+
+	// connect mqtt
+	err = streamCallClient.ConnectMqtt()
+	if err != nil {
+		that.logger.WithField("device_id", devID).WithError(err).Errorf("mqtt connect failed")
+		return err
+	}
+	defer func() {
+		that.logger.WithField("device_id", devID).Debugf("mqtt client disconnect")
+		streamCallClient.client.Disconnect(0)
+	}()
+
+	// Sub
+	err = streamCallClient.SubStreamTopic()
+	if err != nil {
+		that.logger.WithField("device_id", devID).WithError(err).Errorf("mqtt sub failed")
+		return err
+	}
+
+	// heartbeat loop
+	streamCallClient.StreamCallHeartBeatLoop()
+
+	// wait config ok signal
+	select {
+	case <-streamCallClient.streamConfigChan:
+		break
+	case <-time.After(streamCallClient.timeout):
+		that.logger.WithField("device_id", devID).WithError(err).Errorf("stream config timeout")
+		return ErrMqttRequestTimeout
+	}
+
+	errs := make(chan error)
+
+	// send loop
+	go func() {
+		var err error
+		var req *deviced_pb.StreamCallRequest
+
+		defer func() {
+			streamCallClient.heartbeatChan <- nil
+			streamCallClient.streamCallRecvChan <- nil
+			errs <- err
+		}()
+
+		recvStm := NewAsyncDevicedGrpc(stm)
+		recvCh := recvStm.Recv()
+
+		for {
+			select {
+			case req = <-recvCh:
+				if req == nil {
+					err = ErrMqttStreamCallRecvError
+					that.logger.WithField("device_id", devID).WithError(err).Errorf("streamcall recv error")
+					return
+				}
+				that.logger.WithField("device_id", devID).Debugf("message to be send")
+				break
+			case err = <-streamCallClient.streamCallSendChan:
+				return
+			}
+
+			msg := req.GetValue().GetValue().GetValue()
+
+			err = streamCallClient.PubMsg(msg)
+			if err != nil {
+				that.logger.WithField("device_id", devID).WithError(err).Errorf("mqtt pub failed")
+				return
+			}
+		}
+	}()
+
+	//recieve loop
+	go func() {
+		var err error
+
+		defer func() {
+			streamCallClient.heartbeatChan <- nil
+			streamCallClient.streamCallSendChan <- nil
+			errs <- err
+		}()
+
+		for {
+			select {
+			case <-streamCallClient.streamConfigChan:
+				continue
+			case msg := <-streamCallClient.streamMsgChan:
+				err = stm.Send(&deviced_pb.StreamCallResponse{
+					Value: &deviced_pb.StreamCallValue{
+						Union: &deviced_pb.StreamCallValue_Value{
+							Value: &any.Any{
+								Value: msg,
+							},
+						},
+					},
+				})
+				if err != nil {
+					that.logger.WithField("device_id", devID).WithError(err).Errorf("streamcall send failed")
 					return
 				}
 			case err = <-streamCallClient.streamCallRecvChan:
