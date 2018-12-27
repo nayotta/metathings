@@ -8,9 +8,9 @@ import (
 	emitter "github.com/emitter-io/go"
 	"github.com/golang/protobuf/proto"
 	"github.com/golang/protobuf/ptypes/any"
+	deviced_storage "github.com/nayotta/metathings/pkg/deviced/storage"
 	pb "github.com/nayotta/metathings/pkg/proto/device_cloud"
 	deviced_pb "github.com/nayotta/metathings/pkg/proto/deviced"
-	deviced_storage "github.com/nayotta/metathings/pkg/deviced/storage"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -22,7 +22,7 @@ type unaryCallCenter struct {
 	resMsg        []byte
 	timeout       time.Duration
 
-	deviceID  string
+	deviceID     string
 	topicSession string
 	topicDown    string
 
@@ -150,7 +150,7 @@ func newUnaryCallCenter(mqttBr *mqttBridge, deviceID string) (*unaryCallCenter, 
 		sessionID:     sessionID,
 		unaryCallChan: unaryCallChan,
 		timeout:       timeout,
-		deviceID:   deviceID,
+		deviceID:      deviceID,
 		topicSession:  topicSession,
 		topicDown:     topicDown,
 		downKey:       mqttBr.downKey,
@@ -162,7 +162,7 @@ func newUnaryCallCenter(mqttBr *mqttBridge, deviceID string) (*unaryCallCenter, 
 func (that *mqttBridge) UnaryCall(ctx context.Context, req *pb.UnaryCallRequest) (*pb.UnaryCallResponse, error) {
 	var err error
 
-	devID := req.GetComponentId().GetValue()
+	devID := req.GetDeviceId().GetValue()
 	msg := req.GetPayload().GetValue()
 
 	unaryCallClient, err := newUnaryCallCenter(that, devID)

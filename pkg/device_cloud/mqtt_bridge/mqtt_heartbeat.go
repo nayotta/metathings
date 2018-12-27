@@ -23,34 +23,34 @@ type HeartBeatCenter struct {
 	logger            log.FieldLogger
 }
 
-func (that *HeartBeatCenter) logE(componentID string, err error, text string) {
-	that.logger.WithField("component_id", componentID).WithError(err).Errorf(text)
+func (that *HeartBeatCenter) logE(deviceID string, err error, text string) {
+	that.logger.WithField("device_id", deviceID).WithError(err).Errorf(text)
 }
 
-func (that *HeartBeatCenter) logD(componentID string, text string) {
-	that.logger.WithField("component_id", componentID).Debugf(text)
+func (that *HeartBeatCenter) logD(deviceID string, text string) {
+	that.logger.WithField("device_id", deviceID).Debugf(text)
 }
 
-func (that *HeartBeatCenter) heartBeatSelectProcess(componentID string) {
+func (that *HeartBeatCenter) heartBeatSelectProcess(deviceID string) {
 	var err error
 
 	sessionIDStr, sessionID := newSessionID()
 
-	selectTopic := componentID + "/statusup/" + sessionIDStr + "/"
+	selectTopic := deviceID + "/statusup/" + sessionIDStr + "/"
 	r := that.client.Subscribe(that.statusUpKey, selectTopic)
 	if r.Wait() && r.Error() != nil {
 		that.logE("", ErrMqttSubFailed, "mqtt sub failed")
 		return
 	}
 
-	err = that.pubHeartBeatSelectResponse(componentID, sessionID)
+	err = that.pubHeartBeatSelectResponse(deviceID, sessionID)
 	if err != nil {
 		return
 	}
 }
 
-func (that *HeartBeatCenter) heartBeatProcess(componentID string, sessionID int) {
-	go that.pubHeartBeatResponse(componentID, sessionID)
+func (that *HeartBeatCenter) heartBeatProcess(deviceID string, sessionID int) {
+	go that.pubHeartBeatResponse(deviceID, sessionID)
 }
 
 func (that *HeartBeatCenter) heartBeatMsgCallback(client emitter.Emitter, msg emitter.Message) {
@@ -69,12 +69,12 @@ func (that *HeartBeatCenter) heartBeatMsgCallback(client emitter.Emitter, msg em
 			return
 		}
 
-		componentID := strs[0]
+		deviceID := strs[0]
 
 		switch strs[2] {
 		case "select":
 			that.logD(strs[0], "get heartbeat select resquest")
-			go that.heartBeatSelectProcess(componentID)
+			go that.heartBeatSelectProcess(deviceID)
 			return
 		default:
 			sessionID, err := strconv.Atoi(strs[2])
@@ -82,8 +82,8 @@ func (that *HeartBeatCenter) heartBeatMsgCallback(client emitter.Emitter, msg em
 				that.logE("", ErrInvalidArgument, "unexcept topic sessionID get")
 				return
 			}
-			that.logD(componentID, "get heartbeat request")
-			go that.heartBeatProcess(componentID, sessionID)
+			that.logD(deviceID, "get heartbeat request")
+			go that.heartBeatProcess(deviceID, sessionID)
 			return
 		}
 	default:
@@ -135,8 +135,8 @@ func (that *HeartBeatCenter) subStatusTopic() error {
 	return nil
 }
 
-func (that *HeartBeatCenter) pubHeartBeatSelectResponse(componentID string, sessionID int) error {
-	componentTopic := componentID + "/down/"
+func (that *HeartBeatCenter) pubHeartBeatSelectResponse(deviceID string, sessionID int) error {
+	deviceTopic := deviceID + "/down/"
 
 	resMsg := &pb.MqttDeviceRequest{
 		SessionId: (int32)(sessionID),
@@ -153,20 +153,20 @@ func (that *HeartBeatCenter) pubHeartBeatSelectResponse(componentID string, sess
 		return err
 	}
 
-	r := that.client.Publish(that.downKey, componentTopic, res)
+	r := that.client.Publish(that.downKey, deviceTopic, res)
 	if r.Wait() && r.Error() != nil {
-		that.logE(componentID, ErrMqttPubFailed, "heartbeat select pub failed")
+		that.logE(deviceID, ErrMqttPubFailed, "heartbeat select pub failed")
 		return ErrMqttPubFailed
 	}
 
-	that.logD(componentID, "send heartbeat select response")
+	that.logD(deviceID, "send heartbeat select response")
 
 	return nil
 }
 
-func (that *HeartBeatCenter) pubHeartBeatResponse(componentID string, sessionID int) error {
+func (that *HeartBeatCenter) pubHeartBeatResponse(deviceID string, sessionID int) error {
 	//sessionIDStr := strconv.Itoa(sessionID)
-	componentTopic := componentID + "/down/"
+	deviceTopic := deviceID + "/down/"
 
 	// TODO(zh) call deviced heartbeat not response direct
 
@@ -185,13 +185,13 @@ func (that *HeartBeatCenter) pubHeartBeatResponse(componentID string, sessionID 
 		return err
 	}
 
-	r := that.client.Publish(that.downKey, componentTopic, res)
+	r := that.client.Publish(that.downKey, deviceTopic, res)
 	if r.Wait() && r.Error() != nil {
-		that.logE(componentID, ErrMqttPubFailed, "mqtt pub failed")
+		that.logE(deviceID, ErrMqttPubFailed, "mqtt pub failed")
 		return ErrMqttPubFailed
 	}
 
-	that.logD(componentID, "send heartbeat response")
+	that.logD(deviceID, "send heartbeat response")
 
 	return nil
 }

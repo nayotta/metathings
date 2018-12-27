@@ -17,12 +17,12 @@ var _ = fmt.Errorf
 var _ = math.Inf
 
 func (this *StreamCallRequest) Validate() error {
-	if nil == this.ComponentId {
-		return github_com_mwitkow_go_proto_validators.FieldError("ComponentId", fmt.Errorf("message must exist"))
+	if nil == this.DeviceId {
+		return github_com_mwitkow_go_proto_validators.FieldError("DeviceId", fmt.Errorf("message must exist"))
 	}
-	if this.ComponentId != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.ComponentId); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("ComponentId", err)
+	if this.DeviceId != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.DeviceId); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("DeviceId", err)
 		}
 	}
 	if nil == this.Payload {

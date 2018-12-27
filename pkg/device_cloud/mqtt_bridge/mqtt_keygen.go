@@ -17,19 +17,19 @@ type keygenCenter struct {
 	retKey     string
 	timeout    time.Duration
 
-	componentID string
-	topic       string
-	rootkey     string
+	deviceID string
+	topic    string
+	rootkey  string
 
 	logger log.FieldLogger
 }
 
 func (that *keygenCenter) logE(err error, text string) {
-	that.logger.WithField("component_id", that.componentID).WithError(err).Errorf(text)
+	that.logger.WithField("device_id", that.deviceID).WithError(err).Errorf(text)
 }
 
 func (that *keygenCenter) logD(text string) {
-	that.logger.WithField("component_id", that.componentID).Debugf(text)
+	that.logger.WithField("device_id", that.deviceID).Debugf(text)
 }
 
 func (that *keygenCenter) keygenCallback(_ emitter.Emitter, msg emitter.KeyGenResponse) {
@@ -108,32 +108,32 @@ func (that *keygenCenter) KeyGen() (string, error) {
 	}
 }
 
-func newKeygenCenter(mqttBr *mqttBridge, componentID string) (*keygenCenter, error) {
+func newKeygenCenter(mqttBr *mqttBridge, deviceID string) (*keygenCenter, error) {
 	timeout := 10 * time.Second
 
 	keygenChan := make(chan error)
 
-	if componentID == "" {
-		mqttBr.logger.WithField("component_id", componentID).WithError(ErrInvalidArgument).Errorf("component_id null")
+	if deviceID == "" {
+		mqttBr.logger.WithField("device_id", deviceID).WithError(ErrInvalidArgument).Errorf("device_id null")
 		return nil, ErrInvalidArgument
 	}
-	topic := componentID + "/#/"
+	topic := deviceID + "/#/"
 
 	return &keygenCenter{
-		host:        mqttBr.host,
-		keygenChan:  keygenChan,
-		timeout:     timeout,
-		componentID: componentID,
-		topic:       topic,
-		rootkey:     mqttBr.rootKey,
-		logger:      mqttBr.logger,
+		host:       mqttBr.host,
+		keygenChan: keygenChan,
+		timeout:    timeout,
+		deviceID:   deviceID,
+		topic:      topic,
+		rootkey:    mqttBr.rootKey,
+		logger:     mqttBr.logger,
 	}, nil
 }
 
 func (that *mqttBridge) KeyGen(ctx context.Context, req *pb.GenKeyRequest) (*pb.GenKeyResponse, error) {
 	var err error
 
-	cpID := req.GetComponentId().GetValue()
+	cpID := req.GetDeviceId().GetValue()
 
 	keygenClient, err := newKeygenCenter(that, cpID)
 	if err != nil {
@@ -146,6 +146,6 @@ func (that *mqttBridge) KeyGen(ctx context.Context, req *pb.GenKeyRequest) (*pb.
 	}
 
 	return &pb.GenKeyResponse{
-		Key:     retKey,
+		Key: retKey,
 	}, nil
 }

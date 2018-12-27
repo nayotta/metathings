@@ -23,7 +23,7 @@ type streamCallCenter struct {
 	streamConfigChan   chan interface{}
 	timeout            time.Duration
 
-	componentID    string
+	deviceID       string
 	topicSession   string
 	topicHeartBeat string
 	topicNotify    string
@@ -42,11 +42,11 @@ type streamCallCenter struct {
 }
 
 func (that *streamCallCenter) logE(err error, text string) {
-	that.logger.WithField("device_id", that.componentID).WithField("session_id", that.sessionID).WithError(err).Errorf(text)
+	that.logger.WithField("device_id", that.deviceID).WithField("session_id", that.sessionID).WithError(err).Errorf(text)
 }
 
 func (that *streamCallCenter) logD(text string) {
-	that.logger.WithField("device_id", that.componentID).WithField("session_id", that.sessionID).Debugf(text)
+	that.logger.WithField("device_id", that.deviceID).WithField("session_id", that.sessionID).Debugf(text)
 }
 
 func (that *streamCallCenter) streamCallMsgCallback(client emitter.Emitter, msg emitter.Message) {
@@ -212,7 +212,7 @@ func (that *streamCallCenter) PubMsg(msg []byte) error {
 }
 
 // NewStreamCallCenter streamcall center init
-func newStreamCallCenter(mqttBr *mqttBridge, componentID string) *streamCallCenter {
+func newStreamCallCenter(mqttBr *mqttBridge, deviceID string) *streamCallCenter {
 	timeout := 10 * time.Second
 	sessionIDStr, sessionID := newSessionID()
 
@@ -223,10 +223,10 @@ func newStreamCallCenter(mqttBr *mqttBridge, componentID string) *streamCallCent
 	streamMsgChan := make(chan []byte)
 	streamConfigChan := make(chan interface{})
 
-	topicSession := componentID + "/up/" + sessionIDStr + "/"
-	topicNotify := componentID + "/up/notify/"
-	topicDown := componentID + "/down/"
-	topicHeartBeat := componentID + "/statusup/" + sessionIDStr + "/"
+	topicSession := deviceID + "/up/" + sessionIDStr + "/"
+	topicNotify := deviceID + "/up/notify/"
+	topicDown := deviceID + "/down/"
+	topicHeartBeat := deviceID + "/statusup/" + sessionIDStr + "/"
 
 	downKey := mqttBr.downKey
 	upKey := mqttBr.upKey
@@ -247,7 +247,7 @@ func newStreamCallCenter(mqttBr *mqttBridge, componentID string) *streamCallCent
 		streamCallSendChan: streamcallSendChan,
 		streamMsgChan:      streamMsgChan,
 		streamConfigChan:   streamConfigChan,
-		componentID:        componentID,
+		deviceID:           deviceID,
 		topicSession:       topicSession,
 		topicNotify:        topicNotify,
 		topicDown:          topicDown,
@@ -272,7 +272,7 @@ func (that *mqttBridge) StreamCall(stm pb.DeviceCloudService_StreamCallServer) e
 		return ErrMqttStreamCallConfigError
 	}
 
-	devID := req.GetComponentId().GetValue()
+	devID := req.GetDeviceId().GetValue()
 
 	// init
 	streamCallClient := newStreamCallCenter(that, devID)
