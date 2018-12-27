@@ -109,6 +109,7 @@ func (self *MetathingsDeviceServiceImpl) handle_user_stream_request(req *deviced
 		return err
 	}
 	defer cfn()
+	logger.Debugf("new serviced service client")
 
 	ctx := context_helper.NewOutgoingContext(
 		context.Background(),
@@ -120,20 +121,42 @@ func (self *MetathingsDeviceServiceImpl) handle_user_stream_request(req *deviced
 		logger.WithError(err).Debugf("failed to connect to deviced service")
 		return err
 	}
+	logger.Debugf("create deviced stream")
+
+	cfg_res := &deviced_pb.ConnectResponse{
+		SessionId: sess,
+		Kind:      req.GetKind(),
+		Union: &deviced_pb.ConnectResponse_StreamCall{
+			StreamCall: &deviced_pb.StreamCallValue{
+				Union: &deviced_pb.StreamCallValue_Config{
+					Config: &deviced_pb.StreamCallConfig{
+						Name:      name,
+						Component: component,
+						Method:    method,
+					},
+				},
+			},
+		},
+	}
+	if err = stm.Send(cfg_res); err != nil {
+		logger.WithError(err).Debugf("failed to send config response")
+		return err
+	}
+	logger.Debugf("send config response")
 
 	mdl, err := self.mdl_db.Lookup(component, name)
 	if err != nil {
 		logger.WithError(err).Debugf("failed to lookup module in database")
 		return err
 	}
+	logger.Debugf("lookup module in storage")
 
-	err = mdl.StreamCall(context.Background(), stm)
+	err = mdl.StreamCall(context.Background(), req, stm)
 	if err != nil {
 		logger.WithError(err).Debugf("failed to stream call")
 		return err
 	}
-
-	logger.Debugf("startm closed")
+	logger.Debugf("stream closed")
 
 	return nil
 }
