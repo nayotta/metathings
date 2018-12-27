@@ -110,7 +110,6 @@ func (self *connectionCenter) connection_loop(dev *storage.Device, conn Connecti
 	logger.Debugf("remove bridge from device")
 
 	logger.Debugf("quit connection loop")
-
 }
 
 func (self *connectionCenter) br2stm(dev *storage.Device, conn Connection, br Bridge, stm pb.DevicedService_ConnectServer, quit chan bool, wg *sync.WaitGroup) chan bool {
@@ -437,6 +436,7 @@ func (self *connectionCenter) stm_up2down(dev *storage.Device, cfg *pb.StreamCal
 				*perr = err
 			}
 			close(wait)
+			logger.Debugf("stream up to down quit")
 		}()
 		for {
 			var buf []byte
@@ -492,6 +492,7 @@ func (self *connectionCenter) stm_down2up(dev *storage.Device, cfg *pb.StreamCal
 				*perr = err
 			}
 			close(wait)
+			logger.Debugf("stream down to up quit")
 		}()
 		for {
 			var buf []byte

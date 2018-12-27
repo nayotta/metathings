@@ -4,7 +4,6 @@ import (
 	"context"
 	"net"
 
-	"github.com/grpc-ecosystem/go-grpc-middleware/auth"
 	"go.uber.org/fx"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
@@ -23,7 +22,7 @@ func NewGrpcServer(params NewGrpcServerParams, lc fx.Lifecycle) *grpc.Server {
 
 	opts := []grpc.ServerOption{
 		grpc.UnaryInterceptor(grpc_helper.UnaryServerInterceptor()),
-		grpc.StreamInterceptor(grpc_auth.StreamServerInterceptor(nil)),
+		grpc.StreamInterceptor(grpc_helper.StreamServerInterceptor()),
 	}
 
 	if params.Creds != nil {

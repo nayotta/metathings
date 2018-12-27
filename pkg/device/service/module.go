@@ -25,8 +25,8 @@ type Module interface {
 	IsAlive() bool
 	HeartbeatAt() time.Time
 
-	UnaryCall(context.Context, *deviced_pb.OpUnaryCallValue) (*deviced_pb.UnaryCallValue, error)
-	StreamCall(context.Context, deviced_pb.DevicedService_ConnectClient) error
+	UnaryCall(ctx context.Context, req *deviced_pb.OpUnaryCallValue) (*deviced_pb.UnaryCallValue, error)
+	StreamCall(ctx context.Context, cfg_req *deviced_pb.ConnectRequest, stm deviced_pb.DevicedService_ConnectClient) error
 }
 
 type ModuleStream interface {
@@ -67,6 +67,7 @@ func (self *ModuleImpl) init_proxy() error {
 			return err
 		}
 	}
+	self.logger.WithField("endpoint", self.module.Endpoint).Debugf("init module proxy")
 
 	return nil
 }
@@ -91,20 +92,15 @@ func (self *ModuleImpl) UnaryCall(ctx context.Context, req *deviced_pb.OpUnaryCa
 	}, nil
 }
 
-func (self *ModuleImpl) StreamCall(ctx context.Context, upstm deviced_pb.DevicedService_ConnectClient) error {
-	var req *deviced_pb.ConnectRequest
+func (self *ModuleImpl) StreamCall(ctx context.Context, cfg_req *deviced_pb.ConnectRequest, upstm deviced_pb.DevicedService_ConnectClient) error {
 	var err error
 
 	if err = self.init_proxy(); err != nil {
 		return err
 	}
 
-	if req, err = upstm.Recv(); err != nil {
-		return err
-	}
-
-	sess := req.GetSessionId().GetValue()
-	cfg := req.GetStreamCall().GetConfig()
+	sess := cfg_req.GetSessionId().GetValue()
+	cfg := cfg_req.GetStreamCall().GetConfig()
 	method := cfg.GetMethod().GetValue()
 	mpstm := component.NewModuleProxyStream(upstm, sess)
 

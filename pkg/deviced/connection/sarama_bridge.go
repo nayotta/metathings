@@ -32,6 +32,10 @@ type saramaBridge struct {
 func (self *saramaBridge) init_producer() error {
 	var err error
 
+	if self.producer != nil {
+		return nil
+	}
+
 	config := sarama.NewConfig()
 	config.Producer.RequiredAcks = sarama.WaitForAll
 	config.Producer.Return.Successes = true
@@ -40,13 +44,17 @@ func (self *saramaBridge) init_producer() error {
 	if self.producer, err = sarama.NewSyncProducer(self.opt.Brokers, config); err != nil {
 		return err
 	}
-	self.logger.WithField("config", config).Debugf("init producer")
+	self.logger.WithField("topic", self.symbol).Debugf("init producer")
 
 	return nil
 }
 
 func (self *saramaBridge) init_consumer() error {
 	var err error
+
+	if self.consumer != nil {
+		return nil
+	}
 
 	config := cluster.NewConfig()
 	config.Consumer.Return.Errors = true
@@ -56,9 +64,8 @@ func (self *saramaBridge) init_consumer() error {
 		return err
 	}
 	self.logger.WithFields(log.Fields{
-		"config": config,
-		"group":  self.Id(),
-		"topic":  self.symbol,
+		"group": self.Id(),
+		"topic": self.symbol,
 	}).Debugf("init consumer")
 
 	return nil
