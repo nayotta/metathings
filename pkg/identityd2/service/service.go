@@ -132,7 +132,11 @@ func (self *MetathingsIdentitydService) is_refreshable_token(tkn *storage.Token)
 	return tkn.ExpiresAt.Sub(time.Now()) < time.Duration(.25*float64(self.opt.TokenExpire))
 }
 
-func (self *MetathingsIdentitydService) refresh_token(tkn *storage.Token) {
+func (self *MetathingsIdentitydService) refresh_token(tkn *storage.Token) error {
+	tkn_id := *tkn.Id
+	expires_at := time.Now().Add(self.opt.TokenExpire)
+
+	return self.storage.RefreshToken(tkn_id, expires_at)
 }
 
 func (self *MetathingsIdentitydService) AuthFuncOverride(ctx context.Context, fullMethodName string) (context.Context, error) {
@@ -168,7 +172,9 @@ func (self *MetathingsIdentitydService) AuthFuncOverride(ctx context.Context, fu
 	}
 
 	if self.is_refreshable_token(tkn) {
-		self.refresh_token(tkn)
+		if err = self.refresh_token(tkn); err != nil {
+			self.logger.WithError(err).Warningf("failed to refresh token")
+		}
 	}
 
 	new_ctx = context.WithValue(ctx, "token", tkn)

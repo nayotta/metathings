@@ -34,6 +34,20 @@ func (self *MetathingsIdentitydService) ValidateToken(ctx context.Context, req *
 		return nil, status.Errorf(codes.Unauthenticated, policy.ErrUnauthenticated.Error())
 	}
 
+	if self.is_invalid_token(t) {
+		if err = self.revoke_token(*t.Id); err != nil {
+			self.logger.WithError(err).Warningf("failed to revoke token")
+
+		}
+		return nil, status.Errorf(codes.Unauthenticated, policy.ErrUnauthenticated.Error())
+	}
+
+	if self.is_refreshable_token(t) {
+		if err = self.refresh_token(t); err != nil {
+			self.logger.WithError(err).Warningf("failed to refresh token")
+		}
+	}
+
 	res := &pb.ValidateTokenResponse{
 		Token: copy_token(t),
 	}
