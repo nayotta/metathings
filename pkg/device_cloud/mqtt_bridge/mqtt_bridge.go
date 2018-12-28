@@ -55,7 +55,7 @@ func (that *mqttBridge) GetHost() (*url.URL, error) {
 }
 
 // NewMqttBridge NewMqttBridge
-func NewMqttBridge(args ...interface{}) (MqttBridge, error) {
+func NewMqttBridge(cliFty *client_helper.ClientFactory, args ...interface{}) (MqttBridge, error) {
 	var ok bool
 	var err error
 	var key string
@@ -100,6 +100,7 @@ func NewMqttBridge(args ...interface{}) (MqttBridge, error) {
 	return &mqttBridge{
 		host:    host,
 		rootKey: rootKey,
+		cliFty:  cliFty,
 		logger:  logger,
 	}, nil
 }

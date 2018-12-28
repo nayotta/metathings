@@ -11,6 +11,7 @@ import (
 	"github.com/golang/protobuf/proto"
 	"github.com/golang/protobuf/ptypes/wrappers"
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
+	pb_helper "github.com/nayotta/metathings/pkg/common/protobuf"
 	pb "github.com/nayotta/metathings/pkg/proto/device_cloud"
 	deviced_pb "github.com/nayotta/metathings/pkg/proto/deviced"
 	log "github.com/sirupsen/logrus"
@@ -202,10 +203,31 @@ func (that *HeartBeatCenter) pubHeartBeatSelectResponse(deviceID string, session
 }
 
 func (that *HeartBeatCenter) pubHeartBeatResponse(deviceID string, sessionID int) error {
-	//sessionIDStr := strconv.Itoa(sessionID)
+	now := pb_helper.Now()
 	deviceTopic := deviceID + "/down/"
 
-	// TODO(zh) call deviced heartbeat not response direct
+	hbreq := &deviced_pb.HeartbeatRequest{
+		Device: &deviced_pb.OpDevice{
+			Id:          &wrappers.StringValue{Value: deviceID},
+			HeartbeatAt: &now,
+		},
+	}
+
+	hbreq.Device.Modules = append(hbreq.Device.Modules, &deviced_pb.OpModule{
+		Id:          &wrappers.StringValue{Value: deviceID},
+		HeartbeatAt: &now,
+	})
+
+	cli, cfn, err := that.cliFty.NewDevicedServiceClient()
+	if err != nil {
+		return err
+	}
+	defer cfn()
+
+	_, err = cli.Heartbeat(context.Background(), hbreq)
+	if err != nil {
+		return err
+	}
 
 	resMsg := &pb.MqttDeviceRequest{
 		SessionId: (int32)(sessionID),

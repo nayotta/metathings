@@ -12,7 +12,7 @@ func (self *MetathingsDevicedService) ValidateMqttHeartbeatSelect(ctx context.Co
 	return self.validate_chain(
 		[]interface{}{
 			func() (policy_helper.Validator, get_devicer) {
-				req := in.(*pb.CreateMqttKeyRequest)
+				req := in.(*pb.MqttHeartbeatSelectRequest)
 				return req, req
 			},
 		},

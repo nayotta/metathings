@@ -4,6 +4,7 @@ import (
 	"context"
 
 	cmd_contrib "github.com/nayotta/metathings/cmd/contrib"
+	client_helper "github.com/nayotta/metathings/pkg/common/client"
 	cmd_helper "github.com/nayotta/metathings/pkg/common/cmd"
 	token_helper "github.com/nayotta/metathings/pkg/common/token"
 	device_cloud "github.com/nayotta/metathings/pkg/device_cloud/mqtt_bridge"
@@ -168,8 +169,8 @@ func NewConnectionCenter(opt *DevicedOption, logger log.FieldLogger) (connection
 }
 
 // NewMqttBridgeCenter NewMqttBridgeCenter
-func NewMqttBridgeCenter(opt cmd_contrib.MqttBridgeOptioner, logger log.FieldLogger) (device_cloud.MqttBridge, error) {
-	br, err := device_cloud.NewMqttBridge("broker", opt.GetBroker(), "rootkey", opt.GetRootkey(), "logger", logger)
+func NewMqttBridgeCenter(cli *client_helper.ClientFactory, opt cmd_contrib.MqttBridgeOptioner, logger log.FieldLogger) (device_cloud.MqttBridge, error) {
+	br, err := device_cloud.NewMqttBridge(cli, "broker", opt.GetBroker(), "rootkey", opt.GetRootkey(), "logger", logger)
 	if err != nil {
 		return nil, err
 	}
