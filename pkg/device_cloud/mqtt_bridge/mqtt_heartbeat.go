@@ -203,20 +203,11 @@ func (that *HeartBeatCenter) pubHeartBeatSelectResponse(deviceID string, session
 }
 
 func (that *HeartBeatCenter) pubHeartBeatResponse(deviceID string, sessionID int) error {
-	now := pb_helper.Now()
 	deviceTopic := deviceID + "/down/"
 
-	hbreq := &deviced_pb.HeartbeatRequest{
-		Device: &deviced_pb.OpDevice{
-			Id:          &wrappers.StringValue{Value: deviceID},
-			HeartbeatAt: &now,
-		},
+	hbreq := &deviced_pb.MqttHeartbeatRequest{
+		DeviceId: deviceID,
 	}
-
-	hbreq.Device.Modules = append(hbreq.Device.Modules, &deviced_pb.OpModule{
-		Id:          &wrappers.StringValue{Value: deviceID},
-		HeartbeatAt: &now,
-	})
 
 	cli, cfn, err := that.cliFty.NewDevicedServiceClient()
 	if err != nil {
@@ -224,7 +215,7 @@ func (that *HeartBeatCenter) pubHeartBeatResponse(deviceID string, sessionID int
 	}
 	defer cfn()
 
-	_, err = cli.Heartbeat(context.Background(), hbreq)
+	_, err = cli.MqttHeartbeat(context.Background(), hbreq)
 	if err != nil {
 		return err
 	}

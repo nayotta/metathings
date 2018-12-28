@@ -38,6 +38,7 @@ type MetathingsDevicedService struct {
 
 var (
 	ignore_methods = []string{
+		"MqttHeartbeat",
 		"MqttHeartbeatSelect",
 	}
 )
