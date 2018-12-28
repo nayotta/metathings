@@ -8,10 +8,25 @@ var (
 	ErrUnknownBridgeDriver = errors.New("unknown bridge driver")
 )
 
-type Bridge interface {
-	Id() string
+type Side string
+
+const (
+	NORTH_SIDE Side = "north"
+	SOUTH_SIDE Side = "south"
+)
+
+type Channel interface {
 	Send([]byte) error
 	Recv() ([]byte, error)
+	AsyncSend() chan<- []byte
+	AsyncRecv() <-chan []byte
+	Close() error
+}
+
+type Bridge interface {
+	Id() string
+	North() Channel
+	South() Channel
 	Close() error
 }
 

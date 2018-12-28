@@ -134,16 +134,17 @@ func (self *connectionCenter) br2stm(dev *storage.Device, conn Connection, br Br
 			logger.Debugf("connection closed")
 		}()
 
-		abr := NewAsyncBridgeWrapper(br)
 		for {
 			var buf []byte
 			var req pb.ConnectRequest
 
+			// TODO(Peer): catch error
+			ch := br.North()
 			select {
 			case <-quit:
 				logger.Debugf("quit signal from stm2br")
 				return
-			case buf = <-abr.Recv():
+			case buf = <-ch.AsyncRecv():
 				logger.Debugf("recv msg")
 			}
 
@@ -210,11 +211,13 @@ func (self *connectionCenter) stm2br(dev *storage.Device, conn Connection, br Br
 				return
 			}
 
-			abr := NewAsyncBridgeWrapper(res_br)
+			// TODO(Peer): catch error
+			ch := br.South()
 			select {
 			case <-quit:
 				logger.Debugf("quit signal from br2stm")
-			case abr.Send() <- buf:
+				return
+			case ch.AsyncSend() <- buf:
 				logger.WithField("bridge", res_br.Id()).Debugf("send msg")
 			}
 		}
@@ -300,12 +303,12 @@ func (self *connectionCenter) UnaryCall(dev *storage.Device, req *pb.OpUnaryCall
 	}
 	self.logger.Debugf("marshal request")
 
-	if err = conn_br.Send(buf); err != nil {
+	if err = conn_br.North().Send(buf); err != nil {
 		return nil, err
 	}
 	self.logger.Debugf("send request")
 
-	if buf, err = sess_br.Recv(); err != nil {
+	if buf, err = sess_br.North().Recv(); err != nil {
 		return nil, err
 	}
 	self.logger.Debugf("recv response")
@@ -373,13 +376,13 @@ func (self *connectionCenter) StreamCall(dev *storage.Device, cfg *pb.OpStreamCa
 		return err
 	}
 
-	if err = conn_br.Send(buf); err != nil {
+	if err = conn_br.North().Send(buf); err != nil {
 		self.logger.WithError(err).Debugf("failed to send config request")
 		return err
 	}
 	self.logger.Debugf("send config request to device")
 
-	if buf, err = sess_br.Recv(); err != nil {
+	if buf, err = sess_br.North().Recv(); err != nil {
 		self.logger.WithError(err).Debugf("failed to recv config response")
 		return err
 	}
@@ -462,7 +465,7 @@ func (self *connectionCenter) stm_up2down(dev *storage.Device, cfg *pb.StreamCal
 			}
 			logger.Debugf("marshal request")
 
-			if err = downstm.Send(buf); err != nil {
+			if err = downstm.North().Send(buf); err != nil {
 				logger.WithError(err).Debugf("failed to send msg")
 				return
 			}
@@ -498,7 +501,7 @@ func (self *connectionCenter) stm_down2up(dev *storage.Device, cfg *pb.StreamCal
 			var buf []byte
 			var down_res pb.ConnectResponse
 
-			if buf, err = downstm.Recv(); err != nil {
+			if buf, err = downstm.North().Recv(); err != nil {
 				logger.WithError(err).Debugf("failed to recv msg")
 				return
 			}
