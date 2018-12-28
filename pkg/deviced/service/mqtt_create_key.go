@@ -4,14 +4,8 @@ import (
 	"context"
 	"errors"
 
-	id_helper "github.com/nayotta/metathings/pkg/common/id"
 	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
-	deviced_helper "github.com/nayotta/metathings/pkg/deviced/helper"
-	storage "github.com/nayotta/metathings/pkg/deviced/storage"
-	pb_state "github.com/nayotta/metathings/pkg/proto/constant/state"
 	pb "github.com/nayotta/metathings/pkg/proto/deviced"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 func (self *MetathingsDevicedService) ValidateCreateMqttKey(ctx context.Context, in interface{}) error {
@@ -43,7 +37,7 @@ func (self *MetathingsDevicedService) CreateMqttKey(ctx context.Context, req *pb
 
 	dev_id_str := dev.GetId().GetValue()
 
-	keyStr, err := self.mqttBr.KeyGenForDeviced(dev_id_str)	
+	keyStr, err := self.mqttBr.KeyGenForDeviced(dev_id_str)
 	if err != nil {
 		self.logger.WithError(err).Errorf("failed to create mqtt key")
 		return nil, err
@@ -57,5 +51,3 @@ func (self *MetathingsDevicedService) CreateMqttKey(ctx context.Context, req *pb
 
 	return res, nil
 }
-
-
