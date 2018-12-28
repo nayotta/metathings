@@ -133,9 +133,9 @@ func newKeygenCenter(mqttBr *mqttBridge, deviceID string) (*keygenCenter, error)
 func (that *mqttBridge) KeyGen(ctx context.Context, req *pb.GenKeyRequest) (*pb.GenKeyResponse, error) {
 	var err error
 
-	cpID := req.GetDeviceId().GetValue()
+	devID := req.GetDeviceId().GetValue()
 
-	keygenClient, err := newKeygenCenter(that, cpID)
+	keygenClient, err := newKeygenCenter(that, devID)
 	if err != nil {
 		return nil, err
 	}
@@ -148,4 +148,20 @@ func (that *mqttBridge) KeyGen(ctx context.Context, req *pb.GenKeyRequest) (*pb.
 	return &pb.GenKeyResponse{
 		Key: retKey,
 	}, nil
+}
+
+func (that *mqttBridge) KeyGenForDeviced(deviceID string) (string, error) {
+	var err error
+
+	keygenClient, err := newKeygenCenter(that, deviceID)
+	if err != nil {
+		return "", err
+	}
+
+	retKey, err := keygenClient.KeyGen()
+	if err != nil {
+		return "", err
+	}
+
+	return retKey, nil
 }

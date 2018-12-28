@@ -17,6 +17,8 @@ import "heartbeat.proto";
 
 import "unary_call.proto";
 import "stream_call.proto";
+import "create_mqtt_key.proto";
+import "mqtt_heartbeat_select.proto";
 
 service DevicedService {
 	rpc CreateDevice(CreateDeviceRequest) returns (CreateDeviceResponse) {}
@@ -29,6 +31,10 @@ service DevicedService {
 	rpc ShowDevice(google.protobuf.Empty) returns (ShowDeviceResponse) {}
 	rpc Connect(stream ConnectResponse) returns (stream ConnectRequest) {}
 	rpc Heartbeat(HeartbeatRequest) returns (google.protobuf.Empty) {}
+
+	// mqtt device only
+	rpc CreateMqttKey(CreateMqttKeyRequest) returns (CreateMqttKeyResponse) {}
+	rpc MqttHeartbeatSelect(MqttHeartbeatSelectRequest) returns (MqttHeartbeatSelectResponse) {}
 
 	rpc UnaryCall(UnaryCallRequest) returns (UnaryCallResponse) {}
 	rpc StreamCall(stream StreamCallRequest) returns (stream StreamCallResponse) {}

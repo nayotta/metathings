@@ -19,6 +19,7 @@ type MqttBridge interface {
 	InitMqttBridge() error
 	InitHeartBeatLoop() error
 	KeyGen(context.Context, *pb.GenKeyRequest) (*pb.GenKeyResponse, error)
+	KeyGenForDeviced(string) (string, error)
 	HeartBeatSelect()
 	UnaryCall(context.Context, *pb.UnaryCallRequest) (*pb.UnaryCallResponse, error)
 	UnaryCallForDeviced(*deviced_storage.Device, *deviced_pb.OpUnaryCallValue) (*deviced_pb.UnaryCallValue, error)
