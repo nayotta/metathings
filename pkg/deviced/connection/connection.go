@@ -142,6 +142,7 @@ func (self *connectionCenter) south_to_bridge(dev *storage.Device, conn Connecti
 				logger.WithError(err).Debugf("failed to recv msg")
 				return
 			}
+			logger.WithField("from", "south").Debugf("recv msg")
 
 			if buf, err = proto.Marshal(res); err != nil {
 				logger.WithError(err).Warningf("failed to marshal request data")
@@ -159,7 +160,10 @@ func (self *connectionCenter) south_to_bridge(dev *storage.Device, conn Connecti
 
 			// TODO(Peer): catch sending error
 			sending_bridge.South().AsyncSend() <- buf
-			logger.WithField("bridge", sending_bridge.Id()).Debugf("send msg")
+			logger.WithFields(log.Fields{
+				"bridge": sending_bridge.Id(),
+				"to":     "bridge",
+			}).Debugf("send msg")
 		}
 	}()
 
@@ -194,7 +198,10 @@ func (self *connectionCenter) south_from_bridge(dev *storage.Device, conn Connec
 			// TODO(Peer): catch receiving error
 			select {
 			case buf = <-br.South().AsyncRecv():
-				logger.WithField("bridge", br.Id()).Debugf("recv msg")
+				logger.WithFields(log.Fields{
+					"bridge": br.Id(),
+					"from":   "bridge",
+				}).Debugf("recv msg")
 			case <-quit:
 				logger.Debugf("catch quit signal")
 				return
@@ -209,7 +216,7 @@ func (self *connectionCenter) south_from_bridge(dev *storage.Device, conn Connec
 				logger.WithError(err).Debugf("failed to send msg")
 				return
 			}
-			logger.Debugf("send msg")
+			logger.WithField("to", "south").Debugf("send msg")
 		}
 	}()
 
