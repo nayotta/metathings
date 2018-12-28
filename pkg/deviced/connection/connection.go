@@ -86,19 +86,19 @@ func (self *connectionCenter) connection_loop(dev *storage.Device, conn Connecti
 	wg := &sync.WaitGroup{}
 	wg.Add(2)
 
-	br2stm_quit := make(chan bool)
-	stm2br_quit := make(chan bool)
-	defer close(br2stm_quit)
-	defer close(stm2br_quit)
+	south_to_bridge_quit := make(chan bool)
+	south_from_bridge_quit := make(chan bool)
+	defer close(south_to_bridge_quit)
+	defer close(south_from_bridge_quit)
 
-	br2stm_wait := self.br2stm(dev, conn, br, stm, br2stm_quit, wg)
-	stm2br_wait := self.stm2br(dev, conn, br, stm, stm2br_quit, wg)
+	south_to_bridge_wait := self.south_to_bridge(dev, conn, br, stm, south_to_bridge_quit, wg)
+	south_from_bridge_wait := self.south_from_bridge(dev, conn, br, stm, south_from_bridge_quit, wg)
 
 	select {
-	case <-br2stm_wait:
-		stm2br_quit <- false
-	case <-stm2br_wait:
-		br2stm_quit <- false
+	case <-south_to_bridge_wait:
+		south_from_bridge_quit <- false
+	case <-south_from_bridge_wait:
+		south_to_bridge_quit <- false
 	}
 
 	logger.Debugf("waiting for disconnect")
@@ -112,16 +112,18 @@ func (self *connectionCenter) connection_loop(dev *storage.Device, conn Connecti
 	logger.Debugf("quit connection loop")
 }
 
-func (self *connectionCenter) br2stm(dev *storage.Device, conn Connection, br Bridge, stm pb.DevicedService_ConnectServer, quit chan bool, wg *sync.WaitGroup) chan bool {
-	wait := make(chan bool)
+func (self *connectionCenter) south_to_bridge(dev *storage.Device, conn Connection, br Bridge, stm pb.DevicedService_ConnectServer, quit chan bool, wg *sync.WaitGroup) chan struct{} {
+	wait := make(chan struct{})
 
 	go func() {
+		var buf []byte
+		var res *pb.ConnectResponse
+		var sending_bridge Bridge
 		var err error
 
 		logger := self.logger.WithFields(log.Fields{
-			"#from": "bridge",
-			"#to":   "stream",
-			"devid": *dev.Id,
+			"dir":    "south->bridge",
+			"device": *dev.Id,
 		})
 
 		defer func() {
@@ -131,26 +133,76 @@ func (self *connectionCenter) br2stm(dev *storage.Device, conn Connection, br Br
 
 			close(wait)
 			wg.Done()
-			logger.Debugf("connection closed")
+			logger.Debugf("loop closed")
 		}()
 
 		for {
-			var buf []byte
+			// TODO(Peer): catch quit signal
+			if res, err = stm.Recv(); err != nil {
+				logger.WithError(err).Debugf("failed to recv msg")
+				return
+			}
+
+			if buf, err = proto.Marshal(res); err != nil {
+				logger.WithError(err).Warningf("failed to marshal request data")
+				continue
+			}
+
+			if res.GetUnaryCall() != nil {
+				if sending_bridge, err = self.brfty.BuildBridge(*dev.Id, res.GetSessionId()); err != nil {
+					logger.WithError(err).Debugf("failed to build bridge for unary call response")
+					return
+				}
+			} else {
+				sending_bridge = br
+			}
+
+			// TODO(Peer): catch sending error
+			sending_bridge.South().AsyncSend() <- buf
+			logger.WithField("bridge", sending_bridge.Id()).Debugf("send msg")
+		}
+	}()
+
+	return wait
+}
+
+func (self *connectionCenter) south_from_bridge(dev *storage.Device, conn Connection, br Bridge, stm pb.DevicedService_ConnectServer, quit chan bool, wg *sync.WaitGroup) chan struct{} {
+	wait := make(chan struct{})
+
+	go func() {
+		var buf []byte
+		var err error
+
+		logger := self.logger.WithFields(log.Fields{
+			"dir":    "bridge->south",
+			"device": *dev.Id,
+		})
+
+		defer func() {
+			if err != nil {
+				conn.Err(err)
+			}
+
+			close(wait)
+			wg.Done()
+			logger.Debugf("loop closed")
+		}()
+
+		for {
 			var req pb.ConnectRequest
 
-			// TODO(Peer): catch error
-			ch := br.North()
+			// TODO(Peer): catch receiving error
 			select {
+			case buf = <-br.South().AsyncRecv():
+				logger.WithField("bridge", br.Id()).Debugf("recv msg")
 			case <-quit:
-				logger.Debugf("quit signal from stm2br")
+				logger.Debugf("catch quit signal")
 				return
-			case buf = <-ch.AsyncRecv():
-				logger.Debugf("recv msg")
 			}
 
 			if err = proto.Unmarshal(buf, &req); err != nil {
-				logger.WithError(err).Debugf("failed to unmarshal response data")
-				return
+				logger.WithError(err).Warningf("failed to unmarshal response data")
+				continue
 			}
 
 			if err = stm.Send(&req); err != nil {
@@ -158,68 +210,6 @@ func (self *connectionCenter) br2stm(dev *storage.Device, conn Connection, br Br
 				return
 			}
 			logger.Debugf("send msg")
-		}
-	}()
-
-	return wait
-}
-
-func (self *connectionCenter) stm2br(dev *storage.Device, conn Connection, br Bridge, stm pb.DevicedService_ConnectServer, quit chan bool, wg *sync.WaitGroup) chan bool {
-	wait := make(chan bool)
-
-	go func() {
-		var err error
-
-		logger := self.logger.WithFields(log.Fields{
-			"#from": "stream",
-			"#to":   "bridge",
-			"devid": *dev.Id,
-		})
-
-		defer func() {
-			if err != nil {
-				conn.Err(err)
-			}
-
-			close(wait)
-			wg.Done()
-			logger.Debugf("connection closed")
-		}()
-
-		for {
-			var buf []byte
-			var res *pb.ConnectResponse
-			var res_br Bridge
-
-			if res, err = stm.Recv(); err != nil {
-				logger.WithError(err).Debugf("failed to recv msg")
-				return
-			}
-			logger.Debugf("recv msg")
-
-			if res.GetUnaryCall() != nil {
-				if res_br, err = self.brfty.BuildBridge(*dev.Id, res.SessionId); err != nil {
-					logger.WithError(err).Debugf("failed to build bridge for unary call")
-					return
-				}
-			} else {
-				res_br = br
-			}
-
-			if buf, err = proto.Marshal(res); err != nil {
-				logger.WithError(err).Debugf("failed to marshal request data")
-				return
-			}
-
-			// TODO(Peer): catch error
-			ch := br.South()
-			select {
-			case <-quit:
-				logger.Debugf("quit signal from br2stm")
-				return
-			case ch.AsyncSend() <- buf:
-				logger.WithField("bridge", res_br.Id()).Debugf("send msg")
-			}
 		}
 	}()
 

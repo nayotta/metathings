@@ -30,6 +30,11 @@ type saramaChannel struct {
 
 	producer sarama.AsyncProducer
 	consumer *cluster.Consumer
+
+	sending   chan []byte
+	receiving chan []byte
+
+	recv_err error
 }
 
 func (self *saramaChannel) producer_topic() string {
@@ -62,7 +67,7 @@ func (self *saramaChannel) init_producer() error {
 	if self.producer, err = sarama.NewAsyncProducer(self.opt.Brokers, config); err != nil {
 		return err
 	}
-	self.logger.WithField("topic", self.producer_topic).Debugf("init producer")
+	self.logger.WithField("topic", self.producer_topic()).Debugf("init producer")
 
 	return nil
 }
@@ -83,7 +88,7 @@ func (self *saramaChannel) init_consumer() error {
 	}
 	self.logger.WithFields(log.Fields{
 		"group": self.opt.Id,
-		"topic": self.consumer_topic,
+		"topic": self.consumer_topic(),
 	}).Debugf("init consumer")
 
 	return nil
@@ -92,44 +97,78 @@ func (self *saramaChannel) init_consumer() error {
 func (self *saramaChannel) AsyncSend() chan<- []byte {
 	self.init_producer()
 
-	ch := make(chan []byte)
+	logger := self.logger.WithFields(log.Fields{
+		"id":    self.opt.Id,
+		"topic": self.producer_topic(),
+		"side":  self.opt.Side,
+		"event": "send",
+	})
+
+	if self.sending != nil {
+		return self.sending
+	}
+
+	self.sending = make(chan []byte)
 	go func() {
+		defer func() {
+			close(self.sending)
+			logger.Debugf("loop closed")
+		}()
 		for {
 			select {
-			case buf := <-ch:
+			case buf := <-self.sending:
 				msg := &sarama.ProducerMessage{
 					Topic:     self.producer_topic(),
 					Value:     sarama.ByteEncoder(buf),
 					Partition: -1,
 				}
 				self.producer.Input() <- msg
-				self.logger.Debugf("send msg")
+				logger.Debugf("send msg")
 			}
 		}
 	}()
 
-	return ch
+	return self.sending
 }
 
 func (self *saramaChannel) AsyncRecv() <-chan []byte {
 	self.init_consumer()
 
-	ch := make(chan []byte)
+	logger := self.logger.WithFields(log.Fields{
+		"id":    self.opt.Id,
+		"topic": self.consumer_topic(),
+		"side":  self.opt.Side,
+		"event": "recv",
+	})
+
+	if self.receiving != nil {
+		return self.receiving
+	}
+
+	self.receiving = make(chan []byte)
 	go func() {
+		defer func() {
+			close(self.receiving)
+			logger.Debugf("loop closed")
+		}()
 		for {
 			select {
 			case msg, ok := <-self.consumer.Messages():
 				if ok {
 					self.consumer.MarkOffset(msg, "")
+					self.receiving <- msg.Value
 					self.logger.Debugf("recv msg")
-					ch <- msg.Value
 				}
+			case err := <-self.consumer.Errors():
+				self.recv_err = err
+				self.logger.WithError(err).Debugf("recv error")
+				return
 			}
 		}
 
 	}()
 
-	return ch
+	return self.receiving
 }
 
 func (self *saramaChannel) Send(buf []byte) error {
@@ -142,25 +181,34 @@ func (self *saramaChannel) Send(buf []byte) error {
 }
 
 func (self *saramaChannel) Recv() ([]byte, error) {
+	if self.recv_err != nil {
+		return nil, self.recv_err
+	}
+
 	select {
 	case buf := <-self.AsyncRecv():
+		if self.recv_err != nil {
+			return nil, self.recv_err
+		}
 		return buf, nil
-	case err := <-self.consumer.Errors():
-		return nil, err
 	}
 }
 
 func (self *saramaChannel) Close() error {
 	var err error
 
-	if err = self.producer.Close(); err != nil {
-		self.logger.WithError(err).Warningf("failed to close producer")
-		return err
+	if self.producer != nil {
+		if err = self.producer.Close(); err != nil {
+			self.logger.WithError(err).Warningf("failed to close producer")
+			return err
+		}
 	}
 
-	if err = self.consumer.Close(); err != nil {
-		self.logger.WithError(err).Warningf("failed to close consumer")
-		return err
+	if self.consumer != nil {
+		if err = self.consumer.Close(); err != nil {
+			self.logger.WithError(err).Warningf("failed to close consumer")
+			return err
+		}
 	}
 
 	self.logger.Debugf("channel closed")
