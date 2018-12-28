@@ -98,6 +98,7 @@ func NewMetathingsIdentitydServiceOption(opt *Identityd2Option) *service.Metathi
 
 func initIdentityd2() error {
 	app := fx.New(
+		fx.NopLogger,
 		fx.Provide(
 			GetIdentityd2Options,
 			cmd_contrib.NewLogger("identityd2"),

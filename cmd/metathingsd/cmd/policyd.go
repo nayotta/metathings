@@ -127,6 +127,7 @@ func NewMetathingsPolicydServiceOption(opt *PolicydOption) (*service.MetathingsP
 
 func runPolicyd() error {
 	app := fx.New(
+		fx.NopLogger,
 		fx.Provide(
 			GetPolicydOptions,
 			cmd_contrib.NewTransportCredentials,

@@ -73,6 +73,7 @@ func run_device() error {
 	var err error
 
 	app := fx.New(
+		fx.NopLogger,
 		fx.Provide(
 			GetRunDeviceOptions,
 			cmd_contrib.NewLogger("device"),
