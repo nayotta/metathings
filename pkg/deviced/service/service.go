@@ -36,6 +36,12 @@ type MetathingsDevicedService struct {
 	mqttBr   device_cloud.MqttBridge
 }
 
+var (
+	ignore_methods = []string{
+		"MqttHeartbeatSelect",
+	}
+)
+
 func (self *MetathingsDevicedService) get_device_by_context(ctx context.Context) (*storage.Device, error) {
 	var tkn *identityd_pb.Token
 	var dev_s *storage.Device
@@ -94,6 +100,11 @@ func (self *MetathingsDevicedService) validate_chain(providers []interface{}, in
 }
 
 func (self *MetathingsDevicedService) is_ignore_method(md *grpc_helper.MethodDescription) bool {
+	for _, m := range ignore_methods {
+		if md.Method == m {
+			return true
+		}
+	}
 	return false
 }
 

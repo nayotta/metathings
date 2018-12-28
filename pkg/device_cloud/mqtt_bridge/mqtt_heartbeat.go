@@ -1,6 +1,7 @@
 package metathingsdevicecloudmqttbridge
 
 import (
+	"context"
 	"net/url"
 	"strconv"
 	"strings"
@@ -8,7 +9,10 @@ import (
 
 	emitter "github.com/emitter-io/go"
 	"github.com/golang/protobuf/proto"
+	"github.com/golang/protobuf/ptypes/wrappers"
+	client_helper "github.com/nayotta/metathings/pkg/common/client"
 	pb "github.com/nayotta/metathings/pkg/proto/device_cloud"
+	deviced_pb "github.com/nayotta/metathings/pkg/proto/deviced"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -20,6 +24,7 @@ type HeartBeatCenter struct {
 	topicStatusSelect string
 	downKey           string
 	statusUpKey       string
+	cliFty            *client_helper.ClientFactory
 	logger            log.FieldLogger
 }
 
@@ -34,19 +39,51 @@ func (that *HeartBeatCenter) logD(deviceID string, text string) {
 func (that *HeartBeatCenter) heartBeatSelectProcess(deviceID string) {
 	var err error
 
+	cli, cfn, err := that.cliFty.NewDevicedServiceClient()
+	if err != nil {
+		that.logE("", err, "NewDeviceServiceClient failed")
+		return
+	}
+	defer cfn()
+
+	req := &deviced_pb.MqttHeartbeatSelectRequest{
+		Device: &deviced_pb.OpDevice{
+			Id: &wrappers.StringValue{Value: deviceID},
+		},
+	}
+
+	_, err = cli.MqttHeartbeatSelect(context.Background(), req)
+	if err != nil {
+		return
+	}
+}
+
+func (that *HeartBeatCenter) heartBeatSelectSub(deviceID string) (int, error) {
 	sessionIDStr, sessionID := newSessionID()
 
 	selectTopic := deviceID + "/statusup/" + sessionIDStr + "/"
 	r := that.client.Subscribe(that.statusUpKey, selectTopic)
 	if r.Wait() && r.Error() != nil {
 		that.logE("", ErrMqttSubFailed, "mqtt sub failed")
-		return
+		return 0, ErrMqttSubFailed
+	}
+
+	return sessionID, nil
+}
+
+// HeartBeatSelect HeartBeatSelect for deviced
+func (that *HeartBeatCenter) HeartBeatSelect(deviceID string) (int, error) {
+	sessionID, err := that.heartBeatSelectSub(deviceID)
+	if err != nil {
+		return 0, err
 	}
 
 	err = that.pubHeartBeatSelectResponse(deviceID, sessionID)
 	if err != nil {
-		return
+		return 0, err
 	}
+
+	return sessionID, nil
 }
 
 func (that *HeartBeatCenter) heartBeatProcess(deviceID string, sessionID int) {
@@ -219,6 +256,7 @@ func NewHeartBeatCenter(mqttBr *mqttBridge) (*HeartBeatCenter, error) {
 		topicStatusSelect: topicStatusSelect,
 		statusUpKey:       mqttBr.statusUpKey,
 		downKey:           mqttBr.downKey,
+		cliFty:            mqttBr.cliFty,
 		logger:            mqttBr.logger,
 	}, nil
 }
@@ -226,17 +264,29 @@ func NewHeartBeatCenter(mqttBr *mqttBridge) (*HeartBeatCenter, error) {
 func (that *mqttBridge) InitHeartBeatLoop() error {
 	var err error
 
-	hearBeatClient, err := NewHeartBeatCenter(that)
+	that.heartbeat, err = NewHeartBeatCenter(that)
 	if err != nil {
 		that.logger.WithError(err).Errorf("InitHeartBeatLoop error")
 		return err
 	}
 
-	err = hearBeatClient.HeartBeatLoop()
+	err = that.heartbeat.HeartBeatLoop()
 	if err != nil {
 		that.logger.WithError(err).Errorf("HeartBeatLoop error")
 		return err
 	}
 
 	return nil
+}
+
+// HeartBeatSelect HeartBeatSelect
+func (that *mqttBridge) HeartBeatSelect(deviceID string) (int, error) {
+	var err error
+
+	sessionID, err := that.heartbeat.HeartBeatSelect(deviceID)
+	if err != nil {
+		return 0, err
+	}
+
+	return sessionID, nil
 }

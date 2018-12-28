@@ -124,7 +124,3 @@ func (that *mqttBridge) InitMqttBridge() error {
 
 	return nil
 }
-
-func (that *mqttBridge) HeartBeatSelect() {
-
-}

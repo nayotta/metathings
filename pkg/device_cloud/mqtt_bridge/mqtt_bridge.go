@@ -5,6 +5,7 @@ import (
 	"net/url"
 
 	emitter "github.com/emitter-io/go"
+	client_helper "github.com/nayotta/metathings/pkg/common/client"
 	deviced_storage "github.com/nayotta/metathings/pkg/deviced/storage"
 	pb "github.com/nayotta/metathings/pkg/proto/device_cloud"
 	deviced_pb "github.com/nayotta/metathings/pkg/proto/deviced"
@@ -20,7 +21,7 @@ type MqttBridge interface {
 	InitHeartBeatLoop() error
 	KeyGen(context.Context, *pb.GenKeyRequest) (*pb.GenKeyResponse, error)
 	KeyGenForDeviced(string) (string, error)
-	HeartBeatSelect()
+	HeartBeatSelect(string) (int, error)
 	UnaryCall(context.Context, *pb.UnaryCallRequest) (*pb.UnaryCallResponse, error)
 	UnaryCallForDeviced(*deviced_storage.Device, *deviced_pb.OpUnaryCallValue) (*deviced_pb.UnaryCallValue, error)
 	StreamCall(pb.DeviceCloudService_StreamCallServer) error
@@ -34,6 +35,8 @@ type mqttBridge struct {
 	downKey      string
 	statusUpKey  string
 	configClient emitter.Emitter
+	cliFty       *client_helper.ClientFactory
+	heartbeat    *HeartBeatCenter
 	logger       log.FieldLogger
 }
 
