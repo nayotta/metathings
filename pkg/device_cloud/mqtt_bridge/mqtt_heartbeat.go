@@ -11,7 +11,6 @@ import (
 	"github.com/golang/protobuf/proto"
 	"github.com/golang/protobuf/ptypes/wrappers"
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
-	pb_helper "github.com/nayotta/metathings/pkg/common/protobuf"
 	pb "github.com/nayotta/metathings/pkg/proto/device_cloud"
 	deviced_pb "github.com/nayotta/metathings/pkg/proto/deviced"
 	log "github.com/sirupsen/logrus"
