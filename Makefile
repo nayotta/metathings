@@ -39,6 +39,9 @@ clean:
 protos_from_docker:
 	$(DOCKER_EXE) run --rm -v $(CUR_PATH):/go/src/github.com/nayotta/metathings nayotta/metathings-development /usr/bin/make -C /go/src/github.com/nayotta/metathings/pkg/proto
 
+metathingsd_bin_from_docker:
+    $(DOCKER_EXE) run --rm -v $(CUR_PATH):/go/src/github.com/nayotta/metathings nayotta/metathingsd-development /usr/bin/make -C /go/src/github.com/nayotta/metathings/cmd/metathingsd build_docker
+
 protos:
 	$(MAKE) -C pkg/proto all
 

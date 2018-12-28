@@ -1,0 +1,4 @@
+FROM nayotta/metathingsd-development
+
+RUN go get github.com/emitter-io/go
+COPY ./bin/metathingsd-docker /usr/local/bin/metathingsd
