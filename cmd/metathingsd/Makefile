@@ -9,4 +9,4 @@ build:
 	$(GO) build -o $(BIN) $(SRC)
 
 build_docker:
-    $(GO) build -o $(DOCKERBIN) $(SRC)
+	$(GO) build -o $(DOCKERBIN) $(SRC)
