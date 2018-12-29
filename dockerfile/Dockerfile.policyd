@@ -1,5 +1,9 @@
 FROM nayotta/metathingsd
 
 COPY ./etc/policyd.yaml /etc/metathings/policyd.yaml
+COPY ./cert/server.crt  /etc/metathings/cert/server.crt
+COPY ./cert/server.key /etc/metathings/cert/server.key
+COPY ./etc/policyd-model.conf /etc/metathings/policyd-model.conf
 COPY ./script/policyd_start.sh /usr/local/sbin/policyd_start.sh
+COPY ./etc/policyd.db /go/policyd.db
 CMD /usr/local/sbin/policyd_start.sh
