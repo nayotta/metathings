@@ -50,7 +50,22 @@ func (self *tokener) refreshToken() error {
 		return err
 	}
 
-	self.credential_token = res.Token.Text
+	tknByTknReq := &identityd2_pb.IssueTokenByTokenRequest{
+		Token: &identityd2_pb.OpToken{
+			Id: &wrappers.StringValue{Value: res.GetToken().GetId()},
+			Domain: &identityd2_pb.OpDomain{
+				Id: &wrappers.StringValue{Value: res.GetToken().GetDomain().GetId()},
+			},
+			Text: &wrappers.StringValue{Value: res.GetToken().GetText()},
+		},
+	}
+
+	tknByTknRes, err := cli.IssueTokenByToken(context.Background(), tknByTknReq)
+	if err != nil {
+		return err
+	}
+
+	self.credential_token = tknByTknRes.Token.Text
 
 	return nil
 }
