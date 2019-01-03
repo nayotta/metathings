@@ -2,8 +2,10 @@ package metathings_deviced_connection
 
 import (
 	"context"
+	"fmt"
 	"strconv"
 	"sync"
+	"time"
 
 	"github.com/golang/protobuf/proto"
 	"github.com/golang/protobuf/ptypes/wrappers"
@@ -79,8 +81,8 @@ func (self *connectionCenter) connection_loop(dev *storage.Device, conn Connecti
 	br_id := br.Id()
 
 	logger := self.logger.WithFields(log.Fields{
-		"devid": dev_id,
-		"brid":  br_id,
+		"device": dev_id,
+		"bridge": br_id,
 	})
 
 	wg := &sync.WaitGroup{}
@@ -122,8 +124,7 @@ func (self *connectionCenter) south_to_bridge(dev *storage.Device, conn Connecti
 		var err error
 
 		logger := self.logger.WithFields(log.Fields{
-			"dir":    "south->bridge",
-			"device": *dev.Id,
+			"dir": fmt.Sprintf("bridge(%v)<-south(%v)", br.Id(), *dev.Id),
 		})
 
 		defer func() {
@@ -136,21 +137,24 @@ func (self *connectionCenter) south_to_bridge(dev *storage.Device, conn Connecti
 			logger.Debugf("loop closed")
 		}()
 
-		for {
+		for epoch := uint64(0); ; epoch++ {
+			logger = logger.WithField("epoch", epoch)
+
 			// TODO(Peer): catch quit signal
+			logger.Debugf("waiting")
 			if res, err = stm.Recv(); err != nil {
-				logger.WithError(err).Debugf("failed to recv msg")
+				logger.WithError(err).Debugf("failed to recv dev res")
 				return
 			}
-			logger.WithField("from", "south").Debugf("recv msg")
+			logger.Debugf("recv dev res")
 
 			if buf, err = proto.Marshal(res); err != nil {
 				logger.WithError(err).Warningf("failed to marshal request data")
 				continue
 			}
 
-			if res.GetUnaryCall() != nil {
-				if sending_bridge, err = self.brfty.BuildBridge(*dev.Id, res.GetSessionId()); err != nil {
+			if res_br_id := parse_bridge_id(*dev.Id, res.GetSessionId()); res_br_id != br.Id() {
+				if sending_bridge, err = self.brfty.GetBridge(res_br_id); err != nil {
 					logger.WithError(err).Debugf("failed to build bridge for unary call response")
 					return
 				}
@@ -158,12 +162,11 @@ func (self *connectionCenter) south_to_bridge(dev *storage.Device, conn Connecti
 				sending_bridge = br
 			}
 
-			// TODO(Peer): catch sending error
-			sending_bridge.South().AsyncSend() <- buf
-			logger.WithFields(log.Fields{
-				"bridge": sending_bridge.Id(),
-				"to":     "bridge",
-			}).Debugf("send msg")
+			if err = sending_bridge.South().Send(buf); err != nil {
+				logger.WithError(err).Debugf("failed to send msg")
+				return
+			}
+			self.logger.WithField("dir", fmt.Sprintf("bridge(%v)<-south(%v)", sending_bridge.Id(), *dev.Id))
 		}
 	}()
 
@@ -175,11 +178,11 @@ func (self *connectionCenter) south_from_bridge(dev *storage.Device, conn Connec
 
 	go func() {
 		var buf []byte
+
 		var err error
 
 		logger := self.logger.WithFields(log.Fields{
-			"dir":    "bridge->south",
-			"device": *dev.Id,
+			"dir": fmt.Sprintf("bridge(%v)->south(%v)", br.Id(), *dev.Id),
 		})
 
 		defer func() {
@@ -192,16 +195,16 @@ func (self *connectionCenter) south_from_bridge(dev *storage.Device, conn Connec
 			logger.Debugf("loop closed")
 		}()
 
-		for {
+		for epoch := uint64(0); ; epoch++ {
 			var req pb.ConnectRequest
 
+			logger = logger.WithField("epoch", epoch)
+
 			// TODO(Peer): catch receiving error
+			logger.Debugf("waiting")
 			select {
 			case buf = <-br.South().AsyncRecv():
-				logger.WithFields(log.Fields{
-					"bridge": br.Id(),
-					"from":   "bridge",
-				}).Debugf("recv msg")
+				logger.Debugf("recv msg")
 			case <-quit:
 				logger.Debugf("catch quit signal")
 				return
@@ -216,7 +219,7 @@ func (self *connectionCenter) south_from_bridge(dev *storage.Device, conn Connec
 				logger.WithError(err).Debugf("failed to send msg")
 				return
 			}
-			logger.WithField("to", "south").Debugf("send msg")
+			logger.Debugf("send dev req")
 		}
 	}()
 
@@ -228,12 +231,17 @@ func (self *connectionCenter) BuildConnection(dev *storage.Device, stm pb.Device
 	sess := self.get_session_from_context(ctx)
 	dev_id := *dev.Id
 
+	self.logger.WithFields(log.Fields{
+		"session": sess,
+		"stage":   "begin",
+	}).Debugf("build connection")
+
 	br, err := self.brfty.BuildBridge(dev_id, sess)
 	if err != nil {
 		return nil, err
 	}
 	br_id := br.Id()
-	self.logger.WithField("brid", br_id).Debugf("build bridge")
+	self.logger.WithField("bridge", br_id).Debugf("build bridge")
 
 	err = self.storage.AddBridgeToDevice(dev_id, br_id)
 	if err != nil {
@@ -252,6 +260,11 @@ func (self *connectionCenter) BuildConnection(dev *storage.Device, stm pb.Device
 	}
 
 	go self.connection_loop(dev, conn, br, stm)
+
+	self.logger.WithFields(log.Fields{
+		"session": sess,
+		"stage":   "end",
+	}).Debugf("build connection")
 
 	return conn, nil
 }
@@ -345,7 +358,7 @@ func (self *connectionCenter) StreamCall(dev *storage.Device, cfg *pb.OpStreamCa
 		self.logger.WithError(err).Debugf("failed to get bridge from bridge factory")
 		return err
 	}
-	self.logger.WithField("bridge", br_ids[0]).Debugf("get bridge")
+	self.logger.WithField("bridge", br_ids[0]).Debugf("pick bridge")
 
 	if sess_br, err = self.brfty.BuildBridge(dev_id, sess); err != nil {
 		self.logger.WithError(err).Debugf("failed to build bridge")
@@ -373,11 +386,17 @@ func (self *connectionCenter) StreamCall(dev *storage.Device, cfg *pb.OpStreamCa
 		return err
 	}
 
-	if err = conn_br.North().Send(buf); err != nil {
-		self.logger.WithError(err).Debugf("failed to send config request")
-		return err
-	}
-	self.logger.Debugf("send config request to device")
+	go func() {
+		// TODO(Peer): design protocol to avoid to send message delay
+
+		// wait for north receiving channel initialized
+		time.Sleep(500 * time.Millisecond)
+		if err = conn_br.North().Send(buf); err != nil {
+			self.logger.WithError(err).Debugf("failed to send config request")
+			return
+		}
+		self.logger.Debugf("send config request to device")
+	}()
 
 	if buf, err = sess_br.North().Recv(); err != nil {
 		self.logger.WithError(err).Debugf("failed to recv config response")
@@ -400,13 +419,25 @@ func (self *connectionCenter) StreamCall(dev *storage.Device, cfg *pb.OpStreamCa
 	}
 	self.logger.Debugf("recv config response from device")
 
-	up2down_wait := self.stm_up2down(dev, cfg_val, sess, stm, sess_br, &err)
-	down2up_wait := self.stm_down2up(dev, cfg_val, sess, stm, sess_br, &err)
+	wg := &sync.WaitGroup{}
+	wg.Add(2)
+	north_to_bridge_quit := make(chan struct{})
+	north_from_bridge_quit := make(chan struct{})
+	defer close(north_to_bridge_quit)
+	defer close(north_from_bridge_quit)
+
+	north_to_bridge_wait := self.north_to_bridge(dev, cfg_val, sess, stm, sess_br, &err, north_to_bridge_quit, wg)
+	north_from_bridge_wait := self.north_from_bridge(dev, cfg_val, sess, stm, sess_br, &err, north_from_bridge_quit, wg)
 
 	select {
-	case <-up2down_wait:
-	case <-down2up_wait:
+	case <-north_to_bridge_wait:
+		north_from_bridge_quit <- struct{}{}
+	case <-north_from_bridge_wait:
+		north_to_bridge_quit <- struct{}{}
 	}
+
+	self.logger.Debugf("waiting for disconnect")
+	wg.Wait()
 
 	if err != nil {
 		self.logger.WithError(err).Debugf("streaming error")
@@ -417,15 +448,15 @@ func (self *connectionCenter) StreamCall(dev *storage.Device, cfg *pb.OpStreamCa
 	return nil
 }
 
-func (self *connectionCenter) stm_up2down(dev *storage.Device, cfg *pb.StreamCallConfig, sess int32, upstm pb.DevicedService_StreamCallServer, downstm Bridge, perr *error) chan bool {
-	wait := make(chan bool)
+func (self *connectionCenter) north_to_bridge(dev *storage.Device, cfg *pb.StreamCallConfig, sess int32, north pb.DevicedService_StreamCallServer, bridge Bridge, perr *error, quit chan struct{}, wg *sync.WaitGroup) chan struct{} {
+	wait := make(chan struct{})
 	go func() {
+		var buf []byte
+		var req *pb.StreamCallRequest
 		var err error
 
 		logger := self.logger.WithFields(log.Fields{
-			"#from":      "upstream",
-			"#to":        "downstrea",
-			"devid":      *dev.Id,
+			"dir":        fmt.Sprintf("north(%v)->bridge(%v)", *dev.Id, bridge.Id()),
 			"#method":    cfg.GetMethod(),
 			"#component": cfg.GetComponent(),
 			"#name":      cfg.GetName(),
@@ -436,52 +467,50 @@ func (self *connectionCenter) stm_up2down(dev *storage.Device, cfg *pb.StreamCal
 				*perr = err
 			}
 			close(wait)
-			logger.Debugf("stream up to down quit")
+			logger.Debugf("loop closed")
 		}()
-		for {
-			var buf []byte
-			var up_req *pb.StreamCallRequest
+		for epoch := uint64(0); ; epoch++ {
+			logger = logger.WithField("epoch", epoch)
 
-			if up_req, err = upstm.Recv(); err != nil {
+			logger.Debugf("waiting")
+			if req, err = north.Recv(); err != nil {
 				logger.WithError(err).Debugf("failed to recv msg")
 				return
 			}
-			logger.Debugf("recv msg")
+			logger.Debugf("recv cli req")
 
-			down_req := &pb.ConnectRequest{
+			conn_req := &pb.ConnectRequest{
 				SessionId: &wrappers.Int32Value{Value: sess},
 				Kind:      pb.ConnectMessageKind_CONNECT_MESSAGE_KIND_USER,
 				Union: &pb.ConnectRequest_StreamCall{
-					StreamCall: up_req.GetValue(),
+					StreamCall: req.GetValue(),
 				},
 			}
 
-			if buf, err = proto.Marshal(down_req); err != nil {
+			if buf, err = proto.Marshal(conn_req); err != nil {
 				logger.WithError(err).Debugf("failed to marshal request")
 				return
 			}
-			logger.Debugf("marshal request")
 
-			if err = downstm.North().Send(buf); err != nil {
+			if err = bridge.North().Send(buf); err != nil {
 				logger.WithError(err).Debugf("failed to send msg")
 				return
 			}
-			logger.Debugf("send request")
+			logger.Debugf("send msg")
 		}
 	}()
 
 	return wait
 }
 
-func (self *connectionCenter) stm_down2up(dev *storage.Device, cfg *pb.StreamCallConfig, sess int32, upstm pb.DevicedService_StreamCallServer, downstm Bridge, perr *error) chan bool {
+func (self *connectionCenter) north_from_bridge(dev *storage.Device, cfg *pb.StreamCallConfig, sess int32, north pb.DevicedService_StreamCallServer, bridge Bridge, perr *error, quit chan struct{}, wg *sync.WaitGroup) chan bool {
 	wait := make(chan bool)
 	go func() {
+		var buf []byte
 		var err error
 
 		logger := self.logger.WithFields(log.Fields{
-			"#from":      "downstream",
-			"#to":        "upstream",
-			"devid":      *dev.Id,
+			"dir":        fmt.Sprintf("north(%v)<-bridge(%v)", *dev.Id, bridge.Id()),
 			"#method":    cfg.GetMethod(),
 			"#component": cfg.GetComponent(),
 			"#name":      cfg.GetName(),
@@ -492,34 +521,36 @@ func (self *connectionCenter) stm_down2up(dev *storage.Device, cfg *pb.StreamCal
 				*perr = err
 			}
 			close(wait)
-			logger.Debugf("stream down to up quit")
+			logger.Debugf("loop closed")
 		}()
-		for {
-			var buf []byte
-			var down_res pb.ConnectResponse
+		for epoch := uint64(0); ; epoch++ {
+			var res pb.ConnectResponse
 
-			if buf, err = downstm.North().Recv(); err != nil {
-				logger.WithError(err).Debugf("failed to recv msg")
+			// TODO(Peer): catch receiving error
+			logger.Debugf("waiting")
+			select {
+			case buf = <-bridge.North().AsyncRecv():
+				logger.Debugf("recv msg")
+			case <-quit:
+				logger.Debugf("catch quit signal")
 				return
 			}
-			logger.Debugf("recv msg")
 
-			if err = proto.Unmarshal(buf, &down_res); err != nil {
+			if err = proto.Unmarshal(buf, &res); err != nil {
 				logger.WithError(err).Debugf("failed to unmarshal response")
 				return
 			}
-			logger.Debugf("unmarshal response")
 
-			up_res := &pb.StreamCallResponse{
+			stm_res := &pb.StreamCallResponse{
 				Device: &pb.Device{Id: *dev.Id},
-				Value:  down_res.GetStreamCall(),
+				Value:  res.GetStreamCall(),
 			}
 
-			if err = upstm.Send(up_res); err != nil {
+			if err = north.Send(stm_res); err != nil {
 				logger.WithError(err).Debugf("failed to send response")
 				return
 			}
-			logger.Debugf("send response")
+			logger.Debugf("send cli res")
 		}
 	}()
 

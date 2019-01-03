@@ -2,12 +2,13 @@ package metathings_deviced_connection
 
 import (
 	"fmt"
+	"sync"
+	"time"
 
 	"github.com/Shopify/sarama"
 	cluster "github.com/bsm/sarama-cluster"
 	log "github.com/sirupsen/logrus"
 
-	id_helper "github.com/nayotta/metathings/pkg/common/id"
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 )
 
@@ -19,8 +20,10 @@ type saramaChannelOption struct {
 
 func newSaramaChannel(opt *saramaChannelOption, logger log.FieldLogger) Channel {
 	return &saramaChannel{
-		opt:    opt,
-		logger: logger,
+		opt:             opt,
+		logger:          logger,
+		async_recv_once: new(sync.Once),
+		sync_send_once:  new(sync.Once),
 	}
 }
 
@@ -28,122 +31,79 @@ type saramaChannel struct {
 	opt    *saramaChannelOption
 	logger log.FieldLogger
 
-	producer sarama.AsyncProducer
+	producer sarama.SyncProducer
 	consumer *cluster.Consumer
 
 	sending   chan []byte
 	receiving chan []byte
 
 	recv_err error
+
+	async_recv_once *sync.Once
+	sync_send_once  *sync.Once
 }
 
 func (self *saramaChannel) producer_topic() string {
-	return fmt.Sprintf("metathings.deviced.channel.%v.side.%v", self.opt.Id, self.opt.Side)
+	var another Side
+	if self.opt.Side == NORTH_SIDE {
+		another = SOUTH_SIDE
+	} else {
+		another = NORTH_SIDE
+	}
+	return fmt.Sprintf("metathings.deviced.channel.%v.from.%v.to.%v", self.opt.Id, self.opt.Side, another)
 }
 
 func (self *saramaChannel) consumer_topic() string {
-	var s Side
+	var another Side
 	if self.opt.Side == NORTH_SIDE {
-		s = SOUTH_SIDE
+		another = SOUTH_SIDE
 	} else {
-		s = NORTH_SIDE
+		another = NORTH_SIDE
 	}
-
-	return fmt.Sprintf("metathings.deviced.channel.%v.side.%v", self.opt.Id, s)
+	return fmt.Sprintf("metathings.deviced.channel.%v.from.%v.to.%v", self.opt.Id, another, self.opt.Side)
 }
 
-func (self *saramaChannel) init_producer() error {
+func (self *saramaChannel) init_producer() {
 	var err error
 
-	if self.producer != nil {
-		return nil
-	}
-
 	config := sarama.NewConfig()
-	config.Producer.RequiredAcks = sarama.WaitForAll
 	config.Producer.Return.Successes = true
 	config.Producer.Partitioner = sarama.NewRandomPartitioner
 
-	if self.producer, err = sarama.NewAsyncProducer(self.opt.Brokers, config); err != nil {
-		return err
+	if self.producer, err = sarama.NewSyncProducer(self.opt.Brokers, config); err != nil {
+		panic(err)
 	}
 	self.logger.WithField("topic", self.producer_topic()).Debugf("init producer")
-
-	return nil
 }
 
-func (self *saramaChannel) init_consumer() error {
+func (self *saramaChannel) init_consumer() {
 	var err error
-
-	if self.consumer != nil {
-		return nil
-	}
 
 	config := cluster.NewConfig()
 	config.Consumer.Return.Errors = true
-	config.Group.Return.Notifications = false
+	config.Group.Return.Notifications = true
+	config.Group.Heartbeat.Interval = 30 * time.Millisecond
 
 	if self.consumer, err = cluster.NewConsumer(self.opt.Brokers, self.opt.Id, []string{self.consumer_topic()}, config); err != nil {
-		return err
+		self.logger.WithError(err).Warningf("failed to init consumer")
+		return
 	}
 	self.logger.WithFields(log.Fields{
 		"group": self.opt.Id,
 		"topic": self.consumer_topic(),
 	}).Debugf("init consumer")
 
-	return nil
+	return
 }
 
-func (self *saramaChannel) AsyncSend() chan<- []byte {
-	self.init_producer()
-
-	logger := self.logger.WithFields(log.Fields{
-		"id":    self.opt.Id,
-		"topic": self.producer_topic(),
-		"side":  self.opt.Side,
-		"event": "send",
-	})
-
-	if self.sending != nil {
-		return self.sending
-	}
-
-	self.sending = make(chan []byte)
-	go func() {
-		defer func() {
-			close(self.sending)
-			logger.Debugf("loop closed")
-		}()
-		for {
-			select {
-			case buf := <-self.sending:
-				msg := &sarama.ProducerMessage{
-					Topic:     self.producer_topic(),
-					Value:     sarama.ByteEncoder(buf),
-					Partition: -1,
-				}
-				self.producer.Input() <- msg
-				logger.Debugf("send msg")
-			}
-		}
-	}()
-
-	return self.sending
-}
-
-func (self *saramaChannel) AsyncRecv() <-chan []byte {
+func (self *saramaChannel) init_async_recv() {
 	self.init_consumer()
 
 	logger := self.logger.WithFields(log.Fields{
-		"id":    self.opt.Id,
 		"topic": self.consumer_topic(),
 		"side":  self.opt.Side,
 		"event": "recv",
 	})
-
-	if self.receiving != nil {
-		return self.receiving
-	}
 
 	self.receiving = make(chan []byte)
 	go func() {
@@ -151,33 +111,63 @@ func (self *saramaChannel) AsyncRecv() <-chan []byte {
 			close(self.receiving)
 			logger.Debugf("loop closed")
 		}()
+
 		for {
+			logger.Debugf("waiting")
 			select {
 			case msg, ok := <-self.consumer.Messages():
 				if ok {
 					self.consumer.MarkOffset(msg, "")
 					self.receiving <- msg.Value
-					self.logger.Debugf("recv msg")
+					logger.Debugf("recv msg")
 				}
 			case err := <-self.consumer.Errors():
 				self.recv_err = err
-				self.logger.WithError(err).Debugf("recv error")
+				logger.WithError(err).Debugf("recv error")
 				return
+			case ntf := <-self.consumer.Notifications():
+				logger.WithField("notification", ntf).Debugf("rebalanced")
+			case prt := <-self.consumer.Partitions():
+				logger.WithField("partitions", prt).Debugf("partitions")
 			}
 		}
-
 	}()
+	logger.Debugf("init async recv")
+}
 
+func (self *saramaChannel) AsyncSend() chan<- []byte {
+	panic("unimplemented")
+}
+
+func (self *saramaChannel) AsyncRecv() <-chan []byte {
+	self.async_recv_once.Do(self.init_async_recv)
 	return self.receiving
 }
 
 func (self *saramaChannel) Send(buf []byte) error {
-	select {
-	case self.AsyncSend() <- buf:
-		return nil
-	case err := <-self.producer.Errors():
+	self.sync_send_once.Do(self.init_producer)
+
+	topic := self.producer_topic()
+	logger := self.logger.WithFields(log.Fields{
+		"topic": topic,
+		"side":  self.opt.Side,
+		"event": "send",
+	})
+
+	msg := &sarama.ProducerMessage{
+		Topic:     self.producer_topic(),
+		Value:     sarama.ByteEncoder(buf),
+		Partition: -1,
+	}
+
+	_, _, err := self.producer.SendMessage(msg)
+	if err != nil {
+		logger.WithError(err).Debugf("failed to send msg")
 		return err
 	}
+	logger.Debugf("send msg")
+
+	return nil
 }
 
 func (self *saramaChannel) Recv() ([]byte, error) {
@@ -226,6 +216,9 @@ type saramaBridge struct {
 
 	north Channel
 	south Channel
+
+	north_once *sync.Once
+	south_once *sync.Once
 }
 
 func (self *saramaBridge) Id() string {
@@ -233,21 +226,23 @@ func (self *saramaBridge) Id() string {
 }
 
 func (self *saramaBridge) North() Channel {
-	self.init_north()
+	self.north_once.Do(self.init_north)
 	return self.north
 }
 
 func (self *saramaBridge) South() Channel {
-	self.init_south()
+	self.south_once.Do(self.init_south)
 	return self.south
 }
 
 func (self *saramaBridge) Close() error {
-	if err := self.North().Close(); err != nil {
+	var err error
+
+	if err = self.North().Close(); err != nil {
 		return err
 	}
 
-	if err := self.South().Close(); err != nil {
+	if err = self.South().Close(); err != nil {
 		return err
 	}
 
@@ -255,10 +250,6 @@ func (self *saramaBridge) Close() error {
 }
 
 func (self *saramaBridge) init_north() {
-	if self.north != nil {
-		return
-	}
-
 	opt := &saramaChannelOption{
 		Id:      self.Id(),
 		Side:    NORTH_SIDE,
@@ -269,10 +260,6 @@ func (self *saramaBridge) init_north() {
 }
 
 func (self *saramaBridge) init_south() {
-	if self.south != nil {
-		return
-	}
-
 	opt := &saramaChannelOption{
 		Id:      self.Id(),
 		Side:    SOUTH_SIDE,
@@ -292,8 +279,7 @@ type saramaBridgeFactory struct {
 }
 
 func (self *saramaBridgeFactory) BuildBridge(device_id string, session int32) (Bridge, error) {
-	id := id_helper.NewNamedId(fmt.Sprintf("device.%v.session.%v", device_id, session))
-	return self.GetBridge(id)
+	return self.GetBridge(parse_bridge_id(device_id, session))
 }
 
 func (self *saramaBridgeFactory) GetBridge(id string) (Bridge, error) {
@@ -303,8 +289,10 @@ func (self *saramaBridgeFactory) GetBridge(id string) (Bridge, error) {
 	}
 
 	br := &saramaBridge{
-		opt:    opt,
-		logger: self.logger.WithField("bridge", id),
+		opt:        opt,
+		logger:     self.logger.WithField("bridge", id),
+		north_once: new(sync.Once),
+		south_once: new(sync.Once),
 	}
 
 	return br, nil
