@@ -145,13 +145,6 @@ func (this *UnaryCallValue) Validate() error {
 	return nil
 }
 func (this *OpStreamCallValue) Validate() error {
-	if oneOfNester, ok := this.GetUnion().(*OpStreamCallValue_Config); ok {
-		if oneOfNester.Config != nil {
-			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.Config); err != nil {
-				return github_com_mwitkow_go_proto_validators.FieldError("Config", err)
-			}
-		}
-	}
 	if oneOfNester, ok := this.GetUnion().(*OpStreamCallValue_Value); ok {
 		if oneOfNester.Value != nil {
 			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.Value); err != nil {
@@ -159,9 +152,37 @@ func (this *OpStreamCallValue) Validate() error {
 			}
 		}
 	}
+	if oneOfNester, ok := this.GetUnion().(*OpStreamCallValue_Config); ok {
+		if oneOfNester.Config != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.Config); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("Config", err)
+			}
+		}
+	}
+	if oneOfNester, ok := this.GetUnion().(*OpStreamCallValue_ConfigAck); ok {
+		if oneOfNester.ConfigAck != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.ConfigAck); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("ConfigAck", err)
+			}
+		}
+	}
+	if oneOfNester, ok := this.GetUnion().(*OpStreamCallValue_Exit); ok {
+		if oneOfNester.Exit != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.Exit); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("Exit", err)
+			}
+		}
+	}
 	return nil
 }
 func (this *StreamCallValue) Validate() error {
+	if oneOfNester, ok := this.GetUnion().(*StreamCallValue_Value); ok {
+		if oneOfNester.Value != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.Value); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("Value", err)
+			}
+		}
+	}
 	if oneOfNester, ok := this.GetUnion().(*StreamCallValue_Config); ok {
 		if oneOfNester.Config != nil {
 			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.Config); err != nil {
@@ -169,10 +190,17 @@ func (this *StreamCallValue) Validate() error {
 			}
 		}
 	}
-	if oneOfNester, ok := this.GetUnion().(*StreamCallValue_Value); ok {
-		if oneOfNester.Value != nil {
-			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.Value); err != nil {
-				return github_com_mwitkow_go_proto_validators.FieldError("Value", err)
+	if oneOfNester, ok := this.GetUnion().(*StreamCallValue_ConfigAck); ok {
+		if oneOfNester.ConfigAck != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.ConfigAck); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("ConfigAck", err)
+			}
+		}
+	}
+	if oneOfNester, ok := this.GetUnion().(*StreamCallValue_Exit); ok {
+		if oneOfNester.Exit != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.Exit); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("Exit", err)
 			}
 		}
 	}
@@ -197,5 +225,17 @@ func (this *OpStreamCallConfig) Validate() error {
 	return nil
 }
 func (this *StreamCallConfig) Validate() error {
+	return nil
+}
+func (this *OpStreamCallConfigAck) Validate() error {
+	return nil
+}
+func (this *StreamCallConfigAck) Validate() error {
+	return nil
+}
+func (this *OpStreamCallExit) Validate() error {
+	return nil
+}
+func (this *StreamCallExit) Validate() error {
 	return nil
 }
