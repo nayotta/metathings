@@ -2,6 +2,7 @@ package metathings_device_service
 
 import (
 	"context"
+	"sync"
 	"time"
 
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
@@ -124,6 +125,7 @@ func (self *MetathingsDeviceServiceImpl) handle_user_stream_request(req *deviced
 	logger.Debugf("create deviced stream")
 
 	acked := make(chan struct{})
+	acked_once := new(sync.Once)
 	go func() {
 		// TODO(Peer): make SEND_RES_MAX_RETRY configurable.
 		for cnt := 0; cnt < SEND_RES_MAX_RETRY; cnt++ {
@@ -182,7 +184,7 @@ func (self *MetathingsDeviceServiceImpl) handle_user_stream_request(req *deviced
 		case *deviced_pb.OpStreamCallValue_Config:
 		case *deviced_pb.OpStreamCallValue_ConfigAck:
 			logger.Debugf("recv config ack")
-			close(acked)
+			acked_once.Do(func() { close(acked) })
 		case *deviced_pb.OpStreamCallValue_Exit:
 			logger.Debugf("recv exit")
 			return context.Canceled
