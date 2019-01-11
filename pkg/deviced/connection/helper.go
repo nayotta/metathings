@@ -41,3 +41,26 @@ func new_config_ack_message_buffer(sess int32) []byte {
 	}
 	return buf
 }
+
+func new_exit_message(sess int32) *pb.ConnectRequest {
+	return &pb.ConnectRequest{
+		SessionId: &wrappers.Int32Value{Value: sess},
+		Kind:      pb.ConnectMessageKind_CONNECT_MESSAGE_KIND_USER,
+		Union: &pb.ConnectRequest_StreamCall{
+			StreamCall: &pb.OpStreamCallValue{
+				Union: &pb.OpStreamCallValue_Exit{
+					Exit: &pb.OpStreamCallExit{},
+				},
+			},
+		},
+	}
+}
+
+func new_exit_message_buffer(sess int32) []byte {
+	msg := new_exit_message(sess)
+	buf, err := proto.Marshal(msg)
+	if err != nil {
+		panic(err)
+	}
+	return buf
+}

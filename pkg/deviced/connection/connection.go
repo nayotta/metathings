@@ -520,6 +520,7 @@ func (self *connectionCenter) north_from_bridge(dev *storage.Device, cfg *pb.Str
 			if *perr == nil && err != nil {
 				*perr = err
 			}
+			bridge.North().Send(new_exit_message_buffer(sess))
 			close(wait)
 			logger.Debugf("loop closed")
 		}()
