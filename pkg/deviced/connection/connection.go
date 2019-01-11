@@ -189,6 +189,7 @@ func (self *connectionCenter) south_from_bridge(dev *storage.Device, conn Connec
 			if err != nil {
 				conn.Err(err)
 			}
+			br.South().Send(must_marshal_message(new_exit_response_message(0)))
 
 			close(wait)
 			wg.Done()
@@ -197,7 +198,6 @@ func (self *connectionCenter) south_from_bridge(dev *storage.Device, conn Connec
 
 		for epoch := uint64(0); ; epoch++ {
 			var req pb.ConnectRequest
-
 			logger = logger.WithField("epoch", epoch)
 
 			// TODO(Peer): catch receiving error
@@ -520,7 +520,7 @@ func (self *connectionCenter) north_from_bridge(dev *storage.Device, cfg *pb.Str
 			if *perr == nil && err != nil {
 				*perr = err
 			}
-			bridge.North().Send(new_exit_message_buffer(sess))
+			bridge.North().Send(must_marshal_message(new_config_ack_request_message(sess)))
 			close(wait)
 			logger.Debugf("loop closed")
 		}()
@@ -567,8 +567,7 @@ func (self *connectionCenter) handle_north_from_bridge(res *pb.ConnectResponse, 
 		}
 		logger.Debugf("send cli res")
 	case *pb.StreamCallValue_Config:
-		buf := new_config_ack_message_buffer(res.GetSessionId())
-		if err = bridge.North().Send(buf); err != nil {
+		if err = bridge.North().Send(must_marshal_message(new_config_ack_request_message(res.GetSessionId()))); err != nil {
 			logger.WithError(err).Debugf("failed to send ack msg")
 			return err
 		}

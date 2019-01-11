@@ -19,7 +19,7 @@ func parse_bridge_id(device string, session int32) string {
 	return id_helper.NewNamedId(fmt.Sprintf("device.%v.session.%v", device, session))
 }
 
-func new_config_ack_message(sess int32) *pb.ConnectRequest {
+func new_config_ack_request_message(sess int32) *pb.ConnectRequest {
 	return &pb.ConnectRequest{
 		SessionId: &wrappers.Int32Value{Value: sess},
 		Kind:      pb.ConnectMessageKind_CONNECT_MESSAGE_KIND_USER,
@@ -33,16 +33,7 @@ func new_config_ack_message(sess int32) *pb.ConnectRequest {
 	}
 }
 
-func new_config_ack_message_buffer(sess int32) []byte {
-	msg := new_config_ack_message(sess)
-	buf, err := proto.Marshal(msg)
-	if err != nil {
-		panic(err)
-	}
-	return buf
-}
-
-func new_exit_message(sess int32) *pb.ConnectRequest {
+func new_exit_request_message(sess int32) *pb.ConnectRequest {
 	return &pb.ConnectRequest{
 		SessionId: &wrappers.Int32Value{Value: sess},
 		Kind:      pb.ConnectMessageKind_CONNECT_MESSAGE_KIND_USER,
@@ -56,8 +47,21 @@ func new_exit_message(sess int32) *pb.ConnectRequest {
 	}
 }
 
-func new_exit_message_buffer(sess int32) []byte {
-	msg := new_exit_message(sess)
+func new_exit_response_message(sess int32) *pb.ConnectResponse {
+	return &pb.ConnectResponse{
+		SessionId: sess,
+		Kind:      pb.ConnectMessageKind_CONNECT_MESSAGE_KIND_USER,
+		Union: &pb.ConnectResponse_StreamCall{
+			StreamCall: &pb.StreamCallValue{
+				Union: &pb.StreamCallValue_Exit{
+					Exit: &pb.StreamCallExit{},
+				},
+			},
+		},
+	}
+}
+
+func must_marshal_message(msg proto.Message) []byte {
 	buf, err := proto.Marshal(msg)
 	if err != nil {
 		panic(err)
