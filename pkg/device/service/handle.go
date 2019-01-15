@@ -2,6 +2,7 @@ package metathings_device_service
 
 import (
 	"context"
+	"math"
 	"sync"
 	"time"
 
@@ -158,7 +159,7 @@ func (self *MetathingsDeviceServiceImpl) handle_user_stream_request(req *deviced
 			}
 			logger.Debugf("send config response")
 			// TODO(Peer): make SEND_RES_INTERVAL configurable.
-			time.Sleep(SEND_RES_INTERVAL * time.Millisecond)
+			time.Sleep(time.Duration(math.Min(B_SEND_RES_INTERVAL+(float64(cnt)*A_SEND_RES_INTERVAL), MAX_SEND_RES_INTERVAL)) * time.Millisecond)
 		}
 		select {
 		case _, ok := <-acked:

@@ -520,10 +520,12 @@ func (self *connectionCenter) north_from_bridge(dev *storage.Device, cfg *pb.Str
 			if *perr == nil && err != nil {
 				*perr = err
 			}
-			bridge.North().Send(must_marshal_message(new_config_ack_request_message(sess)))
+			bridge.North().Send(must_marshal_message(new_exit_request_message(sess)))
 			close(wait)
 			logger.Debugf("loop closed")
 		}()
+
+		acked_once := new(sync.Once)
 		for epoch := uint64(0); ; epoch++ {
 			var res pb.ConnectResponse
 
@@ -542,7 +544,7 @@ func (self *connectionCenter) north_from_bridge(dev *storage.Device, cfg *pb.Str
 				return
 			}
 
-			if err = self.handle_north_from_bridge(&res, dev, north, bridge, logger); err != nil {
+			if err = self.handle_north_from_bridge(&res, dev, north, bridge, acked_once, logger); err != nil {
 				return
 			}
 
@@ -552,7 +554,7 @@ func (self *connectionCenter) north_from_bridge(dev *storage.Device, cfg *pb.Str
 	return wait
 }
 
-func (self *connectionCenter) handle_north_from_bridge(res *pb.ConnectResponse, dev *storage.Device, north pb.DevicedService_StreamCallServer, bridge Bridge, logger log.FieldLogger) error {
+func (self *connectionCenter) handle_north_from_bridge(res *pb.ConnectResponse, dev *storage.Device, north pb.DevicedService_StreamCallServer, bridge Bridge, acked_once *sync.Once, logger log.FieldLogger) error {
 	var err error
 
 	stm_res := res.GetStreamCall()
@@ -567,11 +569,16 @@ func (self *connectionCenter) handle_north_from_bridge(res *pb.ConnectResponse, 
 		}
 		logger.Debugf("send cli res")
 	case *pb.StreamCallValue_Config:
-		if err = bridge.North().Send(must_marshal_message(new_config_ack_request_message(res.GetSessionId()))); err != nil {
-			logger.WithError(err).Debugf("failed to send ack msg")
-			return err
-		}
-		logger.Debugf("send ack msg")
+		// TODO(Peer): should catch error when send ack failed
+
+		// aviod to resend ack msg
+		acked_once.Do(func() {
+			if err = bridge.North().Send(must_marshal_message(new_config_ack_request_message(res.GetSessionId()))); err != nil {
+				logger.WithError(err).Debugf("failed to send ack msg")
+				return
+			}
+			logger.Debugf("send ack msg")
+		})
 	case *pb.StreamCallValue_ConfigAck:
 		logger.Warningf("should not reach here")
 	case *pb.StreamCallValue_Exit:
