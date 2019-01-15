@@ -111,7 +111,7 @@ func (self *connectionCenter) connection_loop(dev *storage.Device, conn Connecti
 	}
 	logger.Debugf("remove bridge from device")
 
-	logger.Debugf("quit connection loop")
+	logger.Debugf("connection loop closed")
 }
 
 func (self *connectionCenter) south_to_bridge(dev *storage.Device, conn Connection, br Bridge, stm pb.DevicedService_ConnectServer, quit chan bool, wg *sync.WaitGroup) chan struct{} {
@@ -131,7 +131,7 @@ func (self *connectionCenter) south_to_bridge(dev *storage.Device, conn Connecti
 			if err != nil {
 				conn.Err(err)
 			}
-
+			br.South().Send(must_marshal_message(new_exit_response_message(0)))
 			close(wait)
 			wg.Done()
 			logger.Debugf("loop closed")
@@ -345,29 +345,31 @@ func (self *connectionCenter) StreamCall(dev *storage.Device, cfg *pb.OpStreamCa
 	dev_id := *dev.Id
 	sess := generate_session()
 
+	logger := self.logger.WithFields(log.Fields{
+		"device":  dev_id,
+		"side":    "north",
+		"session": sess,
+	})
+
 	if br_ids, err = self.storage.ListBridgesFromDevice(dev_id); err != nil {
-		self.logger.WithError(err).WithField("device_id", dev_id).Debugf("failed to get bridge")
+		logger.WithError(err).WithField("device_id", dev_id).Debugf("failed to get bridge")
 		return err
 	}
-	self.logger.WithFields(log.Fields{
-		"device":  dev_id,
+	logger.WithFields(log.Fields{
 		"bridges": br_ids,
 	}).Debugf("list bridges from device")
 
 	if conn_br, err = self.brfty.GetBridge(br_ids[0]); err != nil {
-		self.logger.WithError(err).Debugf("failed to get bridge from bridge factory")
+		logger.WithError(err).Debugf("failed to get bridge from bridge factory")
 		return err
 	}
-	self.logger.WithField("bridge", br_ids[0]).Debugf("pick bridge")
+	logger.WithField("bridge", br_ids[0]).Debugf("pick bridge")
 
 	if sess_br, err = self.brfty.BuildBridge(dev_id, sess); err != nil {
-		self.logger.WithError(err).Debugf("failed to build bridge")
+		logger.WithError(err).Debugf("failed to build bridge")
 		return err
 	}
-	self.logger.WithFields(log.Fields{
-		"device":  dev_id,
-		"session": sess,
-	}).Debugf("build bridge")
+	logger.Debugf("build bridge")
 
 	cfg_req := &pb.ConnectRequest{
 		SessionId: &wrappers.Int32Value{Value: sess},
@@ -382,7 +384,7 @@ func (self *connectionCenter) StreamCall(dev *storage.Device, cfg *pb.OpStreamCa
 	}
 
 	if buf, err = proto.Marshal(cfg_req); err != nil {
-		self.logger.WithError(err).Debugf("failed to marshal config msg")
+		logger.WithError(err).Debugf("failed to marshal config msg")
 		return err
 	}
 
@@ -392,19 +394,19 @@ func (self *connectionCenter) StreamCall(dev *storage.Device, cfg *pb.OpStreamCa
 		// wait for north receiving channel initialized
 		time.Sleep(500 * time.Millisecond)
 		if err = conn_br.North().Send(buf); err != nil {
-			self.logger.WithError(err).Debugf("failed to send config request")
+			logger.WithError(err).Debugf("failed to send config request")
 			return
 		}
-		self.logger.Debugf("send config request to device")
+		logger.Debugf("send config request to device")
 	}()
 
 	if buf, err = sess_br.North().Recv(); err != nil {
-		self.logger.WithError(err).Debugf("failed to recv config response")
+		logger.WithError(err).Debugf("failed to recv config response")
 		return err
 	}
 
 	if err = proto.Unmarshal(buf, &cfg_res); err != nil {
-		self.logger.WithError(err).Debugf("failed to unmarshal config msg")
+		logger.WithError(err).Debugf("failed to unmarshal config msg")
 		return err
 	}
 
@@ -414,10 +416,10 @@ func (self *connectionCenter) StreamCall(dev *storage.Device, cfg *pb.OpStreamCa
 		cfg_val.GetComponent() != cfg.GetComponent().GetValue() ||
 		cfg_val.GetMethod() != cfg.GetMethod().GetValue() {
 		err = ErrUnexpectedResponse
-		self.logger.WithError(err).WithFields(log.Fields{}).Debugf("unexpected config response")
+		logger.WithError(err).WithFields(log.Fields{}).Debugf("unexpected config response")
 		return err
 	}
-	self.logger.Debugf("recv config response from device")
+	logger.Debugf("recv config response from device")
 
 	wg := &sync.WaitGroup{}
 	wg.Add(2)
@@ -436,14 +438,14 @@ func (self *connectionCenter) StreamCall(dev *storage.Device, cfg *pb.OpStreamCa
 		north_to_bridge_quit <- struct{}{}
 	}
 
-	self.logger.Debugf("waiting for disconnect")
+	logger.Debugf("waiting for disconnect")
 	wg.Wait()
 
 	if err != nil {
-		self.logger.WithError(err).Debugf("streaming error")
+		logger.WithError(err).Debugf("streaming error")
 		return err
 	}
-	self.logger.Debugf("streaming closed")
+	logger.Debugf("streaming closed")
 
 	return nil
 }
@@ -467,17 +469,35 @@ func (self *connectionCenter) north_to_bridge(dev *storage.Device, cfg *pb.Strea
 				*perr = err
 			}
 			close(wait)
+			wg.Done()
 			logger.Debugf("loop closed")
 		}()
+
+		north_recv_chan := make(chan *pb.StreamCallRequest)
+
+		go func(ch chan *pb.StreamCallRequest, stm pb.DevicedService_StreamCallServer) {
+			defer close(ch)
+			for {
+				req, err := stm.Recv()
+				if err != nil {
+					logger.WithError(err).Debugf("failed to recv msg")
+					return
+				}
+				ch <- req
+			}
+		}(north_recv_chan, north)
+
 		for epoch := uint64(0); ; epoch++ {
 			logger = logger.WithField("epoch", epoch)
 
 			logger.Debugf("waiting")
-			if req, err = north.Recv(); err != nil {
-				logger.WithError(err).Debugf("failed to recv msg")
+			select {
+			case req = <-north_recv_chan:
+				logger.Debugf("recv cli req")
+			case <-quit:
+				logger.Debugf("catch quit signal")
 				return
 			}
-			logger.Debugf("recv cli req")
 
 			conn_req := &pb.ConnectRequest{
 				SessionId: &wrappers.Int32Value{Value: sess},
@@ -522,6 +542,7 @@ func (self *connectionCenter) north_from_bridge(dev *storage.Device, cfg *pb.Str
 			}
 			bridge.North().Send(must_marshal_message(new_exit_request_message(sess)))
 			close(wait)
+			wg.Done()
 			logger.Debugf("loop closed")
 		}()
 
