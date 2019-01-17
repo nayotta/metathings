@@ -11,17 +11,17 @@ import (
 	pb "github.com/nayotta/metathings/pkg/proto/deviced"
 )
 
-func generate_session() int32 {
-	return rand_helper.Int31()
+func generate_session() int64 {
+	return rand_helper.Int63()
 }
 
-func parse_bridge_id(device string, session int32) string {
+func parse_bridge_id(device string, session int64) string {
 	return id_helper.NewNamedId(fmt.Sprintf("device.%v.session.%v", device, session))
 }
 
-func new_config_ack_request_message(sess int32) *pb.ConnectRequest {
+func new_config_ack_request_message(sess int64) *pb.ConnectRequest {
 	return &pb.ConnectRequest{
-		SessionId: &wrappers.Int32Value{Value: sess},
+		SessionId: &wrappers.Int64Value{Value: sess},
 		Kind:      pb.ConnectMessageKind_CONNECT_MESSAGE_KIND_USER,
 		Union: &pb.ConnectRequest_StreamCall{
 			StreamCall: &pb.OpStreamCallValue{
@@ -33,9 +33,9 @@ func new_config_ack_request_message(sess int32) *pb.ConnectRequest {
 	}
 }
 
-func new_exit_request_message(sess int32) *pb.ConnectRequest {
+func new_exit_request_message(sess int64) *pb.ConnectRequest {
 	return &pb.ConnectRequest{
-		SessionId: &wrappers.Int32Value{Value: sess},
+		SessionId: &wrappers.Int64Value{Value: sess},
 		Kind:      pb.ConnectMessageKind_CONNECT_MESSAGE_KIND_USER,
 		Union: &pb.ConnectRequest_StreamCall{
 			StreamCall: &pb.OpStreamCallValue{
@@ -47,7 +47,7 @@ func new_exit_request_message(sess int32) *pb.ConnectRequest {
 	}
 }
 
-func new_exit_response_message(sess int32) *pb.ConnectResponse {
+func new_exit_response_message(sess int64) *pb.ConnectResponse {
 	return &pb.ConnectResponse{
 		SessionId: sess,
 		Kind:      pb.ConnectMessageKind_CONNECT_MESSAGE_KIND_USER,

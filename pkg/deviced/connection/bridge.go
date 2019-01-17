@@ -31,7 +31,7 @@ type Bridge interface {
 }
 
 type BridgeFactory interface {
-	BuildBridge(device_id string, session int32) (Bridge, error)
+	BuildBridge(device_id string, session int64) (Bridge, error)
 	GetBridge(br_id string) (Bridge, error)
 }
 

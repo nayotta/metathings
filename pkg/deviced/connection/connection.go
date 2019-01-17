@@ -62,16 +62,17 @@ type connectionCenter struct {
 	storage Storage
 }
 
-func (self *connectionCenter) get_session_from_context(ctx context.Context) int32 {
-	var x int
+func (self *connectionCenter) get_session_from_context(ctx context.Context) int64 {
+	var x int64
 	var err error
 
-	x, err = strconv.Atoi(metautils.ExtractIncoming(ctx).Get("session"))
+	// x, err = strconv.Atoi(metautils.ExtractIncoming(ctx).Get("session"))
+	x, err = strconv.ParseInt(metautils.ExtractIncoming(ctx).Get("session"), 0, 64)
 	if err != nil {
 		return 0
 	}
 
-	return int32(x)
+	return x
 }
 
 func (self *connectionCenter) connection_loop(dev *storage.Device, conn Connection, br Bridge, stm pb.DevicedService_ConnectServer) {
@@ -300,7 +301,7 @@ func (self *connectionCenter) UnaryCall(dev *storage.Device, req *pb.OpUnaryCall
 	self.logger.WithField("bridge", sess_br.Id()).Debugf("build recv bridge")
 
 	conn_req := &pb.ConnectRequest{
-		SessionId: &wrappers.Int32Value{Value: conn_req_sess},
+		SessionId: &wrappers.Int64Value{Value: conn_req_sess},
 		Kind:      pb.ConnectMessageKind_CONNECT_MESSAGE_KIND_USER,
 		Union: &pb.ConnectRequest_UnaryCall{
 			UnaryCall: req,
@@ -371,7 +372,7 @@ func (self *connectionCenter) StreamCall(dev *storage.Device, cfg *pb.OpStreamCa
 
 	go func() {
 		cfg_req := &pb.ConnectRequest{
-			SessionId: &wrappers.Int32Value{Value: sess},
+			SessionId: &wrappers.Int64Value{Value: sess},
 			Kind:      pb.ConnectMessageKind_CONNECT_MESSAGE_KIND_USER,
 			Union: &pb.ConnectRequest_StreamCall{
 				StreamCall: &pb.OpStreamCallValue{
@@ -428,7 +429,7 @@ func (self *connectionCenter) StreamCall(dev *storage.Device, cfg *pb.OpStreamCa
 	return nil
 }
 
-func (self *connectionCenter) north_to_bridge(dev *storage.Device, sess int32, north pb.DevicedService_StreamCallServer, bridge Bridge, perr *error, quit chan struct{}, wg *sync.WaitGroup, logger log.FieldLogger) chan struct{} {
+func (self *connectionCenter) north_to_bridge(dev *storage.Device, sess int64, north pb.DevicedService_StreamCallServer, bridge Bridge, perr *error, quit chan struct{}, wg *sync.WaitGroup, logger log.FieldLogger) chan struct{} {
 	wait := make(chan struct{})
 	go func() {
 		var buf []byte
@@ -471,7 +472,7 @@ func (self *connectionCenter) north_to_bridge(dev *storage.Device, sess int32, n
 			}
 
 			conn_req := &pb.ConnectRequest{
-				SessionId: &wrappers.Int32Value{Value: sess},
+				SessionId: &wrappers.Int64Value{Value: sess},
 				Kind:      pb.ConnectMessageKind_CONNECT_MESSAGE_KIND_USER,
 				Union: &pb.ConnectRequest_StreamCall{
 					StreamCall: req.GetValue(),
@@ -494,7 +495,7 @@ func (self *connectionCenter) north_to_bridge(dev *storage.Device, sess int32, n
 	return wait
 }
 
-func (self *connectionCenter) north_from_bridge(dev *storage.Device, sess int32, north pb.DevicedService_StreamCallServer, bridge Bridge, perr *error, quit chan struct{}, wg *sync.WaitGroup, logger log.FieldLogger) chan bool {
+func (self *connectionCenter) north_from_bridge(dev *storage.Device, sess int64, north pb.DevicedService_StreamCallServer, bridge Bridge, perr *error, quit chan struct{}, wg *sync.WaitGroup, logger log.FieldLogger) chan bool {
 	wait := make(chan bool)
 	go func() {
 		var buf []byte
