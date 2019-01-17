@@ -61,6 +61,15 @@ func new_exit_response_message(sess int32) *pb.ConnectResponse {
 	}
 }
 
+func new_config_ack_response_message_for_north(id string) *pb.StreamCallResponse {
+	return &pb.StreamCallResponse{
+		Device: &pb.Device{Id: id},
+		Value: &pb.StreamCallValue{
+			Union: &pb.StreamCallValue_ConfigAck{ConfigAck: &pb.StreamCallConfigAck{}},
+		},
+	}
+}
+
 func must_marshal_message(msg proto.Message) []byte {
 	buf, err := proto.Marshal(msg)
 	if err != nil {
