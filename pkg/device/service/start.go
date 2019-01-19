@@ -6,7 +6,6 @@ import (
 	"github.com/golang/protobuf/ptypes/empty"
 
 	context_helper "github.com/nayotta/metathings/pkg/common/context"
-	rand_helper "github.com/nayotta/metathings/pkg/common/rand"
 	deviced_pb "github.com/nayotta/metathings/pkg/proto/deviced"
 )
 
@@ -23,7 +22,7 @@ func (self *MetathingsDeviceServiceImpl) start() error {
 	ctx := context_helper.NewOutgoingContext(
 		context.Background(),
 		context_helper.WithTokenOp(self.tknr.GetToken()),
-		context_helper.WithSessionOp(rand_helper.Int31()),
+		context_helper.WithSessionOp(self.generator_major_session()),
 	)
 	self.conn_stm, err = cli.Connect(ctx)
 	if err != nil {

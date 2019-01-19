@@ -7,16 +7,11 @@ import (
 	"github.com/golang/protobuf/ptypes/wrappers"
 
 	id_helper "github.com/nayotta/metathings/pkg/common/id"
-	rand_helper "github.com/nayotta/metathings/pkg/common/rand"
 	pb "github.com/nayotta/metathings/pkg/proto/deviced"
 )
 
-func generate_session() int64 {
-	return rand_helper.Int63()
-}
-
 func parse_bridge_id(device string, session int64) string {
-	return id_helper.NewNamedId(fmt.Sprintf("device.%v.session.%v", device, session))
+	return id_helper.NewNamedId(fmt.Sprintf("device.%v.session.%08x", device, session))
 }
 
 func new_config_ack_request_message(sess int64) *pb.ConnectRequest {

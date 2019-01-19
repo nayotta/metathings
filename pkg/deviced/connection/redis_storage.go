@@ -1,18 +1,24 @@
 package metathings_deviced_connection
 
 import (
+	"fmt"
+
 	"github.com/go-redis/redis"
 )
+
+func bridge_key(device string, startup int32) string {
+	return fmt.Sprintf("/devices/%v/startup/%04x/bridges", device, startup)
+}
 
 type redisStorage struct {
 	client *redis.Client
 }
 
-func (self *redisStorage) AddBridgeToDevice(dev_id, br_id string) error {
+func (self *redisStorage) AddBridgeToDevice(dev_id string, sess int32, br_id string) error {
 	tx := self.client.Pipeline()
 
 	tx.SAdd("/devices", dev_id)
-	tx.SAdd("/devices/"+dev_id+"/bridges", br_id)
+	tx.SAdd(bridge_key(dev_id, sess), br_id)
 
 	if _, err := tx.Exec(); err != nil {
 		return err
@@ -21,19 +27,19 @@ func (self *redisStorage) AddBridgeToDevice(dev_id, br_id string) error {
 	return nil
 }
 
-func (self *redisStorage) RemoveBridgeFromDevice(dev_id, br_id string) error {
-	if err := self.client.SRem("/devices/"+dev_id+"/bridges", br_id).Err(); err != nil {
+func (self *redisStorage) RemoveBridgeFromDevice(dev_id string, sess int32, br_id string) error {
+	if err := self.client.SRem(bridge_key(dev_id, sess), br_id).Err(); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (self *redisStorage) ListBridgesFromDevice(dev_id string) ([]string, error) {
+func (self *redisStorage) ListBridgesFromDevice(dev_id string, sess int32) ([]string, error) {
 	var brs []string
 	var err error
 
-	if brs, err = self.client.SMembers("/devices/" + dev_id + "/bridges").Result(); err != nil {
+	if brs, err = self.client.SMembers(bridge_key(dev_id, sess)).Result(); err != nil {
 		return nil, err
 	}
 

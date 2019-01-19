@@ -13,6 +13,7 @@ import (
 	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
 	token_helper "github.com/nayotta/metathings/pkg/common/token"
 	connection "github.com/nayotta/metathings/pkg/deviced/connection"
+	session_storage "github.com/nayotta/metathings/pkg/deviced/session_storage"
 	storage "github.com/nayotta/metathings/pkg/deviced/storage"
 	identityd_policy "github.com/nayotta/metathings/pkg/identityd2/policy"
 	pb "github.com/nayotta/metathings/pkg/proto/deviced"
@@ -25,14 +26,15 @@ type MetathingsDevicedServiceOption struct {
 type MetathingsDevicedService struct {
 	grpc_helper.AuthorizationTokenParser
 
-	tknr     token_helper.Tokener
-	cli_fty  *client_helper.ClientFactory
-	opt      *MetathingsDevicedServiceOption
-	logger   log.FieldLogger
-	storage  storage.Storage
-	enforcer identityd_policy.Enforcer
-	vdr      token_helper.TokenValidator
-	cc       connection.ConnectionCenter
+	tknr            token_helper.Tokener
+	cli_fty         *client_helper.ClientFactory
+	opt             *MetathingsDevicedServiceOption
+	logger          log.FieldLogger
+	storage         storage.Storage
+	session_storage session_storage.SessionStorage
+	enforcer        identityd_policy.Enforcer
+	vdr             token_helper.TokenValidator
+	cc              connection.ConnectionCenter
 }
 
 func (self *MetathingsDevicedService) get_device_by_context(ctx context.Context) (*storage.Device, error) {

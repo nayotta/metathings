@@ -7,6 +7,7 @@ import fmt "fmt"
 import github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
 import proto "github.com/golang/protobuf/proto"
 import math "math"
+import _ "github.com/golang/protobuf/ptypes/wrappers"
 import _ "github.com/mwitkow/go-proto-validators"
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -21,6 +22,11 @@ func (this *HeartbeatRequest) Validate() error {
 	if this.Device != nil {
 		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Device); err != nil {
 			return github_com_mwitkow_go_proto_validators.FieldError("Device", err)
+		}
+	}
+	if this.StartupSession != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.StartupSession); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("StartupSession", err)
 		}
 	}
 	return nil
