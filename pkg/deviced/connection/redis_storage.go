@@ -4,6 +4,8 @@ import (
 	"fmt"
 
 	"github.com/go-redis/redis"
+
+	client_helper "github.com/nayotta/metathings/pkg/common/client"
 )
 
 func bridge_key(device string, startup int32) string {
@@ -47,43 +49,10 @@ func (self *redisStorage) ListBridgesFromDevice(dev_id string, sess int32) ([]st
 }
 
 func new_redis_storage(args ...interface{}) (Storage, error) {
-	var ok bool
-	var key string
-	var val interface{}
-
-	var opts redis.Options
-
-	if len(args)%2 != 0 {
-		return nil, ErrInvalidArgument
+	cli, err := client_helper.NewRedisClient(args...)
+	if err != nil {
+		return nil, err
 	}
-
-	for i := 0; i < len(args); i += 2 {
-		key, ok = args[i].(string)
-		if !ok {
-			return nil, ErrInvalidArgument
-		}
-		val = args[i+1]
-
-		switch key {
-		case "addr":
-			opts.Addr, ok = val.(string)
-			if !ok {
-				return nil, ErrInvalidArgument
-			}
-		case "db":
-			opts.DB, ok = val.(int)
-			if !ok {
-				return nil, ErrInvalidArgument
-			}
-		case "password":
-			opts.Password, ok = val.(string)
-			if !ok {
-				return nil, ErrInvalidArgument
-			}
-		}
-	}
-
-	cli := redis.NewClient(&opts)
 
 	return &redisStorage{
 		client: cli,

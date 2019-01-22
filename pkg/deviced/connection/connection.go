@@ -629,10 +629,11 @@ func (self *connectionCenter) new_north_from_bridge_handler(dev *storage.Device,
 	}
 }
 
-func NewConnectionCenter(brfty BridgeFactory, stor Storage, logger log.FieldLogger) (ConnectionCenter, error) {
+func NewConnectionCenter(brfty BridgeFactory, stor Storage, sess_stor session_storage.SessionStorage, logger log.FieldLogger) (ConnectionCenter, error) {
 	return &connectionCenter{
-		logger:  logger,
-		brfty:   brfty,
-		storage: stor,
+		logger:          logger,
+		brfty:           brfty,
+		storage:         stor,
+		session_storage: sess_stor,
 	}, nil
 }

@@ -8,6 +8,29 @@ type SessionStorage interface {
 	RefreshStartupSession(id string, expire time.Duration) error
 }
 
-func NewSessionStorage(driver, uri string, args ...interface{}) (SessionStorage, error) {
-	return NewSessionStorage(driver, uri, args...)
+type SessionStorageFactory func(...interface{}) (SessionStorage, error)
+
+var session_storage_factories map[string]SessionStorageFactory
+
+func register_session_storage_factory(driver string, fty SessionStorageFactory) {
+	if session_storage_factories == nil {
+		session_storage_factories = map[string]SessionStorageFactory{}
+	}
+
+	session_storage_factories[driver] = fty
+}
+
+func NewSessionStorage(driver string, args ...interface{}) (SessionStorage, error) {
+
+	fty, ok := session_storage_factories[driver]
+	if !ok {
+		return nil, ErrUnknownSessionStorageDriver
+	}
+
+	stor, err := fty(args...)
+	if err != nil {
+		return nil, err
+	}
+
+	return stor, nil
 }

@@ -6,6 +6,7 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
+	session_helper "github.com/nayotta/metathings/pkg/common/session"
 	token_helper "github.com/nayotta/metathings/pkg/common/token"
 	pb "github.com/nayotta/metathings/pkg/proto/device"
 	deviced_pb "github.com/nayotta/metathings/pkg/proto/deviced"
@@ -61,6 +62,6 @@ func NewMetathingsDeviceService(
 		cli_fty:         cli_fty,
 		logger:          logger,
 		opt:             opt,
-		startup_session: rand_helper.Int63(),
+		startup_session: session_helper.GenerateStartupSession(),
 	}, nil
 }

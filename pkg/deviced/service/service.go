@@ -139,6 +139,7 @@ func NewMetathingsDevicedService(
 	opt *MetathingsDevicedServiceOption,
 	logger log.FieldLogger,
 	storage storage.Storage,
+	session_storage session_storage.SessionStorage,
 	enforcer identityd_policy.Enforcer,
 	vdr token_helper.TokenValidator,
 	cc connection.ConnectionCenter,
@@ -146,13 +147,14 @@ func NewMetathingsDevicedService(
 	cli_fty *client_helper.ClientFactory,
 ) (pb.DevicedServiceServer, error) {
 	return &MetathingsDevicedService{
-		opt:      opt,
-		logger:   logger,
-		storage:  storage,
-		enforcer: enforcer,
-		vdr:      vdr,
-		cc:       cc,
-		tknr:     tknr,
-		cli_fty:  cli_fty,
+		opt:             opt,
+		logger:          logger,
+		storage:         storage,
+		session_storage: session_storage,
+		enforcer:        enforcer,
+		vdr:             vdr,
+		cc:              cc,
+		tknr:            tknr,
+		cli_fty:         cli_fty,
 	}, nil
 }
