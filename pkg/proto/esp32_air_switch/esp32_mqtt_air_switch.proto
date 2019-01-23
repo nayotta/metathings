@@ -1,0 +1,114 @@
+syntax = "proto3";
+
+message MqttDeviceRequest {
+    int32 session_id = 1;
+    oneof payload {
+        CmdReq cmd_01_req = 11;
+        CmdReq cmd_02_req = 12;
+        CmdSubReq cmd_03_req = 13;
+        CmdSubReq cmd_04_req = 14;
+        CmdReq cmd_05_req = 15;
+        CmdSubReq cmd_06_req = 16;
+        Heartbeat heartbeat = 100;
+        HeartbeatSelectRes heartbeat_select_res = 101;
+        HeartbeatRes heartbeat_res = 102;
+        RunTimeReq run_time_req = 103;
+        ConfigReq config_req = 104;
+        TimeTaskReq time_task_req = 105;
+    };
+}
+
+message MqttDeviceResponse {
+    oneof payload {
+        CmdRes cmd_01_res = 1;
+        CmdRes cmd_02_res = 2;
+        CmdRes cmd_03_res = 3;
+        CmdRes cmd_04_res = 4;
+        CmdRes cmd_05_res = 5;
+        CmdRes cmd_06_res = 6;
+        ErrBadExcuteRes bad_excute_res = 98;
+        ErrBadArgsRes bad_args_res = 99;
+        HeartbeatSelectReq heartbeat_select_req = 100;
+        HeartbeatRes heartbeat = 101;
+        HeartbeatReq heartbeat_req = 102;
+        RunTimeRes run_time_res = 103;
+        ConfigRes config_res = 104;
+        TimeTaskRes time_task_res = 105;
+    }
+}
+
+message ConfigReq{
+    int32 config = 1;
+}
+
+message ConfigRes {
+    int32 config = 1;
+}
+
+message RunTimeReq {
+    int32 time = 1 ;
+}
+
+message RunTimeRes {
+    int64 time = 1;
+    int64 app_start_time = 2;
+    int32 restart_times = 3;
+}
+
+message ErrBadExcuteRes {
+    int32 code = 1;
+}
+
+message ErrBadArgsRes {
+    int32 code = 1;
+}
+
+message Heartbeat {
+    int32 status = 1;
+}
+
+message HeartbeatRes {
+    int32 status = 1;
+}
+
+message HeartbeatReq {
+    int32 status = 1;
+}
+
+message HeartbeatSelectRes {
+    int32 status = 1;
+}
+
+message HeartbeatSelectReq {
+    int32 status = 1;
+}
+
+message TimeTask {
+    string time = 1;
+    repeated MqttDeviceRequest tasks = 2;
+}
+
+message TimeTaskReq {
+    repeated TimeTask time_tasks = 1;
+}
+
+message TimeTaskRes {
+    int32 code = 1;
+}
+
+message CmdReq {
+    int32 target = 1;
+    int32 value = 2;
+}
+
+message CmdSubReq {
+    int32 sub_cmd = 1;
+    int32 target = 2;
+    int32 value = 3;
+}
+
+message CmdRes {
+    int32 ret_cmd = 1;
+    int32 size = 2;
+    bytes value = 3;
+}

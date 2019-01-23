@@ -11,6 +11,7 @@ message MqttDeviceRequest {
         HeartbeatRes heartbeat_res = 102;
         RunTimePayload run_time = 103;
         ConfigPayload config = 104;
+        EchoRequest echo = 105;
     };
 }
 
@@ -25,6 +26,7 @@ message MqttDeviceResponse {
         HeartbeatReq heartbeat_req = 102;
         RunTimeRes run_time = 103;
         ConfigRes config = 104;
+        EchoResponse echo = 105;
     }
 }
 
