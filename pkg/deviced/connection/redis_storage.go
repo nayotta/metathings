@@ -9,7 +9,7 @@ import (
 )
 
 func bridge_key(device string, startup int32) string {
-	return fmt.Sprintf("/devices/%v/startup/%04x/bridges", device, startup)
+	return fmt.Sprintf("/devices/%v/startup/%v/bridges", device, startup)
 }
 
 type redisStorage struct {

@@ -46,18 +46,24 @@ func (self *MetathingsDevicedService) Heartbeat(ctx context.Context, req *pb.Hea
 	cur_sess, err := self.session_storage.GetStartupSession(dev_id_str)
 	if err != nil {
 		self.logger.WithError(err).Errorf("failed to get startup session")
-		return nil, err
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
+	if cur_sess == 0 {
+		err = ErrUnconnectedDevice
+		self.logger.WithError(err).Warningf("device not connected")
+		return nil, status.Errorf(codes.NotFound, err.Error())
 	}
 
 	if cur_sess != sess {
-		err = ErrDuplicatedDeviceInstance
+		err = ErrDuplicatedDevice
 		self.logger.WithError(err).Errorf("current startup session not equal heartbeat startup session")
-		return nil, err
+		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
 	if err = self.session_storage.RefreshStartupSession(dev_id_str, session_helper.STARTUP_SESSION_EXPIRE); err != nil {
 		self.logger.WithError(err).Errorf("failed to refresh startup session")
-		return nil, err
+		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
 	if dev_s, err = self.storage.GetDevice(dev_id_str); err != nil {

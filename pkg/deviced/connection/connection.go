@@ -20,19 +20,25 @@ import (
 type Connection interface {
 	Err(err ...error) error
 	Wait() chan bool
-	Close()
+	Done()
+	Cleanup()
 }
 
 type connection struct {
-	err      error
-	c        chan bool
-	close_cb func()
+	err        error
+	c          chan bool
+	done_once  *sync.Once
+	err_once   *sync.Once
+	cleanup_cb func()
 }
 
 func (self *connection) Err(err ...error) error {
-	if len(err) > 0 && self.err != nil {
-		self.err = err[0]
+	if len(err) > 0 {
+		self.err_once.Do(func() {
+			self.err = err[0]
+		})
 	}
+
 	return self.err
 }
 
@@ -40,9 +46,22 @@ func (self *connection) Wait() chan bool {
 	return self.c
 }
 
-func (self *connection) Close() {
-	if self.close_cb != nil {
-		self.close_cb()
+func (self *connection) Cleanup() {
+	if self.cleanup_cb != nil {
+		self.cleanup_cb()
+	}
+}
+
+func (self *connection) Done() {
+	self.done_once.Do(func() { close(self.c) })
+}
+
+func NewConnection(cleanup_cb func()) Connection {
+	return &connection{
+		c:          make(chan bool),
+		done_once:  new(sync.Once),
+		err_once:   new(sync.Once),
+		cleanup_cb: cleanup_cb,
 	}
 }
 
@@ -80,6 +99,8 @@ func (self *connectionCenter) get_session_from_context(ctx context.Context) int6
 }
 
 func (self *connectionCenter) connection_loop(dev *storage.Device, conn Connection, br Bridge, stm pb.DevicedService_ConnectServer) {
+	defer conn.Done()
+
 	dev_id := *dev.Id
 	br_id := br.Id()
 
@@ -225,40 +246,42 @@ func (self *connectionCenter) south_from_bridge(dev *storage.Device, conn Connec
 }
 
 func (self *connectionCenter) BuildConnection(dev *storage.Device, stm pb.DevicedService_ConnectServer) (Connection, error) {
-	var close_cb func()
+	var cleanup_cb func()
 	ctx := stm.Context()
 	sess := self.get_session_from_context(ctx)
 	dev_id := *dev.Id
 
-	self.logger.WithFields(log.Fields{
+	logger := self.logger.WithFields(log.Fields{
 		"session": sess,
-		"stage":   "begin",
-	}).Debugf("build connection")
+		"devie":   dev_id,
+	})
+
+	logger.WithField("stage", "begin").Debugf("build connection")
 
 	br, err := self.brfty.BuildBridge(dev_id, sess)
 	if err != nil {
-		self.logger.WithError(err).Debugf("failed to build bridge")
+		logger.WithError(err).Debugf("failed to build bridge")
 		return nil, err
 	}
 	br_id := br.Id()
-	self.logger.WithField("bridge", br_id).Debugf("build bridge")
+	logger.WithField("bridge", br_id).Debugf("build bridge")
 
 	if session_helper.IsMajorSession(sess) {
 		cur_sess, err := self.session_storage.GetStartupSession(dev_id)
 		if err != nil {
-			self.logger.WithError(err).Debugf("failed to get startup session")
+			logger.WithError(err).Debugf("failed to get startup session")
 			return nil, err
 		}
 
 		if cur_sess != 0 {
 			err = ErrDuplicatedDeviceInstance
-			self.logger.WithError(err).Debugf("duplicated major connection for device")
+			logger.WithError(err).Debugf("duplicated major connection for device")
 			return nil, err
 		}
 
 		startup_sess := session_helper.GetStartupSession(sess)
 		if err = self.session_storage.SetStartupSessionIfNotExists(dev_id, startup_sess, session_helper.STARTUP_SESSION_EXPIRE); err != nil {
-			self.logger.WithError(err).Debugf("failed to set startup session")
+			logger.WithError(err).Debugf("failed to set startup session")
 			return nil, err
 		}
 
@@ -266,24 +289,17 @@ func (self *connectionCenter) BuildConnection(dev *storage.Device, stm pb.Device
 		if err != nil {
 			return nil, err
 		}
-		close_cb = func() { self.storage.RemoveBridgeFromDevice(dev_id, startup_sess, br_id) }
-		self.logger.WithFields(log.Fields{
-			"brid":  br_id,
-			"devid": *dev.Id,
-		}).Debugf("add bridge to device")
+		cleanup_cb = func() {
+			self.storage.RemoveBridgeFromDevice(dev_id, startup_sess, br_id)
+			logger.WithField("bridge", br_id).Debugf("remove bridge from device")
+		}
+		logger.WithField("bridge", br_id).Debugf("add bridge to device")
 	}
 
-	conn := &connection{
-		c:        make(chan bool),
-		close_cb: close_cb,
-	}
-
+	conn := NewConnection(cleanup_cb)
 	go self.connection_loop(dev, conn, br, stm)
 
-	self.logger.WithFields(log.Fields{
-		"session": sess,
-		"stage":   "end",
-	}).Debugf("build connection")
+	logger.WithField("stage", "end").Debugf("build connection")
 
 	return conn, nil
 }

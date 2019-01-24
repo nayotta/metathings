@@ -38,8 +38,8 @@ func (self *MetathingsDeviceServiceImpl) start() error {
 	self.mdl_db = NewModuleDatabase(show_device_res.GetDevice().GetModules(), self.opt.ModuleAliveTimeout, self.logger)
 	self.info = show_device_res.GetDevice()
 
-	go self.heartbeat_loop()
 	go self.main_loop()
+	go self.heartbeat_loop()
 
 	return nil
 }
