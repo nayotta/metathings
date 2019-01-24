@@ -25,14 +25,16 @@ var (
 // minor session design for minor connection.
 
 const (
-	MAJOR_SESSION_FLAG             = 0x40 << 24
-	MINOR_SESSION_FLAG             = 0x60 << 24
-	TEMP_SESSION_FLAG              = 0x10 << 24
-	STARTUP_SESSION_MASK           = 0x7fffffff00000000
-	CONNECTION_SESSION_MASK        = 0x000000007fffffff
-	x_CONNECTION_SESSION_DATA_MASK = 0x0000000000ffffff
-	MAJOR_SESSION_MASK             = MAJOR_SESSION_FLAG | x_CONNECTION_SESSION_DATA_MASK
-	MINOR_SESSION_MASK             = MINOR_SESSION_FLAG | x_CONNECTION_SESSION_DATA_MASK
+	x_CONNECTION_SESSION_CODE_MASK = int32(0x40 << 24) // 0100 0000
+	x_CONNECTION_SESSION_TYPE_MASK = int32(0x20 << 24) // 0010 0000
+	x_CONNECTION_SESSION_TEMP_MASK = int32(0x10 << 24) // 0001 0000
+
+	MAJOR_SESSION_FLAG             = int32(0x00)       // 0000 0000
+	MINOR_SESSION_FLAG             = int32(0x20 << 24) // 0010 0000
+	TEMP_SESSION_FLAG              = int32(0x10 << 24) // 0001 0000
+	STARTUP_SESSION_MASK           = int64(0x7fffffff00000000)
+	CONNECTION_SESSION_MASK        = int64(0x000000007fffffff)
+	x_CONNECTION_SESSION_DATA_MASK = int64(0x0000000000ffffff)
 )
 
 func GenerateStartupSession() int32 {
@@ -40,7 +42,7 @@ func GenerateStartupSession() int32 {
 }
 
 func generateConnectionSessionData() int32 {
-	return rand_helper.Int31() & x_CONNECTION_SESSION_DATA_MASK
+	return rand_helper.Int31() & int32(x_CONNECTION_SESSION_DATA_MASK)
 }
 
 func GenerateMajorSession() int32 {
@@ -52,20 +54,34 @@ func GenerateMinorSession() int32 {
 }
 
 func GenerateTempSession() int32 {
-	return generateConnectionSessionData() | MINOR_SESSION_FLAG | TEMP_SESSION_FLAG
+	return GenerateMinorSession() | TEMP_SESSION_FLAG
+}
+
+func isConnectionSession(cs int32) bool {
+	return cs&x_CONNECTION_SESSION_CODE_MASK == x_CONNECTION_SESSION_CODE_MASK
+}
+
+func isMajorSession(cs int32) bool {
+	return isConnectionSession(cs) && cs&x_CONNECTION_SESSION_TYPE_MASK == MAJOR_SESSION_FLAG
 }
 
 func IsMajorSession(s int64) bool {
-	return GetConnectionSession(s)&MAJOR_SESSION_FLAG != 0
+	cs := GetConnectionSession(s)
+	return isMajorSession(cs)
+}
+
+func isMinorSession(cs int32) bool {
+	return isConnectionSession(cs) && cs&x_CONNECTION_SESSION_TYPE_MASK == MINOR_SESSION_FLAG
 }
 
 func IsMinorSession(s int64) bool {
-	return GetConnectionSession(s)&MINOR_SESSION_FLAG != 0
+	cs := GetConnectionSession(s)
+	return isMinorSession(cs)
 }
 
 func IsTempSession(s int64) bool {
 	cs := GetConnectionSession(s)
-	return cs&MINOR_SESSION_FLAG != 0 && cs&TEMP_SESSION_FLAG != 0
+	return isMinorSession(cs) && cs&x_CONNECTION_SESSION_TEMP_MASK == TEMP_SESSION_FLAG
 }
 
 func GetStartupSession(s int64) int32 {

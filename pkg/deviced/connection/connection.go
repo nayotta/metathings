@@ -257,6 +257,7 @@ func (self *connectionCenter) BuildConnection(dev *storage.Device, stm pb.Device
 	})
 
 	logger.WithField("stage", "begin").Debugf("build connection")
+	self.printSessionInfo(sess)
 
 	br, err := self.brfty.BuildBridge(dev_id, sess)
 	if err != nil {
@@ -410,6 +411,7 @@ func (self *connectionCenter) StreamCall(dev *storage.Device, cfg *pb.OpStreamCa
 	sess := session_helper.NewSession(startup_sess, conn_sess)
 
 	logger = logger.WithField("session", sess)
+	self.printSessionInfo(sess)
 
 	if br_ids, err = self.storage.ListBridgesFromDevice(dev_id, startup_sess); err != nil {
 		logger.WithError(err).WithField("device_id", dev_id).Debugf("failed to get bridge")
