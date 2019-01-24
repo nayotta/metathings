@@ -290,8 +290,18 @@ func (self *connectionCenter) BuildConnection(dev *storage.Device, stm pb.Device
 			return nil, err
 		}
 		cleanup_cb = func() {
-			self.storage.RemoveBridgeFromDevice(dev_id, startup_sess, br_id)
-			logger.WithField("bridge", br_id).Debugf("remove bridge from device")
+			logger = logger.WithField("bridge", br_id)
+			if err = self.storage.RemoveBridgeFromDevice(dev_id, startup_sess, br_id); err != nil {
+				logger.WithError(err).Warningf("failed to remove bridge from device")
+			} else {
+				logger.Debugf("remove bridge from device")
+			}
+
+			if err = self.session_storage.UnsetStartupSession(dev_id); err != nil {
+				logger.WithError(err).Warningf("failed to unset startup session")
+			} else {
+				logger.Debugf("unset startup session")
+			}
 		}
 		logger.WithField("bridge", br_id).Debugf("add bridge to device")
 	}

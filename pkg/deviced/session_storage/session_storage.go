@@ -5,6 +5,7 @@ import "time"
 type SessionStorage interface {
 	GetStartupSession(id string) (int32, error)
 	SetStartupSessionIfNotExists(id string, sess int32, expire time.Duration) error
+	UnsetStartupSession(id string) error
 	RefreshStartupSession(id string, expire time.Duration) error
 }
 

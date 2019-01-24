@@ -43,6 +43,14 @@ func (self *RedisSessionStorage) SetStartupSessionIfNotExists(id string, sess in
 	return nil
 }
 
+func (self *RedisSessionStorage) UnsetStartupSession(id string) error {
+	r := self.client.Del(startup_session_key(id))
+	if r.Err() != nil {
+		return r.Err()
+	}
+	return nil
+}
+
 func (self *RedisSessionStorage) RefreshStartupSession(id string, expire time.Duration) error {
 	r := self.client.Expire(startup_session_key(id), expire)
 	if r.Err() != nil {
