@@ -7,6 +7,7 @@ import github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-valid
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
+import _ "github.com/golang/protobuf/ptypes/wrappers"
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -53,6 +54,83 @@ func (this *MqttDeviceRequest) Validate() error {
 		if oneOfNester.Cmd_06Req != nil {
 			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.Cmd_06Req); err != nil {
 				return github_com_mwitkow_go_proto_validators.FieldError("Cmd_06Req", err)
+			}
+		}
+	}
+	if oneOfNester, ok := this.GetPayload().(*MqttDeviceRequest_GetSwitchsAddrReq); ok {
+		if oneOfNester.GetSwitchsAddrReq != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.GetSwitchsAddrReq); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("GetSwitchsAddrReq", err)
+			}
+		}
+	}
+	if oneOfNester, ok := this.GetPayload().(*MqttDeviceRequest_GetSwitchsStateReq); ok {
+		if oneOfNester.GetSwitchsStateReq != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.GetSwitchsStateReq); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("GetSwitchsStateReq", err)
+			}
+		}
+	}
+	if oneOfNester, ok := this.GetPayload().(*MqttDeviceRequest_GetSwitchDataReq); ok {
+		if oneOfNester.GetSwitchDataReq != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.GetSwitchDataReq); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("GetSwitchDataReq", err)
+			}
+		}
+	}
+	if oneOfNester, ok := this.GetPayload().(*MqttDeviceRequest_GetSwitchConfigReq); ok {
+		if oneOfNester.GetSwitchConfigReq != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.GetSwitchConfigReq); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("GetSwitchConfigReq", err)
+			}
+		}
+	}
+	if oneOfNester, ok := this.GetPayload().(*MqttDeviceRequest_SetSwitchConfigReq); ok {
+		if oneOfNester.SetSwitchConfigReq != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.SetSwitchConfigReq); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("SetSwitchConfigReq", err)
+			}
+		}
+	}
+	if oneOfNester, ok := this.GetPayload().(*MqttDeviceRequest_GetSwitchStateReq); ok {
+		if oneOfNester.GetSwitchStateReq != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.GetSwitchStateReq); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("GetSwitchStateReq", err)
+			}
+		}
+	}
+	if oneOfNester, ok := this.GetPayload().(*MqttDeviceRequest_SetSwitchStateReq); ok {
+		if oneOfNester.SetSwitchStateReq != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.SetSwitchStateReq); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("SetSwitchStateReq", err)
+			}
+		}
+	}
+	if oneOfNester, ok := this.GetPayload().(*MqttDeviceRequest_GetSwitchKwhReq); ok {
+		if oneOfNester.GetSwitchKwhReq != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.GetSwitchKwhReq); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("GetSwitchKwhReq", err)
+			}
+		}
+	}
+	if oneOfNester, ok := this.GetPayload().(*MqttDeviceRequest_SetSwitchKwhReq); ok {
+		if oneOfNester.SetSwitchKwhReq != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.SetSwitchKwhReq); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("SetSwitchKwhReq", err)
+			}
+		}
+	}
+	if oneOfNester, ok := this.GetPayload().(*MqttDeviceRequest_SetSwitchLeakTestReq); ok {
+		if oneOfNester.SetSwitchLeakTestReq != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.SetSwitchLeakTestReq); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("SetSwitchLeakTestReq", err)
+			}
+		}
+	}
+	if oneOfNester, ok := this.GetPayload().(*MqttDeviceRequest_GetSwitchWarnReq); ok {
+		if oneOfNester.GetSwitchWarnReq != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.GetSwitchWarnReq); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("GetSwitchWarnReq", err)
 			}
 		}
 	}
@@ -143,6 +221,83 @@ func (this *MqttDeviceResponse) Validate() error {
 			}
 		}
 	}
+	if oneOfNester, ok := this.GetPayload().(*MqttDeviceResponse_GetSwitchsAddrRes); ok {
+		if oneOfNester.GetSwitchsAddrRes != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.GetSwitchsAddrRes); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("GetSwitchsAddrRes", err)
+			}
+		}
+	}
+	if oneOfNester, ok := this.GetPayload().(*MqttDeviceResponse_GetSwitchsStateRes); ok {
+		if oneOfNester.GetSwitchsStateRes != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.GetSwitchsStateRes); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("GetSwitchsStateRes", err)
+			}
+		}
+	}
+	if oneOfNester, ok := this.GetPayload().(*MqttDeviceResponse_GetSwitchDataRes); ok {
+		if oneOfNester.GetSwitchDataRes != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.GetSwitchDataRes); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("GetSwitchDataRes", err)
+			}
+		}
+	}
+	if oneOfNester, ok := this.GetPayload().(*MqttDeviceResponse_GetSwitchConfigRes); ok {
+		if oneOfNester.GetSwitchConfigRes != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.GetSwitchConfigRes); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("GetSwitchConfigRes", err)
+			}
+		}
+	}
+	if oneOfNester, ok := this.GetPayload().(*MqttDeviceResponse_SetSwitchConfigRes); ok {
+		if oneOfNester.SetSwitchConfigRes != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.SetSwitchConfigRes); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("SetSwitchConfigRes", err)
+			}
+		}
+	}
+	if oneOfNester, ok := this.GetPayload().(*MqttDeviceResponse_GetSwitchStateRes); ok {
+		if oneOfNester.GetSwitchStateRes != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.GetSwitchStateRes); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("GetSwitchStateRes", err)
+			}
+		}
+	}
+	if oneOfNester, ok := this.GetPayload().(*MqttDeviceResponse_SetSwitchStateRes); ok {
+		if oneOfNester.SetSwitchStateRes != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.SetSwitchStateRes); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("SetSwitchStateRes", err)
+			}
+		}
+	}
+	if oneOfNester, ok := this.GetPayload().(*MqttDeviceResponse_GetSwitchKwhRes); ok {
+		if oneOfNester.GetSwitchKwhRes != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.GetSwitchKwhRes); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("GetSwitchKwhRes", err)
+			}
+		}
+	}
+	if oneOfNester, ok := this.GetPayload().(*MqttDeviceResponse_SetSwitchKwhRes); ok {
+		if oneOfNester.SetSwitchKwhRes != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.SetSwitchKwhRes); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("SetSwitchKwhRes", err)
+			}
+		}
+	}
+	if oneOfNester, ok := this.GetPayload().(*MqttDeviceResponse_SetSwitchLeakTestRes); ok {
+		if oneOfNester.SetSwitchLeakTestRes != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.SetSwitchLeakTestRes); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("SetSwitchLeakTestRes", err)
+			}
+		}
+	}
+	if oneOfNester, ok := this.GetPayload().(*MqttDeviceResponse_GetSwitchWarnRes); ok {
+		if oneOfNester.GetSwitchWarnRes != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.GetSwitchWarnRes); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("GetSwitchWarnRes", err)
+			}
+		}
+	}
 	if oneOfNester, ok := this.GetPayload().(*MqttDeviceResponse_BadExcuteRes); ok {
 		if oneOfNester.BadExcuteRes != nil {
 			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.BadExcuteRes); err != nil {
@@ -199,6 +354,172 @@ func (this *MqttDeviceResponse) Validate() error {
 			}
 		}
 	}
+	return nil
+}
+func (this *GetSwitchsAddrReq) Validate() error {
+	return nil
+}
+func (this *GetSwitchsAddrRes) Validate() error {
+	return nil
+}
+func (this *GetSwitchsStateReq) Validate() error {
+	return nil
+}
+func (this *GetSwitchsStateRes) Validate() error {
+	return nil
+}
+func (this *GetSwitchDataReq) Validate() error {
+	return nil
+}
+func (this *GetSwitchDataRes) Validate() error {
+	if this.Votage != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Votage); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Votage", err)
+		}
+	}
+	if this.LeakCurrent != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.LeakCurrent); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("LeakCurrent", err)
+		}
+	}
+	if this.Power != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Power); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Power", err)
+		}
+	}
+	if this.Temp != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Temp); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Temp", err)
+		}
+	}
+	if this.Current != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Current); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Current", err)
+		}
+	}
+	return nil
+}
+func (this *GetSwitchConfigReq) Validate() error {
+	return nil
+}
+func (this *GetSwitchConfigRes) Validate() error {
+	if this.VotageHigh != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.VotageHigh); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("VotageHigh", err)
+		}
+	}
+	if this.VotageLow != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.VotageLow); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("VotageLow", err)
+		}
+	}
+	if this.LeakCurrentHigh != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.LeakCurrentHigh); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("LeakCurrentHigh", err)
+		}
+	}
+	if this.PowerHigh != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.PowerHigh); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("PowerHigh", err)
+		}
+	}
+	if this.TempHigh != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.TempHigh); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("TempHigh", err)
+		}
+	}
+	if this.CurrentHigh != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.CurrentHigh); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("CurrentHigh", err)
+		}
+	}
+	if this.Model != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Model); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Model", err)
+		}
+	}
+	return nil
+}
+func (this *SetSwitchConfigReq) Validate() error {
+	if this.VotageHigh != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.VotageHigh); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("VotageHigh", err)
+		}
+	}
+	if this.VotageLow != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.VotageLow); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("VotageLow", err)
+		}
+	}
+	if this.LeakCurrentHigh != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.LeakCurrentHigh); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("LeakCurrentHigh", err)
+		}
+	}
+	if this.PowerHigh != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.PowerHigh); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("PowerHigh", err)
+		}
+	}
+	if this.TempHigh != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.TempHigh); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("TempHigh", err)
+		}
+	}
+	if this.CurrentHigh != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.CurrentHigh); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("CurrentHigh", err)
+		}
+	}
+	if this.WarnVotageHigh != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.WarnVotageHigh); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("WarnVotageHigh", err)
+		}
+	}
+	if this.WarnVotageLow != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.WarnVotageLow); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("WarnVotageLow", err)
+		}
+	}
+	return nil
+}
+func (this *SetSwitchConfigRes) Validate() error {
+	return nil
+}
+func (this *GetSwitchStateReq) Validate() error {
+	return nil
+}
+func (this *GetSwitchStateRes) Validate() error {
+	return nil
+}
+func (this *SetSwitchStateReq) Validate() error {
+	return nil
+}
+func (this *SetSwitchStateRes) Validate() error {
+	return nil
+}
+func (this *GetSwitchKWhReq) Validate() error {
+	return nil
+}
+func (this *GetSwitchKWhRes) Validate() error {
+	return nil
+}
+func (this *SetSwitchKWhReq) Validate() error {
+	return nil
+}
+func (this *SetSwitchKWhRes) Validate() error {
+	return nil
+}
+func (this *SetSwitchLeakTest) Validate() error {
+	return nil
+}
+func (this *SetSwitchLeakTestRes) Validate() error {
+	return nil
+}
+func (this *GetSwitchWarnReq) Validate() error {
+	return nil
+}
+func (this *GetSwitchWarnRes) Validate() error {
 	return nil
 }
 func (this *ConfigReq) Validate() error {

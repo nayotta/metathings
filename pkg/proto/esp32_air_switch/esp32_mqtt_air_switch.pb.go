@@ -6,6 +6,7 @@ package esp32_mqtt_air_switch
 import (
 	fmt "fmt"
 	proto "github.com/golang/protobuf/proto"
+	wrappers "github.com/golang/protobuf/ptypes/wrappers"
 	math "math"
 )
 
@@ -29,6 +30,17 @@ type MqttDeviceRequest struct {
 	//	*MqttDeviceRequest_Cmd_04Req
 	//	*MqttDeviceRequest_Cmd_05Req
 	//	*MqttDeviceRequest_Cmd_06Req
+	//	*MqttDeviceRequest_GetSwitchsAddrReq
+	//	*MqttDeviceRequest_GetSwitchsStateReq
+	//	*MqttDeviceRequest_GetSwitchDataReq
+	//	*MqttDeviceRequest_GetSwitchConfigReq
+	//	*MqttDeviceRequest_SetSwitchConfigReq
+	//	*MqttDeviceRequest_GetSwitchStateReq
+	//	*MqttDeviceRequest_SetSwitchStateReq
+	//	*MqttDeviceRequest_GetSwitchKwhReq
+	//	*MqttDeviceRequest_SetSwitchKwhReq
+	//	*MqttDeviceRequest_SetSwitchLeakTestReq
+	//	*MqttDeviceRequest_GetSwitchWarnReq
 	//	*MqttDeviceRequest_Heartbeat
 	//	*MqttDeviceRequest_HeartbeatSelectRes
 	//	*MqttDeviceRequest_HeartbeatRes
@@ -101,6 +113,50 @@ type MqttDeviceRequest_Cmd_06Req struct {
 	Cmd_06Req *CmdSubReq `protobuf:"bytes,16,opt,name=cmd_06_req,json=cmd06Req,proto3,oneof"`
 }
 
+type MqttDeviceRequest_GetSwitchsAddrReq struct {
+	GetSwitchsAddrReq *GetSwitchsAddrReq `protobuf:"bytes,17,opt,name=get_switchs_addr_req,json=getSwitchsAddrReq,proto3,oneof"`
+}
+
+type MqttDeviceRequest_GetSwitchsStateReq struct {
+	GetSwitchsStateReq *GetSwitchsStateReq `protobuf:"bytes,18,opt,name=get_switchs_state_req,json=getSwitchsStateReq,proto3,oneof"`
+}
+
+type MqttDeviceRequest_GetSwitchDataReq struct {
+	GetSwitchDataReq *GetSwitchDataReq `protobuf:"bytes,19,opt,name=get_switch_data_req,json=getSwitchDataReq,proto3,oneof"`
+}
+
+type MqttDeviceRequest_GetSwitchConfigReq struct {
+	GetSwitchConfigReq *GetSwitchConfigReq `protobuf:"bytes,20,opt,name=get_switch_config_req,json=getSwitchConfigReq,proto3,oneof"`
+}
+
+type MqttDeviceRequest_SetSwitchConfigReq struct {
+	SetSwitchConfigReq *SetSwitchConfigReq `protobuf:"bytes,21,opt,name=set_switch_config_req,json=setSwitchConfigReq,proto3,oneof"`
+}
+
+type MqttDeviceRequest_GetSwitchStateReq struct {
+	GetSwitchStateReq *GetSwitchStateReq `protobuf:"bytes,22,opt,name=get_switch_state_req,json=getSwitchStateReq,proto3,oneof"`
+}
+
+type MqttDeviceRequest_SetSwitchStateReq struct {
+	SetSwitchStateReq *SetSwitchStateReq `protobuf:"bytes,23,opt,name=set_switch_state_req,json=setSwitchStateReq,proto3,oneof"`
+}
+
+type MqttDeviceRequest_GetSwitchKwhReq struct {
+	GetSwitchKwhReq *GetSwitchKWhReq `protobuf:"bytes,24,opt,name=get_switch_kwh_req,json=getSwitchKwhReq,proto3,oneof"`
+}
+
+type MqttDeviceRequest_SetSwitchKwhReq struct {
+	SetSwitchKwhReq *SetSwitchKWhReq `protobuf:"bytes,25,opt,name=set_switch_kwh_req,json=setSwitchKwhReq,proto3,oneof"`
+}
+
+type MqttDeviceRequest_SetSwitchLeakTestReq struct {
+	SetSwitchLeakTestReq *SetSwitchLeakTest `protobuf:"bytes,26,opt,name=set_switch_leak_test_req,json=setSwitchLeakTestReq,proto3,oneof"`
+}
+
+type MqttDeviceRequest_GetSwitchWarnReq struct {
+	GetSwitchWarnReq *GetSwitchWarnReq `protobuf:"bytes,27,opt,name=get_switch_warn_req,json=getSwitchWarnReq,proto3,oneof"`
+}
+
 type MqttDeviceRequest_Heartbeat struct {
 	Heartbeat *Heartbeat `protobuf:"bytes,100,opt,name=heartbeat,proto3,oneof"`
 }
@@ -136,6 +192,28 @@ func (*MqttDeviceRequest_Cmd_04Req) isMqttDeviceRequest_Payload() {}
 func (*MqttDeviceRequest_Cmd_05Req) isMqttDeviceRequest_Payload() {}
 
 func (*MqttDeviceRequest_Cmd_06Req) isMqttDeviceRequest_Payload() {}
+
+func (*MqttDeviceRequest_GetSwitchsAddrReq) isMqttDeviceRequest_Payload() {}
+
+func (*MqttDeviceRequest_GetSwitchsStateReq) isMqttDeviceRequest_Payload() {}
+
+func (*MqttDeviceRequest_GetSwitchDataReq) isMqttDeviceRequest_Payload() {}
+
+func (*MqttDeviceRequest_GetSwitchConfigReq) isMqttDeviceRequest_Payload() {}
+
+func (*MqttDeviceRequest_SetSwitchConfigReq) isMqttDeviceRequest_Payload() {}
+
+func (*MqttDeviceRequest_GetSwitchStateReq) isMqttDeviceRequest_Payload() {}
+
+func (*MqttDeviceRequest_SetSwitchStateReq) isMqttDeviceRequest_Payload() {}
+
+func (*MqttDeviceRequest_GetSwitchKwhReq) isMqttDeviceRequest_Payload() {}
+
+func (*MqttDeviceRequest_SetSwitchKwhReq) isMqttDeviceRequest_Payload() {}
+
+func (*MqttDeviceRequest_SetSwitchLeakTestReq) isMqttDeviceRequest_Payload() {}
+
+func (*MqttDeviceRequest_GetSwitchWarnReq) isMqttDeviceRequest_Payload() {}
 
 func (*MqttDeviceRequest_Heartbeat) isMqttDeviceRequest_Payload() {}
 
@@ -198,6 +276,83 @@ func (m *MqttDeviceRequest) GetCmd_06Req() *CmdSubReq {
 	return nil
 }
 
+func (m *MqttDeviceRequest) GetGetSwitchsAddrReq() *GetSwitchsAddrReq {
+	if x, ok := m.GetPayload().(*MqttDeviceRequest_GetSwitchsAddrReq); ok {
+		return x.GetSwitchsAddrReq
+	}
+	return nil
+}
+
+func (m *MqttDeviceRequest) GetGetSwitchsStateReq() *GetSwitchsStateReq {
+	if x, ok := m.GetPayload().(*MqttDeviceRequest_GetSwitchsStateReq); ok {
+		return x.GetSwitchsStateReq
+	}
+	return nil
+}
+
+func (m *MqttDeviceRequest) GetGetSwitchDataReq() *GetSwitchDataReq {
+	if x, ok := m.GetPayload().(*MqttDeviceRequest_GetSwitchDataReq); ok {
+		return x.GetSwitchDataReq
+	}
+	return nil
+}
+
+func (m *MqttDeviceRequest) GetGetSwitchConfigReq() *GetSwitchConfigReq {
+	if x, ok := m.GetPayload().(*MqttDeviceRequest_GetSwitchConfigReq); ok {
+		return x.GetSwitchConfigReq
+	}
+	return nil
+}
+
+func (m *MqttDeviceRequest) GetSetSwitchConfigReq() *SetSwitchConfigReq {
+	if x, ok := m.GetPayload().(*MqttDeviceRequest_SetSwitchConfigReq); ok {
+		return x.SetSwitchConfigReq
+	}
+	return nil
+}
+
+func (m *MqttDeviceRequest) GetGetSwitchStateReq() *GetSwitchStateReq {
+	if x, ok := m.GetPayload().(*MqttDeviceRequest_GetSwitchStateReq); ok {
+		return x.GetSwitchStateReq
+	}
+	return nil
+}
+
+func (m *MqttDeviceRequest) GetSetSwitchStateReq() *SetSwitchStateReq {
+	if x, ok := m.GetPayload().(*MqttDeviceRequest_SetSwitchStateReq); ok {
+		return x.SetSwitchStateReq
+	}
+	return nil
+}
+
+func (m *MqttDeviceRequest) GetGetSwitchKwhReq() *GetSwitchKWhReq {
+	if x, ok := m.GetPayload().(*MqttDeviceRequest_GetSwitchKwhReq); ok {
+		return x.GetSwitchKwhReq
+	}
+	return nil
+}
+
+func (m *MqttDeviceRequest) GetSetSwitchKwhReq() *SetSwitchKWhReq {
+	if x, ok := m.GetPayload().(*MqttDeviceRequest_SetSwitchKwhReq); ok {
+		return x.SetSwitchKwhReq
+	}
+	return nil
+}
+
+func (m *MqttDeviceRequest) GetSetSwitchLeakTestReq() *SetSwitchLeakTest {
+	if x, ok := m.GetPayload().(*MqttDeviceRequest_SetSwitchLeakTestReq); ok {
+		return x.SetSwitchLeakTestReq
+	}
+	return nil
+}
+
+func (m *MqttDeviceRequest) GetGetSwitchWarnReq() *GetSwitchWarnReq {
+	if x, ok := m.GetPayload().(*MqttDeviceRequest_GetSwitchWarnReq); ok {
+		return x.GetSwitchWarnReq
+	}
+	return nil
+}
+
 func (m *MqttDeviceRequest) GetHeartbeat() *Heartbeat {
 	if x, ok := m.GetPayload().(*MqttDeviceRequest_Heartbeat); ok {
 		return x.Heartbeat
@@ -249,6 +404,17 @@ func (*MqttDeviceRequest) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buf
 		(*MqttDeviceRequest_Cmd_04Req)(nil),
 		(*MqttDeviceRequest_Cmd_05Req)(nil),
 		(*MqttDeviceRequest_Cmd_06Req)(nil),
+		(*MqttDeviceRequest_GetSwitchsAddrReq)(nil),
+		(*MqttDeviceRequest_GetSwitchsStateReq)(nil),
+		(*MqttDeviceRequest_GetSwitchDataReq)(nil),
+		(*MqttDeviceRequest_GetSwitchConfigReq)(nil),
+		(*MqttDeviceRequest_SetSwitchConfigReq)(nil),
+		(*MqttDeviceRequest_GetSwitchStateReq)(nil),
+		(*MqttDeviceRequest_SetSwitchStateReq)(nil),
+		(*MqttDeviceRequest_GetSwitchKwhReq)(nil),
+		(*MqttDeviceRequest_SetSwitchKwhReq)(nil),
+		(*MqttDeviceRequest_SetSwitchLeakTestReq)(nil),
+		(*MqttDeviceRequest_GetSwitchWarnReq)(nil),
 		(*MqttDeviceRequest_Heartbeat)(nil),
 		(*MqttDeviceRequest_HeartbeatSelectRes)(nil),
 		(*MqttDeviceRequest_HeartbeatRes)(nil),
@@ -290,6 +456,61 @@ func _MqttDeviceRequest_OneofMarshaler(msg proto.Message, b *proto.Buffer) error
 	case *MqttDeviceRequest_Cmd_06Req:
 		b.EncodeVarint(16<<3 | proto.WireBytes)
 		if err := b.EncodeMessage(x.Cmd_06Req); err != nil {
+			return err
+		}
+	case *MqttDeviceRequest_GetSwitchsAddrReq:
+		b.EncodeVarint(17<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.GetSwitchsAddrReq); err != nil {
+			return err
+		}
+	case *MqttDeviceRequest_GetSwitchsStateReq:
+		b.EncodeVarint(18<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.GetSwitchsStateReq); err != nil {
+			return err
+		}
+	case *MqttDeviceRequest_GetSwitchDataReq:
+		b.EncodeVarint(19<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.GetSwitchDataReq); err != nil {
+			return err
+		}
+	case *MqttDeviceRequest_GetSwitchConfigReq:
+		b.EncodeVarint(20<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.GetSwitchConfigReq); err != nil {
+			return err
+		}
+	case *MqttDeviceRequest_SetSwitchConfigReq:
+		b.EncodeVarint(21<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.SetSwitchConfigReq); err != nil {
+			return err
+		}
+	case *MqttDeviceRequest_GetSwitchStateReq:
+		b.EncodeVarint(22<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.GetSwitchStateReq); err != nil {
+			return err
+		}
+	case *MqttDeviceRequest_SetSwitchStateReq:
+		b.EncodeVarint(23<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.SetSwitchStateReq); err != nil {
+			return err
+		}
+	case *MqttDeviceRequest_GetSwitchKwhReq:
+		b.EncodeVarint(24<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.GetSwitchKwhReq); err != nil {
+			return err
+		}
+	case *MqttDeviceRequest_SetSwitchKwhReq:
+		b.EncodeVarint(25<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.SetSwitchKwhReq); err != nil {
+			return err
+		}
+	case *MqttDeviceRequest_SetSwitchLeakTestReq:
+		b.EncodeVarint(26<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.SetSwitchLeakTestReq); err != nil {
+			return err
+		}
+	case *MqttDeviceRequest_GetSwitchWarnReq:
+		b.EncodeVarint(27<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.GetSwitchWarnReq); err != nil {
 			return err
 		}
 	case *MqttDeviceRequest_Heartbeat:
@@ -380,6 +601,94 @@ func _MqttDeviceRequest_OneofUnmarshaler(msg proto.Message, tag, wire int, b *pr
 		err := b.DecodeMessage(msg)
 		m.Payload = &MqttDeviceRequest_Cmd_06Req{msg}
 		return true, err
+	case 17: // payload.get_switchs_addr_req
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(GetSwitchsAddrReq)
+		err := b.DecodeMessage(msg)
+		m.Payload = &MqttDeviceRequest_GetSwitchsAddrReq{msg}
+		return true, err
+	case 18: // payload.get_switchs_state_req
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(GetSwitchsStateReq)
+		err := b.DecodeMessage(msg)
+		m.Payload = &MqttDeviceRequest_GetSwitchsStateReq{msg}
+		return true, err
+	case 19: // payload.get_switch_data_req
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(GetSwitchDataReq)
+		err := b.DecodeMessage(msg)
+		m.Payload = &MqttDeviceRequest_GetSwitchDataReq{msg}
+		return true, err
+	case 20: // payload.get_switch_config_req
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(GetSwitchConfigReq)
+		err := b.DecodeMessage(msg)
+		m.Payload = &MqttDeviceRequest_GetSwitchConfigReq{msg}
+		return true, err
+	case 21: // payload.set_switch_config_req
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(SetSwitchConfigReq)
+		err := b.DecodeMessage(msg)
+		m.Payload = &MqttDeviceRequest_SetSwitchConfigReq{msg}
+		return true, err
+	case 22: // payload.get_switch_state_req
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(GetSwitchStateReq)
+		err := b.DecodeMessage(msg)
+		m.Payload = &MqttDeviceRequest_GetSwitchStateReq{msg}
+		return true, err
+	case 23: // payload.set_switch_state_req
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(SetSwitchStateReq)
+		err := b.DecodeMessage(msg)
+		m.Payload = &MqttDeviceRequest_SetSwitchStateReq{msg}
+		return true, err
+	case 24: // payload.get_switch_kwh_req
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(GetSwitchKWhReq)
+		err := b.DecodeMessage(msg)
+		m.Payload = &MqttDeviceRequest_GetSwitchKwhReq{msg}
+		return true, err
+	case 25: // payload.set_switch_kwh_req
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(SetSwitchKWhReq)
+		err := b.DecodeMessage(msg)
+		m.Payload = &MqttDeviceRequest_SetSwitchKwhReq{msg}
+		return true, err
+	case 26: // payload.set_switch_leak_test_req
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(SetSwitchLeakTest)
+		err := b.DecodeMessage(msg)
+		m.Payload = &MqttDeviceRequest_SetSwitchLeakTestReq{msg}
+		return true, err
+	case 27: // payload.get_switch_warn_req
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(GetSwitchWarnReq)
+		err := b.DecodeMessage(msg)
+		m.Payload = &MqttDeviceRequest_GetSwitchWarnReq{msg}
+		return true, err
 	case 100: // payload.heartbeat
 		if wire != proto.WireBytes {
 			return true, proto.ErrInternalBadWireType
@@ -467,6 +776,61 @@ func _MqttDeviceRequest_OneofSizer(msg proto.Message) (n int) {
 		n += 2 // tag and wire
 		n += proto.SizeVarint(uint64(s))
 		n += s
+	case *MqttDeviceRequest_GetSwitchsAddrReq:
+		s := proto.Size(x.GetSwitchsAddrReq)
+		n += 2 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *MqttDeviceRequest_GetSwitchsStateReq:
+		s := proto.Size(x.GetSwitchsStateReq)
+		n += 2 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *MqttDeviceRequest_GetSwitchDataReq:
+		s := proto.Size(x.GetSwitchDataReq)
+		n += 2 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *MqttDeviceRequest_GetSwitchConfigReq:
+		s := proto.Size(x.GetSwitchConfigReq)
+		n += 2 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *MqttDeviceRequest_SetSwitchConfigReq:
+		s := proto.Size(x.SetSwitchConfigReq)
+		n += 2 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *MqttDeviceRequest_GetSwitchStateReq:
+		s := proto.Size(x.GetSwitchStateReq)
+		n += 2 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *MqttDeviceRequest_SetSwitchStateReq:
+		s := proto.Size(x.SetSwitchStateReq)
+		n += 2 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *MqttDeviceRequest_GetSwitchKwhReq:
+		s := proto.Size(x.GetSwitchKwhReq)
+		n += 2 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *MqttDeviceRequest_SetSwitchKwhReq:
+		s := proto.Size(x.SetSwitchKwhReq)
+		n += 2 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *MqttDeviceRequest_SetSwitchLeakTestReq:
+		s := proto.Size(x.SetSwitchLeakTestReq)
+		n += 2 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *MqttDeviceRequest_GetSwitchWarnReq:
+		s := proto.Size(x.GetSwitchWarnReq)
+		n += 2 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
 	case *MqttDeviceRequest_Heartbeat:
 		s := proto.Size(x.Heartbeat)
 		n += 2 // tag and wire
@@ -512,6 +876,17 @@ type MqttDeviceResponse struct {
 	//	*MqttDeviceResponse_Cmd_04Res
 	//	*MqttDeviceResponse_Cmd_05Res
 	//	*MqttDeviceResponse_Cmd_06Res
+	//	*MqttDeviceResponse_GetSwitchsAddrRes
+	//	*MqttDeviceResponse_GetSwitchsStateRes
+	//	*MqttDeviceResponse_GetSwitchDataRes
+	//	*MqttDeviceResponse_GetSwitchConfigRes
+	//	*MqttDeviceResponse_SetSwitchConfigRes
+	//	*MqttDeviceResponse_GetSwitchStateRes
+	//	*MqttDeviceResponse_SetSwitchStateRes
+	//	*MqttDeviceResponse_GetSwitchKwhRes
+	//	*MqttDeviceResponse_SetSwitchKwhRes
+	//	*MqttDeviceResponse_SetSwitchLeakTestRes
+	//	*MqttDeviceResponse_GetSwitchWarnRes
 	//	*MqttDeviceResponse_BadExcuteRes
 	//	*MqttDeviceResponse_BadArgsRes
 	//	*MqttDeviceResponse_HeartbeatSelectReq
@@ -579,6 +954,50 @@ type MqttDeviceResponse_Cmd_06Res struct {
 	Cmd_06Res *CmdRes `protobuf:"bytes,6,opt,name=cmd_06_res,json=cmd06Res,proto3,oneof"`
 }
 
+type MqttDeviceResponse_GetSwitchsAddrRes struct {
+	GetSwitchsAddrRes *GetSwitchsAddrRes `protobuf:"bytes,17,opt,name=get_switchs_addr_res,json=getSwitchsAddrRes,proto3,oneof"`
+}
+
+type MqttDeviceResponse_GetSwitchsStateRes struct {
+	GetSwitchsStateRes *GetSwitchsStateRes `protobuf:"bytes,18,opt,name=get_switchs_state_res,json=getSwitchsStateRes,proto3,oneof"`
+}
+
+type MqttDeviceResponse_GetSwitchDataRes struct {
+	GetSwitchDataRes *GetSwitchDataRes `protobuf:"bytes,19,opt,name=get_switch_data_res,json=getSwitchDataRes,proto3,oneof"`
+}
+
+type MqttDeviceResponse_GetSwitchConfigRes struct {
+	GetSwitchConfigRes *GetSwitchConfigRes `protobuf:"bytes,20,opt,name=get_switch_config_res,json=getSwitchConfigRes,proto3,oneof"`
+}
+
+type MqttDeviceResponse_SetSwitchConfigRes struct {
+	SetSwitchConfigRes *SetSwitchConfigRes `protobuf:"bytes,21,opt,name=set_switch_config_res,json=setSwitchConfigRes,proto3,oneof"`
+}
+
+type MqttDeviceResponse_GetSwitchStateRes struct {
+	GetSwitchStateRes *GetSwitchStateRes `protobuf:"bytes,22,opt,name=get_switch_state_res,json=getSwitchStateRes,proto3,oneof"`
+}
+
+type MqttDeviceResponse_SetSwitchStateRes struct {
+	SetSwitchStateRes *SetSwitchStateRes `protobuf:"bytes,23,opt,name=set_switch_state_res,json=setSwitchStateRes,proto3,oneof"`
+}
+
+type MqttDeviceResponse_GetSwitchKwhRes struct {
+	GetSwitchKwhRes *GetSwitchKWhRes `protobuf:"bytes,24,opt,name=get_switch_kwh_res,json=getSwitchKwhRes,proto3,oneof"`
+}
+
+type MqttDeviceResponse_SetSwitchKwhRes struct {
+	SetSwitchKwhRes *SetSwitchKWhRes `protobuf:"bytes,25,opt,name=set_switch_kwh_res,json=setSwitchKwhRes,proto3,oneof"`
+}
+
+type MqttDeviceResponse_SetSwitchLeakTestRes struct {
+	SetSwitchLeakTestRes *SetSwitchLeakTestRes `protobuf:"bytes,26,opt,name=set_switch_leak_test_res,json=setSwitchLeakTestRes,proto3,oneof"`
+}
+
+type MqttDeviceResponse_GetSwitchWarnRes struct {
+	GetSwitchWarnRes *GetSwitchWarnRes `protobuf:"bytes,27,opt,name=get_switch_warn_res,json=getSwitchWarnRes,proto3,oneof"`
+}
+
 type MqttDeviceResponse_BadExcuteRes struct {
 	BadExcuteRes *ErrBadExcuteRes `protobuf:"bytes,98,opt,name=bad_excute_res,json=badExcuteRes,proto3,oneof"`
 }
@@ -622,6 +1041,28 @@ func (*MqttDeviceResponse_Cmd_04Res) isMqttDeviceResponse_Payload() {}
 func (*MqttDeviceResponse_Cmd_05Res) isMqttDeviceResponse_Payload() {}
 
 func (*MqttDeviceResponse_Cmd_06Res) isMqttDeviceResponse_Payload() {}
+
+func (*MqttDeviceResponse_GetSwitchsAddrRes) isMqttDeviceResponse_Payload() {}
+
+func (*MqttDeviceResponse_GetSwitchsStateRes) isMqttDeviceResponse_Payload() {}
+
+func (*MqttDeviceResponse_GetSwitchDataRes) isMqttDeviceResponse_Payload() {}
+
+func (*MqttDeviceResponse_GetSwitchConfigRes) isMqttDeviceResponse_Payload() {}
+
+func (*MqttDeviceResponse_SetSwitchConfigRes) isMqttDeviceResponse_Payload() {}
+
+func (*MqttDeviceResponse_GetSwitchStateRes) isMqttDeviceResponse_Payload() {}
+
+func (*MqttDeviceResponse_SetSwitchStateRes) isMqttDeviceResponse_Payload() {}
+
+func (*MqttDeviceResponse_GetSwitchKwhRes) isMqttDeviceResponse_Payload() {}
+
+func (*MqttDeviceResponse_SetSwitchKwhRes) isMqttDeviceResponse_Payload() {}
+
+func (*MqttDeviceResponse_SetSwitchLeakTestRes) isMqttDeviceResponse_Payload() {}
+
+func (*MqttDeviceResponse_GetSwitchWarnRes) isMqttDeviceResponse_Payload() {}
 
 func (*MqttDeviceResponse_BadExcuteRes) isMqttDeviceResponse_Payload() {}
 
@@ -684,6 +1125,83 @@ func (m *MqttDeviceResponse) GetCmd_05Res() *CmdRes {
 func (m *MqttDeviceResponse) GetCmd_06Res() *CmdRes {
 	if x, ok := m.GetPayload().(*MqttDeviceResponse_Cmd_06Res); ok {
 		return x.Cmd_06Res
+	}
+	return nil
+}
+
+func (m *MqttDeviceResponse) GetGetSwitchsAddrRes() *GetSwitchsAddrRes {
+	if x, ok := m.GetPayload().(*MqttDeviceResponse_GetSwitchsAddrRes); ok {
+		return x.GetSwitchsAddrRes
+	}
+	return nil
+}
+
+func (m *MqttDeviceResponse) GetGetSwitchsStateRes() *GetSwitchsStateRes {
+	if x, ok := m.GetPayload().(*MqttDeviceResponse_GetSwitchsStateRes); ok {
+		return x.GetSwitchsStateRes
+	}
+	return nil
+}
+
+func (m *MqttDeviceResponse) GetGetSwitchDataRes() *GetSwitchDataRes {
+	if x, ok := m.GetPayload().(*MqttDeviceResponse_GetSwitchDataRes); ok {
+		return x.GetSwitchDataRes
+	}
+	return nil
+}
+
+func (m *MqttDeviceResponse) GetGetSwitchConfigRes() *GetSwitchConfigRes {
+	if x, ok := m.GetPayload().(*MqttDeviceResponse_GetSwitchConfigRes); ok {
+		return x.GetSwitchConfigRes
+	}
+	return nil
+}
+
+func (m *MqttDeviceResponse) GetSetSwitchConfigRes() *SetSwitchConfigRes {
+	if x, ok := m.GetPayload().(*MqttDeviceResponse_SetSwitchConfigRes); ok {
+		return x.SetSwitchConfigRes
+	}
+	return nil
+}
+
+func (m *MqttDeviceResponse) GetGetSwitchStateRes() *GetSwitchStateRes {
+	if x, ok := m.GetPayload().(*MqttDeviceResponse_GetSwitchStateRes); ok {
+		return x.GetSwitchStateRes
+	}
+	return nil
+}
+
+func (m *MqttDeviceResponse) GetSetSwitchStateRes() *SetSwitchStateRes {
+	if x, ok := m.GetPayload().(*MqttDeviceResponse_SetSwitchStateRes); ok {
+		return x.SetSwitchStateRes
+	}
+	return nil
+}
+
+func (m *MqttDeviceResponse) GetGetSwitchKwhRes() *GetSwitchKWhRes {
+	if x, ok := m.GetPayload().(*MqttDeviceResponse_GetSwitchKwhRes); ok {
+		return x.GetSwitchKwhRes
+	}
+	return nil
+}
+
+func (m *MqttDeviceResponse) GetSetSwitchKwhRes() *SetSwitchKWhRes {
+	if x, ok := m.GetPayload().(*MqttDeviceResponse_SetSwitchKwhRes); ok {
+		return x.SetSwitchKwhRes
+	}
+	return nil
+}
+
+func (m *MqttDeviceResponse) GetSetSwitchLeakTestRes() *SetSwitchLeakTestRes {
+	if x, ok := m.GetPayload().(*MqttDeviceResponse_SetSwitchLeakTestRes); ok {
+		return x.SetSwitchLeakTestRes
+	}
+	return nil
+}
+
+func (m *MqttDeviceResponse) GetGetSwitchWarnRes() *GetSwitchWarnRes {
+	if x, ok := m.GetPayload().(*MqttDeviceResponse_GetSwitchWarnRes); ok {
+		return x.GetSwitchWarnRes
 	}
 	return nil
 }
@@ -753,6 +1271,17 @@ func (*MqttDeviceResponse) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Bu
 		(*MqttDeviceResponse_Cmd_04Res)(nil),
 		(*MqttDeviceResponse_Cmd_05Res)(nil),
 		(*MqttDeviceResponse_Cmd_06Res)(nil),
+		(*MqttDeviceResponse_GetSwitchsAddrRes)(nil),
+		(*MqttDeviceResponse_GetSwitchsStateRes)(nil),
+		(*MqttDeviceResponse_GetSwitchDataRes)(nil),
+		(*MqttDeviceResponse_GetSwitchConfigRes)(nil),
+		(*MqttDeviceResponse_SetSwitchConfigRes)(nil),
+		(*MqttDeviceResponse_GetSwitchStateRes)(nil),
+		(*MqttDeviceResponse_SetSwitchStateRes)(nil),
+		(*MqttDeviceResponse_GetSwitchKwhRes)(nil),
+		(*MqttDeviceResponse_SetSwitchKwhRes)(nil),
+		(*MqttDeviceResponse_SetSwitchLeakTestRes)(nil),
+		(*MqttDeviceResponse_GetSwitchWarnRes)(nil),
 		(*MqttDeviceResponse_BadExcuteRes)(nil),
 		(*MqttDeviceResponse_BadArgsRes)(nil),
 		(*MqttDeviceResponse_HeartbeatSelectReq)(nil),
@@ -796,6 +1325,61 @@ func _MqttDeviceResponse_OneofMarshaler(msg proto.Message, b *proto.Buffer) erro
 	case *MqttDeviceResponse_Cmd_06Res:
 		b.EncodeVarint(6<<3 | proto.WireBytes)
 		if err := b.EncodeMessage(x.Cmd_06Res); err != nil {
+			return err
+		}
+	case *MqttDeviceResponse_GetSwitchsAddrRes:
+		b.EncodeVarint(17<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.GetSwitchsAddrRes); err != nil {
+			return err
+		}
+	case *MqttDeviceResponse_GetSwitchsStateRes:
+		b.EncodeVarint(18<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.GetSwitchsStateRes); err != nil {
+			return err
+		}
+	case *MqttDeviceResponse_GetSwitchDataRes:
+		b.EncodeVarint(19<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.GetSwitchDataRes); err != nil {
+			return err
+		}
+	case *MqttDeviceResponse_GetSwitchConfigRes:
+		b.EncodeVarint(20<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.GetSwitchConfigRes); err != nil {
+			return err
+		}
+	case *MqttDeviceResponse_SetSwitchConfigRes:
+		b.EncodeVarint(21<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.SetSwitchConfigRes); err != nil {
+			return err
+		}
+	case *MqttDeviceResponse_GetSwitchStateRes:
+		b.EncodeVarint(22<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.GetSwitchStateRes); err != nil {
+			return err
+		}
+	case *MqttDeviceResponse_SetSwitchStateRes:
+		b.EncodeVarint(23<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.SetSwitchStateRes); err != nil {
+			return err
+		}
+	case *MqttDeviceResponse_GetSwitchKwhRes:
+		b.EncodeVarint(24<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.GetSwitchKwhRes); err != nil {
+			return err
+		}
+	case *MqttDeviceResponse_SetSwitchKwhRes:
+		b.EncodeVarint(25<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.SetSwitchKwhRes); err != nil {
+			return err
+		}
+	case *MqttDeviceResponse_SetSwitchLeakTestRes:
+		b.EncodeVarint(26<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.SetSwitchLeakTestRes); err != nil {
+			return err
+		}
+	case *MqttDeviceResponse_GetSwitchWarnRes:
+		b.EncodeVarint(27<<3 | proto.WireBytes)
+		if err := b.EncodeMessage(x.GetSwitchWarnRes); err != nil {
 			return err
 		}
 	case *MqttDeviceResponse_BadExcuteRes:
@@ -895,6 +1479,94 @@ func _MqttDeviceResponse_OneofUnmarshaler(msg proto.Message, tag, wire int, b *p
 		msg := new(CmdRes)
 		err := b.DecodeMessage(msg)
 		m.Payload = &MqttDeviceResponse_Cmd_06Res{msg}
+		return true, err
+	case 17: // payload.get_switchs_addr_res
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(GetSwitchsAddrRes)
+		err := b.DecodeMessage(msg)
+		m.Payload = &MqttDeviceResponse_GetSwitchsAddrRes{msg}
+		return true, err
+	case 18: // payload.get_switchs_state_res
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(GetSwitchsStateRes)
+		err := b.DecodeMessage(msg)
+		m.Payload = &MqttDeviceResponse_GetSwitchsStateRes{msg}
+		return true, err
+	case 19: // payload.get_switch_data_res
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(GetSwitchDataRes)
+		err := b.DecodeMessage(msg)
+		m.Payload = &MqttDeviceResponse_GetSwitchDataRes{msg}
+		return true, err
+	case 20: // payload.get_switch_config_res
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(GetSwitchConfigRes)
+		err := b.DecodeMessage(msg)
+		m.Payload = &MqttDeviceResponse_GetSwitchConfigRes{msg}
+		return true, err
+	case 21: // payload.set_switch_config_res
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(SetSwitchConfigRes)
+		err := b.DecodeMessage(msg)
+		m.Payload = &MqttDeviceResponse_SetSwitchConfigRes{msg}
+		return true, err
+	case 22: // payload.get_switch_state_res
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(GetSwitchStateRes)
+		err := b.DecodeMessage(msg)
+		m.Payload = &MqttDeviceResponse_GetSwitchStateRes{msg}
+		return true, err
+	case 23: // payload.set_switch_state_res
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(SetSwitchStateRes)
+		err := b.DecodeMessage(msg)
+		m.Payload = &MqttDeviceResponse_SetSwitchStateRes{msg}
+		return true, err
+	case 24: // payload.get_switch_kwh_res
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(GetSwitchKWhRes)
+		err := b.DecodeMessage(msg)
+		m.Payload = &MqttDeviceResponse_GetSwitchKwhRes{msg}
+		return true, err
+	case 25: // payload.set_switch_kwh_res
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(SetSwitchKWhRes)
+		err := b.DecodeMessage(msg)
+		m.Payload = &MqttDeviceResponse_SetSwitchKwhRes{msg}
+		return true, err
+	case 26: // payload.set_switch_leak_test_res
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(SetSwitchLeakTestRes)
+		err := b.DecodeMessage(msg)
+		m.Payload = &MqttDeviceResponse_SetSwitchLeakTestRes{msg}
+		return true, err
+	case 27: // payload.get_switch_warn_res
+		if wire != proto.WireBytes {
+			return true, proto.ErrInternalBadWireType
+		}
+		msg := new(GetSwitchWarnRes)
+		err := b.DecodeMessage(msg)
+		m.Payload = &MqttDeviceResponse_GetSwitchWarnRes{msg}
 		return true, err
 	case 98: // payload.bad_excute_res
 		if wire != proto.WireBytes {
@@ -999,6 +1671,61 @@ func _MqttDeviceResponse_OneofSizer(msg proto.Message) (n int) {
 		n += 1 // tag and wire
 		n += proto.SizeVarint(uint64(s))
 		n += s
+	case *MqttDeviceResponse_GetSwitchsAddrRes:
+		s := proto.Size(x.GetSwitchsAddrRes)
+		n += 2 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *MqttDeviceResponse_GetSwitchsStateRes:
+		s := proto.Size(x.GetSwitchsStateRes)
+		n += 2 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *MqttDeviceResponse_GetSwitchDataRes:
+		s := proto.Size(x.GetSwitchDataRes)
+		n += 2 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *MqttDeviceResponse_GetSwitchConfigRes:
+		s := proto.Size(x.GetSwitchConfigRes)
+		n += 2 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *MqttDeviceResponse_SetSwitchConfigRes:
+		s := proto.Size(x.SetSwitchConfigRes)
+		n += 2 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *MqttDeviceResponse_GetSwitchStateRes:
+		s := proto.Size(x.GetSwitchStateRes)
+		n += 2 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *MqttDeviceResponse_SetSwitchStateRes:
+		s := proto.Size(x.SetSwitchStateRes)
+		n += 2 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *MqttDeviceResponse_GetSwitchKwhRes:
+		s := proto.Size(x.GetSwitchKwhRes)
+		n += 2 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *MqttDeviceResponse_SetSwitchKwhRes:
+		s := proto.Size(x.SetSwitchKwhRes)
+		n += 2 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *MqttDeviceResponse_SetSwitchLeakTestRes:
+		s := proto.Size(x.SetSwitchLeakTestRes)
+		n += 2 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
+	case *MqttDeviceResponse_GetSwitchWarnRes:
+		s := proto.Size(x.GetSwitchWarnRes)
+		n += 2 // tag and wire
+		n += proto.SizeVarint(uint64(s))
+		n += s
 	case *MqttDeviceResponse_BadExcuteRes:
 		s := proto.Size(x.BadExcuteRes)
 		n += 2 // tag and wire
@@ -1046,6 +1773,1263 @@ func _MqttDeviceResponse_OneofSizer(msg proto.Message) (n int) {
 	return n
 }
 
+// 17 req
+type GetSwitchsAddrReq struct {
+	Code                 int32    `protobuf:"varint,1,opt,name=code,proto3" json:"code,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *GetSwitchsAddrReq) Reset()         { *m = GetSwitchsAddrReq{} }
+func (m *GetSwitchsAddrReq) String() string { return proto.CompactTextString(m) }
+func (*GetSwitchsAddrReq) ProtoMessage()    {}
+func (*GetSwitchsAddrReq) Descriptor() ([]byte, []int) {
+	return fileDescriptor_847da2030fabdbd4, []int{2}
+}
+
+func (m *GetSwitchsAddrReq) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GetSwitchsAddrReq.Unmarshal(m, b)
+}
+func (m *GetSwitchsAddrReq) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GetSwitchsAddrReq.Marshal(b, m, deterministic)
+}
+func (m *GetSwitchsAddrReq) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetSwitchsAddrReq.Merge(m, src)
+}
+func (m *GetSwitchsAddrReq) XXX_Size() int {
+	return xxx_messageInfo_GetSwitchsAddrReq.Size(m)
+}
+func (m *GetSwitchsAddrReq) XXX_DiscardUnknown() {
+	xxx_messageInfo_GetSwitchsAddrReq.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GetSwitchsAddrReq proto.InternalMessageInfo
+
+func (m *GetSwitchsAddrReq) GetCode() int32 {
+	if m != nil {
+		return m.Code
+	}
+	return 0
+}
+
+// 17 res
+type GetSwitchsAddrRes struct {
+	AddrRes              int32    `protobuf:"varint,1,opt,name=addr_res,json=addrRes,proto3" json:"addr_res,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *GetSwitchsAddrRes) Reset()         { *m = GetSwitchsAddrRes{} }
+func (m *GetSwitchsAddrRes) String() string { return proto.CompactTextString(m) }
+func (*GetSwitchsAddrRes) ProtoMessage()    {}
+func (*GetSwitchsAddrRes) Descriptor() ([]byte, []int) {
+	return fileDescriptor_847da2030fabdbd4, []int{3}
+}
+
+func (m *GetSwitchsAddrRes) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GetSwitchsAddrRes.Unmarshal(m, b)
+}
+func (m *GetSwitchsAddrRes) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GetSwitchsAddrRes.Marshal(b, m, deterministic)
+}
+func (m *GetSwitchsAddrRes) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetSwitchsAddrRes.Merge(m, src)
+}
+func (m *GetSwitchsAddrRes) XXX_Size() int {
+	return xxx_messageInfo_GetSwitchsAddrRes.Size(m)
+}
+func (m *GetSwitchsAddrRes) XXX_DiscardUnknown() {
+	xxx_messageInfo_GetSwitchsAddrRes.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GetSwitchsAddrRes proto.InternalMessageInfo
+
+func (m *GetSwitchsAddrRes) GetAddrRes() int32 {
+	if m != nil {
+		return m.AddrRes
+	}
+	return 0
+}
+
+// 18 req
+type GetSwitchsStateReq struct {
+	Num                  int32    `protobuf:"varint,1,opt,name=num,proto3" json:"num,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *GetSwitchsStateReq) Reset()         { *m = GetSwitchsStateReq{} }
+func (m *GetSwitchsStateReq) String() string { return proto.CompactTextString(m) }
+func (*GetSwitchsStateReq) ProtoMessage()    {}
+func (*GetSwitchsStateReq) Descriptor() ([]byte, []int) {
+	return fileDescriptor_847da2030fabdbd4, []int{4}
+}
+
+func (m *GetSwitchsStateReq) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GetSwitchsStateReq.Unmarshal(m, b)
+}
+func (m *GetSwitchsStateReq) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GetSwitchsStateReq.Marshal(b, m, deterministic)
+}
+func (m *GetSwitchsStateReq) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetSwitchsStateReq.Merge(m, src)
+}
+func (m *GetSwitchsStateReq) XXX_Size() int {
+	return xxx_messageInfo_GetSwitchsStateReq.Size(m)
+}
+func (m *GetSwitchsStateReq) XXX_DiscardUnknown() {
+	xxx_messageInfo_GetSwitchsStateReq.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GetSwitchsStateReq proto.InternalMessageInfo
+
+func (m *GetSwitchsStateReq) GetNum() int32 {
+	if m != nil {
+		return m.Num
+	}
+	return 0
+}
+
+// 18 res
+type GetSwitchsStateRes struct {
+	StateRes             int32    `protobuf:"varint,1,opt,name=state_res,json=stateRes,proto3" json:"state_res,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *GetSwitchsStateRes) Reset()         { *m = GetSwitchsStateRes{} }
+func (m *GetSwitchsStateRes) String() string { return proto.CompactTextString(m) }
+func (*GetSwitchsStateRes) ProtoMessage()    {}
+func (*GetSwitchsStateRes) Descriptor() ([]byte, []int) {
+	return fileDescriptor_847da2030fabdbd4, []int{5}
+}
+
+func (m *GetSwitchsStateRes) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GetSwitchsStateRes.Unmarshal(m, b)
+}
+func (m *GetSwitchsStateRes) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GetSwitchsStateRes.Marshal(b, m, deterministic)
+}
+func (m *GetSwitchsStateRes) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetSwitchsStateRes.Merge(m, src)
+}
+func (m *GetSwitchsStateRes) XXX_Size() int {
+	return xxx_messageInfo_GetSwitchsStateRes.Size(m)
+}
+func (m *GetSwitchsStateRes) XXX_DiscardUnknown() {
+	xxx_messageInfo_GetSwitchsStateRes.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GetSwitchsStateRes proto.InternalMessageInfo
+
+func (m *GetSwitchsStateRes) GetStateRes() int32 {
+	if m != nil {
+		return m.StateRes
+	}
+	return 0
+}
+
+// 19 req
+type GetSwitchDataReq struct {
+	SwitchAddr           int32    `protobuf:"varint,1,opt,name=switch_addr,json=switchAddr,proto3" json:"switch_addr,omitempty"`
+	Votage               bool     `protobuf:"varint,2,opt,name=votage,proto3" json:"votage,omitempty"`
+	LeakCurrent          bool     `protobuf:"varint,3,opt,name=leak_current,json=leakCurrent,proto3" json:"leak_current,omitempty"`
+	Power                bool     `protobuf:"varint,4,opt,name=power,proto3" json:"power,omitempty"`
+	Temp                 bool     `protobuf:"varint,5,opt,name=temp,proto3" json:"temp,omitempty"`
+	Current              bool     `protobuf:"varint,6,opt,name=current,proto3" json:"current,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *GetSwitchDataReq) Reset()         { *m = GetSwitchDataReq{} }
+func (m *GetSwitchDataReq) String() string { return proto.CompactTextString(m) }
+func (*GetSwitchDataReq) ProtoMessage()    {}
+func (*GetSwitchDataReq) Descriptor() ([]byte, []int) {
+	return fileDescriptor_847da2030fabdbd4, []int{6}
+}
+
+func (m *GetSwitchDataReq) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GetSwitchDataReq.Unmarshal(m, b)
+}
+func (m *GetSwitchDataReq) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GetSwitchDataReq.Marshal(b, m, deterministic)
+}
+func (m *GetSwitchDataReq) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetSwitchDataReq.Merge(m, src)
+}
+func (m *GetSwitchDataReq) XXX_Size() int {
+	return xxx_messageInfo_GetSwitchDataReq.Size(m)
+}
+func (m *GetSwitchDataReq) XXX_DiscardUnknown() {
+	xxx_messageInfo_GetSwitchDataReq.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GetSwitchDataReq proto.InternalMessageInfo
+
+func (m *GetSwitchDataReq) GetSwitchAddr() int32 {
+	if m != nil {
+		return m.SwitchAddr
+	}
+	return 0
+}
+
+func (m *GetSwitchDataReq) GetVotage() bool {
+	if m != nil {
+		return m.Votage
+	}
+	return false
+}
+
+func (m *GetSwitchDataReq) GetLeakCurrent() bool {
+	if m != nil {
+		return m.LeakCurrent
+	}
+	return false
+}
+
+func (m *GetSwitchDataReq) GetPower() bool {
+	if m != nil {
+		return m.Power
+	}
+	return false
+}
+
+func (m *GetSwitchDataReq) GetTemp() bool {
+	if m != nil {
+		return m.Temp
+	}
+	return false
+}
+
+func (m *GetSwitchDataReq) GetCurrent() bool {
+	if m != nil {
+		return m.Current
+	}
+	return false
+}
+
+// 19 res
+type GetSwitchDataRes struct {
+	SwitchAddr           int32                `protobuf:"varint,1,opt,name=switch_addr,json=switchAddr,proto3" json:"switch_addr,omitempty"`
+	Votage               *wrappers.Int32Value `protobuf:"bytes,2,opt,name=votage,proto3" json:"votage,omitempty"`
+	LeakCurrent          *wrappers.Int32Value `protobuf:"bytes,3,opt,name=leak_current,json=leakCurrent,proto3" json:"leak_current,omitempty"`
+	Power                *wrappers.Int32Value `protobuf:"bytes,4,opt,name=power,proto3" json:"power,omitempty"`
+	Temp                 *wrappers.Int32Value `protobuf:"bytes,5,opt,name=temp,proto3" json:"temp,omitempty"`
+	Current              *wrappers.Int32Value `protobuf:"bytes,6,opt,name=current,proto3" json:"current,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}             `json:"-"`
+	XXX_unrecognized     []byte               `json:"-"`
+	XXX_sizecache        int32                `json:"-"`
+}
+
+func (m *GetSwitchDataRes) Reset()         { *m = GetSwitchDataRes{} }
+func (m *GetSwitchDataRes) String() string { return proto.CompactTextString(m) }
+func (*GetSwitchDataRes) ProtoMessage()    {}
+func (*GetSwitchDataRes) Descriptor() ([]byte, []int) {
+	return fileDescriptor_847da2030fabdbd4, []int{7}
+}
+
+func (m *GetSwitchDataRes) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GetSwitchDataRes.Unmarshal(m, b)
+}
+func (m *GetSwitchDataRes) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GetSwitchDataRes.Marshal(b, m, deterministic)
+}
+func (m *GetSwitchDataRes) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetSwitchDataRes.Merge(m, src)
+}
+func (m *GetSwitchDataRes) XXX_Size() int {
+	return xxx_messageInfo_GetSwitchDataRes.Size(m)
+}
+func (m *GetSwitchDataRes) XXX_DiscardUnknown() {
+	xxx_messageInfo_GetSwitchDataRes.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GetSwitchDataRes proto.InternalMessageInfo
+
+func (m *GetSwitchDataRes) GetSwitchAddr() int32 {
+	if m != nil {
+		return m.SwitchAddr
+	}
+	return 0
+}
+
+func (m *GetSwitchDataRes) GetVotage() *wrappers.Int32Value {
+	if m != nil {
+		return m.Votage
+	}
+	return nil
+}
+
+func (m *GetSwitchDataRes) GetLeakCurrent() *wrappers.Int32Value {
+	if m != nil {
+		return m.LeakCurrent
+	}
+	return nil
+}
+
+func (m *GetSwitchDataRes) GetPower() *wrappers.Int32Value {
+	if m != nil {
+		return m.Power
+	}
+	return nil
+}
+
+func (m *GetSwitchDataRes) GetTemp() *wrappers.Int32Value {
+	if m != nil {
+		return m.Temp
+	}
+	return nil
+}
+
+func (m *GetSwitchDataRes) GetCurrent() *wrappers.Int32Value {
+	if m != nil {
+		return m.Current
+	}
+	return nil
+}
+
+// 20 req
+type GetSwitchConfigReq struct {
+	SwitchAddr           int32    `protobuf:"varint,1,opt,name=switch_addr,json=switchAddr,proto3" json:"switch_addr,omitempty"`
+	VotageHigh           bool     `protobuf:"varint,2,opt,name=votage_high,json=votageHigh,proto3" json:"votage_high,omitempty"`
+	VotageLow            bool     `protobuf:"varint,3,opt,name=votage_low,json=votageLow,proto3" json:"votage_low,omitempty"`
+	LeakCurrentHigh      bool     `protobuf:"varint,4,opt,name=leak_current_high,json=leakCurrentHigh,proto3" json:"leak_current_high,omitempty"`
+	PowerHigh            bool     `protobuf:"varint,5,opt,name=power_high,json=powerHigh,proto3" json:"power_high,omitempty"`
+	TempHigh             bool     `protobuf:"varint,6,opt,name=temp_high,json=tempHigh,proto3" json:"temp_high,omitempty"`
+	CurrentHigh          bool     `protobuf:"varint,7,opt,name=current_high,json=currentHigh,proto3" json:"current_high,omitempty"`
+	Model                bool     `protobuf:"varint,8,opt,name=model,proto3" json:"model,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *GetSwitchConfigReq) Reset()         { *m = GetSwitchConfigReq{} }
+func (m *GetSwitchConfigReq) String() string { return proto.CompactTextString(m) }
+func (*GetSwitchConfigReq) ProtoMessage()    {}
+func (*GetSwitchConfigReq) Descriptor() ([]byte, []int) {
+	return fileDescriptor_847da2030fabdbd4, []int{8}
+}
+
+func (m *GetSwitchConfigReq) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GetSwitchConfigReq.Unmarshal(m, b)
+}
+func (m *GetSwitchConfigReq) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GetSwitchConfigReq.Marshal(b, m, deterministic)
+}
+func (m *GetSwitchConfigReq) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetSwitchConfigReq.Merge(m, src)
+}
+func (m *GetSwitchConfigReq) XXX_Size() int {
+	return xxx_messageInfo_GetSwitchConfigReq.Size(m)
+}
+func (m *GetSwitchConfigReq) XXX_DiscardUnknown() {
+	xxx_messageInfo_GetSwitchConfigReq.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GetSwitchConfigReq proto.InternalMessageInfo
+
+func (m *GetSwitchConfigReq) GetSwitchAddr() int32 {
+	if m != nil {
+		return m.SwitchAddr
+	}
+	return 0
+}
+
+func (m *GetSwitchConfigReq) GetVotageHigh() bool {
+	if m != nil {
+		return m.VotageHigh
+	}
+	return false
+}
+
+func (m *GetSwitchConfigReq) GetVotageLow() bool {
+	if m != nil {
+		return m.VotageLow
+	}
+	return false
+}
+
+func (m *GetSwitchConfigReq) GetLeakCurrentHigh() bool {
+	if m != nil {
+		return m.LeakCurrentHigh
+	}
+	return false
+}
+
+func (m *GetSwitchConfigReq) GetPowerHigh() bool {
+	if m != nil {
+		return m.PowerHigh
+	}
+	return false
+}
+
+func (m *GetSwitchConfigReq) GetTempHigh() bool {
+	if m != nil {
+		return m.TempHigh
+	}
+	return false
+}
+
+func (m *GetSwitchConfigReq) GetCurrentHigh() bool {
+	if m != nil {
+		return m.CurrentHigh
+	}
+	return false
+}
+
+func (m *GetSwitchConfigReq) GetModel() bool {
+	if m != nil {
+		return m.Model
+	}
+	return false
+}
+
+// 20 res
+type GetSwitchConfigRes struct {
+	SwitchAddr           int32                `protobuf:"varint,1,opt,name=switch_addr,json=switchAddr,proto3" json:"switch_addr,omitempty"`
+	VotageHigh           *wrappers.Int32Value `protobuf:"bytes,2,opt,name=votage_high,json=votageHigh,proto3" json:"votage_high,omitempty"`
+	VotageLow            *wrappers.Int32Value `protobuf:"bytes,3,opt,name=votage_low,json=votageLow,proto3" json:"votage_low,omitempty"`
+	LeakCurrentHigh      *wrappers.Int32Value `protobuf:"bytes,4,opt,name=leak_current_high,json=leakCurrentHigh,proto3" json:"leak_current_high,omitempty"`
+	PowerHigh            *wrappers.Int32Value `protobuf:"bytes,5,opt,name=power_high,json=powerHigh,proto3" json:"power_high,omitempty"`
+	TempHigh             *wrappers.Int32Value `protobuf:"bytes,6,opt,name=temp_high,json=tempHigh,proto3" json:"temp_high,omitempty"`
+	CurrentHigh          *wrappers.Int32Value `protobuf:"bytes,7,opt,name=current_high,json=currentHigh,proto3" json:"current_high,omitempty"`
+	Model                *wrappers.Int32Value `protobuf:"bytes,8,opt,name=model,proto3" json:"model,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}             `json:"-"`
+	XXX_unrecognized     []byte               `json:"-"`
+	XXX_sizecache        int32                `json:"-"`
+}
+
+func (m *GetSwitchConfigRes) Reset()         { *m = GetSwitchConfigRes{} }
+func (m *GetSwitchConfigRes) String() string { return proto.CompactTextString(m) }
+func (*GetSwitchConfigRes) ProtoMessage()    {}
+func (*GetSwitchConfigRes) Descriptor() ([]byte, []int) {
+	return fileDescriptor_847da2030fabdbd4, []int{9}
+}
+
+func (m *GetSwitchConfigRes) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GetSwitchConfigRes.Unmarshal(m, b)
+}
+func (m *GetSwitchConfigRes) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GetSwitchConfigRes.Marshal(b, m, deterministic)
+}
+func (m *GetSwitchConfigRes) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetSwitchConfigRes.Merge(m, src)
+}
+func (m *GetSwitchConfigRes) XXX_Size() int {
+	return xxx_messageInfo_GetSwitchConfigRes.Size(m)
+}
+func (m *GetSwitchConfigRes) XXX_DiscardUnknown() {
+	xxx_messageInfo_GetSwitchConfigRes.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GetSwitchConfigRes proto.InternalMessageInfo
+
+func (m *GetSwitchConfigRes) GetSwitchAddr() int32 {
+	if m != nil {
+		return m.SwitchAddr
+	}
+	return 0
+}
+
+func (m *GetSwitchConfigRes) GetVotageHigh() *wrappers.Int32Value {
+	if m != nil {
+		return m.VotageHigh
+	}
+	return nil
+}
+
+func (m *GetSwitchConfigRes) GetVotageLow() *wrappers.Int32Value {
+	if m != nil {
+		return m.VotageLow
+	}
+	return nil
+}
+
+func (m *GetSwitchConfigRes) GetLeakCurrentHigh() *wrappers.Int32Value {
+	if m != nil {
+		return m.LeakCurrentHigh
+	}
+	return nil
+}
+
+func (m *GetSwitchConfigRes) GetPowerHigh() *wrappers.Int32Value {
+	if m != nil {
+		return m.PowerHigh
+	}
+	return nil
+}
+
+func (m *GetSwitchConfigRes) GetTempHigh() *wrappers.Int32Value {
+	if m != nil {
+		return m.TempHigh
+	}
+	return nil
+}
+
+func (m *GetSwitchConfigRes) GetCurrentHigh() *wrappers.Int32Value {
+	if m != nil {
+		return m.CurrentHigh
+	}
+	return nil
+}
+
+func (m *GetSwitchConfigRes) GetModel() *wrappers.Int32Value {
+	if m != nil {
+		return m.Model
+	}
+	return nil
+}
+
+// 21 req
+type SetSwitchConfigReq struct {
+	SwitchAddr           int32                `protobuf:"varint,1,opt,name=switch_addr,json=switchAddr,proto3" json:"switch_addr,omitempty"`
+	VotageHigh           *wrappers.Int32Value `protobuf:"bytes,2,opt,name=votage_high,json=votageHigh,proto3" json:"votage_high,omitempty"`
+	VotageLow            *wrappers.Int32Value `protobuf:"bytes,3,opt,name=votage_low,json=votageLow,proto3" json:"votage_low,omitempty"`
+	LeakCurrentHigh      *wrappers.Int32Value `protobuf:"bytes,4,opt,name=leak_current_high,json=leakCurrentHigh,proto3" json:"leak_current_high,omitempty"`
+	PowerHigh            *wrappers.Int32Value `protobuf:"bytes,5,opt,name=power_high,json=powerHigh,proto3" json:"power_high,omitempty"`
+	TempHigh             *wrappers.Int32Value `protobuf:"bytes,6,opt,name=temp_high,json=tempHigh,proto3" json:"temp_high,omitempty"`
+	CurrentHigh          *wrappers.Int32Value `protobuf:"bytes,7,opt,name=current_high,json=currentHigh,proto3" json:"current_high,omitempty"`
+	WarnVotageHigh       *wrappers.Int32Value `protobuf:"bytes,8,opt,name=warn_votage_high,json=warnVotageHigh,proto3" json:"warn_votage_high,omitempty"`
+	WarnVotageLow        *wrappers.Int32Value `protobuf:"bytes,9,opt,name=warn_votage_low,json=warnVotageLow,proto3" json:"warn_votage_low,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}             `json:"-"`
+	XXX_unrecognized     []byte               `json:"-"`
+	XXX_sizecache        int32                `json:"-"`
+}
+
+func (m *SetSwitchConfigReq) Reset()         { *m = SetSwitchConfigReq{} }
+func (m *SetSwitchConfigReq) String() string { return proto.CompactTextString(m) }
+func (*SetSwitchConfigReq) ProtoMessage()    {}
+func (*SetSwitchConfigReq) Descriptor() ([]byte, []int) {
+	return fileDescriptor_847da2030fabdbd4, []int{10}
+}
+
+func (m *SetSwitchConfigReq) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_SetSwitchConfigReq.Unmarshal(m, b)
+}
+func (m *SetSwitchConfigReq) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_SetSwitchConfigReq.Marshal(b, m, deterministic)
+}
+func (m *SetSwitchConfigReq) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_SetSwitchConfigReq.Merge(m, src)
+}
+func (m *SetSwitchConfigReq) XXX_Size() int {
+	return xxx_messageInfo_SetSwitchConfigReq.Size(m)
+}
+func (m *SetSwitchConfigReq) XXX_DiscardUnknown() {
+	xxx_messageInfo_SetSwitchConfigReq.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_SetSwitchConfigReq proto.InternalMessageInfo
+
+func (m *SetSwitchConfigReq) GetSwitchAddr() int32 {
+	if m != nil {
+		return m.SwitchAddr
+	}
+	return 0
+}
+
+func (m *SetSwitchConfigReq) GetVotageHigh() *wrappers.Int32Value {
+	if m != nil {
+		return m.VotageHigh
+	}
+	return nil
+}
+
+func (m *SetSwitchConfigReq) GetVotageLow() *wrappers.Int32Value {
+	if m != nil {
+		return m.VotageLow
+	}
+	return nil
+}
+
+func (m *SetSwitchConfigReq) GetLeakCurrentHigh() *wrappers.Int32Value {
+	if m != nil {
+		return m.LeakCurrentHigh
+	}
+	return nil
+}
+
+func (m *SetSwitchConfigReq) GetPowerHigh() *wrappers.Int32Value {
+	if m != nil {
+		return m.PowerHigh
+	}
+	return nil
+}
+
+func (m *SetSwitchConfigReq) GetTempHigh() *wrappers.Int32Value {
+	if m != nil {
+		return m.TempHigh
+	}
+	return nil
+}
+
+func (m *SetSwitchConfigReq) GetCurrentHigh() *wrappers.Int32Value {
+	if m != nil {
+		return m.CurrentHigh
+	}
+	return nil
+}
+
+func (m *SetSwitchConfigReq) GetWarnVotageHigh() *wrappers.Int32Value {
+	if m != nil {
+		return m.WarnVotageHigh
+	}
+	return nil
+}
+
+func (m *SetSwitchConfigReq) GetWarnVotageLow() *wrappers.Int32Value {
+	if m != nil {
+		return m.WarnVotageLow
+	}
+	return nil
+}
+
+// 21 res
+type SetSwitchConfigRes struct {
+	SwitchAddr           int32    `protobuf:"varint,1,opt,name=switch_addr,json=switchAddr,proto3" json:"switch_addr,omitempty"`
+	VotageHigh           bool     `protobuf:"varint,2,opt,name=votage_high,json=votageHigh,proto3" json:"votage_high,omitempty"`
+	VotageLow            bool     `protobuf:"varint,3,opt,name=votage_low,json=votageLow,proto3" json:"votage_low,omitempty"`
+	LeakCurrentHigh      bool     `protobuf:"varint,4,opt,name=leak_current_high,json=leakCurrentHigh,proto3" json:"leak_current_high,omitempty"`
+	PowerHigh            bool     `protobuf:"varint,5,opt,name=power_high,json=powerHigh,proto3" json:"power_high,omitempty"`
+	TempHigh             bool     `protobuf:"varint,6,opt,name=temp_high,json=tempHigh,proto3" json:"temp_high,omitempty"`
+	CurrentHigh          bool     `protobuf:"varint,7,opt,name=current_high,json=currentHigh,proto3" json:"current_high,omitempty"`
+	WarnVotageHigh       bool     `protobuf:"varint,8,opt,name=warn_votage_high,json=warnVotageHigh,proto3" json:"warn_votage_high,omitempty"`
+	WarnVotageLow        bool     `protobuf:"varint,9,opt,name=warn_votage_low,json=warnVotageLow,proto3" json:"warn_votage_low,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *SetSwitchConfigRes) Reset()         { *m = SetSwitchConfigRes{} }
+func (m *SetSwitchConfigRes) String() string { return proto.CompactTextString(m) }
+func (*SetSwitchConfigRes) ProtoMessage()    {}
+func (*SetSwitchConfigRes) Descriptor() ([]byte, []int) {
+	return fileDescriptor_847da2030fabdbd4, []int{11}
+}
+
+func (m *SetSwitchConfigRes) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_SetSwitchConfigRes.Unmarshal(m, b)
+}
+func (m *SetSwitchConfigRes) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_SetSwitchConfigRes.Marshal(b, m, deterministic)
+}
+func (m *SetSwitchConfigRes) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_SetSwitchConfigRes.Merge(m, src)
+}
+func (m *SetSwitchConfigRes) XXX_Size() int {
+	return xxx_messageInfo_SetSwitchConfigRes.Size(m)
+}
+func (m *SetSwitchConfigRes) XXX_DiscardUnknown() {
+	xxx_messageInfo_SetSwitchConfigRes.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_SetSwitchConfigRes proto.InternalMessageInfo
+
+func (m *SetSwitchConfigRes) GetSwitchAddr() int32 {
+	if m != nil {
+		return m.SwitchAddr
+	}
+	return 0
+}
+
+func (m *SetSwitchConfigRes) GetVotageHigh() bool {
+	if m != nil {
+		return m.VotageHigh
+	}
+	return false
+}
+
+func (m *SetSwitchConfigRes) GetVotageLow() bool {
+	if m != nil {
+		return m.VotageLow
+	}
+	return false
+}
+
+func (m *SetSwitchConfigRes) GetLeakCurrentHigh() bool {
+	if m != nil {
+		return m.LeakCurrentHigh
+	}
+	return false
+}
+
+func (m *SetSwitchConfigRes) GetPowerHigh() bool {
+	if m != nil {
+		return m.PowerHigh
+	}
+	return false
+}
+
+func (m *SetSwitchConfigRes) GetTempHigh() bool {
+	if m != nil {
+		return m.TempHigh
+	}
+	return false
+}
+
+func (m *SetSwitchConfigRes) GetCurrentHigh() bool {
+	if m != nil {
+		return m.CurrentHigh
+	}
+	return false
+}
+
+func (m *SetSwitchConfigRes) GetWarnVotageHigh() bool {
+	if m != nil {
+		return m.WarnVotageHigh
+	}
+	return false
+}
+
+func (m *SetSwitchConfigRes) GetWarnVotageLow() bool {
+	if m != nil {
+		return m.WarnVotageLow
+	}
+	return false
+}
+
+// 22 req
+type GetSwitchStateReq struct {
+	SwitchAddr           int32    `protobuf:"varint,1,opt,name=switch_addr,json=switchAddr,proto3" json:"switch_addr,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *GetSwitchStateReq) Reset()         { *m = GetSwitchStateReq{} }
+func (m *GetSwitchStateReq) String() string { return proto.CompactTextString(m) }
+func (*GetSwitchStateReq) ProtoMessage()    {}
+func (*GetSwitchStateReq) Descriptor() ([]byte, []int) {
+	return fileDescriptor_847da2030fabdbd4, []int{12}
+}
+
+func (m *GetSwitchStateReq) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GetSwitchStateReq.Unmarshal(m, b)
+}
+func (m *GetSwitchStateReq) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GetSwitchStateReq.Marshal(b, m, deterministic)
+}
+func (m *GetSwitchStateReq) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetSwitchStateReq.Merge(m, src)
+}
+func (m *GetSwitchStateReq) XXX_Size() int {
+	return xxx_messageInfo_GetSwitchStateReq.Size(m)
+}
+func (m *GetSwitchStateReq) XXX_DiscardUnknown() {
+	xxx_messageInfo_GetSwitchStateReq.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GetSwitchStateReq proto.InternalMessageInfo
+
+func (m *GetSwitchStateReq) GetSwitchAddr() int32 {
+	if m != nil {
+		return m.SwitchAddr
+	}
+	return 0
+}
+
+// 22 res
+type GetSwitchStateRes struct {
+	SwitchAddr           int32    `protobuf:"varint,1,opt,name=switch_addr,json=switchAddr,proto3" json:"switch_addr,omitempty"`
+	State                bool     `protobuf:"varint,2,opt,name=state,proto3" json:"state,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *GetSwitchStateRes) Reset()         { *m = GetSwitchStateRes{} }
+func (m *GetSwitchStateRes) String() string { return proto.CompactTextString(m) }
+func (*GetSwitchStateRes) ProtoMessage()    {}
+func (*GetSwitchStateRes) Descriptor() ([]byte, []int) {
+	return fileDescriptor_847da2030fabdbd4, []int{13}
+}
+
+func (m *GetSwitchStateRes) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GetSwitchStateRes.Unmarshal(m, b)
+}
+func (m *GetSwitchStateRes) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GetSwitchStateRes.Marshal(b, m, deterministic)
+}
+func (m *GetSwitchStateRes) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetSwitchStateRes.Merge(m, src)
+}
+func (m *GetSwitchStateRes) XXX_Size() int {
+	return xxx_messageInfo_GetSwitchStateRes.Size(m)
+}
+func (m *GetSwitchStateRes) XXX_DiscardUnknown() {
+	xxx_messageInfo_GetSwitchStateRes.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GetSwitchStateRes proto.InternalMessageInfo
+
+func (m *GetSwitchStateRes) GetSwitchAddr() int32 {
+	if m != nil {
+		return m.SwitchAddr
+	}
+	return 0
+}
+
+func (m *GetSwitchStateRes) GetState() bool {
+	if m != nil {
+		return m.State
+	}
+	return false
+}
+
+// 23 req
+type SetSwitchStateReq struct {
+	SwitchAddr           int32    `protobuf:"varint,1,opt,name=switch_addr,json=switchAddr,proto3" json:"switch_addr,omitempty"`
+	State                bool     `protobuf:"varint,2,opt,name=state,proto3" json:"state,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *SetSwitchStateReq) Reset()         { *m = SetSwitchStateReq{} }
+func (m *SetSwitchStateReq) String() string { return proto.CompactTextString(m) }
+func (*SetSwitchStateReq) ProtoMessage()    {}
+func (*SetSwitchStateReq) Descriptor() ([]byte, []int) {
+	return fileDescriptor_847da2030fabdbd4, []int{14}
+}
+
+func (m *SetSwitchStateReq) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_SetSwitchStateReq.Unmarshal(m, b)
+}
+func (m *SetSwitchStateReq) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_SetSwitchStateReq.Marshal(b, m, deterministic)
+}
+func (m *SetSwitchStateReq) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_SetSwitchStateReq.Merge(m, src)
+}
+func (m *SetSwitchStateReq) XXX_Size() int {
+	return xxx_messageInfo_SetSwitchStateReq.Size(m)
+}
+func (m *SetSwitchStateReq) XXX_DiscardUnknown() {
+	xxx_messageInfo_SetSwitchStateReq.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_SetSwitchStateReq proto.InternalMessageInfo
+
+func (m *SetSwitchStateReq) GetSwitchAddr() int32 {
+	if m != nil {
+		return m.SwitchAddr
+	}
+	return 0
+}
+
+func (m *SetSwitchStateReq) GetState() bool {
+	if m != nil {
+		return m.State
+	}
+	return false
+}
+
+// 23 res
+type SetSwitchStateRes struct {
+	SwitchAddr           int32    `protobuf:"varint,1,opt,name=switch_addr,json=switchAddr,proto3" json:"switch_addr,omitempty"`
+	State                bool     `protobuf:"varint,2,opt,name=state,proto3" json:"state,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *SetSwitchStateRes) Reset()         { *m = SetSwitchStateRes{} }
+func (m *SetSwitchStateRes) String() string { return proto.CompactTextString(m) }
+func (*SetSwitchStateRes) ProtoMessage()    {}
+func (*SetSwitchStateRes) Descriptor() ([]byte, []int) {
+	return fileDescriptor_847da2030fabdbd4, []int{15}
+}
+
+func (m *SetSwitchStateRes) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_SetSwitchStateRes.Unmarshal(m, b)
+}
+func (m *SetSwitchStateRes) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_SetSwitchStateRes.Marshal(b, m, deterministic)
+}
+func (m *SetSwitchStateRes) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_SetSwitchStateRes.Merge(m, src)
+}
+func (m *SetSwitchStateRes) XXX_Size() int {
+	return xxx_messageInfo_SetSwitchStateRes.Size(m)
+}
+func (m *SetSwitchStateRes) XXX_DiscardUnknown() {
+	xxx_messageInfo_SetSwitchStateRes.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_SetSwitchStateRes proto.InternalMessageInfo
+
+func (m *SetSwitchStateRes) GetSwitchAddr() int32 {
+	if m != nil {
+		return m.SwitchAddr
+	}
+	return 0
+}
+
+func (m *SetSwitchStateRes) GetState() bool {
+	if m != nil {
+		return m.State
+	}
+	return false
+}
+
+// 24 req
+type GetSwitchKWhReq struct {
+	SwitchAddr           int32    `protobuf:"varint,1,opt,name=switch_addr,json=switchAddr,proto3" json:"switch_addr,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *GetSwitchKWhReq) Reset()         { *m = GetSwitchKWhReq{} }
+func (m *GetSwitchKWhReq) String() string { return proto.CompactTextString(m) }
+func (*GetSwitchKWhReq) ProtoMessage()    {}
+func (*GetSwitchKWhReq) Descriptor() ([]byte, []int) {
+	return fileDescriptor_847da2030fabdbd4, []int{16}
+}
+
+func (m *GetSwitchKWhReq) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GetSwitchKWhReq.Unmarshal(m, b)
+}
+func (m *GetSwitchKWhReq) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GetSwitchKWhReq.Marshal(b, m, deterministic)
+}
+func (m *GetSwitchKWhReq) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetSwitchKWhReq.Merge(m, src)
+}
+func (m *GetSwitchKWhReq) XXX_Size() int {
+	return xxx_messageInfo_GetSwitchKWhReq.Size(m)
+}
+func (m *GetSwitchKWhReq) XXX_DiscardUnknown() {
+	xxx_messageInfo_GetSwitchKWhReq.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GetSwitchKWhReq proto.InternalMessageInfo
+
+func (m *GetSwitchKWhReq) GetSwitchAddr() int32 {
+	if m != nil {
+		return m.SwitchAddr
+	}
+	return 0
+}
+
+// 24 res
+type GetSwitchKWhRes struct {
+	SwitchAddr           int32    `protobuf:"varint,1,opt,name=switch_addr,json=switchAddr,proto3" json:"switch_addr,omitempty"`
+	Kwh                  int64    `protobuf:"varint,2,opt,name=kwh,proto3" json:"kwh,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *GetSwitchKWhRes) Reset()         { *m = GetSwitchKWhRes{} }
+func (m *GetSwitchKWhRes) String() string { return proto.CompactTextString(m) }
+func (*GetSwitchKWhRes) ProtoMessage()    {}
+func (*GetSwitchKWhRes) Descriptor() ([]byte, []int) {
+	return fileDescriptor_847da2030fabdbd4, []int{17}
+}
+
+func (m *GetSwitchKWhRes) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GetSwitchKWhRes.Unmarshal(m, b)
+}
+func (m *GetSwitchKWhRes) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GetSwitchKWhRes.Marshal(b, m, deterministic)
+}
+func (m *GetSwitchKWhRes) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetSwitchKWhRes.Merge(m, src)
+}
+func (m *GetSwitchKWhRes) XXX_Size() int {
+	return xxx_messageInfo_GetSwitchKWhRes.Size(m)
+}
+func (m *GetSwitchKWhRes) XXX_DiscardUnknown() {
+	xxx_messageInfo_GetSwitchKWhRes.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GetSwitchKWhRes proto.InternalMessageInfo
+
+func (m *GetSwitchKWhRes) GetSwitchAddr() int32 {
+	if m != nil {
+		return m.SwitchAddr
+	}
+	return 0
+}
+
+func (m *GetSwitchKWhRes) GetKwh() int64 {
+	if m != nil {
+		return m.Kwh
+	}
+	return 0
+}
+
+// 25 req
+type SetSwitchKWhReq struct {
+	SwitchAddr           int32    `protobuf:"varint,1,opt,name=switch_addr,json=switchAddr,proto3" json:"switch_addr,omitempty"`
+	Kwh                  int64    `protobuf:"varint,2,opt,name=kwh,proto3" json:"kwh,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *SetSwitchKWhReq) Reset()         { *m = SetSwitchKWhReq{} }
+func (m *SetSwitchKWhReq) String() string { return proto.CompactTextString(m) }
+func (*SetSwitchKWhReq) ProtoMessage()    {}
+func (*SetSwitchKWhReq) Descriptor() ([]byte, []int) {
+	return fileDescriptor_847da2030fabdbd4, []int{18}
+}
+
+func (m *SetSwitchKWhReq) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_SetSwitchKWhReq.Unmarshal(m, b)
+}
+func (m *SetSwitchKWhReq) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_SetSwitchKWhReq.Marshal(b, m, deterministic)
+}
+func (m *SetSwitchKWhReq) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_SetSwitchKWhReq.Merge(m, src)
+}
+func (m *SetSwitchKWhReq) XXX_Size() int {
+	return xxx_messageInfo_SetSwitchKWhReq.Size(m)
+}
+func (m *SetSwitchKWhReq) XXX_DiscardUnknown() {
+	xxx_messageInfo_SetSwitchKWhReq.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_SetSwitchKWhReq proto.InternalMessageInfo
+
+func (m *SetSwitchKWhReq) GetSwitchAddr() int32 {
+	if m != nil {
+		return m.SwitchAddr
+	}
+	return 0
+}
+
+func (m *SetSwitchKWhReq) GetKwh() int64 {
+	if m != nil {
+		return m.Kwh
+	}
+	return 0
+}
+
+// 25 res
+type SetSwitchKWhRes struct {
+	SwitchAddr           int32    `protobuf:"varint,1,opt,name=switch_addr,json=switchAddr,proto3" json:"switch_addr,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *SetSwitchKWhRes) Reset()         { *m = SetSwitchKWhRes{} }
+func (m *SetSwitchKWhRes) String() string { return proto.CompactTextString(m) }
+func (*SetSwitchKWhRes) ProtoMessage()    {}
+func (*SetSwitchKWhRes) Descriptor() ([]byte, []int) {
+	return fileDescriptor_847da2030fabdbd4, []int{19}
+}
+
+func (m *SetSwitchKWhRes) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_SetSwitchKWhRes.Unmarshal(m, b)
+}
+func (m *SetSwitchKWhRes) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_SetSwitchKWhRes.Marshal(b, m, deterministic)
+}
+func (m *SetSwitchKWhRes) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_SetSwitchKWhRes.Merge(m, src)
+}
+func (m *SetSwitchKWhRes) XXX_Size() int {
+	return xxx_messageInfo_SetSwitchKWhRes.Size(m)
+}
+func (m *SetSwitchKWhRes) XXX_DiscardUnknown() {
+	xxx_messageInfo_SetSwitchKWhRes.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_SetSwitchKWhRes proto.InternalMessageInfo
+
+func (m *SetSwitchKWhRes) GetSwitchAddr() int32 {
+	if m != nil {
+		return m.SwitchAddr
+	}
+	return 0
+}
+
+// 26 req
+type SetSwitchLeakTest struct {
+	SwitchAddr           int32    `protobuf:"varint,1,opt,name=switch_addr,json=switchAddr,proto3" json:"switch_addr,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *SetSwitchLeakTest) Reset()         { *m = SetSwitchLeakTest{} }
+func (m *SetSwitchLeakTest) String() string { return proto.CompactTextString(m) }
+func (*SetSwitchLeakTest) ProtoMessage()    {}
+func (*SetSwitchLeakTest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_847da2030fabdbd4, []int{20}
+}
+
+func (m *SetSwitchLeakTest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_SetSwitchLeakTest.Unmarshal(m, b)
+}
+func (m *SetSwitchLeakTest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_SetSwitchLeakTest.Marshal(b, m, deterministic)
+}
+func (m *SetSwitchLeakTest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_SetSwitchLeakTest.Merge(m, src)
+}
+func (m *SetSwitchLeakTest) XXX_Size() int {
+	return xxx_messageInfo_SetSwitchLeakTest.Size(m)
+}
+func (m *SetSwitchLeakTest) XXX_DiscardUnknown() {
+	xxx_messageInfo_SetSwitchLeakTest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_SetSwitchLeakTest proto.InternalMessageInfo
+
+func (m *SetSwitchLeakTest) GetSwitchAddr() int32 {
+	if m != nil {
+		return m.SwitchAddr
+	}
+	return 0
+}
+
+// 26 res
+type SetSwitchLeakTestRes struct {
+	SwitchAddr           int32    `protobuf:"varint,1,opt,name=switch_addr,json=switchAddr,proto3" json:"switch_addr,omitempty"`
+	Result               bool     `protobuf:"varint,2,opt,name=result,proto3" json:"result,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *SetSwitchLeakTestRes) Reset()         { *m = SetSwitchLeakTestRes{} }
+func (m *SetSwitchLeakTestRes) String() string { return proto.CompactTextString(m) }
+func (*SetSwitchLeakTestRes) ProtoMessage()    {}
+func (*SetSwitchLeakTestRes) Descriptor() ([]byte, []int) {
+	return fileDescriptor_847da2030fabdbd4, []int{21}
+}
+
+func (m *SetSwitchLeakTestRes) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_SetSwitchLeakTestRes.Unmarshal(m, b)
+}
+func (m *SetSwitchLeakTestRes) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_SetSwitchLeakTestRes.Marshal(b, m, deterministic)
+}
+func (m *SetSwitchLeakTestRes) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_SetSwitchLeakTestRes.Merge(m, src)
+}
+func (m *SetSwitchLeakTestRes) XXX_Size() int {
+	return xxx_messageInfo_SetSwitchLeakTestRes.Size(m)
+}
+func (m *SetSwitchLeakTestRes) XXX_DiscardUnknown() {
+	xxx_messageInfo_SetSwitchLeakTestRes.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_SetSwitchLeakTestRes proto.InternalMessageInfo
+
+func (m *SetSwitchLeakTestRes) GetSwitchAddr() int32 {
+	if m != nil {
+		return m.SwitchAddr
+	}
+	return 0
+}
+
+func (m *SetSwitchLeakTestRes) GetResult() bool {
+	if m != nil {
+		return m.Result
+	}
+	return false
+}
+
+// 27 req
+type GetSwitchWarnReq struct {
+	SwitchAddr           int32    `protobuf:"varint,1,opt,name=switch_addr,json=switchAddr,proto3" json:"switch_addr,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *GetSwitchWarnReq) Reset()         { *m = GetSwitchWarnReq{} }
+func (m *GetSwitchWarnReq) String() string { return proto.CompactTextString(m) }
+func (*GetSwitchWarnReq) ProtoMessage()    {}
+func (*GetSwitchWarnReq) Descriptor() ([]byte, []int) {
+	return fileDescriptor_847da2030fabdbd4, []int{22}
+}
+
+func (m *GetSwitchWarnReq) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GetSwitchWarnReq.Unmarshal(m, b)
+}
+func (m *GetSwitchWarnReq) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GetSwitchWarnReq.Marshal(b, m, deterministic)
+}
+func (m *GetSwitchWarnReq) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetSwitchWarnReq.Merge(m, src)
+}
+func (m *GetSwitchWarnReq) XXX_Size() int {
+	return xxx_messageInfo_GetSwitchWarnReq.Size(m)
+}
+func (m *GetSwitchWarnReq) XXX_DiscardUnknown() {
+	xxx_messageInfo_GetSwitchWarnReq.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GetSwitchWarnReq proto.InternalMessageInfo
+
+func (m *GetSwitchWarnReq) GetSwitchAddr() int32 {
+	if m != nil {
+		return m.SwitchAddr
+	}
+	return 0
+}
+
+// 27 res
+type GetSwitchWarnRes struct {
+	SwitchAddr           int32    `protobuf:"varint,1,opt,name=switch_addr,json=switchAddr,proto3" json:"switch_addr,omitempty"`
+	WarnRes              int32    `protobuf:"varint,2,opt,name=warn_res,json=warnRes,proto3" json:"warn_res,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *GetSwitchWarnRes) Reset()         { *m = GetSwitchWarnRes{} }
+func (m *GetSwitchWarnRes) String() string { return proto.CompactTextString(m) }
+func (*GetSwitchWarnRes) ProtoMessage()    {}
+func (*GetSwitchWarnRes) Descriptor() ([]byte, []int) {
+	return fileDescriptor_847da2030fabdbd4, []int{23}
+}
+
+func (m *GetSwitchWarnRes) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GetSwitchWarnRes.Unmarshal(m, b)
+}
+func (m *GetSwitchWarnRes) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GetSwitchWarnRes.Marshal(b, m, deterministic)
+}
+func (m *GetSwitchWarnRes) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetSwitchWarnRes.Merge(m, src)
+}
+func (m *GetSwitchWarnRes) XXX_Size() int {
+	return xxx_messageInfo_GetSwitchWarnRes.Size(m)
+}
+func (m *GetSwitchWarnRes) XXX_DiscardUnknown() {
+	xxx_messageInfo_GetSwitchWarnRes.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GetSwitchWarnRes proto.InternalMessageInfo
+
+func (m *GetSwitchWarnRes) GetSwitchAddr() int32 {
+	if m != nil {
+		return m.SwitchAddr
+	}
+	return 0
+}
+
+func (m *GetSwitchWarnRes) GetWarnRes() int32 {
+	if m != nil {
+		return m.WarnRes
+	}
+	return 0
+}
+
+// 104 sys config req
 type ConfigReq struct {
 	Config               int32    `protobuf:"varint,1,opt,name=config,proto3" json:"config,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
@@ -1057,7 +3041,7 @@ func (m *ConfigReq) Reset()         { *m = ConfigReq{} }
 func (m *ConfigReq) String() string { return proto.CompactTextString(m) }
 func (*ConfigReq) ProtoMessage()    {}
 func (*ConfigReq) Descriptor() ([]byte, []int) {
-	return fileDescriptor_847da2030fabdbd4, []int{2}
+	return fileDescriptor_847da2030fabdbd4, []int{24}
 }
 
 func (m *ConfigReq) XXX_Unmarshal(b []byte) error {
@@ -1085,6 +3069,7 @@ func (m *ConfigReq) GetConfig() int32 {
 	return 0
 }
 
+// 104 sys config res
 type ConfigRes struct {
 	Config               int32    `protobuf:"varint,1,opt,name=config,proto3" json:"config,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
@@ -1096,7 +3081,7 @@ func (m *ConfigRes) Reset()         { *m = ConfigRes{} }
 func (m *ConfigRes) String() string { return proto.CompactTextString(m) }
 func (*ConfigRes) ProtoMessage()    {}
 func (*ConfigRes) Descriptor() ([]byte, []int) {
-	return fileDescriptor_847da2030fabdbd4, []int{3}
+	return fileDescriptor_847da2030fabdbd4, []int{25}
 }
 
 func (m *ConfigRes) XXX_Unmarshal(b []byte) error {
@@ -1124,6 +3109,7 @@ func (m *ConfigRes) GetConfig() int32 {
 	return 0
 }
 
+// 103 sys run time req
 type RunTimeReq struct {
 	Time                 int32    `protobuf:"varint,1,opt,name=time,proto3" json:"time,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
@@ -1135,7 +3121,7 @@ func (m *RunTimeReq) Reset()         { *m = RunTimeReq{} }
 func (m *RunTimeReq) String() string { return proto.CompactTextString(m) }
 func (*RunTimeReq) ProtoMessage()    {}
 func (*RunTimeReq) Descriptor() ([]byte, []int) {
-	return fileDescriptor_847da2030fabdbd4, []int{4}
+	return fileDescriptor_847da2030fabdbd4, []int{26}
 }
 
 func (m *RunTimeReq) XXX_Unmarshal(b []byte) error {
@@ -1163,6 +3149,7 @@ func (m *RunTimeReq) GetTime() int32 {
 	return 0
 }
 
+// 103 sys run time res
 type RunTimeRes struct {
 	Time                 int64    `protobuf:"varint,1,opt,name=time,proto3" json:"time,omitempty"`
 	AppStartTime         int64    `protobuf:"varint,2,opt,name=app_start_time,json=appStartTime,proto3" json:"app_start_time,omitempty"`
@@ -1176,7 +3163,7 @@ func (m *RunTimeRes) Reset()         { *m = RunTimeRes{} }
 func (m *RunTimeRes) String() string { return proto.CompactTextString(m) }
 func (*RunTimeRes) ProtoMessage()    {}
 func (*RunTimeRes) Descriptor() ([]byte, []int) {
-	return fileDescriptor_847da2030fabdbd4, []int{5}
+	return fileDescriptor_847da2030fabdbd4, []int{27}
 }
 
 func (m *RunTimeRes) XXX_Unmarshal(b []byte) error {
@@ -1218,6 +3205,7 @@ func (m *RunTimeRes) GetRestartTimes() int32 {
 	return 0
 }
 
+// 98 bad excute res
 type ErrBadExcuteRes struct {
 	Code                 int32    `protobuf:"varint,1,opt,name=code,proto3" json:"code,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
@@ -1229,7 +3217,7 @@ func (m *ErrBadExcuteRes) Reset()         { *m = ErrBadExcuteRes{} }
 func (m *ErrBadExcuteRes) String() string { return proto.CompactTextString(m) }
 func (*ErrBadExcuteRes) ProtoMessage()    {}
 func (*ErrBadExcuteRes) Descriptor() ([]byte, []int) {
-	return fileDescriptor_847da2030fabdbd4, []int{6}
+	return fileDescriptor_847da2030fabdbd4, []int{28}
 }
 
 func (m *ErrBadExcuteRes) XXX_Unmarshal(b []byte) error {
@@ -1257,6 +3245,7 @@ func (m *ErrBadExcuteRes) GetCode() int32 {
 	return 0
 }
 
+// 99 bad args check res
 type ErrBadArgsRes struct {
 	Code                 int32    `protobuf:"varint,1,opt,name=code,proto3" json:"code,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
@@ -1268,7 +3257,7 @@ func (m *ErrBadArgsRes) Reset()         { *m = ErrBadArgsRes{} }
 func (m *ErrBadArgsRes) String() string { return proto.CompactTextString(m) }
 func (*ErrBadArgsRes) ProtoMessage()    {}
 func (*ErrBadArgsRes) Descriptor() ([]byte, []int) {
-	return fileDescriptor_847da2030fabdbd4, []int{7}
+	return fileDescriptor_847da2030fabdbd4, []int{29}
 }
 
 func (m *ErrBadArgsRes) XXX_Unmarshal(b []byte) error {
@@ -1296,6 +3285,7 @@ func (m *ErrBadArgsRes) GetCode() int32 {
 	return 0
 }
 
+// 100 hearbeat req
 type Heartbeat struct {
 	Status               int32    `protobuf:"varint,1,opt,name=status,proto3" json:"status,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
@@ -1307,7 +3297,7 @@ func (m *Heartbeat) Reset()         { *m = Heartbeat{} }
 func (m *Heartbeat) String() string { return proto.CompactTextString(m) }
 func (*Heartbeat) ProtoMessage()    {}
 func (*Heartbeat) Descriptor() ([]byte, []int) {
-	return fileDescriptor_847da2030fabdbd4, []int{8}
+	return fileDescriptor_847da2030fabdbd4, []int{30}
 }
 
 func (m *Heartbeat) XXX_Unmarshal(b []byte) error {
@@ -1335,6 +3325,7 @@ func (m *Heartbeat) GetStatus() int32 {
 	return 0
 }
 
+// 100 heartbeat res
 type HeartbeatRes struct {
 	Status               int32    `protobuf:"varint,1,opt,name=status,proto3" json:"status,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
@@ -1346,7 +3337,7 @@ func (m *HeartbeatRes) Reset()         { *m = HeartbeatRes{} }
 func (m *HeartbeatRes) String() string { return proto.CompactTextString(m) }
 func (*HeartbeatRes) ProtoMessage()    {}
 func (*HeartbeatRes) Descriptor() ([]byte, []int) {
-	return fileDescriptor_847da2030fabdbd4, []int{9}
+	return fileDescriptor_847da2030fabdbd4, []int{31}
 }
 
 func (m *HeartbeatRes) XXX_Unmarshal(b []byte) error {
@@ -1374,6 +3365,7 @@ func (m *HeartbeatRes) GetStatus() int32 {
 	return 0
 }
 
+// 102 stream heartbeat res
 type HeartbeatReq struct {
 	Status               int32    `protobuf:"varint,1,opt,name=status,proto3" json:"status,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
@@ -1385,7 +3377,7 @@ func (m *HeartbeatReq) Reset()         { *m = HeartbeatReq{} }
 func (m *HeartbeatReq) String() string { return proto.CompactTextString(m) }
 func (*HeartbeatReq) ProtoMessage()    {}
 func (*HeartbeatReq) Descriptor() ([]byte, []int) {
-	return fileDescriptor_847da2030fabdbd4, []int{10}
+	return fileDescriptor_847da2030fabdbd4, []int{32}
 }
 
 func (m *HeartbeatReq) XXX_Unmarshal(b []byte) error {
@@ -1413,6 +3405,7 @@ func (m *HeartbeatReq) GetStatus() int32 {
 	return 0
 }
 
+// 101 heartbeat select host res
 type HeartbeatSelectRes struct {
 	Status               int32    `protobuf:"varint,1,opt,name=status,proto3" json:"status,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
@@ -1424,7 +3417,7 @@ func (m *HeartbeatSelectRes) Reset()         { *m = HeartbeatSelectRes{} }
 func (m *HeartbeatSelectRes) String() string { return proto.CompactTextString(m) }
 func (*HeartbeatSelectRes) ProtoMessage()    {}
 func (*HeartbeatSelectRes) Descriptor() ([]byte, []int) {
-	return fileDescriptor_847da2030fabdbd4, []int{11}
+	return fileDescriptor_847da2030fabdbd4, []int{33}
 }
 
 func (m *HeartbeatSelectRes) XXX_Unmarshal(b []byte) error {
@@ -1452,6 +3445,7 @@ func (m *HeartbeatSelectRes) GetStatus() int32 {
 	return 0
 }
 
+// 100 heartbeat select host req
 type HeartbeatSelectReq struct {
 	Status               int32    `protobuf:"varint,1,opt,name=status,proto3" json:"status,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
@@ -1463,7 +3457,7 @@ func (m *HeartbeatSelectReq) Reset()         { *m = HeartbeatSelectReq{} }
 func (m *HeartbeatSelectReq) String() string { return proto.CompactTextString(m) }
 func (*HeartbeatSelectReq) ProtoMessage()    {}
 func (*HeartbeatSelectReq) Descriptor() ([]byte, []int) {
-	return fileDescriptor_847da2030fabdbd4, []int{12}
+	return fileDescriptor_847da2030fabdbd4, []int{34}
 }
 
 func (m *HeartbeatSelectReq) XXX_Unmarshal(b []byte) error {
@@ -1503,7 +3497,7 @@ func (m *TimeTask) Reset()         { *m = TimeTask{} }
 func (m *TimeTask) String() string { return proto.CompactTextString(m) }
 func (*TimeTask) ProtoMessage()    {}
 func (*TimeTask) Descriptor() ([]byte, []int) {
-	return fileDescriptor_847da2030fabdbd4, []int{13}
+	return fileDescriptor_847da2030fabdbd4, []int{35}
 }
 
 func (m *TimeTask) XXX_Unmarshal(b []byte) error {
@@ -1538,6 +3532,7 @@ func (m *TimeTask) GetTasks() []*MqttDeviceRequest {
 	return nil
 }
 
+// 105 time tasks req
 type TimeTaskReq struct {
 	TimeTasks            []*TimeTask `protobuf:"bytes,1,rep,name=time_tasks,json=timeTasks,proto3" json:"time_tasks,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}    `json:"-"`
@@ -1549,7 +3544,7 @@ func (m *TimeTaskReq) Reset()         { *m = TimeTaskReq{} }
 func (m *TimeTaskReq) String() string { return proto.CompactTextString(m) }
 func (*TimeTaskReq) ProtoMessage()    {}
 func (*TimeTaskReq) Descriptor() ([]byte, []int) {
-	return fileDescriptor_847da2030fabdbd4, []int{14}
+	return fileDescriptor_847da2030fabdbd4, []int{36}
 }
 
 func (m *TimeTaskReq) XXX_Unmarshal(b []byte) error {
@@ -1577,6 +3572,7 @@ func (m *TimeTaskReq) GetTimeTasks() []*TimeTask {
 	return nil
 }
 
+// 105 time tasks res
 type TimeTaskRes struct {
 	Code                 int32    `protobuf:"varint,1,opt,name=code,proto3" json:"code,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
@@ -1588,7 +3584,7 @@ func (m *TimeTaskRes) Reset()         { *m = TimeTaskRes{} }
 func (m *TimeTaskRes) String() string { return proto.CompactTextString(m) }
 func (*TimeTaskRes) ProtoMessage()    {}
 func (*TimeTaskRes) Descriptor() ([]byte, []int) {
-	return fileDescriptor_847da2030fabdbd4, []int{15}
+	return fileDescriptor_847da2030fabdbd4, []int{37}
 }
 
 func (m *TimeTaskRes) XXX_Unmarshal(b []byte) error {
@@ -1616,6 +3612,7 @@ func (m *TimeTaskRes) GetCode() int32 {
 	return 0
 }
 
+// 11 12 13 modbus req
 type CmdReq struct {
 	Target               int32    `protobuf:"varint,1,opt,name=target,proto3" json:"target,omitempty"`
 	Value                int32    `protobuf:"varint,2,opt,name=value,proto3" json:"value,omitempty"`
@@ -1628,7 +3625,7 @@ func (m *CmdReq) Reset()         { *m = CmdReq{} }
 func (m *CmdReq) String() string { return proto.CompactTextString(m) }
 func (*CmdReq) ProtoMessage()    {}
 func (*CmdReq) Descriptor() ([]byte, []int) {
-	return fileDescriptor_847da2030fabdbd4, []int{16}
+	return fileDescriptor_847da2030fabdbd4, []int{38}
 }
 
 func (m *CmdReq) XXX_Unmarshal(b []byte) error {
@@ -1663,6 +3660,7 @@ func (m *CmdReq) GetValue() int32 {
 	return 0
 }
 
+// 13 14 modbus req
 type CmdSubReq struct {
 	SubCmd               int32    `protobuf:"varint,1,opt,name=sub_cmd,json=subCmd,proto3" json:"sub_cmd,omitempty"`
 	Target               int32    `protobuf:"varint,2,opt,name=target,proto3" json:"target,omitempty"`
@@ -1676,7 +3674,7 @@ func (m *CmdSubReq) Reset()         { *m = CmdSubReq{} }
 func (m *CmdSubReq) String() string { return proto.CompactTextString(m) }
 func (*CmdSubReq) ProtoMessage()    {}
 func (*CmdSubReq) Descriptor() ([]byte, []int) {
-	return fileDescriptor_847da2030fabdbd4, []int{17}
+	return fileDescriptor_847da2030fabdbd4, []int{39}
 }
 
 func (m *CmdSubReq) XXX_Unmarshal(b []byte) error {
@@ -1718,6 +3716,7 @@ func (m *CmdSubReq) GetValue() int32 {
 	return 0
 }
 
+// 1 2 3 4 5 6 modbus res
 type CmdRes struct {
 	RetCmd               int32    `protobuf:"varint,1,opt,name=ret_cmd,json=retCmd,proto3" json:"ret_cmd,omitempty"`
 	Size                 int32    `protobuf:"varint,2,opt,name=size,proto3" json:"size,omitempty"`
@@ -1731,7 +3730,7 @@ func (m *CmdRes) Reset()         { *m = CmdRes{} }
 func (m *CmdRes) String() string { return proto.CompactTextString(m) }
 func (*CmdRes) ProtoMessage()    {}
 func (*CmdRes) Descriptor() ([]byte, []int) {
-	return fileDescriptor_847da2030fabdbd4, []int{18}
+	return fileDescriptor_847da2030fabdbd4, []int{40}
 }
 
 func (m *CmdRes) XXX_Unmarshal(b []byte) error {
@@ -1776,6 +3775,28 @@ func (m *CmdRes) GetValue() []byte {
 func init() {
 	proto.RegisterType((*MqttDeviceRequest)(nil), "MqttDeviceRequest")
 	proto.RegisterType((*MqttDeviceResponse)(nil), "MqttDeviceResponse")
+	proto.RegisterType((*GetSwitchsAddrReq)(nil), "GetSwitchsAddrReq")
+	proto.RegisterType((*GetSwitchsAddrRes)(nil), "GetSwitchsAddrRes")
+	proto.RegisterType((*GetSwitchsStateReq)(nil), "GetSwitchsStateReq")
+	proto.RegisterType((*GetSwitchsStateRes)(nil), "GetSwitchsStateRes")
+	proto.RegisterType((*GetSwitchDataReq)(nil), "GetSwitchDataReq")
+	proto.RegisterType((*GetSwitchDataRes)(nil), "GetSwitchDataRes")
+	proto.RegisterType((*GetSwitchConfigReq)(nil), "GetSwitchConfigReq")
+	proto.RegisterType((*GetSwitchConfigRes)(nil), "GetSwitchConfigRes")
+	proto.RegisterType((*SetSwitchConfigReq)(nil), "SetSwitchConfigReq")
+	proto.RegisterType((*SetSwitchConfigRes)(nil), "SetSwitchConfigRes")
+	proto.RegisterType((*GetSwitchStateReq)(nil), "GetSwitchStateReq")
+	proto.RegisterType((*GetSwitchStateRes)(nil), "GetSwitchStateRes")
+	proto.RegisterType((*SetSwitchStateReq)(nil), "SetSwitchStateReq")
+	proto.RegisterType((*SetSwitchStateRes)(nil), "SetSwitchStateRes")
+	proto.RegisterType((*GetSwitchKWhReq)(nil), "GetSwitchKWhReq")
+	proto.RegisterType((*GetSwitchKWhRes)(nil), "GetSwitchKWhRes")
+	proto.RegisterType((*SetSwitchKWhReq)(nil), "SetSwitchKWhReq")
+	proto.RegisterType((*SetSwitchKWhRes)(nil), "SetSwitchKWhRes")
+	proto.RegisterType((*SetSwitchLeakTest)(nil), "SetSwitchLeakTest")
+	proto.RegisterType((*SetSwitchLeakTestRes)(nil), "SetSwitchLeakTestRes")
+	proto.RegisterType((*GetSwitchWarnReq)(nil), "GetSwitchWarnReq")
+	proto.RegisterType((*GetSwitchWarnRes)(nil), "GetSwitchWarnRes")
 	proto.RegisterType((*ConfigReq)(nil), "ConfigReq")
 	proto.RegisterType((*ConfigRes)(nil), "ConfigRes")
 	proto.RegisterType((*RunTimeReq)(nil), "RunTimeReq")
@@ -1798,55 +3819,113 @@ func init() {
 func init() { proto.RegisterFile("esp32_mqtt_air_switch.proto", fileDescriptor_847da2030fabdbd4) }
 
 var fileDescriptor_847da2030fabdbd4 = []byte{
-	// 796 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x96, 0x49, 0x6f, 0xe3, 0x36,
-	0x14, 0xc7, 0x93, 0x78, 0x49, 0xf4, 0x2c, 0x3b, 0x29, 0x1b, 0xb4, 0x06, 0x8a, 0x02, 0xa9, 0xd2,
-	0xc5, 0xe8, 0xe2, 0x26, 0xf2, 0xd2, 0x5e, 0x9b, 0x34, 0xa8, 0x8b, 0xc1, 0x5c, 0x94, 0xdc, 0x05,
-	0x4a, 0x62, 0x6c, 0x21, 0x91, 0x2d, 0xf1, 0x51, 0x99, 0xe5, 0xeb, 0xcd, 0xa7, 0x9a, 0xdb, 0x80,
-	0xd4, 0x46, 0xd9, 0x32, 0x30, 0x73, 0xf3, 0xa3, 0x7e, 0xef, 0x2f, 0x52, 0xfc, 0x51, 0x32, 0x7c,
-	0xc7, 0x30, 0x9e, 0xd8, 0x6e, 0x94, 0x08, 0xe1, 0xd2, 0x90, 0xbb, 0xf8, 0x26, 0x14, 0xfe, 0x6a,
-	0x1c, 0xf3, 0x8d, 0xd8, 0x58, 0x1f, 0xdb, 0xf0, 0xd5, 0xeb, 0x44, 0x88, 0x7f, 0xd9, 0x4b, 0xe8,
-	0x33, 0x87, 0x25, 0x29, 0x43, 0x41, 0xbe, 0x07, 0x40, 0x86, 0x18, 0x6e, 0xd6, 0x6e, 0x18, 0x0c,
-	0x0f, 0x2f, 0x0e, 0x47, 0x1d, 0xc7, 0xc8, 0x47, 0xfe, 0x0f, 0xc8, 0x2f, 0x00, 0x7e, 0x14, 0xb8,
-	0x57, 0xd7, 0x2e, 0x67, 0xc9, 0xb0, 0x77, 0x71, 0x38, 0xea, 0xd9, 0xc7, 0xe3, 0xdb, 0x28, 0x70,
-	0x58, 0xb2, 0x38, 0x70, 0x4e, 0xfc, 0x28, 0xb8, 0xba, 0x76, 0x58, 0x52, 0x82, 0xb6, 0x02, 0xcd,
-	0x46, 0xd0, 0x96, 0xe0, 0xaf, 0x39, 0x38, 0x51, 0x60, 0x5f, 0x81, 0x20, 0xc1, 0xfb, 0xd4, 0xd3,
-	0xd8, 0x89, 0xce, 0x4e, 0x15, 0x3b, 0xd8, 0xc7, 0x4e, 0xf5, 0x09, 0xcc, 0x14, 0x7b, 0xda, 0x38,
-	0x81, 0x99, 0x1e, 0x3a, 0x57, 0xe0, 0xd9, 0xbe, 0xd0, 0x79, 0xc6, 0x1a, 0x2b, 0x46, 0xb9, 0xf0,
-	0x18, 0x15, 0xc3, 0x20, 0x47, 0x17, 0xc5, 0xc8, 0xe2, 0xc0, 0xa9, 0x2e, 0x93, 0xff, 0xe0, 0xbc,
-	0x2c, 0x5c, 0x64, 0xcf, 0xcc, 0x17, 0x2e, 0x67, 0x38, 0x64, 0xaa, 0xed, 0xeb, 0xaa, 0xed, 0x5e,
-	0x5d, 0x73, 0x18, 0x2e, 0x0e, 0x1c, 0xb2, 0xda, 0x19, 0x25, 0x53, 0xe8, 0x57, 0x41, 0x32, 0xe1,
-	0x51, 0x25, 0xf4, 0xab, 0x84, 0xac, 0xd7, 0x5c, 0x69, 0x35, 0xf9, 0x13, 0x4c, 0x9e, 0xae, 0x5d,
-	0x11, 0x46, 0x4c, 0x2d, 0x6c, 0xa9, 0x9a, 0x7a, 0x63, 0x27, 0x5d, 0x3f, 0x84, 0x11, 0xcb, 0x56,
-	0x06, 0xbc, 0xac, 0xc8, 0x6f, 0x00, 0xfe, 0x66, 0xfd, 0x18, 0x2e, 0x15, 0xbe, 0x2a, 0x9e, 0x83,
-	0x1a, 0xca, 0x68, 0xc3, 0x2f, 0x0a, 0x62, 0x43, 0x5f, 0x25, 0x0b, 0x8a, 0x4f, 0x8a, 0x0f, 0x15,
-	0x6f, 0x8e, 0x65, 0xda, 0x03, 0xc5, 0xa7, 0xac, 0xa3, 0x27, 0xaa, 0xf2, 0xc6, 0x80, 0xe3, 0x98,
-	0xbe, 0x7b, 0xde, 0xd0, 0xc0, 0xfa, 0xd0, 0x01, 0xa2, 0xbb, 0x87, 0xf1, 0x66, 0x8d, 0xac, 0x66,
-	0x17, 0x2a, 0xf9, 0xca, 0x3d, 0x43, 0xcd, 0x2e, 0xac, 0xd9, 0x85, 0xc3, 0xa3, 0x46, 0xd0, 0xd6,
-	0xc1, 0x89, 0x02, 0x5b, 0x8d, 0xe0, 0x44, 0x07, 0xa7, 0x0a, 0x6c, 0x37, 0x82, 0x53, 0x1d, 0x9c,
-	0x29, 0xb0, 0xd3, 0x08, 0xce, 0x74, 0x70, 0xae, 0xc0, 0x6e, 0x23, 0x38, 0x97, 0xe0, 0xdf, 0x30,
-	0xf0, 0x68, 0xe0, 0xb2, 0xb7, 0x7e, 0x2a, 0x98, 0x82, 0x3d, 0x05, 0x9f, 0x8d, 0xef, 0x38, 0xbf,
-	0xa1, 0xc1, 0x9d, 0xba, 0x90, 0xef, 0xb1, 0xa7, 0xd5, 0xc4, 0x06, 0x59, 0xbb, 0x94, 0x2f, 0x51,
-	0xf5, 0xf9, 0xaa, 0x6f, 0x90, 0xf7, 0xfd, 0xc3, 0x97, 0x98, 0x75, 0x81, 0x57, 0x56, 0x7b, 0xb4,
-	0x4c, 0x72, 0x9b, 0x1b, 0xb4, 0x4c, 0x1a, 0xb5, 0x4c, 0xc8, 0x1f, 0xfa, 0x59, 0x60, 0xcd, 0x4a,
-	0x6a, 0xc7, 0x61, 0xcb, 0xe2, 0xa4, 0xc9, 0xe2, 0x64, 0xcb, 0xe2, 0x64, 0xcb, 0x62, 0xdc, 0xb5,
-	0x18, 0x6b, 0x16, 0x63, 0xcd, 0x62, 0xdc, 0xb1, 0x18, 0x75, 0x8b, 0x71, 0xdb, 0x62, 0x6c, 0xb0,
-	0x18, 0xeb, 0x16, 0xa3, 0x6e, 0xf1, 0x25, 0x18, 0xe5, 0xf1, 0x20, 0xdf, 0x40, 0x37, 0x0b, 0xce,
-	0x5f, 0x9a, 0x79, 0xa5, 0x43, 0xb8, 0x17, 0xba, 0x00, 0xa8, 0xce, 0x25, 0x21, 0xd0, 0x96, 0x77,
-	0xcc, 0x19, 0xf5, 0xdb, 0x7a, 0xd2, 0x08, 0xac, 0x11, 0xad, 0x8c, 0x20, 0x3f, 0xc2, 0x80, 0xc6,
-	0xb1, 0x8b, 0x82, 0x72, 0xa1, 0x1e, 0x98, 0x3a, 0x17, 0x2d, 0xc7, 0xa4, 0x71, 0x7c, 0x2f, 0x07,
-	0x65, 0x33, 0xb9, 0x84, 0x3e, 0x67, 0x15, 0x93, 0x9d, 0x89, 0x8e, 0x63, 0xe6, 0x83, 0x92, 0x41,
-	0xeb, 0x27, 0x38, 0xdd, 0x52, 0x4f, 0xde, 0xd1, 0xdf, 0x04, 0xe5, 0x9c, 0xe4, 0x6f, 0xeb, 0x12,
-	0xfa, 0x35, 0xd3, 0xf6, 0x40, 0x46, 0xb9, 0xc3, 0x72, 0xfd, 0x28, 0xa8, 0x48, 0xb1, 0x58, 0x7f,
-	0x56, 0x59, 0x3f, 0x83, 0xa9, 0x9b, 0xf3, 0x99, 0x5c, 0xb2, 0x97, 0xfb, 0x1d, 0xc8, 0xee, 0xeb,
-	0xf5, 0x8b, 0xe8, 0xfd, 0xd9, 0x0b, 0x38, 0x29, 0xf4, 0xa8, 0xed, 0x83, 0x91, 0xef, 0xc3, 0x08,
-	0x3a, 0xd2, 0x27, 0xf9, 0x5a, 0x6a, 0x8d, 0x7a, 0x36, 0x19, 0xef, 0x7c, 0x64, 0x9d, 0x0c, 0xb0,
-	0xfe, 0x82, 0x9e, 0xf6, 0xba, 0x24, 0x23, 0x80, 0xd2, 0x46, 0x79, 0x53, 0xd9, 0x6d, 0x54, 0x2a,
-	0x1a, 0x85, 0x85, 0x68, 0xfd, 0xa0, 0x37, 0x36, 0x3f, 0xf6, 0x39, 0x74, 0xb3, 0x6f, 0x9d, 0x5c,
-	0x87, 0xa0, 0x7c, 0xc9, 0x44, 0xb1, 0x8e, 0xac, 0x22, 0xe7, 0xd0, 0x79, 0xa1, 0xcf, 0x69, 0xa6,
-	0x49, 0xc7, 0xc9, 0x0a, 0xcb, 0x01, 0xa3, 0xfc, 0xf4, 0x91, 0x6f, 0xe1, 0x18, 0x53, 0xcf, 0xf5,
-	0xa3, 0xa0, 0x7c, 0x06, 0xa9, 0x77, 0x1b, 0x05, 0x5a, 0xe6, 0x51, 0x73, 0x66, 0x4b, 0xcf, 0x7c,
-	0x95, 0xcf, 0x05, 0x65, 0x20, 0x67, 0x42, 0x0f, 0xe4, 0x4c, 0xc8, 0x40, 0x02, 0x6d, 0x0c, 0xdf,
-	0x17, 0x73, 0x51, 0xbf, 0xeb, 0x61, 0x66, 0x1e, 0xe6, 0x75, 0xd5, 0xbf, 0x97, 0xc9, 0xa7, 0x00,
-	0x00, 0x00, 0xff, 0xff, 0x73, 0xb6, 0xa9, 0xa3, 0xdc, 0x08, 0x00, 0x00,
+	// 1716 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xec, 0x59, 0xdd, 0x72, 0xd3, 0x46,
+	0x14, 0x26, 0x71, 0x7e, 0xec, 0x63, 0xe7, 0x6f, 0x31, 0x60, 0xc8, 0xb4, 0x80, 0x68, 0x21, 0x43,
+	0x5b, 0x87, 0xd8, 0x49, 0xca, 0x30, 0x1d, 0x3a, 0x10, 0x32, 0x84, 0x92, 0x96, 0x19, 0x99, 0x81,
+	0x4b, 0x8d, 0x6c, 0x2d, 0xb6, 0x27, 0xb6, 0x65, 0xeb, 0xac, 0x71, 0xdb, 0xeb, 0x3e, 0x43, 0x1f,
+	0xa4, 0x97, 0xbd, 0xed, 0x13, 0xb4, 0x6f, 0xd0, 0x37, 0xe9, 0xec, 0x8f, 0xa5, 0x95, 0xb4, 0x1a,
+	0x19, 0x6e, 0x7a, 0xd1, 0xde, 0x69, 0xcf, 0x7e, 0xe7, 0xf3, 0xd1, 0x39, 0x47, 0x9f, 0xf6, 0xc8,
+	0xb0, 0x4b, 0x71, 0xdc, 0x6c, 0x38, 0xc3, 0x09, 0x63, 0x8e, 0xdb, 0x0f, 0x1c, 0x9c, 0xf5, 0x59,
+	0xa7, 0x57, 0x1f, 0x07, 0x3e, 0xf3, 0x6f, 0x7c, 0xda, 0xf5, 0xfd, 0xee, 0x80, 0xee, 0x8b, 0x55,
+	0x7b, 0xfa, 0x6e, 0x7f, 0x16, 0xb8, 0xe3, 0x31, 0x0d, 0x50, 0xee, 0x5b, 0xbf, 0x94, 0x61, 0xe7,
+	0xfb, 0x09, 0x63, 0xcf, 0xe8, 0xfb, 0x7e, 0x87, 0xda, 0x74, 0x32, 0xa5, 0xc8, 0xc8, 0x27, 0x00,
+	0x48, 0x11, 0xfb, 0xfe, 0xc8, 0xe9, 0x7b, 0xb5, 0xa5, 0x5b, 0x4b, 0x7b, 0xab, 0x76, 0x49, 0x59,
+	0x5e, 0x78, 0xe4, 0x1e, 0x40, 0x67, 0xe8, 0x39, 0x0f, 0x0e, 0x9c, 0x80, 0x4e, 0x6a, 0xe5, 0x5b,
+	0x4b, 0x7b, 0xe5, 0xc6, 0x7a, 0xfd, 0x64, 0xe8, 0xd9, 0x74, 0x72, 0x76, 0xc9, 0x2e, 0x76, 0x86,
+	0xde, 0x83, 0x03, 0x9b, 0x4e, 0x42, 0x60, 0x43, 0x00, 0x2b, 0x46, 0x60, 0x83, 0x03, 0xef, 0x2b,
+	0x60, 0x53, 0x00, 0x37, 0x04, 0x10, 0x38, 0xb0, 0x35, 0x6d, 0x6b, 0xd8, 0xa6, 0x8e, 0x3d, 0x14,
+	0xd8, 0xcd, 0x2c, 0xec, 0xa1, 0x1e, 0xc0, 0x91, 0xc0, 0x6e, 0x19, 0x03, 0x38, 0xd2, 0x49, 0x8f,
+	0x05, 0x70, 0x3b, 0x8b, 0xf4, 0x98, 0x63, 0x4f, 0xa1, 0xda, 0xa5, 0x4c, 0xe5, 0x19, 0x1d, 0xd7,
+	0xf3, 0x02, 0xe1, 0xb5, 0x23, 0xbc, 0x48, 0xfd, 0x39, 0x65, 0x2d, 0xb9, 0xf7, 0xc4, 0xf3, 0x02,
+	0xe9, 0xbd, 0xd3, 0x4d, 0x1a, 0xc9, 0x19, 0x5c, 0xd1, 0x69, 0x90, 0xb9, 0x8c, 0x0a, 0x1e, 0x22,
+	0x78, 0x2e, 0x6b, 0x3c, 0x2d, 0xbe, 0x27, 0x89, 0x48, 0x37, 0x65, 0x25, 0x4f, 0xe1, 0x72, 0xc4,
+	0xe4, 0x78, 0x2e, 0x73, 0x05, 0xcf, 0x65, 0xc1, 0xb3, 0x13, 0xf1, 0x3c, 0x73, 0x99, 0x2b, 0x59,
+	0xb6, 0xbb, 0x09, 0x5b, 0x3c, 0x1a, 0xa7, 0xe3, 0x8f, 0xde, 0xf5, 0xbb, 0x82, 0xa5, 0x9a, 0x8c,
+	0xe6, 0x44, 0xec, 0x25, 0xa3, 0x09, 0xad, 0x9c, 0x09, 0x8d, 0x4c, 0x57, 0x14, 0x53, 0xcb, 0xc8,
+	0x84, 0x69, 0xa6, 0x58, 0xa2, 0xb5, 0x04, 0x5d, 0x4d, 0x26, 0x5a, 0xcb, 0x4f, 0x94, 0xe8, 0x30,
+	0x3d, 0xa7, 0x50, 0x45, 0x13, 0xcd, 0x35, 0x45, 0xd3, 0x32, 0xd1, 0x60, 0x8a, 0xe6, 0x5b, 0x20,
+	0x5a, 0x34, 0x17, 0xb3, 0x9e, 0x20, 0xa9, 0x09, 0x92, 0xed, 0x28, 0x96, 0x97, 0x6f, 0x7b, 0x92,
+	0x62, 0x2b, 0x8c, 0xe4, 0xe5, 0xac, 0xa7, 0x08, 0x30, 0x4d, 0x70, 0x5d, 0x11, 0xb4, 0xd2, 0x04,
+	0x98, 0x20, 0x38, 0x87, 0x9a, 0x46, 0x30, 0xa0, 0xee, 0x85, 0xc3, 0x28, 0x32, 0x41, 0x73, 0x23,
+	0x79, 0x33, 0xe7, 0xd4, 0xbd, 0x78, 0x4d, 0x91, 0x9d, 0x5d, 0xb2, 0xab, 0x98, 0x34, 0xa6, 0xbb,
+	0x66, 0xe6, 0x06, 0x23, 0x41, 0xb4, 0x9b, 0xec, 0x9a, 0xb7, 0x6e, 0x30, 0x4a, 0x76, 0x8d, 0xb2,
+	0x91, 0xfb, 0x50, 0xea, 0x51, 0x37, 0x60, 0x6d, 0xea, 0xb2, 0x9a, 0xa7, 0x9e, 0x9a, 0xb3, 0xb9,
+	0xe5, 0xec, 0x92, 0x1d, 0x6d, 0x93, 0xe7, 0x50, 0x0d, 0x17, 0x0e, 0xd2, 0x01, 0xed, 0xf0, 0xc8,
+	0xb1, 0x46, 0x55, 0x5b, 0x84, 0x6e, 0x2d, 0xb1, 0x67, 0x53, 0xe4, 0x6d, 0xd1, 0x4b, 0x59, 0xc9,
+	0x21, 0x6c, 0x44, 0x44, 0x9c, 0xe1, 0x9d, 0x60, 0xd8, 0x88, 0x18, 0xa4, 0x6f, 0xa5, 0xa7, 0xad,
+	0xc9, 0x3e, 0x54, 0x82, 0xe9, 0xc8, 0x61, 0xfd, 0xa1, 0xac, 0x7e, 0x57, 0x38, 0x95, 0xeb, 0xf6,
+	0x74, 0xf4, 0xba, 0x3f, 0x54, 0x65, 0x87, 0x20, 0x5c, 0x91, 0x2f, 0x00, 0xb4, 0xe6, 0xed, 0xcd,
+	0x25, 0x41, 0xeb, 0xd9, 0x52, 0x27, 0x6c, 0xd5, 0x06, 0x6c, 0x08, 0x66, 0xe6, 0xe2, 0x85, 0xc0,
+	0xf7, 0x05, 0xbe, 0x52, 0xe7, 0x6c, 0xaf, 0x5d, 0xbc, 0x90, 0x1e, 0x65, 0x16, 0x2d, 0x9f, 0x96,
+	0x60, 0x7d, 0xec, 0xfe, 0x34, 0xf0, 0x5d, 0xcf, 0xfa, 0xb3, 0x0c, 0x44, 0x97, 0x61, 0x1c, 0xfb,
+	0x23, 0xa4, 0x31, 0xa1, 0x45, 0xa1, 0xc3, 0xa1, 0x7c, 0xa1, 0x26, 0xb4, 0x18, 0x13, 0x5a, 0xac,
+	0x2d, 0x1b, 0x81, 0x0d, 0x1d, 0xd8, 0x14, 0xc0, 0x82, 0x11, 0xd8, 0xd4, 0x81, 0x87, 0x02, 0xb8,
+	0x62, 0x04, 0x1e, 0xea, 0xc0, 0x23, 0x01, 0x5c, 0x35, 0x02, 0x8f, 0x74, 0xe0, 0xb1, 0x00, 0xae,
+	0x19, 0x81, 0xc7, 0x1c, 0x68, 0xd6, 0x57, 0xcc, 0xd4, 0x57, 0x34, 0xe9, 0x2b, 0x66, 0xe9, 0x2b,
+	0x66, 0xeb, 0x2b, 0x1a, 0xf5, 0x15, 0xcd, 0xfa, 0x8a, 0x59, 0xfa, 0x8a, 0x06, 0x7d, 0xc5, 0x2c,
+	0x7d, 0xc5, 0x6c, 0x7d, 0x45, 0xa3, 0xbe, 0x62, 0x96, 0xbe, 0x62, 0xb6, 0xbe, 0xa2, 0x51, 0x5f,
+	0x31, 0x43, 0x5f, 0x31, 0x53, 0x5f, 0xd1, 0xa4, 0xaf, 0x98, 0xa1, 0xaf, 0x98, 0xa9, 0xaf, 0x68,
+	0xd2, 0x57, 0x34, 0xea, 0x2b, 0x66, 0xe8, 0x2b, 0xa6, 0xf5, 0x15, 0x8d, 0xfa, 0x8a, 0x19, 0xfa,
+	0x8a, 0x69, 0x7d, 0x45, 0xf2, 0x2a, 0x53, 0x5f, 0x51, 0xe9, 0xeb, 0x95, 0xb4, 0xbe, 0x4a, 0x2e,
+	0x93, 0xc4, 0xa2, 0x59, 0x62, 0x31, 0x4b, 0x62, 0xd1, 0x20, 0xb1, 0x48, 0x1e, 0xc2, 0x66, 0xdb,
+	0xf5, 0x1c, 0xfa, 0x63, 0x67, 0xaa, 0xf2, 0xda, 0x56, 0x77, 0x74, 0x1a, 0x04, 0x4f, 0x5d, 0xef,
+	0x54, 0x6c, 0x28, 0xc5, 0x6b, 0x6b, 0x6b, 0xd2, 0x00, 0xbe, 0x76, 0xdc, 0xa0, 0x8b, 0xc2, 0xaf,
+	0x23, 0xfc, 0x36, 0x95, 0xdf, 0x93, 0xa0, 0x8b, 0xd2, 0x0b, 0xda, 0xe1, 0x2a, 0x43, 0xa4, 0x27,
+	0x4a, 0xdb, 0x0d, 0x22, 0x3d, 0x31, 0x8a, 0xf4, 0x84, 0x7c, 0xa5, 0xbf, 0x19, 0xa8, 0x59, 0xa0,
+	0xb5, 0x97, 0x43, 0x42, 0xd3, 0x27, 0x26, 0x4d, 0x9f, 0x24, 0x34, 0x7d, 0x92, 0xd0, 0x74, 0x4c,
+	0x6b, 0x3a, 0xc6, 0x34, 0x1d, 0x63, 0x9a, 0x8e, 0x29, 0x4d, 0x47, 0x5d, 0xd3, 0x31, 0xa9, 0xe9,
+	0x68, 0xd0, 0x74, 0x8c, 0x6b, 0x3a, 0xea, 0x9a, 0x7e, 0x0f, 0x76, 0x52, 0x27, 0x41, 0x42, 0x60,
+	0xa5, 0xe3, 0x7b, 0x54, 0x9d, 0xa9, 0xc5, 0xb5, 0x55, 0x4f, 0x03, 0x91, 0x5c, 0x87, 0x62, 0x28,
+	0x7c, 0x12, 0xbc, 0xee, 0xca, 0x2d, 0xeb, 0x2e, 0x90, 0xf4, 0xd1, 0x90, 0x6c, 0x43, 0x61, 0x34,
+	0x1d, 0x2a, 0x2c, 0xbf, 0xb4, 0x0e, 0x0c, 0x38, 0x24, 0xbb, 0x50, 0x8a, 0x1e, 0x51, 0x89, 0x2e,
+	0xa2, 0xda, 0xb4, 0x7e, 0x5b, 0x82, 0xed, 0xe4, 0x71, 0x91, 0xdc, 0x84, 0xb2, 0xea, 0x60, 0x1e,
+	0x81, 0xf2, 0x01, 0x69, 0xe2, 0xe1, 0x92, 0xab, 0xb0, 0xf6, 0xde, 0x67, 0x6e, 0x97, 0x8a, 0x37,
+	0x4f, 0xd1, 0x56, 0x2b, 0x72, 0x1b, 0x2a, 0xe2, 0x21, 0xea, 0x4c, 0x83, 0x80, 0x8e, 0x98, 0x78,
+	0xdd, 0x14, 0xed, 0x32, 0xb7, 0x9d, 0x48, 0x13, 0xa9, 0xc2, 0xea, 0xd8, 0x9f, 0xd1, 0x40, 0xbc,
+	0x61, 0x8a, 0xb6, 0x5c, 0xf0, 0x2c, 0x31, 0x3a, 0x1c, 0x8b, 0xb7, 0x49, 0xd1, 0x16, 0xd7, 0xa4,
+	0x06, 0xeb, 0x73, 0x9e, 0x35, 0x61, 0x9e, 0x2f, 0xad, 0x3f, 0x96, 0x53, 0x41, 0x63, 0x7e, 0xd0,
+	0xcd, 0x58, 0xd0, 0xe5, 0xc6, 0x6e, 0x5d, 0x8e, 0x4a, 0xf5, 0xf9, 0xa8, 0x54, 0x7f, 0x31, 0x62,
+	0xcd, 0xc6, 0x1b, 0x77, 0x30, 0xa5, 0xe1, 0x1d, 0x3d, 0x36, 0xdc, 0x51, 0x8e, 0x6b, 0xec, 0x76,
+	0x0f, 0xf4, 0xdb, 0xcd, 0x71, 0x54, 0xb9, 0xd8, 0xd7, 0x72, 0x91, 0xe3, 0x21, 0x13, 0x75, 0x14,
+	0x4f, 0x54, 0x8e, 0x4f, 0x98, 0xc5, 0x5f, 0x97, 0xb5, 0x76, 0x89, 0xce, 0xe0, 0xb9, 0x79, 0xbc,
+	0x09, 0x65, 0x99, 0x1c, 0xa7, 0xd7, 0xef, 0xf6, 0x54, 0x07, 0x80, 0x34, 0x9d, 0xf5, 0xbb, 0x3d,
+	0x3e, 0x4c, 0x2a, 0xc0, 0xc0, 0x9f, 0xa9, 0x1e, 0x28, 0x49, 0xcb, 0xb9, 0x3f, 0x23, 0xf7, 0x61,
+	0x47, 0x4f, 0xa9, 0x64, 0x91, 0xdd, 0xb0, 0xa5, 0xa5, 0x6e, 0x4e, 0x25, 0x92, 0x22, 0x41, 0xb2,
+	0x3b, 0x4a, 0xc2, 0x22, 0xb6, 0x77, 0xa1, 0xc4, 0x33, 0x20, 0x77, 0x65, 0x93, 0x14, 0xb9, 0x41,
+	0x6c, 0xde, 0x86, 0x4a, 0xec, 0x27, 0xd6, 0x65, 0x33, 0x76, 0x34, 0xfa, 0x2a, 0xac, 0x0e, 0x7d,
+	0x8f, 0x0e, 0x6a, 0x45, 0xd9, 0x8c, 0x62, 0x61, 0xfd, 0x5d, 0x30, 0x24, 0x66, 0x81, 0x06, 0xfb,
+	0x26, 0x9d, 0x98, 0x9c, 0x5a, 0xe8, 0x59, 0x7b, 0x94, 0xca, 0x5a, 0x8e, 0xb3, 0x96, 0xd2, 0xe7,
+	0x59, 0x29, 0xcd, 0xa1, 0x48, 0xe5, 0xfb, 0x51, 0x2a, 0xdf, 0x79, 0x41, 0x44, 0xc5, 0x78, 0x98,
+	0x2c, 0x46, 0x8e, 0x6b, 0x54, 0xa9, 0xc7, 0x86, 0x4a, 0xe5, 0x3d, 0x64, 0x7a, 0x19, 0x0f, 0xf4,
+	0x32, 0xe6, 0x3d, 0x64, 0xb2, 0xc6, 0xbf, 0xaf, 0x00, 0x69, 0x7d, 0x44, 0xf3, 0xff, 0x5f, 0xe3,
+	0x7f, 0xa9, 0xc6, 0xa7, 0xb0, 0x2d, 0x8e, 0x53, 0x7a, 0xf6, 0x17, 0x28, 0xf7, 0x26, 0x77, 0x7a,
+	0x13, 0x55, 0xe0, 0x04, 0xb6, 0x74, 0x1a, 0x5e, 0x86, 0x52, 0x3e, 0xcb, 0x46, 0xc4, 0x72, 0xee,
+	0xcf, 0xac, 0xbf, 0x96, 0x0d, 0xcd, 0x83, 0xff, 0x29, 0xe5, 0xdc, 0xcb, 0x28, 0x47, 0x31, 0x95,
+	0xf1, 0xbb, 0xe6, 0x8c, 0x17, 0x93, 0x49, 0x3d, 0xd4, 0x0e, 0x45, 0xe1, 0x19, 0x27, 0x2f, 0xa5,
+	0xd6, 0x77, 0x69, 0xaf, 0x05, 0x0a, 0x51, 0x85, 0x55, 0x71, 0x02, 0x52, 0x25, 0x90, 0x0b, 0xce,
+	0xd5, 0xfa, 0xe0, 0x08, 0x16, 0xe7, 0xfa, 0xe8, 0xb8, 0x1a, 0xb0, 0x95, 0xf8, 0xd8, 0x94, 0x9f,
+	0x97, 0x67, 0x49, 0x9f, 0x05, 0x7e, 0x7d, 0x1b, 0x0a, 0x17, 0x33, 0xd9, 0x96, 0x05, 0x9b, 0x5f,
+	0x72, 0x96, 0xd6, 0x07, 0xfe, 0xb2, 0x81, 0xa5, 0x91, 0x64, 0xc9, 0x8f, 0x85, 0x77, 0x43, 0x6a,
+	0xf0, 0xca, 0xf7, 0x7a, 0x05, 0x55, 0xd3, 0xb8, 0xb6, 0xd0, 0x81, 0x36, 0xa0, 0x38, 0x1d, 0xb0,
+	0xf9, 0x81, 0x56, 0xae, 0xac, 0xa6, 0x76, 0xd0, 0x9c, 0x7f, 0x02, 0xcb, 0x8d, 0xe2, 0x87, 0x94,
+	0xd3, 0x02, 0x11, 0x5c, 0x87, 0x62, 0x38, 0x2e, 0x2e, 0xcb, 0xe3, 0xff, 0x4c, 0xfa, 0x5a, 0x77,
+	0xa0, 0x14, 0xbd, 0xa1, 0xae, 0xc2, 0x9a, 0x1c, 0x58, 0x14, 0x87, 0x5a, 0xe9, 0x20, 0xcc, 0x04,
+	0xdd, 0x02, 0x88, 0xbe, 0x7e, 0x89, 0x43, 0x77, 0x7f, 0x18, 0x8e, 0x26, 0xfc, 0xda, 0xba, 0xd0,
+	0x10, 0x18, 0x43, 0x14, 0x24, 0x82, 0x7c, 0x06, 0x9b, 0xee, 0x78, 0xcc, 0xa7, 0xfe, 0x80, 0x89,
+	0x41, 0x4c, 0x95, 0xba, 0xe2, 0x8e, 0xc7, 0x2d, 0x6e, 0xe4, 0xce, 0xe4, 0x0e, 0x6c, 0x04, 0x34,
+	0xc2, 0xc8, 0x2f, 0x4f, 0xab, 0x76, 0x45, 0x19, 0x39, 0x06, 0xad, 0xcf, 0x61, 0x2b, 0x31, 0xd2,
+	0x1a, 0xc7, 0xa5, 0x3b, 0xb0, 0x11, 0x9b, 0x60, 0x33, 0x40, 0xa5, 0x70, 0x72, 0xe4, 0xf7, 0xcf,
+	0x1f, 0x9d, 0xe9, 0x7c, 0xde, 0x51, 0x2b, 0xeb, 0x2e, 0x54, 0xf4, 0x89, 0x74, 0x41, 0xdc, 0x24,
+	0x13, 0xf7, 0x25, 0x90, 0xf4, 0x47, 0xcc, 0x0f, 0x42, 0x67, 0x73, 0x9f, 0x41, 0x71, 0x3e, 0x76,
+	0xc6, 0xea, 0x50, 0x52, 0x75, 0xd8, 0x83, 0x55, 0x3e, 0xa7, 0xf2, 0x6e, 0x29, 0x88, 0xaf, 0x2e,
+	0xa9, 0x7f, 0x75, 0x6c, 0x09, 0xb0, 0xbe, 0x86, 0xb2, 0xf6, 0x51, 0x92, 0xec, 0x01, 0x84, 0x53,
+	0x2e, 0xff, 0x51, 0xee, 0x5d, 0x8a, 0x46, 0xdc, 0xd2, 0x7c, 0xba, 0x45, 0xeb, 0xb6, 0xee, 0x68,
+	0x4e, 0xfb, 0x31, 0xac, 0xc9, 0x3f, 0x57, 0xf8, 0x7d, 0x30, 0x37, 0xe8, 0x52, 0x36, 0xbf, 0x0f,
+	0xb9, 0xe2, 0x9a, 0xf6, 0x9e, 0xbf, 0x44, 0x55, 0x57, 0xcb, 0x85, 0x65, 0x43, 0x29, 0xfc, 0xaf,
+	0x85, 0x5c, 0x83, 0x75, 0x9c, 0xb6, 0x9d, 0xce, 0xd0, 0x0b, 0x73, 0x30, 0x6d, 0x9f, 0x0c, 0x3d,
+	0x8d, 0x73, 0xd9, 0xcc, 0x59, 0xd0, 0x39, 0x5f, 0xaa, 0x58, 0x90, 0x13, 0x06, 0x94, 0xe9, 0x84,
+	0x01, 0x65, 0x9c, 0x90, 0xc0, 0x0a, 0xf6, 0x7f, 0x9e, 0xc7, 0x22, 0xae, 0xe3, 0x64, 0x15, 0x45,
+	0xd6, 0x5e, 0x13, 0xe7, 0x80, 0xe6, 0x3f, 0x01, 0x00, 0x00, 0xff, 0xff, 0x32, 0x98, 0x18, 0xc0,
+	0x6d, 0x1b, 0x00, 0x00,
 }
