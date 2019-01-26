@@ -23,6 +23,8 @@ message MqttDeviceRequest {
     SetSwitchKWhReq set_switch_kwh_req = 25;  // 设置单个开关的电量(校准用)
     SetSwitchLeakTest set_switch_leak_test_req = 26;  // 进行单个开关漏电测试
     GetSwitchWarnReq get_switch_warn_req = 27;  // 获取单个开关报警位实时状态
+    // 获取单个开关能否被远程控制(手动关闭开关后会处于无法远程控制状态)
+    GetSwitchCtrlReq get_switch_ctrl_req = 28;
 
     Heartbeat heartbeat = 100;
     HeartbeatSelectRes heartbeat_select_res = 101;
@@ -45,15 +47,16 @@ message MqttDeviceResponse {
 
     GetSwitchsAddrRes get_switchs_addr_res = 17;
     GetSwitchsStateRes get_switchs_state_res = 18;
-    GetSwitchDataRes get_switch_data_res = 19;
+    GetSwitchDataRes get_switch_data_res = 19;  // stream推送
     GetSwitchConfigRes get_switch_config_res = 20;
     SetSwitchConfigRes set_switch_config_res = 21;
-    GetSwitchStateRes get_switch_state_res = 22;
+    GetSwitchStateRes get_switch_state_res = 22;  // stream推送
     SetSwitchStateRes set_switch_state_res = 23;
     GetSwitchKWhRes get_switch_kwh_res = 24;
     SetSwitchKWhRes set_switch_kwh_res = 25;
     SetSwitchLeakTestRes set_switch_leak_test_res = 26;
-    GetSwitchWarnRes get_switch_warn_res = 27;
+    GetSwitchWarnRes get_switch_warn_res = 27;  // stream推送
+    GetSwitchCtrlRes get_switch_ctrl_res = 28;  // stream推送
 
     ErrBadExcuteRes bad_excute_res = 98;
     ErrBadArgsRes bad_args_res = 99;
@@ -224,6 +227,17 @@ message GetSwitchWarnRes {
   int32 warn_res = 2;     // 警告位
 }
 
+// 28 req
+message GetSwitchCtrlReq {
+  int32 switch_addr = 1;  // 开关地址
+}
+
+// 28 res
+message GetSwitchCtrlRes {
+  int32 switch_addr = 1;  // 开关地址
+  bool ctrl = 2;          // 开关能都被远程控制
+}
+
 // 104 sys config req
 message ConfigReq {
   int32 config = 1;
@@ -283,7 +297,7 @@ message HeartbeatSelectReq {
 
 message TimeTask {
   string time = 1;  // cron string  6位 "秒 分 时 日 月 星期"
-  repeated MqttDeviceRequest tasks = 2;
+  repeated MqttDeviceRequest tasks = 2;  // session_id 需要设置成 99
 }
 
 // 105 time tasks req
@@ -298,7 +312,7 @@ message SetTimeTaskRes {
 
 // 106 get time tasks req
 message GetTimeTaskReq {
-  int32 code = 1; // not use now
+  int32 code = 1;  // not use now
 }
 
 // 106 get time tasks res

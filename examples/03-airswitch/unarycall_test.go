@@ -473,7 +473,7 @@ func (suite *airSwitchTestSuite) TestSwitchKwh() {
 	suite.Equal(resTypeCheck, true)
 
 	// wait switch act over
-	time.Sleep(1 * time.Second)
+	time.Sleep(5 * time.Second)
 
 	// test get kwh
 	resTypeCheck = false
@@ -495,6 +495,31 @@ func (suite *airSwitchTestSuite) TestSwitchKwh() {
 	case *air_switch_pb.MqttDeviceResponse_GetSwitchKwhRes:
 		suite.Equal(testSwitchAddr0, res.GetGetSwitchKwhRes().GetSwitchAddr())
 		suite.Equal(testSwitchKwh, res.GetGetSwitchKwhRes().GetKwh())
+		resTypeCheck = true
+	}
+	suite.Equal(resTypeCheck, true)
+}
+
+func (suite *airSwitchTestSuite) TestGetSwitchKwh() {
+	// test get kwh
+	resTypeCheck := false
+	payload := &air_switch_pb.MqttDeviceRequest{
+		Payload: &air_switch_pb.MqttDeviceRequest_GetSwitchKwhReq{
+			GetSwitchKwhReq: &air_switch_pb.GetSwitchKWhReq{
+				SwitchAddr: testSwitchAddr0,
+			},
+		},
+	}
+
+	res, err := suite.sendRequest(payload)
+	suite.Nil(err)
+	if err != nil {
+		return
+	}
+
+	switch res.Payload.(type) {
+	case *air_switch_pb.MqttDeviceResponse_GetSwitchKwhRes:
+		suite.Equal(testSwitchAddr0, res.GetGetSwitchKwhRes().GetSwitchAddr())
 		resTypeCheck = true
 	}
 	suite.Equal(resTypeCheck, true)
@@ -540,14 +565,13 @@ func (suite *airSwitchTestSuite) TestGetTimeTask() {
 	if err != nil {
 		return
 	}
-	fmt.Println(res)
 
 	switch res.Payload.(type) {
 	case *air_switch_pb.MqttDeviceResponse_GetTimeTaskRes:
 
 		resTypeCheck = true
 	}
-	suite.Equal(resTypeCheck, false)
+	suite.Equal(resTypeCheck, true)
 }
 
 func (suite *airSwitchTestSuite) TestSetTimeTask() {
@@ -559,7 +583,7 @@ func (suite *airSwitchTestSuite) TestSetTimeTask() {
 	}
 	payload.GetSetTimeTaskReq().TimeTasks = append(payload.GetSetTimeTaskReq().TimeTasks,
 		&air_switch_pb.TimeTask{
-			Time: "0 42 13 * * *",
+			Time: "30 30 14 * * *",
 		})
 	payload.GetSetTimeTaskReq().TimeTasks[0].Tasks = append(payload.GetSetTimeTaskReq().TimeTasks[0].Tasks,
 		&air_switch_pb.MqttDeviceRequest{
@@ -574,7 +598,7 @@ func (suite *airSwitchTestSuite) TestSetTimeTask() {
 
 	payload.GetSetTimeTaskReq().TimeTasks[0].Tasks = append(payload.GetSetTimeTaskReq().TimeTasks[0].Tasks,
 		&air_switch_pb.MqttDeviceRequest{
-			SessionId: 98,
+			SessionId: 99,
 			Payload: &air_switch_pb.MqttDeviceRequest_Cmd_06Req{
 				Cmd_06Req: &air_switch_pb.CmdSubReq{
 					SubCmd: 0x07,
@@ -589,11 +613,35 @@ func (suite *airSwitchTestSuite) TestSetTimeTask() {
 	if err != nil {
 		return
 	}
-	fmt.Println(res)
 
 	switch res.Payload.(type) {
 	case *air_switch_pb.MqttDeviceResponse_SetTimeTaskRes:
 
+		resTypeCheck = true
+	}
+	suite.Equal(resTypeCheck, true)
+}
+
+func (suite *airSwitchTestSuite) TestGetSwitchCtrl() {
+	// test get kwh
+	resTypeCheck := false
+	payload := &air_switch_pb.MqttDeviceRequest{
+		Payload: &air_switch_pb.MqttDeviceRequest_GetSwitchCtrlReq{
+			GetSwitchCtrlReq: &air_switch_pb.GetSwitchCtrlReq{
+				SwitchAddr: testSwitchAddr0,
+			},
+		},
+	}
+
+	res, err := suite.sendRequest(payload)
+	suite.Nil(err)
+	if err != nil {
+		return
+	}
+
+	switch res.Payload.(type) {
+	case *air_switch_pb.MqttDeviceResponse_GetSwitchCtrlRes:
+		suite.Equal(testSwitchAddr0, res.GetGetSwitchCtrlRes().GetSwitchAddr())
 		resTypeCheck = true
 	}
 	suite.Equal(resTypeCheck, true)

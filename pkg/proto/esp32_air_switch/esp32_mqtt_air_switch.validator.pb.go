@@ -134,6 +134,13 @@ func (this *MqttDeviceRequest) Validate() error {
 			}
 		}
 	}
+	if oneOfNester, ok := this.GetPayload().(*MqttDeviceRequest_GetSwitchCtrlReq); ok {
+		if oneOfNester.GetSwitchCtrlReq != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.GetSwitchCtrlReq); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("GetSwitchCtrlReq", err)
+			}
+		}
+	}
 	if oneOfNester, ok := this.GetPayload().(*MqttDeviceRequest_Heartbeat); ok {
 		if oneOfNester.Heartbeat != nil {
 			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.Heartbeat); err != nil {
@@ -302,6 +309,13 @@ func (this *MqttDeviceResponse) Validate() error {
 		if oneOfNester.GetSwitchWarnRes != nil {
 			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.GetSwitchWarnRes); err != nil {
 				return github_com_mwitkow_go_proto_validators.FieldError("GetSwitchWarnRes", err)
+			}
+		}
+	}
+	if oneOfNester, ok := this.GetPayload().(*MqttDeviceResponse_GetSwitchCtrlRes); ok {
+		if oneOfNester.GetSwitchCtrlRes != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.GetSwitchCtrlRes); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("GetSwitchCtrlRes", err)
 			}
 		}
 	}
@@ -534,6 +548,12 @@ func (this *GetSwitchWarnReq) Validate() error {
 	return nil
 }
 func (this *GetSwitchWarnRes) Validate() error {
+	return nil
+}
+func (this *GetSwitchCtrlReq) Validate() error {
+	return nil
+}
+func (this *GetSwitchCtrlRes) Validate() error {
 	return nil
 }
 func (this *ConfigReq) Validate() error {
