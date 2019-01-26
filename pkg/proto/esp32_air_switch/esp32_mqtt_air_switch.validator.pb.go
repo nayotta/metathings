@@ -169,10 +169,17 @@ func (this *MqttDeviceRequest) Validate() error {
 			}
 		}
 	}
-	if oneOfNester, ok := this.GetPayload().(*MqttDeviceRequest_TimeTaskReq); ok {
-		if oneOfNester.TimeTaskReq != nil {
-			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.TimeTaskReq); err != nil {
-				return github_com_mwitkow_go_proto_validators.FieldError("TimeTaskReq", err)
+	if oneOfNester, ok := this.GetPayload().(*MqttDeviceRequest_SetTimeTaskReq); ok {
+		if oneOfNester.SetTimeTaskReq != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.SetTimeTaskReq); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("SetTimeTaskReq", err)
+			}
+		}
+	}
+	if oneOfNester, ok := this.GetPayload().(*MqttDeviceRequest_GetTimeTaskReq); ok {
+		if oneOfNester.GetTimeTaskReq != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.GetTimeTaskReq); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("GetTimeTaskReq", err)
 			}
 		}
 	}
@@ -347,10 +354,17 @@ func (this *MqttDeviceResponse) Validate() error {
 			}
 		}
 	}
-	if oneOfNester, ok := this.GetPayload().(*MqttDeviceResponse_TimeTaskRes); ok {
-		if oneOfNester.TimeTaskRes != nil {
-			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.TimeTaskRes); err != nil {
-				return github_com_mwitkow_go_proto_validators.FieldError("TimeTaskRes", err)
+	if oneOfNester, ok := this.GetPayload().(*MqttDeviceResponse_SetTimeTaskRes); ok {
+		if oneOfNester.SetTimeTaskRes != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.SetTimeTaskRes); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("SetTimeTaskRes", err)
+			}
+		}
+	}
+	if oneOfNester, ok := this.GetPayload().(*MqttDeviceResponse_GetTimeTaskRes); ok {
+		if oneOfNester.GetTimeTaskRes != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.GetTimeTaskRes); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("GetTimeTaskRes", err)
 			}
 		}
 	}
@@ -565,7 +579,7 @@ func (this *TimeTask) Validate() error {
 	}
 	return nil
 }
-func (this *TimeTaskReq) Validate() error {
+func (this *SetTimeTaskReq) Validate() error {
 	for _, item := range this.TimeTasks {
 		if item != nil {
 			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {
@@ -575,7 +589,20 @@ func (this *TimeTaskReq) Validate() error {
 	}
 	return nil
 }
-func (this *TimeTaskRes) Validate() error {
+func (this *SetTimeTaskRes) Validate() error {
+	return nil
+}
+func (this *GetTimeTaskReq) Validate() error {
+	return nil
+}
+func (this *GetTimeTaskRes) Validate() error {
+	for _, item := range this.TimeTasks {
+		if item != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("TimeTasks", err)
+			}
+		}
+	}
 	return nil
 }
 func (this *CmdReq) Validate() error {

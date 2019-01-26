@@ -29,7 +29,8 @@ message MqttDeviceRequest {
     HeartbeatRes heartbeat_res = 102;
     RunTimeReq run_time_req = 103;
     ConfigReq config_req = 104;
-    TimeTaskReq time_task_req = 105;
+    SetTimeTaskReq set_time_task_req = 105;
+    GetTimeTaskReq get_time_task_req = 106;
   };
 }
 
@@ -61,7 +62,8 @@ message MqttDeviceResponse {
     HeartbeatReq heartbeat_req = 102;
     RunTimeRes run_time_res = 103;
     ConfigRes config_res = 104;
-    TimeTaskRes time_task_res = 105;
+    SetTimeTaskRes set_time_task_res = 105;
+    GetTimeTaskRes get_time_task_res = 106;
   }
 }
 
@@ -285,13 +287,23 @@ message TimeTask {
 }
 
 // 105 time tasks req
-message TimeTaskReq {
+message SetTimeTaskReq {
   repeated TimeTask time_tasks = 1;
 }
 
 // 105 time tasks res
-message TimeTaskRes {
+message SetTimeTaskRes {
   int32 code = 1;
+}
+
+// 106 get time tasks req
+message GetTimeTaskReq {
+  int32 code = 1; // not use now
+}
+
+// 106 get time tasks res
+message GetTimeTaskRes {
+  repeated TimeTask time_tasks = 1;
 }
 
 // 11 12 13 modbus req

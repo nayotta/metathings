@@ -525,6 +525,80 @@ func (suite *airSwitchTestSuite) TestGetSwitchWarn() {
 	suite.Equal(resTypeCheck, true)
 }
 
+func (suite *airSwitchTestSuite) TestGetTimeTask() {
+	resTypeCheck := false
+	payload := &air_switch_pb.MqttDeviceRequest{
+		Payload: &air_switch_pb.MqttDeviceRequest_GetTimeTaskReq{
+			GetTimeTaskReq: &air_switch_pb.GetTimeTaskReq{
+				Code: 0,
+			},
+		},
+	}
+
+	res, err := suite.sendRequest(payload)
+	suite.Nil(err)
+	if err != nil {
+		return
+	}
+	fmt.Println(res)
+
+	switch res.Payload.(type) {
+	case *air_switch_pb.MqttDeviceResponse_GetTimeTaskRes:
+
+		resTypeCheck = true
+	}
+	suite.Equal(resTypeCheck, false)
+}
+
+func (suite *airSwitchTestSuite) TestSetTimeTask() {
+	resTypeCheck := false
+	payload := &air_switch_pb.MqttDeviceRequest{
+		Payload: &air_switch_pb.MqttDeviceRequest_SetTimeTaskReq{
+			SetTimeTaskReq: &air_switch_pb.SetTimeTaskReq{},
+		},
+	}
+	payload.GetSetTimeTaskReq().TimeTasks = append(payload.GetSetTimeTaskReq().TimeTasks,
+		&air_switch_pb.TimeTask{
+			Time: "0 42 13 * * *",
+		})
+	payload.GetSetTimeTaskReq().TimeTasks[0].Tasks = append(payload.GetSetTimeTaskReq().TimeTasks[0].Tasks,
+		&air_switch_pb.MqttDeviceRequest{
+			SessionId: 99,
+			Payload: &air_switch_pb.MqttDeviceRequest_SetSwitchStateReq{
+				SetSwitchStateReq: &air_switch_pb.SetSwitchStateReq{
+					SwitchAddr: 3,
+					State:      false,
+				},
+			},
+		})
+
+	payload.GetSetTimeTaskReq().TimeTasks[0].Tasks = append(payload.GetSetTimeTaskReq().TimeTasks[0].Tasks,
+		&air_switch_pb.MqttDeviceRequest{
+			SessionId: 98,
+			Payload: &air_switch_pb.MqttDeviceRequest_Cmd_06Req{
+				Cmd_06Req: &air_switch_pb.CmdSubReq{
+					SubCmd: 0x07,
+					Target: 3,
+					Value:  0xa5,
+				},
+			},
+		})
+
+	res, err := suite.sendRequest(payload)
+	suite.Nil(err)
+	if err != nil {
+		return
+	}
+	fmt.Println(res)
+
+	switch res.Payload.(type) {
+	case *air_switch_pb.MqttDeviceResponse_SetTimeTaskRes:
+
+		resTypeCheck = true
+	}
+	suite.Equal(resTypeCheck, true)
+}
+
 func TestAirSwitchTestSuite(t *testing.T) {
 	suite.Run(t, new(airSwitchTestSuite))
 }
