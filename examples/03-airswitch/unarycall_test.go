@@ -28,7 +28,7 @@ var (
 )
 
 var (
-	testGetSwitchsAddr        int32 = 9 //switch 0 and 3
+	testGetSwitchsAddr        int32 = 0x0009 //switch 0 and 3
 	testSwitchAddr0           int32
 	testSwitchModel0          int32 = 0x0740
 	testSwitchVotageHigh      int32 = 0x0104 //0x0104 = 260
@@ -39,7 +39,7 @@ var (
 	testSwitchCurrentHigh     int32 = 0x2580 //0x2580 = 9600
 	testSwitchWarnVotageHigh  int32 = 0x00F0 //0x00F0 = 240
 	testSwitchWarnVotageLow   int32 = 0x00C8 //0x00C8 = 200
-	testSwitchKwh             int64 = 0x123456
+	testSwitchKwh             int64 = 0x5432
 )
 
 type airSwitchTestSuite struct {
@@ -236,7 +236,9 @@ func (suite *airSwitchTestSuite) TestGetSwitchData() {
 	suite.Equal(resTypeCheck, true)
 }
 
-func (suite *airSwitchTestSuite) TestSetSwitchConfig() {
+// need after set config
+func (suite *airSwitchTestSuite) TestGetSwitchConfig() {
+	//set config
 	resTypeCheck := false
 	payload := &air_switch_pb.MqttDeviceRequest{
 		Payload: &air_switch_pb.MqttDeviceRequest_SetSwitchConfigReq{
@@ -275,12 +277,10 @@ func (suite *airSwitchTestSuite) TestSetSwitchConfig() {
 		break
 	}
 	suite.Equal(resTypeCheck, true)
-}
 
-// need after set config
-func (suite *airSwitchTestSuite) TestGetSwitchConfig() {
-	resTypeCheck := false
-	payload := &air_switch_pb.MqttDeviceRequest{
+	// get config
+	resTypeCheck = false
+	payload = &air_switch_pb.MqttDeviceRequest{
 		Payload: &air_switch_pb.MqttDeviceRequest_GetSwitchConfigReq{
 			GetSwitchConfigReq: &air_switch_pb.GetSwitchConfigReq{
 				SwitchAddr:      testSwitchAddr0,
@@ -295,7 +295,7 @@ func (suite *airSwitchTestSuite) TestGetSwitchConfig() {
 		},
 	}
 
-	res, err := suite.sendRequest(payload)
+	res, err = suite.sendRequest(payload)
 	suite.Nil(err)
 	if err != nil {
 		return
@@ -314,6 +314,7 @@ func (suite *airSwitchTestSuite) TestGetSwitchConfig() {
 		suite.Equal(res.GetGetSwitchConfigRes().GetModel().GetValue(), testSwitchModel0)
 		break
 	}
+
 	suite.Equal(resTypeCheck, true)
 }
 
@@ -495,31 +496,6 @@ func (suite *airSwitchTestSuite) TestSwitchKwh() {
 	case *air_switch_pb.MqttDeviceResponse_GetSwitchKwhRes:
 		suite.Equal(testSwitchAddr0, res.GetGetSwitchKwhRes().GetSwitchAddr())
 		suite.Equal(testSwitchKwh, res.GetGetSwitchKwhRes().GetKwh())
-		resTypeCheck = true
-	}
-	suite.Equal(resTypeCheck, true)
-}
-
-func (suite *airSwitchTestSuite) TestGetSwitchKwh() {
-	// test get kwh
-	resTypeCheck := false
-	payload := &air_switch_pb.MqttDeviceRequest{
-		Payload: &air_switch_pb.MqttDeviceRequest_GetSwitchKwhReq{
-			GetSwitchKwhReq: &air_switch_pb.GetSwitchKWhReq{
-				SwitchAddr: testSwitchAddr0,
-			},
-		},
-	}
-
-	res, err := suite.sendRequest(payload)
-	suite.Nil(err)
-	if err != nil {
-		return
-	}
-
-	switch res.Payload.(type) {
-	case *air_switch_pb.MqttDeviceResponse_GetSwitchKwhRes:
-		suite.Equal(testSwitchAddr0, res.GetGetSwitchKwhRes().GetSwitchAddr())
 		resTypeCheck = true
 	}
 	suite.Equal(resTypeCheck, true)
