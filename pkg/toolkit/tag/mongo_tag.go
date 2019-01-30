@@ -58,12 +58,17 @@ func (self *MongoTagToolkit) context() context.Context {
 }
 
 func (self *MongoTagToolkit) get_tags_by_id(id string) ([]string, error) {
-	opts := &options.FindOptions{Projection: bson.M{MONGO_TAG_ID: 0}}
+	exclude_fields := bson.M{
+		MONGO_TAG_ID: 0,
+		"_id":        0,
+	}
+	opts := &options.FindOptions{Projection: exclude_fields}
 	cur, err := self.get_collection().Find(self.context(), self.tag_filter_by_id(id), opts)
 	if err != nil {
 		return nil, err
 	}
 
+	found := false
 	var tags []string
 	for cur.Next(self.context()) {
 		var res bson.M
@@ -74,6 +79,10 @@ func (self *MongoTagToolkit) get_tags_by_id(id string) ([]string, error) {
 		for tag, _ := range res {
 			tags = append(tags, tag)
 		}
+		found = true
+	}
+	if !found {
+		return nil, ErrNotFound
 	}
 
 	return tags, nil
@@ -126,6 +135,10 @@ func (self *MongoTagToolkit) Get(id string) ([]string, error) {
 }
 
 func (self *MongoTagToolkit) Query(tags []string) ([]string, error) {
+	if len(tags) == 0 {
+		return nil, nil
+	}
+
 	query := bson.M{}
 	for _, tag := range tags {
 		query[tag] = MONGO_TAG_PAD
