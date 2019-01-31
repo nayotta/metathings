@@ -1,4 +1,4 @@
-package metathings_toolkit_tag
+package metathings_tagd_storage
 
 import (
 	"context"
@@ -16,26 +16,26 @@ const (
 	MONGO_TAG_PAD = "x"
 )
 
-type MongoTagToolkitOption struct {
+type MongoStorageOption struct {
 	Uri        string
 	Database   string
 	Collection string
 	Timeout    time.Duration
 }
 
-func NewMongoTagToolkitOption() *MongoTagToolkitOption {
-	return &MongoTagToolkitOption{
+func NewMongoStorageOption() *MongoStorageOption {
+	return &MongoStorageOption{
 		Timeout: 10 * time.Second,
 	}
 }
 
-type MongoTagToolkit struct {
+type MongoStorage struct {
 	client *mongo.Client
 
-	opt *MongoTagToolkitOption
+	opt *MongoStorageOption
 }
 
-func (self *MongoTagToolkit) connect() error {
+func (self *MongoStorage) connect() error {
 	var err error
 
 	if self.client, err = mongo.Connect(self.context(), self.opt.Uri); err != nil {
@@ -45,19 +45,19 @@ func (self *MongoTagToolkit) connect() error {
 	return nil
 }
 
-func (self *MongoTagToolkit) tag_filter_by_id(id string) bson.M {
+func (self *MongoStorage) tag_filter_by_id(id string) bson.M {
 	return bson.M{MONGO_TAG_ID: id}
 }
 
-func (self *MongoTagToolkit) get_collection() *mongo.Collection {
+func (self *MongoStorage) get_collection() *mongo.Collection {
 	return self.client.Database(self.opt.Database).Collection(self.opt.Collection)
 }
 
-func (self *MongoTagToolkit) context() context.Context {
+func (self *MongoStorage) context() context.Context {
 	return context.TODO()
 }
 
-func (self *MongoTagToolkit) get_tags_by_id(id string) ([]string, error) {
+func (self *MongoStorage) get_tags_by_id(id string) ([]string, error) {
 	exclude_fields := bson.M{
 		MONGO_TAG_ID: 0,
 		"_id":        0,
@@ -88,7 +88,7 @@ func (self *MongoTagToolkit) get_tags_by_id(id string) ([]string, error) {
 	return tags, nil
 }
 
-func (self *MongoTagToolkit) Tag(id string, tags []string) error {
+func (self *MongoStorage) Tag(id string, tags []string) error {
 	m := bson.M{}
 	m[MONGO_TAG_ID] = id
 	for _, tag := range tags {
@@ -103,7 +103,7 @@ func (self *MongoTagToolkit) Tag(id string, tags []string) error {
 	return nil
 }
 
-func (self *MongoTagToolkit) Untag(id string, tags []string) error {
+func (self *MongoStorage) Untag(id string, tags []string) error {
 	unsets := bson.M{}
 	for _, tag := range tags {
 		unsets[tag] = ""
@@ -118,7 +118,7 @@ func (self *MongoTagToolkit) Untag(id string, tags []string) error {
 	return nil
 }
 
-func (self *MongoTagToolkit) Remove(id string) error {
+func (self *MongoStorage) Remove(id string) error {
 	if _, err := self.get_collection().DeleteOne(self.context(), self.tag_filter_by_id(id)); err != nil {
 		return err
 	}
@@ -126,7 +126,7 @@ func (self *MongoTagToolkit) Remove(id string) error {
 	return nil
 }
 
-func (self *MongoTagToolkit) Get(id string) ([]string, error) {
+func (self *MongoStorage) Get(id string) ([]string, error) {
 	tags, err := self.get_tags_by_id(id)
 	if err != nil {
 		return nil, err
@@ -134,7 +134,7 @@ func (self *MongoTagToolkit) Get(id string) ([]string, error) {
 	return tags, nil
 }
 
-func (self *MongoTagToolkit) Query(tags []string) ([]string, error) {
+func (self *MongoStorage) Query(tags []string) ([]string, error) {
 	if len(tags) == 0 {
 		return nil, nil
 	}
@@ -168,9 +168,9 @@ func (self *MongoTagToolkit) Query(tags []string) ([]string, error) {
 	return ids, nil
 }
 
-func NewMongoTagToolkit(args ...interface{}) (TagToolkit, error) {
+func NewMongoStorage(args ...interface{}) (Storage, error) {
 	var err error
-	opt := NewMongoTagToolkitOption()
+	opt := NewMongoStorageOption()
 
 	if err = opt_helper.Setopt(map[string]func(string, interface{}) error{
 		"uri":        opt_helper.ToString(&opt.Uri),
@@ -181,14 +181,14 @@ func NewMongoTagToolkit(args ...interface{}) (TagToolkit, error) {
 		return nil, err
 	}
 
-	tagtk := &MongoTagToolkit{opt: opt}
-	if err = tagtk.connect(); err != nil {
+	stor := &MongoStorage{opt: opt}
+	if err = stor.connect(); err != nil {
 		return nil, err
 	}
 
-	return tagtk, nil
+	return stor, nil
 }
 
 func init() {
-	register_tag_toolkit_factory("mongo", NewMongoTagToolkit)
+	register_storage_factory("mongo", NewMongoStorage)
 }

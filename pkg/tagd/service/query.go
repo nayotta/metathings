@@ -17,7 +17,7 @@ func (ts *MetathingsTagdService) Query(ctx context.Context, req *pb.QueryRequest
 		tags = append(tags, tag.GetValue())
 	}
 
-	ids, err := ts.tagtk.Query(tags)
+	ids, err := ts.stor.Query(tags)
 	if err != nil {
 		logger.WithError(err).Errorf("failed to query tags")
 		return nil, status.Errorf(codes.Internal, err.Error())

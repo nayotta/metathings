@@ -21,7 +21,7 @@ func (ts *MetathingsTagdService) Tag(ctx context.Context, req *pb.TagRequest) (*
 		tags = append(tags, tag.GetValue())
 	}
 
-	err := ts.tagtk.Tag(id, tags)
+	err := ts.stor.Tag(id, tags)
 	if err != nil {
 		logger.WithError(err).Errorf("failed to tag")
 		return nil, status.Errorf(codes.Internal, err.Error())

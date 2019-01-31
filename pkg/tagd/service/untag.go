@@ -21,7 +21,7 @@ func (ts *MetathingsTagdService) Untag(ctx context.Context, req *pb.UntagRequest
 		tags = append(tags, tag.GetValue())
 	}
 
-	err := ts.tagtk.Untag(id, tags)
+	err := ts.stor.Untag(id, tags)
 	if err != nil {
 		logger.WithError(err).Errorf("failed to untag")
 		return nil, status.Errorf(codes.Internal, err.Error())

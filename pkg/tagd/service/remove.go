@@ -15,7 +15,7 @@ func (ts *MetathingsTagdService) Remove(ctx context.Context, req *pb.RemoveReque
 
 	id := req.GetId().GetValue()
 
-	err := ts.tagtk.Remove(id)
+	err := ts.stor.Remove(id)
 	if err != nil {
 		logger.WithError(err).Errorf("failed to remove id")
 		return nil, status.Errorf(codes.Internal, err.Error())

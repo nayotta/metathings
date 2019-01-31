@@ -14,7 +14,7 @@ func (ts *MetathingsTagdService) Get(ctx context.Context, req *pb.GetRequest) (*
 
 	id := req.GetId().GetValue()
 
-	tags, err := ts.tagtk.Get(id)
+	tags, err := ts.stor.Get(id)
 	if err != nil {
 		logger.WithError(err).Errorf("failed to get tags")
 		return nil, status.Errorf(codes.Internal, err.Error())

@@ -5,20 +5,21 @@ import (
 
 	log_helper "github.com/nayotta/metathings/pkg/common/log"
 	pb "github.com/nayotta/metathings/pkg/proto/tagd"
-	tagtk "github.com/nayotta/metathings/pkg/toolkit/tag"
+	storage "github.com/nayotta/metathings/pkg/tagd/storage"
 )
 
 type MetathingsTagdService struct {
 	*log_helper.GetLoggerer
 
 	logger log.FieldLogger
-	tagtk  tagtk.TagToolkit
+	stor   storage.Storage
 }
 
-func NewMetathingsTagdService(logger log.FieldLogger) (pb.TagdServiceServer, error) {
+func NewMetathingsTagdService(logger log.FieldLogger, stor storage.Storage) (pb.TagdServiceServer, error) {
 	ts := &MetathingsTagdService{
 		GetLoggerer: log_helper.NewGetLoggerer(logger),
 		logger:      logger,
+		stor:        stor,
 	}
 	return ts, nil
 }
