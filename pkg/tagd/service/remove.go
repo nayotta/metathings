@@ -4,10 +4,23 @@ import (
 	"context"
 
 	"github.com/golang/protobuf/ptypes/empty"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 
 	pb "github.com/nayotta/metathings/pkg/proto/tagd"
 )
 
-func (ts *MetathingsTagdService) Remove(context.Context, *pb.RemoveRequest) (*empty.Empty, error) {
-	panic("unimplemented")
+func (ts *MetathingsTagdService) Remove(ctx context.Context, req *pb.RemoveRequest) (*empty.Empty, error) {
+	logger := ts.GetLogger()
+
+	id := req.GetId().GetValue()
+
+	err := ts.tagtk.Remove(id)
+	if err != nil {
+		logger.WithError(err).Errorf("failed to remove id")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+	logger.WithField("id", id).Debugf("remove id")
+
+	return &empty.Empty{}, nil
 }
