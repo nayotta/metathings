@@ -11,23 +11,24 @@ import (
 
 	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
 	storage "github.com/nayotta/metathings/pkg/identityd2/storage"
+	identityd_validator "github.com/nayotta/metathings/pkg/identityd2/validator"
 	pb "github.com/nayotta/metathings/pkg/proto/identityd2"
 )
 
 func (self *MetathingsIdentitydService) ValidateDeleteDomain(ctx context.Context, in interface{}) error {
-	return self.validate_chain(
-		[]interface{}{
+	return self.validator.Validate(
+		identityd_validator.Providers{
 			func() (policy_helper.Validator, domain_getter) {
 				req := in.(*pb.DeleteDomainRequest)
 				return req, req
 			},
 		},
-		[]interface{}{ensure_get_domain_id},
+		identityd_validator.Invokers{ensure_get_domain_id},
 	)
 }
 
 func (self *MetathingsIdentitydService) AuthorizeDeleteDomain(ctx context.Context, in interface{}) error {
-	return self.enforce(ctx, in.(*pb.DeleteDomainRequest).GetDomain().GetId().GetValue(), "delete_domain")
+	return self.authorizer.Authorize(ctx, in.(*pb.DeleteDomainRequest).GetDomain().GetId().GetValue(), "delete_domain")
 }
 
 func (self *MetathingsIdentitydService) DeleteDomain(ctx context.Context, req *pb.DeleteDomainRequest) (*empty.Empty, error) {

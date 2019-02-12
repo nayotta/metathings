@@ -3,15 +3,18 @@ package cmd
 import (
 	"context"
 
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"go.uber.org/fx"
 
 	cmd_contrib "github.com/nayotta/metathings/cmd/contrib"
 	cmd_helper "github.com/nayotta/metathings/pkg/common/cmd"
 	token_helper "github.com/nayotta/metathings/pkg/common/token"
+	authorizer "github.com/nayotta/metathings/pkg/identityd2/authorizer"
 	policy "github.com/nayotta/metathings/pkg/identityd2/policy"
 	pb "github.com/nayotta/metathings/pkg/proto/tagd"
 	service "github.com/nayotta/metathings/pkg/tagd/service"
+	storage "github.com/nayotta/metathings/pkg/tagd/storage"
 )
 
 type TagdOption struct {
@@ -29,6 +32,19 @@ var (
 	tagd_opt *TagdOption
 )
 
+func init_tagd_storage(opt *TagdOption) {
+	ms := map[string]interface{}{}
+	vs := cmd_helper.GetFromStage().Sub("storage")
+	for _, key := range vs.AllKeys() {
+		if key == "driver" {
+			ms[key] = vs.GetString(key)
+		} else {
+			ms[key] = vs.Get(key)
+		}
+	}
+	opt.Storage = ms
+}
+
 var (
 	tagdCmd = &cobra.Command{
 		Use:   "tagd",
@@ -41,6 +57,8 @@ var (
 			opt_t := NewTagdOption()
 			cmd_helper.UnmarshalConfig(opt_t)
 			base_opt = &opt_t.BaseOption
+
+			init_tagd_storage(opt_t)
 
 			tagd_opt = opt_t
 			tagd_opt.SetServiceName("tagd")
@@ -67,8 +85,31 @@ func GetTagdOptions() (
 		tagd_opt
 }
 
+func NewTagdStorage(opt *TagdOption, logger log.FieldLogger) (storage.Storage, error) {
+	drv, ok := opt.Storage["driver"]
+	if !ok {
+		return nil, storage.ErrUnknownDriver
+	}
+
+	args := []interface{}{"logger", logger}
+	for k, v := range opt.Storage {
+		if k == "driver" {
+			continue
+		}
+		args = append(args, k, v)
+	}
+
+	stor, err := storage.NewStorage(drv.(string), args...)
+	if err != nil {
+		return nil, err
+	}
+
+	return stor, nil
+}
+
 func runTagd() error {
 	app := fx.New(
+		fx.NopLogger,
 		fx.Provide(
 			GetTagdOptions,
 			cmd_contrib.NewTransportCredentials,
@@ -79,6 +120,9 @@ func runTagd() error {
 			cmd_contrib.NewTokener,
 			token_helper.NewTokenValidator,
 			policy.NewEnforcer,
+			authorizer.NewAuthorizer,
+			validator.NewValidator,
+			NewTagdStorage,
 			service.NewMetathingsTagdService,
 		),
 		fx.Invoke(

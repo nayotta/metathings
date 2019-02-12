@@ -10,9 +10,10 @@ import (
 	"google.golang.org/grpc/status"
 
 	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
-	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
+	authorizer "github.com/nayotta/metathings/pkg/identityd2/authorizer"
 	policy "github.com/nayotta/metathings/pkg/identityd2/policy"
 	storage "github.com/nayotta/metathings/pkg/identityd2/storage"
+	validator "github.com/nayotta/metathings/pkg/identityd2/validator"
 	pb "github.com/nayotta/metathings/pkg/proto/identityd2"
 )
 
@@ -23,10 +24,12 @@ type MetathingsIdentitydServiceOption struct {
 type MetathingsIdentitydService struct {
 	grpc_helper.AuthorizationTokenParser
 
-	opt      *MetathingsIdentitydServiceOption
-	logger   log.FieldLogger
-	storage  storage.Storage
-	enforcer policy.Enforcer
+	opt        *MetathingsIdentitydServiceOption
+	logger     log.FieldLogger
+	storage    storage.Storage
+	authorizer authorizer.Authorizer
+	validator  validator.Validator
+	enforcer   policy.Enforcer
 }
 
 var (
@@ -36,48 +39,6 @@ var (
 		"IssueTokenByCredential",
 	}
 )
-
-func (self *MetathingsIdentitydService) enforce(ctx context.Context, obj, act string) error {
-	var err error
-
-	tkn := ctx.Value("token").(*storage.Token)
-
-	var groups []string
-	for _, g := range tkn.Groups {
-		groups = append(groups, *g.Id)
-	}
-
-	if err = self.enforcer.Enforce(*tkn.DomainId, groups, *tkn.EntityId, obj, act); err != nil {
-		if err == policy.ErrPermissionDenied {
-			self.logger.WithFields(log.Fields{
-				"subject": *tkn.EntityId,
-				"domain":  *tkn.DomainId,
-				"groups":  groups,
-				"object":  obj,
-				"action":  act,
-			}).Warningf("denied to do #action")
-			return status.Errorf(codes.PermissionDenied, err.Error())
-		} else {
-			self.logger.WithError(err).Errorf("failed to enforce")
-			return status.Errorf(codes.Internal, err.Error())
-		}
-	}
-	return nil
-}
-
-func (self *MetathingsIdentitydService) validate_chain(providers []interface{}, invokers []interface{}) error {
-	default_invokers := []interface{}{policy_helper.ValidateValidator}
-	invokers = append(default_invokers, invokers...)
-	if err := policy_helper.ValidateChain(
-		providers,
-		invokers,
-	); err != nil {
-		self.logger.WithError(err).Warningf("failed to validate request data")
-		return status.Errorf(codes.InvalidArgument, err.Error())
-	}
-
-	return nil
-}
 
 func (self *MetathingsIdentitydService) is_ignore_method(md *grpc_helper.MethodDescription) bool {
 	for _, m := range ignore_methods {
@@ -210,14 +171,16 @@ func (self *MetathingsIdentitydService) ListCredentialsForEntity(context.Context
 
 func NewMetathingsIdentitydService(
 	enforcor policy.Enforcer,
+	auth authorizer.Authorizer,
 	opt *MetathingsIdentitydServiceOption,
 	logger log.FieldLogger,
 	storage storage.Storage,
 ) (pb.IdentitydServiceServer, error) {
 	return &MetathingsIdentitydService{
-		opt:      opt,
-		logger:   logger,
-		storage:  storage,
-		enforcer: enforcor,
+		opt:        opt,
+		logger:     logger,
+		storage:    storage,
+		enforcer:   enforcor,
+		authorizer: auth,
 	}, nil
 }

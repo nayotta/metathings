@@ -7,6 +7,7 @@ import (
 	"github.com/mongodb/mongo-go-driver/bson"
 	"github.com/mongodb/mongo-go-driver/mongo"
 	"github.com/mongodb/mongo-go-driver/mongo/options"
+	log "github.com/sirupsen/logrus"
 
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 )
@@ -31,6 +32,7 @@ func NewMongoStorageOption() *MongoStorageOption {
 
 type MongoStorage struct {
 	client *mongo.Client
+	logger log.FieldLogger
 
 	opt *MongoStorageOption
 }
@@ -169,6 +171,8 @@ func (self *MongoStorage) Query(tags []string) ([]string, error) {
 }
 
 func NewMongoStorage(args ...interface{}) (Storage, error) {
+	var ok bool
+	var logger log.FieldLogger
 	var err error
 	opt := NewMongoStorageOption()
 
@@ -177,11 +181,19 @@ func NewMongoStorage(args ...interface{}) (Storage, error) {
 		"database":   opt_helper.ToString(&opt.Database),
 		"collection": opt_helper.ToString(&opt.Collection),
 		"timeout":    opt_helper.ToDuration(&opt.Timeout),
+		"logger": func(key string, val interface{}) error {
+			if logger, ok = val.(log.FieldLogger); !ok {
+				return opt_helper.ErrInvalidArguments
+			}
+			return nil
+		},
 	})(args...); err != nil {
 		return nil, err
 	}
-
-	stor := &MongoStorage{opt: opt}
+	stor := &MongoStorage{
+		opt:    opt,
+		logger: logger,
+	}
 	if err = stor.connect(); err != nil {
 		return nil, err
 	}

@@ -4,18 +4,17 @@ import (
 	"context"
 
 	log "github.com/sirupsen/logrus"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
 	context_helper "github.com/nayotta/metathings/pkg/common/context"
 	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
-	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
 	token_helper "github.com/nayotta/metathings/pkg/common/token"
 	connection "github.com/nayotta/metathings/pkg/deviced/connection"
 	session_storage "github.com/nayotta/metathings/pkg/deviced/session_storage"
 	storage "github.com/nayotta/metathings/pkg/deviced/storage"
+	identityd_authorizer "github.com/nayotta/metathings/pkg/identityd2/authorizer"
 	identityd_policy "github.com/nayotta/metathings/pkg/identityd2/policy"
+	identityd_validator "github.com/nayotta/metathings/pkg/identityd2/validator"
 	pb "github.com/nayotta/metathings/pkg/proto/deviced"
 	identityd_pb "github.com/nayotta/metathings/pkg/proto/identityd2"
 )
@@ -33,7 +32,9 @@ type MetathingsDevicedService struct {
 	storage         storage.Storage
 	session_storage session_storage.SessionStorage
 	enforcer        identityd_policy.Enforcer
-	vdr             token_helper.TokenValidator
+	authorizer      identityd_authorizer.Authorizer
+	validator       identityd_validator.Validator
+	tkvdr           token_helper.TokenValidator
 	cc              connection.ConnectionCenter
 }
 
@@ -49,49 +50,6 @@ func (self *MetathingsDevicedService) get_device_by_context(ctx context.Context)
 	}
 
 	return dev_s, nil
-}
-
-func (self *MetathingsDevicedService) enforce(ctx context.Context, obj, act string) error {
-	var err error
-
-	tkn := context_helper.ExtractToken(ctx)
-
-	var groups []string
-	for _, g := range tkn.Groups {
-		groups = append(groups, g.Id)
-	}
-
-	if err = self.enforcer.Enforce(tkn.Domain.Id, groups, tkn.Entity.Id, obj, act); err != nil {
-		if err == identityd_policy.ErrPermissionDenied {
-			self.logger.WithFields(log.Fields{
-				"subject": tkn.Entity.Id,
-				"domain":  tkn.Domain.Id,
-				"groups":  groups,
-				"object":  obj,
-				"action":  act,
-			}).Warningf("denied to do #action")
-			return status.Errorf(codes.PermissionDenied, err.Error())
-		} else {
-			self.logger.WithError(err).Errorf("failed to enforce")
-			return status.Errorf(codes.Internal, err.Error())
-		}
-	}
-
-	return nil
-}
-
-func (self *MetathingsDevicedService) validate_chain(providers []interface{}, invokers []interface{}) error {
-	default_invokers := []interface{}{policy_helper.ValidateValidator}
-	invokers = append(default_invokers, invokers...)
-	if err := policy_helper.ValidateChain(
-		providers,
-		invokers,
-	); err != nil {
-		self.logger.WithError(err).Warningf("failed to validate request data")
-		return status.Errorf(codes.InvalidArgument, err.Error())
-	}
-
-	return nil
 }
 
 func (self *MetathingsDevicedService) is_ignore_method(md *grpc_helper.MethodDescription) bool {
@@ -119,7 +77,7 @@ func (self *MetathingsDevicedService) AuthFuncOverride(ctx context.Context, full
 		return ctx, err
 	}
 
-	if tkn, err = self.vdr.Validate(tkn_txt); err != nil {
+	if tkn, err = self.tkvdr.Validate(tkn_txt); err != nil {
 		self.logger.WithError(err).Warningf("failed to validate token in identity service")
 		return ctx, err
 	}
@@ -141,7 +99,9 @@ func NewMetathingsDevicedService(
 	storage storage.Storage,
 	session_storage session_storage.SessionStorage,
 	enforcer identityd_policy.Enforcer,
-	vdr token_helper.TokenValidator,
+	authorizer identityd_authorizer.Authorizer,
+	validator identityd_validator.Validator,
+	tkvdr token_helper.TokenValidator,
 	cc connection.ConnectionCenter,
 	tknr token_helper.Tokener,
 	cli_fty *client_helper.ClientFactory,
@@ -152,7 +112,9 @@ func NewMetathingsDevicedService(
 		storage:         storage,
 		session_storage: session_storage,
 		enforcer:        enforcer,
-		vdr:             vdr,
+		authorizer:      authorizer,
+		validator:       validator,
+		tkvdr:           tkvdr,
 		cc:              cc,
 		tknr:            tknr,
 		cli_fty:         cli_fty,

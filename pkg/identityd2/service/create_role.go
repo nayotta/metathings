@@ -10,18 +10,19 @@ import (
 	id_helper "github.com/nayotta/metathings/pkg/common/id"
 	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
 	storage "github.com/nayotta/metathings/pkg/identityd2/storage"
+	identityd_validator "github.com/nayotta/metathings/pkg/identityd2/validator"
 	pb "github.com/nayotta/metathings/pkg/proto/identityd2"
 )
 
 func (self *MetathingsIdentitydService) ValidateCreateRole(ctx context.Context, in interface{}) error {
-	return self.validate_chain(
-		[]interface{}{
+	return self.validator.Validate(
+		identityd_validator.Providers{
 			func() (policy_helper.Validator, role_getter) {
 				req := in.(*pb.CreateRoleRequest)
 				return req, req
 			},
 		},
-		[]interface{}{
+		identityd_validator.Invokers{
 			func(x role_getter) error {
 				role := x.GetRole()
 

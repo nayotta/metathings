@@ -13,24 +13,25 @@ import (
 	session_helper "github.com/nayotta/metathings/pkg/common/session"
 	deviced_helper "github.com/nayotta/metathings/pkg/deviced/helper"
 	storage "github.com/nayotta/metathings/pkg/deviced/storage"
+	identityd_validator "github.com/nayotta/metathings/pkg/identityd2/validator"
 	state_pb "github.com/nayotta/metathings/pkg/proto/constant/state"
 	pb "github.com/nayotta/metathings/pkg/proto/deviced"
 )
 
 func (self *MetathingsDevicedService) ValidateHeartbeat(ctx context.Context, in interface{}) error {
-	return self.validate_chain(
-		[]interface{}{
+	return self.validator.Validate(
+		identityd_validator.Providers{
 			func() (policy_helper.Validator, get_devicer) {
 				req := in.(*pb.HeartbeatRequest)
 				return req, req
 			},
 		},
-		[]interface{}{ensure_get_device_id},
+		identityd_validator.Invokers{ensure_get_device_id},
 	)
 }
 
 func (self *MetathingsDevicedService) AuthorizeHeartbeat(ctx context.Context, in interface{}) error {
-	return self.enforce(ctx, in.(*pb.HeartbeatRequest).GetDevice().GetId().GetValue(), "heartbeat")
+	return self.authorizer.Authorize(ctx, in.(*pb.HeartbeatRequest).GetDevice().GetId().GetValue(), "heartbeat")
 }
 
 func (self *MetathingsDevicedService) Heartbeat(ctx context.Context, req *pb.HeartbeatRequest) (*empty.Empty, error) {

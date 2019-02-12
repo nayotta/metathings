@@ -3,27 +3,29 @@ package metathings_deviced_service
 import (
 	"context"
 
-	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
-	storage "github.com/nayotta/metathings/pkg/deviced/storage"
-	pb "github.com/nayotta/metathings/pkg/proto/deviced"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+
+	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
+	storage "github.com/nayotta/metathings/pkg/deviced/storage"
+	identityd_validator "github.com/nayotta/metathings/pkg/identityd2/validator"
+	pb "github.com/nayotta/metathings/pkg/proto/deviced"
 )
 
 func (self *MetathingsDevicedService) ValidatePatchDevice(ctx context.Context, in interface{}) error {
-	return self.validate_chain(
-		[]interface{}{
+	return self.validator.Validate(
+		identityd_validator.Providers{
 			func() (policy_helper.Validator, get_devicer) {
 				req := in.(*pb.PatchDeviceRequest)
 				return req, req
 			},
 		},
-		[]interface{}{ensure_get_device_id},
+		identityd_validator.Invokers{ensure_get_device_id},
 	)
 }
 
 func (self *MetathingsDevicedService) AuthorizePatchDevice(ctx context.Context, in interface{}) error {
-	return self.enforce(ctx, in.(*pb.PatchDeviceRequest).GetDevice().GetId().GetValue(), "patch_device")
+	return self.authorizer.Authorize(ctx, in.(*pb.PatchDeviceRequest).GetDevice().GetId().GetValue(), "patch_device")
 }
 
 func (self *MetathingsDevicedService) PatchDevice(ctx context.Context, req *pb.PatchDeviceRequest) (*pb.PatchDeviceResponse, error) {

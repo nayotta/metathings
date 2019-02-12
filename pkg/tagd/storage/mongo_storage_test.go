@@ -4,6 +4,7 @@ import (
 	"os"
 	"testing"
 
+	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -38,7 +39,7 @@ func (s *mongoStorageTestSuite) SetupTest() {
 	}
 
 	s.opt = opt
-	s.stor = &MongoStorage{opt: s.opt}
+	s.stor = &MongoStorage{opt: s.opt, logger: log.New()}
 
 	s.Nil(s.stor.connect())
 	s.Nil(s.stor.get_collection().Drop(s.stor.context()))
