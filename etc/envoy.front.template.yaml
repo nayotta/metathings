@@ -30,6 +30,10 @@ static_resources:
                 route:
                   cluster: deviced
               - match:
+                  prefix: "/ai.metathings.service.tagd.TagdService"
+                route:
+                  cluster: tagd
+              - match:
                   prefix: "/ai.metathings.service.cored.CoredService"
                 route:
                   cluster: cored
@@ -80,6 +84,15 @@ static_resources:
     - socket_address:
         address: deviced
         port_value: 5001
+  - name: tagd
+    connect_timeout: 5s
+    type: strict_dns
+    lb_policy: round_robin
+    http2_protocol_options: {}
+    hosts:
+    - socket_address:
+        address: tagd
+        port_value: 5002
   - name: cored
     connect_timeout: 5s
     type: strict_dns
