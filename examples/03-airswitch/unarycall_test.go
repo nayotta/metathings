@@ -30,7 +30,8 @@ var (
 var (
 	testGetSwitchsAddr        int32 = 0x0009 //switch 0 and 3
 	testSwitchAddr0           int32
-	testSwitchModel0          int32 = 0x0740
+	testSwitchType0           int32 = 0x0007
+	testSwitchModel0          int32 = 0x0040
 	testSwitchVotageHigh      int32 = 0x0104 //0x0104 = 260
 	testSwitchVotageLow       int32 = 0x0064 //0x0064 = 100
 	testSwitchLeakCurrentHigh int32 = 0x012c //0x012c = 300
@@ -236,8 +237,50 @@ func (suite *airSwitchTestSuite) TestGetSwitchData() {
 	suite.Equal(resTypeCheck, true)
 }
 
-// need after set config
 func (suite *airSwitchTestSuite) TestGetSwitchConfig() {
+	resTypeCheck := false
+	payload := &air_switch_pb.MqttDeviceRequest{
+		Payload: &air_switch_pb.MqttDeviceRequest_GetSwitchConfigReq{
+			GetSwitchConfigReq: &air_switch_pb.GetSwitchConfigReq{
+				SwitchAddr:      testSwitchAddr0,
+				VotageHigh:      true,
+				VotageLow:       true,
+				LeakCurrentHigh: true,
+				PowerHigh:       true,
+				TempHigh:        true,
+				CurrentHigh:     true,
+				Model:           true,
+			},
+		},
+	}
+
+	res, err := suite.sendRequest(payload)
+	suite.Nil(err)
+	if err != nil {
+		return
+	}
+
+	switch res.Payload.(type) {
+	case *air_switch_pb.MqttDeviceResponse_GetSwitchConfigRes:
+		resTypeCheck = true
+		fmt.Println(res.Payload)
+		suite.Equal(testSwitchAddr0, res.GetGetSwitchConfigRes().GetSwitchAddr())
+		suite.Equal(testSwitchVotageHigh, res.GetGetSwitchConfigRes().GetVotageHigh().GetValue())
+		suite.Equal(testSwitchVotageLow, res.GetGetSwitchConfigRes().GetVotageLow().GetValue())
+		suite.Equal(testSwitchLeakCurrentHigh, res.GetGetSwitchConfigRes().GetLeakCurrentHigh().GetValue())
+		suite.Equal(testSwitchPowerHigh, res.GetGetSwitchConfigRes().GetPowerHigh().GetValue())
+		suite.Equal(testSwitchTempHigh, res.GetGetSwitchConfigRes().GetTempHigh().GetValue())
+		suite.Equal(testSwitchCurrentHigh, res.GetGetSwitchConfigRes().GetCurrentHigh().GetValue())
+		suite.Equal(testSwitchType0, res.GetGetSwitchConfigRes().GetType().GetValue())
+		suite.Equal(testSwitchModel0, res.GetGetSwitchConfigRes().GetModel().GetValue())
+		break
+	}
+
+	suite.Equal(resTypeCheck, true)
+}
+
+// need after set config
+func (suite *airSwitchTestSuite) TestSwitchConfig() {
 	//set config
 	resTypeCheck := false
 	payload := &air_switch_pb.MqttDeviceRequest{
@@ -311,7 +354,8 @@ func (suite *airSwitchTestSuite) TestGetSwitchConfig() {
 		suite.Equal(testSwitchPowerHigh, res.GetGetSwitchConfigRes().GetPowerHigh().GetValue())
 		suite.Equal(testSwitchTempHigh, res.GetGetSwitchConfigRes().GetTempHigh().GetValue())
 		suite.Equal(testSwitchCurrentHigh, res.GetGetSwitchConfigRes().GetCurrentHigh().GetValue())
-		suite.Equal(res.GetGetSwitchConfigRes().GetModel().GetValue(), testSwitchModel0)
+		suite.Equal(testSwitchType0, res.GetGetSwitchConfigRes().GetType().GetValue())
+		suite.Equal(testSwitchModel0, res.GetGetSwitchConfigRes().GetModel().GetValue())
 		break
 	}
 
@@ -501,6 +545,31 @@ func (suite *airSwitchTestSuite) TestSwitchKwh() {
 	suite.Equal(resTypeCheck, true)
 }
 
+func (suite *airSwitchTestSuite) TestGetSwitchKwh() {
+	resTypeCheck := false
+	payload := &air_switch_pb.MqttDeviceRequest{
+		Payload: &air_switch_pb.MqttDeviceRequest_GetSwitchKwhReq{
+			GetSwitchKwhReq: &air_switch_pb.GetSwitchKWhReq{
+				SwitchAddr: testSwitchAddr0,
+			},
+		},
+	}
+
+	res, err := suite.sendRequest(payload)
+	suite.Nil(err)
+	if err != nil {
+		return
+	}
+
+	switch res.Payload.(type) {
+	case *air_switch_pb.MqttDeviceResponse_GetSwitchKwhRes:
+		suite.Equal(testSwitchAddr0, res.GetGetSwitchKwhRes().GetSwitchAddr())
+		suite.Equal(testSwitchKwh, res.GetGetSwitchKwhRes().GetKwh())
+		resTypeCheck = true
+	}
+	suite.Equal(resTypeCheck, true)
+}
+
 func (suite *airSwitchTestSuite) TestGetSwitchWarn() {
 	resTypeCheck := false
 	payload := &air_switch_pb.MqttDeviceRequest{
@@ -559,7 +628,7 @@ func (suite *airSwitchTestSuite) TestSetTimeTask() {
 	}
 	payload.GetSetTimeTaskReq().TimeTasks = append(payload.GetSetTimeTaskReq().TimeTasks,
 		&air_switch_pb.TimeTask{
-			Time: "30 30 14 * * *",
+			Time: "00 22 15 * * *",
 		})
 	payload.GetSetTimeTaskReq().TimeTasks[0].Tasks = append(payload.GetSetTimeTaskReq().TimeTasks[0].Tasks,
 		&air_switch_pb.MqttDeviceRequest{

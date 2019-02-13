@@ -466,6 +466,11 @@ func (this *GetSwitchConfigRes) Validate() error {
 			return github_com_mwitkow_go_proto_validators.FieldError("Model", err)
 		}
 	}
+	if this.Type != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Type); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Type", err)
+		}
+	}
 	return nil
 }
 func (this *SetSwitchConfigReq) Validate() error {

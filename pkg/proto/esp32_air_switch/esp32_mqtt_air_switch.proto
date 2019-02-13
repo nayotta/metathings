@@ -132,6 +132,7 @@ message GetSwitchConfigRes {
   google.protobuf.Int32Value temp_high = 6;          // 温度上限
   google.protobuf.Int32Value current_high = 7;       // 电流上限
   google.protobuf.Int32Value model = 8;              // 版本信息
+  google.protobuf.Int32Value type = 9;               // 开关类型
 }
 
 // 21 req
@@ -235,7 +236,7 @@ message GetSwitchCtrlReq {
 // 28 res
 message GetSwitchCtrlRes {
   int32 switch_addr = 1;  // 开关地址
-  bool ctrl = 2;          // 开关能都被远程控制
+  bool ctrl = 2;  // 开关能否被远程控制, true 能被控制, false 不能控制
 }
 
 // 104 sys config req

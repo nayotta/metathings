@@ -162,7 +162,7 @@ func main() {
 			return
 		}
 		//time.Sleep(1 * time.Second)
-		time.Sleep(100 * time.Millisecond)
+		time.Sleep(100 * time.Millisecond) 
 	}
 
 }
