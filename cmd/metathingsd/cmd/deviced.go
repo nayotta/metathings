@@ -241,7 +241,7 @@ func runDeviced() error {
 			NewMetathingsDevicedServiceOption,
 			policy.NewEnforcer,
 			authorizer.NewAuthorizer,
-			validator.NewValidator,
+			cmd_contrib.NewValidator,
 			service.NewMetathingsDevicedService,
 		),
 		fx.Invoke(

@@ -121,7 +121,7 @@ func runTagd() error {
 			token_helper.NewTokenValidator,
 			policy.NewEnforcer,
 			authorizer.NewAuthorizer,
-			validator.NewValidator,
+			cmd_contrib.NewValidator,
 			NewTagdStorage,
 			service.NewMetathingsTagdService,
 		),
