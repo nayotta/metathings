@@ -9,6 +9,10 @@ import (
 	pb "github.com/nayotta/metathings/pkg/proto/tagd"
 )
 
+func (ts *MetathingsTagdService) AuthorizeGet(ctx context.Context, in interface{}) error {
+	return ts.authorizer.Authorize(ctx, in.(*pb.GetRequest).GetId().GetValue(), TAGD_GET)
+}
+
 func (ts *MetathingsTagdService) Get(ctx context.Context, req *pb.GetRequest) (*pb.GetResponse, error) {
 	logger := ts.GetLogger()
 

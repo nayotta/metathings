@@ -10,6 +10,10 @@ import (
 	pb "github.com/nayotta/metathings/pkg/proto/tagd"
 )
 
+func (ts *MetathingsTagdService) AuthorizeRemove(ctx context.Context, in interface{}) error {
+	return ts.authorizer.Authorize(ctx, in.(*pb.GetRequest).GetId().GetValue(), TAGD_REMOVE)
+}
+
 func (ts *MetathingsTagdService) Remove(ctx context.Context, req *pb.RemoveRequest) (*empty.Empty, error) {
 	logger := ts.GetLogger()
 

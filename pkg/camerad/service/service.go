@@ -31,8 +31,6 @@ type MetathingsCameradServiceOption struct {
 }
 
 type MetathingsCameradService struct {
-	grpc_helper.AuthorizationTokenParser
-
 	cli_fty       *client_helper.ClientFactory
 	camera_st_psr state_helper.CameraStateParser
 	app_cred_mgr  app_cred_mgr.ApplicationCredentialManager
@@ -73,7 +71,7 @@ func (srv *MetathingsCameradService) ContextWithToken(ctxs ...context.Context) c
 }
 
 func (srv *MetathingsCameradService) AuthFuncOverride(ctx context.Context, fullMethodName string) (context.Context, error) {
-	token_str, err := srv.GetTokenFromContext(ctx)
+	token_str, err := grpc_helper.GetTokenFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}

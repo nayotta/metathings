@@ -23,9 +23,9 @@ type GetLoggerer struct {
 }
 
 func (l *GetLoggerer) GetLogger() log.FieldLogger {
-	pc := make([]uintptr, 1)
+	pc := make([]uintptr, 2)
 	runtime.Callers(1, pc)
-	return l.logger.WithField("#caller", runtime.FuncForPC(pc[0]).Name())
+	return l.logger.WithField("#caller", runtime.FuncForPC(pc[1]).Name())
 }
 
 func NewGetLoggerer(logger log.FieldLogger) *GetLoggerer {

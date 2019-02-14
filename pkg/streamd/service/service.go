@@ -86,8 +86,6 @@ func SetStreamManager(v *viper.Viper) ServiceOptions {
 }
 
 type metathingsStreamdService struct {
-	grpc_helper.AuthorizationTokenParser
-
 	cli_fty       *client_helper.ClientFactory
 	stream_st_psr state_helper.StreamStateParser
 	app_cred_mgr  app_cred_mgr.ApplicationCredentialManager
@@ -100,7 +98,7 @@ type metathingsStreamdService struct {
 }
 
 func (self *metathingsStreamdService) AuthFuncOverride(ctx context.Context, fullMethodName string) (context.Context, error) {
-	token_str, err := self.GetTokenFromContext(ctx)
+	token_str, err := grpc_helper.GetTokenFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}

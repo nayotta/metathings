@@ -3,8 +3,10 @@ package metathings_deviced_service
 import (
 	"context"
 
+	grpc_auth "github.com/grpc-ecosystem/go-grpc-middleware/auth"
 	log "github.com/sirupsen/logrus"
 
+	afo_helper "github.com/nayotta/metathings/pkg/common/auth_func_overrider"
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
 	context_helper "github.com/nayotta/metathings/pkg/common/context"
 	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
@@ -23,8 +25,7 @@ type MetathingsDevicedServiceOption struct {
 }
 
 type MetathingsDevicedService struct {
-	grpc_helper.AuthorizationTokenParser
-
+	grpc_auth.ServiceAuthFuncOverride
 	tknr            token_helper.Tokener
 	cli_fty         *client_helper.ClientFactory
 	opt             *MetathingsDevicedServiceOption
@@ -52,45 +53,8 @@ func (self *MetathingsDevicedService) get_device_by_context(ctx context.Context)
 	return dev_s, nil
 }
 
-func (self *MetathingsDevicedService) is_ignore_method(md *grpc_helper.MethodDescription) bool {
+func (self *MetathingsDevicedService) IsIgnoreMethod(md *grpc_helper.MethodDescription) bool {
 	return false
-}
-
-func (self *MetathingsDevicedService) AuthFuncOverride(ctx context.Context, fullMethodName string) (context.Context, error) {
-	var tkn *identityd_pb.Token
-	var tkn_txt string
-	var new_ctx context.Context
-	var err error
-	var md *grpc_helper.MethodDescription
-
-	if md, err = grpc_helper.ParseMethodDescription(fullMethodName); err != nil {
-		self.logger.WithError(err).Warningf("failed to parse method description")
-		return ctx, err
-	}
-
-	if self.is_ignore_method(md) {
-		return ctx, nil
-	}
-
-	if tkn_txt, err = self.GetTokenFromContext(ctx); err != nil {
-		self.logger.WithError(err).Warningf("failed to get token from context")
-		return ctx, err
-	}
-
-	if tkn, err = self.tkvdr.Validate(tkn_txt); err != nil {
-		self.logger.WithError(err).Warningf("failed to validate token in identity service")
-		return ctx, err
-	}
-
-	new_ctx = context.WithValue(ctx, "token", tkn)
-
-	self.logger.WithFields(log.Fields{
-		"method":    md.Method,
-		"entity_id": tkn.Entity.Id,
-		"domain_id": tkn.Domain.Id,
-	}).Debugf("authorize token")
-
-	return new_ctx, nil
 }
 
 func NewMetathingsDevicedService(
@@ -106,7 +70,7 @@ func NewMetathingsDevicedService(
 	tknr token_helper.Tokener,
 	cli_fty *client_helper.ClientFactory,
 ) (pb.DevicedServiceServer, error) {
-	return &MetathingsDevicedService{
+	srv := &MetathingsDevicedService{
 		opt:             opt,
 		logger:          logger,
 		storage:         storage,
@@ -118,5 +82,8 @@ func NewMetathingsDevicedService(
 		cc:              cc,
 		tknr:            tknr,
 		cli_fty:         cli_fty,
-	}, nil
+	}
+	srv.ServiceAuthFuncOverride = afo_helper.NewAuthFuncOverrider(tkvdr, srv, logger)
+
+	return srv, nil
 }

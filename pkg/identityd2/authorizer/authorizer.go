@@ -45,6 +45,7 @@ func (a *authorizer) Authorize(ctx context.Context, obj, act string) error {
 			return status.Errorf(codes.Internal, err.Error())
 		}
 	}
+
 	return nil
 }
 

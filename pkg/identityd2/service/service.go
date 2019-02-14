@@ -22,8 +22,6 @@ type MetathingsIdentitydServiceOption struct {
 }
 
 type MetathingsIdentitydService struct {
-	grpc_helper.AuthorizationTokenParser
-
 	opt        *MetathingsIdentitydServiceOption
 	logger     log.FieldLogger
 	storage    storage.Storage
@@ -115,7 +113,7 @@ func (self *MetathingsIdentitydService) AuthFuncOverride(ctx context.Context, fu
 		return ctx, nil
 	}
 
-	if tkn_txt, err = self.GetTokenFromContext(ctx); err != nil {
+	if tkn_txt, err = grpc_helper.GetTokenFromContext(ctx); err != nil {
 		self.logger.WithError(err).Warningf("failed to get token from context")
 		return ctx, err
 	}
