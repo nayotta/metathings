@@ -684,6 +684,7 @@ func (suite *airSwitchTestSuite) TestGetSwitchCtrl() {
 		return
 	}
 
+	fmt.Println(res.Payload)
 	switch res.Payload.(type) {
 	case *air_switch_pb.MqttDeviceResponse_GetSwitchCtrlRes:
 		suite.Equal(testSwitchAddr0, res.GetGetSwitchCtrlRes().GetSwitchAddr())

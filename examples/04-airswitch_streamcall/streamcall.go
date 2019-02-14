@@ -17,6 +17,7 @@ import (
 	"google.golang.org/grpc/keepalive"
 )
 
+// MtpURL MtpURL
 var (
 	MtpURL             = "metathings.ai:21733"
 	MtpUsername        = "admin"
