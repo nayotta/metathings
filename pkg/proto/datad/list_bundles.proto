@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package ai.metathings.service.datad;
+
+import "github.com/mwitkow/go-proto-validators/validator.proto";
+
+import "model.proto";
+
+message ListBundlesRequest {
+	OpBundle bundle = 1 [(validator.field) = {msg_exists: true}];
+}
+
+message ListBundlesResponse {
+	repeated Bundle bundles = 1;
+}

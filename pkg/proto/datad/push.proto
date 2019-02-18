@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+package ai.metathings.service.datad;
+
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/struct.proto";
+
+import "github.com/mwitkow/go-proto-validators/validator.proto";
+
+import "model.proto";
+
+message OpPushConfig {
+	google.protobuf.StringValue id = 1 [(validator.field) = {msg_exists: true}];
+	OpBundle bundle = 2 [(validator.field) = {msg_exists: true}];
+	// if config_ack is true, client streaming will recv config ack response
+	// after config success.
+	google.protobuf.BoolValue config_ack = 3;
+	// if push_ack is true, client streaming will recv frame ack response
+	// after push frame success.
+	google.protobuf.BoolValue push_ack = 4;
+}
+
+message OpPushFrame {
+	google.protobuf.StringValue id = 1 [(validator.field) = {msg_exists: true}];
+	OpFlow flow = 2 [(validator.field) = {msg_exists: true}];
+	google.protobuf.Struct frame = 3 [(validator.field) = {msg_exists: true}];
+}
+
+message PushAck {
+	string id = 2;
+}
+
+message PushRequest {
+	oneof request {
+		OpPushConfig config = 1;
+		OpPushFrame frame = 2;
+	}
+}
+
+message PushResponse {
+	oneof response {
+		PushAck ack = 1;
+	}
+}

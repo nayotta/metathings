@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package ai.metathings.service.datad;
+option go_package = "datad";
+
+import "google/protobuf/wrappers.proto";
+
+message Bundle {
+	string id = 1;
+	repeated Flow flows = 2;
+}
+
+message OpBundle {
+	google.protobuf.StringValue id = 1;
+	repeated Flow flows = 2;
+}
+
+message Flow {
+	string id = 1;
+	string name = 2;
+}
+
+message OpFlow {
+	google.protobuf.StringValue id = 1;
+	google.protobuf.StringValue name = 2;
+}

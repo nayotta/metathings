@@ -7,6 +7,7 @@ all:
 	$(MAKE) -C deviced all
 	$(MAKE) -C device all
 	$(MAKE) -C tagd all
+	$(MAKE) -C datad all
 	$(MAKE) -C cored all
 	$(MAKE) -C camerad all
 	$(MAKE) -C sensord all

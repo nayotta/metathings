@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package ai.metathings.service.datad;
+option go_package = "datad";
+
+import "google/protobuf/empty.proto";
+
+import "create_bundle.proto";
+import "delete_bundle.proto";
+import "get_bundle.proto";
+import "list_bundles.proto";
+import "create_flow.proto";
+import "delete_flow.proto";
+import "get_flow.proto";
+import "push.proto";
+import "pull.proto";
+
+service DatadService {
+	rpc CreateBundle(CreateBundleRequest) returns (CreateBundleResponse) {}
+	rpc DeleteBundle(DeleteBundleRequest) returns (google.protobuf.Empty) {}
+	rpc GetBundle(GetBundleRequest) returns (GetBundleResponse) {}
+	rpc ListBundles(ListBundlesRequest) returns (ListBundlesResponse) {}
+
+	rpc CreateFlow(CreateFlowRequest) returns (CreateFlowResponse) {}
+	rpc DeleteFlow(DeleteFlowRequest) returns (google.protobuf.Empty) {}
+	rpc GetFlow(GetFlowRequest) returns (GetFlowResponse) {}
+
+	rpc Push(stream PushRequest) returns (stream PushResponse) {}
+	rpc Pull(stream PullRequest) returns (stream PullResponse) {}
+}

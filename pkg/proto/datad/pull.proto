@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package ai.metathings.service.datad;
+
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/struct.proto";
+
+import "github.com/mwitkow/go-proto-validators/validator.proto";
+
+import "model.proto";
+
+message OpPullConfig {
+	google.protobuf.StringValue id = 1 [(validator.field) = {msg_exists: true}];
+	OpBundle bundle = 2 [(validator.field) = {msg_exists: true}];
+	repeated OpFlow flows = 3;
+	google.protobuf.BoolValue config_ack = 4;
+}
+
+message PullAck {
+	string id = 1;
+}
+
+message PullFrame {
+	Flow flow = 1;
+	google.protobuf.Struct frame = 2;
+}
+
+message PullRequest {
+	oneof request {
+		OpPullConfig config = 1;
+	}
+}
+
+message PullResponse {
+	oneof response {
+		PullAck ack = 1;
+		PullFrame frame = 2;
+	}
+}
