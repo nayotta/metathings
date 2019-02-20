@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package ai.metathings.service.deviced;
+
+import "google/protobuf/wrappers.proto";
+
+import "github.com/mwitkow/go-proto-validators/validator.proto";
+
+import "model.proto";
+
+message PullFrameFromFlowRequest {
+	message Config {
+		OpDevice device = 1;
+		google.protobuf.BoolValue config_ack = 2;
+	}
+
+	google.protobuf.StringValue id = 1 [(validator.field) = {msg_exists: true}];
+	oneof request {
+		Config config = 2;
+	}
+}
+
+message PullFrameFromFlowResponse {
+	message Ack {}
+
+	string id = 1;
+	oneof response {
+		Ack ack = 2;
+		Frame frame = 3;
+	}
+}

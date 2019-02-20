@@ -11,12 +11,16 @@ import "patch_device.proto";
 import "get_device.proto";
 import "list_devices.proto";
 
+import "unary_call.proto";
+import "stream_call.proto";
+
+import "pull_frame_from_flow.proto";
+import "push_frame_to_flow.proto";
+import "query_frame_from_flow.proto";
+
 import "show_device.proto";
 import "connect.proto";
 import "heartbeat.proto";
-
-import "unary_call.proto";
-import "stream_call.proto";
 
 service DevicedService {
 	rpc CreateDevice(CreateDeviceRequest) returns (CreateDeviceResponse) {}
@@ -25,11 +29,18 @@ service DevicedService {
 	rpc GetDevice(GetDeviceRequest) returns (GetDeviceResponse) {}
 	rpc ListDevices(ListDevicesRequest) returns (ListDevicesResponse) {}
 
+	// Calling
+	rpc UnaryCall(UnaryCallRequest) returns (UnaryCallResponse) {}
+	rpc StreamCall(stream StreamCallRequest) returns (stream StreamCallResponse) {}
+
+	// Flow
+	rpc PullFrameFromFlow(PullFrameFromFlowRequest) returns (stream PullFrameFromFlowResponse) {}
+	rpc PushFrameToFlow(stream PushFrameToFlowRequest) returns (stream PushFrameToFlowResponse) {}
+	rpc QueryFrameFromFlow(QueryFrameFromFlowRequest) returns (QueryFrameFromFlowResponse) {}
+
 	// internal device only
 	rpc ShowDevice(google.protobuf.Empty) returns (ShowDeviceResponse) {}
 	rpc Connect(stream ConnectResponse) returns (stream ConnectRequest) {}
 	rpc Heartbeat(HeartbeatRequest) returns (google.protobuf.Empty) {}
 
-	rpc UnaryCall(UnaryCallRequest) returns (UnaryCallResponse) {}
-	rpc StreamCall(stream StreamCallRequest) returns (stream StreamCallResponse) {}
 }
