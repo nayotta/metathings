@@ -29,7 +29,7 @@ var (
 
 var (
 	testGetSwitchsAddr        int32 = 0x0009 //switch 0 and 3
-	testSwitchAddr0           int32
+	testSwitchAddr0           int32 = 3
 	testSwitchType0           int32 = 0x0007
 	testSwitchModel0          int32 = 0x0040
 	testSwitchVotageHigh      int32 = 0x0104 //0x0104 = 260
@@ -688,6 +688,30 @@ func (suite *airSwitchTestSuite) TestGetSwitchCtrl() {
 	switch res.Payload.(type) {
 	case *air_switch_pb.MqttDeviceResponse_GetSwitchCtrlRes:
 		suite.Equal(testSwitchAddr0, res.GetGetSwitchCtrlRes().GetSwitchAddr())
+		resTypeCheck = true
+	}
+	suite.Equal(resTypeCheck, true)
+}
+
+func (suite *airSwitchTestSuite) TestGetRunTime() {
+	resTypeCheck := false
+	payload := &air_switch_pb.MqttDeviceRequest{
+		Payload: &air_switch_pb.MqttDeviceRequest_RunTimeReq{
+			RunTimeReq: &air_switch_pb.RunTimeReq{
+				Time:0,
+			},
+		},
+	}
+
+	res, err := suite.sendRequest(payload)
+	suite.Nil(err)
+	if err != nil {
+		return
+	}
+
+	switch res.Payload.(type) {
+	case *air_switch_pb.MqttDeviceResponse_RunTimeRes:
+		fmt.Println(res)
 		resTypeCheck = true
 	}
 	suite.Equal(resTypeCheck, true)
