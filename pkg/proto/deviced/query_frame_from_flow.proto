@@ -3,13 +3,18 @@ syntax = "proto3";
 package ai.metathings.service.deviced;
 
 import "google/protobuf/wrappers.proto";
+import "google/protobuf/timestamp.proto";
 
 import "github.com/mwitkow/go-proto-validators/validator.proto";
 
 import "model.proto";
 
 message QueryFrameFromFlowRequest {
+	OpDevice device = 1;
+	google.protobuf.Timestamp from = 2;
+	google.protobuf.Timestamp to = 3;
 }
 
 message QueryFrameFromFlowResponse {
+	repeated Frame frames = 1;
 }

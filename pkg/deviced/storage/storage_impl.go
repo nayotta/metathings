@@ -336,6 +336,26 @@ func (self *StorageImpl) ListModules(mdl *Module) ([]*Module, error) {
 	return mdls, nil
 }
 
+func (self *StorageImpl) CreateFlow(flw *Flow) (*Flow, error) {
+	panic("unimplemented")
+}
+
+func (self *StorageImpl) DeleteFlow(id string) error {
+	panic("unimplemented")
+}
+
+func (self *StorageImpl) PatchFlow(id string, flw *Flow) (*Flow, error) {
+	panic("unimplemented")
+}
+
+func (self *StorageImpl) GetFlow(id string) (*Flow, error) {
+	panic("unimplemented")
+}
+
+func (self *StorageImpl) ListFlows(flw *Flow) ([]*Flow, error) {
+	panic("unimplemented")
+}
+
 func init_args(s *StorageImpl, args ...interface{}) error {
 	var key string
 	var ok bool

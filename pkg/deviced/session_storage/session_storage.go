@@ -13,12 +13,12 @@ type SessionStorageFactory func(...interface{}) (SessionStorage, error)
 
 var session_storage_factories map[string]SessionStorageFactory
 
-func register_session_storage_factory(driver string, fty SessionStorageFactory) {
+func register_session_storage_factory(drv string, fty SessionStorageFactory) {
 	if session_storage_factories == nil {
 		session_storage_factories = map[string]SessionStorageFactory{}
 	}
 
-	session_storage_factories[driver] = fty
+	session_storage_factories[drv] = fty
 }
 
 func NewSessionStorage(driver string, args ...interface{}) (SessionStorage, error) {
