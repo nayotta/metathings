@@ -3,6 +3,7 @@ package metathings_deviced_flow
 import (
 	"context"
 	"strings"
+	"sync"
 	"testing"
 	"time"
 
@@ -39,6 +40,7 @@ func (s *FlowImplTestSuite) SetupTest() {
 	opt.MgoDb = test_helper.GetTestMongoDatabase()
 	opt.Id = test_helper.GetenvWithDefault("MTT_FLOW_ID", "floooow")
 	opt.DevId = test_helper.GetenvWithDefault("MTT_DEVICE_ID", "deeeev")
+	opt.KfkBrokers = test_helper.GetTestKafkaBrokers()
 
 	logger, err := log_helper.NewLogger("test", "debug")
 	s.Nil(err)
@@ -66,10 +68,21 @@ func (s *FlowImplTestSuite) SetupTest() {
 }
 
 func (s *FlowImplTestSuite) TestPushFrame() {
+	wg := new(sync.WaitGroup)
 	push_at := time.Now()
 	var dat struct_.Struct
 	s.Nil(s.dec.Unmarshal(strings.NewReader(`{"v": 4}`), &dat))
+
+	wg.Add(1)
+	go func() {
+		frm := <-s.flow.PullFrame()
+		s.NotNil(frm)
+		wg.Done()
+	}()
+
+	time.Sleep(500 * time.Millisecond)
 	s.Nil(s.flow.PushFrame(&pb.Frame{Data: &dat}))
+	wg.Wait()
 
 	frms, err := s.flow.QueryFrame(&FlowFilter{BeginAt: push_at})
 	s.Nil(err)

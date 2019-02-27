@@ -3,33 +3,80 @@ package metathings_deviced_flow
 import (
 	"context"
 	"strings"
+	"sync"
 	"time"
 
+	"github.com/Shopify/sarama"
+	cluster "github.com/bsm/sarama-cluster"
 	"github.com/golang/protobuf/jsonpb"
 	struct_ "github.com/golang/protobuf/ptypes/struct"
 	"github.com/mongodb/mongo-go-driver/bson"
 	"github.com/mongodb/mongo-go-driver/mongo"
 	log "github.com/sirupsen/logrus"
 
+	id_helper "github.com/nayotta/metathings/pkg/common/id"
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 	pb_helper "github.com/nayotta/metathings/pkg/common/protobuf"
 	pb "github.com/nayotta/metathings/pkg/proto/deviced"
 )
 
+var (
+	json_encoder = jsonpb.Marshaler{}
+	json_decoder = jsonpb.Unmarshaler{}
+)
+
 type FlowOption struct {
-	Id    string
-	DevId string
-	MgoDb string
+	Id         string
+	DevId      string
+	MgoDb      string
+	KfkBrokers []string
 }
 
 type FlowImpl struct {
-	opt    *FlowOption
-	mgo_db *mongo.Database
-	logger log.FieldLogger
+	opt           *FlowOption
+	mgo_db        *mongo.Database
+	kfk_prod      sarama.SyncProducer
+	kfk_prod_once *sync.Once
+	logger        log.FieldLogger
 }
 
 func (f *FlowImpl) mongo_collection() *mongo.Collection {
 	return f.mgo_db.Collection("metathings.flow." + f.Id())
+}
+
+func (f *FlowImpl) kafka_topic() string {
+	return "metathings.flow." + f.Id()
+}
+
+func (f *FlowImpl) init_sarama_producer() {
+	var err error
+	cfg := sarama.NewConfig()
+	cfg.Producer.Return.Successes = true
+	cfg.Producer.Partitioner = sarama.NewRandomPartitioner
+
+	f.kfk_prod, err = sarama.NewSyncProducer(f.opt.KfkBrokers, cfg)
+	if err != nil {
+		// TODO(Peer): handle error
+		panic(err)
+	}
+	f.logger.WithField("topic", f.kafka_topic()).Debugf("init sarama producer")
+}
+
+func (f *FlowImpl) new_sarama_cluster_consumer(grp string, topics []string) (*cluster.Consumer, error) {
+	cfg := cluster.NewConfig()
+	cfg.Consumer.Return.Errors = true
+	cfg.Group.Return.Notifications = true
+	cfg.Group.Heartbeat.Interval = 100 * time.Millisecond
+	consumer, err := cluster.NewConsumer(f.opt.KfkBrokers, grp, topics, cfg)
+	if err != nil {
+		return nil, err
+	}
+	return consumer, nil
+}
+
+func (f *FlowImpl) get_sarama_producer() sarama.SyncProducer {
+	f.kfk_prod_once.Do(f.init_sarama_producer)
+	return f.kfk_prod
 }
 
 func (f *FlowImpl) context() context.Context {
@@ -44,10 +91,58 @@ func (f *FlowImpl) Device() string {
 	return f.opt.DevId
 }
 
+func (f *FlowImpl) Close() error {
+	var err error
+	if f.kfk_prod != nil {
+		if err = f.kfk_prod.Close(); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (f *FlowImpl) PushFrame(frm *pb.Frame) error {
+	ts := pb_helper.Now()
+	frm.Ts = &ts
+
+	err := f.push_frame_to_mgo(frm)
+	if err != nil {
+		return err
+	}
+
+	// TODO(Peer): dont push frame to kafka when noone pull frame.
+	err = f.push_frame_to_kafka(frm)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (f *FlowImpl) push_frame_to_kafka(frm *pb.Frame) error {
+	frm_txt, err := json_encoder.MarshalToString(frm)
+	if err != nil {
+		return err
+	}
+
+	msg := &sarama.ProducerMessage{
+		Topic:     f.kafka_topic(),
+		Value:     sarama.ByteEncoder(frm_txt),
+		Partition: -1,
+	}
+
+	_, _, err = f.get_sarama_producer().SendMessage(msg)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (f *FlowImpl) push_frame_to_mgo(frm *pb.Frame) error {
 	frm_dat := frm.GetData()
-	enc := jsonpb.Marshaler{}
-	frm_dat_txt, err := enc.MarshalToString(frm_dat)
+	frm_dat_txt, err := json_encoder.MarshalToString(frm_dat)
 	if err != nil {
 		return err
 	}
@@ -57,7 +152,7 @@ func (f *FlowImpl) PushFrame(frm *pb.Frame) error {
 	if err != nil {
 		return err
 	}
-	frm_dat_buf["ts"] = time.Now().UnixNano()
+	frm_dat_buf["#ts"] = pb_helper.ToTime(*frm.GetTs()).UnixNano()
 
 	coll := f.mongo_collection()
 	_, err = coll.InsertOne(f.context(), frm_dat_buf)
@@ -68,8 +163,45 @@ func (f *FlowImpl) PushFrame(frm *pb.Frame) error {
 	return nil
 }
 
-func (f *FlowImpl) PullFrame(flr *FlowFilter) <-chan *pb.Frame {
-	panic("unimplemented")
+func (f *FlowImpl) PullFrame() <-chan *pb.Frame {
+	ch := make(chan *pb.Frame)
+
+	go func() {
+		defer close(ch)
+
+		grp := id_helper.NewId()
+		consumer, err := f.new_sarama_cluster_consumer(grp, []string{f.kafka_topic()})
+		if err != nil {
+			f.logger.WithError(err).Debugf("failed to new sarama cluster consumer")
+			return
+		}
+
+		for {
+			// TODO(Peer): close by outside.
+			select {
+			case msg, ok := <-consumer.Messages():
+				if ok {
+					consumer.MarkOffset(msg, "")
+					var frm pb.Frame
+					err = json_decoder.Unmarshal(strings.NewReader(string(msg.Value)), &frm)
+					if err != nil {
+						f.logger.WithError(err).Debugf("failed to decode frame from message")
+						return
+					}
+					ch <- &frm
+				}
+			case err := <-consumer.Errors():
+				f.logger.WithError(err).Debugf("failed to receive message from kafka")
+				return
+			case ntf := <-consumer.Notifications():
+				f.logger.WithField("notification", ntf).Debugf("receive notification from kafka")
+			case prt := <-consumer.Partitions():
+				f.logger.WithField("partition", prt).Debugf("receive partition change from kafka")
+			}
+		}
+	}()
+
+	return ch
 }
 
 func (f *FlowImpl) QueryFrame(flrs ...*FlowFilter) ([]*pb.Frame, error) {
@@ -98,7 +230,7 @@ func (f *FlowImpl) query_frame(coll *mongo.Collection, flr *FlowFilter) ([]*pb.F
 		flr_buf["$lte"] = flr.EndAt.UnixNano()
 	}
 
-	cur, err := coll.Find(f.context(), bson.M{"ts": flr_buf})
+	cur, err := coll.Find(f.context(), bson.M{"#ts": flr_buf})
 	if err != nil {
 		return nil, err
 	}
@@ -111,11 +243,11 @@ func (f *FlowImpl) query_frame(coll *mongo.Collection, flr *FlowFilter) ([]*pb.F
 			return nil, err
 		}
 
-		ts, ok := res_buf["ts"]
+		ts, ok := res_buf["#ts"]
 		if !ok {
 			ts = nil
 		}
-		delete(res_buf, "ts")
+		delete(res_buf, "#ts")
 
 		ts_int64, ok := ts.(int64)
 		if !ok {
@@ -181,8 +313,9 @@ func new_flow_impl(args ...interface{}) (*FlowImpl, error) {
 	mgo_db := mgo_cli.Database(opt.MgoDb)
 
 	return &FlowImpl{
-		opt:    opt,
-		mgo_db: mgo_db,
-		logger: logger,
+		opt:           opt,
+		mgo_db:        mgo_db,
+		logger:        logger,
+		kfk_prod_once: new(sync.Once),
 	}, nil
 }

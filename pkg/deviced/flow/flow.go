@@ -15,8 +15,9 @@ type Flow interface {
 	Id() string
 	Device() string
 	PushFrame(*pb.Frame) error
-	PullFrame(*FlowFilter) <-chan *pb.Frame
+	PullFrame() <-chan *pb.Frame
 	QueryFrame(...*FlowFilter) ([]*pb.Frame, error)
+	Close() error
 }
 
 func NewFlow(args ...interface{}) (Flow, error) {
