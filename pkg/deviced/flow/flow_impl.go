@@ -28,7 +28,6 @@ var (
 type FlowOption struct {
 	Id         string
 	DevId      string
-	MgoDb      string
 	KfkBrokers []string
 }
 
@@ -163,22 +162,26 @@ func (f *FlowImpl) push_frame_to_mgo(frm *pb.Frame) error {
 	return nil
 }
 
-func (f *FlowImpl) PullFrame() <-chan *pb.Frame {
-	ch := make(chan *pb.Frame)
+func (f *FlowImpl) PullFrame() (<-chan *pb.Frame, <-chan struct{}) {
+	frm_chan := make(chan *pb.Frame)
+	quit_chan := make(chan struct{})
 
 	go func() {
-		defer close(ch)
+		defer close(frm_chan)
 
 		grp := id_helper.NewId()
 		consumer, err := f.new_sarama_cluster_consumer(grp, []string{f.kafka_topic()})
+		defer consumer.Close()
 		if err != nil {
 			f.logger.WithError(err).Debugf("failed to new sarama cluster consumer")
 			return
 		}
 
 		for {
-			// TODO(Peer): close by outside.
 			select {
+			case <-quit_chan:
+				f.logger.Debugf("receive quit signal from outside")
+				return
 			case msg, ok := <-consumer.Messages():
 				if ok {
 					consumer.MarkOffset(msg, "")
@@ -188,7 +191,7 @@ func (f *FlowImpl) PullFrame() <-chan *pb.Frame {
 						f.logger.WithError(err).Debugf("failed to decode frame from message")
 						return
 					}
-					ch <- &frm
+					frm_chan <- &frm
 				}
 			case err := <-consumer.Errors():
 				f.logger.WithError(err).Debugf("failed to receive message from kafka")
@@ -201,7 +204,7 @@ func (f *FlowImpl) PullFrame() <-chan *pb.Frame {
 		}
 	}()
 
-	return ch
+	return frm_chan, quit_chan
 }
 
 func (f *FlowImpl) QueryFrame(flrs ...*FlowFilter) ([]*pb.Frame, error) {
@@ -281,7 +284,7 @@ func new_flow_impl(args ...interface{}) (*FlowImpl, error) {
 	var ok bool
 	var logger log.FieldLogger
 	var opt *FlowOption
-	var mgo_cli *mongo.Client
+	var mgo_db *mongo.Database
 
 	err := opt_helper.Setopt(map[string]func(string, interface{}) error{
 		"option": func(key string, val interface{}) error {
@@ -298,8 +301,8 @@ func new_flow_impl(args ...interface{}) (*FlowImpl, error) {
 			}
 			return nil
 		},
-		"mongo_client": func(key string, val interface{}) error {
-			mgo_cli, ok = val.(*mongo.Client)
+		"mongo_database": func(key string, val interface{}) error {
+			mgo_db, ok = val.(*mongo.Database)
 			if !ok {
 				return opt_helper.ErrInvalidArguments
 			}
@@ -309,8 +312,6 @@ func new_flow_impl(args ...interface{}) (*FlowImpl, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	mgo_db := mgo_cli.Database(opt.MgoDb)
 
 	return &FlowImpl{
 		opt:           opt,

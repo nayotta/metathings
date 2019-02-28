@@ -16,7 +16,7 @@ import "stream_call.proto";
 
 import "pull_frame_from_flow.proto";
 import "push_frame_to_flow.proto";
-import "query_frame_from_flow.proto";
+import "query_frames_from_flow.proto";
 
 import "show_device.proto";
 import "connect.proto";
@@ -36,7 +36,7 @@ service DevicedService {
 	// Flow
 	rpc PullFrameFromFlow(PullFrameFromFlowRequest) returns (stream PullFrameFromFlowResponse) {}
 	rpc PushFrameToFlow(stream PushFrameToFlowRequest) returns (stream PushFrameToFlowResponse) {}
-	rpc QueryFrameFromFlow(QueryFrameFromFlowRequest) returns (QueryFrameFromFlowResponse) {}
+	rpc QueryFramesFromFlow(QueryFramesFromFlowRequest) returns (QueryFramesFromFlowResponse) {}
 
 	// internal device only
 	rpc ShowDevice(google.protobuf.Empty) returns (ShowDeviceResponse) {}

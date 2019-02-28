@@ -3,6 +3,7 @@ package cmd
 import (
 	"context"
 
+	"github.com/mongodb/mongo-go-driver/mongo"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"go.uber.org/fx"
@@ -25,6 +26,15 @@ type DevicedOption struct {
 	ConnectionCenter              struct {
 		Storage map[string]interface{}
 		Bridge  map[string]interface{}
+	}
+	Flow struct {
+		Mongo struct {
+			Uri      string
+			Database string
+		}
+		Kafka struct {
+			Brokers []string
+		}
 	}
 }
 
@@ -220,7 +230,14 @@ func NewSessionStorage(opt *DevicedOption, logger log.FieldLogger) (session_stor
 }
 
 func NewMetathingsDevicedServiceOption(opt *DevicedOption) *service.MetathingsDevicedServiceOption {
-	return &service.MetathingsDevicedServiceOption{}
+	o := &service.MetathingsDevicedServiceOption{}
+	o.Flow.MongoDatabase = opt.Flow.Mongo.Database
+	o.Flow.KafkaBrokers = opt.Flow.Kafka.Brokers
+	return o
+}
+
+func NewMongoClient(opt *DevicedOption) (*mongo.Client, error) {
+	return mongo.NewClient(opt.Flow.Mongo.Uri)
 }
 
 func runDeviced() error {

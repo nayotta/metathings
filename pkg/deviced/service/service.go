@@ -4,6 +4,7 @@ import (
 	"context"
 
 	grpc_auth "github.com/grpc-ecosystem/go-grpc-middleware/auth"
+	"github.com/mongodb/mongo-go-driver/mongo"
 	log "github.com/sirupsen/logrus"
 
 	afo_helper "github.com/nayotta/metathings/pkg/common/auth_func_overrider"
@@ -12,6 +13,7 @@ import (
 	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
 	token_helper "github.com/nayotta/metathings/pkg/common/token"
 	connection "github.com/nayotta/metathings/pkg/deviced/connection"
+	flow "github.com/nayotta/metathings/pkg/deviced/flow"
 	session_storage "github.com/nayotta/metathings/pkg/deviced/session_storage"
 	storage "github.com/nayotta/metathings/pkg/deviced/storage"
 	identityd_authorizer "github.com/nayotta/metathings/pkg/identityd2/authorizer"
@@ -22,6 +24,10 @@ import (
 )
 
 type MetathingsDevicedServiceOption struct {
+	Flow struct {
+		MongoDatabase string
+		KafkaBrokers  []string
+	}
 }
 
 type MetathingsDevicedService struct {
@@ -37,6 +43,7 @@ type MetathingsDevicedService struct {
 	validator       identityd_validator.Validator
 	tkvdr           token_helper.TokenValidator
 	cc              connection.ConnectionCenter
+	mgo_cli         *mongo.Client
 }
 
 func (self *MetathingsDevicedService) get_device_by_context(ctx context.Context) (*storage.Device, error) {
@@ -53,6 +60,26 @@ func (self *MetathingsDevicedService) get_device_by_context(ctx context.Context)
 	return dev_s, nil
 }
 
+func (self *MetathingsDevicedService) new_flow(dev_id, flw_id string) (flow.Flow, error) {
+	mgo_db := self.mgo_cli.Database(self.opt.Flow.MongoDatabase)
+	flw_opt := &flow.FlowOption{
+		Id:         flw_id,
+		DevId:      dev_id,
+		KfkBrokers: self.opt.Flow.KafkaBrokers,
+	}
+
+	f, err := flow.NewFlow(
+		"option", flw_opt,
+		"logger", self.logger,
+		"mongo_database", mgo_db,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return f, nil
+}
+
 func (self *MetathingsDevicedService) IsIgnoreMethod(md *grpc_helper.MethodDescription) bool {
 	return false
 }
@@ -62,10 +89,6 @@ func (self *MetathingsDevicedService) PullFrameFromFlow(req *pb.PullFrameFromFlo
 }
 
 func (self *MetathingsDevicedService) PushFrameToFlow(stm pb.DevicedService_PushFrameToFlowServer) error {
-	panic("unimplemented")
-}
-
-func (self *MetathingsDevicedService) QueryFrameFromFlow(ctx context.Context, req *pb.QueryFrameFromFlowRequest) (*pb.QueryFrameFromFlowResponse, error) {
 	panic("unimplemented")
 }
 
@@ -81,6 +104,7 @@ func NewMetathingsDevicedService(
 	cc connection.ConnectionCenter,
 	tknr token_helper.Tokener,
 	cli_fty *client_helper.ClientFactory,
+	mgo_cli *mongo.Client,
 ) (pb.DevicedServiceServer, error) {
 	srv := &MetathingsDevicedService{
 		opt:             opt,
@@ -94,6 +118,7 @@ func NewMetathingsDevicedService(
 		cc:              cc,
 		tknr:            tknr,
 		cli_fty:         cli_fty,
+		mgo_cli:         mgo_cli,
 	}
 	srv.ServiceAuthFuncOverride = afo_helper.NewAuthFuncOverrider(tkvdr, srv, logger)
 

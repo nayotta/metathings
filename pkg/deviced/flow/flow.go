@@ -15,11 +15,11 @@ type Flow interface {
 	Id() string
 	Device() string
 	PushFrame(*pb.Frame) error
-	PullFrame() <-chan *pb.Frame
+	PullFrame() (<-chan *pb.Frame, <-chan struct{})
 	QueryFrame(...*FlowFilter) ([]*pb.Frame, error)
 	Close() error
 }
 
 func NewFlow(args ...interface{}) (Flow, error) {
-	panic("unimplemented")
+	return new_flow_impl(args...)
 }

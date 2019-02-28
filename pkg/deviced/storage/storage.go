@@ -24,8 +24,9 @@ type Flow struct {
 	CreatedAt time.Time
 	UpdatedAt time.Time
 
-	Name  *string `gorm:"column:name"`
-	Alias *string `gorm:"column:alias"`
+	DeviceId *string `gorm:"column:device_id"`
+	Name     *string `gorm:"column:name"`
+	Alias    *string `gorm:"column:alias"`
 
 	Device *Device `gorm:"-"`
 }

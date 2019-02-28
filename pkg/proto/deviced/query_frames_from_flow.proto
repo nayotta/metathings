@@ -9,12 +9,16 @@ import "github.com/mwitkow/go-proto-validators/validator.proto";
 
 import "model.proto";
 
-message QueryFrameFromFlowRequest {
+message QueryFramesFromFlowRequest {
 	OpDevice device = 1;
 	google.protobuf.Timestamp from = 2;
 	google.protobuf.Timestamp to = 3;
 }
 
-message QueryFrameFromFlowResponse {
-	repeated Frame frames = 1;
+message QueryFramesFromFlowResponse {
+	message Pack {
+		Flow flow = 1;
+		repeated Frame frames = 2;
+	}
+	repeated Pack packs = 1;
 }
