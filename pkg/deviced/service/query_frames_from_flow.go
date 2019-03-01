@@ -41,6 +41,7 @@ func (self *MetathingsDevicedService) QueryFramesFromFlow(ctx context.Context, r
 			}
 
 			f, err := self.new_flow(dev_id, *flw_s.Id)
+			defer f.Close()
 			if err != nil {
 				self.logger.WithError(err).Errorf("failed to new flow")
 				return nil, status.Errorf(codes.Internal, err.Error())
@@ -62,6 +63,7 @@ func (self *MetathingsDevicedService) QueryFramesFromFlow(ctx context.Context, r
 			}
 
 			res.Packs = append(res.Packs, pack)
+			break
 		}
 	}
 

@@ -22,10 +22,14 @@ message PullFrameFromFlowRequest {
 
 message PullFrameFromFlowResponse {
 	message Ack {}
+	message Pack {
+		Flow flow = 1;
+		repeated Frame frames = 2;
+	}
 
 	string id = 1;
 	oneof response {
 		Ack ack = 2;
-		Frame frame = 3;
+		Pack pack = 3;
 	}
 }

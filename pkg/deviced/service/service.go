@@ -84,14 +84,6 @@ func (self *MetathingsDevicedService) IsIgnoreMethod(md *grpc_helper.MethodDescr
 	return false
 }
 
-func (self *MetathingsDevicedService) PullFrameFromFlow(req *pb.PullFrameFromFlowRequest, stm pb.DevicedService_PullFrameFromFlowServer) error {
-	panic("unimplemented")
-}
-
-func (self *MetathingsDevicedService) PushFrameToFlow(stm pb.DevicedService_PushFrameToFlowServer) error {
-	panic("unimplemented")
-}
-
 func NewMetathingsDevicedService(
 	opt *MetathingsDevicedServiceOption,
 	logger log.FieldLogger,

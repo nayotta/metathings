@@ -54,15 +54,30 @@ func (this *PullFrameFromFlowResponse) Validate() error {
 			}
 		}
 	}
-	if oneOfNester, ok := this.GetResponse().(*PullFrameFromFlowResponse_Frame); ok {
-		if oneOfNester.Frame != nil {
-			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.Frame); err != nil {
-				return github_com_mwitkow_go_proto_validators.FieldError("Frame", err)
+	if oneOfNester, ok := this.GetResponse().(*PullFrameFromFlowResponse_Pack_); ok {
+		if oneOfNester.Pack != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.Pack); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("Pack", err)
 			}
 		}
 	}
 	return nil
 }
 func (this *PullFrameFromFlowResponse_Ack) Validate() error {
+	return nil
+}
+func (this *PullFrameFromFlowResponse_Pack) Validate() error {
+	if this.Flow != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Flow); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Flow", err)
+		}
+	}
+	for _, item := range this.Frames {
+		if item != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("Frames", err)
+			}
+		}
+	}
 	return nil
 }
