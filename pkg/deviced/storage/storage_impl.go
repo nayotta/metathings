@@ -531,9 +531,10 @@ func new_db(s *StorageImpl, driver, uri string) error {
 }
 
 func init_db(s *StorageImpl) error {
-	s.db.AutoMigrate(
+	s.db.Debug().AutoMigrate(
 		&Device{},
 		&Module{},
+		&Flow{},
 	)
 
 	return nil

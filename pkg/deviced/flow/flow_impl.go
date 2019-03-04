@@ -1,8 +1,9 @@
 package metathings_deviced_flow
 
 import (
+	"bytes"
 	"context"
-	"strings"
+	"encoding/json"
 	"sync"
 	"time"
 
@@ -40,11 +41,11 @@ type FlowImpl struct {
 }
 
 func (f *FlowImpl) mongo_collection() *mongo.Collection {
-	return f.mgo_db.Collection("metathings.flow." + f.Id())
+	return f.mgo_db.Collection("mtflw." + f.Id())
 }
 
 func (f *FlowImpl) kafka_topic() string {
-	return "metathings.flow." + f.Id()
+	return "mtflw." + f.Id()
 }
 
 func (f *FlowImpl) init_sarama_producer() {
@@ -92,6 +93,7 @@ func (f *FlowImpl) Device() string {
 
 func (f *FlowImpl) Close() error {
 	var err error
+
 	if f.kfk_prod != nil {
 		if err = f.kfk_prod.Close(); err != nil {
 			return err
@@ -107,12 +109,14 @@ func (f *FlowImpl) PushFrame(frm *pb.Frame) error {
 
 	err := f.push_frame_to_mgo(frm)
 	if err != nil {
+		f.logger.WithError(err).Errorf("failed to push frame to mgo")
 		return err
 	}
 
 	// TODO(Peer): dont push frame to kafka when noone pull frame.
 	err = f.push_frame_to_kafka(frm)
 	if err != nil {
+		f.logger.WithError(err).Errorf("failed to push frame to kafka")
 		return err
 	}
 
@@ -186,7 +190,7 @@ func (f *FlowImpl) PullFrame() (<-chan *pb.Frame, <-chan struct{}) {
 				if ok {
 					consumer.MarkOffset(msg, "")
 					var frm pb.Frame
-					err = json_decoder.Unmarshal(strings.NewReader(string(msg.Value)), &frm)
+					err = json_decoder.Unmarshal(bytes.NewReader(msg.Value), &frm)
 					if err != nil {
 						f.logger.WithError(err).Debugf("failed to decode frame from message")
 						return
@@ -225,6 +229,7 @@ func (f *FlowImpl) QueryFrame(flrs ...*FlowFilter) ([]*pb.Frame, error) {
 
 func (f *FlowImpl) query_frame(coll *mongo.Collection, flr *FlowFilter) ([]*pb.Frame, error) {
 	flr_buf := bson.M{}
+
 	if !flr.BeginAt.Equal(time.Time{}) {
 		flr_buf["$gte"] = flr.BeginAt.UnixNano()
 	}
@@ -251,19 +256,20 @@ func (f *FlowImpl) query_frame(coll *mongo.Collection, flr *FlowFilter) ([]*pb.F
 			ts = nil
 		}
 		delete(res_buf, "#ts")
+		delete(res_buf, "_id")
 
 		ts_int64, ok := ts.(int64)
 		if !ok {
 			ts_int64 = 0
 		}
 
-		frm_dat_txt, err := bson.MarshalExtJSON(res_buf, true, false)
+		frm_dat_txt, err := json.Marshal(res_buf)
 		if err != nil {
 			return nil, err
 		}
 
 		var frm_dat struct_.Struct
-		err = dec.Unmarshal(strings.NewReader(string(frm_dat_txt)), &frm_dat)
+		err = dec.Unmarshal(bytes.NewReader(frm_dat_txt), &frm_dat)
 		if err != nil {
 			return nil, err
 		}

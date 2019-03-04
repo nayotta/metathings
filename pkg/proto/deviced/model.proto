@@ -59,14 +59,16 @@ message OpModule {
 
 message Flow {
 	string id = 1;
-	string name = 2;
-	string alias = 3;
+	string device_id = 2;
+	string name = 3;
+	string alias = 4;
 }
 
 message OpFlow {
 	google.protobuf.StringValue id = 1;
-	google.protobuf.StringValue name = 2;
-	google.protobuf.StringValue alias = 3;
+	google.protobuf.StringValue device_id = 2;
+	google.protobuf.StringValue name = 3;
+	google.protobuf.StringValue alias = 4;
 }
 
 message Frame {

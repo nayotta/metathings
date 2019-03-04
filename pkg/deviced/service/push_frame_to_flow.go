@@ -84,13 +84,13 @@ match_flow_loop:
 
 		if push_ack {
 			err = stm.Send(&pb.PushFrameToFlowResponse{
-				Id: req.GetId().GetValue(),
+				Id:       req.GetId().GetValue(),
+				Response: &pb.PushFrameToFlowResponse_Ack_{Ack: &pb.PushFrameToFlowResponse_Ack{}},
 			})
 			if err != nil {
 				self.logger.WithError(err).Errorf("failed to send push ack message")
 				return status.Errorf(codes.Internal, err.Error())
 			}
 		}
-
 	}
 }

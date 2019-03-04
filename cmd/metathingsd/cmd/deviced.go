@@ -236,10 +236,6 @@ func NewMetathingsDevicedServiceOption(opt *DevicedOption) *service.MetathingsDe
 	return o
 }
 
-func NewMongoClient(opt *DevicedOption) (*mongo.Client, error) {
-	return mongo.NewClient(opt.Flow.Mongo.Uri)
-}
-
 func runDeviced() error {
 	app := fx.New(
 		fx.NopLogger,
@@ -254,6 +250,9 @@ func runDeviced() error {
 			token_helper.NewTokenValidator,
 			NewSessionStorage,
 			NewConnectionCenter,
+			func(opt *DevicedOption) (*mongo.Client, error) {
+				return mongo.Connect(context.TODO(), opt.Flow.Mongo.Uri)
+			},
 			NewDevicedStorage,
 			NewMetathingsDevicedServiceOption,
 			policy.NewEnforcer,

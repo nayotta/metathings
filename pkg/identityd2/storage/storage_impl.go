@@ -1328,7 +1328,6 @@ func init_db(s *StorageImpl) error {
 		&Group{},
 		&Credential{},
 		&Token{},
-
 		&EntityRoleMapping{},
 		&EntityDomainMapping{},
 		&EntityGroupMapping{},

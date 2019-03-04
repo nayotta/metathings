@@ -94,6 +94,10 @@ func (self *MetathingsDevicedService) create_module_entity(mdl *storage.Module) 
 	return self.create_entity(*mdl.Id, "/deviced/module/"+*mdl.Name)
 }
 
+func (self *MetathingsDevicedService) create_flow_entity(flw *storage.Flow) error {
+	return self.create_entity(*flw.Id, "/deviced/flow/"+*flw.Name)
+}
+
 func (self *MetathingsDevicedService) CreateDevice(ctx context.Context, req *pb.CreateDeviceRequest) (*pb.CreateDeviceResponse, error) {
 	var err error
 
@@ -157,6 +161,38 @@ func (self *MetathingsDevicedService) CreateDevice(ctx context.Context, req *pb.
 
 		if _, err = self.storage.CreateModule(mdl_s); err != nil {
 			self.logger.WithError(err).Errorf("failed to create module in storage")
+			return nil, status.Errorf(codes.Internal, err.Error())
+		}
+	}
+
+	for _, flw := range dev.GetFlows() {
+		flw_id_str := id_helper.NewId()
+		if flw.GetId() != nil {
+			flw_id_str = flw.GetId().GetValue()
+		}
+
+		flw_name_str := flw.GetName().GetValue()
+		flw_alias_str := flw.GetAlias().GetValue()
+
+		flw_s := &storage.Flow{
+			DeviceId: &dev_id_str,
+			Id:       &flw_id_str,
+			Name:     &flw_name_str,
+			Alias:    &flw_alias_str,
+		}
+
+		if err = self.create_flow_entity(flw_s); err != nil {
+			self.logger.WithError(err).Errorf("failed to create entity to flow")
+			return nil, status.Errorf(codes.Internal, err.Error())
+		}
+
+		if err = self.enforcer.AddObjectToKind(flw_id_str, KIND_FLOW); err != nil {
+			self.logger.WithError(err).Errorf("failed to add flow in enforcer")
+			return nil, status.Errorf(codes.Internal, err.Error())
+		}
+
+		if _, err = self.storage.CreateFlow(flw_s); err != nil {
+			self.logger.WithError(err).Errorf("failed to create flow in storage")
 			return nil, status.Errorf(codes.Internal, err.Error())
 		}
 	}

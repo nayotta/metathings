@@ -18,7 +18,9 @@ func (self *MetathingsDevicedService) QueryFramesFromFlow(ctx context.Context, r
 	dev_r := req.GetDevice()
 	dev_id := dev_r.GetId().GetValue()
 	flws_r := dev_r.GetFlows()
-	var begin_at_r, end_at_r time.Time
+	now := time.Now()
+	begin_at_r := now.Add(-24 * time.Hour)
+	end_at_r := now
 	if req.GetFrom() != nil {
 		begin_at_r = pb_helper.ToTime(*req.GetFrom())
 	}

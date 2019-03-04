@@ -134,6 +134,11 @@ func (this *OpFlow) Validate() error {
 			return github_com_mwitkow_go_proto_validators.FieldError("Id", err)
 		}
 	}
+	if this.DeviceId != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.DeviceId); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("DeviceId", err)
+		}
+	}
 	if this.Name != nil {
 		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Name); err != nil {
 			return github_com_mwitkow_go_proto_validators.FieldError("Name", err)
