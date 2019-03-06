@@ -11,12 +11,20 @@ import "patch_domain.proto";
 import "get_domain.proto";
 import "list_domains.proto";
 
+import "create_action.proto";
+import "delete_action.proto";
+import "patch_action.proto";
+import "get_action.proto";
+import "list_actions.proto";
+
 import "create_role.proto";
 import "delete_role.proto";
 import "patch_role.proto";
 import "get_role.proto";
 import "list_roles.proto";
 import "list_roles_for_entity.proto";
+import "add_action_to_role.proto";
+import "remove_action_from_role.proto";
 
 import "create_entity.proto";
 import "delete_entity.proto";
@@ -54,6 +62,7 @@ import "issue_token_by_token.proto";
 import "revoke_token.proto";
 import "validate_token.proto";
 import "check_token.proto";
+import "authorize_token.proto";
 
 service IdentitydService {
 	rpc CreateDomain(CreateDomainRequest) returns (CreateDomainResponse) {}
@@ -62,12 +71,20 @@ service IdentitydService {
 	rpc GetDomain(GetDomainRequest) returns (GetDomainResponse) {}
 	rpc ListDomains(ListDomainsRequest) returns (ListDomainsResponse) {}
 
+	rpc CreateAction(CreateActionRequest) returns (CreateActionResponse) {}
+	rpc DeleteAction(DeleteActionRequest) returns (google.protobuf.Empty) {}
+	rpc PatchAction(PatchActionRequest) returns (PatchActionResponse) {}
+	rpc GetAction(GetActionRequest) returns (GetActionResponse) {}
+	rpc ListActions(ListActionsRequest) returns (ListActionsResponse) {}
+
 	rpc CreateRole(CreateRoleRequest) returns (CreateRoleResponse) {}
 	rpc DeleteRole(DeleteRoleRequest) returns (google.protobuf.Empty) {}
 	rpc PatchRole(PatchRoleRequest) returns (PatchRoleResponse) {}
 	rpc GetRole(GetRoleRequest) returns (GetRoleResponse) {}
 	rpc ListRoles(ListRolesRequest) returns (ListRolesResponse) {}
 	rpc ListRolesForEntity(ListRolesForEntityRequest) returns (ListRolesForEntityResponse) {}
+	rpc AddActionToRole(AddActionToRoleRequest) returns (google.protobuf.Empty) {}
+	rpc RemoveActionFromRole(RemoveActionFromRoleRequest) returns (google.protobuf.Empty) {}
 
 	rpc CreateEntity(CreateEntityRequest) returns (CreateEntityResponse) {}
 	rpc DeleteEntity(DeleteEntityRequest) returns (google.protobuf.Empty) {}
@@ -105,4 +122,5 @@ service IdentitydService {
 	rpc RevokeToken(RevokeTokenRequest) returns (google.protobuf.Empty) {}
 	rpc ValidateToken(ValidateTokenRequest) returns (ValidateTokenResponse) {}
 	rpc CheckToken(CheckTokenRequest) returns (google.protobuf.Empty) {}
+	rpc AuthorizeToken(AuthorizeTokenRequest) returns (google.protobuf.Empty) {}
 }

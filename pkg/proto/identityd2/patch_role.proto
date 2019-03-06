@@ -9,11 +9,7 @@ import "github.com/mwitkow/go-proto-validators/validator.proto";
 import "model.proto";
 
 message PatchRoleRequest {
-	reserved "domain", "name";
-	google.protobuf.StringValue id = 1 [(validator.field) = {msg_exists: true}];
-	google.protobuf.StringValue alias = 4;
-	google.protobuf.StringValue description = 5;
-	map<string, google.protobuf.StringValue> extra = 6;
+	OpRole role = 1 [(validator.field) = {msg_exists: true}];
 }
 
 message PatchRoleResponse {

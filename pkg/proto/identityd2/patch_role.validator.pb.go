@@ -16,25 +16,14 @@ var _ = fmt.Errorf
 var _ = math.Inf
 
 func (this *PatchRoleRequest) Validate() error {
-	if nil == this.Id {
-		return github_com_mwitkow_go_proto_validators.FieldError("Id", fmt.Errorf("message must exist"))
+	if nil == this.Role {
+		return github_com_mwitkow_go_proto_validators.FieldError("Role", fmt.Errorf("message must exist"))
 	}
-	if this.Id != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Id); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Id", err)
+	if this.Role != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Role); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Role", err)
 		}
 	}
-	if this.Alias != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Alias); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Alias", err)
-		}
-	}
-	if this.Description != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Description); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Description", err)
-		}
-	}
-	// Validation of proto3 map<> fields is unsupported.
 	return nil
 }
 func (this *PatchRoleResponse) Validate() error {

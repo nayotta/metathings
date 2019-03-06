@@ -16,25 +16,14 @@ var _ = fmt.Errorf
 var _ = math.Inf
 
 func (this *PatchEntityRequest) Validate() error {
-	if nil == this.Id {
-		return github_com_mwitkow_go_proto_validators.FieldError("Id", fmt.Errorf("message must exist"))
+	if nil == this.Entity {
+		return github_com_mwitkow_go_proto_validators.FieldError("Entity", fmt.Errorf("message must exist"))
 	}
-	if this.Id != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Id); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Id", err)
+	if this.Entity != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Entity); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Entity", err)
 		}
 	}
-	if this.Alias != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Alias); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Alias", err)
-		}
-	}
-	if this.Password != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Password); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Password", err)
-		}
-	}
-	// Validation of proto3 map<> fields is unsupported.
 	return nil
 }
 func (this *PatchEntityResponse) Validate() error {

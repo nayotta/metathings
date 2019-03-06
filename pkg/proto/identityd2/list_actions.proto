@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package ai.metathings.service.identityd2;
+
+import "google/protobuf/wrappers.proto";
+
+import "model.proto";
+
+message ListActionsRequest {
+	OpAction action = 1;
+}
+
+message ListActionsResponse {
+	repeated Action actions = 1;
+}

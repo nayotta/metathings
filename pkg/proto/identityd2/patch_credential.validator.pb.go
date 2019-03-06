@@ -16,22 +16,12 @@ var _ = fmt.Errorf
 var _ = math.Inf
 
 func (this *PatchCredentialRequest) Validate() error {
-	if nil == this.Id {
-		return github_com_mwitkow_go_proto_validators.FieldError("Id", fmt.Errorf("message must exist"))
+	if nil == this.Credential {
+		return github_com_mwitkow_go_proto_validators.FieldError("Credential", fmt.Errorf("message must exist"))
 	}
-	if this.Id != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Id); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Id", err)
-		}
-	}
-	if this.Alias != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Alias); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Alias", err)
-		}
-	}
-	if this.Description != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Description); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Description", err)
+	if this.Credential != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Credential); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Credential", err)
 		}
 	}
 	return nil

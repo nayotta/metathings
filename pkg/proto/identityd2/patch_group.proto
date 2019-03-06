@@ -9,12 +9,7 @@ import "github.com/mwitkow/go-proto-validators/validator.proto";
 import "model.proto";
 
 message PatchGroupRequest {
-	reserved "domain", "roles", "entities", "name";
-
-	google.protobuf.StringValue id = 1 [(validator.field) = {msg_exists: true}];
-	google.protobuf.StringValue alias = 6;
-	google.protobuf.StringValue description = 7;
-	map<string, google.protobuf.StringValue> extra = 8;
+	OpGroup group = 1 [(validator.field) = {msg_exists: true}];
 }
 
 message PatchGroupResponse {

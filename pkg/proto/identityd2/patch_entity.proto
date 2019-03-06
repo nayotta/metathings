@@ -9,12 +9,7 @@ import "github.com/mwitkow/go-proto-validators/validator.proto";
 import "model.proto";
 
 message PatchEntityRequest {
-	reserved "domain", "groups", "roles", "name";
-
-	google.protobuf.StringValue id = 1 [(validator.field) = {msg_exists: true}];
-	google.protobuf.StringValue alias = 6;
-	google.protobuf.StringValue password = 7;
-	map<string, google.protobuf.StringValue> extra = 8;
+	OpEntity entity = 1 [(validator.field) = {msg_exists: true}];
 }
 
 message PatchEntityResponse {
