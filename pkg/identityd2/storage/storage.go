@@ -37,7 +37,7 @@ type Role struct {
 	Description *string `gorm:"column:description"`
 	Extra       *string `gorm:"column:extra"`
 
-	Action []*Action `gorm:"-"`
+	Actions []*Action `gorm:"-"`
 }
 
 type ActionRoleMapping struct {

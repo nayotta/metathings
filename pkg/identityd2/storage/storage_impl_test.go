@@ -27,8 +27,27 @@ var (
 	testEntityPassword = "test-entity-password"
 	testEntityExtra    = "test-entity-extra"
 
+	testSubjectEntityId    = "test-subject-entity-id"
+	testSubjectEntityName  = "test-subject-entity-name"
+	testSubjectEntityAlias = "test-subject-entity-alias"
+	testSubjectEntityExtra = "test-subject-entity-extra"
+
+	testSubject2EntityId    = "test-subject2-entity-id"
+	testSubject2EntityName  = "test-subject2-entity-name"
+	testSubject2EntityAlias = "test-subject2-entity-alias"
+	testSubject2EntityExtra = "test-subject2-entity-extra"
+
+	testObjectEntityId    = "test-object-entity-id"
+	testObjectEntityName  = "test-object-entity-name"
+	testObjectEntityAlias = "test-object-entity-alias"
+	testObjectEntityExtra = "test-object-entity-extra"
+
+	testObject2EntityId    = "test-object2-entity-id"
+	testObject2EntityName  = "test-object2-entity-name"
+	testObject2EntityAlias = "test-object2-entity-alias"
+	testObject2EntityExtra = "test-object2-entity-extra"
+
 	testRoleID          = "test-role-id"
-	testRoleDomainID    = "test-role-domainid"
 	testRoleName        = "test-role-name"
 	testRoleAlias       = "test-role-alias"
 	testRoleDescription = "test-role-description"
@@ -96,9 +115,58 @@ func (suite *storageImplTestSuite) SetupTest() {
 		fmt.Println("SetupTest create Entity error:", err.Error())
 	}
 
-	err = suite.s.AddEntityToGroup(testEntityID, testGroupID)
+	sub := Entity{
+		Id:    &testSubjectEntityId,
+		Name:  &testSubjectEntityName,
+		Alias: &testSubjectEntityAlias,
+		Extra: &testSubjectEntityExtra,
+	}
+	_, err = suite.s.CreateEntity(&sub)
 	if err != nil {
-		fmt.Println("SetupTest add entity to group error:", err.Error())
+		fmt.Println("SetupTest create Subject error:", err.Error())
+	}
+
+	sub2 := Entity{
+		Id:    &testSubject2EntityId,
+		Name:  &testSubject2EntityName,
+		Alias: &testSubject2EntityAlias,
+		Extra: &testSubject2EntityExtra,
+	}
+	_, err = suite.s.CreateEntity(&sub2)
+	if err != nil {
+		fmt.Println("SetupTest create Subject2 error:", err.Error())
+	}
+
+	obj := Entity{
+		Id:    &testObjectEntityId,
+		Name:  &testObjectEntityName,
+		Alias: &testObjectEntityAlias,
+		Extra: &testObjectEntityExtra,
+	}
+	_, err = suite.s.CreateEntity(&obj)
+	if err != nil {
+		fmt.Println("SetupTest create Object error:", err.Error())
+	}
+
+	obj2 := Entity{
+		Id:    &testObject2EntityId,
+		Name:  &testObject2EntityName,
+		Alias: &testObject2EntityAlias,
+		Extra: &testObject2EntityExtra,
+	}
+	_, err = suite.s.CreateEntity(&obj2)
+	if err != nil {
+		fmt.Println("SetupTest create Object error:", err.Error())
+	}
+
+	err = suite.s.AddSubjectToGroup(testSubjectEntityId, testGroupID)
+	if err != nil {
+		fmt.Println("SetupTest add subject to group error:", err.Error())
+	}
+
+	err = suite.s.AddObjectToGroup(testObjectEntityId, testGroupID)
+	if err != nil {
+		fmt.Println("SetupTest add object to group error:", err.Error())
 	}
 
 	err = suite.s.AddEntityToDomain(testDomainID, testEntityID)
@@ -108,7 +176,6 @@ func (suite *storageImplTestSuite) SetupTest() {
 
 	rol := Role{
 		Id:          &testRoleID,
-		DomainId:    &testRoleDomainID,
 		Name:        &testRoleName,
 		Alias:       &testRoleAlias,
 		Description: &testRoleDescription,
@@ -231,14 +298,6 @@ func (suite *storageImplTestSuite) TestListDomains() {
 	doms, err = suite.s.ListDomains(dom)
 	suite.Nil(err)
 	suite.Len(doms, 1)
-
-	//list by Extra
-	dom = &Domain{
-		Extra: &testDomainExtra,
-	}
-	doms, err = suite.s.ListDomains(dom)
-	suite.Nil(err)
-	suite.Len(doms, 1)
 }
 
 func (suite *storageImplTestSuite) TestAddEntityToDomain() {
@@ -258,7 +317,6 @@ func (suite *storageImplTestSuite) TestCreateRole() {
 	testStr := "test"
 	rol := Role{
 		Id:          &testStr,
-		DomainId:    &testStr,
 		Name:        &testStr,
 		Alias:       &testStr,
 		Description: &testStr,
@@ -267,7 +325,6 @@ func (suite *storageImplTestSuite) TestCreateRole() {
 	rolRet, err := suite.s.CreateRole(&rol)
 	suite.Nil(err)
 	suite.Equal(testStr, *rolRet.Id)
-	suite.Equal(testStr, *rolRet.DomainId)
 	suite.Equal(testStr, *rolRet.Name)
 	suite.Equal(testStr, *rolRet.Alias)
 	suite.Equal(testStr, *rolRet.Description)
@@ -324,19 +381,11 @@ func (suite *storageImplTestSuite) TestGetRole() {
 }
 
 func (suite *storageImplTestSuite) TestlistRoles() {
-	//list by DomainId
-	rol := &Role{
-		DomainId: &testRoleDomainID,
-	}
-	rols, err := suite.s.ListRoles(rol)
-	suite.Nil(err)
-	suite.Len(rols, 1)
-
 	//list by Name
-	rol = &Role{
+	rol := &Role{
 		Name: &testRoleName,
 	}
-	rols, err = suite.s.ListRoles(rol)
+	rols, err := suite.s.ListRoles(rol)
 	suite.Nil(err)
 	suite.Len(rols, 1)
 
@@ -351,14 +400,6 @@ func (suite *storageImplTestSuite) TestlistRoles() {
 	//list by Description
 	rol = &Role{
 		Description: &testRoleDescription,
-	}
-	rols, err = suite.s.ListRoles(rol)
-	suite.Nil(err)
-	suite.Len(rols, 1)
-
-	//list by Extra
-	rol = &Role{
-		Extra: &testRoleExtra,
 	}
 	rols, err = suite.s.ListRoles(rol)
 	suite.Nil(err)
@@ -451,14 +492,6 @@ func (suite *storageImplTestSuite) TestListEntities() {
 	//list by Alias
 	ent = &Entity{
 		Alias: &testEntityAlias,
-	}
-	ents, err = suite.s.ListEntities(ent)
-	suite.Nil(err)
-	suite.Len(ents, 1)
-
-	//list by Extra
-	ent = &Entity{
-		Extra: &testEntityExtra,
 	}
 	ents, err = suite.s.ListEntities(ent)
 	suite.Nil(err)
@@ -584,14 +617,6 @@ func (suite *storageImplTestSuite) TestListGroups() {
 	grps, err = suite.s.ListGroups(grp)
 	suite.Nil(err)
 	suite.Len(grps, 1)
-
-	//list by Extra
-	grp = &Group{
-		Extra: &testGroupExtra,
-	}
-	grps, err = suite.s.ListGroups(grp)
-	suite.Nil(err)
-	suite.Len(grps, 1)
 }
 
 func (suite *storageImplTestSuite) TestAddRoleToGroup() {
@@ -607,17 +632,32 @@ func (suite *storageImplTestSuite) TestRemoveRoleFromGroup() {
 	suite.Nil(err)
 }
 
-func (suite *storageImplTestSuite) TestAddEntityToGroup() {
-	err := suite.s.AddEntityToGroup(testEntityID, testRoleID)
+func (suite *storageImplTestSuite) TestAddSubjectToGroup() {
+	suite.Nil(suite.s.AddSubjectToGroup(testSubject2EntityId, testGroupID))
+	g, err := suite.s.GetGroup(testGroupID)
 	suite.Nil(err)
-
-	err = suite.s.RemoveEntityFromGroup(testGroupID, testRoleID)
-	suite.Nil(err)
+	suite.Len(g.Subjects, 2)
 }
 
-func (suite *storageImplTestSuite) TestRemoveEntityFromGroup() {
-	err := suite.s.AddEntityToGroup(testEntityID, testRoleID)
+func (suite *storageImplTestSuite) TestRemoveSubjectFromGroup() {
+	suite.Nil(suite.s.RemoveSubjectFromGroup(testSubjectEntityId, testGroupID))
+	g, err := suite.s.GetGroup(testGroupID)
 	suite.Nil(err)
+	suite.Len(g.Subjects, 0)
+}
+
+func (suite *storageImplTestSuite) TestAddObjectToGroup() {
+	suite.Nil(suite.s.AddObjectToGroup(testObject2EntityId, testGroupID))
+	g, err := suite.s.GetGroup(testGroupID)
+	suite.Nil(err)
+	suite.Len(g.Objects, 2)
+}
+
+func (suite *storageImplTestSuite) TestRemoveObjectFromGroup() {
+	suite.Nil(suite.s.RemoveObjectFromGroup(testObjectEntityId, testGroupID))
+	g, err := suite.s.GetGroup(testGroupID)
+	suite.Nil(err)
+	suite.Len(g.Objects, 0)
 }
 
 func (suite *storageImplTestSuite) TestCreateCredential() {

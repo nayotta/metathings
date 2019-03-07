@@ -197,18 +197,151 @@ func (self *StorageImpl) RemoveEntityFromDomain(domain_id, entity_id string) err
 	return nil
 }
 
+func (self *StorageImpl) get_action(id string) (*Action, error) {
+	var err error
+	var act Action
+
+	if err = self.db.First(&act, "id = ?", id).Error; err != nil {
+		return nil, err
+	}
+
+	return &act, nil
+}
+
+func (self *StorageImpl) list_actions(act *Action) ([]*Action, error) {
+	var err error
+	var acts_t []*Action
+
+	a := &Action{}
+	if act.Id != nil {
+		a.Id = act.Id
+	}
+	if act.Name != nil {
+		a.Name = act.Name
+	}
+	if act.Alias != nil {
+		a.Alias = act.Alias
+	}
+
+	if err = self.db.Select("id").Find(&acts_t, a).Error; err != nil {
+		return nil, err
+	}
+
+	acts := []*Action{}
+	for _, a = range acts_t {
+		if a, err = self.get_action(*a.Id); err != nil {
+			return nil, err
+		}
+
+		acts = append(acts, a)
+	}
+
+	return acts, nil
+}
+
+func (self *StorageImpl) CreateAction(act *Action) (*Action, error) {
+	var err error
+
+	if err = self.db.Create(act).Error; err != nil {
+		self.logger.WithError(err).Debugf("failed to create action")
+		return nil, err
+	}
+
+	if act, err = self.get_action(*act.Id); err != nil {
+		self.logger.WithError(err).Debugf("failed to get action")
+		return nil, err
+	}
+
+	return act, nil
+}
+
+func (self *StorageImpl) DeleteAction(id string) error {
+	var err error
+
+	if err = self.db.Delete(&Action{}, "id = ?", id).Error; err != nil {
+		self.logger.WithError(err).Debugf("failed to delete action")
+		return err
+	}
+
+	self.logger.WithField("id", id).Debugf("delete action")
+
+	return nil
+}
+
+func (self *StorageImpl) PatchAction(id string, action *Action) (*Action, error) {
+	var err error
+	var act *Action
+	var actNew Action
+
+	if action.Alias != nil {
+		actNew.Alias = action.Alias
+	}
+
+	if action.Description != nil {
+		actNew.Description = action.Description
+	}
+
+	if action.Extra != nil {
+		actNew.Extra = action.Extra
+	}
+
+	if err = self.db.Model(&Action{Id: &id}).Update(actNew).Error; err != nil {
+		self.logger.WithError(err).Debugf("failed to patch action")
+		return nil, err
+	}
+
+	if act, err = self.get_action(id); err != nil {
+		self.logger.WithError(err).Debugf("failed to get action view")
+		return nil, err
+	}
+
+	self.logger.WithField("id", id).Debugf("patch action")
+
+	return act, nil
+}
+
+func (self *StorageImpl) GetAction(id string) (*Action, error) {
+	var err error
+	var act *Action
+
+	if act, err = self.get_action(id); err != nil {
+		self.logger.WithError(err).Debugf("failed to get action")
+		return nil, err
+	}
+
+	self.logger.WithField("id", id).Debugf("get action")
+
+	return act, nil
+}
+
+func (self *StorageImpl) ListActions(act *Action) ([]*Action, error) {
+	var err error
+	var acts []*Action
+
+	if acts, err = self.list_actions(act); err != nil {
+		self.logger.WithError(err).Debugf("failed to list actions")
+		return nil, err
+	}
+
+	self.logger.Debugf("list actions")
+
+	return acts, nil
+}
+
 func (self *StorageImpl) get_role(id string) (*Role, error) {
 	var role Role
+	var act_role_maps []*ActionRoleMapping
 	var err error
 
 	if err = self.db.First(&role, "id = ?", id).Error; err != nil {
 		return nil, err
 	}
 
-	if role.DomainId != nil {
-		role.Domain = &Domain{
-			Id: role.DomainId,
-		}
+	if err = self.db.Select("action_id").Find(&act_role_maps, "role_id = ?", id).Error; err != nil {
+		return nil, err
+	}
+	for _, m := range act_role_maps {
+		role.Actions = append(role.Actions, &Action{Id: m.ActionId})
 	}
 
 	return &role, nil
@@ -221,9 +354,6 @@ func (self *StorageImpl) list_roles(role *Role) ([]*Role, error) {
 	r := &Role{}
 	if role.Id != nil {
 		r.Id = role.Id
-	}
-	if role.DomainId != nil {
-		r.DomainId = role.DomainId
 	}
 	if role.Name != nil {
 		r.Name = role.Name
@@ -334,6 +464,43 @@ func (self *StorageImpl) ListRoles(role *Role) ([]*Role, error) {
 	return roles, nil
 }
 
+func (self *StorageImpl) AddActionToRole(role_id, action_id string) error {
+	var err error
+
+	m := &ActionRoleMapping{
+		ActionId: &action_id,
+		RoleId:   &role_id,
+	}
+
+	if err = self.db.Create(m).Error; err != nil {
+		self.logger.WithError(err).Debugf("failed to add action to role")
+		return err
+	}
+
+	self.logger.WithFields(log.Fields{
+		"action_id": action_id,
+		"role_id":   role_id,
+	}).Debugf("add action to role")
+
+	return nil
+}
+
+func (self *StorageImpl) RemoveActionFromRole(role_id, action_id string) error {
+	var err error
+
+	if err = self.db.Delete(&ActionRoleMapping{}, "role_id = ? and action_id = ?", role_id, action_id).Error; err != nil {
+		self.logger.WithError(err).Debugf("failed to remove action from role")
+		return err
+	}
+
+	self.logger.WithFields(log.Fields{
+		"action_id": action_id,
+		"role_id":   role_id,
+	}).Debugf("remove action from role")
+
+	return nil
+}
+
 func (self *StorageImpl) list_view_domains_by_entity_id(id string) ([]*Domain, error) {
 	var err error
 
@@ -355,14 +522,27 @@ func (self *StorageImpl) list_view_domains_by_entity_id(id string) ([]*Domain, e
 func (self *StorageImpl) list_view_groups_by_entity_id(id string) ([]*Group, error) {
 	var err error
 
-	var ent_grp_maps []*EntityGroupMapping
-	if err = self.db.Find(&ent_grp_maps, "entity_id = ?", id).Error; err != nil {
+	grps_m := map[string]bool{}
+
+	var sub_grp_maps []*SubjectGroupMapping
+	if err = self.db.Find(&sub_grp_maps, "subject_id = ?", id).Error; err != nil {
 		return nil, err
+	}
+	for _, m := range sub_grp_maps {
+		grps_m[*m.GroupId] = true
+	}
+
+	var obj_grp_maps []*ObjectGroupMapping
+	if err = self.db.Find(&obj_grp_maps, "object_id = ?", id).Error; err != nil {
+		return nil, err
+	}
+	for _, m := range obj_grp_maps {
+		grps_m[*m.GroupId] = true
 	}
 
 	var grps []*Group
-	for _, m := range ent_grp_maps {
-		grps = append(grps, &Group{Id: m.GroupId})
+	for grp_id, _ := range grps_m {
+		grps = append(grps, &Group{Id: &grp_id})
 	}
 
 	return grps, nil
@@ -675,25 +855,29 @@ func (self *StorageImpl) get_group(id string) (*Group, error) {
 
 	grp.Domain = &Domain{Id: grp.DomainId}
 
-	var ent_grp_maps []*EntityGroupMapping
-	if err = self.db.Find(&ent_grp_maps, "group_id = ?", id).Error; err != nil {
+	var sub_grp_maps []*SubjectGroupMapping
+	if err = self.db.Find(&sub_grp_maps, "group_id = ?", id).Error; err != nil {
 		return nil, err
 	}
-	var entities []*Entity
-	for _, m := range ent_grp_maps {
-		entities = append(entities, &Entity{Id: m.EntityId})
+	for _, m := range sub_grp_maps {
+		grp.Subjects = append(grp.Subjects, &Entity{Id: m.SubjectId})
 	}
-	grp.Entities = entities
+
+	var obj_grp_maps []*ObjectGroupMapping
+	if err = self.db.Find(&obj_grp_maps, "group_id = ?", id).Error; err != nil {
+		return nil, err
+	}
+	for _, m := range obj_grp_maps {
+		grp.Objects = append(grp.Objects, &Entity{Id: m.ObjectId})
+	}
 
 	var grp_role_maps []*GroupRoleMapping
 	if err = self.db.Find(&grp_role_maps, "group_id = ?", id).Error; err != nil {
 		return nil, err
 	}
-	var roles []*Role
 	for _, m := range grp_role_maps {
-		roles = append(roles, &Role{Id: m.RoleId})
+		grp.Roles = append(grp.Roles, &Role{Id: m.RoleId})
 	}
-	grp.Roles = roles
 
 	return &grp, nil
 }
@@ -863,43 +1047,84 @@ func (self *StorageImpl) RemoveRoleFromGroup(group_id, role_id string) error {
 	return nil
 }
 
-func (self *StorageImpl) AddEntityToGroup(entity_id, group_id string) error {
+func (self *StorageImpl) AddSubjectToGroup(subject_id, group_id string) error {
 	var err error
 
-	m := &EntityGroupMapping{
-		EntityId: &entity_id,
+	m := &SubjectGroupMapping{
+		SubjectId: &subject_id,
+		GroupId:   &group_id,
+	}
+
+	if err = self.db.Create(m).Error; err != nil {
+		self.logger.WithFields(log.Fields{
+			"subject_id": subject_id,
+			"group_id":   group_id,
+		}).Debugf("failed to add subject to group")
+	}
+
+	self.logger.WithFields(log.Fields{
+		"subject_id": subject_id,
+		"group_id":   group_id,
+	}).Debugf("add subject to group")
+
+	return nil
+}
+
+func (self *StorageImpl) RemoveSubjectFromGroup(subject_id, group_id string) error {
+	var err error
+
+	if err = self.db.Delete(&SubjectGroupMapping{}, "subject_id = ? and group_id = ?", subject_id, group_id).Error; err != nil {
+		self.logger.WithFields(log.Fields{
+			"subject_id": subject_id,
+			"group_id":   group_id,
+		}).Debugf("failed to remove subject from group")
+	}
+
+	self.logger.WithFields(log.Fields{
+		"subject_id": subject_id,
+		"group_id":   group_id,
+	}).Debugf("remove subject from group")
+
+	return nil
+}
+
+func (self *StorageImpl) AddObjectToGroup(object_id, group_id string) error {
+	var err error
+
+	m := &ObjectGroupMapping{
+		ObjectId: &object_id,
 		GroupId:  &group_id,
 	}
 
 	if err = self.db.Create(m).Error; err != nil {
 		self.logger.WithFields(log.Fields{
-			"entity_id": entity_id,
+			"object_id": object_id,
 			"group_id":  group_id,
-		}).Debugf("failed to add entity to group")
+		}).Debugf("failed to add object to group")
 	}
 
 	self.logger.WithFields(log.Fields{
+		"object_id": object_id,
 		"group_id":  group_id,
-		"entity_id": entity_id,
-	}).Debugf("add entity to group")
+	}).Debugf("add object to group")
 
 	return nil
 }
 
-func (self *StorageImpl) RemoveEntityFromGroup(entity_id, group_id string) error {
+func (self *StorageImpl) RemoveObjectFromGroup(object_id, group_id string) error {
 	var err error
 
-	if err = self.db.Delete(&EntityGroupMapping{}, "entity_id = ? and group_id = ?", entity_id, group_id).Error; err != nil {
+	if err = self.db.Delete(&ObjectGroupMapping{}, "object_id = ? and group_id = ?", object_id, group_id).Error; err != nil {
 		self.logger.WithFields(log.Fields{
-			"entity_id": entity_id,
+			"object_id": object_id,
 			"group_id":  group_id,
-		}).Debugf("failed to remove entity from group")
+		}).Debugf("failed to remove object from group")
 	}
 
 	self.logger.WithFields(log.Fields{
-		"entity_id": entity_id,
+		"object_id": object_id,
 		"group_id":  group_id,
-	}).Debugf("remove entity from group")
+	}).Debugf("remove object from group")
 
 	return nil
 }
@@ -1323,14 +1548,17 @@ func new_db(s *StorageImpl, driver, uri string) error {
 func init_db(s *StorageImpl) error {
 	s.db.AutoMigrate(
 		&Domain{},
+		&Action{},
 		&Role{},
 		&Entity{},
 		&Group{},
 		&Credential{},
 		&Token{},
+		&ActionRoleMapping{},
 		&EntityRoleMapping{},
 		&EntityDomainMapping{},
-		&EntityGroupMapping{},
+		&SubjectGroupMapping{},
+		&ObjectGroupMapping{},
 		&GroupRoleMapping{},
 		&CredentialRoleMapping{},
 	)
