@@ -2,8 +2,6 @@ syntax = "proto3";
 
 package ai.metathings.service.identityd2;
 
-import "google/protobuf/wrappers.proto";
-
 import "model.proto";
 
 message ListDomainsRequest {

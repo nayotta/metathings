@@ -6,10 +6,7 @@ import "github.com/mwitkow/go-proto-validators/validator.proto";
 
 import "model.proto";
 
-message PatchGroupRequest {
+message AddObjectToGroupRequest {
 	OpGroup group = 1 [(validator.field) = {msg_exists: true}];
-}
-
-message PatchGroupResponse {
-	Group group = 1;
+	OpEntity object = 2 [(validator.field) = {msg_exists: true}];
 }

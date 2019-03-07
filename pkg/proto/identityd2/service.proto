@@ -46,8 +46,10 @@ import "list_groups_for_entity.proto";
 import "show_groups.proto";
 import "add_role_to_group.proto";
 import "remove_role_from_group.proto";
-import "add_entity_to_group.proto";
-import "remove_entity_from_group.proto";
+import "add_subject_to_group.proto";
+import "remove_subject_from_group.proto";
+import "add_object_to_group.proto";
+import "remove_object_from_group.proto";
 
 import "create_credential.proto";
 import "delete_credential.proto";
@@ -106,8 +108,10 @@ service IdentitydService {
 	rpc ShowGroups(google.protobuf.Empty) returns (ShowGroupsResponse) {}
 	rpc AddRoleToGroup(AddRoleToGroupRequest) returns (google.protobuf.Empty) {}
 	rpc RemoveRoleFromGroup(RemoveRoleFromGroupRequest) returns (google.protobuf.Empty) {}
-	rpc AddEntityToGroup(AddEntityToGroupRequest) returns (google.protobuf.Empty) {}
-	rpc RemoveEntityFromGroup(RemoveEntityFromGroupRequest) returns (google.protobuf.Empty) {}
+	rpc AddSubjectToGroup(AddSubjectToGroupRequest) returns (google.protobuf.Empty) {}
+	rpc RemoveSubjectFromGroup(RemoveSubjectFromGroupRequest) returns (google.protobuf.Empty) {}
+	rpc AddObjectToGroup(AddObjectToGroupRequest) returns (google.protobuf.Empty) {}
+	rpc RemoveObjectFromGroup(RemoveObjectFromGroupRequest) returns (google.protobuf.Empty) {}
 
 	rpc CreateCredential(CreateCredentialRequest) returns (CreateCredentialResponse) {}
 	rpc DeleteCredential(DeleteCredentialRequest) returns (google.protobuf.Empty) {}

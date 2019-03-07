@@ -16,18 +16,35 @@ type Domain struct {
 	Children []*Domain `gorm:"-"`
 }
 
+type Action struct {
+	Id        *string
+	CreatedAt time.Time
+	UpdatedAt time.Time
+
+	Name        *string `gorm:"column:name"`
+	Alias       *string `gorm:"column:alias"`
+	Description *string `gorm:"column:description"`
+	Extra       *string `gorm:"column:extra"`
+}
+
 type Role struct {
 	Id        *string
 	CreatedAt time.Time
 	UpdatedAt time.Time
 
-	DomainId    *string `gorm:"column:domain_id"`
 	Name        *string `gorm:"column:name"`
 	Alias       *string `gorm:"column:alias"`
 	Description *string `gorm:"column:description"`
 	Extra       *string `gorm:"column:extra"`
 
-	Domain *Domain `gorm:"-"`
+	Action []*Action `gorm:"-"`
+}
+
+type ActionRoleMapping struct {
+	CreatedAt time.Time
+
+	ActionId *string `gorm:"action_id"`
+	RoleId   *string `gorm:"role_id"`
 }
 
 type Entity struct {
@@ -71,14 +88,22 @@ type Group struct {
 	Extra       *string `gorm:"column:extra"`
 
 	Domain   *Domain   `gorm:"-"`
-	Entities []*Entity `gorm:"-"`
+	Subjects []*Entity `gorm:"-"`
+	Objects  []*Entity `gorm:"-"`
 	Roles    []*Role   `gorm:"-"`
 }
 
-type EntityGroupMapping struct {
+type SubjectGroupMapping struct {
 	CreatedAt time.Time
 
-	EntityId *string `gorm:"entity_id"`
+	SubjectId *string `gorm:"subject_id"`
+	GroupId   *string `gorm:"group_id"`
+}
+
+type ObjectGroupMapping struct {
+	CreatedAt time.Time
+
+	ObjectId *string `gorm:"object_id"`
 	GroupId  *string `gorm:"group_id"`
 }
 
@@ -142,11 +167,19 @@ type Storage interface {
 	AddEntityToDomain(domain_id, entity_id string) error
 	RemoveEntityFromDomain(domain_id, entity_id string) error
 
+	CreateAction(*Action) (*Action, error)
+	DeleteAction(id string) error
+	PatchAction(id string, action *Action) (*Action, error)
+	GetAction(id string) (*Action, error)
+	ListActions(*Action) ([]*Action, error)
+
 	CreateRole(*Role) (*Role, error)
 	DeleteRole(id string) error
 	PatchRole(id string, role *Role) (*Role, error)
 	GetRole(id string) (*Role, error)
 	ListRoles(*Role) ([]*Role, error)
+	AddActionToRole(role_id, action_id string) error
+	RemoveActionFromRole(role_id, action_id string) error
 
 	CreateEntity(*Entity) (*Entity, error)
 	DeleteEntity(id string) error
@@ -165,8 +198,10 @@ type Storage interface {
 	ListGroups(*Group) ([]*Group, error)
 	AddRoleToGroup(group_id, role_id string) error
 	RemoveRoleFromGroup(group_id, role_id string) error
-	AddEntityToGroup(entity_id, group_id string) error
-	RemoveEntityFromGroup(entity_id, group_id string) error
+	AddSubjectToGroup(group_id, subject_id string) error
+	RemoveSubjectFromGroup(group_id, subject_id string) error
+	AddObjectToGroup(group_id, object_id string) error
+	RemoveObjectFromGroup(group_id, object_id string) error
 
 	CreateCredential(*Credential) (*Credential, error)
 	DeleteCredential(id string) error
