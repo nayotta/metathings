@@ -118,6 +118,18 @@ func copy_domain(x *storage.Domain) *pb.Domain {
 	return y
 }
 
+func copy_action(x *storage.Action) *pb.Action {
+	y := &pb.Action{
+		Id:          *x.Id,
+		Name:        *x.Name,
+		Alias:       *x.Alias,
+		Description: *x.Description,
+		Extra:       copy_extra(x.Extra),
+	}
+
+	return y
+}
+
 func copy_role(x *storage.Role) *pb.Role {
 	y := &pb.Role{
 		Id:          *x.Id,
