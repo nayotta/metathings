@@ -159,12 +159,12 @@ func (suite *storageImplTestSuite) SetupTest() {
 		fmt.Println("SetupTest create Object error:", err.Error())
 	}
 
-	err = suite.s.AddSubjectToGroup(testSubjectEntityId, testGroupID)
+	err = suite.s.AddSubjectToGroup(testGroupID, testSubjectEntityId)
 	if err != nil {
 		fmt.Println("SetupTest add subject to group error:", err.Error())
 	}
 
-	err = suite.s.AddObjectToGroup(testObjectEntityId, testGroupID)
+	err = suite.s.AddObjectToGroup(testGroupID, testObjectEntityId)
 	if err != nil {
 		fmt.Println("SetupTest add object to group error:", err.Error())
 	}
@@ -633,28 +633,28 @@ func (suite *storageImplTestSuite) TestRemoveRoleFromGroup() {
 }
 
 func (suite *storageImplTestSuite) TestAddSubjectToGroup() {
-	suite.Nil(suite.s.AddSubjectToGroup(testSubject2EntityId, testGroupID))
+	suite.Nil(suite.s.AddSubjectToGroup(testGroupID, testSubject2EntityId))
 	g, err := suite.s.GetGroup(testGroupID)
 	suite.Nil(err)
 	suite.Len(g.Subjects, 2)
 }
 
 func (suite *storageImplTestSuite) TestRemoveSubjectFromGroup() {
-	suite.Nil(suite.s.RemoveSubjectFromGroup(testSubjectEntityId, testGroupID))
+	suite.Nil(suite.s.RemoveSubjectFromGroup(testGroupID, testSubjectEntityId))
 	g, err := suite.s.GetGroup(testGroupID)
 	suite.Nil(err)
 	suite.Len(g.Subjects, 0)
 }
 
 func (suite *storageImplTestSuite) TestAddObjectToGroup() {
-	suite.Nil(suite.s.AddObjectToGroup(testObject2EntityId, testGroupID))
+	suite.Nil(suite.s.AddObjectToGroup(testGroupID, testObject2EntityId))
 	g, err := suite.s.GetGroup(testGroupID)
 	suite.Nil(err)
 	suite.Len(g.Objects, 2)
 }
 
 func (suite *storageImplTestSuite) TestRemoveObjectFromGroup() {
-	suite.Nil(suite.s.RemoveObjectFromGroup(testObjectEntityId, testGroupID))
+	suite.Nil(suite.s.RemoveObjectFromGroup(testGroupID, testObjectEntityId))
 	g, err := suite.s.GetGroup(testGroupID)
 	suite.Nil(err)
 	suite.Len(g.Objects, 0)

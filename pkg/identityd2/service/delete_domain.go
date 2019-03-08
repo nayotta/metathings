@@ -33,8 +33,6 @@ func (self *MetathingsIdentitydService) AuthorizeDeleteDomain(ctx context.Contex
 
 func (self *MetathingsIdentitydService) DeleteDomain(ctx context.Context, req *pb.DeleteDomainRequest) (*empty.Empty, error) {
 	var dom_s *storage.Domain
-	var role_s *storage.Role
-	var roles_s []*storage.Role
 	var ents_s []*storage.Entity
 	var grp_s *storage.Group
 	var grps_s []*storage.Group
@@ -49,19 +47,6 @@ func (self *MetathingsIdentitydService) DeleteDomain(ctx context.Context, req *p
 	if len(dom_s.Children) > 0 {
 		err = errors.New("more than 0 children in domain")
 		self.logger.WithError(err).Warningf("any children in domain")
-		return nil, status.Errorf(codes.FailedPrecondition, err.Error())
-	}
-
-	role_s = &storage.Role{
-		DomainId: &dom_id_str,
-	}
-	if roles_s, err = self.storage.ListRoles(role_s); err != nil {
-		self.logger.WithError(err).Errorf("failed to list roles by domain_id in storage")
-		return nil, status.Errorf(codes.Internal, err.Error())
-	}
-	if len(roles_s) > 0 {
-		err = errors.New("more than 0 roles in domain")
-		self.logger.WithError(err).Warningf("any roles in domain")
 		return nil, status.Errorf(codes.FailedPrecondition, err.Error())
 	}
 

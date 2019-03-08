@@ -119,14 +119,8 @@ func copy_domain(x *storage.Domain) *pb.Domain {
 }
 
 func copy_role(x *storage.Role) *pb.Role {
-	var dom *pb.Domain
-	if x.Domain != nil {
-		dom = &pb.Domain{Id: *x.Domain.Id}
-	}
-
 	y := &pb.Role{
 		Id:          *x.Id,
-		Domain:      dom,
 		Name:        *x.Name,
 		Alias:       *x.Alias,
 		Description: copy_string(x.Description),
@@ -179,20 +173,25 @@ func copy_group(x *storage.Group) *pb.Group {
 		})
 	}
 
-	entities := []*pb.Entity{}
-	for _, e := range x.Entities {
-		entities = append(entities, &pb.Entity{
-			Id: *e.Id,
+	subjects := []*pb.Entity{}
+	for _, s := range x.Subjects {
+		subjects = append(subjects, &pb.Entity{
+			Id: *s.Id,
+		})
+	}
+
+	objects := []*pb.Entity{}
+	for _, o := range x.Objects {
+		objects = append(objects, &pb.Entity{
+			Id: *o.Id,
 		})
 	}
 
 	y := &pb.Group{
-		Id: *x.Id,
-		Domain: &pb.Domain{
-			Id: *x.DomainId,
-		},
+		Id:          *x.Id,
 		Roles:       roles,
-		Entities:    entities,
+		Subjects:    subjects,
+		Objects:     objects,
 		Name:        *x.Name,
 		Alias:       *x.Alias,
 		Description: *x.Description,
@@ -285,16 +284,6 @@ func role_in_entity(ent *storage.Entity, role_id string) bool {
 	return false
 }
 
-func entity_in_group(grp *storage.Group, ent_id string) bool {
-	for _, e := range grp.Entities {
-		if *e.Id == ent_id {
-			return true
-		}
-	}
-
-	return false
-}
-
 func role_in_group(grp *storage.Group, role_id string) bool {
 	for _, r := range grp.Roles {
 		if *r.Id == role_id {
@@ -335,13 +324,63 @@ type role_getter interface {
 	GetRole() *pb.OpRole
 }
 
+type subject_getter interface {
+	GetSubject() *pb.OpEntity
+}
+
+type object_getter interface {
+	GetObject() *pb.OpEntity
+}
+
 type group_getter interface {
 	GetGroup() *pb.OpGroup
 }
 
 func ensure_get_domain_id(x domain_getter) error {
-	if x.GetDomain().GetId() == nil {
+	if x.GetDomain() == nil || x.GetDomain().GetId() == nil {
 		return errors.New("domain.id is empty")
+	}
+	return nil
+}
+
+func ensure_get_group_id(x group_getter) error {
+	if x.GetGroup() == nil || x.GetGroup().GetId() == nil {
+		return errors.New("group.id is empty")
+	}
+	return nil
+}
+
+func ensure_get_subject_id(x subject_getter) error {
+	if x.GetSubject() == nil || x.GetSubject().GetId() == nil {
+		return errors.New("subject.id is empty")
+	}
+	return nil
+}
+
+func ensure_get_object_id(x object_getter) error {
+	if x.GetObject() == nil || x.GetObject().GetId() == nil {
+		return errors.New("object.id is empty")
+	}
+	return nil
+}
+
+func ensure_get_credential_id(x credential_getter) error {
+	if x.GetCredential() == nil || x.GetCredential().GetId() == nil {
+		return errors.New("credential.id is empty")
+	}
+	return nil
+}
+
+func ensure_get_entity_id(x entity_getter) error {
+	if x.GetEntity() == nil || x.GetEntity().GetId() == nil {
+		return errors.New("entity.id is empty")
+	}
+	return nil
+}
+
+func ensure_get_role_id(x role_getter) error {
+	if x.GetRole() == nil || x.GetRole().GetId() == nil {
+		return errors.New("role.id is empty")
 	}
 	return nil
 }

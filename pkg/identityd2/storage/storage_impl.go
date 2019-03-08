@@ -1047,7 +1047,7 @@ func (self *StorageImpl) RemoveRoleFromGroup(group_id, role_id string) error {
 	return nil
 }
 
-func (self *StorageImpl) AddSubjectToGroup(subject_id, group_id string) error {
+func (self *StorageImpl) AddSubjectToGroup(group_id, subject_id string) error {
 	var err error
 
 	m := &SubjectGroupMapping{
@@ -1070,7 +1070,7 @@ func (self *StorageImpl) AddSubjectToGroup(subject_id, group_id string) error {
 	return nil
 }
 
-func (self *StorageImpl) RemoveSubjectFromGroup(subject_id, group_id string) error {
+func (self *StorageImpl) RemoveSubjectFromGroup(group_id, subject_id string) error {
 	var err error
 
 	if err = self.db.Delete(&SubjectGroupMapping{}, "subject_id = ? and group_id = ?", subject_id, group_id).Error; err != nil {
@@ -1088,7 +1088,7 @@ func (self *StorageImpl) RemoveSubjectFromGroup(subject_id, group_id string) err
 	return nil
 }
 
-func (self *StorageImpl) AddObjectToGroup(object_id, group_id string) error {
+func (self *StorageImpl) AddObjectToGroup(group_id, object_id string) error {
 	var err error
 
 	m := &ObjectGroupMapping{
@@ -1111,7 +1111,7 @@ func (self *StorageImpl) AddObjectToGroup(object_id, group_id string) error {
 	return nil
 }
 
-func (self *StorageImpl) RemoveObjectFromGroup(object_id, group_id string) error {
+func (self *StorageImpl) RemoveObjectFromGroup(group_id, object_id string) error {
 	var err error
 
 	if err = self.db.Delete(&ObjectGroupMapping{}, "object_id = ? and group_id = ?", object_id, group_id).Error; err != nil {
