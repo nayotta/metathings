@@ -28,6 +28,7 @@ type MetathingsIdentitydService struct {
 	authorizer authorizer.Authorizer
 	validator  validator.Validator
 	enforcer   policy.Enforcer
+	backend    policy.Backend
 }
 
 var (

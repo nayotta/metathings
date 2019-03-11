@@ -60,16 +60,6 @@ func (self *MetathingsIdentitydService) CreateGroup(ctx context.Context, req *pb
 		alias_str = grp.GetAlias().GetValue()
 	}
 
-	if err = self.enforcer.AddGroup(dom_id_str, id_str); err != nil {
-		self.logger.WithError(err).Errorf("failed to add group in enforcer")
-		return nil, status.Errorf(codes.Internal, err.Error())
-	}
-
-	if err = self.enforcer.AddObjectToKind(id_str, KIND_GROUP); err != nil {
-		self.logger.WithError(err).Errorf("failed to add group to kind in enforcer")
-		return nil, status.Errorf(codes.Internal, err.Error())
-	}
-
 	grp_s := &storage.Group{
 		Id:          &id_str,
 		DomainId:    &dom_id_str,
@@ -77,6 +67,11 @@ func (self *MetathingsIdentitydService) CreateGroup(ctx context.Context, req *pb
 		Alias:       &alias_str,
 		Description: &desc_str,
 		Extra:       &extra_str,
+	}
+
+	if err = self.backend.CreateGroup(grp_s); err != nil {
+		self.logger.WithError(err).Errorf("failed to create group in backend")
+		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
 	if grp_s, err = self.storage.CreateGroup(grp_s); err != nil {
