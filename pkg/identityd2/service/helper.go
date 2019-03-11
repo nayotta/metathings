@@ -348,6 +348,10 @@ type group_getter interface {
 	GetGroup() *pb.OpGroup
 }
 
+type action_getter interface {
+	GetAction() *pb.OpAction
+}
+
 func ensure_get_domain_id(x domain_getter) error {
 	if x.GetDomain() == nil || x.GetDomain().GetId() == nil {
 		return errors.New("domain.id is empty")
@@ -393,6 +397,13 @@ func ensure_get_entity_id(x entity_getter) error {
 func ensure_get_role_id(x role_getter) error {
 	if x.GetRole() == nil || x.GetRole().GetId() == nil {
 		return errors.New("role.id is empty")
+	}
+	return nil
+}
+
+func ensure_get_action_id(x action_getter) error {
+	if x.GetAction() == nil || x.GetAction().GetId() == nil {
+		return errors.New("action.id is empty")
 	}
 	return nil
 }
