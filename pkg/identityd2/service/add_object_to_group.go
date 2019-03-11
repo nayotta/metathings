@@ -38,6 +38,24 @@ func (self *MetathingsIdentitydService) AddObjectToGroup(ctx context.Context, re
 	grp_id_str := req.GetGroup().GetId().GetValue()
 	obj_id_str := req.GetObject().GetId().GetValue()
 
+	grp_s, err := self.storage.GetGroup(grp_id_str)
+	if err != nil {
+		self.logger.WithError(err).Errorf("failed to get group in storage")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
+	obj_s, err := self.storage.GetEntity(obj_id_str)
+	if err != nil {
+		self.logger.WithError(err).Errorf("failed to get entity in storage")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
+	err = self.backend.AddObjectToGroup(grp_s, obj_s)
+	if err != nil {
+		self.logger.WithError(err).Errorf("failed to add object to group in backend")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
 	if err = self.storage.AddObjectToGroup(grp_id_str, obj_id_str); err != nil {
 		self.logger.WithError(err).Errorf("failed to add object to group in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())

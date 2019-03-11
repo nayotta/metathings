@@ -38,6 +38,24 @@ func (self *MetathingsIdentitydService) RemoveSubjectFromGroup(ctx context.Conte
 	grp_id_str := req.GetGroup().GetId().GetValue()
 	sub_id_str := req.GetSubject().GetId().GetValue()
 
+	grp_s, err := self.storage.GetGroup(grp_id_str)
+	if err != nil {
+		self.logger.WithError(err).Errorf("failed to get group in storage")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
+	sub_s, err := self.storage.GetEntity(sub_id_str)
+	if err != nil {
+		self.logger.WithError(err).Errorf("failed to get entity in storage")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
+	err = self.backend.RemoveSubjectFromGroup(grp_s, sub_s)
+	if err != nil {
+		self.logger.WithError(err).Errorf("failed to remove subject from group in backend")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
 	if err = self.storage.RemoveSubjectFromGroup(grp_id_str, sub_id_str); err != nil {
 		self.logger.WithError(err).Errorf("failed to remove subject from group in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
