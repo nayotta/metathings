@@ -16,6 +16,7 @@ type Enforcer interface {
 }
 
 type Backend interface {
+	Enforce(sub, obj *storage.Entity, act *storage.Action) (bool, error)
 	CreateGroup(*storage.Group) error
 	DeleteGroup(*storage.Group) error
 	AddSubjectToGroup(*storage.Group, *storage.Entity) error
