@@ -28,7 +28,7 @@ func (self *MetathingsIdentitydService) ValidateDeleteGroup(ctx context.Context,
 }
 
 func (self *MetathingsIdentitydService) AuthorizeDeleteGroup(ctx context.Context, in interface{}) error {
-	return self.authorizer.Authorize(ctx, in.(*pb.DeleteGroupRequest).GetGroup().GetId().GetValue(), "delete_group")
+	return self.authorize(ctx, in.(*pb.DeleteGroupRequest).GetGroup().GetId().GetValue(), "delete_group")
 }
 
 func (self *MetathingsIdentitydService) DeleteGroup(ctx context.Context, req *pb.DeleteGroupRequest) (*empty.Empty, error) {

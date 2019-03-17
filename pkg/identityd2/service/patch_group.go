@@ -27,7 +27,7 @@ func (self *MetathingsIdentitydService) ValidatePatchGroup(ctx context.Context, 
 }
 
 func (self *MetathingsIdentitydService) AuthorizePatchGroup(ctx context.Context, in interface{}) error {
-	return self.authorizer.Authorize(ctx, in.(*pb.PatchGroupRequest).GetGroup().GetId().GetValue(), "patch_group")
+	return self.authorize(ctx, in.(*pb.PatchGroupRequest).GetGroup().GetId().GetValue(), "patch_group")
 }
 
 func (self *MetathingsIdentitydService) PatchGroup(ctx context.Context, req *pb.PatchGroupRequest) (*pb.PatchGroupResponse, error) {

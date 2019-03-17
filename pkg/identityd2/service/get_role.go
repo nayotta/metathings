@@ -26,7 +26,7 @@ func (self *MetathingsIdentitydService) ValidateGetRole(ctx context.Context, in 
 }
 
 func (self *MetathingsIdentitydService) AuthorizeGetRole(ctx context.Context, in interface{}) error {
-	return self.authorizer.Authorize(ctx, in.(*pb.GetRoleRequest).GetRole().GetId().GetValue(), "get_role")
+	return self.authorize(ctx, in.(*pb.GetRoleRequest).GetRole().GetId().GetValue(), "get_role")
 }
 
 func (self *MetathingsIdentitydService) GetRole(ctx context.Context, req *pb.GetRoleRequest) (*pb.GetRoleResponse, error) {

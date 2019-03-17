@@ -83,11 +83,7 @@ func (self *MetathingsPolicydService) Initialize(ctx context.Context, in *pb.Emp
 		return &pb.EmptyReply{}, err
 	}
 
-	if len(e.GetFilteredGroupingPolicy(1, "sysadmin")) == 0 {
-		if !e.AddPolicy("sysadmin", "any", "any", "any", "any") {
-			return &pb.EmptyReply{}, errors.New("initial failed")
-		}
-	}
+	e.AddPolicy("sysadmin", "any", "any", "any")
 
 	return &pb.EmptyReply{}, nil
 }

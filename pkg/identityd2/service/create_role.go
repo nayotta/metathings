@@ -58,11 +58,6 @@ func (self *MetathingsIdentitydService) CreateRole(ctx context.Context, req *pb.
 		alias_str = role.GetAlias().GetValue()
 	}
 
-	if err = self.enforcer.AddObjectToKind(id_str, KIND_ROLE); err != nil {
-		self.logger.WithError(err).Errorf("failed to add object to kind in enforcer")
-		return nil, status.Errorf(codes.Internal, err.Error())
-	}
-
 	role_s = &storage.Role{
 		Id:          &id_str,
 		Name:        &name_str,

@@ -154,11 +154,6 @@ func (self *MetathingsDevicedService) CreateDevice(ctx context.Context, req *pb.
 			return nil, status.Errorf(codes.Internal, err.Error())
 		}
 
-		if err = self.enforcer.AddObjectToKind(mdl_id_str, KIND_MODULE); err != nil {
-			self.logger.WithError(err).Errorf("failed to add module in enforcer")
-			return nil, status.Errorf(codes.Internal, err.Error())
-		}
-
 		if _, err = self.storage.CreateModule(mdl_s); err != nil {
 			self.logger.WithError(err).Errorf("failed to create module in storage")
 			return nil, status.Errorf(codes.Internal, err.Error())
@@ -186,20 +181,10 @@ func (self *MetathingsDevicedService) CreateDevice(ctx context.Context, req *pb.
 			return nil, status.Errorf(codes.Internal, err.Error())
 		}
 
-		if err = self.enforcer.AddObjectToKind(flw_id_str, KIND_FLOW); err != nil {
-			self.logger.WithError(err).Errorf("failed to add flow in enforcer")
-			return nil, status.Errorf(codes.Internal, err.Error())
-		}
-
 		if _, err = self.storage.CreateFlow(flw_s); err != nil {
 			self.logger.WithError(err).Errorf("failed to create flow in storage")
 			return nil, status.Errorf(codes.Internal, err.Error())
 		}
-	}
-
-	if err = self.enforcer.AddObjectToKind(dev_id_str, KIND_DEVICE); err != nil {
-		self.logger.WithError(err).Errorf("failed to add device in enforcer")
-		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
 	if dev_s, err = self.storage.CreateDevice(dev_s); err != nil {

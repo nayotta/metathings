@@ -41,9 +41,6 @@ func (self *MetathingsDevicedService) DeleteDevice(ctx context.Context, req *pb.
 
 	for _, m := range dev.Modules {
 		mdl_id_str := *m.Id
-		if err = self.enforcer.RemoveObjectFromKind(mdl_id_str, KIND_MODULE); err != nil {
-			self.logger.WithError(err).Warningf("failed to remove module from kind in enforcer")
-		}
 		if err = self.storage.DeleteModule(mdl_id_str); err != nil {
 			self.logger.WithError(err).WithField("id", mdl_id_str).Warningf("failed to delete module in storage")
 		}
@@ -51,17 +48,11 @@ func (self *MetathingsDevicedService) DeleteDevice(ctx context.Context, req *pb.
 
 	for _, f := range dev.Flows {
 		flw_id_str := *f.Id
-		if err = self.enforcer.RemoveObjectFromKind(flw_id_str, KIND_FLOW); err != nil {
-			self.logger.WithError(err).Warningf("failed to remove flow from kind in enforcer")
-		}
 		if err = self.storage.DeleteFlow(flw_id_str); err != nil {
 			self.logger.WithError(err).WithField("id", flw_id_str).Warningf("failed to delete flow in storage")
 		}
 	}
 
-	if err = self.enforcer.RemoveObjectFromKind(dev_id_str, KIND_DEVICE); err != nil {
-		self.logger.WithError(err).Warningf("failed to remove device from kind in enforcer")
-	}
 	if err = self.storage.DeleteDevice(dev_id_str); err != nil {
 		self.logger.WithError(err).Debugf("failed to delete device in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())

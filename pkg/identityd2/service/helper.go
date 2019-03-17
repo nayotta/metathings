@@ -407,3 +407,10 @@ func ensure_get_action_id(x action_getter) error {
 	}
 	return nil
 }
+
+func ensure_get_action_name(x action_getter) error {
+	if x.GetAction() == nil || x.GetAction().GetName() == nil {
+		return errors.New("action.name is empty")
+	}
+	return nil
+}

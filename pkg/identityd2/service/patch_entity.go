@@ -28,7 +28,7 @@ func (self *MetathingsIdentitydService) ValidatePatchEntity(ctx context.Context,
 }
 
 func (self *MetathingsIdentitydService) AuthorizePatchEntity(ctx context.Context, in interface{}) error {
-	return self.authorizer.Authorize(ctx, in.(*pb.PatchEntityRequest).GetEntity().GetId().GetValue(), "patch_entity")
+	return self.authorize(ctx, in.(*pb.PatchEntityRequest).GetEntity().GetId().GetValue(), "patch_entity")
 }
 
 func (self *MetathingsIdentitydService) PatchEntity(ctx context.Context, req *pb.PatchEntityRequest) (*pb.PatchEntityResponse, error) {

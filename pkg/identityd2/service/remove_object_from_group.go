@@ -29,7 +29,7 @@ func (self *MetathingsIdentitydService) ValidateRemoveObjectFromGroup(ctx contex
 }
 
 func (self *MetathingsIdentitydService) AuthorizeRemoveObjectFromGroup(ctx context.Context, in interface{}) error {
-	return self.authorizer.Authorize(ctx, in.(*pb.RemoveObjectFromGroupRequest).GetObject().GetId().GetValue(), "remove_object_from_group")
+	return self.authorize(ctx, in.(*pb.RemoveObjectFromGroupRequest).GetObject().GetId().GetValue(), "remove_object_from_group")
 }
 
 func (self *MetathingsIdentitydService) RemoveObjectFromGroup(ctx context.Context, req *pb.RemoveObjectFromGroupRequest) (*empty.Empty, error) {

@@ -1129,6 +1129,14 @@ func (self *StorageImpl) RemoveObjectFromGroup(group_id, object_id string) error
 	return nil
 }
 
+func (self *StorageImpl) ListGroupsForSubject(subject_id string) ([]*Group, error) {
+	panic("unimplemented")
+}
+
+func (self *StorageImpl) ListGroupsForObject(object_id string) ([]*Group, error) {
+	panic("unimplemented")
+}
+
 func (self *StorageImpl) get_credential(id string) (*Credential, error) {
 	var cred Credential
 	var err error

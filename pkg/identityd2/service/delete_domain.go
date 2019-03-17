@@ -28,7 +28,7 @@ func (self *MetathingsIdentitydService) ValidateDeleteDomain(ctx context.Context
 }
 
 func (self *MetathingsIdentitydService) AuthorizeDeleteDomain(ctx context.Context, in interface{}) error {
-	return self.authorizer.Authorize(ctx, in.(*pb.DeleteDomainRequest).GetDomain().GetId().GetValue(), "delete_domain")
+	return self.authorize(ctx, in.(*pb.DeleteDomainRequest).GetDomain().GetId().GetValue(), "delete_domain")
 }
 
 func (self *MetathingsIdentitydService) DeleteDomain(ctx context.Context, req *pb.DeleteDomainRequest) (*empty.Empty, error) {
@@ -73,17 +73,13 @@ func (self *MetathingsIdentitydService) DeleteDomain(ctx context.Context, req *p
 		return nil, status.Errorf(codes.FailedPrecondition, err.Error())
 	}
 
-	if err = self.enforcer.RemoveObjectFromKind(dom_id_str, KIND_DOMAIN); err != nil {
-		self.logger.WithError(err).Warningf("failed to remove domain from kind in enforcer")
-	}
-
 	if err = self.storage.DeleteDomain(dom_id_str); err != nil {
 		self.logger.WithError(err).Errorf("failed to delete domain in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
 	self.logger.WithFields(log.Fields{
-		"domain_id": dom_id_str,
+		"domain": dom_id_str,
 	}).Infof("delete domain")
 
 	return &empty.Empty{}, nil

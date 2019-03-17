@@ -4,39 +4,39 @@ import (
 	"context"
 	"fmt"
 
+	log "github.com/sirupsen/logrus"
+
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
+	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 	storage "github.com/nayotta/metathings/pkg/identityd2/storage"
 	pb "github.com/nayotta/metathings/pkg/proto/policyd"
 )
 
 const (
-	CASBIN_BACKEND_SUBJECT_PTYPE = "g2"
-	CASBIN_BACKEND_OBJECT_PTYPE  = "g3"
+	CASBIN_BACKEND_DEFAULT_ENFORCER_HANDLER = 0
+	CASBIN_BACKEND_POLICY_PTYPE             = "p"
+	CASBIN_BACKEND_SUBJECT_PTYPE            = "g2"
+	CASBIN_BACKEND_OBJECT_PTYPE             = "g3"
 )
 
 type CasbinBackendOption struct {
 	EnforcerHandler int32
 }
 
+func new_casbin_backend_option() *CasbinBackendOption {
+	return &CasbinBackendOption{
+		EnforcerHandler: CASBIN_BACKEND_DEFAULT_ENFORCER_HANDLER,
+	}
+}
+
 type CasbinBackend struct {
 	opt     *CasbinBackendOption
 	cli_fty *client_helper.ClientFactory
+	logger  log.FieldLogger
 }
 
 func (cb *CasbinBackend) context() context.Context {
 	return context.TODO()
-}
-
-func (cb *CasbinBackend) Enforce(sub, obj *storage.Entity, act *storage.Action) (bool, error) {
-	panic("unimplemented")
-}
-
-func (cb *CasbinBackend) CreateGroup(grp *storage.Group) error {
-	panic("unimplemented")
-}
-
-func (cb *CasbinBackend) DeleteGroup(grp *storage.Group) error {
-	panic("unimplemented")
 }
 
 func (cb *CasbinBackend) _add_grouping_policy(cli pb.PolicydServiceClient, g, ent, grp, rol string) error {
@@ -109,6 +109,128 @@ func (cb *CasbinBackend) _remove_subject_from_group(cli pb.PolicydServiceClient,
 	return nil
 }
 
+func (cb *CasbinBackend) _add_role_to_group(cli pb.PolicydServiceClient, grp *storage.Group, rol *storage.Role) error {
+	var err error
+
+	sub_rol_s := cb.convert_role(grp, rol)
+	grp_s := cb.convert_group(grp)
+	obj_rol_s := cb.convert_role_for_object(grp)
+
+	for _, act := range rol.Actions {
+		req := &pb.PolicyRequest{
+			EnforcerHandler: cb.opt.EnforcerHandler,
+			PType:           CASBIN_BACKEND_POLICY_PTYPE,
+			Params:          []string{sub_rol_s, grp_s, obj_rol_s, *act.Name},
+		}
+		if _, err = cli.AddNamedPolicy(cb.context(), req); err != nil {
+			cb._remove_role_from_group(cli, grp, rol)
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (cb *CasbinBackend) _remove_role_from_group(cli pb.PolicydServiceClient, grp *storage.Group, rol *storage.Role) error {
+	var err error
+
+	sub_rol_s := cb.convert_role(grp, rol)
+	grp_s := cb.convert_group(grp)
+
+	req := &pb.FilteredPolicyRequest{
+		EnforcerHandler: cb.opt.EnforcerHandler,
+		PType:           CASBIN_BACKEND_POLICY_PTYPE,
+		FieldIndex:      0,
+		FieldValues:     []string{sub_rol_s, grp_s},
+	}
+
+	if _, err = cli.RemoveFilteredNamedPolicy(cb.context(), req); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (cb *CasbinBackend) _remove_group_about_subject(cli pb.PolicydServiceClient, grp *storage.Group) error {
+	var err error
+
+	req := &pb.FilteredPolicyRequest{
+		EnforcerHandler: cb.opt.EnforcerHandler,
+		PType:           CASBIN_BACKEND_SUBJECT_PTYPE,
+		FieldIndex:      1,
+		FieldValues:     []string{cb.convert_group(grp)},
+	}
+
+	if _, err = cli.RemoveFilteredNamedGroupingPolicy(cb.context(), req); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (cb *CasbinBackend) _remove_group_about_object(cli pb.PolicydServiceClient, grp *storage.Group) error {
+	var err error
+
+	req := &pb.FilteredPolicyRequest{
+		EnforcerHandler: cb.opt.EnforcerHandler,
+		PType:           CASBIN_BACKEND_OBJECT_PTYPE,
+		FieldIndex:      1,
+		FieldValues:     []string{cb.convert_group(grp)},
+	}
+
+	if _, err = cli.RemoveFilteredNamedGroupingPolicy(cb.context(), req); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (cb *CasbinBackend) _remove_group_about_policy(cli pb.PolicydServiceClient, grp *storage.Group) error {
+	var err error
+
+	req := &pb.FilteredPolicyRequest{
+		EnforcerHandler: cb.opt.EnforcerHandler,
+		PType:           CASBIN_BACKEND_POLICY_PTYPE,
+		FieldIndex:      1,
+		FieldValues:     []string{cb.convert_group(grp)},
+	}
+
+	if _, err = cli.RemoveFilteredNamedPolicy(cb.context(), req); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (cb *CasbinBackend) _enforce(cli pb.PolicydServiceClient, sub, obj *storage.Entity, act *storage.Action) error {
+	var err error
+	var reqs []*pb.EnforceRequest
+
+	sub_s := cb.convert_subject(sub)
+	obj_s := cb.convert_object(obj)
+
+	for _, grp := range sub.Groups {
+		grp_s := cb.convert_group(grp)
+
+		reqs = append(reqs, &pb.EnforceRequest{
+			EnforcerHandler: cb.opt.EnforcerHandler,
+			Params:          []string{sub_s, grp_s, obj_s, *act.Name},
+		})
+	}
+
+	req := &pb.EnforceBucketRequest{Requests: reqs}
+	res, err := cli.EnforceBucket(cb.context(), req)
+	if err != nil {
+		return err
+	}
+
+	if !res.Res {
+		return ErrPermissionDenied
+	}
+
+	return nil
+}
+
 func (cb *CasbinBackend) convert_group(grp *storage.Group) string {
 	return fmt.Sprintf("dom.%s.grp.%s", *grp.DomainId, *grp.Id)
 }
@@ -122,7 +244,7 @@ func (cb *CasbinBackend) convert_object(obj *storage.Entity) string {
 }
 
 func (cb *CasbinBackend) convert_role_for_object(grp *storage.Group) string {
-	return fmt.Sprintf("dom.%s.grp.%s.rol.%s", *grp.DomainId, *grp.Id, "data")
+	return fmt.Sprintf("dom.%s.grp.%s.data", *grp.DomainId, *grp.Id)
 }
 
 func (cb *CasbinBackend) convert_roles_for_subject(grp *storage.Group) []string {
@@ -135,9 +257,56 @@ func (cb *CasbinBackend) convert_roles_for_subject(grp *storage.Group) []string 
 	return ys
 }
 
-func (cb *CasbinBackend) AddSubjectToGroup(grp *storage.Group, sub *storage.Entity) error {
-	var err error
+func (cb *CasbinBackend) convert_role(grp *storage.Group, rol *storage.Role) string {
+	return fmt.Sprintf("dom.%s.grp.%s.rol.%s", *grp.DomainId, *grp.Id, *rol.Id)
+}
 
+func (cb *CasbinBackend) Enforce(sub, obj *storage.Entity, act *storage.Action) error {
+	cli, cfn, err := cb.cli_fty.NewPolicydServiceClient()
+	if err != nil {
+		return err
+	}
+	defer cfn()
+
+	err = cb._enforce(cli, sub, obj, act)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (cb *CasbinBackend) CreateGroup(grp *storage.Group) error {
+	cb.logger.WithField("group", *grp.Id).Debugf("create group")
+
+	return nil
+}
+
+func (cb *CasbinBackend) DeleteGroup(grp *storage.Group) error {
+	cli, cfn, err := cb.cli_fty.NewPolicydServiceClient()
+	if err != nil {
+		return err
+	}
+	defer cfn()
+
+	if err = cb._remove_group_about_subject(cli, grp); err != nil {
+		return err
+	}
+
+	if err = cb._remove_group_about_object(cli, grp); err != nil {
+		return err
+	}
+
+	if err = cb._remove_group_about_policy(cli, grp); err != nil {
+		return err
+	}
+
+	cb.logger.WithField("group", *grp.Id).Debugf("delete group")
+
+	return nil
+}
+
+func (cb *CasbinBackend) AddSubjectToGroup(grp *storage.Group, sub *storage.Entity) error {
 	cli, cfn, err := cb.cli_fty.NewPolicydServiceClient()
 	if err != nil {
 		return err
@@ -154,55 +323,164 @@ func (cb *CasbinBackend) AddSubjectToGroup(grp *storage.Group, sub *storage.Enti
 		}
 	}
 
+	cb.logger.WithFields(log.Fields{
+		"group":   *grp.Id,
+		"subject": *sub.Id,
+	}).Debugf("add subject to group")
+
 	return nil
 }
 
 func (cb *CasbinBackend) RemoveSubjectFromGroup(grp *storage.Group, sub *storage.Entity) error {
-	var err error
-
 	cli, cfn, err := cb.cli_fty.NewPolicydServiceClient()
 	if err != nil {
 		return err
 	}
 	defer cfn()
 
-	return cb._remove_subject_from_group(cli, grp, sub)
+	err = cb._remove_subject_from_group(cli, grp, sub)
+	if err != nil {
+		return err
+	}
+
+	cb.logger.WithFields(log.Fields{
+		"group":   *grp.Id,
+		"subject": *sub.Id,
+	}).Debugf("remove subject from group")
+
+	return nil
 }
 
 func (cb *CasbinBackend) AddObjectToGroup(grp *storage.Group, obj *storage.Entity) error {
-	var err error
-
 	cli, cfn, err := cb.cli_fty.NewPolicydServiceClient()
 	if err != nil {
 		return err
 	}
 	defer cfn()
 
-	return cb._add_grouping_policy(cli, CASBIN_BACKEND_OBJECT_PTYPE, cb.convert_object(obj), cb.convert_group(grp), cb.convert_role_for_object(grp))
+	err = cb._add_grouping_policy(cli, CASBIN_BACKEND_OBJECT_PTYPE, cb.convert_object(obj), cb.convert_group(grp), cb.convert_role_for_object(grp))
+	if err != nil {
+		return err
+	}
+
+	cb.logger.WithFields(log.Fields{
+		"group":  *grp.Id,
+		"object": *obj.Id,
+	}).Debugf("add object to group")
+
+	return nil
 }
 
 func (cb *CasbinBackend) RemoveObjectFromGroup(grp *storage.Group, obj *storage.Entity) error {
-	var err error
-
 	cli, cfn, err := cb.cli_fty.NewPolicydServiceClient()
 	if err != nil {
 		return err
 	}
 	defer cfn()
 
-	return cb._remove_grouping_policy(cli, CASBIN_BACKEND_OBJECT_PTYPE, cb.convert_object(obj), cb.convert_group(grp), cb.convert_role_for_object(grp))
+	err = cb._remove_grouping_policy(cli, CASBIN_BACKEND_OBJECT_PTYPE, cb.convert_object(obj), cb.convert_group(grp), cb.convert_role_for_object(grp))
+	if err != nil {
+		return err
+	}
+
+	cb.logger.WithFields(log.Fields{
+		"group":  *grp.Id,
+		"object": *obj.Id,
+	}).Debugf("remove object from group")
+
+	return nil
 }
 
 func (cb *CasbinBackend) AddRoleToGroup(grp *storage.Group, rol *storage.Role) error {
-	panic("unimplemented")
+	cli, cfn, err := cb.cli_fty.NewPolicydServiceClient()
+	if err != nil {
+		return err
+	}
+	defer cfn()
+
+	err = cb._add_role_to_group(cli, grp, rol)
+	if err != nil {
+		return err
+	}
+
+	cb.logger.WithFields(log.Fields{
+		"group": *grp.Id,
+		"role":  *grp.Id,
+	}).Debugf("add role to group")
+
+	return nil
 }
 
 func (cb *CasbinBackend) RemoveRoleFromGroup(grp *storage.Group, rol *storage.Role) error {
-	panic("unimplemented")
+	cli, cfn, err := cb.cli_fty.NewPolicydServiceClient()
+	if err != nil {
+		return err
+	}
+	defer cfn()
+
+	err = cb._remove_role_from_group(cli, grp, rol)
+	if err != nil {
+		return err
+	}
+
+	cb.logger.WithFields(log.Fields{
+		"group": *grp.Id,
+		"role":  *rol.Id,
+	}).Debugf("remove role from group")
+
+	return nil
 }
 
 func casbin_backend_factory(args ...interface{}) (Backend, error) {
-	panic("unimplemented")
+	var ok bool
+	var logger log.FieldLogger
+	var cli_fty *client_helper.ClientFactory
+	opt := new_casbin_backend_option()
+
+	err := opt_helper.Setopt(map[string]func(string, interface{}) error{
+		"logger": func(key string, val interface{}) error {
+			logger, ok = val.(log.FieldLogger)
+			if !ok {
+				return opt_helper.ErrInvalidArguments
+			}
+			return nil
+		},
+		"client_factory": func(key string, val interface{}) error {
+			cli_fty, ok = val.(*client_helper.ClientFactory)
+			if !ok {
+				return opt_helper.ErrInvalidArguments
+			}
+			return nil
+		},
+		"casbin_enforcer_handler": func(key string, val interface{}) error {
+			opt.EnforcerHandler, ok = val.(int32)
+			if !ok {
+				return opt_helper.ErrInvalidArguments
+			}
+			return nil
+		},
+	})(args...)
+	if err != nil {
+		return nil, err
+	}
+
+	cli, cfn, err := cli_fty.NewPolicydServiceClient()
+	if err != nil {
+		return nil, err
+	}
+	defer cfn()
+
+	b := &CasbinBackend{
+		opt:     opt,
+		cli_fty: cli_fty,
+		logger:  logger,
+	}
+
+	if _, err = cli.Initialize(b.context(), &pb.EmptyRequest{Handler: opt.EnforcerHandler}); err != nil {
+		return nil, err
+	}
+
+	return b, nil
 }
 
 func init() {

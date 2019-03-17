@@ -26,7 +26,7 @@ func (self *MetathingsIdentitydService) ValidatePatchDomain(ctx context.Context,
 }
 
 func (self *MetathingsIdentitydService) AuthorizePatchDomain(ctx context.Context, in interface{}) error {
-	return self.authorizer.Authorize(ctx, in.(*pb.PatchDomainRequest).GetDomain().GetId().GetValue(), "patch_domain")
+	return self.authorize(ctx, in.(*pb.PatchDomainRequest).GetDomain().GetId().GetValue(), "patch_domain")
 }
 
 func (self *MetathingsIdentitydService) PatchDomain(ctx context.Context, req *pb.PatchDomainRequest) (*pb.PatchDomainResponse, error) {

@@ -29,7 +29,7 @@ func (self *MetathingsIdentitydService) ValidateAddSubjectToGroup(ctx context.Co
 }
 
 func (self *MetathingsIdentitydService) AuthorizeAddSubjectToGroup(ctx context.Context, in interface{}) error {
-	return self.authorizer.Authorize(ctx, in.(*pb.AddSubjectToGroupRequest).GetSubject().GetId().GetValue(), "add_subject_to_group")
+	return self.authorize(ctx, in.(*pb.AddSubjectToGroupRequest).GetSubject().GetId().GetValue(), "add_subject_to_group")
 }
 
 func (self *MetathingsIdentitydService) AddSubjectToGroup(ctx context.Context, req *pb.AddSubjectToGroupRequest) (*empty.Empty, error) {

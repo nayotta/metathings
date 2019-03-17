@@ -29,3 +29,7 @@ func GetTestKafkaBrokers() []string {
 	brokers := GetenvWithDefault("MTT_KAFKA_BROKERS", "127.0.0.1:9092")
 	return strings.Split(brokers, ",")
 }
+
+func GetTestPolicydAddress() string {
+	return GetenvWithDefault("MTT_POLICYD_ADDRESS", "localhost:21733")
+}

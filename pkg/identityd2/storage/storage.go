@@ -202,6 +202,8 @@ type Storage interface {
 	RemoveSubjectFromGroup(group_id, subject_id string) error
 	AddObjectToGroup(group_id, object_id string) error
 	RemoveObjectFromGroup(group_id, object_id string) error
+	ListGroupsForSubject(subject_id string) ([]*Group, error)
+	ListGroupsForObject(subject_id string) ([]*Group, error)
 
 	CreateCredential(*Credential) (*Credential, error)
 	DeleteCredential(id string) error

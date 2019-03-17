@@ -6,11 +6,8 @@ import (
 
 	"github.com/golang/protobuf/ptypes/empty"
 	log "github.com/sirupsen/logrus"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 
 	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
-	authorizer "github.com/nayotta/metathings/pkg/identityd2/authorizer"
 	policy "github.com/nayotta/metathings/pkg/identityd2/policy"
 	storage "github.com/nayotta/metathings/pkg/identityd2/storage"
 	validator "github.com/nayotta/metathings/pkg/identityd2/validator"
@@ -22,13 +19,11 @@ type MetathingsIdentitydServiceOption struct {
 }
 
 type MetathingsIdentitydService struct {
-	opt        *MetathingsIdentitydServiceOption
-	logger     log.FieldLogger
-	storage    storage.Storage
-	authorizer authorizer.Authorizer
-	validator  validator.Validator
-	enforcer   policy.Enforcer
-	backend    policy.Backend
+	opt       *MetathingsIdentitydServiceOption
+	logger    log.FieldLogger
+	storage   storage.Storage
+	validator validator.Validator
+	backend   policy.Backend
 }
 
 var (
@@ -48,23 +43,8 @@ func (self *MetathingsIdentitydService) is_ignore_method(md *grpc_helper.MethodD
 	return false
 }
 
-func (self *MetathingsIdentitydService) add_token_to_kind_in_enforcer(tkn_id string) error {
-	var err error
-
-	if err = self.enforcer.AddObjectToKind(tkn_id, KIND_TOKEN); err != nil {
-		self.logger.WithError(err).Errorf("failed to add token to kind in enforcer")
-		return status.Errorf(codes.Internal, err.Error())
-	}
-
-	return nil
-}
-
 func (self *MetathingsIdentitydService) revoke_token(tkn_id string) error {
 	var err error
-
-	if err = self.enforcer.RemoveObjectFromKind(tkn_id, KIND_TOKEN); err != nil {
-		self.logger.WithError(err).WithField("id", tkn_id).Warningf("failed to remove token from kind in enforcer")
-	}
 
 	if err = self.storage.DeleteToken(tkn_id); err != nil {
 		self.logger.WithError(err).WithField("id", tkn_id).Warningf("failed to delete token in storage")
@@ -170,18 +150,15 @@ func (self *MetathingsIdentitydService) ListCredentialsForEntity(context.Context
 
 func NewMetathingsIdentitydService(
 	enforcor policy.Enforcer,
-	auth authorizer.Authorizer,
 	opt *MetathingsIdentitydServiceOption,
 	logger log.FieldLogger,
 	storage storage.Storage,
 	validator validator.Validator,
 ) (pb.IdentitydServiceServer, error) {
 	return &MetathingsIdentitydService{
-		opt:        opt,
-		logger:     logger,
-		storage:    storage,
-		enforcer:   enforcor,
-		authorizer: auth,
-		validator:  validator,
+		opt:       opt,
+		logger:    logger,
+		storage:   storage,
+		validator: validator,
 	}, nil
 }

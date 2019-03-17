@@ -26,7 +26,7 @@ func (self *MetathingsIdentitydService) ValidatePatchRole(ctx context.Context, i
 }
 
 func (self *MetathingsIdentitydService) AuthorizePatchRole(ctx context.Context, in interface{}) error {
-	return self.authorizer.Authorize(ctx, in.(*pb.PatchRoleRequest).GetRole().GetId().GetValue(), "patch_role")
+	return self.authorize(ctx, in.(*pb.PatchRoleRequest).GetRole().GetId().GetValue(), "patch_role")
 }
 
 func (self *MetathingsIdentitydService) PatchRole(ctx context.Context, req *pb.PatchRoleRequest) (*pb.PatchRoleResponse, error) {

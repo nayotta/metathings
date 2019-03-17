@@ -25,7 +25,7 @@ func (self *MetathingsIdentitydService) ValidateGetAction(ctx context.Context, i
 }
 
 func (self *MetathingsIdentitydService) AuthorizeGetAction(ctx context.Context, in interface{}) error {
-	return self.authorizer.Authorize(ctx, in.(*pb.GetActionRequest).GetAction().GetId().GetValue(), "get_action")
+	return self.authorize(ctx, in.(*pb.GetActionRequest).GetAction().GetId().GetValue(), "get_action")
 }
 
 func (self *MetathingsIdentitydService) GetAction(ctx context.Context, req *pb.GetActionRequest) (*pb.GetActionResponse, error) {
