@@ -92,6 +92,28 @@ func (cb *CasbinBackend) _list_grouping_policies(cli pb.PolicydServiceClient, g,
 	return ys, nil
 }
 
+func (cb *CasbinBackend) _list_policies(cli pb.PolicydServiceClient, p, rol, grp string) ([][]string, error) {
+	var err error
+	var res *pb.Array2DReply
+	var ys [][]string
+
+	req := &pb.FilteredPolicyRequest{
+		EnforcerHandler: cb.opt.EnforcerHandler,
+		PType:           p,
+		FieldIndex:      0,
+		FieldValues:     []string{rol, grp},
+	}
+	if res, err = cli.GetFilteredNamedPolicy(cb.context(), req); err != nil {
+		return nil, err
+	}
+
+	for _, d2 := range res.GetD2() {
+		ys = append(ys, d2.GetD1())
+	}
+
+	return ys, nil
+}
+
 func (cb *CasbinBackend) _remove_subject_from_group(cli pb.PolicydServiceClient, grp *storage.Group, sub *storage.Entity) error {
 	var err error
 
@@ -124,6 +146,12 @@ func (cb *CasbinBackend) _add_role_to_group(cli pb.PolicydServiceClient, grp *st
 		}
 		if _, err = cli.AddNamedPolicy(cb.context(), req); err != nil {
 			cb._remove_role_from_group(cli, grp, rol)
+			return err
+		}
+	}
+
+	for _, sub := range grp.Subjects {
+		if err = cb._add_grouping_policy(cli, CASBIN_BACKEND_SUBJECT_PTYPE, cb.convert_subject(sub), cb.convert_group(grp), sub_rol_s); err != nil {
 			return err
 		}
 	}
@@ -247,11 +275,15 @@ func (cb *CasbinBackend) convert_role_for_object(grp *storage.Group) string {
 	return fmt.Sprintf("dom.%s.grp.%s.data", *grp.DomainId, *grp.Id)
 }
 
+func (cb *CasbinBackend) convert_role_for_subject(grp *storage.Group, rol *storage.Role) string {
+	return fmt.Sprintf("dom.%s.grp.%s.rol.%s", *grp.DomainId, *grp.Id, *rol.Id)
+}
+
 func (cb *CasbinBackend) convert_roles_for_subject(grp *storage.Group) []string {
 	var ys []string
 
 	for _, r := range grp.Roles {
-		ys = append(ys, fmt.Sprintf("dom.%s.grp.%s.rol.%s", *grp.DomainId, *grp.Id, *r.Id))
+		ys = append(ys, cb.convert_role_for_subject(grp, r))
 	}
 
 	return ys

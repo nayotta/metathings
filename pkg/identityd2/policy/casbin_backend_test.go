@@ -30,51 +30,18 @@ var (
 	test_action_name  = "test-action-name"
 	test_action2_id   = "test-action2-id"
 	test_action2_name = "test-action2-name"
+)
 
-	test_action = &storage.Action{
-		Id:   &test_action_id,
-		Name: &test_action_name,
-	}
-	test_action2 = &storage.Action{
-		Id:   &test_action2_id,
-		Name: &test_action2_name,
-	}
-	test_role = &storage.Role{
-		Id:   &test_role_id,
-		Name: &test_role_name,
-		Actions: []*storage.Action{
-			test_action,
-		},
-	}
-	test_role2 = &storage.Role{
-		Id:   &test_role2_id,
-		Name: &test_role_name,
-		Actions: []*storage.Action{
-			test_action2,
-		},
-	}
-	test_group = &storage.Group{
-		Id:       &test_domain_id,
-		DomainId: &test_domain_id,
-		Domain:   &storage.Domain{Id: &test_domain_id},
-		Roles: []*storage.Role{
-			test_role,
-		},
-	}
-	test_subject = &storage.Entity{
-		Id: &test_subject_id,
-		Groups: []*storage.Group{
-			test_group,
-		},
-	}
-	test_subject2 = &storage.Entity{
-		Id: &test_subject2_id,
-		Groups: []*storage.Group{
-			test_group,
-		},
-	}
-	test_object  = &storage.Entity{Id: &test_object_id}
-	test_object2 = &storage.Entity{Id: &test_object2_id}
+var (
+	test_action   *storage.Action
+	test_action2  *storage.Action
+	test_role     *storage.Role
+	test_role2    *storage.Role
+	test_group    *storage.Group
+	test_subject  *storage.Entity
+	test_subject2 *storage.Entity
+	test_object   *storage.Entity
+	test_object2  *storage.Entity
 )
 
 type casbinBackendTestSuite struct {
@@ -104,7 +71,55 @@ g3 = _, _, _
 e = some(where (p.eft == allow))
 
 [matchers]
-m = (g2(r.sub, r.grp, p.sub) && g3(r.obj, r.grp, p.obj) && r.grp == p.grp && r.act == p.act) || (g(r.sub, p.sub) && (p.sub == 'sysadmin'))`
+m = (g2(r.sub, r.grp, p.sub) && g3(r.obj, r.grp, p.obj) && r.grp == p.grp && r.act == p.act) || (g(r.sub, p.sub) && (p.sub == "sysadmin"))`
+
+	test_action = &storage.Action{
+		Id:   &test_action_id,
+		Name: &test_action_name,
+	}
+	test_action2 = &storage.Action{
+		Id:   &test_action2_id,
+		Name: &test_action2_name,
+	}
+	test_role = &storage.Role{
+		Id:   &test_role_id,
+		Name: &test_role_name,
+		Actions: []*storage.Action{
+			test_action,
+		},
+	}
+	test_role2 = &storage.Role{
+		Id:   &test_role2_id,
+		Name: &test_role2_name,
+		Actions: []*storage.Action{
+			test_action2,
+		},
+	}
+	test_group = &storage.Group{
+		Id:       &test_domain_id,
+		DomainId: &test_domain_id,
+		Domain:   &storage.Domain{Id: &test_domain_id},
+		Roles: []*storage.Role{
+			test_role,
+		},
+	}
+	test_subject = &storage.Entity{
+		Id: &test_subject_id,
+		Groups: []*storage.Group{
+			test_group,
+		},
+	}
+	test_subject2 = &storage.Entity{
+		Id: &test_subject2_id,
+		Groups: []*storage.Group{
+			test_group,
+		},
+	}
+	test_object = &storage.Entity{Id: &test_object_id}
+	test_object2 = &storage.Entity{Id: &test_object2_id}
+
+	test_group.Subjects = []*storage.Entity{test_subject}
+	test_group.Objects = []*storage.Entity{test_object}
 
 	logger, err = log_helper.NewLogger("test", "debug")
 	s.Nil(err)
