@@ -571,6 +571,12 @@ func (self *connectionCenter) new_north_from_bridge_handler(dev *storage.Device,
 					logger.WithError(err).Debugf("failed to send ack msg")
 					return
 				}
+
+				if err = north.Send(new_config_ack_response_message_for_north(*dev.Id)); err != nil {
+					logger.WithError(err).Debugf("failed to send ack msg to north")
+					return
+				}
+
 				acked = true
 				logger.Debugf("send ack msg")
 			})
