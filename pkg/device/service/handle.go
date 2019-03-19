@@ -2,6 +2,7 @@ package metathings_device_service
 
 import (
 	"context"
+	"math"
 	"sync"
 	"time"
 
@@ -158,7 +159,7 @@ func (self *MetathingsDeviceServiceImpl) handle_user_stream_request(req *deviced
 			}
 			logger.Debugf("send config response")
 			// TODO(Peer): make SEND_RES_INTERVAL configurable.
-			time.Sleep(SEND_RES_INTERVAL * time.Millisecond)
+			time.Sleep(time.Duration(math.Min(B_SEND_RES_INTERVAL+(float64(cnt)*A_SEND_RES_INTERVAL), MAX_SEND_RES_INTERVAL)) * time.Millisecond)
 		}
 		select {
 		case _, ok := <-acked:
@@ -206,23 +207,19 @@ func (self *MetathingsDeviceServiceImpl) handle_user_stream_request(req *deviced
 type hijackStream struct {
 	deviced_pb.DevicedService_ConnectClient
 
-	on_recv   func(*hijackStream, *deviced_pb.ConnectRequest) error
-	recv_chan chan *deviced_pb.ConnectRequest
-	recv_err  error
+	on_recv       func(*hijackStream, *deviced_pb.ConnectRequest) error
+	recv_chan     chan *deviced_pb.ConnectRequest
+	recv_err      error
+	recv_err_once *sync.Once
 }
 
 func (self *hijackStream) Recv() (*deviced_pb.ConnectRequest, error) {
-	if self.recv_err != nil {
-		return nil, self.recv_err
-	}
-
 	select {
 	case req, ok := <-self.recv_chan:
 		if !ok {
-			self.recv_err = ErrFailedToRecvMessage
+			self.recv_err_once.Do(func() { self.recv_err = ErrFailedToRecvMessage })
 			return nil, self.recv_err
 		}
-
 		return req, nil
 	}
 }
@@ -233,15 +230,16 @@ func (self *hijackStream) RecvChan() chan *deviced_pb.ConnectRequest {
 
 func (self *hijackStream) start() {
 	go func() {
+		defer close(self.recv_chan)
 		for {
 			req, err := self.DevicedService_ConnectClient.Recv()
 			if err != nil {
-				self.recv_err = err
+				self.recv_err_once.Do(func() { self.recv_err = err })
 				break
 			}
 			err = self.on_recv(self, req)
 			if err != nil {
-				self.recv_err = err
+				self.recv_err_once.Do(func() { self.recv_err = err })
 				break
 			}
 		}
@@ -251,8 +249,9 @@ func (self *hijackStream) start() {
 func newHijackStream(stm deviced_pb.DevicedService_ConnectClient, on_recv func(*hijackStream, *deviced_pb.ConnectRequest) error) *hijackStream {
 	hjstm := &hijackStream{
 		DevicedService_ConnectClient: stm,
-		on_recv:   on_recv,
-		recv_chan: make(chan *deviced_pb.ConnectRequest, 128),
+		on_recv:       on_recv,
+		recv_chan:     make(chan *deviced_pb.ConnectRequest, 128),
+		recv_err_once: new(sync.Once),
 	}
 
 	hjstm.start()
