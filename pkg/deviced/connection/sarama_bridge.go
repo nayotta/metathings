@@ -295,7 +295,7 @@ type saramaBridgeFactory struct {
 	logger log.FieldLogger
 }
 
-func (self *saramaBridgeFactory) BuildBridge(device_id string, session int32) (Bridge, error) {
+func (self *saramaBridgeFactory) BuildBridge(device_id string, session int64) (Bridge, error) {
 	return self.GetBridge(parse_bridge_id(device_id, session))
 }
 

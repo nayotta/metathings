@@ -6,6 +6,7 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
+	session_helper "github.com/nayotta/metathings/pkg/common/session"
 	token_helper "github.com/nayotta/metathings/pkg/common/token"
 	pb "github.com/nayotta/metathings/pkg/proto/device"
 	deviced_pb "github.com/nayotta/metathings/pkg/proto/deviced"
@@ -34,6 +35,8 @@ type MetathingsDeviceServiceImpl struct {
 	mdl_db   ModuleDatabase
 	conn_stm deviced_pb.DevicedService_ConnectClient
 	conn_cfn client_helper.CloseFn
+
+	startup_session int32
 }
 
 func (self *MetathingsDeviceServiceImpl) Stop() error {
@@ -55,9 +58,10 @@ func NewMetathingsDeviceService(
 	opt *MetathingsDeviceServiceOption,
 ) (MetathingsDeviceService, error) {
 	return &MetathingsDeviceServiceImpl{
-		tknr:    tknr,
-		cli_fty: cli_fty,
-		logger:  logger,
-		opt:     opt,
+		tknr:            tknr,
+		cli_fty:         cli_fty,
+		logger:          logger,
+		opt:             opt,
+		startup_session: session_helper.GenerateStartupSession(),
 	}, nil
 }

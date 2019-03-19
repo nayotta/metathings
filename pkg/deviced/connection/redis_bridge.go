@@ -238,7 +238,7 @@ type redisBridgeFactory struct {
 	logger log.FieldLogger
 }
 
-func (self *redisBridgeFactory) BuildBridge(device string, session int32) (Bridge, error) {
+func (self *redisBridgeFactory) BuildBridge(device string, session int64) (Bridge, error) {
 	return self.GetBridge(parse_bridge_id(device, session))
 }
 

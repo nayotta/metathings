@@ -83,6 +83,7 @@ func (self *MetathingsDeviceServiceImpl) heartbeat_once() {
 			HeartbeatAt: &pb_now,
 			Modules:     pb_mdls,
 		},
+		StartupSession: &wrappers.Int32Value{Value: self.startup_session},
 	}
 
 	_, err = cli.Heartbeat(ctx, req)
