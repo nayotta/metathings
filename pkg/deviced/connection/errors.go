@@ -6,4 +6,5 @@ var (
 	ErrInvalidArgument    = errors.New("invalid argument")
 	ErrUnexpectedResponse = errors.New("unexpected response")
 	ErrBridgeClosed       = errors.New("bridge closed")
+	ErrTimeout            = errors.New("timeout")
 )

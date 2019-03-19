@@ -77,15 +77,19 @@ message UnaryCallValue {
 
 message OpStreamCallValue {
 	oneof union {
-		OpStreamCallConfig config = 1;
-		google.protobuf.Any value = 2;
+		google.protobuf.Any value = 1;
+		OpStreamCallConfig config = 2;
+		OpStreamCallConfigAck config_ack = 3;
+		OpStreamCallExit exit = 4;
 	}
 }
 
 message StreamCallValue {
 	oneof union {
-		StreamCallConfig config = 1;
-		google.protobuf.Any value = 2;
+		google.protobuf.Any value = 1;
+		StreamCallConfig config = 2;
+		StreamCallConfigAck config_ack = 3;
+		StreamCallExit exit = 4;
 	}
 }
 
@@ -100,3 +104,9 @@ message StreamCallConfig {
 	string component = 2;
 	string method = 3;
 }
+
+message OpStreamCallConfigAck {}
+message StreamCallConfigAck {}
+
+message OpStreamCallExit {}
+message StreamCallExit {}

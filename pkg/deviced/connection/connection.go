@@ -541,20 +541,47 @@ func (self *connectionCenter) north_from_bridge(dev *storage.Device, cfg *pb.Str
 				return
 			}
 
-			stm_res := &pb.StreamCallResponse{
-				Device: &pb.Device{Id: *dev.Id},
-				Value:  res.GetStreamCall(),
-			}
-
-			if err = north.Send(stm_res); err != nil {
-				logger.WithError(err).Debugf("failed to send response")
+			if err = self.handle_north_from_bridge(&res, dev, north, bridge, logger); err != nil {
 				return
 			}
-			logger.Debugf("send cli res")
+
 		}
 	}()
 
 	return wait
+}
+
+func (self *connectionCenter) handle_north_from_bridge(res *pb.ConnectResponse, dev *storage.Device, north pb.DevicedService_StreamCallServer, bridge Bridge, logger log.FieldLogger) error {
+	var err error
+
+	stm_res := res.GetStreamCall()
+	switch stm_res.Union.(type) {
+	case *pb.StreamCallValue_Value:
+		if err = north.Send(&pb.StreamCallResponse{
+			Device: &pb.Device{Id: *dev.Id},
+			Value:  res.GetStreamCall(),
+		}); err != nil {
+			logger.WithError(err).Debugf("failed to send response")
+			return err
+		}
+		logger.Debugf("send cli res")
+	case *pb.StreamCallValue_Config:
+		buf := new_config_ack_message_buffer(res.GetSessionId())
+		if err = bridge.North().Send(buf); err != nil {
+			logger.WithError(err).Debugf("failed to send ack msg")
+			return err
+		}
+		logger.Debugf("send ack msg")
+	case *pb.StreamCallValue_ConfigAck:
+		logger.Warningf("should not reach here")
+	case *pb.StreamCallValue_Exit:
+		logger.Debugf("recv exit msg")
+		return context.Canceled
+	default:
+		logger.Debugf("unexpected response")
+	}
+
+	return nil
 }
 
 func NewConnectionCenter(brfty BridgeFactory, stor Storage, logger log.FieldLogger) (ConnectionCenter, error) {
