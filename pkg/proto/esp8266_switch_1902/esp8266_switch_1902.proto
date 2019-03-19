@@ -1,0 +1,290 @@
+syntax = "proto3";
+
+import "google/protobuf/wrappers.proto";
+
+message MqttDeviceRequest {
+  int32 session_id = 1;
+  oneof payload {
+    // native api
+    GpioDigitalReq gpio_digital_req = 2;
+    GpioAnalogReq gpio_analog_req = 3;
+    I2cReq i2c_req = 4;
+
+    // device api
+    GetSwitchsAddrReq get_switchs_addr_req = 11;  // 获取所有开关
+    GetSwitchsStateReq get_switchs_state_req = 12;  // 获取连续数量的开关状态
+    GetSwitchStateReq get_switch_state_req = 13;  // 获取单个开关状态
+    SetSwitchStateReq set_switch_state_req = 14;  // 设置单个开关状态
+    GetSwitchsDataReq get_switchs_data_req = 15;
+    // 获取开关数据(电压, 电流, 功率, 电量)
+    GetSwitchsConfigReq get_switchs_config_req = 16;  // 获取(电压 电流限额)
+    SetSwitchsConfigReq set_switchs_config_req = 17;  // 设置(电压 电流限额)
+    GetSwitchsWarnReq get_switchs_warn_req = 18;      // 电压电流报警
+
+    // metathings api
+    Heartbeat heartbeat = 100;
+    HeartbeatSelectRes heartbeat_select_res = 101;
+    HeartbeatRes heartbeat_res = 102;
+    RunTimeReq run_time_req = 103;
+    ConfigReq config_req = 104;
+
+    // time task api
+    SetTimeTaskReq set_time_task_req = 105;
+    GetTimeTaskReq get_time_task_req = 106;
+  };
+}
+
+message MqttDeviceResponse {
+  oneof payload {
+    // native response
+    GpioDigitalRes gpio_digital_res = 2;
+    GpioAnalogRes gpio_analog_res = 3;
+    I2cRes i2c_res = 4;
+
+    // device api
+    GetSwitchsAddrRes get_switchs_addr_res = 11;
+    GetSwitchsStateRes get_switchs_state_res = 12;
+    GetSwitchStateRes get_switch_state_res = 13;  // stream 推送
+    SetSwitchStateRes set_switch_state_res = 14;
+    GetSwitchsDataRes get_switchs_data_res = 15;
+    GetSwitchsConfigRes get_switchs_config_res = 16;
+    SetSwitchsConfigRes set_switchs_config_res = 17;
+    GetSwitchsWarnRes get_switchs_warn_res = 18;  // stream 推送
+
+    // error response
+    ErrBadExcuteRes bad_excute_res = 98;
+    ErrBadArgsRes bad_args_res = 99;
+
+    // metathing response
+    HeartbeatSelectReq heartbeat_select_req = 100;
+    HeartbeatRes heartbeat_res = 101;
+    HeartbeatReq heartbeat_req = 102;
+    RunTimeRes run_time_res = 103;
+    ConfigRes config_res = 104;
+    SetTimeTaskRes set_time_task_res = 105;
+    GetTimeTaskRes get_time_task_res = 106;
+  }
+}
+
+// 02 gpio digital req
+message GpioDigitalReq {
+  int32 pin = 1;
+  int32 value = 2;
+}
+
+// 02 gpio digital res
+message GpioDigitalRes {
+  int32 pin = 1;
+  int32 value = 2;
+}
+
+// 03 gpio analog req
+message GpioAnalogReq {
+  int32 pin = 1;
+  float value = 2;
+}
+
+// 03 gpio anolog res
+message GpioAnalogRes {
+  int32 pin = 1;
+  float value = 2;
+}
+
+// 04 i2c req
+message I2cReq {
+  int32 bus = 1;
+  int32 addr = 2;
+  int32 index = 3;
+  int32 angle = 4;
+}
+
+// 04 i2c res
+message I2cRes {
+  int32 bus = 1;
+  int32 addr = 2;
+  int32 index = 3;
+  int32 angle = 4;
+}
+
+// 11 req
+message GetSwitchsAddrReq {
+  int32 code = 1;  // 暂时不用, 设置为0
+}
+
+// 11 res
+message GetSwitchsAddrRes {
+  int32 addr_res = 1;  // 16位 开关地址, 字节位1标识开关是否存在, 0x09 表示
+}
+
+// 12 req
+message GetSwitchsStateReq {
+  int32 num = 1;  // 需要获取的数量
+}
+
+// 12 res
+message GetSwitchsStateRes {
+  int32 state_res = 1;  // 连续开关状态
+}
+
+// 13 req
+message GetSwitchStateReq {
+  int32 switch_addr = 1;  // 开关地址
+}
+
+// 13 res
+message GetSwitchStateRes {
+  int32 switch_addr = 1;  // 开关地址
+  bool state = 2;         // 开关状态
+}
+
+// 14 req
+message SetSwitchStateReq {
+  int32 switch_addr = 1;  // 开关地址
+  bool state = 2;         // 开关状态
+}
+
+// 14 res
+message SetSwitchStateRes {
+  int32 switch_addr = 1;  // 开关地址
+  bool state = 2;         // 开关设置成功
+}
+
+// 15 req
+message GetSwitchsDataReq {
+  bool votage = 1;
+  bool current = 2;
+  bool power = 3;
+  bool kwh = 4;
+}
+
+// 15 res
+message GetSwitchsDataRes {
+  google.protobuf.Int32Value votage = 1;   // 电压
+  google.protobuf.Int32Value current = 2;  // 电流
+  google.protobuf.Int32Value power = 3;    // 功率
+  google.protobuf.Int32Value kwh = 4;      // 电量
+}
+
+// 16 req
+message GetSwitchsConfigReq {
+  bool votage_high = 1;
+  bool votage_low = 2;
+  bool current_hight = 3;
+}
+
+// 16 res
+message GetSwitchsConfigRes {
+  google.protobuf.Int32Value votage_high = 1;   // 电压上限
+  google.protobuf.Int32Value votage_low = 2;    // 电压下限
+  google.protobuf.Int32Value current_high = 3;  // 电流上限
+}
+
+// 17 req
+message SetSwitchsConfigReq {
+  google.protobuf.Int32Value votage_high = 1;
+  google.protobuf.Int32Value votage_low = 2;
+  google.protobuf.Int32Value current_high = 3;
+}
+
+// 17 res
+message SetSwitchsConfigRes {
+  bool votage_high = 1;
+  bool votage_low = 2;
+  bool current_hight = 3;
+}
+
+// 18 req
+message GetSwitchsWarnReq {
+  bool votage_high_warn = 1;   // 过压报警
+  bool votage_low_warn = 2;    // 欠压报警
+  bool current_high_warn = 3;  // 过流报警
+}
+
+// 19 res
+message GetSwitchsWarnRes {
+  google.protobuf.BoolValue votage_high_warn = 1;   // 过压报警
+  google.protobuf.BoolValue votage_low_warn = 2;    // 欠压报警
+  google.protobuf.BoolValue current_high_warn = 3;  // 过流报警
+}
+
+// 98 bad excute res
+message ErrBadExcuteRes {
+  int32 code = 1;
+}
+
+// 99 bad args check res
+message ErrBadArgsRes {
+  int32 code = 1;
+}
+
+// 100 hearbeat req
+message Heartbeat {
+  int32 status = 1;
+}
+
+// 100 heartbeat res
+message HeartbeatRes {
+  int32 status = 1;
+}
+
+// 102 stream heartbeat res
+message HeartbeatReq {
+  int32 status = 1;
+}
+
+// 101 heartbeat select host res
+message HeartbeatSelectRes {
+  int32 status = 1;
+}
+
+// 100 heartbeat select host req
+message HeartbeatSelectReq {
+  int32 status = 1;
+}
+
+// 103 sys run time eeq
+message RunTimeReq {
+  int32 time = 1;
+}
+
+// 103 sys run time res
+message RunTimeRes {
+  int64 time = 1;
+  int64 app_start_time = 2;
+  int32 restart_times = 3;
+}
+
+// 104 sys config req
+message ConfigReq {
+  int32 config = 1;
+}
+
+// 104 sys config res
+message ConfigRes {
+  int32 config = 1;
+}
+
+message TimeTask {
+  string time = 1;  // cron string  6位 "秒 分 时 日 月 星期"
+  repeated MqttDeviceRequest tasks = 2;  // session_id 需要设置成 99
+}
+
+// 105 time tasks req
+message SetTimeTaskReq {
+  repeated TimeTask time_tasks = 1;
+}
+
+// 105 time tasks res
+message SetTimeTaskRes {
+  int32 code = 1;
+}
+
+// 106 get time tasks req
+message GetTimeTaskReq {
+  int32 code = 1;  // not use now
+}
+
+// 106 get time tasks res
+message GetTimeTaskRes {
+  repeated TimeTask time_tasks = 1;
+}

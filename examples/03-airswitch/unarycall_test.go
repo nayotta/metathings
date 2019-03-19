@@ -24,12 +24,12 @@ var (
 	MtpUsername        = "admin"
 	MtpPassword        = "admin"
 	MtpDefaultDomainID = "default"
-	MtpDeviceID        = "airswitch01"
+	MtpDeviceID        = "airswitch02"
 )
 
 var (
-	testGetSwitchsAddr        int32 = 0x0009 //switch 0 and 3
-	testSwitchAddr0           int32 = 3
+	testGetSwitchsAddr        int32 = 0x0055 //switch 0 and 3
+	testSwitchAddr0           int32 = 0
 	testSwitchType0           int32 = 0x0007
 	testSwitchModel0          int32 = 0x0040
 	testSwitchVotageHigh      int32 = 0x0104 //0x0104 = 260
