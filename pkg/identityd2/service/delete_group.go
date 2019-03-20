@@ -2,7 +2,6 @@ package metathings_identityd2_service
 
 import (
 	"context"
-	"errors"
 
 	"github.com/golang/protobuf/ptypes/empty"
 	log "github.com/sirupsen/logrus"
@@ -41,11 +40,6 @@ func (self *MetathingsIdentitydService) DeleteGroup(ctx context.Context, req *pb
 	}
 
 	grp := req.GetGroup()
-	if grp.GetId() == nil {
-		err = errors.New("group.id is empty")
-		self.logger.WithError(err).Warningf("failed to validate request data")
-		return nil, status.Errorf(codes.InvalidArgument, err.Error())
-	}
 	grp_id_str := grp.GetId().GetValue()
 
 	if grp_s, err = self.storage.GetGroup(grp_id_str); err != nil {

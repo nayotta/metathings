@@ -83,7 +83,9 @@ func (self *MetathingsPolicydService) Initialize(ctx context.Context, in *pb.Emp
 		return &pb.EmptyReply{}, err
 	}
 
-	e.AddPolicy("sysadmin", "any", "any", "any")
+	// WARNING(Peer): `rol.sysadmin` from identityd2.policy.CasbinBackend.convert_ungrouping_role
+	// WARNING(Peer): `ungrouping` from identityd2.policy.CASBIN_BACKEND_UNGROUPING_PTYPE
+	e.AddPolicy("rol.sysadmin", "ungrouping", "any", "any")
 
 	return &pb.EmptyReply{}, nil
 }

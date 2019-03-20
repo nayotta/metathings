@@ -5,9 +5,9 @@ import (
 
 	"github.com/golang/protobuf/ptypes/wrappers"
 	log "github.com/sirupsen/logrus"
-	"google.golang.org/grpc/metadata"
 
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
+	context_helper "github.com/nayotta/metathings/pkg/common/context"
 	identityd2_pb "github.com/nayotta/metathings/pkg/proto/identityd2"
 )
 
@@ -22,11 +22,7 @@ type identityd2TokenValidator struct {
 }
 
 func (self *identityd2TokenValidator) Validate(token string) (*identityd2_pb.Token, error) {
-	ctx := context.Background()
-	md := metadata.Pairs(
-		"authorization", self.tknr.GetToken(),
-	)
-	ctx = metadata.NewOutgoingContext(ctx, md)
+	ctx := context_helper.WithToken(context.Background(), self.tknr.GetToken())
 
 	cli, cfn, err := self.cli_fty.NewIdentityd2ServiceClient()
 	if err != nil {

@@ -14,6 +14,9 @@ type Backend interface {
 	RemoveObjectFromGroup(*storage.Group, *storage.Entity) error
 	AddRoleToGroup(*storage.Group, *storage.Role) error
 	RemoveRoleFromGroup(*storage.Group, *storage.Role) error
+
+	AddRoleToEntity(ent *storage.Entity, rol *storage.Role) error
+	RemoveRoleFromEntity(ent *storage.Entity, rol *storage.Role) error
 }
 
 type BackendFactory func(...interface{}) (Backend, error)

@@ -158,7 +158,18 @@ type Token struct {
 	Groups     []*Group    `gorm:"-"`
 }
 
+type SystemConfig struct {
+	CreatedAt time.Time
+	UpdatedAt time.Time
+
+	Key   *string `gorm:"column:key"`
+	Value *string `gorm:"column:value"`
+}
+
 type Storage interface {
+	IsInitialized() (bool, error)
+	Initialize() error
+
 	CreateDomain(*Domain) (*Domain, error)
 	DeleteDomain(id string) error
 	PatchDomain(id string, domain *Domain) (*Domain, error)

@@ -11,7 +11,6 @@ import (
 	cmd_helper "github.com/nayotta/metathings/pkg/common/cmd"
 	token_helper "github.com/nayotta/metathings/pkg/common/token"
 	authorizer "github.com/nayotta/metathings/pkg/identityd2/authorizer"
-	policy "github.com/nayotta/metathings/pkg/identityd2/policy"
 	pb "github.com/nayotta/metathings/pkg/proto/tagd"
 	service "github.com/nayotta/metathings/pkg/tagd/service"
 	storage "github.com/nayotta/metathings/pkg/tagd/storage"
@@ -119,7 +118,6 @@ func runTagd() error {
 			cmd_contrib.NewClientFactory,
 			cmd_contrib.NewTokener,
 			token_helper.NewTokenValidator,
-			policy.NewEnforcer,
 			authorizer.NewAuthorizer,
 			cmd_contrib.NewValidator,
 			NewTagdStorage,

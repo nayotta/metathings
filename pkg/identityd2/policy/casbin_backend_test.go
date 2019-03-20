@@ -16,32 +16,37 @@ import (
 )
 
 var (
-	test_domain_id    = "test-domain-id"
-	test_group_id     = "test-group-id"
-	test_subject_id   = "test-subject-id"
-	test_subject2_id  = "test-subject2-id"
-	test_object_id    = "test-object-id"
-	test_object2_id   = "test-object2-id"
-	test_role_id      = "test-role-id"
-	test_role_name    = "test-role-name"
-	test_role2_id     = "test-role2-id"
-	test_role2_name   = "test-role2-name"
-	test_action_id    = "test-action-id"
-	test_action_name  = "test-action-name"
-	test_action2_id   = "test-action2-id"
-	test_action2_name = "test-action2-name"
+	test_domain_id          = "test-domain-id"
+	test_group_id           = "test-group-id"
+	test_subject_id         = "test-subject-id"
+	test_subject2_id        = "test-subject2-id"
+	test_object_id          = "test-object-id"
+	test_object2_id         = "test-object2-id"
+	test_role_id            = "test-role-id"
+	test_role_name          = "test-role-name"
+	test_role2_id           = "test-role2-id"
+	test_role2_name         = "test-role2-name"
+	test_action_id          = "test-action-id"
+	test_action_name        = "test-action-name"
+	test_action2_id         = "test-action2-id"
+	test_action2_name       = "test-action2-name"
+	test_entity_id          = "test-entity-id"
+	test_sysadmin_role_id   = "test-sysadmin-role-id"
+	test_sysadmin_role_name = "sysadmin"
 )
 
 var (
-	test_action   *storage.Action
-	test_action2  *storage.Action
-	test_role     *storage.Role
-	test_role2    *storage.Role
-	test_group    *storage.Group
-	test_subject  *storage.Entity
-	test_subject2 *storage.Entity
-	test_object   *storage.Entity
-	test_object2  *storage.Entity
+	test_action        *storage.Action
+	test_action2       *storage.Action
+	test_role          *storage.Role
+	test_role2         *storage.Role
+	test_group         *storage.Group
+	test_subject       *storage.Entity
+	test_subject2      *storage.Entity
+	test_object        *storage.Entity
+	test_object2       *storage.Entity
+	test_entity        *storage.Entity
+	test_sysadmin_role *storage.Role
 )
 
 type casbinBackendTestSuite struct {
@@ -71,7 +76,8 @@ g3 = _, _, _
 e = some(where (p.eft == allow))
 
 [matchers]
-m = (g2(r.sub, r.grp, p.sub) && g3(r.obj, r.grp, p.obj) && r.grp == p.grp && r.act == p.act) || (g(r.sub, p.sub) && (p.sub == "sysadmin"))`
+m = (g2(r.sub, r.grp, p.sub) && g3(r.obj, r.grp, p.obj) && r.grp == p.grp && r.act == p.act) || (g2(r.sub, r.grp, p.sub) && p.sub == "rol.sysadmin")
+`
 
 	test_action = &storage.Action{
 		Id:   &test_action_id,
@@ -117,6 +123,11 @@ m = (g2(r.sub, r.grp, p.sub) && g3(r.obj, r.grp, p.obj) && r.grp == p.grp && r.a
 	}
 	test_object = &storage.Entity{Id: &test_object_id}
 	test_object2 = &storage.Entity{Id: &test_object2_id}
+	test_entity = &storage.Entity{Id: &test_entity_id}
+	test_sysadmin_role = &storage.Role{
+		Id:   &test_sysadmin_role_id,
+		Name: &test_sysadmin_role_name,
+	}
 
 	test_group.Subjects = []*storage.Entity{test_subject}
 	test_group.Objects = []*storage.Entity{test_object}
@@ -148,6 +159,12 @@ m = (g2(r.sub, r.grp, p.sub) && g3(r.obj, r.grp, p.obj) && r.grp == p.grp && r.a
 	opt.EnforcerHandler = new_enforcer_res.Handler
 	s.enforcer_handler = new_adapter_res.Handler
 
+	_, err = cli.AddPolicy(context.TODO(), &policyd_pb.PolicyRequest{
+		EnforcerHandler: new_adapter_res.Handler,
+		Params:          []string{"rol.sysadmin", CASBIN_BACKEND_UNGROUPING, "any", "any"},
+	})
+	s.Nil(err)
+
 	b, err = casbin_backend_factory("logger", logger, "client_factory", cli_fty, "casbin_enforcer_handler", s.enforcer_handler)
 	s.Nil(err)
 
@@ -156,6 +173,7 @@ m = (g2(r.sub, r.grp, p.sub) && g3(r.obj, r.grp, p.obj) && r.grp == p.grp && r.a
 	s.Nil(s.b.AddRoleToGroup(test_group, test_role))
 	s.Nil(s.b.AddSubjectToGroup(test_group, test_subject))
 	s.Nil(s.b.AddObjectToGroup(test_group, test_object))
+	s.Nil(s.b.AddRoleToEntity(test_entity, test_sysadmin_role))
 }
 
 func (s *casbinBackendTestSuite) TestEnforce() {
@@ -163,6 +181,7 @@ func (s *casbinBackendTestSuite) TestEnforce() {
 	s.NotNil(s.b.Enforce(test_subject2, test_object, test_action))
 	s.NotNil(s.b.Enforce(test_subject, test_object2, test_action))
 	s.NotNil(s.b.Enforce(test_subject, test_object, test_action2))
+	s.Nil(s.b.Enforce(test_entity, test_object, test_action))
 }
 
 func (s *casbinBackendTestSuite) TestDeleteGroup() {
@@ -247,6 +266,16 @@ func (s *casbinBackendTestSuite) TestAddRoleToGroup() {
 func (s *casbinBackendTestSuite) TestRemoveRoleFromGroup() {
 	s.Nil(s.b.RemoveRoleFromGroup(test_group, test_role))
 	s.NotNil(s.b.Enforce(test_subject, test_object, test_action))
+}
+
+func (s *casbinBackendTestSuite) TestAddRoleToEntity() {
+	s.Nil(s.b.AddRoleToEntity(test_subject, test_sysadmin_role))
+	s.Nil(s.b.Enforce(test_subject, test_object, test_action2))
+}
+
+func (s *casbinBackendTestSuite) TestRemoveRoleFromEntity() {
+	s.Nil(s.b.RemoveRoleFromEntity(test_entity, test_sysadmin_role))
+	s.NotNil(s.b.Enforce(test_entity, test_object, test_action))
 }
 
 func TestCasbinBackendTestSuite(t *testing.T) {

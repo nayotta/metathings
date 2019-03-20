@@ -117,7 +117,7 @@ func (self *MetathingsIdentitydService) AuthFuncOverride(ctx context.Context, fu
 		}
 	}
 
-	new_ctx = context.WithValue(ctx, "token", tkn)
+	new_ctx = context.WithValue(ctx, "token", copy_token(tkn))
 
 	self.logger.WithFields(log.Fields{
 		"method":    md.Method,
@@ -149,16 +149,17 @@ func (self *MetathingsIdentitydService) ListCredentialsForEntity(context.Context
 }
 
 func NewMetathingsIdentitydService(
-	enforcor policy.Enforcer,
 	opt *MetathingsIdentitydServiceOption,
 	logger log.FieldLogger,
 	storage storage.Storage,
 	validator validator.Validator,
+	backend policy.Backend,
 ) (pb.IdentitydServiceServer, error) {
 	return &MetathingsIdentitydService{
 		opt:       opt,
 		logger:    logger,
 		storage:   storage,
 		validator: validator,
+		backend:   backend,
 	}, nil
 }

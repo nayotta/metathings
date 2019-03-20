@@ -15,8 +15,10 @@ import (
 const (
 	CASBIN_BACKEND_DEFAULT_ENFORCER_HANDLER = 0
 	CASBIN_BACKEND_POLICY_PTYPE             = "p"
+	CASBIN_BACKEND_UNGROUPING_PTYPE         = "g2"
 	CASBIN_BACKEND_SUBJECT_PTYPE            = "g2"
 	CASBIN_BACKEND_OBJECT_PTYPE             = "g3"
+	CASBIN_BACKEND_UNGROUPING               = "ungrouping"
 )
 
 type CasbinBackendOption struct {
@@ -230,13 +232,49 @@ func (cb *CasbinBackend) _remove_group_about_policy(cli pb.PolicydServiceClient,
 	return nil
 }
 
+func (cb *CasbinBackend) _add_role_to_entity(cli pb.PolicydServiceClient, ent *storage.Entity, rol *storage.Role) error {
+	var err error
+
+	req := &pb.PolicyRequest{
+		EnforcerHandler: cb.opt.EnforcerHandler,
+		PType:           CASBIN_BACKEND_UNGROUPING_PTYPE,
+		Params:          []string{cb.convert_entity(ent), CASBIN_BACKEND_UNGROUPING, cb.convert_ungrouping_role(rol)},
+	}
+	if _, err = cli.AddNamedGroupingPolicy(cb.context(), req); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (cb *CasbinBackend) _remove_role_from_entity(cli pb.PolicydServiceClient, ent *storage.Entity, rol *storage.Role) error {
+	var err error
+
+	req := &pb.FilteredPolicyRequest{
+		EnforcerHandler: cb.opt.EnforcerHandler,
+		PType:           CASBIN_BACKEND_UNGROUPING_PTYPE,
+		FieldIndex:      0,
+		FieldValues:     []string{cb.convert_entity(ent), CASBIN_BACKEND_UNGROUPING, cb.convert_ungrouping_role(rol)},
+	}
+	if _, err = cli.RemoveFilteredNamedGroupingPolicy(cb.context(), req); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (cb *CasbinBackend) _enforce(cli pb.PolicydServiceClient, sub, obj *storage.Entity, act *storage.Action) error {
 	var err error
-	var reqs []*pb.EnforceRequest
 
 	sub_s := cb.convert_subject(sub)
 	obj_s := cb.convert_object(obj)
 
+	reqs := []*pb.EnforceRequest{
+		&pb.EnforceRequest{
+			EnforcerHandler: cb.opt.EnforcerHandler,
+			Params:          []string{cb.convert_entity(sub), CASBIN_BACKEND_UNGROUPING, obj_s, *act.Name},
+		},
+	}
 	for _, grp := range sub.Groups {
 		grp_s := cb.convert_group(grp)
 
@@ -245,6 +283,8 @@ func (cb *CasbinBackend) _enforce(cli pb.PolicydServiceClient, sub, obj *storage
 			Params:          []string{sub_s, grp_s, obj_s, *act.Name},
 		})
 	}
+
+	fmt.Println(reqs)
 
 	req := &pb.EnforceBucketRequest{Requests: reqs}
 	res, err := cli.EnforceBucket(cb.context(), req)
@@ -271,12 +311,16 @@ func (cb *CasbinBackend) convert_object(obj *storage.Entity) string {
 	return fmt.Sprintf("obj.%s", *obj.Id)
 }
 
+func (cb *CasbinBackend) convert_entity(ent *storage.Entity) string {
+	return fmt.Sprintf("ent.%s", *ent.Id)
+}
+
 func (cb *CasbinBackend) convert_role_for_object(grp *storage.Group) string {
 	return fmt.Sprintf("dom.%s.grp.%s.data", *grp.DomainId, *grp.Id)
 }
 
 func (cb *CasbinBackend) convert_role_for_subject(grp *storage.Group, rol *storage.Role) string {
-	return fmt.Sprintf("dom.%s.grp.%s.rol.%s", *grp.DomainId, *grp.Id, *rol.Id)
+	return fmt.Sprintf("dom.%s.grp.%s.rol.%s", *grp.DomainId, *grp.Id, *rol.Name)
 }
 
 func (cb *CasbinBackend) convert_roles_for_subject(grp *storage.Group) []string {
@@ -290,7 +334,11 @@ func (cb *CasbinBackend) convert_roles_for_subject(grp *storage.Group) []string 
 }
 
 func (cb *CasbinBackend) convert_role(grp *storage.Group, rol *storage.Role) string {
-	return fmt.Sprintf("dom.%s.grp.%s.rol.%s", *grp.DomainId, *grp.Id, *rol.Id)
+	return fmt.Sprintf("dom.%s.grp.%s.rol.%s", *grp.DomainId, *grp.Id, *rol.Name)
+}
+
+func (cb *CasbinBackend) convert_ungrouping_role(rol *storage.Role) string {
+	return fmt.Sprintf("rol.%s", *rol.Name)
 }
 
 func (cb *CasbinBackend) Enforce(sub, obj *storage.Entity, act *storage.Action) error {
@@ -457,8 +505,48 @@ func (cb *CasbinBackend) RemoveRoleFromGroup(grp *storage.Group, rol *storage.Ro
 
 	cb.logger.WithFields(log.Fields{
 		"group": *grp.Id,
-		"role":  *rol.Id,
+		"role":  *rol.Name,
 	}).Debugf("remove role from group")
+
+	return nil
+}
+
+func (cb *CasbinBackend) AddRoleToEntity(ent *storage.Entity, rol *storage.Role) error {
+	cli, cfn, err := cb.cli_fty.NewPolicydServiceClient()
+	if err != nil {
+		return err
+	}
+	defer cfn()
+
+	err = cb._add_role_to_entity(cli, ent, rol)
+	if err != nil {
+		return err
+	}
+
+	cb.logger.WithFields(log.Fields{
+		"entity": *ent.Id,
+		"role":   *rol.Name,
+	}).Debugf("add role to entity")
+
+	return nil
+}
+
+func (cb *CasbinBackend) RemoveRoleFromEntity(ent *storage.Entity, rol *storage.Role) error {
+	cli, cfn, err := cb.cli_fty.NewPolicydServiceClient()
+	if err != nil {
+		return err
+	}
+	defer cfn()
+
+	err = cb._remove_role_from_entity(cli, ent, rol)
+	if err != nil {
+		return err
+	}
+
+	cb.logger.WithFields(log.Fields{
+		"entity": *ent.Id,
+		"role":   *rol.Name,
+	}).Debugf("remove role from entity")
 
 	return nil
 }

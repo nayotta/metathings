@@ -34,7 +34,7 @@ func (self *MetathingsIdentitydService) AuthorizeToken(ctx context.Context, req 
 	var err error
 
 	tkn := ctx.Value("token").(*pb.Token)
-	sub := tkn.Entity.Id
+	sub := tkn.GetEntity().GetId()
 	obj := req.GetObject().GetId().GetValue()
 	act := req.GetAction().GetName().GetValue()
 

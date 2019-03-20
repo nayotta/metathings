@@ -3,11 +3,13 @@ package metathings_identityd2_authorizer
 import (
 	"context"
 
+	"github.com/golang/protobuf/ptypes/wrappers"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
+	context_helper "github.com/nayotta/metathings/pkg/common/context"
 	identityd_pb "github.com/nayotta/metathings/pkg/proto/identityd2"
 )
 
@@ -28,8 +30,12 @@ func (a *authorizer) Authorize(ctx context.Context, object, action string) error
 	}
 	defer cfn()
 
-	req := &identityd_pb.AuthorizeTokenRequest{}
-	_, err = cli.AuthorizeToken(ctx, req)
+	new_ctx := context_helper.WithToken(context.Background(), "mt "+context_helper.ExtractToken(ctx).GetText())
+	req := &identityd_pb.AuthorizeTokenRequest{
+		Object: &identityd_pb.OpEntity{Id: &wrappers.StringValue{Value: object}},
+		Action: &identityd_pb.OpAction{Name: &wrappers.StringValue{Value: action}},
+	}
+	_, err = cli.AuthorizeToken(new_ctx, req)
 	if err != nil {
 		a.logger.WithError(err).Warningf("permission denied")
 		return status.Errorf(codes.PermissionDenied, err.Error())

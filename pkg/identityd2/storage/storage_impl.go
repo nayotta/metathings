@@ -8,6 +8,10 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+var (
+	SYSTEM_CONFIG_INITIALIZE = "init"
+)
+
 type StorageImpl struct {
 	db     *gorm.DB
 	logger log.FieldLogger
@@ -875,8 +879,14 @@ func (self *StorageImpl) get_group(id string) (*Group, error) {
 	if err = self.db.Find(&grp_role_maps, "group_id = ?", id).Error; err != nil {
 		return nil, err
 	}
+
+	// TODO(Peer): bad performance
 	for _, m := range grp_role_maps {
-		grp.Roles = append(grp.Roles, &Role{Id: m.RoleId})
+		rol, err := self.get_role(*m.RoleId)
+		if err != nil {
+			return nil, err
+		}
+		grp.Roles = append(grp.Roles, rol)
 	}
 
 	return &grp, nil
@@ -1515,6 +1525,39 @@ func (self *StorageImpl) ListTokens(tkn *Token) ([]*Token, error) {
 	return tkns, nil
 }
 
+func (self *StorageImpl) Initialize() error {
+	var err error
+	var ok bool
+
+	if ok, err = self.IsInitialized(); err != nil {
+		return err
+	} else if !ok {
+		return ErrInitialized
+	}
+
+	val := ""
+	cfg := &SystemConfig{
+		Key:   &SYSTEM_CONFIG_INITIALIZE,
+		Value: &val,
+	}
+	if err = self.db.Create(cfg).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (self *StorageImpl) IsInitialized() (bool, error) {
+	var err error
+	var cnt int
+
+	if err = self.db.Model(&SystemConfig{}).Where("key", SYSTEM_CONFIG_INITIALIZE).Count(&cnt).Error; err != nil {
+		return false, err
+	}
+
+	return cnt > 0, nil
+}
+
 func init_args(s *StorageImpl, args ...interface{}) error {
 	var key string
 	var ok bool
@@ -1569,6 +1612,7 @@ func init_db(s *StorageImpl) error {
 		&ObjectGroupMapping{},
 		&GroupRoleMapping{},
 		&CredentialRoleMapping{},
+		&SystemConfig{},
 	)
 
 	return nil
