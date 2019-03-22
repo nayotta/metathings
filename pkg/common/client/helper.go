@@ -10,8 +10,6 @@ import (
 	camera_pb "github.com/nayotta/metathings/pkg/proto/camera"
 	camerad_pb "github.com/nayotta/metathings/pkg/proto/camerad"
 	component_pb "github.com/nayotta/metathings/pkg/proto/component"
-	agent_pb "github.com/nayotta/metathings/pkg/proto/core_agent"
-	cored_pb "github.com/nayotta/metathings/pkg/proto/cored"
 	device_pb "github.com/nayotta/metathings/pkg/proto/device"
 	deviced_pb "github.com/nayotta/metathings/pkg/proto/deviced"
 	echo_pb "github.com/nayotta/metathings/pkg/proto/echo"
@@ -22,7 +20,6 @@ import (
 	sensor_pb "github.com/nayotta/metathings/pkg/proto/sensor"
 	sensord_pb "github.com/nayotta/metathings/pkg/proto/sensord"
 	servo_pb "github.com/nayotta/metathings/pkg/proto/servo"
-	streamd_pb "github.com/nayotta/metathings/pkg/proto/streamd"
 	switcher_pb "github.com/nayotta/metathings/pkg/proto/switcher"
 )
 
@@ -33,19 +30,16 @@ const (
 	POLICYD_CONFIG
 	IDENTITYD2_CONFIG
 	IDENTITYD_CONFIG
-	CORED_CONFIG
 	DEVICED_CONFIG
 	DEVICE_CONFIG
 	CAMERAD_CONFIG
 	SENSORD_CONFIG
-	AGENT_CONFIG
 	ECHO_CONFIG
 	SWITCHER_CONFIG
 	MOTOR_CONFIG
 	CAMERA_CONFIG
 	SERVO_CONFIG
 	SENSOR_CONFIG
-	STREAMD_CONFIG
 	MODULE_CONFIG
 	OVERFLOW_CONFIG
 )
@@ -122,15 +116,6 @@ func (f *ClientFactory) NewConnection(cfg_val ClientType, opts ...grpc.DialOptio
 	return conn, nil
 }
 
-func (f *ClientFactory) NewCoredServiceClient(opts ...grpc.DialOption) (cored_pb.CoredServiceClient, CloseFn, error) {
-	conn, err := f.NewConnection(CORED_CONFIG, opts...)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	return cored_pb.NewCoredServiceClient(conn), conn.Close, nil
-}
-
 func (f *ClientFactory) NewIdentitydServiceClient(opts ...grpc.DialOption) (identityd_pb.IdentitydServiceClient, CloseFn, error) {
 	conn, err := f.NewConnection(IDENTITYD_CONFIG, opts...)
 	if err != nil {
@@ -138,15 +123,6 @@ func (f *ClientFactory) NewIdentitydServiceClient(opts ...grpc.DialOption) (iden
 	}
 
 	return identityd_pb.NewIdentitydServiceClient(conn), conn.Close, nil
-}
-
-func (f *ClientFactory) NewCoreAgentServiceClient(opts ...grpc.DialOption) (agent_pb.CoreAgentServiceClient, CloseFn, error) {
-	conn, err := f.NewConnection(AGENT_CONFIG, opts...)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	return agent_pb.NewCoreAgentServiceClient(conn), conn.Close, nil
 }
 
 func (f *ClientFactory) NewEchoServiceClient(opts ...grpc.DialOption) (echo_pb.EchoServiceClient, CloseFn, error) {
@@ -219,15 +195,6 @@ func (f *ClientFactory) NewSensordServiceClient(opts ...grpc.DialOption) (sensor
 	}
 
 	return sensord_pb.NewSensordServiceClient(conn), conn.Close, nil
-}
-
-func (f *ClientFactory) NewStreamdServiceClient(opts ...grpc.DialOption) (streamd_pb.StreamdServiceClient, CloseFn, error) {
-	conn, err := f.NewConnection(STREAMD_CONFIG, opts...)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	return streamd_pb.NewStreamdServiceClient(conn), conn.Close, nil
 }
 
 func (f *ClientFactory) NewPolicydServiceClient(opts ...grpc.DialOption) (policyd_pb.PolicydServiceClient, CloseFn, error) {

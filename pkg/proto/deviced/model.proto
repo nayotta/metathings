@@ -81,6 +81,26 @@ message OpFrame {
 	google.protobuf.Struct data = 2;
 }
 
+message Object {
+	Device device = 1;
+	string prefix = 2;
+	string name = 3;
+	int64 size = 4;
+	string etag = 5;
+	google.protobuf.Timestamp last_modified = 6;
+	map<string, string> metadata = 7;
+}
+
+message OpObject {
+	OpDevice device = 1;
+	google.protobuf.StringValue prefix = 2;
+	google.protobuf.StringValue name = 3;
+	google.protobuf.Int64Value size = 4;
+	google.protobuf.StringValue etag = 5;
+	google.protobuf.Timestamp liast_modified = 6;
+	map<string, google.protobuf.StringValue> metadata = 7;
+}
+
 message ErrorValue {
 	string name = 1;
 	string service_name = 2;
