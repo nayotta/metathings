@@ -207,9 +207,9 @@ func (this *OpObject) Validate() error {
 			return github_com_mwitkow_go_proto_validators.FieldError("Name", err)
 		}
 	}
-	if this.Size_ != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Size_); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Size_", err)
+	if this.Length != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Length); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Length", err)
 		}
 	}
 	if this.Etag != nil {
