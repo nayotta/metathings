@@ -23,6 +23,7 @@ import "remove_object.proto";
 import "rename_object.proto";
 import "get_object.proto";
 import "get_object_content.proto";
+import "get_object_streaming_content.proto";
 import "list_objects.proto";
 
 import "show_device.proto";
