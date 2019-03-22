@@ -78,6 +78,10 @@ import:
   version: ~6.14.2
 - package: github.com/bsm/sarama-cluster
   version: ~2.1.15
+- package: github.com/mongodb/mongo-go-driver
+  version: ~0.2.0
+  subpackages:
+  - mongo
 testImport:
 - package: github.com/stretchr/testify
   version: ~1.2.2

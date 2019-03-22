@@ -12,6 +12,7 @@ import (
 	cmd_helper "github.com/nayotta/metathings/pkg/common/cmd"
 	id_helper "github.com/nayotta/metathings/pkg/common/id"
 	passwd_helper "github.com/nayotta/metathings/pkg/common/passwd"
+	authorizer "github.com/nayotta/metathings/pkg/identityd2/authorizer"
 	policy "github.com/nayotta/metathings/pkg/identityd2/policy"
 	service "github.com/nayotta/metathings/pkg/identityd2/service"
 	storage "github.com/nayotta/metathings/pkg/identityd2/storage"
@@ -217,6 +218,7 @@ func runIdentityd2() error {
 			NewIdentityd2Storage,
 			NewMetathingsIdentitydServiceOption,
 			policy.NewEnforcer,
+			authorizer.NewAuthorizer,
 			service.NewMetathingsIdentitydService,
 		),
 		fx.Invoke(

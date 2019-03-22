@@ -3,19 +3,20 @@ package metathings_deviced_service
 import (
 	"context"
 
+	grpc_auth "github.com/grpc-ecosystem/go-grpc-middleware/auth"
 	log "github.com/sirupsen/logrus"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 
+	afo_helper "github.com/nayotta/metathings/pkg/common/auth_func_overrider"
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
 	context_helper "github.com/nayotta/metathings/pkg/common/context"
 	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
-	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
 	token_helper "github.com/nayotta/metathings/pkg/common/token"
 	connection "github.com/nayotta/metathings/pkg/deviced/connection"
 	session_storage "github.com/nayotta/metathings/pkg/deviced/session_storage"
 	storage "github.com/nayotta/metathings/pkg/deviced/storage"
+	identityd_authorizer "github.com/nayotta/metathings/pkg/identityd2/authorizer"
 	identityd_policy "github.com/nayotta/metathings/pkg/identityd2/policy"
+	identityd_validator "github.com/nayotta/metathings/pkg/identityd2/validator"
 	pb "github.com/nayotta/metathings/pkg/proto/deviced"
 	identityd_pb "github.com/nayotta/metathings/pkg/proto/identityd2"
 )
@@ -24,8 +25,7 @@ type MetathingsDevicedServiceOption struct {
 }
 
 type MetathingsDevicedService struct {
-	grpc_helper.AuthorizationTokenParser
-
+	grpc_auth.ServiceAuthFuncOverride
 	tknr            token_helper.Tokener
 	cli_fty         *client_helper.ClientFactory
 	opt             *MetathingsDevicedServiceOption
@@ -33,7 +33,9 @@ type MetathingsDevicedService struct {
 	storage         storage.Storage
 	session_storage session_storage.SessionStorage
 	enforcer        identityd_policy.Enforcer
-	vdr             token_helper.TokenValidator
+	authorizer      identityd_authorizer.Authorizer
+	validator       identityd_validator.Validator
+	tkvdr           token_helper.TokenValidator
 	cc              connection.ConnectionCenter
 }
 
@@ -51,88 +53,8 @@ func (self *MetathingsDevicedService) get_device_by_context(ctx context.Context)
 	return dev_s, nil
 }
 
-func (self *MetathingsDevicedService) enforce(ctx context.Context, obj, act string) error {
-	var err error
-
-	tkn := context_helper.ExtractToken(ctx)
-
-	var groups []string
-	for _, g := range tkn.Groups {
-		groups = append(groups, g.Id)
-	}
-
-	if err = self.enforcer.Enforce(tkn.Domain.Id, groups, tkn.Entity.Id, obj, act); err != nil {
-		if err == identityd_policy.ErrPermissionDenied {
-			self.logger.WithFields(log.Fields{
-				"subject": tkn.Entity.Id,
-				"domain":  tkn.Domain.Id,
-				"groups":  groups,
-				"object":  obj,
-				"action":  act,
-			}).Warningf("denied to do #action")
-			return status.Errorf(codes.PermissionDenied, err.Error())
-		} else {
-			self.logger.WithError(err).Errorf("failed to enforce")
-			return status.Errorf(codes.Internal, err.Error())
-		}
-	}
-
-	return nil
-}
-
-func (self *MetathingsDevicedService) validate_chain(providers []interface{}, invokers []interface{}) error {
-	default_invokers := []interface{}{policy_helper.ValidateValidator}
-	invokers = append(default_invokers, invokers...)
-	if err := policy_helper.ValidateChain(
-		providers,
-		invokers,
-	); err != nil {
-		self.logger.WithError(err).Warningf("failed to validate request data")
-		return status.Errorf(codes.InvalidArgument, err.Error())
-	}
-
-	return nil
-}
-
-func (self *MetathingsDevicedService) is_ignore_method(md *grpc_helper.MethodDescription) bool {
+func (self *MetathingsDevicedService) IsIgnoreMethod(md *grpc_helper.MethodDescription) bool {
 	return false
-}
-
-func (self *MetathingsDevicedService) AuthFuncOverride(ctx context.Context, fullMethodName string) (context.Context, error) {
-	var tkn *identityd_pb.Token
-	var tkn_txt string
-	var new_ctx context.Context
-	var err error
-	var md *grpc_helper.MethodDescription
-
-	if md, err = grpc_helper.ParseMethodDescription(fullMethodName); err != nil {
-		self.logger.WithError(err).Warningf("failed to parse method description")
-		return ctx, err
-	}
-
-	if self.is_ignore_method(md) {
-		return ctx, nil
-	}
-
-	if tkn_txt, err = self.GetTokenFromContext(ctx); err != nil {
-		self.logger.WithError(err).Warningf("failed to get token from context")
-		return ctx, err
-	}
-
-	if tkn, err = self.vdr.Validate(tkn_txt); err != nil {
-		self.logger.WithError(err).Warningf("failed to validate token in identity service")
-		return ctx, err
-	}
-
-	new_ctx = context.WithValue(ctx, "token", tkn)
-
-	self.logger.WithFields(log.Fields{
-		"method":    md.Method,
-		"entity_id": tkn.Entity.Id,
-		"domain_id": tkn.Domain.Id,
-	}).Debugf("authorize token")
-
-	return new_ctx, nil
 }
 
 func NewMetathingsDevicedService(
@@ -141,20 +63,27 @@ func NewMetathingsDevicedService(
 	storage storage.Storage,
 	session_storage session_storage.SessionStorage,
 	enforcer identityd_policy.Enforcer,
-	vdr token_helper.TokenValidator,
+	authorizer identityd_authorizer.Authorizer,
+	validator identityd_validator.Validator,
+	tkvdr token_helper.TokenValidator,
 	cc connection.ConnectionCenter,
 	tknr token_helper.Tokener,
 	cli_fty *client_helper.ClientFactory,
 ) (pb.DevicedServiceServer, error) {
-	return &MetathingsDevicedService{
+	srv := &MetathingsDevicedService{
 		opt:             opt,
 		logger:          logger,
 		storage:         storage,
 		session_storage: session_storage,
 		enforcer:        enforcer,
-		vdr:             vdr,
+		authorizer:      authorizer,
+		validator:       validator,
+		tkvdr:           tkvdr,
 		cc:              cc,
 		tknr:            tknr,
 		cli_fty:         cli_fty,
-	}, nil
+	}
+	srv.ServiceAuthFuncOverride = afo_helper.NewAuthFuncOverrider(tkvdr, srv, logger)
+
+	return srv, nil
 }
