@@ -3,6 +3,7 @@ package metathings_deviced_service
 import (
 	"context"
 
+	"github.com/golang/protobuf/ptypes/empty"
 	grpc_auth "github.com/grpc-ecosystem/go-grpc-middleware/auth"
 	"github.com/mongodb/mongo-go-driver/mongo"
 	log "github.com/sirupsen/logrus"
@@ -80,6 +81,34 @@ func (self *MetathingsDevicedService) new_flow(dev_id, flw_id string) (flow.Flow
 
 func (self *MetathingsDevicedService) IsIgnoreMethod(md *grpc_helper.MethodDescription) bool {
 	return false
+}
+
+func (self *MetathingsDevicedService) PutObject(context.Context, *pb.PutObjectRequest) (*empty.Empty, error) {
+	panic("unimplemented")
+}
+
+func (self *MetathingsDevicedService) RemoveObject(context.Context, *pb.RemoveObjectRequest) (*empty.Empty, error) {
+	panic("unimplemented")
+}
+
+func (self *MetathingsDevicedService) RenameObject(context.Context, *pb.RenameObjectRequest) (*empty.Empty, error) {
+	panic("unimplemented")
+}
+
+func (self *MetathingsDevicedService) GetObject(context.Context, *pb.GetObjectRequest) (*pb.GetObjectResponse, error) {
+	panic("unimplemented")
+}
+
+func (self *MetathingsDevicedService) GetObjectContent(context.Context, *pb.GetObjectContentRequest) (*pb.GetObjectContentResponse, error) {
+	panic("unimplemented")
+}
+
+func (self *MetathingsDevicedService) GetObjectStreamingContent(*pb.GetObjectStreamingContentRequest, pb.DevicedService_GetObjectStreamingContentServer) error {
+	panic("unimplemented")
+}
+
+func (self *MetathingsDevicedService) ListObjects(context.Context, *pb.ListObjectsRequest) (*pb.ListObjectsResponse, error) {
+	panic("unimplemented")
 }
 
 func NewMetathingsDevicedService(
