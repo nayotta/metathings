@@ -15,7 +15,7 @@ import (
 func (self *MetathingsDevicedService) ValidateGetDevice(ctx context.Context, in interface{}) error {
 	return self.validator.Validate(
 		identityd_validator.Providers{
-			func() (policy_helper.Validator, get_devicer) {
+			func() (policy_helper.Validator, device_getter) {
 				req := in.(*pb.GetDeviceRequest)
 				return req, req
 			},

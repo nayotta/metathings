@@ -77,13 +77,35 @@ func copy_flows(xs []*storage.Flow) []*pb.Flow {
 	return ys
 }
 
-type get_devicer interface {
+type device_getter interface {
 	GetDevice() *pb.OpDevice
 }
 
-func ensure_get_device_id(x get_devicer) error {
+type object_getter interface {
+	GetObject() *pb.OpObject
+}
+
+func ensure_get_device_id(x device_getter) error {
 	if x.GetDevice().GetId() == nil {
 		return errors.New("device.id is empty")
+	}
+	return nil
+}
+
+func ensure_get_object_name(x object_getter) error {
+	if x.GetObject().GetName() == nil {
+		return errors.New("object.name is empty")
+	}
+	return nil
+}
+
+func ensure_get_object_device_id(x object_getter) error {
+	dev := x.GetObject().GetDevice()
+	if dev == nil {
+		return errors.New("object.device.id is empty")
+	}
+	if dev.GetId() == nil {
+		return errors.New("object.device.id is empty")
 	}
 	return nil
 }

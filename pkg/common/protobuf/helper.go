@@ -41,6 +41,16 @@ func ExtractStringMap(xs map[string]*wrappers.StringValue) map[string]interface{
 	return ys
 }
 
+func ExtractStringMapToString(xs map[string]*wrappers.StringValue) map[string]string {
+	ys := make(map[string]string)
+
+	for k, v := range xs {
+		ys[k] = v.GetValue()
+	}
+
+	return ys
+}
+
 type Enumer struct {
 	prefix string
 	names  map[int32]string
