@@ -16,6 +16,19 @@ type Device struct {
 	Alias       *string `gorm:"column:alias"`
 
 	Modules []*Module `gorm:"-"`
+	Flows   []*Flow   `gorm:"-"`
+}
+
+type Flow struct {
+	Id        *string
+	CreatedAt time.Time
+	UpdatedAt time.Time
+
+	DeviceId *string `gorm:"column:device_id"`
+	Name     *string `gorm:"column:name"`
+	Alias    *string `gorm:"column:alias"`
+
+	Device *Device `gorm:"-"`
 }
 
 type Module struct {
@@ -46,6 +59,12 @@ type Storage interface {
 	PatchModule(id string, module *Module) (*Module, error)
 	GetModule(id string) (*Module, error)
 	ListModules(*Module) ([]*Module, error)
+
+	CreateFlow(*Flow) (*Flow, error)
+	DeleteFlow(id string) error
+	PatchFlow(id string, flow *Flow) (*Flow, error)
+	GetFlow(id string) (*Flow, error)
+	ListFlows(*Flow) ([]*Flow, error)
 }
 
 func NewStorage(driver, uri string, args ...interface{}) (Storage, error) {

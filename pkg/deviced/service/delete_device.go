@@ -49,6 +49,16 @@ func (self *MetathingsDevicedService) DeleteDevice(ctx context.Context, req *pb.
 		}
 	}
 
+	for _, f := range dev.Flows {
+		flw_id_str := *f.Id
+		if err = self.enforcer.RemoveObjectFromKind(flw_id_str, KIND_FLOW); err != nil {
+			self.logger.WithError(err).Warningf("failed to remove flow from kind in enforcer")
+		}
+		if err = self.storage.DeleteFlow(flw_id_str); err != nil {
+			self.logger.WithError(err).WithField("id", flw_id_str).Warningf("failed to delete flow in storage")
+		}
+	}
+
 	if err = self.enforcer.RemoveObjectFromKind(dev_id_str, KIND_DEVICE); err != nil {
 		self.logger.WithError(err).Warningf("failed to remove device from kind in enforcer")
 	}

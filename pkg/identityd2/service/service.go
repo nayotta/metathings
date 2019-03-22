@@ -173,6 +173,7 @@ func NewMetathingsIdentitydService(
 	opt *MetathingsIdentitydServiceOption,
 	logger log.FieldLogger,
 	storage storage.Storage,
+	validator validator.Validator,
 ) (pb.IdentitydServiceServer, error) {
 	return &MetathingsIdentitydService{
 		opt:        opt,
@@ -180,5 +181,6 @@ func NewMetathingsIdentitydService(
 		storage:    storage,
 		enforcer:   enforcor,
 		authorizer: auth,
+		validator:  validator,
 	}, nil
 }

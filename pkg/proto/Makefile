@@ -7,14 +7,3 @@ all:
 	$(MAKE) -C deviced all
 	$(MAKE) -C device all
 	$(MAKE) -C tagd all
-	$(MAKE) -C cored all
-	$(MAKE) -C camerad all
-	$(MAKE) -C sensord all
-	$(MAKE) -C streamd all
-	$(MAKE) -C core_agent all
-	$(MAKE) -C echo all
-	$(MAKE) -C switcher all
-	$(MAKE) -C motor all
-	$(MAKE) -C camera all
-	$(MAKE) -C servo all
-	$(MAKE) -C sensor all

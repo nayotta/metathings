@@ -8,7 +8,7 @@ import (
 	"google.golang.org/grpc/status"
 
 	policy "github.com/nayotta/metathings/pkg/identityd2/policy"
-	storage "github.com/nayotta/metathings/pkg/identityd2/storage"
+	pb "github.com/nayotta/metathings/pkg/proto/identityd2"
 )
 
 type Authorizer interface {
@@ -23,18 +23,21 @@ type authorizer struct {
 func (a *authorizer) Authorize(ctx context.Context, obj, act string) error {
 	var err error
 
-	tkn := ctx.Value("token").(*storage.Token)
+	tkn := ctx.Value("token").(*pb.Token)
 
 	var groups []string
-	for _, g := range tkn.Groups {
-		groups = append(groups, *g.Id)
+	for _, g := range tkn.GetGroups() {
+		groups = append(groups, g.GetId())
 	}
 
-	if err = a.enforcer.Enforce(*tkn.DomainId, groups, *tkn.EntityId, obj, act); err != nil {
+	dom_id := tkn.GetDomain().GetId()
+	ent_id := tkn.GetEntity().GetId()
+
+	if err = a.enforcer.Enforce(dom_id, groups, ent_id, obj, act); err != nil {
 		if err == policy.ErrPermissionDenied {
 			a.logger.WithFields(log.Fields{
-				"subject": *tkn.EntityId,
-				"domain":  *tkn.DomainId,
+				"subject": ent_id,
+				"domain":  dom_id,
 				"groups":  groups,
 				"object":  obj,
 				"action":  act,

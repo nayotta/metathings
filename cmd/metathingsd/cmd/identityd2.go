@@ -215,6 +215,7 @@ func runIdentityd2() error {
 			cmd_contrib.NewListener,
 			cmd_contrib.NewGrpcServer,
 			cmd_contrib.NewClientFactory,
+			cmd_contrib.NewValidator,
 			NewIdentityd2Storage,
 			NewMetathingsIdentitydServiceOption,
 			policy.NewEnforcer,

@@ -1,11 +1,12 @@
 package metathings_tagd_storage
 
 import (
-	"os"
 	"testing"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/suite"
+
+	test_helper "github.com/nayotta/metathings/pkg/common/test"
 )
 
 const (
@@ -25,18 +26,9 @@ type mongoStorageTestSuite struct {
 
 func (s *mongoStorageTestSuite) SetupTest() {
 	opt := NewMongoStorageOption()
-	opt.Uri = os.Getenv("MTT_MONGO_URI")
-	if opt.Uri == "" {
-		opt.Uri = "mongodb://127.0.0.1:27107"
-	}
-	opt.Database = os.Getenv("MTT_MONGO_DATABASE")
-	if opt.Database == "" {
-		opt.Database = "test"
-	}
-	opt.Collection = os.Getenv("MTT_MONGO_COLLECTION")
-	if opt.Collection == "" {
-		opt.Collection = "metathings-testing"
-	}
+	opt.Uri = test_helper.GetTestMongoUri()
+	opt.Database = test_helper.GetTestMongoDatabase()
+	opt.Collection = test_helper.GetTestMongoCollection()
 
 	s.opt = opt
 	s.stor = &MongoStorage{opt: s.opt, logger: log.New()}
