@@ -85,6 +85,14 @@ type object_getter interface {
 	GetObject() *pb.OpObject
 }
 
+type source_getter interface {
+	GetSource() *pb.OpObject
+}
+
+type destination_getter interface {
+	GetDestination() *pb.OpObject
+}
+
 func ensure_get_device_id(x device_getter) error {
 	if x.GetDevice().GetId() == nil {
 		return errors.New("device.id is empty")
@@ -93,14 +101,22 @@ func ensure_get_device_id(x device_getter) error {
 }
 
 func ensure_get_object_name(x object_getter) error {
-	if x.GetObject().GetName() == nil {
+	return _ensure_get_object_name(x.GetObject())
+}
+
+func _ensure_get_object_name(x *pb.OpObject) error {
+	if x.GetName() == nil {
 		return errors.New("object.name is empty")
 	}
 	return nil
 }
 
 func ensure_get_object_device_id(x object_getter) error {
-	dev := x.GetObject().GetDevice()
+	return _ensure_get_object_device_id(x.GetObject())
+}
+
+func _ensure_get_object_device_id(x *pb.OpObject) error {
+	dev := x.GetDevice()
 	if dev == nil {
 		return errors.New("object.device.id is empty")
 	}

@@ -3,6 +3,7 @@ package metathings_deviced_service
 import (
 	"bytes"
 	"context"
+	"path"
 
 	"github.com/golang/protobuf/ptypes/empty"
 	log "github.com/sirupsen/logrus"
@@ -36,8 +37,8 @@ func (self *MetathingsDevicedService) AuthorizePutObject(ctx context.Context, in
 }
 
 func (self *MetathingsDevicedService) PutObject(ctx context.Context, req *pb.PutObjectRequest) (*empty.Empty, error) {
-	dev_id := req.GetObject().GetDevice().GetId().GetValue()
 	obj := req.GetObject()
+	dev_id := obj.GetDevice().GetId().GetValue()
 	obj_pre_str := obj.GetPrefix().GetValue()
 	obj_name_str := obj.GetName().GetValue()
 	obj_md := pb_helper.ExtractStringMapToString(obj.GetMetadata())
@@ -58,8 +59,8 @@ func (self *MetathingsDevicedService) PutObject(ctx context.Context, req *pb.Put
 	}
 
 	self.logger.WithFields(log.Fields{
-		"device":      dev_id,
-		"object.name": obj_name_str,
+		"device": dev_id,
+		"object": path.Join(obj_pre_str, obj_name_str),
 	}).Infof("put object")
 
 	return &empty.Empty{}, nil
