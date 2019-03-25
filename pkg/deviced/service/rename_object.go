@@ -2,16 +2,15 @@ package metathings_deviced_service
 
 import (
 	"context"
-	"path"
 
 	"github.com/golang/protobuf/ptypes/empty"
-	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
-	simple_storage "github.com/nayotta/metathings/pkg/deviced/simple_storage"
-	identityd_validator "github.com/nayotta/metathings/pkg/identityd2/validator"
-	pb "github.com/nayotta/metathings/pkg/proto/deviced"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+
+	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
+	identityd_validator "github.com/nayotta/metathings/pkg/identityd2/validator"
+	pb "github.com/nayotta/metathings/pkg/proto/deviced"
 )
 
 func (self *MetathingsDevicedService) ValidateRenameObject(ctx context.Context, in interface{}) error {
@@ -48,29 +47,24 @@ func (self *MetathingsDevicedService) AuthorizeRenameObject(ctx context.Context,
 
 func (self *MetathingsDevicedService) RenameObject(ctx context.Context, req *pb.RenameObjectRequest) (*empty.Empty, error) {
 	src := req.GetSource()
-	src_pre_str := src.GetPrefix().GetValue()
-	src_name_str := src.GetName().GetValue()
 	dst := req.GetDestination()
-	dst_pre_str := dst.GetPrefix().GetValue()
-	dst_name_str := dst.GetName().GetValue()
-	dev_id := src.GetDevice().GetId().GetValue()
+	src_s := parse_object(src)
+	dst_s := parse_object(dst)
 
-	dev_s, err := self.storage.GetDevice(dev_id)
+	dev_s, err := self.storage.GetDevice(src_s.Device)
 	if err != nil {
 		self.logger.WithError(err).Errorf("failed to get device in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
-	src_s := simple_storage.NewObject(src_pre_str, src_name_str, nil)
-	dst_s := simple_storage.NewObject(dst_pre_str, dst_name_str, nil)
 	err = self.simple_storage.RenameObject(dev_s, src_s, dst_s)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
 	self.logger.WithFields(log.Fields{
-		"device":      dev_id,
-		"source":      path.Join(src_pre_str, src_name_str),
-		"destination": path.Join(dst_pre_str, dst_name_str),
+		"device":      src_s.Device,
+		"source":      src_s.FullName(),
+		"destination": dst_s.FullName(),
 	}).Infof("renmae object")
 
 	return &empty.Empty{}, nil

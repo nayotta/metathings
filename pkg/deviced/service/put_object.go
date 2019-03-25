@@ -3,7 +3,6 @@ package metathings_deviced_service
 import (
 	"bytes"
 	"context"
-	"path"
 
 	"github.com/golang/protobuf/ptypes/empty"
 	log "github.com/sirupsen/logrus"
@@ -11,8 +10,6 @@ import (
 	"google.golang.org/grpc/status"
 
 	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
-	pb_helper "github.com/nayotta/metathings/pkg/common/protobuf"
-	simple_storage "github.com/nayotta/metathings/pkg/deviced/simple_storage"
 	identityd_validator "github.com/nayotta/metathings/pkg/identityd2/validator"
 	pb "github.com/nayotta/metathings/pkg/proto/deviced"
 )
@@ -38,15 +35,11 @@ func (self *MetathingsDevicedService) AuthorizePutObject(ctx context.Context, in
 
 func (self *MetathingsDevicedService) PutObject(ctx context.Context, req *pb.PutObjectRequest) (*empty.Empty, error) {
 	obj := req.GetObject()
-	dev_id := obj.GetDevice().GetId().GetValue()
-	obj_pre_str := obj.GetPrefix().GetValue()
-	obj_name_str := obj.GetName().GetValue()
-	obj_md := pb_helper.ExtractStringMapToString(obj.GetMetadata())
 	content := req.GetContent().GetValue()
 	reader := bytes.NewReader(content)
-	obj_s := simple_storage.NewObject(obj_pre_str, obj_name_str, obj_md)
+	obj_s := parse_object(obj)
 
-	dev_s, err := self.storage.GetDevice(dev_id)
+	dev_s, err := self.storage.GetDevice(obj_s.Device)
 	if err != nil {
 		self.logger.WithError(err).Errorf("failed to get device in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
@@ -59,9 +52,9 @@ func (self *MetathingsDevicedService) PutObject(ctx context.Context, req *pb.Put
 	}
 
 	self.logger.WithFields(log.Fields{
-		"device": dev_id,
-		"object": path.Join(obj_pre_str, obj_name_str),
-	}).Infof("put object")
+		"device": obj_s.Device,
+		"object": obj_s.FullName(),
+	}).Debugf("put object")
 
 	return &empty.Empty{}, nil
 }

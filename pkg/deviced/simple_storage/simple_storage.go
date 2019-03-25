@@ -9,6 +9,7 @@ import (
 )
 
 type Object struct {
+	Device       string
 	Prefix       string
 	Name         string
 	Length       int64
@@ -17,11 +18,16 @@ type Object struct {
 	Metadata     map[string]string
 }
 
-func NewObject(prefix string, name string, metadata map[string]string) *Object {
+func (o *Object) FullName() string {
+	return path.Join(o.Prefix, o.Name)
+}
+
+func NewObject(device, prefix, name string, metadata map[string]string) *Object {
 	prefix = path.Join(prefix, path.Dir(name))
 	name = path.Clean(path.Base(name))
 
 	return &Object{
+		Device:   device,
 		Prefix:   prefix,
 		Name:     name,
 		Metadata: metadata,

@@ -2,16 +2,15 @@ package metathings_deviced_service
 
 import (
 	"context"
-	"path"
 
 	"github.com/golang/protobuf/ptypes/empty"
-	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
-	simple_storage "github.com/nayotta/metathings/pkg/deviced/simple_storage"
-	identityd_validator "github.com/nayotta/metathings/pkg/identityd2/validator"
-	pb "github.com/nayotta/metathings/pkg/proto/deviced"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+
+	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
+	identityd_validator "github.com/nayotta/metathings/pkg/identityd2/validator"
+	pb "github.com/nayotta/metathings/pkg/proto/deviced"
 )
 
 func (self *MetathingsDevicedService) ValidateRemoveObject(ctx context.Context, in interface{}) error {
@@ -35,12 +34,9 @@ func (self *MetathingsDevicedService) AuthorizeRemoveObject(ctx context.Context,
 
 func (self *MetathingsDevicedService) RemoveObject(ctx context.Context, req *pb.RemoveObjectRequest) (*empty.Empty, error) {
 	obj := req.GetObject()
-	dev_id := obj.GetDevice().GetId().GetValue()
-	obj_pre_str := obj.GetPrefix().GetValue()
-	obj_name_str := obj.GetName().GetValue()
-	obj_s := simple_storage.NewObject(obj_pre_str, obj_name_str, nil)
+	obj_s := parse_object(obj)
 
-	dev_s, err := self.storage.GetDevice(dev_id)
+	dev_s, err := self.storage.GetDevice(obj_s.Device)
 	if err != nil {
 		self.logger.WithError(err).Errorf("failed to get device in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
@@ -53,8 +49,8 @@ func (self *MetathingsDevicedService) RemoveObject(ctx context.Context, req *pb.
 	}
 
 	self.logger.WithFields(log.Fields{
-		"device": dev_id,
-		"object": path.Join(obj_pre_str, obj_name_str),
+		"device": obj_s.Device,
+		"object": obj_s.FullName(),
 	}).Infof("remove object")
 
 	return &empty.Empty{}, nil

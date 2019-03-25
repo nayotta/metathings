@@ -3,10 +3,20 @@ package metathings_deviced_service
 import (
 	"errors"
 
+	pb_helper "github.com/nayotta/metathings/pkg/common/protobuf"
 	deviced_helper "github.com/nayotta/metathings/pkg/deviced/helper"
+	simple_storage "github.com/nayotta/metathings/pkg/deviced/simple_storage"
 	storage "github.com/nayotta/metathings/pkg/deviced/storage"
 	pb "github.com/nayotta/metathings/pkg/proto/deviced"
 )
+
+func parse_object(x *pb.OpObject) *simple_storage.Object {
+	device := x.GetDevice().GetId().GetValue()
+	prefix := x.GetPrefix().GetValue()
+	name := x.GetName().GetValue()
+	metadata := pb_helper.ExtractStringMapToString(x.GetMetadata())
+	return simple_storage.NewObject(device, prefix, name, metadata)
+}
 
 func copy_device(x *storage.Device) *pb.Device {
 	y := &pb.Device{
@@ -75,6 +85,22 @@ func copy_flows(xs []*storage.Flow) []*pb.Flow {
 	}
 
 	return ys
+}
+
+func copy_object(x *simple_storage.Object) *pb.Object {
+	mod := pb_helper.FromTime(x.LastModified)
+
+	y := &pb.Object{
+		Device:       &pb.Device{Id: x.Device},
+		Prefix:       x.Prefix,
+		Name:         x.Name,
+		Length:       x.Length,
+		Etag:         x.Etag,
+		LastModified: &mod,
+		Metadata:     x.Metadata,
+	}
+
+	return y
 }
 
 type device_getter interface {
