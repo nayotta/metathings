@@ -103,6 +103,16 @@ func copy_object(x *simple_storage.Object) *pb.Object {
 	return y
 }
 
+func copy_objects(xs []*simple_storage.Object) []*pb.Object {
+	var ys []*pb.Object
+
+	for _, x := range xs {
+		ys = append(ys, copy_object(x))
+	}
+
+	return ys
+}
+
 type device_getter interface {
 	GetDevice() *pb.OpDevice
 }
