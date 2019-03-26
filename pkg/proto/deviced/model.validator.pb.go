@@ -188,7 +188,6 @@ func (this *Object) Validate() error {
 			return github_com_mwitkow_go_proto_validators.FieldError("LastModified", err)
 		}
 	}
-	// Validation of proto3 map<> fields is unsupported.
 	return nil
 }
 func (this *OpObject) Validate() error {
@@ -222,7 +221,6 @@ func (this *OpObject) Validate() error {
 			return github_com_mwitkow_go_proto_validators.FieldError("LiastModified", err)
 		}
 	}
-	// Validation of proto3 map<> fields is unsupported.
 	return nil
 }
 func (this *ErrorValue) Validate() error {

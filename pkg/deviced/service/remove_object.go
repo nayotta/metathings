@@ -36,13 +36,7 @@ func (self *MetathingsDevicedService) RemoveObject(ctx context.Context, req *pb.
 	obj := req.GetObject()
 	obj_s := parse_object(obj)
 
-	dev_s, err := self.storage.GetDevice(obj_s.Device)
-	if err != nil {
-		self.logger.WithError(err).Errorf("failed to get device in storage")
-		return nil, status.Errorf(codes.Internal, err.Error())
-	}
-
-	err = self.simple_storage.RemoveObject(dev_s, obj_s)
+	err := self.simple_storage.RemoveObject(obj_s)
 	if err != nil {
 		self.logger.WithError(err).Errorf("failed to remove object from simple storage")
 		return nil, status.Errorf(codes.Internal, err.Error())

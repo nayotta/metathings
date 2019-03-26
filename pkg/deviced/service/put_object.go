@@ -39,13 +39,7 @@ func (self *MetathingsDevicedService) PutObject(ctx context.Context, req *pb.Put
 	reader := bytes.NewReader(content)
 	obj_s := parse_object(obj)
 
-	dev_s, err := self.storage.GetDevice(obj_s.Device)
-	if err != nil {
-		self.logger.WithError(err).Errorf("failed to get device in storage")
-		return nil, status.Errorf(codes.Internal, err.Error())
-	}
-
-	err = self.simple_storage.PutObject(dev_s, obj_s, reader)
+	err := self.simple_storage.PutObject(obj_s, reader)
 	if err != nil {
 		self.logger.WithError(err).Errorf("failed to put object to simple storage")
 		return nil, status.Errorf(codes.Internal, err.Error())

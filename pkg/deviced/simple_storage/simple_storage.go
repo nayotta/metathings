@@ -4,8 +4,6 @@ import (
 	"io"
 	"path"
 	"time"
-
-	storage "github.com/nayotta/metathings/pkg/deviced/storage"
 )
 
 type Object struct {
@@ -15,26 +13,24 @@ type Object struct {
 	Length       int64
 	Etag         string
 	LastModified time.Time
-	Metadata     map[string]string
 }
 
 func (o *Object) FullName() string {
 	return path.Join(o.Prefix, o.Name)
 }
 
-func NewObject(device, prefix, name string, metadata map[string]string) *Object {
+func NewObject(device, prefix, name string) *Object {
 	prefix = path.Join(prefix, path.Dir(name))
 	name = path.Clean(path.Base(name))
 
 	return &Object{
-		Device:   device,
-		Prefix:   prefix,
-		Name:     name,
-		Metadata: metadata,
+		Device: device,
+		Prefix: prefix,
+		Name:   name,
 	}
 }
 
-func new_object(device, prefix, name string, length int64, etag string, last_modified time.Time, metadata map[string]string) *Object {
+func new_object(device, prefix, name string, length int64, etag string, last_modified time.Time) *Object {
 	return &Object{
 		Device:       device,
 		Prefix:       prefix,
@@ -42,17 +38,16 @@ func new_object(device, prefix, name string, length int64, etag string, last_mod
 		Length:       length,
 		Etag:         etag,
 		LastModified: last_modified,
-		Metadata:     metadata,
 	}
 }
 
 type SimpleStorage interface {
-	PutObject(dev *storage.Device, obj *Object, reader io.Reader) error
-	RemoveObject(dev *storage.Device, obj *Object) error
-	RenameObject(dev *storage.Device, src, dst *Object) error
-	GetObject(dev *storage.Device, obj *Object) (*Object, error)
-	GetObjectContent(dev *storage.Device, obj *Object) (chan []byte, error)
-	ListObjects(dev *storage.Device, obj *Object) ([]*Object, error)
+	PutObject(obj *Object, reader io.Reader) error
+	RemoveObject(obj *Object) error
+	RenameObject(src, dst *Object) error
+	GetObject(obj *Object) (*Object, error)
+	GetObjectContent(obj *Object) (chan []byte, error)
+	ListObjects(obj *Object) ([]*Object, error)
 }
 
 type SimpleStorageFactory func(...interface{}) (SimpleStorage, error)

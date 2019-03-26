@@ -51,12 +51,7 @@ func (self *MetathingsDevicedService) RenameObject(ctx context.Context, req *pb.
 	src_s := parse_object(src)
 	dst_s := parse_object(dst)
 
-	dev_s, err := self.storage.GetDevice(src_s.Device)
-	if err != nil {
-		self.logger.WithError(err).Errorf("failed to get device in storage")
-		return nil, status.Errorf(codes.Internal, err.Error())
-	}
-	err = self.simple_storage.RenameObject(dev_s, src_s, dst_s)
+	err := self.simple_storage.RenameObject(src_s, dst_s)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}

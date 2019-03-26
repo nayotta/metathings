@@ -26,12 +26,12 @@ type FileSimpleStorage struct {
 	logger log.FieldLogger
 }
 
-func (fss *FileSimpleStorage) join_path(dev *storage.Device, obj *Object) string {
-	return path.Join(fss.opt.Home, *dev.Id, obj.FullName())
+func (fss *FileSimpleStorage) join_path(obj *Object) string {
+	return path.Join(fss.opt.Home, obj.Device, obj.FullName())
 }
 
 func (fss *FileSimpleStorage) is_empty(dev *storage.Device, obj *Object) (bool, error) {
-	p := fss.join_path(dev, obj)
+	p := fss.join_path(obj)
 	f, err := os.Open(path.Dir(p))
 	if err != nil {
 		return false, err
@@ -45,8 +45,8 @@ func (fss *FileSimpleStorage) is_empty(dev *storage.Device, obj *Object) (bool, 
 	return false, nil
 }
 
-func (fss *FileSimpleStorage) PutObject(dev *storage.Device, obj *Object, reader io.Reader) error {
-	p := fss.join_path(dev, obj)
+func (fss *FileSimpleStorage) PutObject(obj *Object, reader io.Reader) error {
+	p := fss.join_path(obj)
 
 	err := os.MkdirAll(path.Dir(p), os.ModePerm)
 	if err != nil {
@@ -72,8 +72,8 @@ func (fss *FileSimpleStorage) PutObject(dev *storage.Device, obj *Object, reader
 	return nil
 }
 
-func (fss *FileSimpleStorage) RemoveObject(dev *storage.Device, obj *Object) error {
-	p := fss.join_path(dev, obj)
+func (fss *FileSimpleStorage) RemoveObject(obj *Object) error {
+	p := fss.join_path(obj)
 	pre := path.Dir(p)
 
 	err := os.Remove(p)
@@ -97,9 +97,10 @@ func (fss *FileSimpleStorage) RemoveObject(dev *storage.Device, obj *Object) err
 	return nil
 }
 
-func (fss *FileSimpleStorage) RenameObject(dev *storage.Device, src, dst *Object) error {
-	psrc := fss.join_path(dev, src)
-	pdst := fss.join_path(dev, dst)
+func (fss *FileSimpleStorage) RenameObject(src, dst *Object) error {
+	dst.Device = src.Device
+	psrc := fss.join_path(src)
+	pdst := fss.join_path(dst)
 	predst := path.Dir(pdst)
 
 	err := os.MkdirAll(predst, os.ModePerm)
@@ -115,21 +116,21 @@ func (fss *FileSimpleStorage) RenameObject(dev *storage.Device, src, dst *Object
 	return nil
 }
 
-func (fss *FileSimpleStorage) GetObject(dev *storage.Device, obj *Object) (*Object, error) {
-	p := fss.join_path(dev, obj)
+func (fss *FileSimpleStorage) GetObject(obj *Object) (*Object, error) {
+	p := fss.join_path(obj)
 
 	fi, err := os.Stat(p)
 	if err != nil {
 		return nil, err
 	}
 
-	new_obj := new_object(*dev.Id, obj.Prefix, obj.Name, fi.Size(), "\"\"", fi.ModTime(), obj.Metadata)
+	new_obj := new_object(obj.Device, obj.Prefix, obj.Name, fi.Size(), "\"\"", fi.ModTime())
 
 	return new_obj, nil
 }
 
-func (fss *FileSimpleStorage) GetObjectContent(dev *storage.Device, obj *Object) (chan []byte, error) {
-	p := fss.join_path(dev, obj)
+func (fss *FileSimpleStorage) GetObjectContent(obj *Object) (chan []byte, error) {
+	p := fss.join_path(obj)
 
 	f, err := os.Open(p)
 	if err != nil {
@@ -153,9 +154,9 @@ func (fss *FileSimpleStorage) GetObjectContent(dev *storage.Device, obj *Object)
 	return ch, nil
 }
 
-func (fss *FileSimpleStorage) ListObjects(dev *storage.Device, obj *Object) ([]*Object, error) {
+func (fss *FileSimpleStorage) ListObjects(obj *Object) ([]*Object, error) {
 	obj.Name = ""
-	p := fss.join_path(dev, obj)
+	p := fss.join_path(obj)
 
 	fs, err := ioutil.ReadDir(p)
 	if err != nil {
@@ -166,9 +167,9 @@ func (fss *FileSimpleStorage) ListObjects(dev *storage.Device, obj *Object) ([]*
 	for _, f := range fs {
 		var new_obj *Object
 		if f.IsDir() {
-			new_obj = new_object(*dev.Id, path.Join(obj.Prefix, f.Name()), "", f.Size(), "\"\"", f.ModTime(), nil)
+			new_obj = new_object(obj.Device, path.Join(obj.Prefix, f.Name()), "", f.Size(), "\"\"", f.ModTime())
 		} else {
-			new_obj = new_object(*dev.Id, obj.Prefix, f.Name(), f.Size(), "\"\"", f.ModTime(), nil)
+			new_obj = new_object(obj.Device, obj.Prefix, f.Name(), f.Size(), "\"\"", f.ModTime())
 		}
 		objs = append(objs, new_obj)
 	}

@@ -34,13 +34,7 @@ func (self *MetathingsDevicedService) ListObjects(ctx context.Context, req *pb.L
 	obj := req.GetObject()
 	obj_s := parse_object(obj)
 
-	dev_s, err := self.storage.GetDevice(obj_s.Device)
-	if err != nil {
-		self.logger.WithError(err).Errorf("failed to get device in storage")
-		return nil, status.Errorf(codes.Internal, err.Error())
-	}
-
-	objs_s, err := self.simple_storage.ListObjects(dev_s, obj_s)
+	objs_s, err := self.simple_storage.ListObjects(obj_s)
 	if err != nil {
 		self.logger.WithError(err).Errorf("failed to list objects in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())

@@ -9,7 +9,6 @@ import (
 	"github.com/stretchr/testify/suite"
 
 	log_helper "github.com/nayotta/metathings/pkg/common/log"
-	storage "github.com/nayotta/metathings/pkg/deviced/storage"
 )
 
 var (
@@ -18,7 +17,6 @@ var (
 	test_object_name    = "test_object_name.txt"
 	test_object_content = "test object content"
 
-	test_device = &storage.Device{Id: &test_device_id}
 	test_object = &Object{
 		Device: test_device_id,
 		Prefix: test_object_prefix,
@@ -43,7 +41,7 @@ func (s *fileSimpleStorageTestSuite) SetupTest() {
 
 	s.fss = fss.(*FileSimpleStorage)
 
-	err = s.fss.PutObject(test_device, test_object, strings.NewReader(test_object_content))
+	err = s.fss.PutObject(test_object, strings.NewReader(test_object_content))
 	s.Nil(err)
 }
 
@@ -53,7 +51,7 @@ func (s *fileSimpleStorageTestSuite) TearDownTest() {
 }
 
 func (s *fileSimpleStorageTestSuite) TestGetObjectContent() {
-	ch, err := s.fss.GetObjectContent(test_device, test_object)
+	ch, err := s.fss.GetObjectContent(test_object)
 	s.Nil(err)
 
 	content := ""
@@ -65,7 +63,7 @@ func (s *fileSimpleStorageTestSuite) TestGetObjectContent() {
 }
 
 func (s *fileSimpleStorageTestSuite) TestGetObject() {
-	obj, err := s.fss.GetObject(test_device, test_object)
+	obj, err := s.fss.GetObject(test_object)
 	s.Nil(err)
 	s.Equal(test_device_id, obj.Device)
 	s.Equal(test_object_prefix, obj.Prefix)
@@ -75,11 +73,11 @@ func (s *fileSimpleStorageTestSuite) TestGetObject() {
 
 func (s *fileSimpleStorageTestSuite) TestPutObject() {
 	txt := "hello, world"
-	obj := NewObject(test_device_id, "", "test/test/test.txt", nil)
-	err := s.fss.PutObject(test_device, obj, strings.NewReader(txt))
+	obj := NewObject(test_device_id, "", "test/test/test.txt")
+	err := s.fss.PutObject(obj, strings.NewReader(txt))
 	s.Nil(err)
 
-	obj1, err := s.fss.GetObject(test_device, obj)
+	obj1, err := s.fss.GetObject(obj)
 	s.Nil(err)
 
 	s.Equal("test/test", obj1.Prefix)
@@ -88,28 +86,28 @@ func (s *fileSimpleStorageTestSuite) TestPutObject() {
 }
 
 func (s *fileSimpleStorageTestSuite) TestRemoveObject() {
-	err := s.fss.RemoveObject(test_device, test_object)
+	err := s.fss.RemoveObject(test_object)
 	s.Nil(err)
 
-	_, err = s.fss.GetObject(test_device, test_object)
+	_, err = s.fss.GetObject(test_object)
 	s.NotNil(err)
 }
 
 func (s *fileSimpleStorageTestSuite) TestRenameObject() {
-	dst := NewObject(test_device_id, "dst", "test.txt", nil)
-	err := s.fss.RenameObject(test_device, test_object, dst)
+	dst := NewObject(test_device_id, "dst", "test.txt")
+	err := s.fss.RenameObject(test_object, dst)
 	s.Nil(err)
 
-	_, err = s.fss.GetObject(test_device, test_object)
+	_, err = s.fss.GetObject(test_object)
 	s.NotNil(err)
 
-	_, err = s.fss.GetObject(test_device, dst)
+	_, err = s.fss.GetObject(dst)
 	s.Nil(err)
 }
 
 func (s *fileSimpleStorageTestSuite) TestListObjects() {
-	fltr := NewObject(test_device_id, test_object_prefix, "", nil)
-	objs, err := s.fss.ListObjects(test_device, fltr)
+	fltr := NewObject(test_device_id, test_object_prefix, "")
+	objs, err := s.fss.ListObjects(fltr)
 	s.Nil(err)
 	s.Len(objs, 1)
 }
