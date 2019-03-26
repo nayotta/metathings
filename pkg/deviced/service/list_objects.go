@@ -3,12 +3,13 @@ package metathings_deviced_service
 import (
 	"context"
 
-	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
-	identityd_validator "github.com/nayotta/metathings/pkg/identityd2/validator"
-	pb "github.com/nayotta/metathings/pkg/proto/deviced"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+
+	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
+	identityd_validator "github.com/nayotta/metathings/pkg/identityd2/validator"
+	pb "github.com/nayotta/metathings/pkg/proto/deviced"
 )
 
 func (self *MetathingsDevicedService) ValidateListObjects(ctx context.Context, in interface{}) error {

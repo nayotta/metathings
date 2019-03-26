@@ -34,6 +34,18 @@ func NewObject(device, prefix, name string, metadata map[string]string) *Object 
 	}
 }
 
+func new_object(device, prefix, name string, length int64, etag string, last_modified time.Time, metadata map[string]string) *Object {
+	return &Object{
+		Device:       device,
+		Prefix:       prefix,
+		Name:         name,
+		Length:       length,
+		Etag:         etag,
+		LastModified: last_modified,
+		Metadata:     metadata,
+	}
+}
+
 type SimpleStorage interface {
 	PutObject(dev *storage.Device, obj *Object, reader io.Reader) error
 	RemoveObject(dev *storage.Device, obj *Object) error
@@ -45,7 +57,11 @@ type SimpleStorage interface {
 
 type SimpleStorageFactory func(...interface{}) (SimpleStorage, error)
 
-var simple_storage_factories map[string]SimpleStorageFactory
+var simple_storage_factories = make(map[string]SimpleStorageFactory)
+
+func register_simple_storage_factory(name string, fty SimpleStorageFactory) {
+	simple_storage_factories[name] = fty
+}
 
 func NewSimpleStorage(name string, args ...interface{}) (SimpleStorage, error) {
 	var fty SimpleStorageFactory
@@ -56,8 +72,4 @@ func NewSimpleStorage(name string, args ...interface{}) (SimpleStorage, error) {
 	}
 
 	return fty(args...)
-}
-
-func init() {
-	simple_storage_factories = make(map[string]SimpleStorageFactory)
 }
