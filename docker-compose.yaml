@@ -65,6 +65,21 @@ services:
     - "5001"
     restart: on-failure
 
+  tagd:
+    environment:
+    - MTD_STAGE=debug
+    build:
+      context: .
+      dockerfile: dockerfile/Dockerfile.tagd
+    image: nayotta/tagd
+    volumes:
+    - ./etc/tagd.yaml:/etc/metathings/tagd.yaml
+    networks:
+    - metathings-backend
+    expose:
+    - "5002"
+    restart: on-failure
+
   cored:
     environment:
     - MTD_STAGE=debug

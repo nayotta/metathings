@@ -10,6 +10,76 @@ type StorageImpl struct {
 	logger log.FieldLogger
 }
 
+func (self *StorageImpl) get_flow(id string) (*Flow, error) {
+	var err error
+	flw := &Flow{}
+
+	if err = self.db.First(flw, "id = ?", id).Error; err != nil {
+		return nil, err
+	}
+
+	flw.Device = &Device{Id: flw.DeviceId}
+
+	return flw, nil
+}
+
+func (self *StorageImpl) list_flows_by_device_id(id string) ([]*Flow, error) {
+	var err error
+	var flws_t []*Flow
+
+	if err = self.db.Select("id").Find(&flws_t, "device_id = ?", id).Error; err != nil {
+		return nil, err
+	}
+
+	flws := []*Flow{}
+	for _, f := range flws_t {
+		if f, err = self.get_flow(*f.Id); err != nil {
+			return nil, err
+		}
+
+		flws = append(flws, f)
+	}
+
+	return flws, nil
+}
+
+func (self *StorageImpl) list_flows(flw *Flow) ([]*Flow, error) {
+	var err error
+	var flws_t []*Flow
+
+	f := &Flow{}
+	if flw.Id != nil {
+		f.Id = flw.Id
+	}
+
+	if flw.DeviceId != nil {
+		f.DeviceId = flw.DeviceId
+	}
+
+	if flw.Name != nil {
+		f.Name = flw.Name
+	}
+
+	if flw.Alias != nil {
+		f.Alias = flw.Alias
+	}
+
+	if err = self.db.Select("id").Find(&flws_t, f).Error; err != nil {
+		return nil, err
+	}
+
+	var flws []*Flow
+	for _, f = range flws_t {
+		if f, err = self.get_flow(*f.Id); err != nil {
+			return nil, err
+		}
+
+		flws = append(flws, f)
+	}
+
+	return flws, nil
+}
+
 func (self *StorageImpl) get_module(id string) (*Module, error) {
 	var err error
 	mdl := &Module{}
@@ -96,6 +166,10 @@ func (self *StorageImpl) internal_get_device(dev *Device) (*Device, error) {
 	var err error
 
 	if dev.Modules, err = self.list_modules_by_device_id(*dev.Id); err != nil {
+		return nil, err
+	}
+
+	if dev.Flows, err = self.list_flows_by_device_id(*dev.Id); err != nil {
 		return nil, err
 	}
 
@@ -277,35 +351,35 @@ func (self *StorageImpl) DeleteModule(id string) error {
 	return nil
 }
 
-func (self *StorageImpl) PatchModule(id string, module *Module) (*Module, error) {
+func (self *StorageImpl) PatchModule(id string, mdl *Module) (*Module, error) {
 	var err error
-	var mdl Module
+	var m Module
 
-	if module.Alias != nil {
-		mdl.Alias = module.Alias
+	if mdl.Alias != nil {
+		m.Alias = mdl.Alias
 	}
 
-	if module.State != nil {
-		mdl.State = module.State
+	if mdl.State != nil {
+		m.State = mdl.State
 	}
 
-	if module.HeartbeatAt != nil {
-		mdl.HeartbeatAt = module.HeartbeatAt
+	if mdl.HeartbeatAt != nil {
+		m.HeartbeatAt = mdl.HeartbeatAt
 	}
 
-	if err = self.db.Model(&Module{Id: &id}).Update(mdl).Error; err != nil {
+	if err = self.db.Model(&Module{Id: &id}).Update(m).Error; err != nil {
 		self.logger.WithError(err).Debugf("failed to patch module")
 		return nil, err
 	}
 
-	if module, err = self.get_module(id); err != nil {
+	if mdl, err = self.get_module(id); err != nil {
 		self.logger.WithError(err).Debugf("failed to get module")
 		return nil, err
 	}
 
 	self.logger.WithField("id", id).Debugf("patch module")
 
-	return module, nil
+	return mdl, nil
 }
 
 func (self *StorageImpl) GetModule(id string) (*Module, error) {
@@ -334,6 +408,88 @@ func (self *StorageImpl) ListModules(mdl *Module) ([]*Module, error) {
 	self.logger.Debugf("list modules")
 
 	return mdls, nil
+}
+
+func (self *StorageImpl) CreateFlow(flw *Flow) (*Flow, error) {
+	var err error
+
+	if err = self.db.Create(flw).Error; err != nil {
+		self.logger.WithError(err).Debugf("failed to create flow")
+		return nil, err
+	}
+
+	if flw, err = self.get_flow(*flw.Id); err != nil {
+		self.logger.WithError(err).Debugf("failed to get flow")
+		return nil, err
+	}
+
+	self.logger.WithField("id", *flw.Id).Debugf("create flow")
+
+	return flw, nil
+}
+
+func (self *StorageImpl) DeleteFlow(id string) error {
+	var err error
+
+	if err = self.db.Delete(&Flow{}, "id = ?", id).Error; err != nil {
+		self.logger.WithError(err).Debugf("failed to delete flow")
+		return err
+	}
+
+	self.logger.WithField("id", id).Debugf("delete flow")
+
+	return nil
+}
+
+func (self *StorageImpl) PatchFlow(id string, flw *Flow) (*Flow, error) {
+	var err error
+	var f Flow
+
+	if flw.Alias != nil {
+		f.Alias = flw.Alias
+	}
+
+	if err = self.db.Model(&Flow{Id: &id}).Update(f).Error; err != nil {
+		self.logger.WithError(err).Debugf("failed to patch flow")
+		return nil, err
+	}
+
+	if flw, err = self.get_flow(id); err != nil {
+		self.logger.WithError(err).Debugf("failed to get flow")
+		return nil, err
+	}
+
+	self.logger.WithField("id", id).Debugf("patch flow")
+
+	return flw, nil
+}
+
+func (self *StorageImpl) GetFlow(id string) (*Flow, error) {
+	var flw *Flow
+	var err error
+
+	if flw, err = self.get_flow(id); err != nil {
+		self.logger.WithError(err).Debugf("failed to get flow")
+		return nil, err
+	}
+
+	self.logger.WithField("id", id).Debugf("get flow")
+
+	return flw, nil
+}
+
+func (self *StorageImpl) ListFlows(flw *Flow) ([]*Flow, error) {
+	var flws []*Flow
+	var err error
+
+	if flws, err = self.list_flows(flw); err != nil {
+		self.logger.WithError(err).Debugf("failed to list flows")
+		return nil, err
+	}
+
+	self.logger.Debugf("list flows")
+
+	return flws, nil
 }
 
 func init_args(s *StorageImpl, args ...interface{}) error {
@@ -375,9 +531,10 @@ func new_db(s *StorageImpl, driver, uri string) error {
 }
 
 func init_db(s *StorageImpl) error {
-	s.db.AutoMigrate(
+	s.db.Debug().AutoMigrate(
 		&Device{},
 		&Module{},
+		&Flow{},
 	)
 
 	return nil

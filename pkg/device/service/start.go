@@ -6,7 +6,6 @@ import (
 	"github.com/golang/protobuf/ptypes/empty"
 
 	context_helper "github.com/nayotta/metathings/pkg/common/context"
-	rand_helper "github.com/nayotta/metathings/pkg/common/rand"
 	deviced_pb "github.com/nayotta/metathings/pkg/proto/deviced"
 )
 
@@ -23,7 +22,7 @@ func (self *MetathingsDeviceServiceImpl) start() error {
 	ctx := context_helper.NewOutgoingContext(
 		context.Background(),
 		context_helper.WithTokenOp(self.tknr.GetToken()),
-		context_helper.WithSessionOp(rand_helper.Int31()),
+		context_helper.WithSessionOp(self.generator_major_session()),
 	)
 	self.conn_stm, err = cli.Connect(ctx)
 	if err != nil {
@@ -39,8 +38,8 @@ func (self *MetathingsDeviceServiceImpl) start() error {
 	self.mdl_db = NewModuleDatabase(show_device_res.GetDevice().GetModules(), self.opt.ModuleAliveTimeout, self.logger)
 	self.info = show_device_res.GetDevice()
 
-	go self.heartbeat_loop()
 	go self.main_loop()
+	go self.heartbeat_loop()
 
 	return nil
 }

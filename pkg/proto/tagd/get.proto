@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package ai.metathings.service.tagd;
+
+import "google/protobuf/wrappers.proto";
+
+import "github.com/mwitkow/go-proto-validators/validator.proto";
+
+message GetRequest {
+	google.protobuf.StringValue id = 1 [(validator.field) = {msg_exists: true}];
+}
+
+message GetResponse {
+	string id = 1;
+	repeated string tags = 2;
+}

@@ -25,7 +25,7 @@ func (self *MetathingsDevicedService) Connect(stream pb.DevicedService_ConnectSe
 		self.logger.WithError(err).Errorf("failed to build connection")
 		return status.Errorf(codes.Internal, err.Error())
 	}
-	defer conn.Close()
+	defer conn.Cleanup()
 
 	self.logger.WithFields(log.Fields{
 		"device_id": *dev_s.Id,

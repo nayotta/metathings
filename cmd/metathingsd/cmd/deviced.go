@@ -3,6 +3,7 @@ package cmd
 import (
 	"context"
 
+	"github.com/mongodb/mongo-go-driver/mongo"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"go.uber.org/fx"
@@ -12,16 +13,28 @@ import (
 	token_helper "github.com/nayotta/metathings/pkg/common/token"
 	connection "github.com/nayotta/metathings/pkg/deviced/connection"
 	service "github.com/nayotta/metathings/pkg/deviced/service"
+	session_storage "github.com/nayotta/metathings/pkg/deviced/session_storage"
 	storage "github.com/nayotta/metathings/pkg/deviced/storage"
+	authorizer "github.com/nayotta/metathings/pkg/identityd2/authorizer"
 	policy "github.com/nayotta/metathings/pkg/identityd2/policy"
 	pb "github.com/nayotta/metathings/pkg/proto/deviced"
 )
 
 type DevicedOption struct {
 	cmd_contrib.ServiceBaseOption `mapstructure:",squash"`
+	SessionStorage                map[string]interface{}
 	ConnectionCenter              struct {
 		Storage map[string]interface{}
 		Bridge  map[string]interface{}
+	}
+	Flow struct {
+		Mongo struct {
+			Uri      string
+			Database string
+		}
+		Kafka struct {
+			Brokers []string
+		}
 	}
 }
 
@@ -58,6 +71,15 @@ func init_connection_center_bridge(opt *DevicedOption) {
 	opt.ConnectionCenter.Bridge = mccb
 }
 
+func init_session_storage(opt *DevicedOption) {
+	mss := map[string]interface{}{}
+	vss := cmd_helper.GetFromStage().Sub("session_storage")
+	for _, key := range vss.AllKeys() {
+		mss[key] = vss.Get(key)
+	}
+	opt.SessionStorage = mss
+}
+
 var (
 	devicedCmd = &cobra.Command{
 		Use:   "deviced",
@@ -72,6 +94,7 @@ var (
 			base_opt = &opt_t.BaseOption
 
 			init_service_cmd_option(opt_t, deviced_opt)
+			init_session_storage(opt_t)
 			init_connection_center(opt_t)
 
 			deviced_opt = opt_t
@@ -131,7 +154,7 @@ func parse_connection_center_option(x map[string]interface{}) (string, []interfa
 	return name, y, nil
 }
 
-func NewConnectionCenter(opt *DevicedOption, logger log.FieldLogger) (connection.ConnectionCenter, error) {
+func NewConnectionCenter(opt *DevicedOption, sess_stor session_storage.SessionStorage, logger log.FieldLogger) (connection.ConnectionCenter, error) {
 	var name string
 	var args []interface{}
 	var err error
@@ -157,15 +180,60 @@ func NewConnectionCenter(opt *DevicedOption, logger log.FieldLogger) (connection
 		return nil, err
 	}
 
-	if cc, err = connection.NewConnectionCenter(conn_brfty, conn_stor, logger); err != nil {
+	if cc, err = connection.NewConnectionCenter(conn_brfty, conn_stor, sess_stor, logger); err != nil {
 		return nil, err
 	}
 
 	return cc, nil
 }
 
+func parse_session_storage_option(x map[string]interface{}) (string, []interface{}, error) {
+	var key string
+	var val interface{}
+	var drv string
+	var ok bool
+
+	y := []interface{}{}
+
+	if val, ok = x["driver"]; !ok {
+		return "", nil, ErrInvalidArgument
+	}
+
+	if drv, ok = val.(string); !ok {
+		return "", nil, ErrInvalidArgument
+	}
+
+	for key, val = range x {
+		if key == "driver" {
+			continue
+		}
+
+		y = append(y, key, val)
+	}
+
+	return drv, y, nil
+}
+
+func NewSessionStorage(opt *DevicedOption, logger log.FieldLogger) (session_storage.SessionStorage, error) {
+	drv, args, err := parse_session_storage_option(opt.SessionStorage)
+	if err != nil {
+		return nil, err
+	}
+	args = append(args, "logger", logger)
+
+	sess_stor, err := session_storage.NewSessionStorage(drv, args...)
+	if err != nil {
+		return nil, err
+	}
+
+	return sess_stor, nil
+}
+
 func NewMetathingsDevicedServiceOption(opt *DevicedOption) *service.MetathingsDevicedServiceOption {
-	return &service.MetathingsDevicedServiceOption{}
+	o := &service.MetathingsDevicedServiceOption{}
+	o.Flow.MongoDatabase = opt.Flow.Mongo.Database
+	o.Flow.KafkaBrokers = opt.Flow.Kafka.Brokers
+	return o
 }
 
 func runDeviced() error {
@@ -180,10 +248,16 @@ func runDeviced() error {
 			cmd_contrib.NewClientFactory,
 			cmd_contrib.NewTokener,
 			token_helper.NewTokenValidator,
+			NewSessionStorage,
 			NewConnectionCenter,
+			func(opt *DevicedOption) (*mongo.Client, error) {
+				return mongo.Connect(context.TODO(), opt.Flow.Mongo.Uri)
+			},
 			NewDevicedStorage,
 			NewMetathingsDevicedServiceOption,
 			policy.NewEnforcer,
+			authorizer.NewAuthorizer,
+			cmd_contrib.NewValidator,
 			service.NewMetathingsDevicedService,
 		),
 		fx.Invoke(

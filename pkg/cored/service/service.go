@@ -83,8 +83,6 @@ func SetEntityAliveTimeout(timeout int) ServiceOptions {
 }
 
 type metathingsCoredService struct {
-	grpc_helper.AuthorizationTokenParser
-
 	cli_fty             *client_helper.ClientFactory
 	core_st_psr         state_helper.CoreStateParser
 	entity_st_psr       state_helper.EntityStateParser
@@ -100,7 +98,7 @@ type metathingsCoredService struct {
 }
 
 func (srv *metathingsCoredService) AuthFuncOverride(ctx context.Context, fullMethodName string) (context.Context, error) {
-	token_str, err := srv.GetTokenFromContext(ctx)
+	token_str, err := grpc_helper.GetTokenFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}

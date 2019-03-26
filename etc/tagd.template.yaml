@@ -1,0 +1,15 @@
+dev:
+  listen: 127.0.0.1:5002
+  verbose: true
+  log:
+    level: debug
+  storage:
+    driver: mongo
+    uri: <mongo-uri>
+    # ...
+  service_endpoint:
+    default:
+      address: <metathings-address>
+  credential:
+    id: <credential-id>
+    secret: <credential-secret>

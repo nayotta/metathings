@@ -8,23 +8,24 @@ import (
 
 	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
 	storage "github.com/nayotta/metathings/pkg/deviced/storage"
+	identityd_validator "github.com/nayotta/metathings/pkg/identityd2/validator"
 	pb "github.com/nayotta/metathings/pkg/proto/deviced"
 )
 
 func (self *MetathingsDevicedService) ValidateGetDevice(ctx context.Context, in interface{}) error {
-	return self.validate_chain(
-		[]interface{}{
+	return self.validator.Validate(
+		identityd_validator.Providers{
 			func() (policy_helper.Validator, get_devicer) {
 				req := in.(*pb.GetDeviceRequest)
 				return req, req
 			},
 		},
-		[]interface{}{ensure_get_device_id},
+		identityd_validator.Invokers{ensure_get_device_id},
 	)
 }
 
 func (self *MetathingsDevicedService) AuthorizeGetDevice(ctx context.Context, in interface{}) error {
-	return self.enforce(ctx, in.(*pb.GetDeviceRequest).GetDevice().GetId().GetValue(), "get_device")
+	return self.authorizer.Authorize(ctx, in.(*pb.GetDeviceRequest).GetDevice().GetId().GetValue(), "get_device")
 }
 
 func (self *MetathingsDevicedService) GetDevice(ctx context.Context, req *pb.GetDeviceRequest) (*pb.GetDeviceResponse, error) {

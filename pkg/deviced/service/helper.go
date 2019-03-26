@@ -16,6 +16,7 @@ func copy_device(x *storage.Device) *pb.Device {
 		Name:    *x.Name,
 		Alias:   *x.Alias,
 		Modules: copy_modules(x.Modules),
+		Flows:   copy_flows(x.Flows),
 	}
 
 	return y
@@ -50,6 +51,27 @@ func copy_modules(xs []*storage.Module) []*pb.Module {
 
 	for _, x := range xs {
 		ys = append(ys, copy_module(x))
+	}
+
+	return ys
+}
+
+func copy_flow(x *storage.Flow) *pb.Flow {
+	y := &pb.Flow{
+		Id:       *x.Id,
+		DeviceId: *x.DeviceId,
+		Name:     *x.Name,
+		Alias:    *x.Alias,
+	}
+
+	return y
+}
+
+func copy_flows(xs []*storage.Flow) []*pb.Flow {
+	var ys []*pb.Flow
+
+	for _, x := range xs {
+		ys = append(ys, copy_flow(x))
 	}
 
 	return ys

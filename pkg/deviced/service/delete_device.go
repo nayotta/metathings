@@ -9,23 +9,24 @@ import (
 
 	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
 	storage "github.com/nayotta/metathings/pkg/deviced/storage"
+	identityd_validator "github.com/nayotta/metathings/pkg/identityd2/validator"
 	pb "github.com/nayotta/metathings/pkg/proto/deviced"
 )
 
 func (self *MetathingsDevicedService) ValidateDeleteDevice(ctx context.Context, in interface{}) error {
-	return self.validate_chain(
-		[]interface{}{
+	return self.validator.Validate(
+		identityd_validator.Providers{
 			func() (policy_helper.Validator, get_devicer) {
 				req := in.(*pb.DeleteDeviceRequest)
 				return req, req
 			},
 		},
-		[]interface{}{ensure_get_device_id},
+		identityd_validator.Invokers{ensure_get_device_id},
 	)
 }
 
 func (self *MetathingsDevicedService) AuthorizeDeleteDevice(ctx context.Context, in interface{}) error {
-	return self.enforce(ctx, in.(*pb.DeleteDeviceRequest).GetDevice().GetId().GetValue(), "delete_device")
+	return self.authorizer.Authorize(ctx, in.(*pb.DeleteDeviceRequest).GetDevice().GetId().GetValue(), "delete_device")
 }
 
 func (self *MetathingsDevicedService) DeleteDevice(ctx context.Context, req *pb.DeleteDeviceRequest) (*empty.Empty, error) {
@@ -45,6 +46,16 @@ func (self *MetathingsDevicedService) DeleteDevice(ctx context.Context, req *pb.
 		}
 		if err = self.storage.DeleteModule(mdl_id_str); err != nil {
 			self.logger.WithError(err).WithField("id", mdl_id_str).Warningf("failed to delete module in storage")
+		}
+	}
+
+	for _, f := range dev.Flows {
+		flw_id_str := *f.Id
+		if err = self.enforcer.RemoveObjectFromKind(flw_id_str, KIND_FLOW); err != nil {
+			self.logger.WithError(err).Warningf("failed to remove flow from kind in enforcer")
+		}
+		if err = self.storage.DeleteFlow(flw_id_str); err != nil {
+			self.logger.WithError(err).WithField("id", flw_id_str).Warningf("failed to delete flow in storage")
 		}
 	}
 
