@@ -1,10 +1,14 @@
 package metathings_deviced_simple_storage
 
 import (
+	"crypto/sha1"
+	"encoding/base64"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"os"
 	"path"
+	"time"
 
 	log "github.com/sirupsen/logrus"
 
@@ -20,7 +24,6 @@ func NewFileSimpleStorageOption() *FileSimpleStorageOption {
 	return &FileSimpleStorageOption{}
 }
 
-// TODO(Peer): let Metadata and Etag work.
 type FileSimpleStorage struct {
 	opt    *FileSimpleStorageOption
 	logger log.FieldLogger
@@ -43,6 +46,18 @@ func (fss *FileSimpleStorage) is_empty(dev *storage.Device, obj *Object) (bool, 
 	}
 
 	return false, nil
+}
+
+func (fss *FileSimpleStorage) etag(obj *Object) string {
+	s := fmt.Sprintf("%v#%v#%v", fss.join_path(obj), obj.Length, obj.LastModified.UnixNano())
+	h := sha1.Sum([]byte(s))
+	return base64.StdEncoding.EncodeToString([]byte(h[:]))
+}
+
+func (fss *FileSimpleStorage) new_object(device, prefix, name string, length int64, last_modified time.Time) *Object {
+	obj := new_object(device, prefix, name, length, "\"\"", last_modified)
+	obj.Etag = fss.etag(obj)
+	return obj
 }
 
 func (fss *FileSimpleStorage) PutObject(obj *Object, reader io.Reader) error {
@@ -124,7 +139,7 @@ func (fss *FileSimpleStorage) GetObject(obj *Object) (*Object, error) {
 		return nil, err
 	}
 
-	new_obj := new_object(obj.Device, obj.Prefix, obj.Name, fi.Size(), "\"\"", fi.ModTime())
+	new_obj := fss.new_object(obj.Device, obj.Prefix, obj.Name, fi.Size(), fi.ModTime())
 
 	return new_obj, nil
 }
@@ -167,9 +182,9 @@ func (fss *FileSimpleStorage) ListObjects(obj *Object) ([]*Object, error) {
 	for _, f := range fs {
 		var new_obj *Object
 		if f.IsDir() {
-			new_obj = new_object(obj.Device, path.Join(obj.Prefix, f.Name()), "", f.Size(), "\"\"", f.ModTime())
+			new_obj = fss.new_object(obj.Device, path.Join(obj.Prefix, f.Name()), "", f.Size(), f.ModTime())
 		} else {
-			new_obj = new_object(obj.Device, obj.Prefix, f.Name(), f.Size(), "\"\"", f.ModTime())
+			new_obj = fss.new_object(obj.Device, obj.Prefix, f.Name(), f.Size(), f.ModTime())
 		}
 		objs = append(objs, new_obj)
 	}
