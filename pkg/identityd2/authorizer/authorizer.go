@@ -3,12 +3,14 @@ package metathings_identityd2_authorizer
 import (
 	"context"
 
+	"github.com/golang/protobuf/ptypes/wrappers"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	policy "github.com/nayotta/metathings/pkg/identityd2/policy"
-	pb "github.com/nayotta/metathings/pkg/proto/identityd2"
+	client_helper "github.com/nayotta/metathings/pkg/common/client"
+	context_helper "github.com/nayotta/metathings/pkg/common/context"
+	identityd_pb "github.com/nayotta/metathings/pkg/proto/identityd2"
 )
 
 type Authorizer interface {
@@ -16,45 +18,35 @@ type Authorizer interface {
 }
 
 type authorizer struct {
-	logger   log.FieldLogger
-	enforcer policy.Enforcer
+	logger  log.FieldLogger
+	cli_fty *client_helper.ClientFactory
 }
 
-func (a *authorizer) Authorize(ctx context.Context, obj, act string) error {
-	var err error
-
-	tkn := ctx.Value("token").(*pb.Token)
-
-	var groups []string
-	for _, g := range tkn.GetGroups() {
-		groups = append(groups, g.GetId())
+func (a *authorizer) Authorize(ctx context.Context, object, action string) error {
+	cli, cfn, err := a.cli_fty.NewIdentityd2ServiceClient()
+	if err != nil {
+		a.logger.WithError(err).Errorf("failed to connect to identityd2")
+		return status.Errorf(codes.Internal, err.Error())
 	}
+	defer cfn()
 
-	dom_id := tkn.GetDomain().GetId()
-	ent_id := tkn.GetEntity().GetId()
-
-	if err = a.enforcer.Enforce(dom_id, groups, ent_id, obj, act); err != nil {
-		if err == policy.ErrPermissionDenied {
-			a.logger.WithFields(log.Fields{
-				"subject": ent_id,
-				"domain":  dom_id,
-				"groups":  groups,
-				"object":  obj,
-				"action":  act,
-			}).Warningf("denied to do #action")
-			return status.Errorf(codes.PermissionDenied, err.Error())
-		} else {
-			a.logger.WithError(err).Errorf("failed to enforce")
-			return status.Errorf(codes.Internal, err.Error())
-		}
+	new_ctx := context_helper.WithToken(context.Background(), "mt "+context_helper.ExtractToken(ctx).GetText())
+	req := &identityd_pb.AuthorizeTokenRequest{
+		Object: &identityd_pb.OpEntity{Id: &wrappers.StringValue{Value: object}},
+		Action: &identityd_pb.OpAction{Name: &wrappers.StringValue{Value: action}},
+	}
+	_, err = cli.AuthorizeToken(new_ctx, req)
+	if err != nil {
+		a.logger.WithError(err).Warningf("permission denied")
+		return status.Errorf(codes.PermissionDenied, err.Error())
 	}
 
 	return nil
 }
 
-func NewAuthorizer(enforcer policy.Enforcer, logger log.FieldLogger) Authorizer {
+func NewAuthorizer(cli_fty *client_helper.ClientFactory, logger log.FieldLogger) Authorizer {
 	return &authorizer{
-		logger:   logger,
-		enforcer: enforcer,
+		logger:  logger,
+		cli_fty: cli_fty,
 	}
 }

@@ -65,11 +65,6 @@ func (self *MetathingsIdentitydService) IssueTokenByCredential(ctx context.Conte
 	}
 
 	tkn := new_token(&dom_id_str, cred_s.EntityId, cred_s.Id, self.opt.TokenExpire)
-
-	if err = self.add_token_to_kind_in_enforcer(*tkn.Id); err != nil {
-		return nil, err
-	}
-
 	if tkn, err = self.storage.CreateToken(tkn); err != nil {
 		self.logger.WithError(err).Errorf("failed to create token in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())

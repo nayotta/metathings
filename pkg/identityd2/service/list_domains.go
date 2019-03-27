@@ -18,19 +18,17 @@ func (self *MetathingsIdentitydService) ListDomains(ctx context.Context, req *pb
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 
+	dom_req := req.GetDomain()
 	dom := &storage.Domain{}
 
-	if req.GetId() != nil && req.GetId().GetValue() != "" {
-		idStr := req.GetId().GetValue()
-		dom.Id = &idStr
+	if dom_req.GetId() != nil && dom_req.GetId().GetValue() != "" {
+		dom.Id = &dom_req.Id.Value
 	}
-	if req.GetName() != nil && req.GetName().GetValue() != "" {
-		nameStr := req.GetName().GetValue()
-		dom.Name = &nameStr
+	if dom_req.GetName() != nil && dom_req.GetName().GetValue() != "" {
+		dom.Name = &dom_req.Name.Value
 	}
-	if req.GetAlias() != nil && req.GetAlias().GetValue() != "" {
-		aliasStr := req.GetAlias().GetValue()
-		dom.Alias = &aliasStr
+	if dom_req.GetAlias() != nil && dom_req.GetAlias().GetValue() != "" {
+		dom.Alias = &dom_req.Alias.Value
 	}
 
 	doms, err := self.storage.ListDomains(dom)

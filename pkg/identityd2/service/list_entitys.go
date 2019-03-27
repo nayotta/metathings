@@ -17,19 +17,17 @@ func (self *MetathingsIdentitydService) ListEntities(ctx context.Context, req *p
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 
+	ent_req := req.GetEntity()
 	ent := &storage.Entity{}
 
-	if req.GetId() != nil && req.GetId().GetValue() != "" {
-		idStr := req.GetId().GetValue()
-		ent.Id = &idStr
+	if ent_req.GetId() != nil && ent_req.GetId().GetValue() != "" {
+		ent.Id = &ent_req.Id.Value
 	}
-	if req.GetName() != nil && req.GetName().GetValue() != "" {
-		nameStr := req.GetName().GetValue()
-		ent.Name = &nameStr
+	if ent_req.GetName() != nil && ent_req.GetName().GetValue() != "" {
+		ent.Name = &ent_req.Name.Value
 	}
-	if req.GetAlias() != nil && req.GetAlias().GetValue() != "" {
-		aliasStr := req.GetAlias().GetValue()
-		ent.Alias = &aliasStr
+	if ent_req.GetAlias() != nil && ent_req.GetAlias().GetValue() != "" {
+		ent.Alias = &ent_req.Alias.Value
 	}
 
 	ents, err := self.storage.ListEntities(ent)

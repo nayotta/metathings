@@ -2,40 +2,49 @@ package metathings_identityd2_service
 
 import (
 	"context"
-	"errors"
 
+	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
 	storage "github.com/nayotta/metathings/pkg/identityd2/storage"
+	identityd_validator "github.com/nayotta/metathings/pkg/identityd2/validator"
 	pb "github.com/nayotta/metathings/pkg/proto/identityd2"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
+func (self *MetathingsIdentitydService) ValidatePatchRole(ctx context.Context, in interface{}) error {
+	return self.validator.Validate(
+		identityd_validator.Providers{
+			func() (policy_helper.Validator, role_getter) {
+				req := in.(*pb.PatchRoleRequest)
+				return req, req
+			},
+		},
+		identityd_validator.Invokers{
+			ensure_get_role_id,
+		},
+	)
+}
+
+func (self *MetathingsIdentitydService) AuthorizePatchRole(ctx context.Context, in interface{}) error {
+	return self.authorize(ctx, in.(*pb.PatchRoleRequest).GetRole().GetId().GetValue(), "patch_role")
+}
+
 func (self *MetathingsIdentitydService) PatchRole(ctx context.Context, req *pb.PatchRoleRequest) (*pb.PatchRoleResponse, error) {
-	var rol = &storage.Role{}
 	var err error
 
-	if err = req.Validate(); err != nil {
-		self.logger.WithError(err).Warningf("failed to validate request data")
-		return nil, status.Errorf(codes.InvalidArgument, err.Error())
-	}
+	rol_req := req.GetRole()
+	rol := &storage.Role{}
 
-	if req.GetId() == nil || req.GetId().GetValue() == "" {
-		err = errors.New("role.id is empty")
-		self.logger.WithError(err).Warningf("failed to validate request data")
-		return nil, status.Errorf(codes.InvalidArgument, err.Error())
-	}
-	idStr := req.GetId().GetValue()
+	idStr := rol_req.GetId().GetValue()
 
-	if req.GetAlias() != nil {
-		aliasStr := req.GetAlias().GetValue()
-		rol.Alias = &aliasStr
+	if rol_req.GetAlias() != nil {
+		rol.Alias = &rol_req.Alias.Value
 	}
-	if req.GetDescription() != nil {
-		descriptionStr := req.GetDescription().GetValue()
-		rol.Description = &descriptionStr
+	if rol_req.GetDescription() != nil {
+		rol.Description = &rol_req.Description.Value
 	}
-	if req.GetExtra() != nil {
-		extraStr := must_parse_extra(req.GetExtra())
+	if rol_req.GetExtra() != nil {
+		extraStr := must_parse_extra(rol_req.GetExtra())
 		rol.Extra = &extraStr
 	}
 

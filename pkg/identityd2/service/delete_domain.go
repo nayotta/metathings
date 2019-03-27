@@ -28,13 +28,11 @@ func (self *MetathingsIdentitydService) ValidateDeleteDomain(ctx context.Context
 }
 
 func (self *MetathingsIdentitydService) AuthorizeDeleteDomain(ctx context.Context, in interface{}) error {
-	return self.authorizer.Authorize(ctx, in.(*pb.DeleteDomainRequest).GetDomain().GetId().GetValue(), "delete_domain")
+	return self.authorize(ctx, in.(*pb.DeleteDomainRequest).GetDomain().GetId().GetValue(), "delete_domain")
 }
 
 func (self *MetathingsIdentitydService) DeleteDomain(ctx context.Context, req *pb.DeleteDomainRequest) (*empty.Empty, error) {
 	var dom_s *storage.Domain
-	var role_s *storage.Role
-	var roles_s []*storage.Role
 	var ents_s []*storage.Entity
 	var grp_s *storage.Group
 	var grps_s []*storage.Group
@@ -49,19 +47,6 @@ func (self *MetathingsIdentitydService) DeleteDomain(ctx context.Context, req *p
 	if len(dom_s.Children) > 0 {
 		err = errors.New("more than 0 children in domain")
 		self.logger.WithError(err).Warningf("any children in domain")
-		return nil, status.Errorf(codes.FailedPrecondition, err.Error())
-	}
-
-	role_s = &storage.Role{
-		DomainId: &dom_id_str,
-	}
-	if roles_s, err = self.storage.ListRoles(role_s); err != nil {
-		self.logger.WithError(err).Errorf("failed to list roles by domain_id in storage")
-		return nil, status.Errorf(codes.Internal, err.Error())
-	}
-	if len(roles_s) > 0 {
-		err = errors.New("more than 0 roles in domain")
-		self.logger.WithError(err).Warningf("any roles in domain")
 		return nil, status.Errorf(codes.FailedPrecondition, err.Error())
 	}
 
@@ -88,17 +73,13 @@ func (self *MetathingsIdentitydService) DeleteDomain(ctx context.Context, req *p
 		return nil, status.Errorf(codes.FailedPrecondition, err.Error())
 	}
 
-	if err = self.enforcer.RemoveObjectFromKind(dom_id_str, KIND_DOMAIN); err != nil {
-		self.logger.WithError(err).Warningf("failed to remove domain from kind in enforcer")
-	}
-
 	if err = self.storage.DeleteDomain(dom_id_str); err != nil {
 		self.logger.WithError(err).Errorf("failed to delete domain in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
 	self.logger.WithFields(log.Fields{
-		"domain_id": dom_id_str,
+		"domain": dom_id_str,
 	}).Infof("delete domain")
 
 	return &empty.Empty{}, nil

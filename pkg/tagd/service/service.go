@@ -9,7 +9,6 @@ import (
 	log_helper "github.com/nayotta/metathings/pkg/common/log"
 	token_helper "github.com/nayotta/metathings/pkg/common/token"
 	identityd_authorizer "github.com/nayotta/metathings/pkg/identityd2/authorizer"
-	identityd_policy "github.com/nayotta/metathings/pkg/identityd2/policy"
 	identityd_validator "github.com/nayotta/metathings/pkg/identityd2/validator"
 	pb "github.com/nayotta/metathings/pkg/proto/tagd"
 	storage "github.com/nayotta/metathings/pkg/tagd/storage"
@@ -18,7 +17,6 @@ import (
 type MetathingsTagdService struct {
 	grpc_auth.ServiceAuthFuncOverride
 	*log_helper.GetLoggerer
-	enforcer   identityd_policy.Enforcer
 	authorizer identityd_authorizer.Authorizer
 	validator  identityd_validator.Validator
 	logger     log.FieldLogger
@@ -32,7 +30,6 @@ func (ts *MetathingsTagdService) IsIgnoreMethod(md *grpc_helper.MethodDescriptio
 func NewMetathingsTagdService(
 	logger log.FieldLogger,
 	stor storage.Storage,
-	enforcer identityd_policy.Enforcer,
 	authorizer identityd_authorizer.Authorizer,
 	validator identityd_validator.Validator,
 	tkvdr token_helper.TokenValidator,
@@ -41,7 +38,6 @@ func NewMetathingsTagdService(
 		GetLoggerer: log_helper.NewGetLoggerer(logger),
 		logger:      logger,
 		stor:        stor,
-		enforcer:    enforcer,
 		authorizer:  authorizer,
 		validator:   validator,
 	}

@@ -26,10 +26,6 @@ func (self *MetathingsIdentitydService) ValidateCreateRole(ctx context.Context, 
 			func(x role_getter) error {
 				role := x.GetRole()
 
-				if role.GetDomain() == nil || role.GetDomain().GetId() == nil {
-					return errors.New("role.domain.id is empty")
-				}
-
 				if role.GetName() == nil {
 					return errors.New("role.name is empty")
 				}
@@ -51,7 +47,6 @@ func (self *MetathingsIdentitydService) CreateRole(ctx context.Context, req *pb.
 		id_str = role.GetId().GetValue()
 	}
 
-	dom_id_str := role.GetDomain().GetId().GetValue()
 	desc_str := ""
 	if role.GetDescription() != nil {
 		desc_str = role.GetDescription().GetValue()
@@ -63,14 +58,8 @@ func (self *MetathingsIdentitydService) CreateRole(ctx context.Context, req *pb.
 		alias_str = role.GetAlias().GetValue()
 	}
 
-	if err = self.enforcer.AddObjectToKind(id_str, KIND_ROLE); err != nil {
-		self.logger.WithError(err).Errorf("failed to add object to kind in enforcer")
-		return nil, status.Errorf(codes.Internal, err.Error())
-	}
-
 	role_s = &storage.Role{
 		Id:          &id_str,
-		DomainId:    &dom_id_str,
 		Name:        &name_str,
 		Alias:       &alias_str,
 		Description: &desc_str,
@@ -80,7 +69,7 @@ func (self *MetathingsIdentitydService) CreateRole(ctx context.Context, req *pb.
 	role_s, err = self.storage.CreateRole(role_s)
 	if err != nil {
 		self.logger.WithError(err).Errorf("failed to create role in storage")
-		return nil, status.Errorf(codes.InvalidArgument, err.Error())
+		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
 	res := &pb.CreateRoleResponse{

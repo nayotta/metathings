@@ -6,7 +6,7 @@ import "github.com/mwitkow/go-proto-validators/validator.proto";
 
 import "model.proto";
 
-message RemoveEntityFromGroupRequest {
+message RemoveObjectFromGroupRequest {
 	OpGroup group = 1 [(validator.field) = {msg_exists: true}];
-	OpEntity entity = 2 [(validator.field) = {msg_exists: true}];
+	OpEntity object = 2 [(validator.field) = {msg_exists: true}];
 }

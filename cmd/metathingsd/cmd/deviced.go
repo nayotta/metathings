@@ -16,7 +16,6 @@ import (
 	session_storage "github.com/nayotta/metathings/pkg/deviced/session_storage"
 	storage "github.com/nayotta/metathings/pkg/deviced/storage"
 	authorizer "github.com/nayotta/metathings/pkg/identityd2/authorizer"
-	policy "github.com/nayotta/metathings/pkg/identityd2/policy"
 	pb "github.com/nayotta/metathings/pkg/proto/deviced"
 )
 
@@ -255,7 +254,6 @@ func runDeviced() error {
 			},
 			NewDevicedStorage,
 			NewMetathingsDevicedServiceOption,
-			policy.NewEnforcer,
 			authorizer.NewAuthorizer,
 			cmd_contrib.NewValidator,
 			service.NewMetathingsDevicedService,

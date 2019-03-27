@@ -37,7 +37,6 @@ func (s *FlowImplTestSuite) SetupTest() {
 	var opt FlowOption
 
 	uri := test_helper.GetTestMongoUri()
-	opt.MgoDb = test_helper.GetTestMongoDatabase()
 	opt.Id = test_helper.GetenvWithDefault("MTT_FLOW_ID", "floooow")
 	opt.DevId = test_helper.GetenvWithDefault("MTT_DEVICE_ID", "deeeev")
 	opt.KfkBrokers = test_helper.GetTestKafkaBrokers()
@@ -75,7 +74,8 @@ func (s *FlowImplTestSuite) TestPushFrame() {
 
 	wg.Add(1)
 	go func() {
-		frm := <-s.flow.PullFrame()
+		frm_ch, _ := s.flow.PullFrame()
+		frm := <-frm_ch
 		s.NotNil(frm)
 		wg.Done()
 	}()

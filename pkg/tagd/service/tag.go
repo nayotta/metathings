@@ -27,7 +27,6 @@ func (ts *MetathingsTagdService) Tag(ctx context.Context, req *pb.TagRequest) (*
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
-	err = ts.enforcer.AddObjectToKind(id, KIND_TAG)
 	if err != nil {
 		defer ts.stor.Remove(id)
 		logger.WithError(err).Errorf("failed to add tag in enforcer")

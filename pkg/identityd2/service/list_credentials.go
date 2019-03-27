@@ -18,25 +18,26 @@ func (self *MetathingsIdentitydService) ListCredentials(ctx context.Context, req
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 
+	cred_req := req.GetCredential()
 	cred := &storage.Credential{}
 
-	if id := req.GetId(); id != nil {
+	if id := cred_req.GetId(); id != nil {
 		cred.Id = &id.Value
 	}
-	if domain := req.GetDomain(); domain != nil {
+	if domain := cred_req.GetDomain(); domain != nil {
 		if domainID := domain.GetId(); domainID != nil {
 			cred.DomainId = &domainID.Value
 		}
 	}
-	if entity := req.GetEntity(); entity != nil {
+	if entity := cred_req.GetEntity(); entity != nil {
 		if entityID := entity.GetId(); entityID != nil {
 			cred.EntityId = &entityID.Value
 		}
 	}
-	if name := req.GetName(); name != nil {
+	if name := cred_req.GetName(); name != nil {
 		cred.Name = &name.Value
 	}
-	if alias := req.GetAlias(); alias != nil {
+	if alias := cred_req.GetAlias(); alias != nil {
 		cred.Alias = &alias.Value
 	}
 

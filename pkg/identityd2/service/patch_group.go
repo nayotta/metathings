@@ -2,41 +2,50 @@ package metathings_identityd2_service
 
 import (
 	"context"
-	"errors"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
+	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
 	storage "github.com/nayotta/metathings/pkg/identityd2/storage"
+	identityd_validator "github.com/nayotta/metathings/pkg/identityd2/validator"
 	pb "github.com/nayotta/metathings/pkg/proto/identityd2"
 )
 
+func (self *MetathingsIdentitydService) ValidatePatchGroup(ctx context.Context, in interface{}) error {
+	return self.validator.Validate(
+		identityd_validator.Providers{
+			func() (policy_helper.Validator, group_getter) {
+				req := in.(*pb.PatchGroupRequest)
+				return req, req
+			},
+		},
+		identityd_validator.Invokers{
+			ensure_get_group_id,
+		},
+	)
+}
+
+func (self *MetathingsIdentitydService) AuthorizePatchGroup(ctx context.Context, in interface{}) error {
+	return self.authorize(ctx, in.(*pb.PatchGroupRequest).GetGroup().GetId().GetValue(), "patch_group")
+}
+
 func (self *MetathingsIdentitydService) PatchGroup(ctx context.Context, req *pb.PatchGroupRequest) (*pb.PatchGroupResponse, error) {
-	var grp = &storage.Group{}
 	var err error
 
-	if err = req.Validate(); err != nil {
-		self.logger.WithError(err).Warningf("failed to validate request data")
-		return nil, status.Errorf(codes.InvalidArgument, err.Error())
-	}
+	grp_req := req.GetGroup()
+	grp := &storage.Group{}
 
-	if req.GetId() == nil || req.GetId().GetValue() == "" {
-		err = errors.New("group.id is empty")
-		self.logger.WithError(err).Warningf("failed to validate request data")
-		return nil, status.Errorf(codes.InvalidArgument, err.Error())
-	}
-	idStr := req.GetId().GetValue()
+	idStr := grp_req.GetId().GetValue()
 
-	if req.GetAlias() != nil {
-		aliasStr := req.GetAlias().GetValue()
-		grp.Alias = &aliasStr
+	if grp_req.GetAlias() != nil {
+		grp.Alias = &grp_req.Alias.Value
 	}
-	if req.GetDescription() != nil {
-		descriptionStr := req.GetDescription().GetValue()
-		grp.Description = &descriptionStr
+	if grp_req.GetDescription() != nil {
+		grp.Description = &grp_req.Description.Value
 	}
-	if req.GetExtra() != nil {
-		extraStr := must_parse_extra(req.GetExtra())
+	if grp_req.GetExtra() != nil {
+		extraStr := must_parse_extra(grp_req.GetExtra())
 		grp.Extra = &extraStr
 	}
 

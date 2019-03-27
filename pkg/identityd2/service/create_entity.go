@@ -64,11 +64,6 @@ func (self *MetathingsIdentitydService) CreateEntity(ctx context.Context, req *p
 		alias_str = ent.GetAlias().GetValue()
 	}
 
-	if err = self.enforcer.AddObjectToKind(ent_id_str, KIND_ENTITY); err != nil {
-		self.logger.WithError(err).Errorf("failed to add entity to kind in enforcer")
-		return nil, status.Errorf(codes.Internal, err.Error())
-	}
-
 	ent_s := &storage.Entity{
 		Id:       &ent_id_str,
 		Name:     &name_str,
@@ -79,14 +74,14 @@ func (self *MetathingsIdentitydService) CreateEntity(ctx context.Context, req *p
 
 	if ent_s, err = self.storage.CreateEntity(ent_s); err != nil {
 		self.logger.WithError(err).Errorf("failed to create entity in storage")
-		return nil, status.Errorf(codes.InvalidArgument, err.Error())
+		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
 	res := &pb.CreateEntityResponse{
 		Entity: copy_entity(ent_s),
 	}
 
-	self.logger.WithField("id", ent_id_str).Infof("create entity")
+	self.logger.WithField("entity", ent_id_str).Infof("create entity")
 
 	return res, nil
 }

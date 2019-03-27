@@ -2,21 +2,10 @@ syntax = "proto3";
 
 package ai.metathings.service.identityd2;
 
-import "google/protobuf/wrappers.proto";
-
-import "github.com/mwitkow/go-proto-validators/validator.proto";
-
 import "model.proto";
 
 message ListEntitiesRequest {
-	reserved "password", "extra";
-
-	google.protobuf.StringValue id = 1;
-	OpDomain domain = 2;
-	repeated OpGroup groups = 3;
-	repeated OpRole roles = 4;
-	google.protobuf.StringValue name = 5;
-	google.protobuf.StringValue alias = 6;
+	OpEntity entity = 1;
 }
 
 message ListEntitiesResponse {
