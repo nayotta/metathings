@@ -10,10 +10,12 @@ import (
 
 	cmd_contrib "github.com/nayotta/metathings/cmd/contrib"
 	cmd_helper "github.com/nayotta/metathings/pkg/common/cmd"
+	cfg_helper "github.com/nayotta/metathings/pkg/common/config"
 	token_helper "github.com/nayotta/metathings/pkg/common/token"
 	connection "github.com/nayotta/metathings/pkg/deviced/connection"
 	service "github.com/nayotta/metathings/pkg/deviced/service"
 	session_storage "github.com/nayotta/metathings/pkg/deviced/session_storage"
+	simple_storage "github.com/nayotta/metathings/pkg/deviced/simple_storage"
 	storage "github.com/nayotta/metathings/pkg/deviced/storage"
 	authorizer "github.com/nayotta/metathings/pkg/identityd2/authorizer"
 	pb "github.com/nayotta/metathings/pkg/proto/deviced"
@@ -22,6 +24,7 @@ import (
 type DevicedOption struct {
 	cmd_contrib.ServiceBaseOption `mapstructure:",squash"`
 	SessionStorage                map[string]interface{}
+	SimpleStorage                 map[string]interface{}
 	ConnectionCenter              struct {
 		Storage map[string]interface{}
 		Bridge  map[string]interface{}
@@ -79,6 +82,15 @@ func init_session_storage(opt *DevicedOption) {
 	opt.SessionStorage = mss
 }
 
+func init_simple_storage(opt *DevicedOption) {
+	mss := map[string]interface{}{}
+	vss := cmd_helper.GetFromStage().Sub("simple_storage")
+	for _, key := range vss.AllKeys() {
+		mss[key] = vss.Get(key)
+	}
+	opt.SimpleStorage = mss
+}
+
 var (
 	devicedCmd = &cobra.Command{
 		Use:   "deviced",
@@ -94,6 +106,7 @@ var (
 
 			init_service_cmd_option(opt_t, deviced_opt)
 			init_session_storage(opt_t)
+			init_simple_storage(opt_t)
 			init_connection_center(opt_t)
 
 			deviced_opt = opt_t
@@ -186,35 +199,8 @@ func NewConnectionCenter(opt *DevicedOption, sess_stor session_storage.SessionSt
 	return cc, nil
 }
 
-func parse_session_storage_option(x map[string]interface{}) (string, []interface{}, error) {
-	var key string
-	var val interface{}
-	var drv string
-	var ok bool
-
-	y := []interface{}{}
-
-	if val, ok = x["driver"]; !ok {
-		return "", nil, ErrInvalidArgument
-	}
-
-	if drv, ok = val.(string); !ok {
-		return "", nil, ErrInvalidArgument
-	}
-
-	for key, val = range x {
-		if key == "driver" {
-			continue
-		}
-
-		y = append(y, key, val)
-	}
-
-	return drv, y, nil
-}
-
 func NewSessionStorage(opt *DevicedOption, logger log.FieldLogger) (session_storage.SessionStorage, error) {
-	drv, args, err := parse_session_storage_option(opt.SessionStorage)
+	drv, args, err := cfg_helper.ParseConfigOption("driver", opt.SessionStorage)
 	if err != nil {
 		return nil, err
 	}
@@ -226,6 +212,21 @@ func NewSessionStorage(opt *DevicedOption, logger log.FieldLogger) (session_stor
 	}
 
 	return sess_stor, nil
+}
+
+func NewSimpleStorage(opt *DevicedOption, logger log.FieldLogger) (simple_storage.SimpleStorage, error) {
+	name, args, err := cfg_helper.ParseConfigOption("name", opt.SimpleStorage)
+	if err != nil {
+		return nil, err
+	}
+	args = append(args, "logger", logger)
+
+	simp_stor, err := simple_storage.NewSimpleStorage(name, args...)
+	if err != nil {
+		return nil, err
+	}
+
+	return simp_stor, nil
 }
 
 func NewMetathingsDevicedServiceOption(opt *DevicedOption) *service.MetathingsDevicedServiceOption {
@@ -248,6 +249,7 @@ func runDeviced() error {
 			cmd_contrib.NewTokener,
 			token_helper.NewTokenValidator,
 			NewSessionStorage,
+			NewSimpleStorage,
 			NewConnectionCenter,
 			func(opt *DevicedOption) (*mongo.Client, error) {
 				return mongo.Connect(context.TODO(), opt.Flow.Mongo.Uri)

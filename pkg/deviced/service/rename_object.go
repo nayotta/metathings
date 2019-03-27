@@ -36,7 +36,6 @@ func (self *MetathingsDevicedService) ValidateRenameObject(ctx context.Context, 
 			f(_ensure_get_object_name),
 			f(_ensure_get_object_device_id),
 			g(_ensure_get_object_name),
-			g(_ensure_get_object_device_id),
 		},
 	)
 }
