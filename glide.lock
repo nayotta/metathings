@@ -1,0 +1,353 @@
+hash: 0963f3d8fa001fa0470b8dacf814bc5ef6bd5d5ba5f63edbbf1f6d0205699387
+updated: 2019-03-20T10:25:16.443824+08:00
+imports:
+- name: github.com/bsm/sarama-cluster
+  version: c618e605e15c0d7535f6c96ff8efbb0dba4fd66c
+- name: github.com/casbin/casbin
+  version: a5a1667e25abdbc5a4414ea9b6b889764174b7ec
+  subpackages:
+  - config
+  - effect
+  - model
+  - persist
+  - persist/file-adapter
+  - rbac
+  - rbac/default-role-manager
+  - util
+- name: github.com/casbin/gorm-adapter
+  version: e74a050c51a4c12323e72f0c7ab445fb2daf6b40
+- name: github.com/cbroglie/mustache
+  version: eb931a9d20042e51d8a3a9ad5a9ba9bc8282c564
+- name: github.com/confluentinc/confluent-kafka-go
+  version: 460e8e43b282a1a68219df600ef63442b81faf5f
+  subpackages:
+  - kafka
+- name: github.com/DataDog/zstd
+  version: c7161f8c63c045cbc7ca051dcc969dd0e4054de2
+- name: github.com/davecgh/go-spew
+  version: d8f796af33cc11cb798c1aaeb27a4ebc5099927d
+  subpackages:
+  - spew
+- name: github.com/eapache/go-resiliency
+  version: ea41b0fad31007accc7f806884dcdf3da98b79ce
+  subpackages:
+  - breaker
+- name: github.com/eapache/go-xerial-snappy
+  version: 776d5712da21bc4762676d614db1d8a64f4238b0
+- name: github.com/eapache/queue
+  version: 093482f3f8ce946c05bcba64badd2c82369e084d
+- name: github.com/fsnotify/fsnotify
+  version: ccc981bf80385c528a65fbfdd49bf2d8da22aa23
+- name: github.com/go-daq/smbus
+  version: 15ef727fb3205992e78eb887b88a90f952874459
+- name: github.com/go-redis/redis
+  version: b3d9bf10f6666b2ee5100a6f3f84f4caf3b4e37d
+  subpackages:
+  - internal
+  - internal/consistenthash
+  - internal/hashtag
+  - internal/pool
+  - internal/proto
+  - internal/singleflight
+  - internal/util
+- name: github.com/go-stack/stack
+  version: 2fee6af1a9795aafbe0253a0cfbdf668e1fb8a9a
+- name: github.com/gogo/protobuf
+  version: 636bf0302bc95575d69441b25a2603156ffdddf1
+  subpackages:
+  - proto
+  - protoc-gen-gogo/descriptor
+- name: github.com/golang/mock
+  version: 8a44ef6e8be577e050008c7886f24fc705d709fb
+  subpackages:
+  - gomock
+- name: github.com/golang/protobuf
+  version: aa810b61a9c79d51363740d207bb46cf8e620ed5
+  subpackages:
+  - jsonpb
+  - proto
+  - ptypes
+  - ptypes/any
+  - ptypes/duration
+  - ptypes/empty
+  - ptypes/struct
+  - ptypes/timestamp
+  - ptypes/wrappers
+- name: github.com/golang/snappy
+  version: 2e65f85255dbc3072edf28d6b5b8efc472979f5a
+- name: github.com/grpc-ecosystem/go-grpc-middleware
+  version: c250d6563d4d4c20252cd865923440e829844f4e
+  subpackages:
+  - auth
+  - util/metautils
+- name: github.com/hashicorp/errwrap
+  version: 8a6fb523712970c966eefc6b39ed2c5e74880354
+- name: github.com/hashicorp/go-multierror
+  version: 886a7fbe3eb1c874d46f623bfa70af45f425b3d1
+- name: github.com/hashicorp/hcl
+  version: 65a6292f0157eff210d03ed1bf6c59b190b8b906
+  subpackages:
+  - hcl/ast
+  - hcl/parser
+  - hcl/printer
+  - hcl/scanner
+  - hcl/strconv
+  - hcl/token
+  - json/parser
+  - json/scanner
+  - json/token
+- name: github.com/inconshreveable/mousetrap
+  version: 76626ae9c91c4f2a10f34cad8ce83ea42c93bb75
+- name: github.com/jinzhu/gorm
+  version: 472c70caa40267cb89fd8facb07fe6454b578626
+  subpackages:
+  - dialects/sqlite
+- name: github.com/jinzhu/inflection
+  version: 04140366298a54a039076d798123ffa108fff46c
+- name: github.com/Knetic/govaluate
+  version: 9aa49832a739dcd78a5542ff189fb82c3e423116
+- name: github.com/konsorten/go-windows-terminal-sequences
+  version: 5c8c8bd35d3832f5d134ae1e1e375b69a4d25242
+- name: github.com/lib/pq
+  version: 9eb73efc1fcc404148b56765b0d3f61d9a5ef8ee
+  subpackages:
+  - oid
+- name: github.com/lovoo/goka
+  version: 3da18a1c44d31288d515a7a3f8e93d3d31bb0537
+  subpackages:
+  - kafka
+  - logger
+  - multierr
+  - storage
+- name: github.com/magiconair/properties
+  version: c2353362d570a7bfa228149c62842019201cfb71
+- name: github.com/mattn/go-sqlite3
+  version: c7c4067b79cc51e6dfdcef5c702e74b1e0fa7c75
+- name: github.com/mitchellh/mapstructure
+  version: 3536a929edddb9a5b34bd6861dc4a9647cb459fe
+- name: github.com/mongodb/mongo-go-driver
+  version: 3cfdc9ffcf780eede57d27ec26a3edad4c9ab6a9
+  subpackages:
+  - bson
+  - bson/bsoncodec
+  - bson/bsonrw
+  - bson/bsontype
+  - bson/primitive
+  - event
+  - internal
+  - mongo
+  - mongo/options
+  - mongo/readconcern
+  - mongo/readpref
+  - mongo/writeconcern
+  - tag
+  - version
+  - x/bsonx
+  - x/bsonx/bsoncore
+  - x/mongo/driver
+  - x/mongo/driver/auth
+  - x/mongo/driver/auth/internal/gssapi
+  - x/mongo/driver/session
+  - x/mongo/driver/topology
+  - x/mongo/driver/uuid
+  - x/network/address
+  - x/network/command
+  - x/network/compressor
+  - x/network/connection
+  - x/network/connstring
+  - x/network/description
+  - x/network/result
+  - x/network/wiremessage
+- name: github.com/moul/http2curl
+  version: 9ac6cf4d929b2fa8fd2d2e6dec5bb0feb4f4911d
+- name: github.com/mwitkow/go-proto-validators
+  version: 0950a79900071e9f3f5979b78078c599376422fd
+- name: github.com/nayotta/viper
+  version: b5e8006cbee93ec955a89ab31e0e3ce3204f3736
+- name: github.com/parnurzeal/gorequest
+  version: a578a48e8d6ca8b01a3b18314c43c6716bb5f5a3
+- name: github.com/pelletier/go-toml
+  version: 81a861c69d25a841d0c4394f0e6f84bc8c5afae0
+- name: github.com/pierrec/lz4
+  version: 623b5a2f4d2a41e411730dcdfbfdaeb5c0c4564e
+  subpackages:
+  - internal/xxh32
+- name: github.com/pkg/errors
+  version: 059132a15dd08d6704c67711dae0cf35ab991756
+- name: github.com/rcrowley/go-metrics
+  version: 3113b8401b8a98917cde58f8bbd42a1b1c03b1fd
+- name: github.com/samuel/go-zookeeper
+  version: c4fab1ac1bec58281ad0667dc3f0907a9476ac47
+  subpackages:
+  - zk
+- name: github.com/satori/go.uuid
+  version: f58768cc1a7a7e77a3bd49e98cdd21419399b6a3
+- name: github.com/Shopify/sarama
+  version: f3f4f5f1acf1a26acb582cfb158c2433f37288b4
+- name: github.com/sigurn/crc8
+  version: e55481d6f45c5a8f040343bace9013571dae103e
+- name: github.com/sigurn/utils
+  version: f19e41f79f8f006116f682c1af454591bc278ad4
+- name: github.com/sirupsen/logrus
+  version: ad15b42461921f1fb3529b058c6786c6a45d5162
+- name: github.com/spf13/afero
+  version: d40851caa0d747393da1ffb28f7f9d8b4eeffebd
+  subpackages:
+  - mem
+- name: github.com/spf13/cast
+  version: 8c9545af88b134710ab1cd196795e7f2388358d7
+- name: github.com/spf13/cobra
+  version: ef82de70bb3f60c65fb8eebacbb2d122ef517385
+- name: github.com/spf13/jwalterweatherman
+  version: 94f6ae3ed3bceceafa716478c5fbf8d29ca601a1
+- name: github.com/spf13/pflag
+  version: 082b515c9490f4eccc758469c3152b77d139f868
+- name: github.com/stianeikeland/go-rpio
+  version: 019f406b4939d0ac8fb6801637506f0e2fe872d3
+- name: github.com/syndtr/goleveldb
+  version: 6b91fda63f2e36186f1c9d0e48578defb69c5d43
+  subpackages:
+  - leveldb
+  - leveldb/cache
+  - leveldb/comparer
+  - leveldb/errors
+  - leveldb/filter
+  - leveldb/iterator
+  - leveldb/journal
+  - leveldb/memdb
+  - leveldb/opt
+  - leveldb/storage
+  - leveldb/table
+  - leveldb/util
+- name: github.com/wvanbergen/kazoo-go
+  version: f72d8611297a7cf105da904c04198ad701a60101
+- name: github.com/xdg/scram
+  version: 7eeb5667e42c09cb51bf7b7c28aea8c56767da90
+- name: github.com/xdg/stringprep
+  version: 73f8eece6fdcd902c185bf651de50f3828bed5ed
+- name: github.com/yuin/gopher-lua
+  version: afd0ecd19d39ec7934808cec084e17011691ae5f
+  subpackages:
+  - ast
+  - parse
+  - pm
+- name: go.uber.org/atomic
+  version: 1ea20fb1cbb1cc08cbd0d913a96dead89aa18289
+- name: go.uber.org/dig
+  version: 007ab720a796b1027b6c289fb4e836c8fc077357
+  subpackages:
+  - internal/digreflect
+  - internal/dot
+- name: go.uber.org/fx
+  version: 6244a3ed900ddd4deac96447f2c988d4722ad890
+  subpackages:
+  - internal/fxlog
+  - internal/fxreflect
+  - internal/lifecycle
+- name: go.uber.org/multierr
+  version: 3c4937480c32f4c13a875a1829af76c98ca3d40a
+- name: gobot.io/x/gobot
+  version: ed531980b4efe72c4fd9e768171855de3af2d718
+  subpackages:
+  - drivers/gpio
+  - drivers/i2c
+  - drivers/spi
+  - platforms/raspi
+  - sysfs
+- name: golang.org/x/crypto
+  version: bc7917b19d8f099105de72dc62898400be07c984
+  subpackages:
+  - bcrypt
+  - blowfish
+  - pbkdf2
+  - ssh/terminal
+- name: golang.org/x/net
+  version: adae6a3d119ae4890b46832a2e88a95adc62b8e7
+  subpackages:
+  - context
+  - http/httpguts
+  - http2
+  - http2/hpack
+  - idna
+  - internal/timeseries
+  - publicsuffix
+  - trace
+- name: golang.org/x/sync
+  version: 1d60e4601c6fd243af51cc01ddf169918a5407ca
+  subpackages:
+  - errgroup
+  - semaphore
+- name: golang.org/x/sys
+  version: d69651ed3497faee15a5363a89578e9991f6d5e2
+  subpackages:
+  - unix
+  - windows
+- name: golang.org/x/text
+  version: cd89ac83aaa7444b412643e7b7e1f82dccf9c45b
+  subpackages:
+  - secure/bidirule
+  - transform
+  - unicode/bidi
+  - unicode/norm
+- name: google.golang.org/genproto
+  version: b69ba1387ce2108ac9bc8e8e5e5a46e7d5c72313
+  subpackages:
+  - googleapis/rpc/status
+- name: google.golang.org/grpc
+  version: 2e463a05d100327ca47ac218281906921038fd95
+  subpackages:
+  - balancer
+  - balancer/base
+  - balancer/roundrobin
+  - codes
+  - connectivity
+  - credentials
+  - encoding
+  - encoding/proto
+  - grpclog
+  - internal
+  - internal/backoff
+  - internal/channelz
+  - internal/envconfig
+  - internal/grpcrand
+  - internal/transport
+  - keepalive
+  - metadata
+  - naming
+  - peer
+  - resolver
+  - resolver/dns
+  - resolver/passthrough
+  - stats
+  - status
+  - tap
+- name: gopkg.in/yaml.v2
+  version: 5420a8b6744d3b0345ab293f6fcba19c978f1183
+- name: periph.io/x/periph
+  version: 14d3d207203c280cca36add30d6750649c839681
+  subpackages:
+  - conn
+  - conn/gpio
+  - conn/gpio/gpioreg
+  - conn/i2c
+  - conn/i2c/i2creg
+  - conn/physic
+  - conn/pin
+  - conn/spi
+  - conn/spi/spireg
+  - host/fs
+  - host/sysfs
+testImports:
+- name: github.com/pmezard/go-difflib
+  version: 792786c7400a136282c1664665ae0a8db921c6c2
+  subpackages:
+  - difflib
+- name: github.com/stretchr/objx
+  version: ef50b0de28773081167c97fc27cf29a0bf8b8c71
+- name: github.com/stretchr/testify
+  version: f35b8ab0b5a2cef36673838d662e249dd9c94686
+  subpackages:
+  - assert
+  - mock
+  - require
+  - suite

@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/golang/protobuf/ptypes/wrappers"
+
 	context_helper "github.com/nayotta/metathings/pkg/common/context"
 	session_helper "github.com/nayotta/metathings/pkg/common/session"
 	deviced_pb "github.com/nayotta/metathings/pkg/proto/deviced"

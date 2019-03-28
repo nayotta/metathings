@@ -33,26 +33,6 @@ static_resources:
                   prefix: "/ai.metathings.service.tagd.TagdService"
                 route:
                   cluster: tagd
-              - match:
-                  prefix: "/ai.metathings.service.cored.CoredService"
-                route:
-                  cluster: cored
-              - match:
-                  prefix: "/ai.metathings.service.camerad.CameradService"
-                route:
-                  cluster: camerad
-              - match:
-                  prefix: "/ai.metathings.service.sensord.SensordService"
-                route:
-                  cluster: sensord
-              - match:
-                  prefix: "/ai.metathings.service.streamd.StreamdService"
-                route:
-                  cluster: streamd
-              - match:
-                  prefix: "/ai.metathings_wechatd.service.wechatd.WechatdService"
-                route:
-                  cluster: wechatd
           http_filters:
           - name: envoy.router
             config: {}
@@ -93,51 +73,6 @@ static_resources:
     - socket_address:
         address: tagd
         port_value: 5002
-  - name: cored
-    connect_timeout: 5s
-    type: strict_dns
-    lb_policy: round_robin
-    http2_protocol_options: {}
-    hosts:
-    - socket_address:
-        address: cored
-        port_value: 5001
-  - name: camerad
-    connect_timeout: 5s
-    type: strict_dns
-    lb_policy: round_robin
-    http2_protocol_options: {}
-    hosts:
-    - socket_address:
-        address: camerad
-        port_value: 5002
-  - name: sensord
-    connect_timeout: 5s
-    type: strict_dns
-    lb_policy: round_robin
-    http2_protocol_options: {}
-    hosts:
-    - socket_address:
-        address: sensord
-        port_value: 5003
-  - name: streamd
-    connect_timeout: 5s
-    type: strict_dns
-    lb_policy: round_robin
-    http2_protocol_options: {}
-    hosts:
-    - socket_address:
-        address: streamd
-        port_value: 5004
-  - name: wechatd
-    connect_timeout: 5s
-    type: strict_dns
-    lb_policy: round_robin
-    http2_protocol_options: {}
-    hosts:
-    - socket_address:
-        address: wechatd
-        port_value: 5101
 admin:
   access_log_path: "/dev/null"
   address:

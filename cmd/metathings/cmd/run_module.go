@@ -96,10 +96,13 @@ func load_components(libraries []string) (map[string]component.Component, error)
 
 func run_module(args []string) error {
 	components, err := load_components(run_module_opt.Libraries)
+	if err != nil {
+		return err
+	}
 
 	cmp, ok := components[run_module_opt.Component]
 	if !ok {
-		return component.ErrNotFound
+		return component.ErrComponentNotFound
 	}
 
 	mdl, err := cmp.NewModule(args)
