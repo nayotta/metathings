@@ -56,7 +56,7 @@ func (self *MetathingsIdentitydService) CreateEntity(ctx context.Context, req *p
 	extra_str := must_parse_extra(ent.Extra)
 	pwd_str := passwd_helper.MustParsePassword("")
 	if ent.GetPassword() != nil {
-		pwd_str = ent.GetPassword().GetValue()
+		pwd_str = passwd_helper.MustParsePassword(ent.GetPassword().GetValue())
 	}
 	name_str := ent.GetName().GetValue()
 	alias_str := name_str
