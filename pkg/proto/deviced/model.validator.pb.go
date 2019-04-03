@@ -177,6 +177,52 @@ func (this *OpFrame) Validate() error {
 	}
 	return nil
 }
+func (this *Object) Validate() error {
+	if this.Device != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Device); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Device", err)
+		}
+	}
+	if this.LastModified != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.LastModified); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("LastModified", err)
+		}
+	}
+	return nil
+}
+func (this *OpObject) Validate() error {
+	if this.Device != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Device); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Device", err)
+		}
+	}
+	if this.Prefix != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Prefix); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Prefix", err)
+		}
+	}
+	if this.Name != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Name); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Name", err)
+		}
+	}
+	if this.Length != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Length); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Length", err)
+		}
+	}
+	if this.Etag != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Etag); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Etag", err)
+		}
+	}
+	if this.LiastModified != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.LiastModified); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("LiastModified", err)
+		}
+	}
+	return nil
+}
 func (this *ErrorValue) Validate() error {
 	return nil
 }

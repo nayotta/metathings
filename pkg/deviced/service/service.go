@@ -15,6 +15,7 @@ import (
 	connection "github.com/nayotta/metathings/pkg/deviced/connection"
 	flow "github.com/nayotta/metathings/pkg/deviced/flow"
 	session_storage "github.com/nayotta/metathings/pkg/deviced/session_storage"
+	simple_storage "github.com/nayotta/metathings/pkg/deviced/simple_storage"
 	storage "github.com/nayotta/metathings/pkg/deviced/storage"
 	identityd_authorizer "github.com/nayotta/metathings/pkg/identityd2/authorizer"
 	identityd_validator "github.com/nayotta/metathings/pkg/identityd2/validator"
@@ -37,6 +38,7 @@ type MetathingsDevicedService struct {
 	logger          log.FieldLogger
 	storage         storage.Storage
 	session_storage session_storage.SessionStorage
+	simple_storage  simple_storage.SimpleStorage
 	authorizer      identityd_authorizer.Authorizer
 	validator       identityd_validator.Validator
 	tkvdr           token_helper.TokenValidator
@@ -87,6 +89,7 @@ func NewMetathingsDevicedService(
 	logger log.FieldLogger,
 	storage storage.Storage,
 	session_storage session_storage.SessionStorage,
+	simple_storage simple_storage.SimpleStorage,
 	authorizer identityd_authorizer.Authorizer,
 	validator identityd_validator.Validator,
 	tkvdr token_helper.TokenValidator,
@@ -100,6 +103,7 @@ func NewMetathingsDevicedService(
 		logger:          logger,
 		storage:         storage,
 		session_storage: session_storage,
+		simple_storage:  simple_storage,
 		authorizer:      authorizer,
 		validator:       validator,
 		tkvdr:           tkvdr,

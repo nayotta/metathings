@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package ai.metathings.service.deviced;
+
+import "google/protobuf/wrappers.proto";
+
+import "github.com/mwitkow/go-proto-validators/validator.proto";
+
+import "model.proto";
+
+message PutObjectRequest {
+	OpObject object = 1 [(validator.field) = {msg_exists: true}];
+	google.protobuf.BytesValue content = 2 [(validator.field) = {msg_exists: true}];
+}

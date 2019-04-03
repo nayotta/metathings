@@ -8,7 +8,6 @@ import (
 	"path"
 
 	"github.com/golang/protobuf/ptypes/empty"
-	gpb "github.com/golang/protobuf/ptypes/wrappers"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -23,7 +22,7 @@ import (
 	token_helper "github.com/nayotta/metathings/pkg/common/token"
 	camera_pb "github.com/nayotta/metathings/pkg/proto/camera"
 	pb "github.com/nayotta/metathings/pkg/proto/camerad"
-	cored_pb "github.com/nayotta/metathings/pkg/proto/cored"
+	deviced_pb "github.com/nayotta/metathings/pkg/proto/deviced"
 )
 
 type MetathingsCameradServiceOption struct {
@@ -191,39 +190,40 @@ func (srv *MetathingsCameradService) Create(ctx context.Context, req *pb.CreateR
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 	go func() {
-		cli, cfn, err := srv.cli_fty.NewCoredServiceClient()
-		if err != nil {
-			srv.logger.WithError(err).Errorf("failed to create cored service client")
-			return
-		}
-		defer cfn()
+		// cli, cfn, err := srv.cli_fty.NewCoredServiceClient()
+		// if err != nil {
+		// 	srv.logger.WithError(err).Errorf("failed to create cored service client")
+		// 	return
+		// }
+		// defer cfn()
 
-		req := client_helper.MustNewUnaryCallRequest(
-			core_id, entity_name, "camera", "Show", &empty.Empty{},
-		)
+		// req := client_helper.MustNewUnaryCallRequest(
+		// 	core_id, entity_name, "camera", "Show", &empty.Empty{},
+		// )
 
-		res, err := cli.UnaryCall(srv.ContextWithToken(), req)
-		if err != nil {
-			srv.logger.WithError(err).Errorf("failed to show camera from cored")
-			return
-		}
+		// res, err := cli.UnaryCall(srv.ContextWithToken(), req)
+		// if err != nil {
+		// 	srv.logger.WithError(err).Errorf("failed to show camera from cored")
+		// 	return
+		// }
 
-		var show_res camera_pb.ShowResponse
-		client_helper.DecodeUnaryCallResponse(res, &show_res)
+		// var show_res camera_pb.ShowResponse
+		// client_helper.DecodeUnaryCallResponse(res, &show_res)
 
-		state := show_res.Camera.State
-		state_str := srv.camera_st_psr.ToString(state)
+		// state := show_res.Camera.State
+		// state_str := srv.camera_st_psr.ToString(state)
 
-		_, err = srv.set_camera_state(cam_id, state_str)
-		if err != nil {
-			srv.logger.WithField("id", cam_id).WithError(err).Errorf("failed to patch camera")
-			return
-		}
+		// _, err = srv.set_camera_state(cam_id, state_str)
+		// if err != nil {
+		// 	srv.logger.WithField("id", cam_id).WithError(err).Errorf("failed to patch camera")
+		// 	return
+		// }
 
-		srv.logger.WithFields(log.Fields{
-			"id":    cam_id,
-			"state": state,
-		}).Debugf("update camera state after created")
+		// srv.logger.WithFields(log.Fields{
+		// 	"id":    cam_id,
+		// 	"state": state,
+		// }).Debugf("update camera state after created")
+		panic("unimplemented")
 	}()
 
 	srv.logger.WithFields(log.Fields{
@@ -477,28 +477,28 @@ func (srv *MetathingsCameradService) set_camera_state(cam_id string, state strin
 	return c, nil
 }
 
-func (srv *MetathingsCameradService) sync_camera_state(cli cored_pb.CoredServiceClient, cam_id string, core_id string, entity_name string) (camera_pb.CameraState, error) {
+func (srv *MetathingsCameradService) sync_camera_state(cli deviced_pb.DevicedServiceClient, cam_id string, core_id string, entity_name string) (camera_pb.CameraState, error) {
+	// call_req := client_helper.MustNewUnaryCallRequest(core_id, entity_name, "camera", "Show", &empty.Empty{})
+	// call_res, err := cli.UnaryCall(srv.ContextWithToken(), call_req)
+	// if err != nil {
+	// 	return camera_pb.CameraState_CAMERA_STATE_UNKNOWN, err
+	// }
 
-	call_req := client_helper.MustNewUnaryCallRequest(core_id, entity_name, "camera", "Show", &empty.Empty{})
-	call_res, err := cli.UnaryCall(srv.ContextWithToken(), call_req)
-	if err != nil {
-		return camera_pb.CameraState_CAMERA_STATE_UNKNOWN, err
-	}
+	// var show_res camera_pb.ShowResponse
+	// err = client_helper.DecodeUnaryCallResponse(call_res, &show_res)
+	// if err != nil {
+	// 	return camera_pb.CameraState_CAMERA_STATE_UNKNOWN, err
+	// }
 
-	var show_res camera_pb.ShowResponse
-	err = client_helper.DecodeUnaryCallResponse(call_res, &show_res)
-	if err != nil {
-		return camera_pb.CameraState_CAMERA_STATE_UNKNOWN, err
-	}
+	// cam_st := show_res.Camera.State
+	// srv.set_camera_state(cam_id, srv.camera_st_psr.ToString(cam_st))
+	// srv.logger.WithFields(log.Fields{
+	// 	"cam_id": cam_id,
+	// 	"state":  cam_st,
+	// }).Debugf("sync camera state")
 
-	cam_st := show_res.Camera.State
-	srv.set_camera_state(cam_id, srv.camera_st_psr.ToString(cam_st))
-	srv.logger.WithFields(log.Fields{
-		"cam_id": cam_id,
-		"state":  cam_st,
-	}).Debugf("sync camera state")
-
-	return cam_st, nil
+	// return cam_st, nil
+	panic("unimplemented")
 }
 
 func (srv *MetathingsCameradService) Start(ctx context.Context, req *pb.StartRequest) (*pb.StartResponse, error) {
@@ -515,7 +515,7 @@ func (srv *MetathingsCameradService) Start(ctx context.Context, req *pb.StartReq
 	}
 	live_id := srv.newLiveId()
 	live.Path = path.Join(live.Path, fmt.Sprintf("metathings.live.%v", live_id))
-	live_str := live.String()
+	// live_str := live.String()
 	cam_id := req.GetId().GetValue()
 
 	c, err := srv.storage.GetCamera(cam_id)
@@ -539,83 +539,84 @@ func (srv *MetathingsCameradService) Start(ctx context.Context, req *pb.StartReq
 	}
 
 	go func() {
-		var err error
-		defer func() {
-			if err != nil {
-				srv.set_camera_state(cam_id, "stop")
-			}
-		}()
+		// var err error
+		// defer func() {
+		// 	if err != nil {
+		// 		srv.set_camera_state(cam_id, "stop")
+		// 	}
+		// }()
 
-		cli, cfn, err := srv.cli_fty.NewCoredServiceClient()
-		if err != nil {
-			srv.logger.WithError(err).Errorf("failed to new core service client")
-			return
-		}
-		defer cfn()
+		// cli, cfn, err := srv.cli_fty.NewCoredServiceClient()
+		// if err != nil {
+		// 	srv.logger.WithError(err).Errorf("failed to new core service client")
+		// 	return
+		// }
+		// defer cfn()
 
-		st, err := srv.sync_camera_state(cli, cam_id, *c.CoreId, *c.EntityName)
-		if err != nil {
-			srv.logger.WithField("cam_id", cam_id).WithError(err).Errorf("failed to sync camera state from agent")
-			return
-		}
+		// st, err := srv.sync_camera_state(cli, cam_id, *c.CoreId, *c.EntityName)
+		// if err != nil {
+		// 	srv.logger.WithField("cam_id", cam_id).WithError(err).Errorf("failed to sync camera state from agent")
+		// 	return
+		// }
 
-		if st == camera_pb.CameraState_CAMERA_STATE_RUNNING {
-			srv.logger.WithField("cam_id", cam_id).Debugf("camera already running")
-			return
-		}
+		// if st == camera_pb.CameraState_CAMERA_STATE_RUNNING {
+		// 	srv.logger.WithField("cam_id", cam_id).Debugf("camera already running")
+		// 	return
+		// }
 
-		start_req := &camera_pb.StartRequest{
-			Config: &camera_pb.StartConfig{
-				Url: &gpb.StringValue{Value: live_str},
-			},
-		}
+		// start_req := &camera_pb.StartRequest{
+		// 	Config: &camera_pb.StartConfig{
+		// 		Url: &gpb.StringValue{Value: live_str},
+		// 	},
+		// }
 
-		if c.Device != nil {
-			start_req.Config.Device = &gpb.StringValue{Value: *c.Device}
-		}
-		if c.Width != nil && c.Height != nil {
-			start_req.Config.Width = &gpb.UInt32Value{Value: *c.Width}
-			start_req.Config.Height = &gpb.UInt32Value{Value: *c.Height}
-		}
-		if c.Bitrate != nil {
-			start_req.Config.Bitrate = &gpb.UInt32Value{Value: *c.Bitrate}
-		}
-		if c.Framerate != nil {
-			start_req.Config.Framerate = &gpb.UInt32Value{Value: *c.Framerate}
-		}
+		// if c.Device != nil {
+		// 	start_req.Config.Device = &gpb.StringValue{Value: *c.Device}
+		// }
+		// if c.Width != nil && c.Height != nil {
+		// 	start_req.Config.Width = &gpb.UInt32Value{Value: *c.Width}
+		// 	start_req.Config.Height = &gpb.UInt32Value{Value: *c.Height}
+		// }
+		// if c.Bitrate != nil {
+		// 	start_req.Config.Bitrate = &gpb.UInt32Value{Value: *c.Bitrate}
+		// }
+		// if c.Framerate != nil {
+		// 	start_req.Config.Framerate = &gpb.UInt32Value{Value: *c.Framerate}
+		// }
 
-		call_req := client_helper.MustNewUnaryCallRequest(*c.CoreId, *c.EntityName, "camera", "Start", start_req)
+		// call_req := client_helper.MustNewUnaryCallRequest(*c.CoreId, *c.EntityName, "camera", "Start", start_req)
 
-		call_res, err := cli.UnaryCall(srv.ContextWithToken(), call_req)
-		if err != nil {
-			srv.logger.WithError(err).Errorf("failed to call start on entity")
-			return
-		}
+		// call_res, err := cli.UnaryCall(srv.ContextWithToken(), call_req)
+		// if err != nil {
+		// 	srv.logger.WithError(err).Errorf("failed to call start on entity")
+		// 	return
+		// }
 
-		var start_res camera_pb.StartResponse
-		err = client_helper.DecodeUnaryCallResponse(call_res, &start_res)
-		if err != nil {
-			srv.logger.WithError(err).Errorf("failed to decode start camera response")
-			return
-		}
+		// var start_res camera_pb.StartResponse
+		// err = client_helper.DecodeUnaryCallResponse(call_res, &start_res)
+		// if err != nil {
+		// 	srv.logger.WithError(err).Errorf("failed to decode start camera response")
+		// 	return
+		// }
 
-		cfg := start_res.Camera.Config
-		c = storage.Camera{
-			Url:       &cfg.Url,
-			Device:    &cfg.Device,
-			Width:     &cfg.Width,
-			Height:    &cfg.Height,
-			Bitrate:   &cfg.Bitrate,
-			Framerate: &cfg.Framerate,
-		}
+		// cfg := start_res.Camera.Config
+		// c = storage.Camera{
+		// 	Url:       &cfg.Url,
+		// 	Device:    &cfg.Device,
+		// 	Width:     &cfg.Width,
+		// 	Height:    &cfg.Height,
+		// 	Bitrate:   &cfg.Bitrate,
+		// 	Framerate: &cfg.Framerate,
+		// }
 
-		c, err = srv.storage.PatchCamera(cam_id, c)
-		if err != nil {
-			srv.logger.WithError(err).Errorf("failed to update camera")
-			return
-		}
+		// c, err = srv.storage.PatchCamera(cam_id, c)
+		// if err != nil {
+		// 	srv.logger.WithError(err).Errorf("failed to update camera")
+		// 	return
+		// }
 
-		srv.logger.WithField("cam_id", cam_id).Debugf("send start command to camera")
+		// srv.logger.WithField("cam_id", cam_id).Debugf("send start command to camera")
+		panic("unimplemented")
 	}()
 
 	res := &pb.StartResponse{
@@ -656,47 +657,48 @@ func (srv *MetathingsCameradService) Stop(ctx context.Context, req *pb.StopReque
 	}
 
 	go func() {
-		var err error
-		defer func() {
-			if err != nil {
-				srv.set_camera_state(cam_id, "running")
-			}
-		}()
+		// var err error
+		// defer func() {
+		// 	if err != nil {
+		// 		srv.set_camera_state(cam_id, "running")
+		// 	}
+		// }()
 
-		cli, cfn, err := srv.cli_fty.NewCoredServiceClient()
-		if err != nil {
-			srv.logger.WithError(err).Errorf("failed to new core service client")
-			return
-		}
-		defer cfn()
+		// cli, cfn, err := srv.cli_fty.NewCoredServiceClient()
+		// if err != nil {
+		// 	srv.logger.WithError(err).Errorf("failed to new core service client")
+		// 	return
+		// }
+		// defer cfn()
 
-		st, err := srv.sync_camera_state(cli, cam_id, *c.CoreId, *c.EntityName)
-		if err != nil {
-			srv.logger.WithField("cam_id", cam_id).WithError(err).Errorf("failed to sync camera state from agent")
-			return
-		}
+		// st, err := srv.sync_camera_state(cli, cam_id, *c.CoreId, *c.EntityName)
+		// if err != nil {
+		// 	srv.logger.WithField("cam_id", cam_id).WithError(err).Errorf("failed to sync camera state from agent")
+		// 	return
+		// }
 
-		if st == camera_pb.CameraState_CAMERA_STATE_STOP {
-			srv.logger.WithField("cam_id", cam_id).Debugf("camera already stop")
-			return
-		}
+		// if st == camera_pb.CameraState_CAMERA_STATE_STOP {
+		// 	srv.logger.WithField("cam_id", cam_id).Debugf("camera already stop")
+		// 	return
+		// }
 
-		call_req := client_helper.MustNewUnaryCallRequest(*c.CoreId, *c.EntityName, "camera", "Stop", &empty.Empty{})
+		// call_req := client_helper.MustNewUnaryCallRequest(*c.CoreId, *c.EntityName, "camera", "Stop", &empty.Empty{})
 
-		call_res, err := cli.UnaryCall(srv.ContextWithToken(), call_req)
-		if err != nil {
-			srv.logger.WithError(err).Errorf("failed to call stop on entity")
-			return
-		}
+		// call_res, err := cli.UnaryCall(srv.ContextWithToken(), call_req)
+		// if err != nil {
+		// 	srv.logger.WithError(err).Errorf("failed to call stop on entity")
+		// 	return
+		// }
 
-		var stop_res camera_pb.StopResponse
-		err = client_helper.DecodeUnaryCallResponse(call_res, &stop_res)
-		if err != nil {
-			srv.logger.WithError(err).Errorf("failed to decode response")
-			return
-		}
+		// var stop_res camera_pb.StopResponse
+		// err = client_helper.DecodeUnaryCallResponse(call_res, &stop_res)
+		// if err != nil {
+		// 	srv.logger.WithError(err).Errorf("failed to decode response")
+		// 	return
+		// }
 
-		srv.logger.WithField("cam_id", cam_id).Debugf("send stop command to camera")
+		// srv.logger.WithField("cam_id", cam_id).Debugf("send stop command to camera")
+		panic("unimplemented")
 	}()
 
 	res := &pb.StopResponse{

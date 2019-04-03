@@ -18,6 +18,14 @@ import "pull_frame_from_flow.proto";
 import "push_frame_to_flow.proto";
 import "query_frames_from_flow.proto";
 
+import "put_object.proto";
+import "remove_object.proto";
+import "rename_object.proto";
+import "get_object.proto";
+import "get_object_content.proto";
+import "get_object_streaming_content.proto";
+import "list_objects.proto";
+
 import "show_device.proto";
 import "connect.proto";
 import "heartbeat.proto";
@@ -38,9 +46,17 @@ service DevicedService {
 	rpc PushFrameToFlow(stream PushFrameToFlowRequest) returns (stream PushFrameToFlowResponse) {}
 	rpc QueryFramesFromFlow(QueryFramesFromFlowRequest) returns (QueryFramesFromFlowResponse) {}
 
+	// Simple Storage
+	rpc PutObject(PutObjectRequest) returns (google.protobuf.Empty) {}
+	rpc RemoveObject(RemoveObjectRequest) returns (google.protobuf.Empty) {}
+	rpc RenameObject(RenameObjectRequest) returns (google.protobuf.Empty) {}
+	rpc GetObject(GetObjectRequest) returns (GetObjectResponse) {}
+	rpc GetObjectContent(GetObjectContentRequest) returns (GetObjectContentResponse) {}
+	rpc GetObjectStreamingContent(GetObjectStreamingContentRequest) returns (stream GetObjectStreamingContentResponse) {}
+	rpc ListObjects(ListObjectsRequest) returns (ListObjectsResponse) {}
+
 	// internal device only
 	rpc ShowDevice(google.protobuf.Empty) returns (ShowDeviceResponse) {}
 	rpc Connect(stream ConnectResponse) returns (stream ConnectRequest) {}
 	rpc Heartbeat(HeartbeatRequest) returns (google.protobuf.Empty) {}
-
 }

@@ -3,10 +3,19 @@ package metathings_deviced_service
 import (
 	"errors"
 
+	pb_helper "github.com/nayotta/metathings/pkg/common/protobuf"
 	deviced_helper "github.com/nayotta/metathings/pkg/deviced/helper"
+	simple_storage "github.com/nayotta/metathings/pkg/deviced/simple_storage"
 	storage "github.com/nayotta/metathings/pkg/deviced/storage"
 	pb "github.com/nayotta/metathings/pkg/proto/deviced"
 )
+
+func parse_object(x *pb.OpObject) *simple_storage.Object {
+	device := x.GetDevice().GetId().GetValue()
+	prefix := x.GetPrefix().GetValue()
+	name := x.GetName().GetValue()
+	return simple_storage.NewObject(device, prefix, name)
+}
 
 func copy_device(x *storage.Device) *pb.Device {
 	y := &pb.Device{
@@ -77,13 +86,76 @@ func copy_flows(xs []*storage.Flow) []*pb.Flow {
 	return ys
 }
 
-type get_devicer interface {
+func copy_object(x *simple_storage.Object) *pb.Object {
+	mod := pb_helper.FromTime(x.LastModified)
+
+	y := &pb.Object{
+		Device:       &pb.Device{Id: x.Device},
+		Prefix:       x.Prefix,
+		Name:         x.Name,
+		Length:       x.Length,
+		Etag:         x.Etag,
+		LastModified: &mod,
+	}
+
+	return y
+}
+
+func copy_objects(xs []*simple_storage.Object) []*pb.Object {
+	var ys []*pb.Object
+
+	for _, x := range xs {
+		ys = append(ys, copy_object(x))
+	}
+
+	return ys
+}
+
+type device_getter interface {
 	GetDevice() *pb.OpDevice
 }
 
-func ensure_get_device_id(x get_devicer) error {
+type object_getter interface {
+	GetObject() *pb.OpObject
+}
+
+type source_getter interface {
+	GetSource() *pb.OpObject
+}
+
+type destination_getter interface {
+	GetDestination() *pb.OpObject
+}
+
+func ensure_get_device_id(x device_getter) error {
 	if x.GetDevice().GetId() == nil {
 		return errors.New("device.id is empty")
+	}
+	return nil
+}
+
+func ensure_get_object_name(x object_getter) error {
+	return _ensure_get_object_name(x.GetObject())
+}
+
+func _ensure_get_object_name(x *pb.OpObject) error {
+	if x.GetName() == nil {
+		return errors.New("object.name is empty")
+	}
+	return nil
+}
+
+func ensure_get_object_device_id(x object_getter) error {
+	return _ensure_get_object_device_id(x.GetObject())
+}
+
+func _ensure_get_object_device_id(x *pb.OpObject) error {
+	dev := x.GetDevice()
+	if dev == nil {
+		return errors.New("object.device.id is empty")
+	}
+	if dev.GetId() == nil {
+		return errors.New("object.device.id is empty")
 	}
 	return nil
 }

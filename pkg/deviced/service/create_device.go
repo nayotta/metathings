@@ -23,13 +23,13 @@ import (
 func (self *MetathingsDevicedService) ValidateCreateDevice(ctx context.Context, in interface{}) error {
 	return self.validator.Validate(
 		identityd_validator.Providers{
-			func() (policy_helper.Validator, get_devicer) {
+			func() (policy_helper.Validator, device_getter) {
 				req := in.(*pb.CreateDeviceRequest)
 				return req, req
 			},
 		},
 		identityd_validator.Invokers{
-			func(x get_devicer) error {
+			func(x device_getter) error {
 				dev := x.GetDevice()
 
 				if dev.GetKind() == pb_kind.DeviceKind_DEVICE_KIND_UNKNOWN {
