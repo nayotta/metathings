@@ -6,6 +6,25 @@ import "google/protobuf/empty.proto";
 
 import "heartbeat.proto";
 
+import "push_frame_to_flow.proto";
+
+import "put_object.proto";
+import "remove_object.proto";
+import "rename_object.proto";
+import "get_object.proto";
+import "get_object_content.proto";
+import "get_object_streaming_content.proto";
+import "list_objects.proto";
+
 service DeviceService {
 	rpc Heartbeat(HeartbeatRequest) returns (google.protobuf.Empty) {}
+
+	rpc PushFrameToFlow(stream PushFrameToFlowRequest) returns (stream PushFrameToFlowResponse) {}
+	rpc PutObject(PutObjectRequest) returns (google.protobuf.Empty) {}
+	rpc RemoveObject(RemoveObjectRequest) returns (google.protobuf.Empty) {}
+	rpc RenameObject(RenameObjectRequest) returns (google.protobuf.Empty) {}
+	rpc GetObject(GetObjectRequest) returns (GetObjectResponse) {}
+	rpc GetObjectContent(GetObjectContentRequest) returns (GetObjectContentResponse) {}
+	rpc GetObjectStreamingContent(GetObjectStreamingContentRequest) returns (GetObjectStreamingContentResponse) {}
+	rpc ListObjects(ListObjectsRequest) returns (ListObjectsResponse) {}
 }

@@ -29,6 +29,7 @@ const (
 	x_CONNECTION_SESSION_TYPE_MASK = int32(0x20 << 24) // 0010 0000
 	x_CONNECTION_SESSION_TEMP_MASK = int32(0x10 << 24) // 0001 0000
 
+	SESSION_CODE_FLAG              = int32(0x40 << 24) // 0100 0000
 	MAJOR_SESSION_FLAG             = int32(0x00)       // 0000 0000
 	MINOR_SESSION_FLAG             = int32(0x20 << 24) // 0010 0000
 	TEMP_SESSION_FLAG              = int32(0x10 << 24) // 0001 0000
@@ -42,7 +43,7 @@ func GenerateStartupSession() int32 {
 }
 
 func generateConnectionSessionData() int32 {
-	return rand_helper.Int31() & int32(x_CONNECTION_SESSION_DATA_MASK)
+	return rand_helper.Int31()&int32(x_CONNECTION_SESSION_DATA_MASK) | SESSION_CODE_FLAG
 }
 
 func GenerateMajorSession() int32 {

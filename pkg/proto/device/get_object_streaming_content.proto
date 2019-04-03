@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package ai.metathings.service.device;
+
+import "google/protobuf/wrappers.proto";
+
+import "github.com/mwitkow/go-proto-validators/validator.proto";
+
+import "github.com/nayotta/metathings/pkg/proto/deviced/model.proto";
+
+message GetObjectStreamingContentRequest {
+	ai.metathings.service.deviced.OpObject object = 1 [(validator.field) = {msg_exists: true}];
+}
+
+message GetObjectStreamingContentResponse {
+	google.protobuf.BytesValue content = 1;
+}

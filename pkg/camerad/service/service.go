@@ -14,7 +14,6 @@ import (
 
 	state_helper "github.com/nayotta/metathings/pkg/camera/state"
 	storage "github.com/nayotta/metathings/pkg/camerad/storage"
-	app_cred_mgr "github.com/nayotta/metathings/pkg/common/application_credential_manager"
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
 	context_helper "github.com/nayotta/metathings/pkg/common/context"
 	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
@@ -32,7 +31,6 @@ type MetathingsCameradServiceOption struct {
 type MetathingsCameradService struct {
 	cli_fty       *client_helper.ClientFactory
 	camera_st_psr state_helper.CameraStateParser
-	app_cred_mgr  app_cred_mgr.ApplicationCredentialManager
 	logger        log.FieldLogger
 	opt           *MetathingsCameradServiceOption
 	storage       storage.Storage
@@ -43,7 +41,6 @@ func NewMetathingsCameradService(
 	opt *MetathingsCameradServiceOption,
 	cli_fty *client_helper.ClientFactory,
 	camera_st_psr state_helper.CameraStateParser,
-	app_cred_mgr app_cred_mgr.ApplicationCredentialManager,
 	logger log.FieldLogger,
 	storage storage.Storage,
 	tk_vdr token_helper.TokenValidator,
@@ -52,7 +49,6 @@ func NewMetathingsCameradService(
 		opt:           opt,
 		cli_fty:       cli_fty,
 		camera_st_psr: camera_st_psr,
-		app_cred_mgr:  app_cred_mgr,
 		logger:        logger,
 		storage:       storage,
 		tk_vdr:        tk_vdr,
@@ -60,13 +56,14 @@ func NewMetathingsCameradService(
 }
 
 func (srv *MetathingsCameradService) ContextWithToken(ctxs ...context.Context) context.Context {
-	ctx := context.Background()
-	if len(ctxs) > 0 {
-		ctx = ctxs[0]
-	}
-	token_str := srv.app_cred_mgr.GetToken()
-	ctx = context_helper.WithToken(ctx, token_str)
-	return ctx
+	// ctx := context.Background()
+	// if len(ctxs) > 0 {
+	// 	ctx = ctxs[0]
+	// }
+	// token_str := srv.app_cred_mgr.GetToken()
+	// ctx = context_helper.WithToken(ctx, token_str)
+	// return ctx
+	panic("unimplemented")
 }
 
 func (srv *MetathingsCameradService) AuthFuncOverride(ctx context.Context, fullMethodName string) (context.Context, error) {

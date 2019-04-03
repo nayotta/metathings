@@ -1,0 +1,11 @@
+debug:
+  listen: 127.0.0.1:5002
+  verbose: true
+  log:
+    level: info
+  credential:
+    id: <application-credential-id>
+    secret: <application-credential-secret>
+  service_endpoint:
+    default:
+      address: <metathingsd-address>

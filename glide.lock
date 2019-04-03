@@ -234,7 +234,7 @@ imports:
 - name: go.uber.org/atomic
   version: 1ea20fb1cbb1cc08cbd0d913a96dead89aa18289
 - name: go.uber.org/dig
-  version: 7ff117f761a3f1b3eb521945c17a1091438eb6de
+  version: 007ab720a796b1027b6c289fb4e836c8fc077357
   subpackages:
   - internal/digreflect
   - internal/dot
