@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package ai.metathings.service.device;
+
+import "github.com/mwitkow/go-proto-validators/validator.proto";
+
+import "github.com/nayotta/metathings/pkg/proto/identityd2/model.proto";
+
+message IssueModuleTokenRequest {
+	ai.metathings.service.identityd2.OpCredential credential = 1 [(validator.field) = {msg_exists: true}];
+}
+
+message IssueModuleTokenResponse {
+	ai.metathings.service.identityd2.Token token = 1;
+}

@@ -28,10 +28,5 @@ func (this *GetObjectStreamingContentRequest) Validate() error {
 	return nil
 }
 func (this *GetObjectStreamingContentResponse) Validate() error {
-	if this.Content != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Content); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Content", err)
-		}
-	}
 	return nil
 }

@@ -18,10 +18,9 @@ import (
 
 func (self *MetathingsDeviceServiceImpl) Heartbeat(ctx context.Context, req *pb.HeartbeatRequest) (*empty.Empty, error) {
 	op_mdl := req.GetModule()
-	component := op_mdl.GetComponent().GetValue()
 	name := op_mdl.GetName().GetValue()
 
-	mdl, err := self.mdl_db.Lookup(component, name)
+	mdl, err := self.mdl_db.Lookup(name)
 	if err != nil {
 		self.logger.WithError(err).Errorf("failed to lookup module")
 		return nil, status.Errorf(codes.Internal, err.Error())
@@ -30,8 +29,7 @@ func (self *MetathingsDeviceServiceImpl) Heartbeat(ctx context.Context, req *pb.
 	mdl.Heartbeat()
 
 	self.logger.WithFields(log.Fields{
-		"component": component,
-		"name":      name,
+		"name": name,
 	}).Debugf("module heartbeat")
 
 	return &empty.Empty{}, nil

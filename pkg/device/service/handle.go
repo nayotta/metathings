@@ -55,7 +55,7 @@ func (self *MetathingsDeviceServiceImpl) handle_user_unary_request(req *deviced_
 		"#method":    method,
 	})
 
-	mdl, err := self.mdl_db.Lookup(component, name)
+	mdl, err := self.mdl_db.Lookup(name)
 	if err != nil {
 		logger.WithError(err).Debugf("failed to lookup module in database")
 		return err
@@ -171,7 +171,7 @@ func (self *MetathingsDeviceServiceImpl) handle_user_stream_request(req *deviced
 		}
 	}()
 
-	mdl, err := self.mdl_db.Lookup(component, name)
+	mdl, err := self.mdl_db.Lookup(name)
 	if err != nil {
 		logger.WithError(err).Debugf("failed to lookup module in database")
 		return err

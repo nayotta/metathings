@@ -5,6 +5,7 @@ import (
 	"sync"
 
 	"github.com/golang/protobuf/ptypes/wrappers"
+
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
 	identityd2_pb "github.com/nayotta/metathings/pkg/proto/identityd2"
 )

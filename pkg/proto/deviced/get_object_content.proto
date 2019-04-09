@@ -13,5 +13,5 @@ message GetObjectContentRequest {
 }
 
 message GetObjectContentResponse {
-	google.protobuf.BytesValue content = 1;
+	bytes content = 1;
 }

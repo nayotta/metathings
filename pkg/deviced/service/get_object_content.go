@@ -3,7 +3,6 @@ package metathings_deviced_service
 import (
 	"context"
 
-	"github.com/golang/protobuf/ptypes/wrappers"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -51,7 +50,7 @@ func (self *MetathingsDevicedService) GetObjectContent(ctx context.Context, req 
 		contents = append(contents, buf...)
 	}
 
-	res := &pb.GetObjectContentResponse{Content: &wrappers.BytesValue{Value: contents}}
+	res := &pb.GetObjectContentResponse{Content: contents}
 
 	self.logger.WithFields(log.Fields{
 		"device": obj_s.Device,
