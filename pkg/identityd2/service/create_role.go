@@ -76,7 +76,7 @@ func (self *MetathingsIdentitydService) CreateRole(ctx context.Context, req *pb.
 		Role: copy_role(role_s),
 	}
 
-	self.logger.WithField("id", *role.Id).Infof("create role")
+	self.logger.WithField("id", id_str).Infof("create role")
 
 	return res, nil
 }

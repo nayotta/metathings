@@ -75,7 +75,7 @@ func (self *MetathingsIdentitydService) CreateDomain(ctx context.Context, req *p
 		Domain: copy_domain(dom_s),
 	}
 
-	self.logger.WithField("id", *dom_s.Id).Infof("create domain")
+	self.logger.WithField("id", id_str).Infof("create domain")
 
 	return res, nil
 }
