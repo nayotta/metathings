@@ -67,64 +67,924 @@ import "check_token.proto";
 import "authorize_token.proto";
 
 service IdentitydService {
+	/*
+	 * @fn CreateDomain
+	 * @arg domain.id <optional> "domain id"
+	 * @arg domain.parent.id "domain parent id"
+	 * @arg domain.name "domain name"
+	 * @arg domain.alias <optional> "domain alias"
+	 * @arg domain.extra <optional> "extra data, json string"
+	 * @ret domain
+	 * @req
+	 *   {
+	 *     "domain": {
+	 *       "name": "test",
+	 *       "parent": {
+	 *         "id": "default"
+	 *       }
+	 *     }
+	 *   }
+	 * @res
+	 *   { ... }
+	 * @err Internal
+	 */
 	rpc CreateDomain(CreateDomainRequest) returns (CreateDomainResponse) {}
+	/*
+	 * @fn DeleteDomain
+	 * @arg domain.id "domain id"
+	 * @ret
+	 * @req
+	 *   {
+	 *     "domain": {
+	 *       "id": "domain-id"
+	 *     }
+	 *   }
+	 * @res
+	 *   { }
+	 * @err FailedPrecondition
+	 * @err Internal
+	 */
 	rpc DeleteDomain(DeleteDomainRequest) returns (google.protobuf.Empty) {}
+	/*
+	 * @fn PatchDomain
+	 * @arg domain.id "domain id"
+	 * @arg domain.alias <optional> "domain alias"
+	 * @arg domain.extra <optional> "extra data, json string"
+	 * @ret domain
+	 * @req
+	 *   {
+	 *     "domain": {
+	 *       "id": "domain-id"
+	 *       "alias": "renamed-domain"
+	 *     }
+	 *   }
+	 * @res
+	 *   { ... }
+	 * @err Internal
+	 */
 	rpc PatchDomain(PatchDomainRequest) returns (PatchDomainResponse) {}
+	/*
+	 * @fn GetDomain
+	 * @arg domain.id "domain id"
+	 * @ret domain
+	 * @req
+	 *   {
+	 *     "domain": {
+	 *       "id": "domain-id"
+	 *     }
+	 *   }
+	 * @res
+	 *   { ... }
+	 * @err InvalidArgument
+	 * @err Internal
+	 */
 	rpc GetDomain(GetDomainRequest) returns (GetDomainResponse) {}
+	/*
+	 * @fn ListDomains
+	 * @arg domain.id <optional> "domain id"
+	 * @arg domain.name <optional> "domain name"
+	 * @arg domain.alias <optional> "domain alias"
+	 * @ret domains "list of domains"
+	 * @req
+	 *   { ... }
+	 * @res
+	 *   { ... }
+	 * @err Internal
+	 */
 	rpc ListDomains(ListDomainsRequest) returns (ListDomainsResponse) {}
 
+	/*
+	 * @fn CreateAction
+	 * @arg action.id <optional> "action id"
+	 * @arg action.name "action name, format: <service>:<action>, example: identtiyd2:create_action"
+	 * @arg action.alias <optional> "action alias"
+	 * @arg action.description <optional> "action description"
+	 * @arg action.extra <optional> "extra data, json string"
+	 * @ret action
+	 * @req
+	 *   {
+	 *     "action": {
+	 *       "name": "identityd2:create_action"
+	 *     }
+	 *   }
+	 * @res
+	 *   { ... }
+	 * @err Internal
+	 */
 	rpc CreateAction(CreateActionRequest) returns (CreateActionResponse) {}
+	/*
+	 * @fn DeleteAction
+	 * @arg action.id "action id"
+	 * @ret
+	 * @req
+	 *   {
+	 *     "action": {
+	 *       "id": "action-id"
+	 *     }
+	 *   }
+	 * @res
+	 *   { }
+	 * @err Internal
+	 */
 	rpc DeleteAction(DeleteActionRequest) returns (google.protobuf.Empty) {}
+	/*
+	 * @fn PatchAction
+	 * @arg action.id "action id"
+	 * @arg action.alias <optional> "action alias"
+	 * @arg action.description <optional> "action description"
+	 * @arg action.extra <optional> "extra data, json string"
+	 * @ret action
+	 * @req
+	 *   {
+	 *     "action": {
+	 *       "id": "action-id",
+	 *       "alias": "renamed-action-alias"
+	 *     }
+	 *   }
+	 * @res
+	 *   { ... }
+	 * @err Internal
+	 */
 	rpc PatchAction(PatchActionRequest) returns (PatchActionResponse) {}
+	/*
+	 * @fn GetAction
+	 * @arg action.id "action id"
+	 * @ret action
+	 * @req
+	 *   {
+	 *     "action": {
+	 *       "id": "action-id"
+	 *     }
+	 *   }
+	 * @res
+	 *   { ... }
+	 * @err Internal
+	 */
 	rpc GetAction(GetActionRequest) returns (GetActionResponse) {}
+	/*
+	 * @fn ListActions
+	 * @unimplemented
+	 * @arg action.id <optional> "action id"
+	 * @arg action.name <optional> "action name"
+	 * @arg action.alias <optional> "action alias"
+	 * @ret actions "list of action"
+	 * @req
+	 *   { ... }
+	 * @res
+	 *   { ... }
+	 * @err Internal
+	 */
 	rpc ListActions(ListActionsRequest) returns (ListActionsResponse) {}
 
+	/*
+	 * @fn CreateRole
+	 * @arg role.id <optional> "role id"
+	 * @arg role.name "role name"
+	 * @arg role.alias <optional> "role alias"
+	 * @arg role.description <optional> "role description"
+	 * @arg role.extra <optional> "extra data, json string"
+	 * @ret role
+	 * @req
+	 *   {
+	 *     "role": {
+	 *       "name": "admin"
+	 *     }
+	 *   }
+	 * @res
+	 *   { ... }
+	 * @err Internal
+	 */
 	rpc CreateRole(CreateRoleRequest) returns (CreateRoleResponse) {}
+	/*
+	 * @fn DeleteRole
+	 * @arg role.id "role id"
+	 * @ret
+	 * @req
+	 *   {
+	 *     "role": {
+	 *       "id": "role-id"
+	 *     }
+	 *   }
+	 * @res
+	 *   { }
+	 * @err Internal
+	 */
 	rpc DeleteRole(DeleteRoleRequest) returns (google.protobuf.Empty) {}
+	/*
+	 * @fn PatchRole
+	 * @arg role.id "role id"
+	 * @arg role.alias <optional> "role alias"
+	 * @arg role.description <optional> "role description"
+	 * @arg role.extra <optional> "extra data, json string"
+	 * @ret role
+	 * @req
+	 *   {
+	 *     "role": {
+	 *       "id": "role-id",
+	 *       "alias": "renamed-role-alias"
+	 *     }
+	 *   }
+	 * @res
+	 *   { ... }
+	 * @err Internal
+	 */
 	rpc PatchRole(PatchRoleRequest) returns (PatchRoleResponse) {}
+	/*
+	 * @fn GetRole
+	 * @arg role.id "role id"
+	 * @ret role
+	 * @req
+	 *   {
+	 *     "role": {
+	 *       "id": "role-id"
+	 *     }
+	 *   }
+	 * @res
+	 *   { ... }
+	 * @err InvalidArgument
+	 * @err Internal
+	 */
 	rpc GetRole(GetRoleRequest) returns (GetRoleResponse) {}
+	/*
+	 * @fn ListRoles
+	 * @arg role.id <optional> "role id"
+	 * @arg role.name <optional> "role name"
+	 * @arg role.alias <optional> "role alias"
+	 * @ret roles "list of role"
+	 * @req
+	 *   {
+	 *     "role": {
+	 *       "id": "role-id",
+	 *     }
+	 *   }
+	 * @res
+	 *   { ... }
+	 * @err Internal
+	 */
 	rpc ListRoles(ListRolesRequest) returns (ListRolesResponse) {}
+	/*
+	 * @fn ListRolesForEntity
+	 * @unimplemented
+	 */
 	rpc ListRolesForEntity(ListRolesForEntityRequest) returns (ListRolesForEntityResponse) {}
+	/*
+	 * @fn AddActionToRole
+	 * @arg role.id "role id"
+	 * @arg action.id "action id"
+	 * @ret
+	 * @req
+	 *   {
+	 *     "role": {
+	 *       "id": "role-id"
+	 *     },
+	 *     "action": {
+	 *       "id": "action-id"
+	 *     }
+	 *   }
+	 * @res
+	 *   { ... }
+	 * @err Internal
+	 */
 	rpc AddActionToRole(AddActionToRoleRequest) returns (google.protobuf.Empty) {}
+	/*
+	 * @fn RemoveActionFromRole
+	 * @arg role.id "role id"
+	 * @arg action.id "action id"
+	 * @ret
+	 * @req
+	 *   {
+	 *     "role": {
+	 *       "id": "role-id"
+	 *     },
+	 *     "action": {
+	 *       "id": "action-id"
+	 *     }
+	 *   }
+	 * @res
+	 *   { ... }
+	 * @err Internal
+	 */
 	rpc RemoveActionFromRole(RemoveActionFromRoleRequest) returns (google.protobuf.Empty) {}
 
+	/*
+	 * @fn CreateEntity
+	 * @arg entity.id <optional> "entity id"
+	 * @arg entity.name "entity name"
+	 * @arg entity.alias <optional> "entity alias"
+	 * @arg entity.password <optional> "if create entity for user, password MUST exists, password size from 8 to 128 bytes"
+	 * @arg entity.extra <optional> "extra data, json string"
+	 * @ret entity
+	 * @req
+	 *   {
+	 *     "entity": {
+	 *       "name": "entity-name",
+	 *       "password": "password",
+	 *     }
+	 *   }
+	 * @res
+	 *   { ... }
+	 * @err Internal
+	 */
 	rpc CreateEntity(CreateEntityRequest) returns (CreateEntityResponse) {}
+	/*
+	 * @fn DeleteEntity
+	 * @arg entity.id "entity id"
+	 * @ret
+	 * @req
+	 *   {
+	 *     "entity": {
+	 *       "id": "entity-id"
+	 *     }
+	 *   }
+	 * @res
+	 *   { ... }
+	 * @err Internal
+	 */
 	rpc DeleteEntity(DeleteEntityRequest) returns (google.protobuf.Empty) {}
+	/*
+	 * @fn PatchEntity
+	 * @arg entity.id "entity id"
+	 * @arg entity.alias <optional> "entity alias"
+	 * @arg enttiy.password <optional> "entity password"
+	 * @arg entity.extra <optional> "extra data, json string"
+	 * @ret entity
+	 * @req
+	 *   {
+	 *     "entity": {
+	 *       "id": "entity-id",
+	 *       "password": "new-password"
+	 *     }
+	 *   }
+	 * @res
+	 *   { ... }
+	 * @err Internal
+	 */
 	rpc PatchEntity(PatchEntityRequest) returns (PatchEntityResponse) {}
+	/*
+	 * @fn GetEnttiy
+	 * @arg entity.id "entity id"
+	 * @ret entity
+	 * @req
+	 *   {
+	 *     "entity": {
+	 *       "id": "entity-id"
+	 *     }
+	 *   }
+	 * @res
+	 *   { ... }
+	 * @err Internal
+	 */
 	rpc GetEntity(GetEntityRequest) returns (GetEntityResponse) {}
+	/*
+	 * @fn ListEntities
+	 * @arg entity.id <optional> "entity id"
+	 * @arg entity.name <optional> "entity name"
+	 * @arg entity.alias <optional> "entity alias"
+	 * @ret entities "list of entity"
+	 * @req
+	 *   {
+	 *     "entity": {
+	 *       "id": "entity-id"
+	 *     }
+	 *   }
+	 * @res
+	 *   { ... }
+	 * @err Internal
+	 */
 	rpc ListEntities(ListEntitiesRequest) returns (ListEntitiesResponse) {}
+	/*
+	 * @fn ShowEntity
+	 * @unimplemented
+	 */
 	rpc ShowEntity(google.protobuf.Empty) returns (ShowEntityResponse) {}
+	/*
+	 * @fn AddRoleToEntity
+	 * @arg role.id "role id"
+	 * @arg entity.id "entity id"
+	 * @ret
+	 * @req
+	 *   {
+	 *     "role": {
+	 *       "id": "role-id"
+	 *     },
+	 *     "entity": {
+	 *       "id": "entity-id"
+	 *     }
+	 *   }
+	 * @res
+	 *   { ... }
+	 * @err Internal
+	 */
 	rpc AddRoleToEntity(AddRoleToEntityRequest) returns (google.protobuf.Empty) {}
+	/*
+	 * @fn RemoveRoleFromEntity
+	 * @arg role.id "role id"
+	 * @arg entity.id "entity id"
+	 * @ret
+	 * @req
+	 *   {
+	 *     "role": {
+	 *       "id": "role-id"
+	 *     },
+	 *     "entity": {
+	 *       "id": "entity-id"
+	 *     }
+	 *   }
+	 * @res
+	 *   { ... }
+	 * @err Internal
+	 */
 	rpc RemoveRoleFromEntity(RemoveRoleFromEntityRequest) returns (google.protobuf.Empty) {}
+	/*
+	 * @fn AddEntityToDomain
+	 * @arg domain.id "domain id"
+	 * @arg entity.id "entity id"
+	 * @ret
+	 * @req
+	 *   {
+	 *     "domain": {
+	 *       "id": "domain-id"
+	 *     },
+	 *     "entity": {
+	 *       "id": "entity-id"
+	 *     }
+	 *   }
+	 * @res
+	 *   { ... }
+	 * @err Internal
+	 */
 	rpc AddEntityToDomain(AddEntityToDomainRequest) returns (google.protobuf.Empty) {}
+	/*
+	 * @fn RemoveEntityFromDomain
+	 * @arg domain.id "domain id"
+	 * @arg entity.id "entity id"
+	 * @ret
+	 * @req
+	 *   {
+	 *     "domain": {
+	 *       "id": "domain-id"
+	 *     },
+	 *     "entity": {
+	 *       "id": "entity-id"
+	 *     }
+	 *   }
+	 * @res
+	 *   { ... }
+	 * @err Internal
+	 */
 	rpc RemoveEntityFromDomain(RemoveEntityFromDomainRequest) returns (google.protobuf.Empty) {}
 
+	/*
+	 * @fn CreateGroup
+	 * @arg group.id <optional> "group id"
+	 * @arg group.domain.id "create group in domain"
+	 * @arg group.name "group name"
+	 * @arg group.alias "group alias"
+	 * @arg group.description "group description"
+	 * @arg group.extra "extra data, json string"
+	 * @ret group
+	 * @req
+	 *   {
+	 *     "group": {
+	 *       "name": "group-name",
+	 *       "domain": {
+	 *         "id": "domain-id"
+	 *       }
+	 *     }
+	 *   }
+	 * @res
+	 *   { ... }
+	 * @err Internal
+	 */
 	rpc CreateGroup(CreateGroupRequest) returns (CreateGroupResponse) {}
+	/*
+	 * @fn DeleteGroup
+	 * @arg group.id "group id"
+	 * @ret
+	 * @req
+	 *   {
+	 *     "group": {
+	 *       "id": "group-id"
+	 *     }
+	 *   }
+	 * @res
+	 *   { ... }
+	 * @err Internal
+	 */
 	rpc DeleteGroup(DeleteGroupRequest) returns (google.protobuf.Empty) {}
+	/*
+	 * @fn PatchGroup
+	 * @arg group.id "group id"
+	 * @arg group.alias <optional> "group alias"
+	 * @arg group.description <optional> "group description"
+	 * @arg group.extra <optional> "extra data, json string"
+	 * @ret group
+	 * @req
+	 *   {
+	 *     "group": {
+	 *       "id": "group-id"
+	 *     }
+	 *   }
+	 * @res
+	 *   { ... }
+	 * @err Internal
+	 */
 	rpc PatchGroup(PatchGroupRequest) returns (PatchGroupResponse) {}
+	/*
+	 * @fn GetGroup
+	 * @arg group.id "group id"
+	 * @ret group
+	 * @req
+	 *   {
+	 *     "group": {
+	 *       "id": "group-id"
+	 *     }
+	 *   }
+	 * @res
+	 *   { ... }
+	 * @err Internal
+	 */
 	rpc GetGroup(GetGroupRequest) returns (GetGroupResponse) {}
+	/*
+	 * @fn ListGroups
+	 * @arg group.id <optional> "group id"
+	 * @arg group.domain.id <optional> "domain id"
+	 * @arg group.name <optional> "group name"
+	 * @arg group.alias <optional> "group alias"
+	 * @ret groups "list of group"
+	 * @req
+	 *   {
+	 *     "group": {
+	 *       "id": "group-id"
+	 *     }
+	 *   }
+	 * @res
+	 *   { ... }
+	 * @err Internal
+	 */
 	rpc ListGroups(ListGroupsRequest) returns (ListGroupsResponse) {}
+	/*
+	 * @fn ListGroupsForEntity
+	 * @unimplemented
+	 */
 	rpc ListGroupsForEntity(ListGroupsForEntityRequest) returns (ListGroupsForEntityResponse) {}
+	/*
+	 * @fn ShowGroups
+	 * @unimplemented
+	 */
 	rpc ShowGroups(google.protobuf.Empty) returns (ShowGroupsResponse) {}
+	/*
+	 * @fn AddRoleToGroup
+	 * @arg role.id "role id"
+	 * @arg group.id "group id"
+	 * @ret
+	 * @req
+	 *   {
+	 *     "role": {
+	 *       "id": "role-id"
+	 *     },
+	 *     "group": {
+	 *       "id": "group-id"
+	 *     }
+	 *   }
+	 * @res
+	 *   { }
+	 * @err Internal
+	 */
 	rpc AddRoleToGroup(AddRoleToGroupRequest) returns (google.protobuf.Empty) {}
+	/*
+	 * @fn RemoveRoleFromGroup
+	 * @arg role.id "role id"
+	 * @arg group.id "group id"
+	 * @ret
+	 * @req
+	 *   {
+	 *     "role": {
+	 *       "id": "role-id"
+	 *     },
+	 *     "group": {
+	 *       "id": "group-id"
+	 *     }
+	 *   }
+	 * @res
+	 *   { }
+	 * @err Internal
+	 */
 	rpc RemoveRoleFromGroup(RemoveRoleFromGroupRequest) returns (google.protobuf.Empty) {}
+	/*
+	 * @fn AddSubjectToGroup
+	 * @arg subject.id "subject id"
+	 * @arg group.id "group id"
+	 * @ret
+	 * @req
+	 *   {
+	 *     "subject": {
+	 *       "id": "subject-id"
+	 *     },
+	 *     "group": {
+	 *       "id": "group-id"
+	 *     }
+	 *   }
+	 * @res
+	 *   { }
+	 * @err Internal
+	 */
 	rpc AddSubjectToGroup(AddSubjectToGroupRequest) returns (google.protobuf.Empty) {}
+	/*
+	 * @fn RemoveSubjectFromGroup
+	 * @arg subject.id "subject id"
+	 * @arg group.id "group id"
+	 * @ret
+	 * @req
+	 *   {
+	 *     "subject": {
+	 *       "id": "subject-id"
+	 *     },
+	 *     "group": {
+	 *       "id": "group-id"
+	 *     }
+	 *   }
+	 * @res
+	 *   { }
+	 * @err Internal
+	 */
 	rpc RemoveSubjectFromGroup(RemoveSubjectFromGroupRequest) returns (google.protobuf.Empty) {}
+	/*
+	 * @fn AddObjectToGroup
+	 * @arg object.id "object id"
+	 * @arg group.id "group id"
+	 * @ret
+	 * @req
+	 *   {
+	 *     "object": {
+	 *       "id": "object-id"
+	 *     },
+	 *     "group": {
+	 *       "id": "group-id"
+	 *     }
+	 *   }
+	 * @res
+	 *   { }
+	 * @err Internal
+	 */
 	rpc AddObjectToGroup(AddObjectToGroupRequest) returns (google.protobuf.Empty) {}
+	/*
+	 * @fn RemoveObjectFromGroup
+	 * @arg object.id "object id"
+	 * @arg group.id "group id"
+	 * @ret
+	 * @req
+	 *   {
+	 *     "object": {
+	 *       "id": "object-id"
+	 *     },
+	 *     "group": {
+	 *       "id": "group-id"
+	 *     }
+	 *   }
+	 * @res
+	 *   { }
+	 * @err Internal
+	 */
 	rpc RemoveObjectFromGroup(RemoveObjectFromGroupRequest) returns (google.protobuf.Empty) {}
 
+	/*
+	 * @fn CreateCredential
+	 * @arg credential.id <optional> "credential id"
+	 * @arg credential.domain.id "domain id"
+	 * @arg credential.entity.id "entity id"
+	 * @arg credential.name "credential name"
+	 * @arg credential.alias <optional> "credential alias"
+	 * @arg credential.secret <optional> "credential secret"
+	 * @arg credential.description <optional> "credential description"
+	 * @arg credential.expires_at <optional> "expires time"
+	 * @arg credential.roles.id <list> <optional> "list of role"
+	 * @arg secret_size <optional> "secret size, default 32 bytes"
+	 * @ret credential
+	 * @req
+	 *   {
+	 *     "credential": {
+	 *       "domain": {
+	 *         "id": "domain-id"
+	 *       },
+	 *       "entity": {
+	 *         "id": "entity-id"
+	 *       },
+	 *       "name": "cred-name",
+	 *     }
+	 *   }
+	 * @res
+	 *   { ... }
+	 * @err Internal
+	 */
 	rpc CreateCredential(CreateCredentialRequest) returns (CreateCredentialResponse) {}
+	/*
+	 * @fn DeleteCredential
+	 * @arg credential.id "credential id"
+	 * @ret
+	 * @req
+	 *   {
+	 *     "credential": {
+	 *       "id": "credential-id"
+	 *     }
+	 *   }
+	 * @res
+	 *   { }
+	 * @err Internal
+	 */
 	rpc DeleteCredential(DeleteCredentialRequest) returns (google.protobuf.Empty) {}
+	/*
+	 * @fn PatchCredential
+	 * @arg credential.id "credential id"
+	 * @arg credential.alias "credential alias"
+	 * @arg credential.description "credential description"
+	 * @ret credential
+	 * @req
+	 *   {
+	 *     "credential": {
+	 *       "id": "credential-id",
+	 *       "alias": "renamed-credential-alias"
+	 *     }
+	 *   }
+	 * @res
+	 *   { ... }
+	 * @err Internal
+	 */
 	rpc PatchCredential(PatchCredentialRequest) returns (PatchCredentialResponse) {}
+	/*
+	 * @fn GetCredential
+	 * @arg credential.id "credential id"
+	 * @ret credential
+	 * @req
+	 *   {
+	 *     "credential": {
+	 *       "id": "credential-id",
+	 *     }
+	 *   }
+	 * @res
+	 *   { ... }
+	 */
 	rpc GetCredential(GetCredentialRequest) returns (GetCredentialResponse) {}
+	/*
+	 * @fn ListCredentials
+	 * @arg credential.id <optional> "credential id"
+	 * @arg credential.domain.id <optional> "domain id"
+	 * @arg credential.entity.id <optional> "entity id"
+	 * @arg credential.name <optional> "credential name"
+	 * @arg credential.alias <optional> "credential alias"
+	 * @ret credentials "list of credential"
+	 * @req
+	 *   {
+	 *     "credential": {
+	 *       "id": "credential-id"
+	 *     }
+	 *   }
+	 * @res
+	 *   { ... }
+	 * @err Internal
+	 */
 	rpc ListCredentials(ListCredentialsRequest) returns (ListCredentialsResponse) {}
+	/*
+	 * @fn ListCredentialsForEntity
+	 * @unimplemented
+	 */
 	rpc ListCredentialsForEntity(ListCredentialsForEntityRequest) returns (ListCredentialsForEntityResponse) {}
-
+	/*
+	 * @fn IssueTokenByCredential
+	 * @arg credential.id "credential id"
+	 * @arg credential.domain.id "domain id"
+	 * @arg timestamp "timestamp"
+	 * @arg nonce "nonce"
+	 * @arg hmac "=hmac(key, credential.id+timestamp+nonce), helper: pkg/identityd2/contrib/issue_token_by_credential.go:NewIssueTokenByCredentialRequest"
+	 * @ret token
+	 * @req
+	 *   {
+	 *     "credential": {
+	 *       "id": "credential-id"
+	 *     },
+	 *     "timestamp": {
+	 *       "seconds": 0,
+	 *       "nanos": 0
+	 *     },
+	 *     "nonce": 0,
+	 *     "hmac": "hmac"
+	 *   }
+	 * @res
+	 *   { ... }
+	 * @err Internal
+	 * @err Unauthenticated
+	 */
 	rpc IssueTokenByCredential(IssueTokenByCredentialRequest) returns (IssueTokenByCredentialResponse) {}
+	/*
+	 * @fn IssueTokenByPassword
+	 * @arg entity.domains.id "domain id, less 1 domain"
+	 * @arg entity.id <optional> "entity id"
+	 * @arg entity.name <optional> "entity name"
+	 * @arg entity.password "entity password"
+	 * @ret token
+	 * @req
+	 *   {
+	 *     "entity": {
+	 *       "domains": [{"id": "domain-id"}],
+	 *       "name": "test",
+	 *       "password": "test"
+	 *     }
+	 *   }
+	 * @res
+	 *   { ... }
+	 * @err Internal
+	 * @err Unauthenticated
+	 */
 	rpc IssueTokenByPassword(IssueTokenByPasswordRequest) returns (IssueTokenByPasswordResponse) {}
+	/*
+	 * @fn IssueTokenByToken
+	 * @arg token.domain.id "domain id"
+	 * @arg token.text "token text"
+	 * @ret token
+	 * @req
+	 *   {
+	 *     "token": {
+	 *       "domain": {
+	 *         "id": "domain-id"
+	 *       },
+	 *       "text": "token-text"
+	 *     }
+	 *   }
+	 * @res
+	 *   { ... }
+	 * @err Internal
+	 * @err Unauthenticated
+	 */
 	rpc IssueTokenByToken(IssueTokenByTokenRequest) returns (IssueTokenByTokenResponse) {}
+	/*
+	 * @fn RevokeToken
+	 * @arg token.text "token text"
+	 * @ret
+	 * @req
+	 *   {
+	 *     "token": {
+	 *       "text": "token-text"
+	 *     }
+	 *   }
+	 * @res
+	 *   { }
+	 * @err Internal
+	 * @err FailedPrecondition
+	 */
 	rpc RevokeToken(RevokeTokenRequest) returns (google.protobuf.Empty) {}
+	/*
+	 * @fn ValidateToken
+	 * @arg token.text "token text"
+	 * @ret
+	 * @req
+	 *   {
+	 *     "token": {
+	 *       "text": "token-text"
+	 *     }
+	 *   }
+	 * @res
+	 *   { ... }
+	 * @err Internal
+	 * @err InvalidArgument
+	 * @err Unauthenticated
+	 */
 	rpc ValidateToken(ValidateTokenRequest) returns (ValidateTokenResponse) {}
+	/*
+	 * @fn CheckToken
+	 * @arg token.text "token text"
+	 * @arg token.domain.id "domain id"
+	 * @ret
+	 * @req
+	 *   {
+	 *     "token": {
+	 *       "domain": {
+	 *         "id": "domain-id"
+	 *       },
+	 *       "text": "token-text"
+	 *     }
+	 *   }
+	 * @err Internal
+	 * @err InvalidArgument
+	 * @err Unauthenticated
+	 */
 	rpc CheckToken(CheckTokenRequest) returns (google.protobuf.Empty) {}
+	/*
+	 * @fn AuthorizeToken
+	 * @arg object.id "object id"
+	 * @arg action.name "action name"
+	 * @ret
+	 * @req
+	 *   {
+	 *     "object": {
+	 *       "id": "object-id"
+	 *     },
+	 *     "action": {
+	 *       "name": "action-name"
+	 *     }
+	 *   }
+	 * @res
+	 * @err PermissionDenied
+	 * @err Internal
+	 */
 	rpc AuthorizeToken(AuthorizeTokenRequest) returns (google.protobuf.Empty) {}
 }
