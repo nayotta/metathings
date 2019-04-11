@@ -188,6 +188,7 @@ type Storage interface {
 	DeleteRole(id string) error
 	PatchRole(id string, role *Role) (*Role, error)
 	GetRole(id string) (*Role, error)
+	GetRoleWithFullActions(id string) (*Role, error)
 	ListRoles(*Role) ([]*Role, error)
 	AddActionToRole(role_id, action_id string) error
 	RemoveActionFromRole(role_id, action_id string) error
