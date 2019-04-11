@@ -12,8 +12,10 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
+	const_helper "github.com/nayotta/metathings/pkg/common/constant"
 	context_helper "github.com/nayotta/metathings/pkg/common/context"
 	log_helper "github.com/nayotta/metathings/pkg/common/log"
+	identityd2_contrib "github.com/nayotta/metathings/pkg/identityd2/contrib"
 	device_pb "github.com/nayotta/metathings/pkg/proto/device"
 	pb "github.com/nayotta/metathings/pkg/proto/device"
 	deviced_pb "github.com/nayotta/metathings/pkg/proto/deviced"
@@ -369,17 +371,18 @@ func _heartbeat(cli pb.DeviceServiceClient, ctx context.Context, name string) er
 	return nil
 }
 
-func _issue_module_token(cli pb.DeviceServiceClient, ctx context.Context, id, secret string) (*identityd2_pb.Token, error) {
-	req := &device_pb.IssueModuleTokenRequest{
-		Credential: &identityd2_pb.OpCredential{
-			Domain: &identityd2_pb.OpDomain{
-				Id: &wrappers.StringValue{Value: "default"},
-			},
-			Id:     &wrappers.StringValue{Value: id},
-			Secret: &wrappers.StringValue{Value: secret},
-		},
+func new_issue_module_token_request(domain, id, secret string) *device_pb.IssueModuleTokenRequest {
+	itbc_req := identityd2_contrib.NewIssueTokenByCredentialRequest(domain, id, secret)
+	return &device_pb.IssueModuleTokenRequest{
+		Credential: itbc_req.GetCredential(),
+		Timestamp:  itbc_req.GetTimestamp(),
+		Nonce:      itbc_req.GetNonce(),
+		Hmac:       itbc_req.GetHmac(),
 	}
+}
 
+func _issue_module_token(cli pb.DeviceServiceClient, ctx context.Context, id, secret string) (*identityd2_pb.Token, error) {
+	req := new_issue_module_token_request(const_helper.DEFAULT_DOMAIN, id, secret)
 	res, err := cli.IssueModuleToken(ctx, req)
 	if err != nil {
 		return nil, err

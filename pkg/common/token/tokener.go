@@ -4,10 +4,9 @@ import (
 	"context"
 	"sync"
 
-	"github.com/golang/protobuf/ptypes/wrappers"
-
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
-	identityd2_pb "github.com/nayotta/metathings/pkg/proto/identityd2"
+	const_helper "github.com/nayotta/metathings/pkg/common/constant"
+	identityd2_contrib "github.com/nayotta/metathings/pkg/identityd2/contrib"
 )
 
 type Tokener interface {
@@ -33,12 +32,7 @@ func (self *tokener) refreshToken() error {
 	self.mtx.Lock()
 	defer self.mtx.Unlock()
 
-	req := &identityd2_pb.IssueTokenByCredentialRequest{
-		Credential: &identityd2_pb.OpCredential{
-			Id:     &wrappers.StringValue{Value: self.credential_id},
-			Secret: &wrappers.StringValue{Value: self.credential_secret},
-		},
-	}
+	req := identityd2_contrib.NewIssueTokenByCredentialRequest(const_helper.DEFAULT_DOMAIN, self.credential_id, self.credential_secret)
 
 	cli, cfn, err := self.cli_fty.NewIdentityd2ServiceClient()
 	if err != nil {

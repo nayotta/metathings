@@ -9,7 +9,6 @@ import (
 	"google.golang.org/grpc/status"
 
 	id_helper "github.com/nayotta/metathings/pkg/common/id"
-	passwd_helper "github.com/nayotta/metathings/pkg/common/passwd"
 	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
 	pb_helper "github.com/nayotta/metathings/pkg/common/protobuf"
 	storage "github.com/nayotta/metathings/pkg/identityd2/storage"
@@ -79,11 +78,11 @@ func (self *MetathingsIdentitydService) CreateCredential(ctx context.Context, re
 		alias_str = cred.GetAlias().GetValue()
 	}
 
-	srt_str := generate_secret()
-	if cred.GetSecret() != nil {
-		srt_str = cred.GetSecret().GetValue()
+	var siz int32 = 32
+	if req.GetSecretSize() != nil {
+		siz = req.GetSecretSize().GetValue()
 	}
-	srt_encode_str := passwd_helper.MustParsePassword(srt_str)
+	srt_str := generate_secret(siz)
 
 	desc_str := ""
 	if cred.GetDescription() != nil {
@@ -104,7 +103,7 @@ func (self *MetathingsIdentitydService) CreateCredential(ctx context.Context, re
 		EntityId:    &ent_id_str,
 		Name:        &name_str,
 		Alias:       &alias_str,
-		Secret:      &srt_encode_str,
+		Secret:      &srt_str,
 		Description: &desc_str,
 		ExpiresAt:   &expires,
 		Roles:       roles,
@@ -114,14 +113,10 @@ func (self *MetathingsIdentitydService) CreateCredential(ctx context.Context, re
 		self.logger.WithError(err).Errorf("failed to create credential in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
-
-	//return no encode secret string
-	//storage save the encode secret string
-	//should remember secret on response, you will nerver get no encode secret string in future
 	cred_s.Secret = &srt_str
 
 	res := &pb.CreateCredentialResponse{
-		Credential: copy_credential(cred_s),
+		Credential: copy_credential_with_secret(cred_s),
 	}
 
 	self.logger.WithField("id", id_str).Infof("create credential")

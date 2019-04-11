@@ -21,6 +21,9 @@ func (self *MetathingsDeviceServiceImpl) IssueModuleToken(ctx context.Context, r
 
 	itc_req := &identityd2_pb.IssueTokenByCredentialRequest{
 		Credential: req.GetCredential(),
+		Timestamp:  req.GetTimestamp(),
+		Nonce:      req.GetNonce(),
+		Hmac:       req.GetHmac(),
 	}
 	itc_res, err := cli.IssueTokenByCredential(context.Background(), itc_req)
 	if err != nil {
