@@ -243,6 +243,21 @@ func (self *StorageImpl) list_actions(act *Action) ([]*Action, error) {
 	return acts, nil
 }
 
+func (self *StorageImpl) list_actions_by_view_actions(xs []*Action) ([]*Action, error) {
+	var err error
+	var y *Action
+	var ys []*Action
+
+	for _, x := range xs {
+		if y, err = self.get_action(*x.Id); err != nil {
+			return nil, err
+		}
+		ys = append(ys, y)
+	}
+
+	return ys, nil
+}
+
 func (self *StorageImpl) CreateAction(act *Action) (*Action, error) {
 	var err error
 
@@ -448,6 +463,23 @@ func (self *StorageImpl) GetRole(id string) (*Role, error) {
 
 	if role, err = self.get_role(id); err != nil {
 		self.logger.WithError(err).Debugf("failed to get role")
+		return nil, err
+	}
+
+	return role, nil
+}
+
+func (self *StorageImpl) GetRoleWithFullActions(id string) (*Role, error) {
+	var role *Role
+	var err error
+
+	if role, err = self.get_role(id); err != nil {
+		self.logger.WithError(err).Debugf("failed to get role")
+		return nil, err
+	}
+
+	if role.Actions, err = self.list_actions_by_view_actions(role.Actions); err != nil {
+		self.logger.WithError(err).Debugf("failed to list actions by view actions")
 		return nil, err
 	}
 
