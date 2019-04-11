@@ -578,7 +578,8 @@ func (self *StorageImpl) list_view_groups_by_entity_id(id string) ([]*Group, err
 
 	var grps []*Group
 	for grp_id, _ := range grps_m {
-		grps = append(grps, &Group{Id: &grp_id})
+		grpIdStr := grp_id
+		grps = append(grps, &Group{Id: &grpIdStr})
 	}
 
 	return grps, nil
