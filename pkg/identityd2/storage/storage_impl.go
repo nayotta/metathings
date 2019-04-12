@@ -1139,12 +1139,87 @@ func (self *StorageImpl) RemoveObjectFromGroup(group_id, object_id string) error
 	return nil
 }
 
+func (self *StorageImpl) list_groups_by_group_ids(grp_ids []string) ([]*Group, error) {
+	var err error
+	var grps []*Group
+	var grp *Group
+
+	for _, grp_id := range grp_ids {
+		if grp, err = self.get_group(grp_id); err != nil {
+			return nil, err
+		}
+		grps = append(grps, grp)
+	}
+
+	return grps, nil
+}
+
+func (self *StorageImpl) list_groups_for_subject(subject_id string) ([]*Group, error) {
+	var err error
+	var group_ids []string
+	var grps []*Group
+	var sub_grp_maps []*SubjectGroupMapping
+
+	if err = self.db.Find(&sub_grp_maps, "subject_id = ?", subject_id).Error; err != nil {
+		return nil, err
+	}
+
+	for _, m := range sub_grp_maps {
+		group_ids = append(group_ids, *m.GroupId)
+	}
+
+	if grps, err = self.list_groups_by_group_ids(group_ids); err != nil {
+		return nil, err
+	}
+
+	return grps, nil
+}
+
+func (self *StorageImpl) list_groups_for_object(object_id string) ([]*Group, error) {
+	var err error
+	var group_ids []string
+	var grps []*Group
+	var obj_grp_maps []*ObjectGroupMapping
+
+	if err = self.db.Find(&obj_grp_maps, "object_id = ?", object_id).Error; err != nil {
+		return nil, err
+	}
+
+	for _, m := range obj_grp_maps {
+		group_ids = append(group_ids, *m.GroupId)
+	}
+
+	if grps, err = self.list_groups_by_group_ids(group_ids); err != nil {
+		return nil, err
+	}
+
+	return grps, nil
+}
+
 func (self *StorageImpl) ListGroupsForSubject(subject_id string) ([]*Group, error) {
-	panic("unimplemented")
+	var err error
+	var grps []*Group
+
+	if grps, err = self.list_groups_for_subject(subject_id); err != nil {
+		return nil, err
+	}
+
+	self.logger.Debugf("list groups for subject")
+
+	return grps, nil
 }
 
 func (self *StorageImpl) ListGroupsForObject(object_id string) ([]*Group, error) {
-	panic("unimplemented")
+	var err error
+	var grps []*Group
+
+	if grps, err = self.list_groups_for_object(object_id); err != nil {
+		return nil, err
+	}
+
+	self.logger.Debugf("list groups for object")
+
+	return grps, nil
 }
 
 func (self *StorageImpl) get_credential(id string) (*Credential, error) {

@@ -50,7 +50,7 @@ func (self *MetathingsIdentitydService) CreateAction(ctx context.Context, req *p
 		Action: copy_action(act_s),
 	}
 
-	self.logger.WithField("id", *act.Id).Infof("create action")
+	self.logger.WithField("id", id_str).Infof("create action")
 
 	return res, nil
 }
