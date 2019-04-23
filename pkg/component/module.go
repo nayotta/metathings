@@ -125,9 +125,9 @@ func (m *Module) init_logger() error {
 func (m *Module) init_server() error {
 	var err error
 
-	initer, ok := m.tgt.(ModuleServiceInitializer)
+	mdl_srv_initer, ok := m.tgt.(ModuleServiceInitializer)
 	if ok {
-		err = initer.InitModuleService(m)
+		err = mdl_srv_initer.InitModuleService(m)
 		if err != nil {
 			return err
 		}

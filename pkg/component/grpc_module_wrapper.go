@@ -68,12 +68,14 @@ func (self *GrpcModuleWrapper) UnaryCall(ctx context.Context, req *pb.UnaryCallR
 	meth := req.GetMethod().GetValue()
 	fn, err := self.lookup_unary_method(meth)
 	if err != nil {
+		self.logger.WithError(err).WithField("method", meth).Errorf("failed to lookup unary method")
 		return nil, err
 	}
 	self.logger.WithField("method", meth).Debugf("lookup unary method")
 
 	any_res, err := fn(ctx, req.Value)
 	if err != nil {
+		self.logger.WithError(err).Errorf("unary call error")
 		return nil, err
 	}
 
