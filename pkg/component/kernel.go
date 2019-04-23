@@ -31,6 +31,10 @@ func (kc *KernelConfig) Sub(key string) *KernelConfig {
 	return &KernelConfig{kc.Viper.Sub(key)}
 }
 
+func (kc *KernelConfig) Raw() *viper.Viper {
+	return kc.Viper
+}
+
 func new_kernel_config_viper_form_text(text string) (*viper.Viper, error) {
 	v := viper.New()
 
