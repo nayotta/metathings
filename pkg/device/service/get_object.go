@@ -3,7 +3,6 @@ package metathings_device_service
 import (
 	"context"
 
-	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
@@ -30,11 +29,6 @@ func (self *MetathingsDeviceServiceImpl) GetObject(ctx context.Context, req *pb.
 	}
 
 	res := &pb.GetObjectResponse{Object: cres.GetObject()}
-
-	self.logger.WithFields(log.Fields{
-		"object.prefix": obj.Prefix.Value,
-		"object.name":   obj.Name.Value,
-	}).Debugf("get object")
 
 	return res, nil
 }

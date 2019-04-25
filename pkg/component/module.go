@@ -1,13 +1,17 @@
 package metathings_component
 
 import (
+	"io"
 	"io/ioutil"
 	"os"
 	"os/signal"
+	"path"
 	"strings"
+	"sync"
 	"time"
 
 	log_helper "github.com/nayotta/metathings/pkg/common/log"
+	deviced_pb "github.com/nayotta/metathings/pkg/proto/deviced"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/pflag"
 )
@@ -29,6 +33,9 @@ type ModuleOption struct {
 }
 
 type Module struct {
+	name_once *sync.Once
+	name      string
+
 	krn    *Kernel
 	tgt    interface{}
 	srv    ModuleServer
@@ -150,6 +157,61 @@ func (m *Module) init_server() error {
 	return nil
 }
 
+func (m *Module) Name() string {
+	m.name_once.Do(func() {
+		mdl, err := m.Kernel().Show()
+		// TODO(Peer): should not panic
+		if err != nil {
+			panic(err)
+		}
+		m.name = mdl.Name
+	})
+
+	return m.name
+}
+
+func (m *Module) WithNamespace(name string) string {
+	return path.Join("modules", m.Name(), name)
+}
+
+func (m *Module) PutObject(name string, content io.Reader) error {
+	return m.Kernel().PutObject(m.WithNamespace(name), content)
+}
+
+func (m *Module) PutObjects(objects map[string]io.Reader) error {
+	with_namespace_objects := make(map[string]io.Reader)
+	for name, content := range objects {
+		with_namespace_objects[m.WithNamespace(name)] = content
+	}
+
+	return m.Kernel().PutObjects(with_namespace_objects)
+}
+
+func (m *Module) GetObject(name string) (*deviced_pb.Object, error) {
+	return m.Kernel().GetObject(m.WithNamespace(name))
+}
+
+func (m *Module) GetObjectContent(name string) ([]byte, error) {
+	return m.Kernel().GetObjectContent(m.WithNamespace(name))
+}
+
+func (m *Module) RemoveObject(name string) error {
+	return m.Kernel().RemoveObject(m.WithNamespace(name))
+}
+
+func (m *Module) RemoveObjects(names []string) error {
+	with_namespace_names := []string{}
+	for _, name := range names {
+		with_namespace_names = append(with_namespace_names, m.WithNamespace(name))
+	}
+
+	return m.Kernel().RemoveObjects(with_namespace_names)
+}
+
+func (m *Module) RenameObject(src, dst string) error {
+	return m.Kernel().RenameObject(m.WithNamespace(src), m.WithNamespace(dst))
+}
+
 func (m *Module) Kernel() *Kernel {
 	return m.krn
 }
@@ -226,6 +288,8 @@ func (m *Module) Launch() error {
 
 func NewModule(name string, target interface{}) (*Module, error) {
 	return &Module{
+		name_once: new(sync.Once),
+
 		tgt:   target,
 		opt:   &ModuleOption{},
 		flags: pflag.NewFlagSet(name, pflag.ExitOnError),

@@ -3,9 +3,12 @@ package metathings_device_service
 import (
 	"time"
 
+	grpc_auth "github.com/grpc-ecosystem/go-grpc-middleware/auth"
 	log "github.com/sirupsen/logrus"
 
+	afo_helper "github.com/nayotta/metathings/pkg/common/auth_func_overrider"
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
+	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
 	session_helper "github.com/nayotta/metathings/pkg/common/session"
 	token_helper "github.com/nayotta/metathings/pkg/common/token"
 	pb "github.com/nayotta/metathings/pkg/proto/device"
@@ -26,6 +29,7 @@ type MetathingsDeviceServiceOption struct {
 }
 
 type MetathingsDeviceServiceImpl struct {
+	grpc_auth.ServiceAuthFuncOverride
 	tknr    token_helper.Tokener
 	cli_fty *client_helper.ClientFactory
 	logger  log.FieldLogger
@@ -37,6 +41,22 @@ type MetathingsDeviceServiceImpl struct {
 	conn_cfn client_helper.CloseFn
 
 	startup_session int32
+}
+
+var (
+	ignore_methods = []string{
+		"IssueModuleToken",
+	}
+)
+
+func (self *MetathingsDeviceServiceImpl) IsIgnoreMethod(md *grpc_helper.MethodDescription) bool {
+	for _, m := range ignore_methods {
+		if md.Method == m {
+			return true
+		}
+	}
+
+	return false
 }
 
 func (self *MetathingsDeviceServiceImpl) Stop() error {
@@ -55,13 +75,17 @@ func NewMetathingsDeviceService(
 	tknr token_helper.Tokener,
 	cli_fty *client_helper.ClientFactory,
 	logger log.FieldLogger,
+	tkvdr token_helper.TokenValidator,
 	opt *MetathingsDeviceServiceOption,
 ) (MetathingsDeviceService, error) {
-	return &MetathingsDeviceServiceImpl{
+	srv := &MetathingsDeviceServiceImpl{
 		tknr:            tknr,
 		cli_fty:         cli_fty,
 		logger:          logger,
 		opt:             opt,
 		startup_session: session_helper.GenerateStartupSession(),
-	}, nil
+	}
+	srv.ServiceAuthFuncOverride = afo_helper.NewAuthFuncOverrider(tkvdr, srv, logger)
+
+	return srv, nil
 }

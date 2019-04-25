@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/golang/protobuf/ptypes/empty"
-	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
@@ -34,13 +33,6 @@ func (self *MetathingsDeviceServiceImpl) RenameObject(ctx context.Context, req *
 		self.logger.WithError(err).Errorf("failed to rename object from deviced service")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
-
-	self.logger.WithFields(log.Fields{
-		"source.prefix":      src.Prefix.Value,
-		"source.name":        src.Name.Value,
-		"destination.prefix": dst.Prefix.Value,
-		"destination.name":   dst.Name.Value,
-	}).Debugf("rename object")
 
 	return &empty.Empty{}, nil
 }

@@ -97,7 +97,9 @@ func (k *Kernel) Show() (*deviced_pb.Module, error) {
 	}
 	defer cfn()
 
-	mdl, err := _show_module(cli, k.Context())
+	ctx := k.Context()
+	fmt.Println(ctx)
+	mdl, err := _show_module(cli, ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -115,6 +117,22 @@ func (k *Kernel) PutObject(name string, content io.Reader) error {
 	err = _put_object(cli, k.Context(), name, content)
 	if err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func (k *Kernel) PutObjects(objects map[string]io.Reader) error {
+	cli, cfn, err := k.cli_fty.NewDeviceServiceClient()
+	if err != nil {
+		return err
+	}
+	defer cfn()
+
+	for name, content := range objects {
+		if err = _put_object(cli, k.Context(), name, content); err != nil {
+			return err
+		}
 	}
 
 	return nil
@@ -160,6 +178,22 @@ func (k *Kernel) RemoveObject(name string) error {
 	err = _remove_object(cli, k.Context(), name)
 	if err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func (k *Kernel) RemoveObjects(names []string) error {
+	cli, cfn, err := k.cli_fty.NewDeviceServiceClient()
+	if err != nil {
+		return err
+	}
+	defer cfn()
+
+	for _, name := range names {
+		if err = _remove_object(cli, k.Context(), name); err != nil {
+			return err
+		}
 	}
 
 	return nil

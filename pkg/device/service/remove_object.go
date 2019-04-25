@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/golang/protobuf/ptypes/empty"
-	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
@@ -29,11 +28,6 @@ func (self *MetathingsDeviceServiceImpl) RemoveObject(ctx context.Context, req *
 		self.logger.WithError(err).Errorf("failed to remove object from deviced service")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
-
-	self.logger.WithFields(log.Fields{
-		"object.prefix": obj.Prefix.Value,
-		"object.name":   obj.Name.Value,
-	}).Debugf("remove object")
 
 	return &empty.Empty{}, nil
 }
