@@ -3,6 +3,7 @@ package context_helper
 import (
 	"context"
 	"strconv"
+	"strings"
 
 	"google.golang.org/grpc/metadata"
 
@@ -16,6 +17,10 @@ func WithToken(ctx context.Context, token string) context.Context {
 
 func WithTokenOp(token string) func(metadata.MD) metadata.MD {
 	return func(md metadata.MD) metadata.MD {
+		if !strings.HasPrefix(token, "mt") {
+			token = "mt " + strings.Trim(token, " ")
+		}
+
 		md.Append("authorization", token)
 		return md
 	}
