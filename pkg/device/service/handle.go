@@ -6,11 +6,27 @@ import (
 	"sync"
 	"time"
 
+	log "github.com/sirupsen/logrus"
+	"google.golang.org/grpc/status"
+
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
 	context_helper "github.com/nayotta/metathings/pkg/common/context"
 	deviced_pb "github.com/nayotta/metathings/pkg/proto/deviced"
-	log "github.com/sirupsen/logrus"
 )
+
+func parse_error_to_connect_error_response(name, service, method string, err error) *deviced_pb.ConnectResponse_Err {
+	s := status.Convert(err)
+
+	return &deviced_pb.ConnectResponse_Err{
+		Err: &deviced_pb.ErrorValue{
+			Name:      name,
+			Component: service,
+			Method:    method,
+			Code:      uint32(s.Code()),
+			Message:   s.Message(),
+		},
+	}
+}
 
 func (self *MetathingsDeviceServiceImpl) handle(req *deviced_pb.ConnectRequest) error {
 	switch req.Kind {
@@ -63,18 +79,24 @@ func (self *MetathingsDeviceServiceImpl) handle_user_unary_request(req *deviced_
 	logger.Debugf("lookup module in storage")
 
 	res_val, err := mdl.UnaryCall(context.Background(), req_val)
-	if err != nil {
-		logger.WithError(err).Debugf("failed to unary call in module")
-		return err
-	}
 	logger.Debugf("unary call in module")
 
-	res := &deviced_pb.ConnectResponse{
-		SessionId: sess,
-		Kind:      kind,
-		Union: &deviced_pb.ConnectResponse_UnaryCall{
-			UnaryCall: res_val,
-		},
+	var res *deviced_pb.ConnectResponse
+
+	if err != nil {
+		res = &deviced_pb.ConnectResponse{
+			SessionId: sess,
+			Kind:      kind,
+			Union:     parse_error_to_connect_error_response(name, component, method, err),
+		}
+	} else {
+		res = &deviced_pb.ConnectResponse{
+			SessionId: sess,
+			Kind:      kind,
+			Union: &deviced_pb.ConnectResponse_UnaryCall{
+				UnaryCall: res_val,
+			},
+		}
 	}
 
 	err = self.conn_stm.Send(res)

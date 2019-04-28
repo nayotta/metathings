@@ -126,59 +126,866 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type IdentitydServiceClient interface {
+	//
+	// @fn CreateDomain
+	// @arg domain.id <optional> "domain id"
+	// @arg domain.parent.id "domain parent id"
+	// @arg domain.name "domain name"
+	// @arg domain.alias <optional> "domain alias"
+	// @arg domain.extra <optional> "extra data, json string"
+	// @ret domain
+	// @req
+	//   {
+	//     "domain": {
+	//       "name": "test",
+	//       "parent": {
+	//         "id": "default"
+	//       }
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	CreateDomain(ctx context.Context, in *CreateDomainRequest, opts ...grpc.CallOption) (*CreateDomainResponse, error)
+	//
+	// @fn DeleteDomain
+	// @arg domain.id "domain id"
+	// @ret
+	// @req
+	//   {
+	//     "domain": {
+	//       "id": "domain-id"
+	//     }
+	//   }
+	// @res
+	//   { }
+	// @err FailedPrecondition
+	// @err Internal
 	DeleteDomain(ctx context.Context, in *DeleteDomainRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	//
+	// @fn PatchDomain
+	// @arg domain.id "domain id"
+	// @arg domain.alias <optional> "domain alias"
+	// @arg domain.extra <optional> "extra data, json string"
+	// @ret domain
+	// @req
+	//   {
+	//     "domain": {
+	//       "id": "domain-id"
+	//       "alias": "renamed-domain"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	PatchDomain(ctx context.Context, in *PatchDomainRequest, opts ...grpc.CallOption) (*PatchDomainResponse, error)
+	//
+	// @fn GetDomain
+	// @arg domain.id "domain id"
+	// @ret domain
+	// @req
+	//   {
+	//     "domain": {
+	//       "id": "domain-id"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err InvalidArgument
+	// @err Internal
 	GetDomain(ctx context.Context, in *GetDomainRequest, opts ...grpc.CallOption) (*GetDomainResponse, error)
+	//
+	// @fn ListDomains
+	// @arg domain.id <optional> "domain id"
+	// @arg domain.name <optional> "domain name"
+	// @arg domain.alias <optional> "domain alias"
+	// @ret domains "list of domains"
+	// @req
+	//   { ... }
+	// @res
+	//   { ... }
+	// @err Internal
 	ListDomains(ctx context.Context, in *ListDomainsRequest, opts ...grpc.CallOption) (*ListDomainsResponse, error)
+	//
+	// @fn CreateAction
+	// @arg action.id <optional> "action id"
+	// @arg action.name "action name, format: <service>:<action>, example: identtiyd2:create_action"
+	// @arg action.alias <optional> "action alias"
+	// @arg action.description <optional> "action description"
+	// @arg action.extra <optional> "extra data, json string"
+	// @ret action
+	// @req
+	//   {
+	//     "action": {
+	//       "name": "identityd2:create_action"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	CreateAction(ctx context.Context, in *CreateActionRequest, opts ...grpc.CallOption) (*CreateActionResponse, error)
+	//
+	// @fn DeleteAction
+	// @arg action.id "action id"
+	// @ret
+	// @req
+	//   {
+	//     "action": {
+	//       "id": "action-id"
+	//     }
+	//   }
+	// @res
+	//   { }
+	// @err Internal
 	DeleteAction(ctx context.Context, in *DeleteActionRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	//
+	// @fn PatchAction
+	// @arg action.id "action id"
+	// @arg action.alias <optional> "action alias"
+	// @arg action.description <optional> "action description"
+	// @arg action.extra <optional> "extra data, json string"
+	// @ret action
+	// @req
+	//   {
+	//     "action": {
+	//       "id": "action-id",
+	//       "alias": "renamed-action-alias"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	PatchAction(ctx context.Context, in *PatchActionRequest, opts ...grpc.CallOption) (*PatchActionResponse, error)
+	//
+	// @fn GetAction
+	// @arg action.id "action id"
+	// @ret action
+	// @req
+	//   {
+	//     "action": {
+	//       "id": "action-id"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	GetAction(ctx context.Context, in *GetActionRequest, opts ...grpc.CallOption) (*GetActionResponse, error)
+	//
+	// @fn ListActions
+	// @unimplemented
+	// @arg action.id <optional> "action id"
+	// @arg action.name <optional> "action name"
+	// @arg action.alias <optional> "action alias"
+	// @ret actions "list of action"
+	// @req
+	//   { ... }
+	// @res
+	//   { ... }
+	// @err Internal
 	ListActions(ctx context.Context, in *ListActionsRequest, opts ...grpc.CallOption) (*ListActionsResponse, error)
+	//
+	// @fn CreateRole
+	// @arg role.id <optional> "role id"
+	// @arg role.name "role name"
+	// @arg role.alias <optional> "role alias"
+	// @arg role.description <optional> "role description"
+	// @arg role.extra <optional> "extra data, json string"
+	// @ret role
+	// @req
+	//   {
+	//     "role": {
+	//       "name": "admin"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	CreateRole(ctx context.Context, in *CreateRoleRequest, opts ...grpc.CallOption) (*CreateRoleResponse, error)
+	//
+	// @fn DeleteRole
+	// @arg role.id "role id"
+	// @ret
+	// @req
+	//   {
+	//     "role": {
+	//       "id": "role-id"
+	//     }
+	//   }
+	// @res
+	//   { }
+	// @err Internal
 	DeleteRole(ctx context.Context, in *DeleteRoleRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	//
+	// @fn PatchRole
+	// @arg role.id "role id"
+	// @arg role.alias <optional> "role alias"
+	// @arg role.description <optional> "role description"
+	// @arg role.extra <optional> "extra data, json string"
+	// @ret role
+	// @req
+	//   {
+	//     "role": {
+	//       "id": "role-id",
+	//       "alias": "renamed-role-alias"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	PatchRole(ctx context.Context, in *PatchRoleRequest, opts ...grpc.CallOption) (*PatchRoleResponse, error)
+	//
+	// @fn GetRole
+	// @arg role.id "role id"
+	// @ret role
+	// @req
+	//   {
+	//     "role": {
+	//       "id": "role-id"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err InvalidArgument
+	// @err Internal
 	GetRole(ctx context.Context, in *GetRoleRequest, opts ...grpc.CallOption) (*GetRoleResponse, error)
+	//
+	// @fn ListRoles
+	// @arg role.id <optional> "role id"
+	// @arg role.name <optional> "role name"
+	// @arg role.alias <optional> "role alias"
+	// @ret roles "list of role"
+	// @req
+	//   {
+	//     "role": {
+	//       "id": "role-id",
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	ListRoles(ctx context.Context, in *ListRolesRequest, opts ...grpc.CallOption) (*ListRolesResponse, error)
+	//
+	// @fn ListRolesForEntity
+	// @unimplemented
 	ListRolesForEntity(ctx context.Context, in *ListRolesForEntityRequest, opts ...grpc.CallOption) (*ListRolesForEntityResponse, error)
+	//
+	// @fn AddActionToRole
+	// @arg role.id "role id"
+	// @arg action.id "action id"
+	// @ret
+	// @req
+	//   {
+	//     "role": {
+	//       "id": "role-id"
+	//     },
+	//     "action": {
+	//       "id": "action-id"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	AddActionToRole(ctx context.Context, in *AddActionToRoleRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	//
+	// @fn RemoveActionFromRole
+	// @arg role.id "role id"
+	// @arg action.id "action id"
+	// @ret
+	// @req
+	//   {
+	//     "role": {
+	//       "id": "role-id"
+	//     },
+	//     "action": {
+	//       "id": "action-id"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	RemoveActionFromRole(ctx context.Context, in *RemoveActionFromRoleRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	//
+	// @fn CreateEntity
+	// @arg entity.id <optional> "entity id"
+	// @arg entity.name "entity name"
+	// @arg entity.alias <optional> "entity alias"
+	// @arg entity.password <optional> "if create entity for user, password MUST exists, password size from 8 to 128 bytes"
+	// @arg entity.extra <optional> "extra data, json string"
+	// @ret entity
+	// @req
+	//   {
+	//     "entity": {
+	//       "name": "entity-name",
+	//       "password": "password",
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	CreateEntity(ctx context.Context, in *CreateEntityRequest, opts ...grpc.CallOption) (*CreateEntityResponse, error)
+	//
+	// @fn DeleteEntity
+	// @arg entity.id "entity id"
+	// @ret
+	// @req
+	//   {
+	//     "entity": {
+	//       "id": "entity-id"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	DeleteEntity(ctx context.Context, in *DeleteEntityRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	//
+	// @fn PatchEntity
+	// @arg entity.id "entity id"
+	// @arg entity.alias <optional> "entity alias"
+	// @arg enttiy.password <optional> "entity password"
+	// @arg entity.extra <optional> "extra data, json string"
+	// @ret entity
+	// @req
+	//   {
+	//     "entity": {
+	//       "id": "entity-id",
+	//       "password": "new-password"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	PatchEntity(ctx context.Context, in *PatchEntityRequest, opts ...grpc.CallOption) (*PatchEntityResponse, error)
+	//
+	// @fn GetEnttiy
+	// @arg entity.id "entity id"
+	// @ret entity
+	// @req
+	//   {
+	//     "entity": {
+	//       "id": "entity-id"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	GetEntity(ctx context.Context, in *GetEntityRequest, opts ...grpc.CallOption) (*GetEntityResponse, error)
+	//
+	// @fn ListEntities
+	// @arg entity.id <optional> "entity id"
+	// @arg entity.name <optional> "entity name"
+	// @arg entity.alias <optional> "entity alias"
+	// @ret entities "list of entity"
+	// @req
+	//   {
+	//     "entity": {
+	//       "id": "entity-id"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	ListEntities(ctx context.Context, in *ListEntitiesRequest, opts ...grpc.CallOption) (*ListEntitiesResponse, error)
+	//
+	// @fn ShowEntity
+	// @unimplemented
 	ShowEntity(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*ShowEntityResponse, error)
+	//
+	// @fn AddRoleToEntity
+	// @arg role.id "role id"
+	// @arg entity.id "entity id"
+	// @ret
+	// @req
+	//   {
+	//     "role": {
+	//       "id": "role-id"
+	//     },
+	//     "entity": {
+	//       "id": "entity-id"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	AddRoleToEntity(ctx context.Context, in *AddRoleToEntityRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	//
+	// @fn RemoveRoleFromEntity
+	// @arg role.id "role id"
+	// @arg entity.id "entity id"
+	// @ret
+	// @req
+	//   {
+	//     "role": {
+	//       "id": "role-id"
+	//     },
+	//     "entity": {
+	//       "id": "entity-id"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	RemoveRoleFromEntity(ctx context.Context, in *RemoveRoleFromEntityRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	//
+	// @fn AddEntityToDomain
+	// @arg domain.id "domain id"
+	// @arg entity.id "entity id"
+	// @ret
+	// @req
+	//   {
+	//     "domain": {
+	//       "id": "domain-id"
+	//     },
+	//     "entity": {
+	//       "id": "entity-id"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	AddEntityToDomain(ctx context.Context, in *AddEntityToDomainRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	//
+	// @fn RemoveEntityFromDomain
+	// @arg domain.id "domain id"
+	// @arg entity.id "entity id"
+	// @ret
+	// @req
+	//   {
+	//     "domain": {
+	//       "id": "domain-id"
+	//     },
+	//     "entity": {
+	//       "id": "entity-id"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	RemoveEntityFromDomain(ctx context.Context, in *RemoveEntityFromDomainRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	//
+	// @fn CreateGroup
+	// @arg group.id <optional> "group id"
+	// @arg group.domain.id "create group in domain"
+	// @arg group.name "group name"
+	// @arg group.alias "group alias"
+	// @arg group.description "group description"
+	// @arg group.extra "extra data, json string"
+	// @ret group
+	// @req
+	//   {
+	//     "group": {
+	//       "name": "group-name",
+	//       "domain": {
+	//         "id": "domain-id"
+	//       }
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	CreateGroup(ctx context.Context, in *CreateGroupRequest, opts ...grpc.CallOption) (*CreateGroupResponse, error)
+	//
+	// @fn DeleteGroup
+	// @arg group.id "group id"
+	// @ret
+	// @req
+	//   {
+	//     "group": {
+	//       "id": "group-id"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	DeleteGroup(ctx context.Context, in *DeleteGroupRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	//
+	// @fn PatchGroup
+	// @arg group.id "group id"
+	// @arg group.alias <optional> "group alias"
+	// @arg group.description <optional> "group description"
+	// @arg group.extra <optional> "extra data, json string"
+	// @ret group
+	// @req
+	//   {
+	//     "group": {
+	//       "id": "group-id"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	PatchGroup(ctx context.Context, in *PatchGroupRequest, opts ...grpc.CallOption) (*PatchGroupResponse, error)
+	//
+	// @fn GetGroup
+	// @arg group.id "group id"
+	// @ret group
+	// @req
+	//   {
+	//     "group": {
+	//       "id": "group-id"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	GetGroup(ctx context.Context, in *GetGroupRequest, opts ...grpc.CallOption) (*GetGroupResponse, error)
+	//
+	// @fn ListGroups
+	// @arg group.id <optional> "group id"
+	// @arg group.domain.id <optional> "domain id"
+	// @arg group.name <optional> "group name"
+	// @arg group.alias <optional> "group alias"
+	// @ret groups "list of group"
+	// @req
+	//   {
+	//     "group": {
+	//       "id": "group-id"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	ListGroups(ctx context.Context, in *ListGroupsRequest, opts ...grpc.CallOption) (*ListGroupsResponse, error)
+	//
+	// @fn ListGroupsForEntity
+	// @unimplemented
 	ListGroupsForEntity(ctx context.Context, in *ListGroupsForEntityRequest, opts ...grpc.CallOption) (*ListGroupsForEntityResponse, error)
+	//
+	// @fn ShowGroups
+	// @unimplemented
 	ShowGroups(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*ShowGroupsResponse, error)
+	//
+	// @fn AddRoleToGroup
+	// @arg role.id "role id"
+	// @arg group.id "group id"
+	// @ret
+	// @req
+	//   {
+	//     "role": {
+	//       "id": "role-id"
+	//     },
+	//     "group": {
+	//       "id": "group-id"
+	//     }
+	//   }
+	// @res
+	//   { }
+	// @err Internal
 	AddRoleToGroup(ctx context.Context, in *AddRoleToGroupRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	//
+	// @fn RemoveRoleFromGroup
+	// @arg role.id "role id"
+	// @arg group.id "group id"
+	// @ret
+	// @req
+	//   {
+	//     "role": {
+	//       "id": "role-id"
+	//     },
+	//     "group": {
+	//       "id": "group-id"
+	//     }
+	//   }
+	// @res
+	//   { }
+	// @err Internal
 	RemoveRoleFromGroup(ctx context.Context, in *RemoveRoleFromGroupRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	//
+	// @fn AddSubjectToGroup
+	// @arg subject.id "subject id"
+	// @arg group.id "group id"
+	// @ret
+	// @req
+	//   {
+	//     "subject": {
+	//       "id": "subject-id"
+	//     },
+	//     "group": {
+	//       "id": "group-id"
+	//     }
+	//   }
+	// @res
+	//   { }
+	// @err Internal
 	AddSubjectToGroup(ctx context.Context, in *AddSubjectToGroupRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	//
+	// @fn RemoveSubjectFromGroup
+	// @arg subject.id "subject id"
+	// @arg group.id "group id"
+	// @ret
+	// @req
+	//   {
+	//     "subject": {
+	//       "id": "subject-id"
+	//     },
+	//     "group": {
+	//       "id": "group-id"
+	//     }
+	//   }
+	// @res
+	//   { }
+	// @err Internal
 	RemoveSubjectFromGroup(ctx context.Context, in *RemoveSubjectFromGroupRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	//
+	// @fn AddObjectToGroup
+	// @arg object.id "object id"
+	// @arg group.id "group id"
+	// @ret
+	// @req
+	//   {
+	//     "object": {
+	//       "id": "object-id"
+	//     },
+	//     "group": {
+	//       "id": "group-id"
+	//     }
+	//   }
+	// @res
+	//   { }
+	// @err Internal
 	AddObjectToGroup(ctx context.Context, in *AddObjectToGroupRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	//
+	// @fn RemoveObjectFromGroup
+	// @arg object.id "object id"
+	// @arg group.id "group id"
+	// @ret
+	// @req
+	//   {
+	//     "object": {
+	//       "id": "object-id"
+	//     },
+	//     "group": {
+	//       "id": "group-id"
+	//     }
+	//   }
+	// @res
+	//   { }
+	// @err Internal
 	RemoveObjectFromGroup(ctx context.Context, in *RemoveObjectFromGroupRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	//
+	// @fn CreateCredential
+	// @arg credential.id <optional> "credential id"
+	// @arg credential.domain.id "domain id"
+	// @arg credential.entity.id "entity id"
+	// @arg credential.name "credential name"
+	// @arg credential.alias <optional> "credential alias"
+	// @arg credential.secret <optional> "credential secret"
+	// @arg credential.description <optional> "credential description"
+	// @arg credential.expires_at <optional> "expires time"
+	// @arg credential.roles.id <list> <optional> "list of role"
+	// @arg secret_size <optional> "secret size, default 32 bytes"
+	// @ret credential
+	// @req
+	//   {
+	//     "credential": {
+	//       "domain": {
+	//         "id": "domain-id"
+	//       },
+	//       "entity": {
+	//         "id": "entity-id"
+	//       },
+	//       "name": "cred-name",
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	CreateCredential(ctx context.Context, in *CreateCredentialRequest, opts ...grpc.CallOption) (*CreateCredentialResponse, error)
+	//
+	// @fn DeleteCredential
+	// @arg credential.id "credential id"
+	// @ret
+	// @req
+	//   {
+	//     "credential": {
+	//       "id": "credential-id"
+	//     }
+	//   }
+	// @res
+	//   { }
+	// @err Internal
 	DeleteCredential(ctx context.Context, in *DeleteCredentialRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	//
+	// @fn PatchCredential
+	// @arg credential.id "credential id"
+	// @arg credential.alias "credential alias"
+	// @arg credential.description "credential description"
+	// @ret credential
+	// @req
+	//   {
+	//     "credential": {
+	//       "id": "credential-id",
+	//       "alias": "renamed-credential-alias"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	PatchCredential(ctx context.Context, in *PatchCredentialRequest, opts ...grpc.CallOption) (*PatchCredentialResponse, error)
+	//
+	// @fn GetCredential
+	// @arg credential.id "credential id"
+	// @ret credential
+	// @req
+	//   {
+	//     "credential": {
+	//       "id": "credential-id",
+	//     }
+	//   }
+	// @res
+	//   { ... }
 	GetCredential(ctx context.Context, in *GetCredentialRequest, opts ...grpc.CallOption) (*GetCredentialResponse, error)
+	//
+	// @fn ListCredentials
+	// @arg credential.id <optional> "credential id"
+	// @arg credential.domain.id <optional> "domain id"
+	// @arg credential.entity.id <optional> "entity id"
+	// @arg credential.name <optional> "credential name"
+	// @arg credential.alias <optional> "credential alias"
+	// @ret credentials "list of credential"
+	// @req
+	//   {
+	//     "credential": {
+	//       "id": "credential-id"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	ListCredentials(ctx context.Context, in *ListCredentialsRequest, opts ...grpc.CallOption) (*ListCredentialsResponse, error)
+	//
+	// @fn ListCredentialsForEntity
+	// @unimplemented
 	ListCredentialsForEntity(ctx context.Context, in *ListCredentialsForEntityRequest, opts ...grpc.CallOption) (*ListCredentialsForEntityResponse, error)
+	//
+	// @fn IssueTokenByCredential
+	// @arg credential.id "credential id"
+	// @arg credential.domain.id "domain id"
+	// @arg timestamp "timestamp"
+	// @arg nonce "nonce"
+	// @arg hmac "=hmac(key, credential.id+timestamp+nonce), helper: pkg/identityd2/contrib/issue_token_by_credential.go:NewIssueTokenByCredentialRequest"
+	// @ret token
+	// @req
+	//   {
+	//     "credential": {
+	//       "id": "credential-id"
+	//     },
+	//     "timestamp": {
+	//       "seconds": 0,
+	//       "nanos": 0
+	//     },
+	//     "nonce": 0,
+	//     "hmac": "hmac"
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
+	// @err Unauthenticated
 	IssueTokenByCredential(ctx context.Context, in *IssueTokenByCredentialRequest, opts ...grpc.CallOption) (*IssueTokenByCredentialResponse, error)
+	//
+	// @fn IssueTokenByPassword
+	// @arg entity.domains.id "domain id, less 1 domain"
+	// @arg entity.id <optional> "entity id"
+	// @arg entity.name <optional> "entity name"
+	// @arg entity.password "entity password"
+	// @ret token
+	// @req
+	//   {
+	//     "entity": {
+	//       "domains": [{"id": "domain-id"}],
+	//       "name": "test",
+	//       "password": "test"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
+	// @err Unauthenticated
 	IssueTokenByPassword(ctx context.Context, in *IssueTokenByPasswordRequest, opts ...grpc.CallOption) (*IssueTokenByPasswordResponse, error)
+	//
+	// @fn IssueTokenByToken
+	// @arg token.domain.id "domain id"
+	// @arg token.text "token text"
+	// @ret token
+	// @req
+	//   {
+	//     "token": {
+	//       "domain": {
+	//         "id": "domain-id"
+	//       },
+	//       "text": "token-text"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
+	// @err Unauthenticated
 	IssueTokenByToken(ctx context.Context, in *IssueTokenByTokenRequest, opts ...grpc.CallOption) (*IssueTokenByTokenResponse, error)
+	//
+	// @fn RevokeToken
+	// @arg token.text "token text"
+	// @ret
+	// @req
+	//   {
+	//     "token": {
+	//       "text": "token-text"
+	//     }
+	//   }
+	// @res
+	//   { }
+	// @err Internal
+	// @err FailedPrecondition
 	RevokeToken(ctx context.Context, in *RevokeTokenRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	//
+	// @fn ValidateToken
+	// @arg token.text "token text"
+	// @ret
+	// @req
+	//   {
+	//     "token": {
+	//       "text": "token-text"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
+	// @err InvalidArgument
+	// @err Unauthenticated
 	ValidateToken(ctx context.Context, in *ValidateTokenRequest, opts ...grpc.CallOption) (*ValidateTokenResponse, error)
+	//
+	// @fn CheckToken
+	// @arg token.text "token text"
+	// @arg token.domain.id "domain id"
+	// @ret
+	// @req
+	//   {
+	//     "token": {
+	//       "domain": {
+	//         "id": "domain-id"
+	//       },
+	//       "text": "token-text"
+	//     }
+	//   }
+	// @err Internal
+	// @err InvalidArgument
+	// @err Unauthenticated
 	CheckToken(ctx context.Context, in *CheckTokenRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	//
+	// @fn AuthorizeToken
+	// @arg object.id "object id"
+	// @arg action.name "action name"
+	// @ret
+	// @req
+	//   {
+	//     "object": {
+	//       "id": "object-id"
+	//     },
+	//     "action": {
+	//       "name": "action-name"
+	//     }
+	//   }
+	// @res
+	// @err PermissionDenied
+	// @err Internal
 	AuthorizeToken(ctx context.Context, in *AuthorizeTokenRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 }
 
@@ -678,59 +1485,866 @@ func (c *identitydServiceClient) AuthorizeToken(ctx context.Context, in *Authori
 
 // IdentitydServiceServer is the server API for IdentitydService service.
 type IdentitydServiceServer interface {
+	//
+	// @fn CreateDomain
+	// @arg domain.id <optional> "domain id"
+	// @arg domain.parent.id "domain parent id"
+	// @arg domain.name "domain name"
+	// @arg domain.alias <optional> "domain alias"
+	// @arg domain.extra <optional> "extra data, json string"
+	// @ret domain
+	// @req
+	//   {
+	//     "domain": {
+	//       "name": "test",
+	//       "parent": {
+	//         "id": "default"
+	//       }
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	CreateDomain(context.Context, *CreateDomainRequest) (*CreateDomainResponse, error)
+	//
+	// @fn DeleteDomain
+	// @arg domain.id "domain id"
+	// @ret
+	// @req
+	//   {
+	//     "domain": {
+	//       "id": "domain-id"
+	//     }
+	//   }
+	// @res
+	//   { }
+	// @err FailedPrecondition
+	// @err Internal
 	DeleteDomain(context.Context, *DeleteDomainRequest) (*empty.Empty, error)
+	//
+	// @fn PatchDomain
+	// @arg domain.id "domain id"
+	// @arg domain.alias <optional> "domain alias"
+	// @arg domain.extra <optional> "extra data, json string"
+	// @ret domain
+	// @req
+	//   {
+	//     "domain": {
+	//       "id": "domain-id"
+	//       "alias": "renamed-domain"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	PatchDomain(context.Context, *PatchDomainRequest) (*PatchDomainResponse, error)
+	//
+	// @fn GetDomain
+	// @arg domain.id "domain id"
+	// @ret domain
+	// @req
+	//   {
+	//     "domain": {
+	//       "id": "domain-id"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err InvalidArgument
+	// @err Internal
 	GetDomain(context.Context, *GetDomainRequest) (*GetDomainResponse, error)
+	//
+	// @fn ListDomains
+	// @arg domain.id <optional> "domain id"
+	// @arg domain.name <optional> "domain name"
+	// @arg domain.alias <optional> "domain alias"
+	// @ret domains "list of domains"
+	// @req
+	//   { ... }
+	// @res
+	//   { ... }
+	// @err Internal
 	ListDomains(context.Context, *ListDomainsRequest) (*ListDomainsResponse, error)
+	//
+	// @fn CreateAction
+	// @arg action.id <optional> "action id"
+	// @arg action.name "action name, format: <service>:<action>, example: identtiyd2:create_action"
+	// @arg action.alias <optional> "action alias"
+	// @arg action.description <optional> "action description"
+	// @arg action.extra <optional> "extra data, json string"
+	// @ret action
+	// @req
+	//   {
+	//     "action": {
+	//       "name": "identityd2:create_action"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	CreateAction(context.Context, *CreateActionRequest) (*CreateActionResponse, error)
+	//
+	// @fn DeleteAction
+	// @arg action.id "action id"
+	// @ret
+	// @req
+	//   {
+	//     "action": {
+	//       "id": "action-id"
+	//     }
+	//   }
+	// @res
+	//   { }
+	// @err Internal
 	DeleteAction(context.Context, *DeleteActionRequest) (*empty.Empty, error)
+	//
+	// @fn PatchAction
+	// @arg action.id "action id"
+	// @arg action.alias <optional> "action alias"
+	// @arg action.description <optional> "action description"
+	// @arg action.extra <optional> "extra data, json string"
+	// @ret action
+	// @req
+	//   {
+	//     "action": {
+	//       "id": "action-id",
+	//       "alias": "renamed-action-alias"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	PatchAction(context.Context, *PatchActionRequest) (*PatchActionResponse, error)
+	//
+	// @fn GetAction
+	// @arg action.id "action id"
+	// @ret action
+	// @req
+	//   {
+	//     "action": {
+	//       "id": "action-id"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	GetAction(context.Context, *GetActionRequest) (*GetActionResponse, error)
+	//
+	// @fn ListActions
+	// @unimplemented
+	// @arg action.id <optional> "action id"
+	// @arg action.name <optional> "action name"
+	// @arg action.alias <optional> "action alias"
+	// @ret actions "list of action"
+	// @req
+	//   { ... }
+	// @res
+	//   { ... }
+	// @err Internal
 	ListActions(context.Context, *ListActionsRequest) (*ListActionsResponse, error)
+	//
+	// @fn CreateRole
+	// @arg role.id <optional> "role id"
+	// @arg role.name "role name"
+	// @arg role.alias <optional> "role alias"
+	// @arg role.description <optional> "role description"
+	// @arg role.extra <optional> "extra data, json string"
+	// @ret role
+	// @req
+	//   {
+	//     "role": {
+	//       "name": "admin"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	CreateRole(context.Context, *CreateRoleRequest) (*CreateRoleResponse, error)
+	//
+	// @fn DeleteRole
+	// @arg role.id "role id"
+	// @ret
+	// @req
+	//   {
+	//     "role": {
+	//       "id": "role-id"
+	//     }
+	//   }
+	// @res
+	//   { }
+	// @err Internal
 	DeleteRole(context.Context, *DeleteRoleRequest) (*empty.Empty, error)
+	//
+	// @fn PatchRole
+	// @arg role.id "role id"
+	// @arg role.alias <optional> "role alias"
+	// @arg role.description <optional> "role description"
+	// @arg role.extra <optional> "extra data, json string"
+	// @ret role
+	// @req
+	//   {
+	//     "role": {
+	//       "id": "role-id",
+	//       "alias": "renamed-role-alias"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	PatchRole(context.Context, *PatchRoleRequest) (*PatchRoleResponse, error)
+	//
+	// @fn GetRole
+	// @arg role.id "role id"
+	// @ret role
+	// @req
+	//   {
+	//     "role": {
+	//       "id": "role-id"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err InvalidArgument
+	// @err Internal
 	GetRole(context.Context, *GetRoleRequest) (*GetRoleResponse, error)
+	//
+	// @fn ListRoles
+	// @arg role.id <optional> "role id"
+	// @arg role.name <optional> "role name"
+	// @arg role.alias <optional> "role alias"
+	// @ret roles "list of role"
+	// @req
+	//   {
+	//     "role": {
+	//       "id": "role-id",
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	ListRoles(context.Context, *ListRolesRequest) (*ListRolesResponse, error)
+	//
+	// @fn ListRolesForEntity
+	// @unimplemented
 	ListRolesForEntity(context.Context, *ListRolesForEntityRequest) (*ListRolesForEntityResponse, error)
+	//
+	// @fn AddActionToRole
+	// @arg role.id "role id"
+	// @arg action.id "action id"
+	// @ret
+	// @req
+	//   {
+	//     "role": {
+	//       "id": "role-id"
+	//     },
+	//     "action": {
+	//       "id": "action-id"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	AddActionToRole(context.Context, *AddActionToRoleRequest) (*empty.Empty, error)
+	//
+	// @fn RemoveActionFromRole
+	// @arg role.id "role id"
+	// @arg action.id "action id"
+	// @ret
+	// @req
+	//   {
+	//     "role": {
+	//       "id": "role-id"
+	//     },
+	//     "action": {
+	//       "id": "action-id"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	RemoveActionFromRole(context.Context, *RemoveActionFromRoleRequest) (*empty.Empty, error)
+	//
+	// @fn CreateEntity
+	// @arg entity.id <optional> "entity id"
+	// @arg entity.name "entity name"
+	// @arg entity.alias <optional> "entity alias"
+	// @arg entity.password <optional> "if create entity for user, password MUST exists, password size from 8 to 128 bytes"
+	// @arg entity.extra <optional> "extra data, json string"
+	// @ret entity
+	// @req
+	//   {
+	//     "entity": {
+	//       "name": "entity-name",
+	//       "password": "password",
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	CreateEntity(context.Context, *CreateEntityRequest) (*CreateEntityResponse, error)
+	//
+	// @fn DeleteEntity
+	// @arg entity.id "entity id"
+	// @ret
+	// @req
+	//   {
+	//     "entity": {
+	//       "id": "entity-id"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	DeleteEntity(context.Context, *DeleteEntityRequest) (*empty.Empty, error)
+	//
+	// @fn PatchEntity
+	// @arg entity.id "entity id"
+	// @arg entity.alias <optional> "entity alias"
+	// @arg enttiy.password <optional> "entity password"
+	// @arg entity.extra <optional> "extra data, json string"
+	// @ret entity
+	// @req
+	//   {
+	//     "entity": {
+	//       "id": "entity-id",
+	//       "password": "new-password"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	PatchEntity(context.Context, *PatchEntityRequest) (*PatchEntityResponse, error)
+	//
+	// @fn GetEnttiy
+	// @arg entity.id "entity id"
+	// @ret entity
+	// @req
+	//   {
+	//     "entity": {
+	//       "id": "entity-id"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	GetEntity(context.Context, *GetEntityRequest) (*GetEntityResponse, error)
+	//
+	// @fn ListEntities
+	// @arg entity.id <optional> "entity id"
+	// @arg entity.name <optional> "entity name"
+	// @arg entity.alias <optional> "entity alias"
+	// @ret entities "list of entity"
+	// @req
+	//   {
+	//     "entity": {
+	//       "id": "entity-id"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	ListEntities(context.Context, *ListEntitiesRequest) (*ListEntitiesResponse, error)
+	//
+	// @fn ShowEntity
+	// @unimplemented
 	ShowEntity(context.Context, *empty.Empty) (*ShowEntityResponse, error)
+	//
+	// @fn AddRoleToEntity
+	// @arg role.id "role id"
+	// @arg entity.id "entity id"
+	// @ret
+	// @req
+	//   {
+	//     "role": {
+	//       "id": "role-id"
+	//     },
+	//     "entity": {
+	//       "id": "entity-id"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	AddRoleToEntity(context.Context, *AddRoleToEntityRequest) (*empty.Empty, error)
+	//
+	// @fn RemoveRoleFromEntity
+	// @arg role.id "role id"
+	// @arg entity.id "entity id"
+	// @ret
+	// @req
+	//   {
+	//     "role": {
+	//       "id": "role-id"
+	//     },
+	//     "entity": {
+	//       "id": "entity-id"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	RemoveRoleFromEntity(context.Context, *RemoveRoleFromEntityRequest) (*empty.Empty, error)
+	//
+	// @fn AddEntityToDomain
+	// @arg domain.id "domain id"
+	// @arg entity.id "entity id"
+	// @ret
+	// @req
+	//   {
+	//     "domain": {
+	//       "id": "domain-id"
+	//     },
+	//     "entity": {
+	//       "id": "entity-id"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	AddEntityToDomain(context.Context, *AddEntityToDomainRequest) (*empty.Empty, error)
+	//
+	// @fn RemoveEntityFromDomain
+	// @arg domain.id "domain id"
+	// @arg entity.id "entity id"
+	// @ret
+	// @req
+	//   {
+	//     "domain": {
+	//       "id": "domain-id"
+	//     },
+	//     "entity": {
+	//       "id": "entity-id"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	RemoveEntityFromDomain(context.Context, *RemoveEntityFromDomainRequest) (*empty.Empty, error)
+	//
+	// @fn CreateGroup
+	// @arg group.id <optional> "group id"
+	// @arg group.domain.id "create group in domain"
+	// @arg group.name "group name"
+	// @arg group.alias "group alias"
+	// @arg group.description "group description"
+	// @arg group.extra "extra data, json string"
+	// @ret group
+	// @req
+	//   {
+	//     "group": {
+	//       "name": "group-name",
+	//       "domain": {
+	//         "id": "domain-id"
+	//       }
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	CreateGroup(context.Context, *CreateGroupRequest) (*CreateGroupResponse, error)
+	//
+	// @fn DeleteGroup
+	// @arg group.id "group id"
+	// @ret
+	// @req
+	//   {
+	//     "group": {
+	//       "id": "group-id"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	DeleteGroup(context.Context, *DeleteGroupRequest) (*empty.Empty, error)
+	//
+	// @fn PatchGroup
+	// @arg group.id "group id"
+	// @arg group.alias <optional> "group alias"
+	// @arg group.description <optional> "group description"
+	// @arg group.extra <optional> "extra data, json string"
+	// @ret group
+	// @req
+	//   {
+	//     "group": {
+	//       "id": "group-id"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	PatchGroup(context.Context, *PatchGroupRequest) (*PatchGroupResponse, error)
+	//
+	// @fn GetGroup
+	// @arg group.id "group id"
+	// @ret group
+	// @req
+	//   {
+	//     "group": {
+	//       "id": "group-id"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	GetGroup(context.Context, *GetGroupRequest) (*GetGroupResponse, error)
+	//
+	// @fn ListGroups
+	// @arg group.id <optional> "group id"
+	// @arg group.domain.id <optional> "domain id"
+	// @arg group.name <optional> "group name"
+	// @arg group.alias <optional> "group alias"
+	// @ret groups "list of group"
+	// @req
+	//   {
+	//     "group": {
+	//       "id": "group-id"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	ListGroups(context.Context, *ListGroupsRequest) (*ListGroupsResponse, error)
+	//
+	// @fn ListGroupsForEntity
+	// @unimplemented
 	ListGroupsForEntity(context.Context, *ListGroupsForEntityRequest) (*ListGroupsForEntityResponse, error)
+	//
+	// @fn ShowGroups
+	// @unimplemented
 	ShowGroups(context.Context, *empty.Empty) (*ShowGroupsResponse, error)
+	//
+	// @fn AddRoleToGroup
+	// @arg role.id "role id"
+	// @arg group.id "group id"
+	// @ret
+	// @req
+	//   {
+	//     "role": {
+	//       "id": "role-id"
+	//     },
+	//     "group": {
+	//       "id": "group-id"
+	//     }
+	//   }
+	// @res
+	//   { }
+	// @err Internal
 	AddRoleToGroup(context.Context, *AddRoleToGroupRequest) (*empty.Empty, error)
+	//
+	// @fn RemoveRoleFromGroup
+	// @arg role.id "role id"
+	// @arg group.id "group id"
+	// @ret
+	// @req
+	//   {
+	//     "role": {
+	//       "id": "role-id"
+	//     },
+	//     "group": {
+	//       "id": "group-id"
+	//     }
+	//   }
+	// @res
+	//   { }
+	// @err Internal
 	RemoveRoleFromGroup(context.Context, *RemoveRoleFromGroupRequest) (*empty.Empty, error)
+	//
+	// @fn AddSubjectToGroup
+	// @arg subject.id "subject id"
+	// @arg group.id "group id"
+	// @ret
+	// @req
+	//   {
+	//     "subject": {
+	//       "id": "subject-id"
+	//     },
+	//     "group": {
+	//       "id": "group-id"
+	//     }
+	//   }
+	// @res
+	//   { }
+	// @err Internal
 	AddSubjectToGroup(context.Context, *AddSubjectToGroupRequest) (*empty.Empty, error)
+	//
+	// @fn RemoveSubjectFromGroup
+	// @arg subject.id "subject id"
+	// @arg group.id "group id"
+	// @ret
+	// @req
+	//   {
+	//     "subject": {
+	//       "id": "subject-id"
+	//     },
+	//     "group": {
+	//       "id": "group-id"
+	//     }
+	//   }
+	// @res
+	//   { }
+	// @err Internal
 	RemoveSubjectFromGroup(context.Context, *RemoveSubjectFromGroupRequest) (*empty.Empty, error)
+	//
+	// @fn AddObjectToGroup
+	// @arg object.id "object id"
+	// @arg group.id "group id"
+	// @ret
+	// @req
+	//   {
+	//     "object": {
+	//       "id": "object-id"
+	//     },
+	//     "group": {
+	//       "id": "group-id"
+	//     }
+	//   }
+	// @res
+	//   { }
+	// @err Internal
 	AddObjectToGroup(context.Context, *AddObjectToGroupRequest) (*empty.Empty, error)
+	//
+	// @fn RemoveObjectFromGroup
+	// @arg object.id "object id"
+	// @arg group.id "group id"
+	// @ret
+	// @req
+	//   {
+	//     "object": {
+	//       "id": "object-id"
+	//     },
+	//     "group": {
+	//       "id": "group-id"
+	//     }
+	//   }
+	// @res
+	//   { }
+	// @err Internal
 	RemoveObjectFromGroup(context.Context, *RemoveObjectFromGroupRequest) (*empty.Empty, error)
+	//
+	// @fn CreateCredential
+	// @arg credential.id <optional> "credential id"
+	// @arg credential.domain.id "domain id"
+	// @arg credential.entity.id "entity id"
+	// @arg credential.name "credential name"
+	// @arg credential.alias <optional> "credential alias"
+	// @arg credential.secret <optional> "credential secret"
+	// @arg credential.description <optional> "credential description"
+	// @arg credential.expires_at <optional> "expires time"
+	// @arg credential.roles.id <list> <optional> "list of role"
+	// @arg secret_size <optional> "secret size, default 32 bytes"
+	// @ret credential
+	// @req
+	//   {
+	//     "credential": {
+	//       "domain": {
+	//         "id": "domain-id"
+	//       },
+	//       "entity": {
+	//         "id": "entity-id"
+	//       },
+	//       "name": "cred-name",
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	CreateCredential(context.Context, *CreateCredentialRequest) (*CreateCredentialResponse, error)
+	//
+	// @fn DeleteCredential
+	// @arg credential.id "credential id"
+	// @ret
+	// @req
+	//   {
+	//     "credential": {
+	//       "id": "credential-id"
+	//     }
+	//   }
+	// @res
+	//   { }
+	// @err Internal
 	DeleteCredential(context.Context, *DeleteCredentialRequest) (*empty.Empty, error)
+	//
+	// @fn PatchCredential
+	// @arg credential.id "credential id"
+	// @arg credential.alias "credential alias"
+	// @arg credential.description "credential description"
+	// @ret credential
+	// @req
+	//   {
+	//     "credential": {
+	//       "id": "credential-id",
+	//       "alias": "renamed-credential-alias"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	PatchCredential(context.Context, *PatchCredentialRequest) (*PatchCredentialResponse, error)
+	//
+	// @fn GetCredential
+	// @arg credential.id "credential id"
+	// @ret credential
+	// @req
+	//   {
+	//     "credential": {
+	//       "id": "credential-id",
+	//     }
+	//   }
+	// @res
+	//   { ... }
 	GetCredential(context.Context, *GetCredentialRequest) (*GetCredentialResponse, error)
+	//
+	// @fn ListCredentials
+	// @arg credential.id <optional> "credential id"
+	// @arg credential.domain.id <optional> "domain id"
+	// @arg credential.entity.id <optional> "entity id"
+	// @arg credential.name <optional> "credential name"
+	// @arg credential.alias <optional> "credential alias"
+	// @ret credentials "list of credential"
+	// @req
+	//   {
+	//     "credential": {
+	//       "id": "credential-id"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	ListCredentials(context.Context, *ListCredentialsRequest) (*ListCredentialsResponse, error)
+	//
+	// @fn ListCredentialsForEntity
+	// @unimplemented
 	ListCredentialsForEntity(context.Context, *ListCredentialsForEntityRequest) (*ListCredentialsForEntityResponse, error)
+	//
+	// @fn IssueTokenByCredential
+	// @arg credential.id "credential id"
+	// @arg credential.domain.id "domain id"
+	// @arg timestamp "timestamp"
+	// @arg nonce "nonce"
+	// @arg hmac "=hmac(key, credential.id+timestamp+nonce), helper: pkg/identityd2/contrib/issue_token_by_credential.go:NewIssueTokenByCredentialRequest"
+	// @ret token
+	// @req
+	//   {
+	//     "credential": {
+	//       "id": "credential-id"
+	//     },
+	//     "timestamp": {
+	//       "seconds": 0,
+	//       "nanos": 0
+	//     },
+	//     "nonce": 0,
+	//     "hmac": "hmac"
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
+	// @err Unauthenticated
 	IssueTokenByCredential(context.Context, *IssueTokenByCredentialRequest) (*IssueTokenByCredentialResponse, error)
+	//
+	// @fn IssueTokenByPassword
+	// @arg entity.domains.id "domain id, less 1 domain"
+	// @arg entity.id <optional> "entity id"
+	// @arg entity.name <optional> "entity name"
+	// @arg entity.password "entity password"
+	// @ret token
+	// @req
+	//   {
+	//     "entity": {
+	//       "domains": [{"id": "domain-id"}],
+	//       "name": "test",
+	//       "password": "test"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
+	// @err Unauthenticated
 	IssueTokenByPassword(context.Context, *IssueTokenByPasswordRequest) (*IssueTokenByPasswordResponse, error)
+	//
+	// @fn IssueTokenByToken
+	// @arg token.domain.id "domain id"
+	// @arg token.text "token text"
+	// @ret token
+	// @req
+	//   {
+	//     "token": {
+	//       "domain": {
+	//         "id": "domain-id"
+	//       },
+	//       "text": "token-text"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
+	// @err Unauthenticated
 	IssueTokenByToken(context.Context, *IssueTokenByTokenRequest) (*IssueTokenByTokenResponse, error)
+	//
+	// @fn RevokeToken
+	// @arg token.text "token text"
+	// @ret
+	// @req
+	//   {
+	//     "token": {
+	//       "text": "token-text"
+	//     }
+	//   }
+	// @res
+	//   { }
+	// @err Internal
+	// @err FailedPrecondition
 	RevokeToken(context.Context, *RevokeTokenRequest) (*empty.Empty, error)
+	//
+	// @fn ValidateToken
+	// @arg token.text "token text"
+	// @ret
+	// @req
+	//   {
+	//     "token": {
+	//       "text": "token-text"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
+	// @err InvalidArgument
+	// @err Unauthenticated
 	ValidateToken(context.Context, *ValidateTokenRequest) (*ValidateTokenResponse, error)
+	//
+	// @fn CheckToken
+	// @arg token.text "token text"
+	// @arg token.domain.id "domain id"
+	// @ret
+	// @req
+	//   {
+	//     "token": {
+	//       "domain": {
+	//         "id": "domain-id"
+	//       },
+	//       "text": "token-text"
+	//     }
+	//   }
+	// @err Internal
+	// @err InvalidArgument
+	// @err Unauthenticated
 	CheckToken(context.Context, *CheckTokenRequest) (*empty.Empty, error)
+	//
+	// @fn AuthorizeToken
+	// @arg object.id "object id"
+	// @arg action.name "action name"
+	// @ret
+	// @req
+	//   {
+	//     "object": {
+	//       "id": "object-id"
+	//     },
+	//     "action": {
+	//       "name": "action-name"
+	//     }
+	//   }
+	// @res
+	// @err PermissionDenied
+	// @err Internal
 	AuthorizeToken(context.Context, *AuthorizeTokenRequest) (*empty.Empty, error)
 }
 
