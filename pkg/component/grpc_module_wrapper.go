@@ -7,6 +7,8 @@ import (
 
 	"github.com/golang/protobuf/ptypes/any"
 	log "github.com/sirupsen/logrus"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 
 	pb "github.com/nayotta/metathings/pkg/proto/component"
 )
@@ -69,7 +71,7 @@ func (self *GrpcModuleWrapper) UnaryCall(ctx context.Context, req *pb.UnaryCallR
 	fn, err := self.lookup_unary_method(meth)
 	if err != nil {
 		self.logger.WithError(err).WithField("method", meth).Errorf("failed to lookup unary method")
-		return nil, err
+		return nil, status.Errorf(codes.Unimplemented, err.Error())
 	}
 	self.logger.WithField("method", meth).Debugf("lookup unary method")
 
@@ -95,7 +97,7 @@ func (self *GrpcModuleWrapper) StreamCall(upstm pb.ModuleService_StreamCallServe
 
 	if req, err = upstm.Recv(); err != nil {
 		self.logger.WithError(err).Errorf("failed to receive config message")
-		return err
+		return status.Errorf(codes.Internal, err.Error())
 	}
 	self.logger.Debugf("receive config message")
 
@@ -103,14 +105,14 @@ func (self *GrpcModuleWrapper) StreamCall(upstm pb.ModuleService_StreamCallServe
 	if cfg == nil {
 		err = ErrInvalidArguments
 		self.logger.WithError(err).Errorf("faield to get config from message")
-		return err
+		return status.Errorf(codes.FailedPrecondition, err.Error())
 	}
 
 	meth := cfg.GetMethod().GetValue()
 	fn, err := self.lookup_stream_method(meth)
 	if err != nil {
 		self.logger.WithError(err).Errorf("failed to lookup stream method")
-		return err
+		return status.Errorf(codes.Unimplemented, err.Error())
 	}
 	self.logger.WithField("method", meth).Debugf("lookup stream method")
 

@@ -10,6 +10,8 @@ import (
 	"github.com/golang/protobuf/ptypes/wrappers"
 	"github.com/grpc-ecosystem/go-grpc-middleware/util/metautils"
 	log "github.com/sirupsen/logrus"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 
 	session_helper "github.com/nayotta/metathings/pkg/common/session"
 	session_storage "github.com/nayotta/metathings/pkg/deviced/session_storage"
@@ -324,6 +326,7 @@ func (self *connectionCenter) UnaryCall(dev *storage.Device, req *pb.OpUnaryCall
 	var conn_res pb.ConnectResponse
 	var ucv *pb.UnaryCallValue
 	var err error
+	var crerr *pb.ErrorValue
 	dev_id := *dev.Id
 
 	if startup_sess, err = self.session_storage.GetStartupSession(dev_id); err != nil {
@@ -380,6 +383,10 @@ func (self *connectionCenter) UnaryCall(dev *storage.Device, req *pb.OpUnaryCall
 		return nil, err
 	}
 	self.logger.Debugf("unmarshal response")
+
+	if crerr = conn_res.GetErr(); crerr != nil {
+		return nil, status.Errorf(codes.Code(crerr.GetCode()), crerr.GetMessage())
+	}
 
 	if ucv = conn_res.GetUnaryCall(); ucv == nil {
 		return nil, ErrUnexpectedResponse

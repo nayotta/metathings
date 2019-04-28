@@ -101,9 +101,10 @@ message OpObject {
 
 message ErrorValue {
 	string name = 1;
-	string service_name = 2;
-	string method_name = 3;
-	string context = 4;
+	string component = 2;
+	string method = 3;
+	uint32 code = 4;
+	string message = 5;
 }
 
 message OpUnaryCallValue {
