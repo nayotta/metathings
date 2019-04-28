@@ -11,6 +11,7 @@ import (
 	cmd_contrib "github.com/nayotta/metathings/cmd/contrib"
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
 	cmd_helper "github.com/nayotta/metathings/pkg/common/cmd"
+	const_helper "github.com/nayotta/metathings/pkg/common/constant"
 	id_helper "github.com/nayotta/metathings/pkg/common/id"
 	passwd_helper "github.com/nayotta/metathings/pkg/common/passwd"
 	policy "github.com/nayotta/metathings/pkg/identityd2/policy"
@@ -124,9 +125,9 @@ func initIdentityd2() error {
 							return nil
 						}
 
-						dom_id_str := "default"
-						dom_name_str := "default"
-						dom_alias_str := "default"
+						dom_id_str := const_helper.DEFAULT_DOMAIN
+						dom_name_str := const_helper.DEFAULT_DOMAIN
+						dom_alias_str := const_helper.DEFAULT_DOMAIN
 						dom_parent_id_str := ""
 
 						dom := &storage.Domain{

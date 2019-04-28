@@ -8,7 +8,6 @@ import (
 
 	pb "github.com/nayotta/metathings/pkg/proto/device"
 	deviced_pb "github.com/nayotta/metathings/pkg/proto/deviced"
-	log "github.com/sirupsen/logrus"
 )
 
 func (self *MetathingsDeviceServiceImpl) ListObjects(ctx context.Context, req *pb.ListObjectsRequest) (*pb.ListObjectsResponse, error) {
@@ -32,11 +31,6 @@ func (self *MetathingsDeviceServiceImpl) ListObjects(ctx context.Context, req *p
 	res := &pb.ListObjectsResponse{
 		Objects: cres.GetObjects(),
 	}
-
-	self.logger.WithFields(log.Fields{
-		"object.prefix": obj.Prefix.Value,
-		"object.name":   obj.Name.Value,
-	}).Debugf("list objects")
 
 	return res, nil
 }

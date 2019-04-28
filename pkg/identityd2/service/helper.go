@@ -1,15 +1,16 @@
 package metathings_identityd2_service
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"errors"
+	"math/rand"
 	"time"
 
 	"github.com/golang/protobuf/ptypes/wrappers"
 
 	id_helper "github.com/nayotta/metathings/pkg/common/id"
 	pb_helper "github.com/nayotta/metathings/pkg/common/protobuf"
-	rand_helper "github.com/nayotta/metathings/pkg/common/rand"
 	storage "github.com/nayotta/metathings/pkg/identityd2/storage"
 	pb "github.com/nayotta/metathings/pkg/proto/identityd2"
 )
@@ -34,19 +35,14 @@ func new_token(dom_id, ent_id, cred_id *string, expire time.Duration) *storage.T
 	}
 }
 
-const (
-	SECRET_LENGTH  = 128
-	SECRET_LETTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-)
+func generate_secret(siz int32) string {
+	buf := make([]byte, siz)
 
-func generate_secret() string {
-	buf := make([]byte, SECRET_LENGTH)
-
-	for i := 0; i < SECRET_LENGTH; i++ {
-		buf[i] = SECRET_LETTERS[rand_helper.Intn(len(SECRET_LETTERS))]
+	for i := int32(0); i < siz; i++ {
+		buf[i] = byte(rand.Intn(256))
 	}
 
-	return string(buf)
+	return base64.StdEncoding.EncodeToString(buf)
 }
 
 func must_parse_extra(x map[string]*wrappers.StringValue) string {
@@ -213,7 +209,7 @@ func copy_group(x *storage.Group) *pb.Group {
 	return y
 }
 
-func copy_credential(x *storage.Credential) *pb.Credential {
+func copy_credential_with_secret(x *storage.Credential) *pb.Credential {
 	roles := []*pb.Role{}
 	for _, r := range x.Roles {
 		roles = append(roles, &pb.Role{
@@ -240,6 +236,12 @@ func copy_credential(x *storage.Credential) *pb.Credential {
 	}
 
 	return y
+}
+
+func copy_credential(x *storage.Credential) *pb.Credential {
+	cred := copy_credential_with_secret(x)
+	cred.Secret = ""
+	return cred
 }
 
 func copy_token(x *storage.Token) *pb.Token {

@@ -2,6 +2,7 @@ package metathings_deviced_connection
 
 import (
 	"errors"
+	"sync"
 )
 
 var (
@@ -36,8 +37,12 @@ type BridgeFactory interface {
 }
 
 var bridge_factory_factries map[string]func(...interface{}) (BridgeFactory, error)
+var bridge_factory_factries_once sync.Once
 
 func register_bridge_factory_factory(name string, fn func(args ...interface{}) (BridgeFactory, error)) {
+	bridge_factory_factries_once.Do(func() {
+		bridge_factory_factries = make(map[string]func(...interface{}) (BridgeFactory, error))
+	})
 	bridge_factory_factries[name] = fn
 }
 
@@ -53,8 +58,4 @@ func NewBridgeFactory(name string, args ...interface{}) (BridgeFactory, error) {
 	}
 
 	return fty, nil
-}
-
-func init() {
-	bridge_factory_factries = make(map[string]func(...interface{}) (BridgeFactory, error))
 }

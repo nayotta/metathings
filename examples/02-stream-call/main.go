@@ -96,7 +96,7 @@ func main() {
 		}
 	}
 
-	echo_req := &echo_pb.EchoRequest{
+	echo_req := &echo_pb.StreamingEchoRequest{
 		Text: &wrappers.StringValue{Value: request},
 	}
 	any_req, err := ptypes.MarshalAny(echo_req)
@@ -119,7 +119,7 @@ func main() {
 
 			fmt.Printf("type=%v\nvalue=%v\n", any_res.TypeUrl, any_res.Value)
 
-			var echo_res echo_pb.EchoResponse
+			var echo_res echo_pb.StreamingEchoResponse
 			err = ptypes.UnmarshalAny(any_res, &echo_res)
 			if err != nil {
 				panic(err)

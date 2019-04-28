@@ -9,6 +9,7 @@ import (
 
 	cmd_contrib "github.com/nayotta/metathings/cmd/contrib"
 	cmd_helper "github.com/nayotta/metathings/pkg/common/cmd"
+	token_helper "github.com/nayotta/metathings/pkg/common/token"
 	service "github.com/nayotta/metathings/pkg/device/service"
 	pb "github.com/nayotta/metathings/pkg/proto/device"
 )
@@ -79,6 +80,7 @@ func run_device() error {
 			cmd_contrib.NewLogger("device"),
 			cmd_contrib.NewClientFactory,
 			cmd_contrib.NewTokener,
+			token_helper.NewTokenValidator,
 			NewMetathingsDeviceServiceOption,
 			service.NewMetathingsDeviceService,
 			func(x service.MetathingsDeviceService) pb.DeviceServiceServer {

@@ -81,6 +81,7 @@ func (self *saramaChannel) init_consumer() {
 	config.Consumer.Return.Errors = true
 	config.Group.Return.Notifications = true
 	config.Group.Heartbeat.Interval = 30 * time.Millisecond
+	config.Consumer.Offsets.Initial = sarama.OffsetOldest
 
 	if self.consumer, err = cluster.NewConsumer(self.opt.Brokers, self.opt.Id, []string{self.consumer_topic()}, config); err != nil {
 		self.logger.WithError(err).Warningf("failed to init consumer")
@@ -321,10 +322,6 @@ func new_sarama_bridge_factory(args ...interface{}) (BridgeFactory, error) {
 	var logger log.FieldLogger
 	var err error
 
-	if len(args)%2 != 0 {
-		return nil, ErrInvalidArgument
-	}
-
 	opt := &saramaBridgeFactoryOption{}
 
 	if err = opt_helper.Setopt(map[string]func(string, interface{}) error{
@@ -368,6 +365,10 @@ func new_sarama_bridge_factory(args ...interface{}) (BridgeFactory, error) {
 	}, nil
 }
 
+var register_sarama_bridge_factory_factory_once sync.Once
+
 func init() {
-	register_bridge_factory_factory("sarama", new_sarama_bridge_factory)
+	register_sarama_bridge_factory_factory_once.Do(func() {
+		register_bridge_factory_factory("sarama", new_sarama_bridge_factory)
+	})
 }

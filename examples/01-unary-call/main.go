@@ -6,6 +6,8 @@ import (
 	"os"
 
 	"github.com/golang/protobuf/ptypes"
+	"github.com/golang/protobuf/ptypes/any"
+	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/golang/protobuf/ptypes/wrappers"
 	"github.com/spf13/pflag"
 	"google.golang.org/grpc"
@@ -39,15 +41,25 @@ func main() {
 
 	fmt.Printf("addr=%v\ndevice=%v\nmodule=%v\ncomponent=%v\nmethod=%v\nrequest=%v\n", deviced_addr, device_id, module, component, method, request)
 
-	if component != "echo" && method != "Echo" {
-		panic("unsupported call")
-	}
+	var any_req *any.Any
 
-	echo_req := &echo_pb.EchoRequest{
-		Text: &wrappers.StringValue{Value: request},
+	switch component {
+	case "echo":
+		switch method {
+		case "Echo":
+			echo_req := &echo_pb.EchoRequest{
+				Text: &wrappers.StringValue{Value: request},
+			}
+			any_req, _ = ptypes.MarshalAny(echo_req)
+		}
+	case "camera":
+		switch method {
+		case "Start":
+			any_req, _ = ptypes.MarshalAny(&empty.Empty{})
+		case "Stop":
+			any_req, _ = ptypes.MarshalAny(&empty.Empty{})
+		}
 	}
-
-	any_req, _ := ptypes.MarshalAny(echo_req)
 
 	req := &pb.UnaryCallRequest{
 		Device: &pb.OpDevice{
@@ -75,11 +87,24 @@ func main() {
 		panic(err)
 	}
 
-	var echo_res echo_pb.EchoResponse
-	err = ptypes.UnmarshalAny(res.Value.Value, &echo_res)
-	if err != nil {
-		panic(err)
-	}
+	switch component {
+	case "echo":
+		switch method {
+		case "Echo":
+			var echo_res echo_pb.EchoResponse
+			err = ptypes.UnmarshalAny(res.Value.Value, &echo_res)
+			if err != nil {
+				panic(err)
+			}
 
-	fmt.Println(echo_res.Text)
+			fmt.Println(echo_res.Text)
+		}
+	case "camera":
+		switch method {
+		case "Start":
+			fmt.Println("camera started")
+		case "Stop":
+			fmt.Println("camera stoped")
+		}
+	}
 }
