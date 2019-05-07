@@ -59,6 +59,13 @@ func main() {
 		case "Stop":
 			any_req, _ = ptypes.MarshalAny(&empty.Empty{})
 		}
+	case "switch":
+		switch method {
+		case "Start":
+			any_req, _ = ptypes.MarshalAny(&empty.Empty{})
+		case "Stop":
+			any_req, _ = ptypes.MarshalAny(&empty.Empty{})
+		}
 	}
 
 	req := &pb.UnaryCallRequest{
