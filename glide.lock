@@ -1,10 +1,10 @@
-hash: 0963f3d8fa001fa0470b8dacf814bc5ef6bd5d5ba5f63edbbf1f6d0205699387
-updated: 2019-03-20T10:25:16.443824+08:00
+hash: 667559a3ad3efe814802f78e3716231d225e431ce604e7619270593126b2ab12
+updated: 2019-05-06T13:42:24.807581+08:00
 imports:
 - name: github.com/bsm/sarama-cluster
   version: c618e605e15c0d7535f6c96ff8efbb0dba4fd66c
 - name: github.com/casbin/casbin
-  version: a5a1667e25abdbc5a4414ea9b6b889764174b7ec
+  version: 695c374a6617e9cdc930e8666307a772577cbd70
   subpackages:
   - config
   - effect
@@ -16,8 +16,6 @@ imports:
   - util
 - name: github.com/casbin/gorm-adapter
   version: e74a050c51a4c12323e72f0c7ab445fb2daf6b40
-- name: github.com/cbroglie/mustache
-  version: eb931a9d20042e51d8a3a9ad5a9ba9bc8282c564
 - name: github.com/confluentinc/confluent-kafka-go
   version: 460e8e43b282a1a68219df600ef63442b81faf5f
   subpackages:
@@ -66,6 +64,7 @@ imports:
   subpackages:
   - jsonpb
   - proto
+  - protoc-gen-go
   - ptypes
   - ptypes/any
   - ptypes/duration
@@ -80,10 +79,6 @@ imports:
   subpackages:
   - auth
   - util/metautils
-- name: github.com/hashicorp/errwrap
-  version: 8a6fb523712970c966eefc6b39ed2c5e74880354
-- name: github.com/hashicorp/go-multierror
-  version: 886a7fbe3eb1c874d46f623bfa70af45f425b3d1
 - name: github.com/hashicorp/hcl
   version: 65a6292f0157eff210d03ed1bf6c59b190b8b906
   subpackages:
@@ -99,7 +94,7 @@ imports:
 - name: github.com/inconshreveable/mousetrap
   version: 76626ae9c91c4f2a10f34cad8ce83ea42c93bb75
 - name: github.com/jinzhu/gorm
-  version: 472c70caa40267cb89fd8facb07fe6454b578626
+  version: 5c0f6716ad1e3a6b6a8afa56afeff747032a6926
   subpackages:
   - dialects/sqlite
 - name: github.com/jinzhu/inflection
@@ -114,11 +109,6 @@ imports:
   - oid
 - name: github.com/lovoo/goka
   version: 3da18a1c44d31288d515a7a3f8e93d3d31bb0537
-  subpackages:
-  - kafka
-  - logger
-  - multierr
-  - storage
 - name: github.com/magiconair/properties
   version: c2353362d570a7bfa228149c62842019201cfb71
 - name: github.com/mattn/go-sqlite3
@@ -158,10 +148,10 @@ imports:
   - x/network/description
   - x/network/result
   - x/network/wiremessage
-- name: github.com/moul/http2curl
-  version: 9ac6cf4d929b2fa8fd2d2e6dec5bb0feb4f4911d
 - name: github.com/mwitkow/go-proto-validators
   version: 0950a79900071e9f3f5979b78078c599376422fd
+  subpackages:
+  - protoc-gen-govalidators
 - name: github.com/nayotta/viper
   version: b5e8006cbee93ec955a89ab31e0e3ce3204f3736
 - name: github.com/parnurzeal/gorequest
@@ -176,18 +166,10 @@ imports:
   version: 059132a15dd08d6704c67711dae0cf35ab991756
 - name: github.com/rcrowley/go-metrics
   version: 3113b8401b8a98917cde58f8bbd42a1b1c03b1fd
-- name: github.com/samuel/go-zookeeper
-  version: c4fab1ac1bec58281ad0667dc3f0907a9476ac47
-  subpackages:
-  - zk
 - name: github.com/satori/go.uuid
   version: f58768cc1a7a7e77a3bd49e98cdd21419399b6a3
 - name: github.com/Shopify/sarama
   version: f3f4f5f1acf1a26acb582cfb158c2433f37288b4
-- name: github.com/sigurn/crc8
-  version: e55481d6f45c5a8f040343bace9013571dae103e
-- name: github.com/sigurn/utils
-  version: f19e41f79f8f006116f682c1af454591bc278ad4
 - name: github.com/sirupsen/logrus
   version: ad15b42461921f1fb3529b058c6786c6a45d5162
 - name: github.com/spf13/afero
@@ -204,37 +186,16 @@ imports:
   version: 082b515c9490f4eccc758469c3152b77d139f868
 - name: github.com/stianeikeland/go-rpio
   version: 019f406b4939d0ac8fb6801637506f0e2fe872d3
-- name: github.com/syndtr/goleveldb
-  version: 6b91fda63f2e36186f1c9d0e48578defb69c5d43
-  subpackages:
-  - leveldb
-  - leveldb/cache
-  - leveldb/comparer
-  - leveldb/errors
-  - leveldb/filter
-  - leveldb/iterator
-  - leveldb/journal
-  - leveldb/memdb
-  - leveldb/opt
-  - leveldb/storage
-  - leveldb/table
-  - leveldb/util
-- name: github.com/wvanbergen/kazoo-go
-  version: f72d8611297a7cf105da904c04198ad701a60101
 - name: github.com/xdg/scram
   version: 7eeb5667e42c09cb51bf7b7c28aea8c56767da90
 - name: github.com/xdg/stringprep
   version: 73f8eece6fdcd902c185bf651de50f3828bed5ed
 - name: github.com/yuin/gopher-lua
   version: afd0ecd19d39ec7934808cec084e17011691ae5f
-  subpackages:
-  - ast
-  - parse
-  - pm
 - name: go.uber.org/atomic
-  version: 1ea20fb1cbb1cc08cbd0d913a96dead89aa18289
+  version: df976f2515e274675050de7b3f42545de80594fd
 - name: go.uber.org/dig
-  version: 007ab720a796b1027b6c289fb4e836c8fc077357
+  version: 7ff117f761a3f1b3eb521945c17a1091438eb6de
   subpackages:
   - internal/digreflect
   - internal/dot
@@ -250,10 +211,7 @@ imports:
   version: ed531980b4efe72c4fd9e768171855de3af2d718
   subpackages:
   - drivers/gpio
-  - drivers/i2c
-  - drivers/spi
   - platforms/raspi
-  - sysfs
 - name: golang.org/x/crypto
   version: bc7917b19d8f099105de72dc62898400be07c984
   subpackages:
@@ -270,12 +228,10 @@ imports:
   - http2/hpack
   - idna
   - internal/timeseries
-  - publicsuffix
   - trace
 - name: golang.org/x/sync
   version: 1d60e4601c6fd243af51cc01ddf169918a5407ca
   subpackages:
-  - errgroup
   - semaphore
 - name: golang.org/x/sys
   version: d69651ed3497faee15a5363a89578e9991f6d5e2
@@ -323,20 +279,6 @@ imports:
   - tap
 - name: gopkg.in/yaml.v2
   version: 5420a8b6744d3b0345ab293f6fcba19c978f1183
-- name: periph.io/x/periph
-  version: 14d3d207203c280cca36add30d6750649c839681
-  subpackages:
-  - conn
-  - conn/gpio
-  - conn/gpio/gpioreg
-  - conn/i2c
-  - conn/i2c/i2creg
-  - conn/physic
-  - conn/pin
-  - conn/spi
-  - conn/spi/spireg
-  - host/fs
-  - host/sysfs
 testImports:
 - name: github.com/pmezard/go-difflib
   version: 792786c7400a136282c1664665ae0a8db921c6c2
