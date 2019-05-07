@@ -284,8 +284,6 @@ func (cb *CasbinBackend) _enforce(cli pb.PolicydServiceClient, sub, obj *storage
 		})
 	}
 
-	fmt.Println(reqs)
-
 	req := &pb.EnforceBucketRequest{Requests: reqs}
 	res, err := cli.EnforceBucket(cb.context(), req)
 	if err != nil {
