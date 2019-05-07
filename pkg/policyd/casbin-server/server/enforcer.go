@@ -76,7 +76,8 @@ func (s *Server) NewEnforcer(ctx context.Context, in *pb.NewEnforcerRequest) (*p
 		return &pb.NewEnforcerReply{Handler: 0}, err
 	}
 
-	e := casbin.NewEnforcer(casbin.NewModel(in.ModelText), a)
+	// TODO(Peer): turn off or on by config.
+	e := casbin.NewEnforcer(casbin.NewModel(in.ModelText), a, false)
 	h := s.addEnforcer(e)
 
 	return &pb.NewEnforcerReply{Handler: int32(h)}, nil

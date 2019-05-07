@@ -98,7 +98,6 @@ func (k *Kernel) Show() (*deviced_pb.Module, error) {
 	defer cfn()
 
 	ctx := k.Context()
-	fmt.Println(ctx)
 	mdl, err := _show_module(cli, ctx)
 	if err != nil {
 		return nil, err
