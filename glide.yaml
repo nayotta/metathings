@@ -6,8 +6,6 @@ import:
   - persist
   - persist/file-adapter
 - package: github.com/casbin/gorm-adapter
-- package: github.com/cbroglie/mustache
-  version: ~1.0.1
 - package: github.com/confluentinc/confluent-kafka-go
   version: ~0.11.6
   subpackages:
@@ -26,6 +24,7 @@ import:
   - ptypes/empty
   - ptypes/timestamp
   - ptypes/wrappers
+  - protoc-gen-go
 - package: github.com/grpc-ecosystem/go-grpc-middleware
   version: ~1.0.0
   subpackages:
@@ -38,6 +37,8 @@ import:
 - package: github.com/lovoo/goka
   version: ~0.1.0
 - package: github.com/mwitkow/go-proto-validators
+  subpackages:
+  - protoc-gen-govalidators
 - package: github.com/nayotta/viper
   version: ~1.0.2
 - package: github.com/parnurzeal/gorequest
