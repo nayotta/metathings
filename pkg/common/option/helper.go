@@ -181,7 +181,9 @@ var (
 	ErrInvalidArguments = errors.New("invalid arguments")
 )
 
-func Setopt(conds map[string]func(key string, val interface{}) error) func(...interface{}) error {
+type SetoptConds map[string]func(string, interface{}) error
+
+func Setopt(conds SetoptConds) func(...interface{}) error {
 	return func(args ...interface{}) error {
 		if len(args)%2 != 0 {
 			return ErrInvalidArguments

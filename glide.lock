@@ -153,7 +153,7 @@ imports:
   subpackages:
   - protoc-gen-govalidators
 - name: github.com/nayotta/viper
-  version: b5e8006cbee93ec955a89ab31e0e3ce3204f3736
+  version: 0b05c0f44a230bf4ce45b54c67e119302d450731
 - name: github.com/parnurzeal/gorequest
   version: a578a48e8d6ca8b01a3b18314c43c6716bb5f5a3
 - name: github.com/pelletier/go-toml
