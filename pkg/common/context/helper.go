@@ -7,7 +7,6 @@ import (
 
 	"google.golang.org/grpc/metadata"
 
-	identityd_pb "github.com/nayotta/metathings/pkg/proto/identityd"
 	identityd2_pb "github.com/nayotta/metathings/pkg/proto/identityd2"
 )
 
@@ -47,16 +46,6 @@ func NewOutgoingContext(ctx context.Context, fns ...func(metadata.MD) metadata.M
 	}
 	ctx = metadata.NewOutgoingContext(ctx, md)
 	return ctx
-}
-
-func Credential(ctx context.Context) (cred *identityd_pb.Token) {
-	var ok bool
-
-	if cred, ok = ctx.Value("credential").(*identityd_pb.Token); !ok {
-		return nil
-	}
-
-	return cred
 }
 
 func ExtractToken(ctx context.Context) *identityd2_pb.Token {

@@ -209,6 +209,16 @@ func copy_group(x *storage.Group) *pb.Group {
 	return y
 }
 
+func copy_groups(xs []*storage.Group) []*pb.Group {
+	var ys []*pb.Group
+
+	for _, x := range xs {
+		ys = append(ys, copy_group(x))
+	}
+
+	return ys
+}
+
 func copy_credential_with_secret(x *storage.Credential) *pb.Credential {
 	roles := []*pb.Role{}
 	for _, r := range x.Roles {
