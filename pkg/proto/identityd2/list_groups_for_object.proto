@@ -6,10 +6,10 @@ import "github.com/mwitkow/go-proto-validators/validator.proto";
 
 import "model.proto";
 
-message ListGroupsForEntityRequest {
-	OpGroup group = 1;
+message ListGroupsForObjectRequest {
+	OpEntity object = 1 [(validator.field) = {msg_exists: true}];
 }
 
-message ListGroupsForEntityResponse {
+message ListGroupsForObjectResponse {
 	repeated Group groups = 1;
 }
