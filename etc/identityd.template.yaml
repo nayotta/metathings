@@ -1,7 +1,0 @@
-dev:
-  listen: 127.0.0.1:5000
-  keystone:
-    url: http://127.0.0.1:35357
-  verbose: false
-  log:
-    level: info
