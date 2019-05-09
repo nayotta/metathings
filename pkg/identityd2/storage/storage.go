@@ -207,13 +207,16 @@ type Storage interface {
 	DeleteGroup(id string) error
 	PatchGroup(id string, group *Group) (*Group, error)
 	GetGroup(id string) (*Group, error)
+	ExistGroup(id string) (bool, error)
 	ListGroups(*Group) ([]*Group, error)
 	AddRoleToGroup(group_id, role_id string) error
 	RemoveRoleFromGroup(group_id, role_id string) error
 	AddSubjectToGroup(group_id, subject_id string) error
 	RemoveSubjectFromGroup(group_id, subject_id string) error
+	SubjectExistsInGroup(subject_id, group_id string) (bool, error)
 	AddObjectToGroup(group_id, object_id string) error
 	RemoveObjectFromGroup(group_id, object_id string) error
+	ObjectExistsInGroup(object_id, group_id string) (bool, error)
 	ListGroupsForSubject(subject_id string) ([]*Group, error)
 	ListGroupsForObject(subject_id string) ([]*Group, error)
 

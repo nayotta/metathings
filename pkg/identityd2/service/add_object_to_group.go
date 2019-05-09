@@ -24,6 +24,8 @@ func (self *MetathingsIdentitydService) ValidateAddObjectToGroup(ctx context.Con
 		identityd_validator.Invokers{
 			ensure_get_object_id,
 			ensure_get_group_id,
+			ensure_group_exists_s(self.storage),
+			ensure_object_not_exists_in_group_s(self.storage),
 		},
 	)
 }

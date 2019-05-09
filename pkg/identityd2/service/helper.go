@@ -426,3 +426,62 @@ func ensure_get_action_name(x action_getter) error {
 	}
 	return nil
 }
+
+func ensure_group_exists_s(s storage.Storage) func(group_getter) error {
+	return func(x group_getter) error {
+		if exist, err := s.ExistGroup(x.GetGroup().GetId().GetValue()); err != nil {
+			return err
+		} else if !exist {
+			return errors.New("group not found")
+		}
+		return nil
+	}
+}
+
+func ensure_subject_not_exists_in_group_s(s storage.Storage) func(subject_getter, group_getter) error {
+	return func(x subject_getter, y group_getter) error {
+		if exist, err := s.SubjectExistsInGroup(x.GetSubject().GetId().GetValue(), y.GetGroup().GetId().GetValue()); err != nil {
+			return err
+		} else if exist {
+			return errors.New("subject exists in group")
+		}
+
+		return nil
+	}
+}
+
+func ensure_subject_exists_in_group_s(s storage.Storage) func(subject_getter, group_getter) error {
+	return func(x subject_getter, y group_getter) error {
+		if exist, err := s.SubjectExistsInGroup(x.GetSubject().GetId().GetValue(), y.GetGroup().GetId().GetValue()); err != nil {
+			return err
+		} else if !exist {
+			return errors.New("subject not exists in group")
+		}
+
+		return nil
+	}
+}
+
+func ensure_object_not_exists_in_group_s(s storage.Storage) func(object_getter, group_getter) error {
+	return func(x object_getter, y group_getter) error {
+		if exist, err := s.ObjectExistsInGroup(x.GetObject().GetId().GetValue(), y.GetGroup().GetId().GetValue()); err != nil {
+			return err
+		} else if exist {
+			return errors.New("object exists in group")
+		}
+
+		return nil
+	}
+}
+
+func ensure_object_exists_in_group_s(s storage.Storage) func(object_getter, group_getter) error {
+	return func(x object_getter, y group_getter) error {
+		if exist, err := s.ObjectExistsInGroup(x.GetObject().GetId().GetValue(), y.GetGroup().GetId().GetValue()); err != nil {
+			return err
+		} else if !exist {
+			return errors.New("object not exists in group")
+		}
+
+		return nil
+	}
+}
