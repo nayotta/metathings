@@ -42,7 +42,8 @@ import "delete_group.proto";
 import "patch_group.proto";
 import "get_group.proto";
 import "list_groups.proto";
-import "list_groups_for_entity.proto";
+import "list_groups_for_subject.proto";
+import "list_groups_for_object.proto";
 import "show_groups.proto";
 import "add_role_to_group.proto";
 import "remove_role_from_group.proto";
@@ -624,10 +625,23 @@ service IdentitydService {
 	 */
 	rpc ListGroups(ListGroupsRequest) returns (ListGroupsResponse) {}
 	/*
-	 * @fn ListGroupsForEntity
-	 * @unimplemented
+	 * @fn ListGroupsForSubject
+	 * @arg subject.id "subject id"
+	 * @ret groups
+	 * @req
+	 *   { ... }
+	 * @err Internal
 	 */
-	rpc ListGroupsForEntity(ListGroupsForEntityRequest) returns (ListGroupsForEntityResponse) {}
+	rpc ListGroupsForSubject(ListGroupsForSubjectRequest) returns (ListGroupsForSubjectResponse) {}
+	/*
+	 * @fn ListGroupsForObject
+	 * @arg object.id "object id"
+	 * @ret groups
+	 * @req
+	 *   { ... }
+	 * @err Internal
+	 */
+	rpc ListGroupsForObject(ListGroupsForObjectRequest) returns (ListGroupsForObjectResponse) {}
 	/*
 	 * @fn ShowGroups
 	 * @unimplemented

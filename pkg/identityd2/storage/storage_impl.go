@@ -1033,6 +1033,17 @@ func (self *StorageImpl) GetGroup(id string) (*Group, error) {
 	return grp, nil
 }
 
+func (self *StorageImpl) ExistGroup(id string) (bool, error) {
+	var cnt int
+	var err error
+
+	if err = self.db.Model(&Group{}).Where("id = ?", id).Count(&cnt).Error; err != nil {
+		return false, err
+	}
+
+	return cnt > 0, nil
+}
+
 func (self *StorageImpl) ListGroups(grp *Group) ([]*Group, error) {
 	var grps []*Group
 	var err error
@@ -1131,6 +1142,17 @@ func (self *StorageImpl) RemoveSubjectFromGroup(group_id, subject_id string) err
 	return nil
 }
 
+func (self *StorageImpl) SubjectExistsInGroup(subject_id, group_id string) (bool, error) {
+	var cnt int
+	var err error
+
+	if err = self.db.Model(&SubjectGroupMapping{}).Where("subject_id = ? and group_id = ?", subject_id, group_id).Count(&cnt).Error; err != nil {
+		return false, err
+	}
+
+	return cnt > 0, nil
+}
+
 func (self *StorageImpl) AddObjectToGroup(group_id, object_id string) error {
 	var err error
 
@@ -1170,6 +1192,17 @@ func (self *StorageImpl) RemoveObjectFromGroup(group_id, object_id string) error
 	}).Debugf("remove object from group")
 
 	return nil
+}
+
+func (self *StorageImpl) ObjectExistsInGroup(object_id, group_id string) (bool, error) {
+	var cnt int
+	var err error
+
+	if err = self.db.Model(&ObjectGroupMapping{}).Where("object_id = ? and group_id = ?", object_id, group_id).Count(&cnt).Error; err != nil {
+		return false, err
+	}
+
+	return cnt > 0, nil
 }
 
 func (self *StorageImpl) list_groups_by_group_ids(grp_ids []string) ([]*Group, error) {
