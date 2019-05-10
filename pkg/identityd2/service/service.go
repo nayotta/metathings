@@ -6,6 +6,8 @@ import (
 
 	"github.com/golang/protobuf/ptypes/empty"
 	log "github.com/sirupsen/logrus"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 
 	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
 	policy "github.com/nayotta/metathings/pkg/identityd2/policy"
@@ -88,7 +90,7 @@ func (self *MetathingsIdentitydService) AuthFuncOverride(ctx context.Context, fu
 
 	if md, err = grpc_helper.ParseMethodDescription(fullMethodName); err != nil {
 		self.logger.WithError(err).Warningf("failed to parse method description")
-		return ctx, err
+		return ctx, status.Errorf(codes.Unauthenticated, err.Error())
 	}
 	if self.is_ignore_method(md) {
 		return ctx, nil
@@ -96,19 +98,19 @@ func (self *MetathingsIdentitydService) AuthFuncOverride(ctx context.Context, fu
 
 	if tkn_txt, err = grpc_helper.GetTokenFromContext(ctx); err != nil {
 		self.logger.WithError(err).Warningf("failed to get token from context")
-		return ctx, err
+		return ctx, status.Errorf(codes.Unauthenticated, err.Error())
 	}
 
 	if tkn, err = self.storage.GetTokenByText(tkn_txt); err != nil {
 		self.logger.WithError(err).Warningf("failed to get token in storage")
-		return ctx, err
+		return ctx, status.Errorf(codes.Unauthenticated, err.Error())
 	}
 
 	if self.is_invalid_token(tkn) {
 		if err = self.revoke_token(*tkn.Id); err != nil {
 			self.logger.WithError(err).Warningf("failed to revoke token")
 		}
-		return ctx, policy.ErrUnauthenticated
+		return ctx, status.Errorf(codes.Unauthenticated, err.Error())
 	}
 
 	if self.is_refreshable_token(tkn) {

@@ -2,7 +2,6 @@ package metathings_identityd2_service
 
 import (
 	"context"
-	"errors"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -23,19 +22,8 @@ func (self *MetathingsIdentitydService) ValidateCreateDomain(ctx context.Context
 			},
 		},
 		identityd_validator.Invokers{
-			func(x domain_getter) error {
-				dom := x.GetDomain()
-
-				if dom.GetParent() == nil || dom.GetParent().GetId() == nil || dom.GetParent().GetId().GetValue() == "" {
-					return errors.New("domain.parent.id is empty")
-				}
-
-				if dom.GetName() == nil {
-					return errors.New("domain.name is empty")
-				}
-
-				return nil
-			},
+			ensure_get_domain_parent_id,
+			ensure_get_domain_name,
 		},
 	)
 }

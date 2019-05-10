@@ -364,10 +364,36 @@ type action_getter interface {
 	GetAction() *pb.OpAction
 }
 
+type token_getter interface {
+	GetToken() *pb.OpToken
+}
+
 func ensure_get_domain_id(x domain_getter) error {
 	if x.GetDomain() == nil || x.GetDomain().GetId() == nil {
 		return errors.New("domain.id is empty")
 	}
+	return nil
+}
+
+func ensure_get_domain_parent_id(x domain_getter) error {
+	if dom := x.GetDomain(); dom != nil {
+		if par := dom.GetParent(); par != nil {
+			if id := par.GetId(); id != nil {
+				if s := id.GetValue(); s != "" {
+					return nil
+				}
+			}
+		}
+	}
+
+	return errors.New("domain.parent.id is empty")
+}
+
+func ensure_get_domain_name(x domain_getter) error {
+	if x.GetDomain() == nil || x.GetDomain().GetName() == nil {
+		return errors.New("domain.name is empty")
+	}
+
 	return nil
 }
 
@@ -484,4 +510,12 @@ func ensure_object_exists_in_group_s(s storage.Storage) func(object_getter, grou
 
 		return nil
 	}
+}
+
+func ensure_get_token_text(x token_getter) error {
+	if x.GetToken() == nil || x.GetToken().GetText() == nil {
+		return errors.New("token.text is empty")
+	}
+
+	return nil
 }
