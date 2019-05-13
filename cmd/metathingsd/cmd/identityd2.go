@@ -94,7 +94,8 @@ func NewIdentityd2Storage(opt cmd_contrib.StorageOptioner, logger log.FieldLogge
 
 func NewMetathingsIdentitydServiceOption(opt *Identityd2Option) *service.MetathingsIdentitydServiceOption {
 	return &service.MetathingsIdentitydServiceOption{
-		TokenExpire: 1 * time.Hour,
+		TokenExpire:      1 * time.Hour,
+		CredentialExpire: 100 * 365 * 24 * time.Hour, // 100 years.
 	}
 }
 
