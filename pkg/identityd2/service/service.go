@@ -17,7 +17,8 @@ import (
 )
 
 type MetathingsIdentitydServiceOption struct {
-	TokenExpire time.Duration
+	TokenExpire      time.Duration
+	CredentialExpire time.Duration
 }
 
 type MetathingsIdentitydService struct {
