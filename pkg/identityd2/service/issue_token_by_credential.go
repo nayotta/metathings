@@ -3,6 +3,7 @@ package metathings_identityd2_service
 import (
 	"context"
 	"errors"
+	"time"
 
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc/codes"
@@ -67,6 +68,12 @@ func (self *MetathingsIdentitydService) IssueTokenByCredential(ctx context.Conte
 	if cred_s, err = self.storage.GetCredential(cred_id_str); err != nil {
 		self.logger.WithError(err).Errorf("failed to find credential by id in storage")
 		return nil, status.Errorf(codes.Unauthenticated, policy.ErrUnauthenticated.Error())
+	}
+
+	if cred_s.ExpiresAt.Sub(time.Now()) < 0 {
+		err = errors.New("credential expired")
+		self.logger.WithError(err).Errorf("credential expired")
+		return nil, status.Errorf(codes.Unauthenticated, err.Error())
 	}
 
 	if dom_id_str != "" && !domain_in_credential(cred_s, dom_id_str) {
