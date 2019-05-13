@@ -29,7 +29,7 @@ func (self *MetathingsIdentitydService) ValidateRemoveRoleFromGroup(ctx context.
 }
 
 func (self *MetathingsIdentitydService) AuthorizeRemoveRoleFromGroup(ctx context.Context, in interface{}) error {
-	return self.authorize(ctx, in.(*pb.RemoveRoleFromGroupRequest).GetRole().GetId().GetValue(), "remove_role_from_group")
+	return self.authorize(ctx, in.(*pb.RemoveRoleFromGroupRequest).GetGroup().GetId().GetValue(), "remove_role_from_group")
 }
 
 func (self *MetathingsIdentitydService) RemoveRoleFromGroup(ctx context.Context, req *pb.RemoveRoleFromGroupRequest) (*empty.Empty, error) {

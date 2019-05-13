@@ -9,34 +9,37 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
+	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
 	storage "github.com/nayotta/metathings/pkg/identityd2/storage"
+	identityd_validator "github.com/nayotta/metathings/pkg/identityd2/validator"
 	pb "github.com/nayotta/metathings/pkg/proto/identityd2"
 )
+
+func (self *MetathingsIdentitydService) ValidateRemoveEntityFromDomain(ctx context.Context, in interface{}) error {
+	return self.validator.Validate(
+		identityd_validator.Providers{
+			func() (policy_helper.Validator, entity_getter, domain_getter) {
+				req := in.(*pb.RemoveEntityFromDomainRequest)
+				return req, req, req
+			},
+		},
+		identityd_validator.Invokers{
+			ensure_get_entity_id,
+			ensure_get_domain_id,
+		},
+	)
+}
+
+func (self *MetathingsIdentitydService) AuthorizeRemoveEntityFromDomain(ctx context.Context, in interface{}) error {
+	return self.authorize(ctx, in.(*pb.RemoveEntityFromDomainRequest).GetDomain().GetId().GetValue(), "remove_entity_from_domain")
+}
 
 func (self *MetathingsIdentitydService) RemoveEntityFromDomain(ctx context.Context, req *pb.RemoveEntityFromDomainRequest) (*empty.Empty, error) {
 	var e *storage.Entity
 	var err error
 
-	if err = req.Validate(); err != nil {
-		self.logger.WithError(err).Warningf("failed to validate request data")
-		return nil, status.Errorf(codes.InvalidArgument, err.Error())
-	}
-
-	dom := req.GetDomain()
-	if dom == nil || dom.GetId() == nil || dom.GetId().GetValue() == "" {
-		err = errors.New("domain.id is empty")
-		self.logger.WithError(err).Warningf("failed to validate request data")
-		return nil, status.Errorf(codes.InvalidArgument, err.Error())
-	}
-	dom_id_str := dom.GetId().GetValue()
-
-	ent := req.GetEntity()
-	if ent == nil || ent.GetId() == nil || ent.GetId().GetValue() == "" {
-		err = errors.New("entity.id is empty")
-		self.logger.WithError(err).Warningf("failed to validate request data")
-		return nil, status.Errorf(codes.InvalidArgument, err.Error())
-	}
-	ent_id_str := ent.GetId().GetValue()
+	dom_id_str := req.GetDomain().GetId().GetValue()
+	ent_id_str := req.GetEntity().GetId().GetValue()
 
 	if e, err = self.storage.GetEntity(ent_id_str); err != nil {
 		self.logger.WithError(err).Error("failed to get entity in storage")

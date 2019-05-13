@@ -34,14 +34,7 @@ func (self *MetathingsIdentitydService) DeleteGroup(ctx context.Context, req *pb
 	var grp_s *storage.Group
 	var err error
 
-	if err = req.Validate(); err != nil {
-		self.logger.WithError(err).Warningf("failed to validate request data")
-		return nil, status.Errorf(codes.InvalidArgument, err.Error())
-	}
-
-	grp := req.GetGroup()
-	grp_id_str := grp.GetId().GetValue()
-
+	grp_id_str := req.GetGroup().GetId().GetValue()
 	if grp_s, err = self.storage.GetGroup(grp_id_str); err != nil {
 		self.logger.WithError(err).Errorf("failed to get group in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
