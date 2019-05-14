@@ -18,20 +18,16 @@ func (self *MetathingsIdentitydService) ListRoles(ctx context.Context, req *pb.L
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 
+	role_req := req.GetRole()
 	rol := &storage.Role{}
 
-	if id := req.GetId(); id != nil {
+	if id := role_req.GetId(); id != nil {
 		rol.Id = &id.Value
 	}
-	if domain := req.GetDomain(); domain != nil {
-		if domainID := domain.GetId(); domainID != nil {
-			rol.DomainId = &domainID.Value
-		}
-	}
-	if name := req.GetName(); name != nil {
+	if name := role_req.GetName(); name != nil {
 		rol.Name = &name.Value
 	}
-	if alias := req.GetAlias(); alias != nil {
+	if alias := role_req.GetAlias(); alias != nil {
 		rol.Alias = &alias.Value
 	}
 

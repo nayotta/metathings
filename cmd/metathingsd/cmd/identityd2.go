@@ -9,7 +9,9 @@ import (
 	"go.uber.org/fx"
 
 	cmd_contrib "github.com/nayotta/metathings/cmd/contrib"
+	client_helper "github.com/nayotta/metathings/pkg/common/client"
 	cmd_helper "github.com/nayotta/metathings/pkg/common/cmd"
+	const_helper "github.com/nayotta/metathings/pkg/common/constant"
 	id_helper "github.com/nayotta/metathings/pkg/common/id"
 	passwd_helper "github.com/nayotta/metathings/pkg/common/passwd"
 	policy "github.com/nayotta/metathings/pkg/identityd2/policy"
@@ -92,32 +94,41 @@ func NewIdentityd2Storage(opt cmd_contrib.StorageOptioner, logger log.FieldLogge
 
 func NewMetathingsIdentitydServiceOption(opt *Identityd2Option) *service.MetathingsIdentitydServiceOption {
 	return &service.MetathingsIdentitydServiceOption{
-		TokenExpire: 1 * time.Hour,
+		TokenExpire:      1 * time.Hour,
+		CredentialExpire: 100 * 365 * 24 * time.Hour, // 100 years.
 	}
+}
+
+func NewIdentityd2Backend(cli_fty *client_helper.ClientFactory, logger log.FieldLogger) (policy.Backend, error) {
+	return policy.NewBackend("casbin", "logger", logger, "client_factory", cli_fty, "casbin_enforcer_handler", int32(0))
 }
 
 func initIdentityd2() error {
 	app := fx.New(
+		fx.NopLogger,
 		fx.Provide(
 			GetIdentityd2Options,
 			cmd_contrib.NewLogger("identityd2"),
 			cmd_contrib.NewClientFactory,
-			policy.NewEnforcer,
+			NewIdentityd2Backend,
 			NewIdentityd2Storage,
 		),
 		fx.Invoke(
-			func(lc fx.Lifecycle, stor storage.Storage, enf policy.Enforcer, logger log.FieldLogger) {
+			func(lc fx.Lifecycle, stor storage.Storage, bck policy.Backend, logger log.FieldLogger) {
 				lc.Append(fx.Hook{
 					OnStart: func(context.Context) error {
+						var ok bool
 						var err error
 
-						if err = enf.Initialize(); err != nil {
+						if ok, err = stor.IsInitialized(); err != nil {
 							return err
+						} else if ok {
+							return nil
 						}
 
-						dom_id_str := "default"
-						dom_name_str := "default"
-						dom_alias_str := "default"
+						dom_id_str := const_helper.DEFAULT_DOMAIN
+						dom_name_str := const_helper.DEFAULT_DOMAIN
+						dom_alias_str := const_helper.DEFAULT_DOMAIN
 						dom_parent_id_str := ""
 
 						dom := &storage.Domain{
@@ -131,14 +142,6 @@ func initIdentityd2() error {
 							return err
 						}
 
-						if err = enf.AddGroup(dom_id_str, policy.UNGROUPED); err != nil {
-							return err
-						}
-
-						if err = enf.AddObjectToKind(dom_id_str, service.KIND_DOMAIN); err != nil {
-							return err
-						}
-
 						sysadmin_id_str := id_helper.NewId()
 						sysadmin_name_str := "sysadmin"
 						sysadmin_alias_str := "sysadmin"
@@ -148,11 +151,7 @@ func initIdentityd2() error {
 							Alias: &sysadmin_alias_str,
 						}
 
-						if _, err = stor.CreateRole(sysadmin); err != nil {
-							return err
-						}
-
-						if err = enf.AddObjectToKind(sysadmin_id_str, service.KIND_ROLE); err != nil {
+						if sysadmin, err = stor.CreateRole(sysadmin); err != nil {
 							return err
 						}
 
@@ -168,23 +167,19 @@ func initIdentityd2() error {
 							Password: &admin_passwd_str,
 						}
 
-						if _, err = stor.CreateEntity(admin); err != nil {
+						if admin, err = stor.CreateEntity(admin); err != nil {
 							return err
 						}
 
-						if err = enf.AddObjectToKind(admin_id_str, service.KIND_ENTITY); err != nil {
+						if err = stor.AddEntityToDomain(dom_id_str, *admin.Id); err != nil {
 							return err
 						}
 
-						if err = stor.AddRoleToEntity(admin_id_str, sysadmin_id_str); err != nil {
+						if err = stor.AddRoleToEntity(*admin.Id, *sysadmin.Id); err != nil {
 							return err
 						}
 
-						if err = enf.AddSubjectToRole(admin_id_str, sysadmin_name_str); err != nil {
-							return err
-						}
-
-						if err = stor.AddEntityToDomain(dom_id_str, admin_id_str); err != nil {
+						if err = bck.AddRoleToEntity(admin, sysadmin); err != nil {
 							return err
 						}
 
@@ -213,9 +208,10 @@ func runIdentityd2() error {
 			cmd_contrib.NewListener,
 			cmd_contrib.NewGrpcServer,
 			cmd_contrib.NewClientFactory,
+			cmd_contrib.NewValidator,
 			NewIdentityd2Storage,
+			NewIdentityd2Backend,
 			NewMetathingsIdentitydServiceOption,
-			policy.NewEnforcer,
 			service.NewMetathingsIdentitydService,
 		),
 		fx.Invoke(

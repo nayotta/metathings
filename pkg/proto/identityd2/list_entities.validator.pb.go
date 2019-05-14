@@ -7,8 +7,6 @@ import github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-valid
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import _ "github.com/golang/protobuf/ptypes/wrappers"
-import _ "github.com/mwitkow/go-proto-validators"
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -16,38 +14,9 @@ var _ = fmt.Errorf
 var _ = math.Inf
 
 func (this *ListEntitiesRequest) Validate() error {
-	if this.Id != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Id); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Id", err)
-		}
-	}
-	if this.Domain != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Domain); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Domain", err)
-		}
-	}
-	for _, item := range this.Groups {
-		if item != nil {
-			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {
-				return github_com_mwitkow_go_proto_validators.FieldError("Groups", err)
-			}
-		}
-	}
-	for _, item := range this.Roles {
-		if item != nil {
-			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {
-				return github_com_mwitkow_go_proto_validators.FieldError("Roles", err)
-			}
-		}
-	}
-	if this.Name != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Name); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Name", err)
-		}
-	}
-	if this.Alias != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Alias); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Alias", err)
+	if this.Entity != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Entity); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Entity", err)
 		}
 	}
 	return nil

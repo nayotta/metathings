@@ -18,20 +18,21 @@ func (self *MetathingsIdentitydService) ListGroups(ctx context.Context, req *pb.
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 
+	grp_req := req.GetGroup()
 	grp := &storage.Group{}
 
-	if id := req.GetId(); id != nil {
+	if id := grp_req.GetId(); id != nil {
 		grp.Id = &id.Value
 	}
-	if domain := req.GetDomain(); domain != nil {
+	if domain := grp_req.GetDomain(); domain != nil {
 		if domainID := domain.GetId(); domainID != nil {
 			grp.DomainId = &domainID.Value
 		}
 	}
-	if name := req.GetName(); name != nil {
+	if name := grp_req.GetName(); name != nil {
 		grp.Name = &name.Value
 	}
-	if alias := req.GetAlias(); alias != nil {
+	if alias := grp_req.GetAlias(); alias != nil {
 		grp.Alias = &alias.Value
 	}
 

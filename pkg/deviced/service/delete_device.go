@@ -9,23 +9,24 @@ import (
 
 	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
 	storage "github.com/nayotta/metathings/pkg/deviced/storage"
+	identityd_validator "github.com/nayotta/metathings/pkg/identityd2/validator"
 	pb "github.com/nayotta/metathings/pkg/proto/deviced"
 )
 
 func (self *MetathingsDevicedService) ValidateDeleteDevice(ctx context.Context, in interface{}) error {
-	return self.validate_chain(
-		[]interface{}{
-			func() (policy_helper.Validator, get_devicer) {
+	return self.validator.Validate(
+		identityd_validator.Providers{
+			func() (policy_helper.Validator, device_getter) {
 				req := in.(*pb.DeleteDeviceRequest)
 				return req, req
 			},
 		},
-		[]interface{}{ensure_get_device_id},
+		identityd_validator.Invokers{ensure_get_device_id},
 	)
 }
 
 func (self *MetathingsDevicedService) AuthorizeDeleteDevice(ctx context.Context, in interface{}) error {
-	return self.enforce(ctx, in.(*pb.DeleteDeviceRequest).GetDevice().GetId().GetValue(), "delete_device")
+	return self.authorizer.Authorize(ctx, in.(*pb.DeleteDeviceRequest).GetDevice().GetId().GetValue(), "delete_device")
 }
 
 func (self *MetathingsDevicedService) DeleteDevice(ctx context.Context, req *pb.DeleteDeviceRequest) (*empty.Empty, error) {
@@ -40,17 +41,18 @@ func (self *MetathingsDevicedService) DeleteDevice(ctx context.Context, req *pb.
 
 	for _, m := range dev.Modules {
 		mdl_id_str := *m.Id
-		if err = self.enforcer.RemoveObjectFromKind(mdl_id_str, KIND_MODULE); err != nil {
-			self.logger.WithError(err).Warningf("failed to remove module from kind in enforcer")
-		}
 		if err = self.storage.DeleteModule(mdl_id_str); err != nil {
 			self.logger.WithError(err).WithField("id", mdl_id_str).Warningf("failed to delete module in storage")
 		}
 	}
 
-	if err = self.enforcer.RemoveObjectFromKind(dev_id_str, KIND_DEVICE); err != nil {
-		self.logger.WithError(err).Warningf("failed to remove device from kind in enforcer")
+	for _, f := range dev.Flows {
+		flw_id_str := *f.Id
+		if err = self.storage.DeleteFlow(flw_id_str); err != nil {
+			self.logger.WithError(err).WithField("id", flw_id_str).Warningf("failed to delete flow in storage")
+		}
 	}
+
 	if err = self.storage.DeleteDevice(dev_id_str); err != nil {
 		self.logger.WithError(err).Debugf("failed to delete device in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())

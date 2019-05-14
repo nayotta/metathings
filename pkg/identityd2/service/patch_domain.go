@@ -2,36 +2,45 @@ package metathings_identityd2_service
 
 import (
 	"context"
-	"errors"
 
+	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
 	storage "github.com/nayotta/metathings/pkg/identityd2/storage"
+	identityd_validator "github.com/nayotta/metathings/pkg/identityd2/validator"
 	pb "github.com/nayotta/metathings/pkg/proto/identityd2"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
+func (self *MetathingsIdentitydService) ValidatePatchDomain(ctx context.Context, in interface{}) error {
+	return self.validator.Validate(
+		identityd_validator.Providers{
+			func() (policy_helper.Validator, domain_getter) {
+				req := in.(*pb.PatchDomainRequest)
+				return req, req
+			},
+		},
+		identityd_validator.Invokers{
+			ensure_get_domain_id,
+		},
+	)
+}
+
+func (self *MetathingsIdentitydService) AuthorizePatchDomain(ctx context.Context, in interface{}) error {
+	return self.authorize(ctx, in.(*pb.PatchDomainRequest).GetDomain().GetId().GetValue(), "patch_domain")
+}
+
 func (self *MetathingsIdentitydService) PatchDomain(ctx context.Context, req *pb.PatchDomainRequest) (*pb.PatchDomainResponse, error) {
-	var dom = &storage.Domain{}
 	var err error
 
-	if err = req.Validate(); err != nil {
-		self.logger.WithError(err).Warningf("failed to validate request data")
-		return nil, status.Errorf(codes.InvalidArgument, err.Error())
-	}
+	dom_req := req.GetDomain()
+	dom := &storage.Domain{}
 
-	if req.GetId() == nil || req.GetId().GetValue() == "" {
-		err = errors.New("domain.id is empty")
-		self.logger.WithError(err).Warningf("failed to validate request data")
-		return nil, status.Errorf(codes.InvalidArgument, err.Error())
+	idStr := dom_req.GetId().GetValue()
+	if dom_req.GetAlias() != nil {
+		dom.Alias = &dom_req.Alias.Value
 	}
-	idStr := req.GetId().GetValue()
-
-	if req.GetAlias() != nil {
-		aliasStr := req.GetAlias().GetValue()
-		dom.Alias = &aliasStr
-	}
-	if req.GetExtra() != nil {
-		extraStr := must_parse_extra(req.GetExtra())
+	if dom_req.GetExtra() != nil {
+		extraStr := must_parse_extra(dom_req.GetExtra())
 		dom.Extra = &extraStr
 	}
 

@@ -10,30 +10,33 @@ import (
 	id_helper "github.com/nayotta/metathings/pkg/common/id"
 	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
 	storage "github.com/nayotta/metathings/pkg/identityd2/storage"
+	identityd_validator "github.com/nayotta/metathings/pkg/identityd2/validator"
 	pb "github.com/nayotta/metathings/pkg/proto/identityd2"
 )
 
 func (self *MetathingsIdentitydService) ValidateCreateGroup(ctx context.Context, in interface{}) error {
-	return self.validate_chain([]interface{}{
-		func() (policy_helper.Validator, group_getter) {
-			req := in.(*pb.CreateGroupRequest)
-			return req, req
+	return self.validator.Validate(
+		identityd_validator.Providers{
+			func() (policy_helper.Validator, group_getter) {
+				req := in.(*pb.CreateGroupRequest)
+				return req, req
+			},
 		},
-	}, []interface{}{
-		func(x group_getter) error {
-			grp := x.GetGroup()
+		identityd_validator.Invokers{
+			func(x group_getter) error {
+				grp := x.GetGroup()
 
-			if grp.GetDomain() == nil || grp.GetDomain().GetId() == nil {
-				return errors.New("group.domain.id is empty")
-			}
+				if grp.GetDomain() == nil || grp.GetDomain().GetId() == nil {
+					return errors.New("group.domain.id is empty")
+				}
 
-			if grp.GetName() == nil {
-				return errors.New("group.name is empty")
-			}
+				if grp.GetName() == nil {
+					return errors.New("group.name is empty")
+				}
 
-			return nil
-		},
-	})
+				return nil
+			},
+		})
 }
 
 func (self *MetathingsIdentitydService) CreateGroup(ctx context.Context, req *pb.CreateGroupRequest) (*pb.CreateGroupResponse, error) {
@@ -57,16 +60,6 @@ func (self *MetathingsIdentitydService) CreateGroup(ctx context.Context, req *pb
 		alias_str = grp.GetAlias().GetValue()
 	}
 
-	if err = self.enforcer.AddGroup(dom_id_str, id_str); err != nil {
-		self.logger.WithError(err).Errorf("failed to add group in enforcer")
-		return nil, status.Errorf(codes.Internal, err.Error())
-	}
-
-	if err = self.enforcer.AddObjectToKind(id_str, KIND_GROUP); err != nil {
-		self.logger.WithError(err).Errorf("failed to add group to kind in enforcer")
-		return nil, status.Errorf(codes.Internal, err.Error())
-	}
-
 	grp_s := &storage.Group{
 		Id:          &id_str,
 		DomainId:    &dom_id_str,
@@ -74,6 +67,11 @@ func (self *MetathingsIdentitydService) CreateGroup(ctx context.Context, req *pb
 		Alias:       &alias_str,
 		Description: &desc_str,
 		Extra:       &extra_str,
+	}
+
+	if err = self.backend.CreateGroup(grp_s); err != nil {
+		self.logger.WithError(err).Errorf("failed to create group in backend")
+		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
 	if grp_s, err = self.storage.CreateGroup(grp_s); err != nil {

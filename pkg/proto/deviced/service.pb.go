@@ -26,6 +26,7 @@ const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 func init() { proto.RegisterFile("service.proto", fileDescriptor_a0b84a42fa06f626) }
 
 var fileDescriptor_a0b84a42fa06f626 = []byte{
+<<<<<<< HEAD
 	// 493 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x54, 0x4d, 0x8f, 0xd2, 0x40,
 	0x18, 0x86, 0x8b, 0x1b, 0x5e, 0x16, 0x5d, 0x67, 0xd5, 0x43, 0x37, 0x5e, 0x38, 0x79, 0x71, 0xd8,
@@ -58,6 +59,53 @@ var fileDescriptor_a0b84a42fa06f626 = []byte{
 	0xae, 0xa3, 0x1d, 0xc0, 0x54, 0x3d, 0xd8, 0x2a, 0xd2, 0xe7, 0x70, 0xa0, 0xda, 0xcc, 0xab, 0x16,
 	0x0a, 0x1b, 0x5a, 0x9e, 0xd8, 0xe7, 0xbd, 0xcf, 0x27, 0x86, 0x33, 0xbf, 0xa5, 0xe6, 0x70, 0xfd,
 	0x3b, 0x00, 0x00, 0xff, 0xff, 0x53, 0x25, 0xb3, 0x12, 0x2f, 0x07, 0x00, 0x00,
+=======
+	// 690 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x56, 0x4d, 0x6f, 0xd3, 0x4c,
+	0x10, 0xae, 0x2f, 0x6f, 0x95, 0x6d, 0xfb, 0xb6, 0xdd, 0x4a, 0xa8, 0x04, 0xb8, 0xf4, 0xc4, 0x05,
+	0xf7, 0x4b, 0xb4, 0xc0, 0x05, 0x44, 0x4a, 0xe1, 0x80, 0x44, 0x68, 0xa0, 0x12, 0xa8, 0x92, 0xe5,
+	0x38, 0x93, 0xd8, 0x68, 0xed, 0x75, 0xbd, 0xeb, 0x44, 0xf9, 0x01, 0x70, 0xe0, 0xc0, 0x8f, 0xe0,
+	0xca, 0x9f, 0x44, 0xde, 0xaf, 0xac, 0x53, 0x60, 0xed, 0x9e, 0x2c, 0xcd, 0x3c, 0xcf, 0x33, 0x1f,
+	0x3b, 0x3b, 0x6b, 0xb4, 0xc1, 0xa0, 0x98, 0x26, 0x11, 0xf8, 0x79, 0x41, 0x39, 0xc5, 0x0f, 0xc2,
+	0xc4, 0x4f, 0x81, 0x87, 0x3c, 0x4e, 0xb2, 0x09, 0xf3, 0xb5, 0x73, 0x04, 0xd5, 0x67, 0xd4, 0xbd,
+	0x37, 0xa1, 0x74, 0x42, 0x60, 0x5f, 0x80, 0x87, 0xe5, 0x78, 0x1f, 0xd2, 0x9c, 0xcf, 0x25, 0xb7,
+	0xbb, 0x13, 0x15, 0x10, 0x72, 0x08, 0x24, 0x58, 0x1b, 0x47, 0x40, 0x60, 0xd9, 0x88, 0xf3, 0x90,
+	0x47, 0x71, 0xdd, 0xb6, 0x35, 0x01, 0xbe, 0x84, 0x22, 0x09, 0xd3, 0x26, 0xa6, 0x51, 0x65, 0x16,
+	0x16, 0xf3, 0x20, 0x0a, 0x09, 0x51, 0x96, 0x6d, 0xc6, 0x0b, 0x08, 0x53, 0xdb, 0xd4, 0xcd, 0x4b,
+	0x42, 0x82, 0x71, 0x11, 0xa6, 0x10, 0x8c, 0x0b, 0x9a, 0x06, 0x63, 0x42, 0x67, 0xca, 0xb7, 0x9b,
+	0x97, 0x2c, 0x56, 0x3e, 0x4e, 0x6d, 0xcf, 0xfd, 0xeb, 0x12, 0x8a, 0xb9, 0x74, 0xb1, 0x1b, 0xbc,
+	0xad, 0xbc, 0xe4, 0x01, 0x1d, 0x7e, 0x81, 0x88, 0xeb, 0xca, 0x0a, 0x48, 0xe9, 0x14, 0x6e, 0x18,
+	0xb3, 0x4a, 0xba, 0x66, 0x14, 0xa5, 0xd5, 0x2c, 0xbb, 0x0b, 0x4b, 0x10, 0xd1, 0x8c, 0x43, 0xa6,
+	0x3d, 0x7b, 0x96, 0x47, 0x56, 0x96, 0x64, 0x93, 0x25, 0x8c, 0x6c, 0x8c, 0x04, 0x31, 0xd3, 0x86,
+	0x98, 0xce, 0xea, 0xfd, 0xdb, 0x88, 0x68, 0x96, 0x2d, 0x62, 0x6e, 0xc6, 0x10, 0x16, 0x7c, 0x08,
+	0xa1, 0x32, 0x1c, 0xfd, 0xc2, 0xe8, 0xff, 0x33, 0x79, 0xb0, 0x03, 0x79, 0xce, 0x78, 0x8e, 0xd6,
+	0x7b, 0xe2, 0x10, 0xa5, 0x1d, 0x1f, 0xf9, 0xff, 0x9c, 0x07, 0xdf, 0x06, 0x5f, 0xc0, 0x75, 0x09,
+	0x8c, 0x77, 0x8f, 0x5b, 0x71, 0x58, 0x4e, 0x33, 0x06, 0x7b, 0x2b, 0xf8, 0x0a, 0xad, 0x9f, 0x89,
+	0x51, 0x69, 0x18, 0xda, 0x06, 0xeb, 0xd0, 0x77, 0x7c, 0x39, 0x9f, 0xbe, 0x9e, 0x4f, 0xff, 0x55,
+	0x35, 0x9f, 0x7b, 0x2b, 0x78, 0x8a, 0xd6, 0xfa, 0xd5, 0xcc, 0x29, 0xf1, 0x43, 0x87, 0xb8, 0x85,
+	0xd5, 0xda, 0x47, 0x6d, 0x28, 0xa6, 0xaa, 0x1c, 0x75, 0x5e, 0x03, 0x57, 0x51, 0xf7, 0x1d, 0x12,
+	0x06, 0xa9, 0x63, 0x1e, 0x34, 0x27, 0x98, 0x88, 0x53, 0xb4, 0xf6, 0x36, 0x61, 0xca, 0xce, 0x9c,
+	0x95, 0x5a, 0xd8, 0xa6, 0x95, 0xd6, 0x28, 0x76, 0xa5, 0x1f, 0xab, 0xbb, 0xd9, 0x0b, 0x09, 0x71,
+	0x56, 0x6a, 0x90, 0x4d, 0x2b, 0xb5, 0x08, 0x26, 0xe2, 0x0c, 0xa1, 0x81, 0xb8, 0x21, 0x22, 0xa4,
+	0x4b, 0x61, 0x01, 0xd5, 0x31, 0x0f, 0x5b, 0x30, 0x74, 0xd0, 0x87, 0xde, 0x81, 0x87, 0xbf, 0x7b,
+	0x68, 0xbb, 0x5f, 0x12, 0x72, 0x5e, 0xad, 0x8a, 0xf3, 0x82, 0xa6, 0xe7, 0x84, 0xce, 0xf0, 0xa9,
+	0x6b, 0x40, 0x96, 0x19, 0x3a, 0x8f, 0x27, 0xed, 0x89, 0x3a, 0x9d, 0x03, 0x0f, 0x7f, 0xf3, 0xd0,
+	0x66, 0xbf, 0x64, 0xb1, 0x40, 0x7c, 0xa0, 0x22, 0x95, 0xc7, 0x4e, 0xc5, 0x1a, 0x5e, 0x27, 0x72,
+	0xd2, 0x96, 0x56, 0xeb, 0xca, 0x0f, 0x0f, 0xed, 0xbc, 0xaf, 0x56, 0xa8, 0x80, 0x30, 0xd3, 0x97,
+	0xa7, 0x0e, 0xd5, 0x3f, 0x70, 0x74, 0x42, 0xcf, 0x6e, 0x43, 0x35, 0xf3, 0x71, 0x89, 0x3a, 0xfd,
+	0x92, 0xbf, 0x13, 0x6b, 0xd2, 0x39, 0x91, 0x06, 0xe9, 0xde, 0x25, 0x57, 0x68, 0xfd, 0x42, 0xac,
+	0x7e, 0x25, 0xed, 0xba, 0x2f, 0x36, 0xb8, 0xa1, 0x7a, 0xf5, 0x86, 0x34, 0x56, 0x5f, 0x80, 0xdd,
+	0xea, 0x72, 0x1f, 0x35, 0xec, 0x89, 0x41, 0xb6, 0xd8, 0x47, 0x9a, 0x60, 0x4e, 0xe1, 0xab, 0x87,
+	0xb6, 0x8c, 0xbd, 0x27, 0xdf, 0x31, 0x7c, 0xd2, 0x54, 0x48, 0x11, 0x74, 0x02, 0xa7, 0xad, 0x79,
+	0x26, 0x8f, 0x9f, 0x1e, 0xba, 0x6b, 0xdc, 0x03, 0xfd, 0xb2, 0xea, 0x84, 0x9e, 0x37, 0x15, 0x5e,
+	0x66, 0xea, 0xcc, 0x5e, 0xdc, 0x5e, 0xc0, 0xba, 0xcc, 0x6a, 0x79, 0x4b, 0x64, 0xb3, 0xe5, 0xad,
+	0xb0, 0x6d, 0x96, 0xb7, 0xa1, 0x98, 0xe6, 0x7c, 0x42, 0x68, 0x10, 0xd3, 0x99, 0x7a, 0xa7, 0xfe,
+	0x32, 0x3e, 0xee, 0x85, 0x69, 0x24, 0x2c, 0xe9, 0x0c, 0xad, 0xf6, 0xe4, 0x7f, 0x08, 0xf6, 0x5d,
+	0x7f, 0x06, 0x12, 0xa7, 0xc9, 0xdd, 0x47, 0x4d, 0xf1, 0xa2, 0x74, 0xb5, 0x86, 0x2e, 0x51, 0xe7,
+	0x8d, 0xfe, 0xd1, 0x71, 0x4e, 0xb8, 0x41, 0x3a, 0x6f, 0xce, 0xcb, 0xce, 0xe7, 0x55, 0xc5, 0x1a,
+	0xfe, 0x27, 0x9c, 0xc7, 0xbf, 0x03, 0x00, 0x00, 0xff, 0xff, 0x15, 0xdd, 0xe4, 0xd9, 0x3c, 0x0b,
+	0x00, 0x00,
+>>>>>>> master
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -77,16 +125,34 @@ type DevicedServiceClient interface {
 	PatchDevice(ctx context.Context, in *PatchDeviceRequest, opts ...grpc.CallOption) (*PatchDeviceResponse, error)
 	GetDevice(ctx context.Context, in *GetDeviceRequest, opts ...grpc.CallOption) (*GetDeviceResponse, error)
 	ListDevices(ctx context.Context, in *ListDevicesRequest, opts ...grpc.CallOption) (*ListDevicesResponse, error)
+	// Calling
+	UnaryCall(ctx context.Context, in *UnaryCallRequest, opts ...grpc.CallOption) (*UnaryCallResponse, error)
+	StreamCall(ctx context.Context, opts ...grpc.CallOption) (DevicedService_StreamCallClient, error)
+	// Flow
+	PullFrameFromFlow(ctx context.Context, in *PullFrameFromFlowRequest, opts ...grpc.CallOption) (DevicedService_PullFrameFromFlowClient, error)
+	PushFrameToFlow(ctx context.Context, opts ...grpc.CallOption) (DevicedService_PushFrameToFlowClient, error)
+	QueryFramesFromFlow(ctx context.Context, in *QueryFramesFromFlowRequest, opts ...grpc.CallOption) (*QueryFramesFromFlowResponse, error)
+	// Simple Storage
+	PutObject(ctx context.Context, in *PutObjectRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	RemoveObject(ctx context.Context, in *RemoveObjectRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	RenameObject(ctx context.Context, in *RenameObjectRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	GetObject(ctx context.Context, in *GetObjectRequest, opts ...grpc.CallOption) (*GetObjectResponse, error)
+	GetObjectContent(ctx context.Context, in *GetObjectContentRequest, opts ...grpc.CallOption) (*GetObjectContentResponse, error)
+	GetObjectStreamingContent(ctx context.Context, in *GetObjectStreamingContentRequest, opts ...grpc.CallOption) (DevicedService_GetObjectStreamingContentClient, error)
+	ListObjects(ctx context.Context, in *ListObjectsRequest, opts ...grpc.CallOption) (*ListObjectsResponse, error)
 	// internal device only
 	ShowDevice(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*ShowDeviceResponse, error)
 	Connect(ctx context.Context, opts ...grpc.CallOption) (DevicedService_ConnectClient, error)
 	Heartbeat(ctx context.Context, in *HeartbeatRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+<<<<<<< HEAD
 	// mqtt device only
 	CreateMqttKey(ctx context.Context, in *CreateMqttKeyRequest, opts ...grpc.CallOption) (*CreateMqttKeyResponse, error)
 	MqttHeartbeatSelect(ctx context.Context, in *MqttHeartbeatSelectRequest, opts ...grpc.CallOption) (*MqttHeartbeatSelectResponse, error)
 	MqttHeartbeat(ctx context.Context, in *MqttHeartbeatRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 	UnaryCall(ctx context.Context, in *UnaryCallRequest, opts ...grpc.CallOption) (*UnaryCallResponse, error)
 	StreamCall(ctx context.Context, opts ...grpc.CallOption) (DevicedService_StreamCallClient, error)
+=======
+>>>>>>> master
 }
 
 type devicedServiceClient struct {
@@ -142,6 +208,237 @@ func (c *devicedServiceClient) ListDevices(ctx context.Context, in *ListDevicesR
 	return out, nil
 }
 
+func (c *devicedServiceClient) UnaryCall(ctx context.Context, in *UnaryCallRequest, opts ...grpc.CallOption) (*UnaryCallResponse, error) {
+	out := new(UnaryCallResponse)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.deviced.DevicedService/UnaryCall", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *devicedServiceClient) StreamCall(ctx context.Context, opts ...grpc.CallOption) (DevicedService_StreamCallClient, error) {
+	stream, err := c.cc.NewStream(ctx, &_DevicedService_serviceDesc.Streams[0], "/ai.metathings.service.deviced.DevicedService/StreamCall", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &devicedServiceStreamCallClient{stream}
+	return x, nil
+}
+
+type DevicedService_StreamCallClient interface {
+	Send(*StreamCallRequest) error
+	Recv() (*StreamCallResponse, error)
+	grpc.ClientStream
+}
+
+type devicedServiceStreamCallClient struct {
+	grpc.ClientStream
+}
+
+func (x *devicedServiceStreamCallClient) Send(m *StreamCallRequest) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *devicedServiceStreamCallClient) Recv() (*StreamCallResponse, error) {
+	m := new(StreamCallResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (c *devicedServiceClient) PullFrameFromFlow(ctx context.Context, in *PullFrameFromFlowRequest, opts ...grpc.CallOption) (DevicedService_PullFrameFromFlowClient, error) {
+	stream, err := c.cc.NewStream(ctx, &_DevicedService_serviceDesc.Streams[1], "/ai.metathings.service.deviced.DevicedService/PullFrameFromFlow", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &devicedServicePullFrameFromFlowClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type DevicedService_PullFrameFromFlowClient interface {
+	Recv() (*PullFrameFromFlowResponse, error)
+	grpc.ClientStream
+}
+
+type devicedServicePullFrameFromFlowClient struct {
+	grpc.ClientStream
+}
+
+func (x *devicedServicePullFrameFromFlowClient) Recv() (*PullFrameFromFlowResponse, error) {
+	m := new(PullFrameFromFlowResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (c *devicedServiceClient) PushFrameToFlow(ctx context.Context, opts ...grpc.CallOption) (DevicedService_PushFrameToFlowClient, error) {
+	stream, err := c.cc.NewStream(ctx, &_DevicedService_serviceDesc.Streams[2], "/ai.metathings.service.deviced.DevicedService/PushFrameToFlow", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &devicedServicePushFrameToFlowClient{stream}
+	return x, nil
+}
+
+type DevicedService_PushFrameToFlowClient interface {
+	Send(*PushFrameToFlowRequest) error
+	Recv() (*PushFrameToFlowResponse, error)
+	grpc.ClientStream
+}
+
+type devicedServicePushFrameToFlowClient struct {
+	grpc.ClientStream
+}
+
+func (x *devicedServicePushFrameToFlowClient) Send(m *PushFrameToFlowRequest) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *devicedServicePushFrameToFlowClient) Recv() (*PushFrameToFlowResponse, error) {
+	m := new(PushFrameToFlowResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (c *devicedServiceClient) QueryFramesFromFlow(ctx context.Context, in *QueryFramesFromFlowRequest, opts ...grpc.CallOption) (*QueryFramesFromFlowResponse, error) {
+	out := new(QueryFramesFromFlowResponse)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.deviced.DevicedService/QueryFramesFromFlow", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *devicedServiceClient) PutObject(ctx context.Context, in *PutObjectRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.deviced.DevicedService/PutObject", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+<<<<<<< HEAD
+func (c *devicedServiceClient) CreateMqttKey(ctx context.Context, in *CreateMqttKeyRequest, opts ...grpc.CallOption) (*CreateMqttKeyResponse, error) {
+	out := new(CreateMqttKeyResponse)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.deviced.DevicedService/CreateMqttKey", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *devicedServiceClient) MqttHeartbeatSelect(ctx context.Context, in *MqttHeartbeatSelectRequest, opts ...grpc.CallOption) (*MqttHeartbeatSelectResponse, error) {
+	out := new(MqttHeartbeatSelectResponse)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.deviced.DevicedService/MqttHeartbeatSelect", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *devicedServiceClient) MqttHeartbeat(ctx context.Context, in *MqttHeartbeatRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.deviced.DevicedService/MqttHeartbeat", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *devicedServiceClient) UnaryCall(ctx context.Context, in *UnaryCallRequest, opts ...grpc.CallOption) (*UnaryCallResponse, error) {
+	out := new(UnaryCallResponse)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.deviced.DevicedService/UnaryCall", in, out, opts...)
+=======
+func (c *devicedServiceClient) RemoveObject(ctx context.Context, in *RemoveObjectRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.deviced.DevicedService/RemoveObject", in, out, opts...)
+>>>>>>> master
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *devicedServiceClient) RenameObject(ctx context.Context, in *RenameObjectRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.deviced.DevicedService/RenameObject", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *devicedServiceClient) GetObject(ctx context.Context, in *GetObjectRequest, opts ...grpc.CallOption) (*GetObjectResponse, error) {
+	out := new(GetObjectResponse)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.deviced.DevicedService/GetObject", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *devicedServiceClient) GetObjectContent(ctx context.Context, in *GetObjectContentRequest, opts ...grpc.CallOption) (*GetObjectContentResponse, error) {
+	out := new(GetObjectContentResponse)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.deviced.DevicedService/GetObjectContent", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *devicedServiceClient) GetObjectStreamingContent(ctx context.Context, in *GetObjectStreamingContentRequest, opts ...grpc.CallOption) (DevicedService_GetObjectStreamingContentClient, error) {
+	stream, err := c.cc.NewStream(ctx, &_DevicedService_serviceDesc.Streams[3], "/ai.metathings.service.deviced.DevicedService/GetObjectStreamingContent", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &devicedServiceGetObjectStreamingContentClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type DevicedService_GetObjectStreamingContentClient interface {
+	Recv() (*GetObjectStreamingContentResponse, error)
+	grpc.ClientStream
+}
+
+type devicedServiceGetObjectStreamingContentClient struct {
+	grpc.ClientStream
+}
+
+func (x *devicedServiceGetObjectStreamingContentClient) Recv() (*GetObjectStreamingContentResponse, error) {
+	m := new(GetObjectStreamingContentResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (c *devicedServiceClient) ListObjects(ctx context.Context, in *ListObjectsRequest, opts ...grpc.CallOption) (*ListObjectsResponse, error) {
+	out := new(ListObjectsResponse)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.deviced.DevicedService/ListObjects", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *devicedServiceClient) ShowDevice(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*ShowDeviceResponse, error) {
 	out := new(ShowDeviceResponse)
 	err := c.cc.Invoke(ctx, "/ai.metathings.service.deviced.DevicedService/ShowDevice", in, out, opts...)
@@ -152,7 +449,7 @@ func (c *devicedServiceClient) ShowDevice(ctx context.Context, in *empty.Empty, 
 }
 
 func (c *devicedServiceClient) Connect(ctx context.Context, opts ...grpc.CallOption) (DevicedService_ConnectClient, error) {
-	stream, err := c.cc.NewStream(ctx, &_DevicedService_serviceDesc.Streams[0], "/ai.metathings.service.deviced.DevicedService/Connect", opts...)
+	stream, err := c.cc.NewStream(ctx, &_DevicedService_serviceDesc.Streams[4], "/ai.metathings.service.deviced.DevicedService/Connect", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -191,73 +488,6 @@ func (c *devicedServiceClient) Heartbeat(ctx context.Context, in *HeartbeatReque
 	return out, nil
 }
 
-func (c *devicedServiceClient) CreateMqttKey(ctx context.Context, in *CreateMqttKeyRequest, opts ...grpc.CallOption) (*CreateMqttKeyResponse, error) {
-	out := new(CreateMqttKeyResponse)
-	err := c.cc.Invoke(ctx, "/ai.metathings.service.deviced.DevicedService/CreateMqttKey", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *devicedServiceClient) MqttHeartbeatSelect(ctx context.Context, in *MqttHeartbeatSelectRequest, opts ...grpc.CallOption) (*MqttHeartbeatSelectResponse, error) {
-	out := new(MqttHeartbeatSelectResponse)
-	err := c.cc.Invoke(ctx, "/ai.metathings.service.deviced.DevicedService/MqttHeartbeatSelect", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *devicedServiceClient) MqttHeartbeat(ctx context.Context, in *MqttHeartbeatRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
-	out := new(empty.Empty)
-	err := c.cc.Invoke(ctx, "/ai.metathings.service.deviced.DevicedService/MqttHeartbeat", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *devicedServiceClient) UnaryCall(ctx context.Context, in *UnaryCallRequest, opts ...grpc.CallOption) (*UnaryCallResponse, error) {
-	out := new(UnaryCallResponse)
-	err := c.cc.Invoke(ctx, "/ai.metathings.service.deviced.DevicedService/UnaryCall", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *devicedServiceClient) StreamCall(ctx context.Context, opts ...grpc.CallOption) (DevicedService_StreamCallClient, error) {
-	stream, err := c.cc.NewStream(ctx, &_DevicedService_serviceDesc.Streams[1], "/ai.metathings.service.deviced.DevicedService/StreamCall", opts...)
-	if err != nil {
-		return nil, err
-	}
-	x := &devicedServiceStreamCallClient{stream}
-	return x, nil
-}
-
-type DevicedService_StreamCallClient interface {
-	Send(*StreamCallRequest) error
-	Recv() (*StreamCallResponse, error)
-	grpc.ClientStream
-}
-
-type devicedServiceStreamCallClient struct {
-	grpc.ClientStream
-}
-
-func (x *devicedServiceStreamCallClient) Send(m *StreamCallRequest) error {
-	return x.ClientStream.SendMsg(m)
-}
-
-func (x *devicedServiceStreamCallClient) Recv() (*StreamCallResponse, error) {
-	m := new(StreamCallResponse)
-	if err := x.ClientStream.RecvMsg(m); err != nil {
-		return nil, err
-	}
-	return m, nil
-}
-
 // DevicedServiceServer is the server API for DevicedService service.
 type DevicedServiceServer interface {
 	CreateDevice(context.Context, *CreateDeviceRequest) (*CreateDeviceResponse, error)
@@ -265,16 +495,34 @@ type DevicedServiceServer interface {
 	PatchDevice(context.Context, *PatchDeviceRequest) (*PatchDeviceResponse, error)
 	GetDevice(context.Context, *GetDeviceRequest) (*GetDeviceResponse, error)
 	ListDevices(context.Context, *ListDevicesRequest) (*ListDevicesResponse, error)
+	// Calling
+	UnaryCall(context.Context, *UnaryCallRequest) (*UnaryCallResponse, error)
+	StreamCall(DevicedService_StreamCallServer) error
+	// Flow
+	PullFrameFromFlow(*PullFrameFromFlowRequest, DevicedService_PullFrameFromFlowServer) error
+	PushFrameToFlow(DevicedService_PushFrameToFlowServer) error
+	QueryFramesFromFlow(context.Context, *QueryFramesFromFlowRequest) (*QueryFramesFromFlowResponse, error)
+	// Simple Storage
+	PutObject(context.Context, *PutObjectRequest) (*empty.Empty, error)
+	RemoveObject(context.Context, *RemoveObjectRequest) (*empty.Empty, error)
+	RenameObject(context.Context, *RenameObjectRequest) (*empty.Empty, error)
+	GetObject(context.Context, *GetObjectRequest) (*GetObjectResponse, error)
+	GetObjectContent(context.Context, *GetObjectContentRequest) (*GetObjectContentResponse, error)
+	GetObjectStreamingContent(*GetObjectStreamingContentRequest, DevicedService_GetObjectStreamingContentServer) error
+	ListObjects(context.Context, *ListObjectsRequest) (*ListObjectsResponse, error)
 	// internal device only
 	ShowDevice(context.Context, *empty.Empty) (*ShowDeviceResponse, error)
 	Connect(DevicedService_ConnectServer) error
 	Heartbeat(context.Context, *HeartbeatRequest) (*empty.Empty, error)
+<<<<<<< HEAD
 	// mqtt device only
 	CreateMqttKey(context.Context, *CreateMqttKeyRequest) (*CreateMqttKeyResponse, error)
 	MqttHeartbeatSelect(context.Context, *MqttHeartbeatSelectRequest) (*MqttHeartbeatSelectResponse, error)
 	MqttHeartbeat(context.Context, *MqttHeartbeatRequest) (*empty.Empty, error)
 	UnaryCall(context.Context, *UnaryCallRequest) (*UnaryCallResponse, error)
 	StreamCall(DevicedService_StreamCallServer) error
+=======
+>>>>>>> master
 }
 
 func RegisterDevicedServiceServer(s *grpc.Server, srv DevicedServiceServer) {
@@ -371,6 +619,303 @@ func _DevicedService_ListDevices_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _DevicedService_UnaryCall_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UnaryCallRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DevicedServiceServer).UnaryCall(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ai.metathings.service.deviced.DevicedService/UnaryCall",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DevicedServiceServer).UnaryCall(ctx, req.(*UnaryCallRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DevicedService_StreamCall_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(DevicedServiceServer).StreamCall(&devicedServiceStreamCallServer{stream})
+}
+
+type DevicedService_StreamCallServer interface {
+	Send(*StreamCallResponse) error
+	Recv() (*StreamCallRequest, error)
+	grpc.ServerStream
+}
+
+type devicedServiceStreamCallServer struct {
+	grpc.ServerStream
+}
+
+func (x *devicedServiceStreamCallServer) Send(m *StreamCallResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *devicedServiceStreamCallServer) Recv() (*StreamCallRequest, error) {
+	m := new(StreamCallRequest)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func _DevicedService_PullFrameFromFlow_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(PullFrameFromFlowRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(DevicedServiceServer).PullFrameFromFlow(m, &devicedServicePullFrameFromFlowServer{stream})
+}
+
+type DevicedService_PullFrameFromFlowServer interface {
+	Send(*PullFrameFromFlowResponse) error
+	grpc.ServerStream
+}
+
+type devicedServicePullFrameFromFlowServer struct {
+	grpc.ServerStream
+}
+
+func (x *devicedServicePullFrameFromFlowServer) Send(m *PullFrameFromFlowResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func _DevicedService_PushFrameToFlow_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(DevicedServiceServer).PushFrameToFlow(&devicedServicePushFrameToFlowServer{stream})
+}
+
+type DevicedService_PushFrameToFlowServer interface {
+	Send(*PushFrameToFlowResponse) error
+	Recv() (*PushFrameToFlowRequest, error)
+	grpc.ServerStream
+}
+
+type devicedServicePushFrameToFlowServer struct {
+	grpc.ServerStream
+}
+
+func (x *devicedServicePushFrameToFlowServer) Send(m *PushFrameToFlowResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *devicedServicePushFrameToFlowServer) Recv() (*PushFrameToFlowRequest, error) {
+	m := new(PushFrameToFlowRequest)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func _DevicedService_QueryFramesFromFlow_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryFramesFromFlowRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DevicedServiceServer).QueryFramesFromFlow(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ai.metathings.service.deviced.DevicedService/QueryFramesFromFlow",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DevicedServiceServer).QueryFramesFromFlow(ctx, req.(*QueryFramesFromFlowRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+<<<<<<< HEAD
+func _DevicedService_CreateMqttKey_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateMqttKeyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DevicedServiceServer).CreateMqttKey(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ai.metathings.service.deviced.DevicedService/CreateMqttKey",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DevicedServiceServer).CreateMqttKey(ctx, req.(*CreateMqttKeyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DevicedService_MqttHeartbeatSelect_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MqttHeartbeatSelectRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DevicedServiceServer).MqttHeartbeatSelect(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ai.metathings.service.deviced.DevicedService/MqttHeartbeatSelect",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DevicedServiceServer).MqttHeartbeatSelect(ctx, req.(*MqttHeartbeatSelectRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DevicedService_MqttHeartbeat_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MqttHeartbeatRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DevicedServiceServer).MqttHeartbeat(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ai.metathings.service.deviced.DevicedService/MqttHeartbeat",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DevicedServiceServer).MqttHeartbeat(ctx, req.(*MqttHeartbeatRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DevicedService_UnaryCall_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UnaryCallRequest)
+=======
+func _DevicedService_PutObject_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PutObjectRequest)
+>>>>>>> master
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DevicedServiceServer).PutObject(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ai.metathings.service.deviced.DevicedService/PutObject",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DevicedServiceServer).PutObject(ctx, req.(*PutObjectRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DevicedService_RemoveObject_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RemoveObjectRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DevicedServiceServer).RemoveObject(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ai.metathings.service.deviced.DevicedService/RemoveObject",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DevicedServiceServer).RemoveObject(ctx, req.(*RemoveObjectRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DevicedService_RenameObject_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RenameObjectRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DevicedServiceServer).RenameObject(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ai.metathings.service.deviced.DevicedService/RenameObject",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DevicedServiceServer).RenameObject(ctx, req.(*RenameObjectRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DevicedService_GetObject_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetObjectRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DevicedServiceServer).GetObject(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ai.metathings.service.deviced.DevicedService/GetObject",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DevicedServiceServer).GetObject(ctx, req.(*GetObjectRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DevicedService_GetObjectContent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetObjectContentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DevicedServiceServer).GetObjectContent(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ai.metathings.service.deviced.DevicedService/GetObjectContent",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DevicedServiceServer).GetObjectContent(ctx, req.(*GetObjectContentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DevicedService_GetObjectStreamingContent_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(GetObjectStreamingContentRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(DevicedServiceServer).GetObjectStreamingContent(m, &devicedServiceGetObjectStreamingContentServer{stream})
+}
+
+type DevicedService_GetObjectStreamingContentServer interface {
+	Send(*GetObjectStreamingContentResponse) error
+	grpc.ServerStream
+}
+
+type devicedServiceGetObjectStreamingContentServer struct {
+	grpc.ServerStream
+}
+
+func (x *devicedServiceGetObjectStreamingContentServer) Send(m *GetObjectStreamingContentResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func _DevicedService_ListObjects_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListObjectsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DevicedServiceServer).ListObjects(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ai.metathings.service.deviced.DevicedService/ListObjects",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DevicedServiceServer).ListObjects(ctx, req.(*ListObjectsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _DevicedService_ShowDevice_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(empty.Empty)
 	if err := dec(in); err != nil {
@@ -433,104 +978,6 @@ func _DevicedService_Heartbeat_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
-func _DevicedService_CreateMqttKey_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateMqttKeyRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(DevicedServiceServer).CreateMqttKey(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/ai.metathings.service.deviced.DevicedService/CreateMqttKey",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DevicedServiceServer).CreateMqttKey(ctx, req.(*CreateMqttKeyRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _DevicedService_MqttHeartbeatSelect_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(MqttHeartbeatSelectRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(DevicedServiceServer).MqttHeartbeatSelect(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/ai.metathings.service.deviced.DevicedService/MqttHeartbeatSelect",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DevicedServiceServer).MqttHeartbeatSelect(ctx, req.(*MqttHeartbeatSelectRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _DevicedService_MqttHeartbeat_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(MqttHeartbeatRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(DevicedServiceServer).MqttHeartbeat(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/ai.metathings.service.deviced.DevicedService/MqttHeartbeat",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DevicedServiceServer).MqttHeartbeat(ctx, req.(*MqttHeartbeatRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _DevicedService_UnaryCall_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UnaryCallRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(DevicedServiceServer).UnaryCall(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/ai.metathings.service.deviced.DevicedService/UnaryCall",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DevicedServiceServer).UnaryCall(ctx, req.(*UnaryCallRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _DevicedService_StreamCall_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(DevicedServiceServer).StreamCall(&devicedServiceStreamCallServer{stream})
-}
-
-type DevicedService_StreamCallServer interface {
-	Send(*StreamCallResponse) error
-	Recv() (*StreamCallRequest, error)
-	grpc.ServerStream
-}
-
-type devicedServiceStreamCallServer struct {
-	grpc.ServerStream
-}
-
-func (x *devicedServiceStreamCallServer) Send(m *StreamCallResponse) error {
-	return x.ServerStream.SendMsg(m)
-}
-
-func (x *devicedServiceStreamCallServer) Recv() (*StreamCallRequest, error) {
-	m := new(StreamCallRequest)
-	if err := x.ServerStream.RecvMsg(m); err != nil {
-		return nil, err
-	}
-	return m, nil
-}
-
 var _DevicedService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "ai.metathings.service.deviced.DevicedService",
 	HandlerType: (*DevicedServiceServer)(nil),
@@ -556,6 +1003,38 @@ var _DevicedService_serviceDesc = grpc.ServiceDesc{
 			Handler:    _DevicedService_ListDevices_Handler,
 		},
 		{
+			MethodName: "UnaryCall",
+			Handler:    _DevicedService_UnaryCall_Handler,
+		},
+		{
+			MethodName: "QueryFramesFromFlow",
+			Handler:    _DevicedService_QueryFramesFromFlow_Handler,
+		},
+		{
+			MethodName: "PutObject",
+			Handler:    _DevicedService_PutObject_Handler,
+		},
+		{
+			MethodName: "RemoveObject",
+			Handler:    _DevicedService_RemoveObject_Handler,
+		},
+		{
+			MethodName: "RenameObject",
+			Handler:    _DevicedService_RenameObject_Handler,
+		},
+		{
+			MethodName: "GetObject",
+			Handler:    _DevicedService_GetObject_Handler,
+		},
+		{
+			MethodName: "GetObjectContent",
+			Handler:    _DevicedService_GetObjectContent_Handler,
+		},
+		{
+			MethodName: "ListObjects",
+			Handler:    _DevicedService_ListObjects_Handler,
+		},
+		{
 			MethodName: "ShowDevice",
 			Handler:    _DevicedService_ShowDevice_Handler,
 		},
@@ -563,6 +1042,7 @@ var _DevicedService_serviceDesc = grpc.ServiceDesc{
 			MethodName: "Heartbeat",
 			Handler:    _DevicedService_Heartbeat_Handler,
 		},
+<<<<<<< HEAD
 		{
 			MethodName: "CreateMqttKey",
 			Handler:    _DevicedService_CreateMqttKey_Handler,
@@ -579,17 +1059,35 @@ var _DevicedService_serviceDesc = grpc.ServiceDesc{
 			MethodName: "UnaryCall",
 			Handler:    _DevicedService_UnaryCall_Handler,
 		},
+=======
+>>>>>>> master
 	},
 	Streams: []grpc.StreamDesc{
 		{
-			StreamName:    "Connect",
-			Handler:       _DevicedService_Connect_Handler,
+			StreamName:    "StreamCall",
+			Handler:       _DevicedService_StreamCall_Handler,
 			ServerStreams: true,
 			ClientStreams: true,
 		},
 		{
-			StreamName:    "StreamCall",
-			Handler:       _DevicedService_StreamCall_Handler,
+			StreamName:    "PullFrameFromFlow",
+			Handler:       _DevicedService_PullFrameFromFlow_Handler,
+			ServerStreams: true,
+		},
+		{
+			StreamName:    "PushFrameToFlow",
+			Handler:       _DevicedService_PushFrameToFlow_Handler,
+			ServerStreams: true,
+			ClientStreams: true,
+		},
+		{
+			StreamName:    "GetObjectStreamingContent",
+			Handler:       _DevicedService_GetObjectStreamingContent_Handler,
+			ServerStreams: true,
+		},
+		{
+			StreamName:    "Connect",
+			Handler:       _DevicedService_Connect_Handler,
 			ServerStreams: true,
 			ClientStreams: true,
 		},

@@ -10,23 +10,23 @@ import (
 	"google.golang.org/grpc/status"
 
 	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
-	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
 	policy "github.com/nayotta/metathings/pkg/identityd2/policy"
 	storage "github.com/nayotta/metathings/pkg/identityd2/storage"
+	validator "github.com/nayotta/metathings/pkg/identityd2/validator"
 	pb "github.com/nayotta/metathings/pkg/proto/identityd2"
 )
 
 type MetathingsIdentitydServiceOption struct {
-	TokenExpire time.Duration
+	TokenExpire      time.Duration
+	CredentialExpire time.Duration
 }
 
 type MetathingsIdentitydService struct {
-	grpc_helper.AuthorizationTokenParser
-
-	opt      *MetathingsIdentitydServiceOption
-	logger   log.FieldLogger
-	storage  storage.Storage
-	enforcer policy.Enforcer
+	opt       *MetathingsIdentitydServiceOption
+	logger    log.FieldLogger
+	storage   storage.Storage
+	validator validator.Validator
+	backend   policy.Backend
 }
 
 var (
@@ -37,48 +37,6 @@ var (
 	}
 )
 
-func (self *MetathingsIdentitydService) enforce(ctx context.Context, obj, act string) error {
-	var err error
-
-	tkn := ctx.Value("token").(*storage.Token)
-
-	var groups []string
-	for _, g := range tkn.Groups {
-		groups = append(groups, *g.Id)
-	}
-
-	if err = self.enforcer.Enforce(*tkn.DomainId, groups, *tkn.EntityId, obj, act); err != nil {
-		if err == policy.ErrPermissionDenied {
-			self.logger.WithFields(log.Fields{
-				"subject": *tkn.EntityId,
-				"domain":  *tkn.DomainId,
-				"groups":  groups,
-				"object":  obj,
-				"action":  act,
-			}).Warningf("denied to do #action")
-			return status.Errorf(codes.PermissionDenied, err.Error())
-		} else {
-			self.logger.WithError(err).Errorf("failed to enforce")
-			return status.Errorf(codes.Internal, err.Error())
-		}
-	}
-	return nil
-}
-
-func (self *MetathingsIdentitydService) validate_chain(providers []interface{}, invokers []interface{}) error {
-	default_invokers := []interface{}{policy_helper.ValidateValidator}
-	invokers = append(default_invokers, invokers...)
-	if err := policy_helper.ValidateChain(
-		providers,
-		invokers,
-	); err != nil {
-		self.logger.WithError(err).Warningf("failed to validate request data")
-		return status.Errorf(codes.InvalidArgument, err.Error())
-	}
-
-	return nil
-}
-
 func (self *MetathingsIdentitydService) is_ignore_method(md *grpc_helper.MethodDescription) bool {
 	for _, m := range ignore_methods {
 		if md.Method == m {
@@ -88,23 +46,8 @@ func (self *MetathingsIdentitydService) is_ignore_method(md *grpc_helper.MethodD
 	return false
 }
 
-func (self *MetathingsIdentitydService) add_token_to_kind_in_enforcer(tkn_id string) error {
-	var err error
-
-	if err = self.enforcer.AddObjectToKind(tkn_id, KIND_TOKEN); err != nil {
-		self.logger.WithError(err).Errorf("failed to add token to kind in enforcer")
-		return status.Errorf(codes.Internal, err.Error())
-	}
-
-	return nil
-}
-
 func (self *MetathingsIdentitydService) revoke_token(tkn_id string) error {
 	var err error
-
-	if err = self.enforcer.RemoveObjectFromKind(tkn_id, KIND_TOKEN); err != nil {
-		self.logger.WithError(err).WithField("id", tkn_id).Warningf("failed to remove token from kind in enforcer")
-	}
 
 	if err = self.storage.DeleteToken(tkn_id); err != nil {
 		self.logger.WithError(err).WithField("id", tkn_id).Warningf("failed to delete token in storage")
@@ -148,27 +91,27 @@ func (self *MetathingsIdentitydService) AuthFuncOverride(ctx context.Context, fu
 
 	if md, err = grpc_helper.ParseMethodDescription(fullMethodName); err != nil {
 		self.logger.WithError(err).Warningf("failed to parse method description")
-		return ctx, err
+		return ctx, status.Errorf(codes.Unauthenticated, err.Error())
 	}
 	if self.is_ignore_method(md) {
 		return ctx, nil
 	}
 
-	if tkn_txt, err = self.GetTokenFromContext(ctx); err != nil {
+	if tkn_txt, err = grpc_helper.GetTokenFromContext(ctx); err != nil {
 		self.logger.WithError(err).Warningf("failed to get token from context")
-		return ctx, err
+		return ctx, status.Errorf(codes.Unauthenticated, err.Error())
 	}
 
 	if tkn, err = self.storage.GetTokenByText(tkn_txt); err != nil {
 		self.logger.WithError(err).Warningf("failed to get token in storage")
-		return ctx, err
+		return ctx, status.Errorf(codes.Unauthenticated, err.Error())
 	}
 
 	if self.is_invalid_token(tkn) {
 		if err = self.revoke_token(*tkn.Id); err != nil {
 			self.logger.WithError(err).Warningf("failed to revoke token")
 		}
-		return ctx, policy.ErrUnauthenticated
+		return ctx, status.Errorf(codes.Unauthenticated, err.Error())
 	}
 
 	if self.is_refreshable_token(tkn) {
@@ -177,7 +120,7 @@ func (self *MetathingsIdentitydService) AuthFuncOverride(ctx context.Context, fu
 		}
 	}
 
-	new_ctx = context.WithValue(ctx, "token", tkn)
+	new_ctx = context.WithValue(ctx, "token", copy_token(tkn))
 
 	self.logger.WithFields(log.Fields{
 		"method":    md.Method,
@@ -196,10 +139,6 @@ func (self *MetathingsIdentitydService) ShowEntity(context.Context, *empty.Empty
 	panic("unimplemented")
 }
 
-func (self *MetathingsIdentitydService) ListGroupsForEntity(context.Context, *pb.ListGroupsForEntityRequest) (*pb.ListGroupsForEntityResponse, error) {
-	panic("unimplemented")
-}
-
 func (self *MetathingsIdentitydService) ShowGroups(context.Context, *empty.Empty) (*pb.ShowGroupsResponse, error) {
 	panic("unimplemented")
 }
@@ -209,15 +148,17 @@ func (self *MetathingsIdentitydService) ListCredentialsForEntity(context.Context
 }
 
 func NewMetathingsIdentitydService(
-	enforcor policy.Enforcer,
 	opt *MetathingsIdentitydServiceOption,
 	logger log.FieldLogger,
 	storage storage.Storage,
+	validator validator.Validator,
+	backend policy.Backend,
 ) (pb.IdentitydServiceServer, error) {
 	return &MetathingsIdentitydService{
-		opt:      opt,
-		logger:   logger,
-		storage:  storage,
-		enforcer: enforcor,
+		opt:       opt,
+		logger:    logger,
+		storage:   storage,
+		validator: validator,
+		backend:   backend,
 	}, nil
 }

@@ -7,6 +7,7 @@ import fmt "fmt"
 import github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
 import proto "github.com/golang/protobuf/proto"
 import math "math"
+import _ "github.com/golang/protobuf/ptypes/wrappers"
 import _ "github.com/mwitkow/go-proto-validators"
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -21,6 +22,11 @@ func (this *CreateCredentialRequest) Validate() error {
 	if this.Credential != nil {
 		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Credential); err != nil {
 			return github_com_mwitkow_go_proto_validators.FieldError("Credential", err)
+		}
+	}
+	if this.SecretSize != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.SecretSize); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("SecretSize", err)
 		}
 	}
 	return nil

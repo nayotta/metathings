@@ -1,6 +1,8 @@
 package cmd
 
-import cmd_contrib "github.com/nayotta/metathings/cmd/contrib"
+import (
+	cmd_contrib "github.com/nayotta/metathings/cmd/contrib"
+)
 
 func init_service_cmd_option(dst, src interface{}) {
 	init_listen_optioner(dst, src)

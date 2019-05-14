@@ -13,6 +13,7 @@ import (
 	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
 	deviced_helper "github.com/nayotta/metathings/pkg/deviced/helper"
 	storage "github.com/nayotta/metathings/pkg/deviced/storage"
+	identityd_validator "github.com/nayotta/metathings/pkg/identityd2/validator"
 	pb_kind "github.com/nayotta/metathings/pkg/proto/constant/kind"
 	pb_state "github.com/nayotta/metathings/pkg/proto/constant/state"
 	pb "github.com/nayotta/metathings/pkg/proto/deviced"
@@ -20,15 +21,15 @@ import (
 )
 
 func (self *MetathingsDevicedService) ValidateCreateDevice(ctx context.Context, in interface{}) error {
-	return self.validate_chain(
-		[]interface{}{
-			func() (policy_helper.Validator, get_devicer) {
+	return self.validator.Validate(
+		identityd_validator.Providers{
+			func() (policy_helper.Validator, device_getter) {
 				req := in.(*pb.CreateDeviceRequest)
 				return req, req
 			},
 		},
-		[]interface{}{
-			func(x get_devicer) error {
+		identityd_validator.Invokers{
+			func(x device_getter) error {
 				dev := x.GetDevice()
 
 				if dev.GetKind() == pb_kind.DeviceKind_DEVICE_KIND_UNKNOWN {
@@ -93,6 +94,10 @@ func (self *MetathingsDevicedService) create_module_entity(mdl *storage.Module) 
 	return self.create_entity(*mdl.Id, "/deviced/module/"+*mdl.Name)
 }
 
+func (self *MetathingsDevicedService) create_flow_entity(flw *storage.Flow) error {
+	return self.create_entity(*flw.Id, "/deviced/flow/"+*flw.Name)
+}
+
 func (self *MetathingsDevicedService) CreateDevice(ctx context.Context, req *pb.CreateDeviceRequest) (*pb.CreateDeviceResponse, error) {
 	var err error
 
@@ -149,20 +154,37 @@ func (self *MetathingsDevicedService) CreateDevice(ctx context.Context, req *pb.
 			return nil, status.Errorf(codes.Internal, err.Error())
 		}
 
-		if err = self.enforcer.AddObjectToKind(mdl_id_str, KIND_MODULE); err != nil {
-			self.logger.WithError(err).Errorf("failed to add module in enforcer")
-			return nil, status.Errorf(codes.Internal, err.Error())
-		}
-
 		if _, err = self.storage.CreateModule(mdl_s); err != nil {
 			self.logger.WithError(err).Errorf("failed to create module in storage")
 			return nil, status.Errorf(codes.Internal, err.Error())
 		}
 	}
 
-	if err = self.enforcer.AddObjectToKind(dev_id_str, KIND_DEVICE); err != nil {
-		self.logger.WithError(err).Errorf("failed to add device in enforcer")
-		return nil, status.Errorf(codes.Internal, err.Error())
+	for _, flw := range dev.GetFlows() {
+		flw_id_str := id_helper.NewId()
+		if flw.GetId() != nil {
+			flw_id_str = flw.GetId().GetValue()
+		}
+
+		flw_name_str := flw.GetName().GetValue()
+		flw_alias_str := flw.GetAlias().GetValue()
+
+		flw_s := &storage.Flow{
+			DeviceId: &dev_id_str,
+			Id:       &flw_id_str,
+			Name:     &flw_name_str,
+			Alias:    &flw_alias_str,
+		}
+
+		if err = self.create_flow_entity(flw_s); err != nil {
+			self.logger.WithError(err).Errorf("failed to create entity to flow")
+			return nil, status.Errorf(codes.Internal, err.Error())
+		}
+
+		if _, err = self.storage.CreateFlow(flw_s); err != nil {
+			self.logger.WithError(err).Errorf("failed to create flow in storage")
+			return nil, status.Errorf(codes.Internal, err.Error())
+		}
 	}
 
 	if dev_s, err = self.storage.CreateDevice(dev_s); err != nil {

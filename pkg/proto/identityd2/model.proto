@@ -23,20 +23,36 @@ message OpDomain {
 	map<string, google.protobuf.StringValue> extra = 6;
 }
 
+message Action {
+	string id = 1;
+	string name = 2;
+	string alias = 3;
+	string description = 4;
+	map<string, string> extra = 5;
+}
+
+message OpAction {
+	google.protobuf.StringValue id = 1;
+	google.protobuf.StringValue name = 2;
+	google.protobuf.StringValue alias = 3;
+	google.protobuf.StringValue description = 4;
+	map<string, google.protobuf.StringValue> extra = 5;
+}
+
 message Role {
 	string id = 1;
-	Domain domain = 2;
-	string name = 3;
-	string alias = 4;
-	string description = 5;
-	map<string, string> extra = 7;
+	string name = 2;
+	string alias = 3;
+	string description = 4;
+	repeated Action actions = 5;
+	map<string, string> extra = 6;
 }
 
 message OpRole {
 	google.protobuf.StringValue id = 1;
-	OpDomain domain = 2;
-	google.protobuf.StringValue name = 3;
-	google.protobuf.StringValue alias = 4;
+	google.protobuf.StringValue name = 2;
+	google.protobuf.StringValue alias = 3;
+	repeated OpAction actions = 4;
 	google.protobuf.StringValue description = 5;
 	map<string, google.protobuf.StringValue> extra = 6;
 }
@@ -67,22 +83,24 @@ message Group {
 	string id = 1;
 	Domain domain = 2;
 	repeated Role roles = 3;
-	repeated Entity entities = 4;
-	string name = 5;
-	string alias = 6;
-	string description = 7;
-	map<string, string> extra = 8;
+	repeated Entity subjects = 4;
+	repeated Entity objects = 5;
+	string name = 6;
+	string alias = 7;
+	string description = 8;
+	map<string, string> extra = 9;
 }
 
 message OpGroup {
 	google.protobuf.StringValue id = 1;
 	OpDomain domain = 2;
 	repeated OpRole roles = 3;
-	repeated OpEntity entities = 4;
-	google.protobuf.StringValue name = 5;
-	google.protobuf.StringValue alias = 6;
-	google.protobuf.StringValue description = 7;
-	map<string, google.protobuf.StringValue> extra = 8;
+	repeated OpEntity subjects = 4;
+	repeated OpEntity objects = 5;
+	google.protobuf.StringValue name = 6;
+	google.protobuf.StringValue alias = 7;
+	google.protobuf.StringValue description = 8;
+	map<string, google.protobuf.StringValue> extra = 9;
 }
 
 message Credential {

@@ -1,15 +1,16 @@
 package metathings_identityd2_service
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"errors"
+	"math/rand"
 	"time"
 
 	"github.com/golang/protobuf/ptypes/wrappers"
 
 	id_helper "github.com/nayotta/metathings/pkg/common/id"
 	pb_helper "github.com/nayotta/metathings/pkg/common/protobuf"
-	rand_helper "github.com/nayotta/metathings/pkg/common/rand"
 	storage "github.com/nayotta/metathings/pkg/identityd2/storage"
 	pb "github.com/nayotta/metathings/pkg/proto/identityd2"
 )
@@ -34,19 +35,14 @@ func new_token(dom_id, ent_id, cred_id *string, expire time.Duration) *storage.T
 	}
 }
 
-const (
-	SECRET_LENGTH  = 128
-	SECRET_LETTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-)
+func generate_secret(siz int32) string {
+	buf := make([]byte, siz)
 
-func generate_secret() string {
-	buf := make([]byte, SECRET_LENGTH)
-
-	for i := 0; i < SECRET_LENGTH; i++ {
-		buf[i] = SECRET_LETTERS[rand_helper.Intn(len(SECRET_LETTERS))]
+	for i := int32(0); i < siz; i++ {
+		buf[i] = byte(rand.Intn(256))
 	}
 
-	return string(buf)
+	return base64.StdEncoding.EncodeToString(buf)
 }
 
 func must_parse_extra(x map[string]*wrappers.StringValue) string {
@@ -118,15 +114,21 @@ func copy_domain(x *storage.Domain) *pb.Domain {
 	return y
 }
 
-func copy_role(x *storage.Role) *pb.Role {
-	var dom *pb.Domain
-	if x.Domain != nil {
-		dom = &pb.Domain{Id: *x.Domain.Id}
+func copy_action(x *storage.Action) *pb.Action {
+	y := &pb.Action{
+		Id:          *x.Id,
+		Name:        *x.Name,
+		Alias:       *x.Alias,
+		Description: *x.Description,
+		Extra:       copy_extra(x.Extra),
 	}
 
+	return y
+}
+
+func copy_role(x *storage.Role) *pb.Role {
 	y := &pb.Role{
 		Id:          *x.Id,
-		Domain:      dom,
 		Name:        *x.Name,
 		Alias:       *x.Alias,
 		Description: copy_string(x.Description),
@@ -179,20 +181,25 @@ func copy_group(x *storage.Group) *pb.Group {
 		})
 	}
 
-	entities := []*pb.Entity{}
-	for _, e := range x.Entities {
-		entities = append(entities, &pb.Entity{
-			Id: *e.Id,
+	subjects := []*pb.Entity{}
+	for _, s := range x.Subjects {
+		subjects = append(subjects, &pb.Entity{
+			Id: *s.Id,
+		})
+	}
+
+	objects := []*pb.Entity{}
+	for _, o := range x.Objects {
+		objects = append(objects, &pb.Entity{
+			Id: *o.Id,
 		})
 	}
 
 	y := &pb.Group{
-		Id: *x.Id,
-		Domain: &pb.Domain{
-			Id: *x.DomainId,
-		},
+		Id:          *x.Id,
 		Roles:       roles,
-		Entities:    entities,
+		Subjects:    subjects,
+		Objects:     objects,
 		Name:        *x.Name,
 		Alias:       *x.Alias,
 		Description: *x.Description,
@@ -202,7 +209,17 @@ func copy_group(x *storage.Group) *pb.Group {
 	return y
 }
 
-func copy_credential(x *storage.Credential) *pb.Credential {
+func copy_groups(xs []*storage.Group) []*pb.Group {
+	var ys []*pb.Group
+
+	for _, x := range xs {
+		ys = append(ys, copy_group(x))
+	}
+
+	return ys
+}
+
+func copy_credential_with_secret(x *storage.Credential) *pb.Credential {
 	roles := []*pb.Role{}
 	for _, r := range x.Roles {
 		roles = append(roles, &pb.Role{
@@ -229,6 +246,12 @@ func copy_credential(x *storage.Credential) *pb.Credential {
 	}
 
 	return y
+}
+
+func copy_credential(x *storage.Credential) *pb.Credential {
+	cred := copy_credential_with_secret(x)
+	cred.Secret = ""
+	return cred
 }
 
 func copy_token(x *storage.Token) *pb.Token {
@@ -285,16 +308,6 @@ func role_in_entity(ent *storage.Entity, role_id string) bool {
 	return false
 }
 
-func entity_in_group(grp *storage.Group, ent_id string) bool {
-	for _, e := range grp.Entities {
-		if *e.Id == ent_id {
-			return true
-		}
-	}
-
-	return false
-}
-
 func role_in_group(grp *storage.Group, role_id string) bool {
 	for _, r := range grp.Roles {
 		if *r.Id == role_id {
@@ -335,13 +348,174 @@ type role_getter interface {
 	GetRole() *pb.OpRole
 }
 
+type subject_getter interface {
+	GetSubject() *pb.OpEntity
+}
+
+type object_getter interface {
+	GetObject() *pb.OpEntity
+}
+
 type group_getter interface {
 	GetGroup() *pb.OpGroup
 }
 
+type action_getter interface {
+	GetAction() *pb.OpAction
+}
+
+type token_getter interface {
+	GetToken() *pb.OpToken
+}
+
 func ensure_get_domain_id(x domain_getter) error {
-	if x.GetDomain().GetId() == nil {
+	if x.GetDomain() == nil || x.GetDomain().GetId() == nil {
 		return errors.New("domain.id is empty")
 	}
+	return nil
+}
+
+func ensure_get_domain_parent_id(x domain_getter) error {
+	if dom := x.GetDomain(); dom != nil {
+		if par := dom.GetParent(); par != nil {
+			if id := par.GetId(); id != nil {
+				if s := id.GetValue(); s != "" {
+					return nil
+				}
+			}
+		}
+	}
+
+	return errors.New("domain.parent.id is empty")
+}
+
+func ensure_get_domain_name(x domain_getter) error {
+	if x.GetDomain() == nil || x.GetDomain().GetName() == nil {
+		return errors.New("domain.name is empty")
+	}
+
+	return nil
+}
+
+func ensure_get_group_id(x group_getter) error {
+	if x.GetGroup() == nil || x.GetGroup().GetId() == nil {
+		return errors.New("group.id is empty")
+	}
+	return nil
+}
+
+func ensure_get_subject_id(x subject_getter) error {
+	if x.GetSubject() == nil || x.GetSubject().GetId() == nil {
+		return errors.New("subject.id is empty")
+	}
+	return nil
+}
+
+func ensure_get_object_id(x object_getter) error {
+	if x.GetObject() == nil || x.GetObject().GetId() == nil {
+		return errors.New("object.id is empty")
+	}
+	return nil
+}
+
+func ensure_get_credential_id(x credential_getter) error {
+	if x.GetCredential() == nil || x.GetCredential().GetId() == nil {
+		return errors.New("credential.id is empty")
+	}
+	return nil
+}
+
+func ensure_get_entity_id(x entity_getter) error {
+	if x.GetEntity() == nil || x.GetEntity().GetId() == nil {
+		return errors.New("entity.id is empty")
+	}
+	return nil
+}
+
+func ensure_get_role_id(x role_getter) error {
+	if x.GetRole() == nil || x.GetRole().GetId() == nil {
+		return errors.New("role.id is empty")
+	}
+	return nil
+}
+
+func ensure_get_action_id(x action_getter) error {
+	if x.GetAction() == nil || x.GetAction().GetId() == nil {
+		return errors.New("action.id is empty")
+	}
+	return nil
+}
+
+func ensure_get_action_name(x action_getter) error {
+	if x.GetAction() == nil || x.GetAction().GetName() == nil {
+		return errors.New("action.name is empty")
+	}
+	return nil
+}
+
+func ensure_group_exists_s(s storage.Storage) func(group_getter) error {
+	return func(x group_getter) error {
+		if exist, err := s.ExistGroup(x.GetGroup().GetId().GetValue()); err != nil {
+			return err
+		} else if !exist {
+			return errors.New("group not found")
+		}
+		return nil
+	}
+}
+
+func ensure_subject_not_exists_in_group_s(s storage.Storage) func(subject_getter, group_getter) error {
+	return func(x subject_getter, y group_getter) error {
+		if exist, err := s.SubjectExistsInGroup(x.GetSubject().GetId().GetValue(), y.GetGroup().GetId().GetValue()); err != nil {
+			return err
+		} else if exist {
+			return errors.New("subject exists in group")
+		}
+
+		return nil
+	}
+}
+
+func ensure_subject_exists_in_group_s(s storage.Storage) func(subject_getter, group_getter) error {
+	return func(x subject_getter, y group_getter) error {
+		if exist, err := s.SubjectExistsInGroup(x.GetSubject().GetId().GetValue(), y.GetGroup().GetId().GetValue()); err != nil {
+			return err
+		} else if !exist {
+			return errors.New("subject not exists in group")
+		}
+
+		return nil
+	}
+}
+
+func ensure_object_not_exists_in_group_s(s storage.Storage) func(object_getter, group_getter) error {
+	return func(x object_getter, y group_getter) error {
+		if exist, err := s.ObjectExistsInGroup(x.GetObject().GetId().GetValue(), y.GetGroup().GetId().GetValue()); err != nil {
+			return err
+		} else if exist {
+			return errors.New("object exists in group")
+		}
+
+		return nil
+	}
+}
+
+func ensure_object_exists_in_group_s(s storage.Storage) func(object_getter, group_getter) error {
+	return func(x object_getter, y group_getter) error {
+		if exist, err := s.ObjectExistsInGroup(x.GetObject().GetId().GetValue(), y.GetGroup().GetId().GetValue()); err != nil {
+			return err
+		} else if !exist {
+			return errors.New("object not exists in group")
+		}
+
+		return nil
+	}
+}
+
+func ensure_get_token_text(x token_getter) error {
+	if x.GetToken() == nil || x.GetToken().GetText() == nil {
+		return errors.New("token.text is empty")
+	}
+
 	return nil
 }

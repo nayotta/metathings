@@ -137,11 +137,21 @@ func (self *GrpcModuleProxy) stm_up2down(upstm ModuleProxyStream, downstm pb.Mod
 	var val *any.Any
 	var err error
 
+	logger := self.logger.WithFields(log.Fields{
+		"dir": "up->down",
+	})
+
 	defer close(wait)
-	for {
+	for epoch := uint64(0); ; epoch++ {
+		logger := logger.WithFields(log.Fields{
+			"epoch": epoch,
+		})
+
 		if val, err = upstm.Recv(); err != nil {
+			logger.WithError(err).Debugf("failed to recv msg from upstm")
 			return
 		}
+		logger.Debugf("recv msg from upstm")
 
 		downreq := &pb.StreamCallRequest{
 			Request: &pb.StreamCallRequest_Data{
@@ -152,8 +162,10 @@ func (self *GrpcModuleProxy) stm_up2down(upstm ModuleProxyStream, downstm pb.Mod
 		}
 
 		if err = downstm.Send(downreq); err != nil {
+			logger.WithError(err).Debugf("failed to send msg to downstm")
 			return
 		}
+		logger.Debugf("send msg to downstm")
 	}
 }
 
@@ -161,15 +173,27 @@ func (self *GrpcModuleProxy) stm_down2up(upstm ModuleProxyStream, downstm pb.Mod
 	var downres *pb.StreamCallResponse
 	var err error
 
+	logger := self.logger.WithFields(log.Fields{
+		"dir": "up<-down",
+	})
+
 	defer close(wait)
-	for {
+	for epoch := uint64(0); ; epoch++ {
+		logger := logger.WithFields(log.Fields{
+			"epoch": epoch,
+		})
+
 		if downres, err = downstm.Recv(); err != nil {
+			logger.WithError(err).Debugf("failed to recv msg from downstm")
 			return
 		}
+		logger.Debugf("recv msg from downstm")
 
 		if err = upstm.Send(downres.GetData().GetValue()); err != nil {
+			logger.Debugf("failed to send msg to upstm")
 			return
 		}
+		logger.Debugf("send msg to upstm")
 	}
 }
 

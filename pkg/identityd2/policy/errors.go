@@ -3,6 +3,7 @@ package metathings_identityd2_policy
 import "errors"
 
 var (
-	ErrPermissionDenied = errors.New("permission denied")
-	ErrUnauthenticated  = errors.New("unauthenticated")
+	ErrPermissionDenied     = errors.New("permission denied")
+	ErrUnauthenticated      = errors.New("unauthenticated")
+	ErrInvalidBackendDriver = errors.New("invalid backend driver")
 )

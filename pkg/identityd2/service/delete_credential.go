@@ -2,34 +2,42 @@ package metathings_identityd2_service
 
 import (
 	"context"
-	"errors"
 
 	"github.com/golang/protobuf/ptypes/empty"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
+	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
 	storage "github.com/nayotta/metathings/pkg/identityd2/storage"
+	identityd_validator "github.com/nayotta/metathings/pkg/identityd2/validator"
 	pb "github.com/nayotta/metathings/pkg/proto/identityd2"
 )
+
+func (self *MetathingsIdentitydService) ValidateDeleteCredential(ctx context.Context, in interface{}) error {
+	return self.validator.Validate(
+		identityd_validator.Providers{
+			func() (policy_helper.Validator, credential_getter) {
+				req := in.(*pb.DeleteCredentialRequest)
+				return req, req
+			},
+		},
+		identityd_validator.Invokers{
+			ensure_get_credential_id,
+		},
+	)
+}
+
+func (self *MetathingsIdentitydService) AuthorizeDeleteCredential(ctx context.Context, in interface{}) error {
+	return self.authorize(ctx, in.(*pb.DeleteCredentialRequest).GetCredential().GetId().GetValue(), "delete_credential")
+}
 
 func (self *MetathingsIdentitydService) DeleteCredential(ctx context.Context, req *pb.DeleteCredentialRequest) (*empty.Empty, error) {
 	var tkn_s *storage.Token
 	var tkns_s []*storage.Token
 	var err error
 
-	if err = req.Validate(); err != nil {
-		self.logger.WithError(err).Warningf("failed to validate request data")
-		return nil, status.Errorf(codes.InvalidArgument, err.Error())
-	}
-
-	cred := req.GetCredential()
-	if cred.GetId() == nil {
-		err = errors.New("credential.id is empty")
-		self.logger.WithError(err).Warningf("failed to validate request data")
-		return nil, status.Errorf(codes.InvalidArgument, err.Error())
-	}
-	cred_id_str := cred.GetId().GetValue()
+	cred_id_str := req.GetCredential().GetId().GetValue()
 
 	// ensure no token issued by credential
 	tkn_s = &storage.Token{

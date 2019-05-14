@@ -1,0 +1,5 @@
+FROM nayotta/tagd
+
+COPY ./etc/tagd.yaml /etc/metathings/tagd.yaml
+COPY ./script/tagd_start.sh /usr/local/sbin/tagd_start.sh
+CMD /usr/local/sbin/tagd_start.sh

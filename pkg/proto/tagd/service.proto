@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package ai.metathings.service.tagd;
+option go_package = "tagd";
+
+import "google/protobuf/empty.proto";
+
+import "tag.proto";
+import "untag.proto";
+import "remove.proto";
+import "get.proto";
+import "query.proto";
+
+service TagdService {
+	rpc Tag(TagRequest) returns (google.protobuf.Empty) {}
+	rpc Untag(UntagRequest) returns (google.protobuf.Empty) {}
+	rpc Remove(RemoveRequest) returns (google.protobuf.Empty) {}
+	rpc Get(GetRequest) returns (GetResponse) {}
+	rpc Query(QueryRequest) returns (QueryResponse) {}
+}

@@ -83,13 +83,11 @@ func AuthFromMD(ctx context.Context, expectedScheme string, headerAuthorize ...s
 	return splits[1], nil
 }
 
-type AuthorizationTokenParser struct{}
-
-func (p AuthorizationTokenParser) GetTokenFromContext(ctx context.Context) (string, error) {
+func GetTokenFromContext(ctx context.Context) (string, error) {
 	return AuthFromMD(ctx, "mt", "authorization")
 }
 
-func (p AuthorizationTokenParser) GetSubjectTokenFromContext(ctx context.Context) (string, error) {
+func GetSubjectTokenFromContext(ctx context.Context) (string, error) {
 	return AuthFromMD(ctx, "mt", "authorization-subject")
 }
 

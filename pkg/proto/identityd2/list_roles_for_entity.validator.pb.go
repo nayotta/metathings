@@ -7,7 +7,6 @@ import github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-valid
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import _ "github.com/golang/protobuf/ptypes/wrappers"
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -15,24 +14,9 @@ var _ = fmt.Errorf
 var _ = math.Inf
 
 func (this *ListRolesForEntityRequest) Validate() error {
-	if this.Id != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Id); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Id", err)
-		}
-	}
-	if this.Domain != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Domain); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Domain", err)
-		}
-	}
-	if this.Name != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Name); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Name", err)
-		}
-	}
-	if this.Alias != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Alias); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Alias", err)
+	if this.Role != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Role); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Role", err)
 		}
 	}
 	return nil

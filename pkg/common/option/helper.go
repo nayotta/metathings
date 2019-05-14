@@ -3,6 +3,7 @@ package option_helper
 import (
 	"errors"
 	"fmt"
+	"time"
 )
 
 type Option interface {
@@ -180,7 +181,9 @@ var (
 	ErrInvalidArguments = errors.New("invalid arguments")
 )
 
-func Setopt(conds map[string]func(key string, val interface{}) error) func(...interface{}) error {
+type SetoptConds map[string]func(string, interface{}) error
+
+func Setopt(conds SetoptConds) func(...interface{}) error {
 	return func(args ...interface{}) error {
 		if len(args)%2 != 0 {
 			return ErrInvalidArguments
@@ -202,6 +205,28 @@ func Setopt(conds map[string]func(key string, val interface{}) error) func(...in
 			}
 		}
 
+		return nil
+	}
+}
+
+func ToString(v *string) func(string, interface{}) error {
+	return func(key string, val interface{}) error {
+		var ok bool
+		*v, ok = val.(string)
+		if !ok {
+			return ErrInvalidArguments
+		}
+		return nil
+	}
+}
+
+func ToDuration(v *time.Duration) func(string, interface{}) error {
+	return func(key string, val interface{}) error {
+		var ok bool
+		*v, ok = val.(time.Duration)
+		if !ok {
+			return ErrInvalidArguments
+		}
 		return nil
 	}
 }

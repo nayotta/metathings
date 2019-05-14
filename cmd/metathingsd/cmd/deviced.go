@@ -3,15 +3,19 @@ package cmd
 import (
 	"context"
 
+	"github.com/mongodb/mongo-go-driver/mongo"
 	cmd_contrib "github.com/nayotta/metathings/cmd/contrib"
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
 	cmd_helper "github.com/nayotta/metathings/pkg/common/cmd"
+	cfg_helper "github.com/nayotta/metathings/pkg/common/config"
 	token_helper "github.com/nayotta/metathings/pkg/common/token"
 	device_cloud "github.com/nayotta/metathings/pkg/device_cloud/mqtt_bridge"
 	connection "github.com/nayotta/metathings/pkg/deviced/connection"
 	service "github.com/nayotta/metathings/pkg/deviced/service"
+	session_storage "github.com/nayotta/metathings/pkg/deviced/session_storage"
+	simple_storage "github.com/nayotta/metathings/pkg/deviced/simple_storage"
 	storage "github.com/nayotta/metathings/pkg/deviced/storage"
-	policy "github.com/nayotta/metathings/pkg/identityd2/policy"
+	authorizer "github.com/nayotta/metathings/pkg/identityd2/authorizer"
 	pb "github.com/nayotta/metathings/pkg/proto/deviced"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -20,11 +24,22 @@ import (
 
 type DevicedOption struct {
 	cmd_contrib.ServiceBaseOption `mapstructure:",squash"`
+	SessionStorage                map[string]interface{}
+	SimpleStorage                 map[string]interface{}
 	ConnectionCenter              struct {
 		Storage map[string]interface{}
 		Bridge  map[string]interface{}
 	}
 	cmd_contrib.MqttBridgeOption `mapstructure:",squash"`
+	Flow                         struct {
+		Mongo struct {
+			Uri      string
+			Database string
+		}
+		Kafka struct {
+			Brokers []string
+		}
+	}
 }
 
 func NewDevicedOption() *DevicedOption {
@@ -60,6 +75,24 @@ func init_connection_center_bridge(opt *DevicedOption) {
 	opt.ConnectionCenter.Bridge = mccb
 }
 
+func init_session_storage(opt *DevicedOption) {
+	mss := map[string]interface{}{}
+	vss := cmd_helper.GetFromStage().Sub("session_storage")
+	for _, key := range vss.AllKeys() {
+		mss[key] = vss.Get(key)
+	}
+	opt.SessionStorage = mss
+}
+
+func init_simple_storage(opt *DevicedOption) {
+	mss := map[string]interface{}{}
+	vss := cmd_helper.GetFromStage().Sub("simple_storage")
+	for _, key := range vss.AllKeys() {
+		mss[key] = vss.Get(key)
+	}
+	opt.SimpleStorage = mss
+}
+
 var (
 	devicedCmd = &cobra.Command{
 		Use:   "deviced",
@@ -74,6 +107,8 @@ var (
 			base_opt = &opt_t.BaseOption
 
 			init_service_cmd_option(opt_t, deviced_opt)
+			init_session_storage(opt_t)
+			init_simple_storage(opt_t)
 			init_connection_center(opt_t)
 
 			deviced_opt = opt_t
@@ -135,7 +170,7 @@ func parse_connection_center_option(x map[string]interface{}) (string, []interfa
 	return name, y, nil
 }
 
-func NewConnectionCenter(opt *DevicedOption, logger log.FieldLogger) (connection.ConnectionCenter, error) {
+func NewConnectionCenter(opt *DevicedOption, sess_stor session_storage.SessionStorage, logger log.FieldLogger) (connection.ConnectionCenter, error) {
 	var name string
 	var args []interface{}
 	var err error
@@ -161,7 +196,7 @@ func NewConnectionCenter(opt *DevicedOption, logger log.FieldLogger) (connection
 		return nil, err
 	}
 
-	if cc, err = connection.NewConnectionCenter(conn_brfty, conn_stor, logger); err != nil {
+	if cc, err = connection.NewConnectionCenter(conn_brfty, conn_stor, sess_stor, logger); err != nil {
 		return nil, err
 	}
 
@@ -188,8 +223,41 @@ func NewMqttBridgeCenter(cli *client_helper.ClientFactory, opt cmd_contrib.MqttB
 	return br, nil
 }
 
+func NewSessionStorage(opt *DevicedOption, logger log.FieldLogger) (session_storage.SessionStorage, error) {
+	drv, args, err := cfg_helper.ParseConfigOption("driver", opt.SessionStorage)
+	if err != nil {
+		return nil, err
+	}
+	args = append(args, "logger", logger)
+
+	sess_stor, err := session_storage.NewSessionStorage(drv, args...)
+	if err != nil {
+		return nil, err
+	}
+
+	return sess_stor, nil
+}
+
+func NewSimpleStorage(opt *DevicedOption, logger log.FieldLogger) (simple_storage.SimpleStorage, error) {
+	name, args, err := cfg_helper.ParseConfigOption("name", opt.SimpleStorage)
+	if err != nil {
+		return nil, err
+	}
+	args = append(args, "logger", logger)
+
+	simp_stor, err := simple_storage.NewSimpleStorage(name, args...)
+	if err != nil {
+		return nil, err
+	}
+
+	return simp_stor, nil
+}
+
 func NewMetathingsDevicedServiceOption(opt *DevicedOption) *service.MetathingsDevicedServiceOption {
-	return &service.MetathingsDevicedServiceOption{}
+	o := &service.MetathingsDevicedServiceOption{}
+	o.Flow.MongoDatabase = opt.Flow.Mongo.Database
+	o.Flow.KafkaBrokers = opt.Flow.Kafka.Brokers
+	return o
 }
 
 func runDeviced() error {
@@ -204,11 +272,17 @@ func runDeviced() error {
 			cmd_contrib.NewClientFactory,
 			cmd_contrib.NewTokener,
 			token_helper.NewTokenValidator,
+			NewSessionStorage,
+			NewSimpleStorage,
 			NewConnectionCenter,
+			func(opt *DevicedOption) (*mongo.Client, error) {
+				return mongo.Connect(context.TODO(), opt.Flow.Mongo.Uri)
+			},
 			NewDevicedStorage,
 			NewMqttBridgeCenter,
 			NewMetathingsDevicedServiceOption,
-			policy.NewEnforcer,
+			authorizer.NewAuthorizer,
+			cmd_contrib.NewValidator,
 			service.NewMetathingsDevicedService,
 		),
 		fx.Invoke(

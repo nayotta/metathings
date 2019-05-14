@@ -26,17 +26,36 @@ const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 func init() { proto.RegisterFile("service.proto", fileDescriptor_a0b84a42fa06f626) }
 
 var fileDescriptor_a0b84a42fa06f626 = []byte{
-	// 147 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xe2, 0x2d, 0x4e, 0x2d, 0x2a,
-	0xcb, 0x4c, 0x4e, 0xd5, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x92, 0x49, 0xcc, 0xd4, 0xcb, 0x4d,
-	0x2d, 0x49, 0x2c, 0xc9, 0xc8, 0xcc, 0x4b, 0x2f, 0xd6, 0x83, 0x49, 0xa6, 0xa4, 0x82, 0x28, 0x29,
-	0xe9, 0xf4, 0xfc, 0xfc, 0xf4, 0x9c, 0x54, 0x7d, 0xb0, 0xda, 0xa4, 0xd2, 0x34, 0xfd, 0xd4, 0xdc,
-	0x82, 0x92, 0x4a, 0x88, 0x56, 0x29, 0xfe, 0x8c, 0xd4, 0xc4, 0xa2, 0x92, 0xa4, 0xd4, 0xc4, 0x12,
-	0x88, 0x80, 0x51, 0x1a, 0x17, 0xaf, 0x0b, 0x58, 0x5f, 0x30, 0xc4, 0x14, 0xa1, 0x50, 0x2e, 0x4e,
-	0x0f, 0x98, 0x1a, 0x21, 0x3d, 0x3d, 0x7c, 0x56, 0xe9, 0xc1, 0x15, 0x06, 0xa5, 0x16, 0x96, 0xa6,
-	0x16, 0x97, 0x48, 0x89, 0xe9, 0x41, 0x2c, 0xd7, 0x83, 0x59, 0xae, 0xe7, 0x0a, 0xb2, 0x5c, 0x89,
-	0x21, 0x89, 0x0d, 0x2c, 0x62, 0x0c, 0x08, 0x00, 0x00, 0xff, 0xff, 0x49, 0x9e, 0x04, 0xb9, 0xcb,
-	0x00, 0x00, 0x00,
+	// 456 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x54, 0x4f, 0x8f, 0x93, 0x40,
+	0x14, 0x5f, 0x2e, 0x26, 0x1d, 0xdd, 0x6c, 0x1d, 0x13, 0xb3, 0xa2, 0xa7, 0x9e, 0x3c, 0x4d, 0x77,
+	0xd5, 0x7a, 0xd4, 0x83, 0x5a, 0x35, 0xd1, 0xd8, 0xb4, 0x35, 0x31, 0xf1, 0x40, 0xa0, 0x7d, 0x05,
+	0x14, 0x66, 0x90, 0x99, 0x29, 0xf1, 0xac, 0x9f, 0xc3, 0x2f, 0xe8, 0x97, 0x30, 0x03, 0xbc, 0x29,
+	0xd2, 0x08, 0xd4, 0x13, 0xc9, 0xfb, 0xfd, 0x99, 0xf7, 0x17, 0x72, 0x2e, 0x21, 0xdf, 0xc7, 0x1b,
+	0x60, 0x59, 0x2e, 0x94, 0xa0, 0x0f, 0xfc, 0x98, 0xa5, 0xa0, 0x7c, 0x15, 0xc5, 0x3c, 0x94, 0x0c,
+	0xc1, 0x2d, 0x98, 0x8f, 0x7b, 0x3f, 0x14, 0x22, 0x4c, 0x60, 0x5a, 0x72, 0x03, 0xbd, 0x9b, 0x42,
+	0x9a, 0xa9, 0xef, 0x95, 0xd4, 0xbd, 0x8c, 0xa5, 0xd4, 0xe0, 0xa5, 0x62, 0xab, 0x13, 0xf0, 0x94,
+	0xf8, 0x0a, 0xbc, 0x46, 0x6e, 0xcb, 0x48, 0x14, 0x35, 0x50, 0x87, 0x2e, 0x22, 0xf0, 0x73, 0x15,
+	0x80, 0xaf, 0x50, 0x9d, 0x69, 0x19, 0x79, 0xbb, 0xdc, 0x4f, 0x8d, 0xd6, 0xdb, 0x25, 0xa2, 0xa8,
+	0x91, 0x71, 0xa6, 0x95, 0x27, 0x82, 0x2f, 0xb0, 0x41, 0xee, 0x9d, 0x1c, 0x52, 0xb1, 0x87, 0xa3,
+	0x20, 0x37, 0xe2, 0xbf, 0x82, 0xe3, 0x10, 0x5a, 0xda, 0xcb, 0x43, 0xc4, 0xdb, 0x08, 0xae, 0x80,
+	0x23, 0x32, 0x69, 0x20, 0x52, 0xe5, 0xe0, 0xa7, 0x31, 0x0f, 0x5b, 0x1c, 0x9a, 0xc4, 0x12, 0x49,
+	0xb2, 0x8a, 0x3d, 0xfa, 0x3d, 0x22, 0xe7, 0x2f, 0xcb, 0xfe, 0xac, 0xaa, 0x6e, 0xd1, 0x1f, 0x0e,
+	0x19, 0xbf, 0x35, 0xcd, 0x78, 0x5f, 0x96, 0xbc, 0x36, 0xad, 0xa0, 0x33, 0xd6, 0xd5, 0x5a, 0xd6,
+	0xe6, 0x2f, 0xe1, 0x9b, 0x06, 0xa9, 0xdc, 0xa7, 0xa7, 0xca, 0x64, 0x26, 0xb8, 0x84, 0xc9, 0x19,
+	0xfd, 0x44, 0xc8, 0x2a, 0x12, 0x45, 0x05, 0xd2, 0xbb, 0xac, 0x9a, 0x1d, 0xc3, 0xd9, 0xb1, 0x57,
+	0x66, 0x76, 0xee, 0x55, 0xb7, 0xff, 0xc1, 0xa1, 0xe1, 0xfc, 0x91, 0x8c, 0xde, 0xe0, 0xf8, 0x28,
+	0xeb, 0x36, 0xb0, 0x44, 0x2c, 0xe8, 0x1f, 0x89, 0x4c, 0xce, 0xe8, 0x4f, 0x87, 0x5c, 0x2c, 0xb4,
+	0x8c, 0xe6, 0x66, 0x09, 0xd6, 0x62, 0x9e, 0x88, 0x82, 0x3e, 0xe9, 0x76, 0x6f, 0xd1, 0xf1, 0x8d,
+	0xd9, 0x89, 0x2a, 0xac, 0xec, 0xa1, 0x73, 0xe5, 0x98, 0xea, 0x16, 0x5a, 0x7d, 0x28, 0x67, 0xdc,
+	0x57, 0x9d, 0x25, 0xf6, 0x57, 0xf7, 0x99, 0xdc, 0x5a, 0x96, 0x6b, 0x5b, 0x3b, 0x5f, 0x77, 0x3b,
+	0x37, 0xb9, 0x03, 0xcd, 0xcd, 0xfa, 0x0f, 0x35, 0x3f, 0x70, 0xfb, 0xcd, 0x39, 0x19, 0xbd, 0x86,
+	0x81, 0x0d, 0xb1, 0x44, 0xb4, 0x9d, 0x0e, 0xe6, 0xdb, 0xf5, 0x32, 0xe7, 0x63, 0xe3, 0x2f, 0xaa,
+	0xfb, 0xeb, 0x3b, 0x9f, 0x36, 0x7f, 0xe0, 0xf9, 0x1c, 0xcb, 0x6c, 0x16, 0xbf, 0x1c, 0x72, 0xcf,
+	0xc2, 0x2b, 0xfc, 0x1f, 0x60, 0x3a, 0xcf, 0x06, 0xfa, 0xb6, 0x85, 0x98, 0xd7, 0xf3, 0xff, 0xd6,
+	0xdb, 0x04, 0x15, 0xb9, 0xf9, 0x2e, 0x96, 0x35, 0x4f, 0xd2, 0x9e, 0x43, 0x6e, 0x50, 0x31, 0x87,
+	0xeb, 0x13, 0x14, 0xf8, 0x6a, 0x70, 0xa3, 0x5c, 0x8f, 0xc7, 0x7f, 0x02, 0x00, 0x00, 0xff, 0xff,
+	0x4e, 0x1c, 0x52, 0x0a, 0x38, 0x06, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -51,7 +70,17 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type DeviceServiceClient interface {
+	IssueModuleToken(ctx context.Context, in *IssueModuleTokenRequest, opts ...grpc.CallOption) (*IssueModuleTokenResponse, error)
+	ShowModule(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*ShowModuleResponse, error)
 	Heartbeat(ctx context.Context, in *HeartbeatRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	PushFrameToFlow(ctx context.Context, opts ...grpc.CallOption) (DeviceService_PushFrameToFlowClient, error)
+	PutObject(ctx context.Context, in *PutObjectRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	RemoveObject(ctx context.Context, in *RemoveObjectRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	RenameObject(ctx context.Context, in *RenameObjectRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	GetObject(ctx context.Context, in *GetObjectRequest, opts ...grpc.CallOption) (*GetObjectResponse, error)
+	GetObjectContent(ctx context.Context, in *GetObjectContentRequest, opts ...grpc.CallOption) (*GetObjectContentResponse, error)
+	GetObjectStreamingContent(ctx context.Context, in *GetObjectStreamingContentRequest, opts ...grpc.CallOption) (*GetObjectStreamingContentResponse, error)
+	ListObjects(ctx context.Context, in *ListObjectsRequest, opts ...grpc.CallOption) (*ListObjectsResponse, error)
 }
 
 type deviceServiceClient struct {
@@ -60,6 +89,24 @@ type deviceServiceClient struct {
 
 func NewDeviceServiceClient(cc *grpc.ClientConn) DeviceServiceClient {
 	return &deviceServiceClient{cc}
+}
+
+func (c *deviceServiceClient) IssueModuleToken(ctx context.Context, in *IssueModuleTokenRequest, opts ...grpc.CallOption) (*IssueModuleTokenResponse, error) {
+	out := new(IssueModuleTokenResponse)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.device.DeviceService/IssueModuleToken", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *deviceServiceClient) ShowModule(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*ShowModuleResponse, error) {
+	out := new(ShowModuleResponse)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.device.DeviceService/ShowModule", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *deviceServiceClient) Heartbeat(ctx context.Context, in *HeartbeatRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
@@ -71,13 +118,153 @@ func (c *deviceServiceClient) Heartbeat(ctx context.Context, in *HeartbeatReques
 	return out, nil
 }
 
+func (c *deviceServiceClient) PushFrameToFlow(ctx context.Context, opts ...grpc.CallOption) (DeviceService_PushFrameToFlowClient, error) {
+	stream, err := c.cc.NewStream(ctx, &_DeviceService_serviceDesc.Streams[0], "/ai.metathings.service.device.DeviceService/PushFrameToFlow", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &deviceServicePushFrameToFlowClient{stream}
+	return x, nil
+}
+
+type DeviceService_PushFrameToFlowClient interface {
+	Send(*PushFrameToFlowRequest) error
+	Recv() (*PushFrameToFlowResponse, error)
+	grpc.ClientStream
+}
+
+type deviceServicePushFrameToFlowClient struct {
+	grpc.ClientStream
+}
+
+func (x *deviceServicePushFrameToFlowClient) Send(m *PushFrameToFlowRequest) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *deviceServicePushFrameToFlowClient) Recv() (*PushFrameToFlowResponse, error) {
+	m := new(PushFrameToFlowResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (c *deviceServiceClient) PutObject(ctx context.Context, in *PutObjectRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.device.DeviceService/PutObject", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *deviceServiceClient) RemoveObject(ctx context.Context, in *RemoveObjectRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.device.DeviceService/RemoveObject", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *deviceServiceClient) RenameObject(ctx context.Context, in *RenameObjectRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.device.DeviceService/RenameObject", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *deviceServiceClient) GetObject(ctx context.Context, in *GetObjectRequest, opts ...grpc.CallOption) (*GetObjectResponse, error) {
+	out := new(GetObjectResponse)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.device.DeviceService/GetObject", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *deviceServiceClient) GetObjectContent(ctx context.Context, in *GetObjectContentRequest, opts ...grpc.CallOption) (*GetObjectContentResponse, error) {
+	out := new(GetObjectContentResponse)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.device.DeviceService/GetObjectContent", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *deviceServiceClient) GetObjectStreamingContent(ctx context.Context, in *GetObjectStreamingContentRequest, opts ...grpc.CallOption) (*GetObjectStreamingContentResponse, error) {
+	out := new(GetObjectStreamingContentResponse)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.device.DeviceService/GetObjectStreamingContent", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *deviceServiceClient) ListObjects(ctx context.Context, in *ListObjectsRequest, opts ...grpc.CallOption) (*ListObjectsResponse, error) {
+	out := new(ListObjectsResponse)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.device.DeviceService/ListObjects", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // DeviceServiceServer is the server API for DeviceService service.
 type DeviceServiceServer interface {
+	IssueModuleToken(context.Context, *IssueModuleTokenRequest) (*IssueModuleTokenResponse, error)
+	ShowModule(context.Context, *empty.Empty) (*ShowModuleResponse, error)
 	Heartbeat(context.Context, *HeartbeatRequest) (*empty.Empty, error)
+	PushFrameToFlow(DeviceService_PushFrameToFlowServer) error
+	PutObject(context.Context, *PutObjectRequest) (*empty.Empty, error)
+	RemoveObject(context.Context, *RemoveObjectRequest) (*empty.Empty, error)
+	RenameObject(context.Context, *RenameObjectRequest) (*empty.Empty, error)
+	GetObject(context.Context, *GetObjectRequest) (*GetObjectResponse, error)
+	GetObjectContent(context.Context, *GetObjectContentRequest) (*GetObjectContentResponse, error)
+	GetObjectStreamingContent(context.Context, *GetObjectStreamingContentRequest) (*GetObjectStreamingContentResponse, error)
+	ListObjects(context.Context, *ListObjectsRequest) (*ListObjectsResponse, error)
 }
 
 func RegisterDeviceServiceServer(s *grpc.Server, srv DeviceServiceServer) {
 	s.RegisterService(&_DeviceService_serviceDesc, srv)
+}
+
+func _DeviceService_IssueModuleToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(IssueModuleTokenRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DeviceServiceServer).IssueModuleToken(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ai.metathings.service.device.DeviceService/IssueModuleToken",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DeviceServiceServer).IssueModuleToken(ctx, req.(*IssueModuleTokenRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DeviceService_ShowModule_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(empty.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DeviceServiceServer).ShowModule(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ai.metathings.service.device.DeviceService/ShowModule",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DeviceServiceServer).ShowModule(ctx, req.(*empty.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _DeviceService_Heartbeat_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -98,15 +285,210 @@ func _DeviceService_Heartbeat_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _DeviceService_PushFrameToFlow_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(DeviceServiceServer).PushFrameToFlow(&deviceServicePushFrameToFlowServer{stream})
+}
+
+type DeviceService_PushFrameToFlowServer interface {
+	Send(*PushFrameToFlowResponse) error
+	Recv() (*PushFrameToFlowRequest, error)
+	grpc.ServerStream
+}
+
+type deviceServicePushFrameToFlowServer struct {
+	grpc.ServerStream
+}
+
+func (x *deviceServicePushFrameToFlowServer) Send(m *PushFrameToFlowResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *deviceServicePushFrameToFlowServer) Recv() (*PushFrameToFlowRequest, error) {
+	m := new(PushFrameToFlowRequest)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func _DeviceService_PutObject_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PutObjectRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DeviceServiceServer).PutObject(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ai.metathings.service.device.DeviceService/PutObject",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DeviceServiceServer).PutObject(ctx, req.(*PutObjectRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DeviceService_RemoveObject_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RemoveObjectRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DeviceServiceServer).RemoveObject(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ai.metathings.service.device.DeviceService/RemoveObject",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DeviceServiceServer).RemoveObject(ctx, req.(*RemoveObjectRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DeviceService_RenameObject_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RenameObjectRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DeviceServiceServer).RenameObject(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ai.metathings.service.device.DeviceService/RenameObject",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DeviceServiceServer).RenameObject(ctx, req.(*RenameObjectRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DeviceService_GetObject_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetObjectRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DeviceServiceServer).GetObject(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ai.metathings.service.device.DeviceService/GetObject",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DeviceServiceServer).GetObject(ctx, req.(*GetObjectRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DeviceService_GetObjectContent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetObjectContentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DeviceServiceServer).GetObjectContent(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ai.metathings.service.device.DeviceService/GetObjectContent",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DeviceServiceServer).GetObjectContent(ctx, req.(*GetObjectContentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DeviceService_GetObjectStreamingContent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetObjectStreamingContentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DeviceServiceServer).GetObjectStreamingContent(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ai.metathings.service.device.DeviceService/GetObjectStreamingContent",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DeviceServiceServer).GetObjectStreamingContent(ctx, req.(*GetObjectStreamingContentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DeviceService_ListObjects_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListObjectsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DeviceServiceServer).ListObjects(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ai.metathings.service.device.DeviceService/ListObjects",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DeviceServiceServer).ListObjects(ctx, req.(*ListObjectsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _DeviceService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "ai.metathings.service.device.DeviceService",
 	HandlerType: (*DeviceServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
+			MethodName: "IssueModuleToken",
+			Handler:    _DeviceService_IssueModuleToken_Handler,
+		},
+		{
+			MethodName: "ShowModule",
+			Handler:    _DeviceService_ShowModule_Handler,
+		},
+		{
 			MethodName: "Heartbeat",
 			Handler:    _DeviceService_Heartbeat_Handler,
 		},
+		{
+			MethodName: "PutObject",
+			Handler:    _DeviceService_PutObject_Handler,
+		},
+		{
+			MethodName: "RemoveObject",
+			Handler:    _DeviceService_RemoveObject_Handler,
+		},
+		{
+			MethodName: "RenameObject",
+			Handler:    _DeviceService_RenameObject_Handler,
+		},
+		{
+			MethodName: "GetObject",
+			Handler:    _DeviceService_GetObject_Handler,
+		},
+		{
+			MethodName: "GetObjectContent",
+			Handler:    _DeviceService_GetObjectContent_Handler,
+		},
+		{
+			MethodName: "GetObjectStreamingContent",
+			Handler:    _DeviceService_GetObjectStreamingContent_Handler,
+		},
+		{
+			MethodName: "ListObjects",
+			Handler:    _DeviceService_ListObjects_Handler,
+		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "PushFrameToFlow",
+			Handler:       _DeviceService_PushFrameToFlow_Handler,
+			ServerStreams: true,
+			ClientStreams: true,
+		},
+	},
 	Metadata: "service.proto",
 }

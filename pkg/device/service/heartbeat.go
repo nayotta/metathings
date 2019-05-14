@@ -10,7 +10,6 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	context_helper "github.com/nayotta/metathings/pkg/common/context"
 	protobuf_helper "github.com/nayotta/metathings/pkg/common/protobuf"
 	state_pb "github.com/nayotta/metathings/pkg/proto/constant/state"
 	pb "github.com/nayotta/metathings/pkg/proto/device"
@@ -19,10 +18,9 @@ import (
 
 func (self *MetathingsDeviceServiceImpl) Heartbeat(ctx context.Context, req *pb.HeartbeatRequest) (*empty.Empty, error) {
 	op_mdl := req.GetModule()
-	component := op_mdl.GetComponent().GetValue()
 	name := op_mdl.GetName().GetValue()
 
-	mdl, err := self.mdl_db.Lookup(component, name)
+	mdl, err := self.mdl_db.Lookup(name)
 	if err != nil {
 		self.logger.WithError(err).Errorf("failed to lookup module")
 		return nil, status.Errorf(codes.Internal, err.Error())
@@ -31,8 +29,7 @@ func (self *MetathingsDeviceServiceImpl) Heartbeat(ctx context.Context, req *pb.
 	mdl.Heartbeat()
 
 	self.logger.WithFields(log.Fields{
-		"component": component,
-		"name":      name,
+		"name": name,
 	}).Debugf("module heartbeat")
 
 	return &empty.Empty{}, nil
@@ -53,7 +50,6 @@ func (self *MetathingsDeviceServiceImpl) heartbeat_once() {
 	}
 	defer cfn()
 
-	ctx := context_helper.WithToken(context.Background(), self.tknr.GetToken())
 	now := time.Now()
 	pb_now := protobuf_helper.FromTime(now)
 	pb_mdls := []*deviced_pb.OpModule{}
@@ -83,9 +79,10 @@ func (self *MetathingsDeviceServiceImpl) heartbeat_once() {
 			HeartbeatAt: &pb_now,
 			Modules:     pb_mdls,
 		},
+		StartupSession: &wrappers.Int32Value{Value: self.startup_session},
 	}
 
-	_, err = cli.Heartbeat(ctx, req)
+	_, err = cli.Heartbeat(self.context(), req)
 	if err != nil {
 		self.logger.WithError(err).Warningf("failed to heartbeat")
 		return

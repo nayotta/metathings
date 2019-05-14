@@ -16,3 +16,15 @@ dev:
     bridge:
       name: <bridge-driver>
       # ...
+  flow:
+    mongo:
+      uri: <mongo-uri>
+      database: <mongo-database>
+    kafka:
+      brokers: <kafka-brokers>
+  simple_storage:
+    name: <simple-storage-name>
+    # ...
+  credential:
+    id: <credential-id>
+    secret: <credential-key>

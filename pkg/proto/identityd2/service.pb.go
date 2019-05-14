@@ -26,81 +26,94 @@ const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 func init() { proto.RegisterFile("service.proto", fileDescriptor_a0b84a42fa06f626) }
 
 var fileDescriptor_a0b84a42fa06f626 = []byte{
-	// 1172 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xa4, 0x58, 0x5b, 0x6f, 0x1b, 0x45,
-	0x14, 0xae, 0x5f, 0x80, 0x9e, 0xa6, 0x8d, 0xbd, 0x09, 0x69, 0x49, 0x5b, 0x0a, 0x7d, 0xe3, 0xc5,
-	0x05, 0x3b, 0x49, 0x6f, 0x69, 0x21, 0x49, 0x53, 0xab, 0x12, 0x0f, 0x55, 0x1a, 0xf1, 0xc0, 0x45,
-	0x96, 0xe3, 0x9d, 0xd8, 0x2b, 0x5f, 0xc6, 0xdd, 0x59, 0x3b, 0xb2, 0x54, 0x09, 0x89, 0x27, 0x24,
-	0x24, 0x24, 0x24, 0x24, 0x9e, 0x78, 0xe2, 0x3f, 0xf1, 0x7b, 0xd0, 0x5c, 0xf7, 0xcc, 0x6e, 0xd0,
-	0x9e, 0x71, 0x9f, 0x12, 0x7d, 0x73, 0xbe, 0xf3, 0x9d, 0x73, 0x66, 0xf6, 0xdb, 0xf1, 0xc2, 0x75,
-	0xc1, 0xd2, 0x45, 0xd2, 0x67, 0xcd, 0x59, 0xca, 0x33, 0x1e, 0x7d, 0xd6, 0x4b, 0x9a, 0x13, 0x96,
-	0xf5, 0xb2, 0x61, 0x32, 0x1d, 0x88, 0xa6, 0x5d, 0x4c, 0x62, 0x36, 0xcd, 0x92, 0x6c, 0x19, 0xb7,
-	0xb6, 0x6f, 0x0f, 0x38, 0x1f, 0x8c, 0xd9, 0x03, 0x15, 0x7f, 0x36, 0x3f, 0x7f, 0xc0, 0x26, 0xb3,
-	0x6c, 0xa9, 0xe9, 0xdb, 0x1b, 0xfd, 0x94, 0xf5, 0x32, 0xd6, 0x8d, 0xf9, 0xa4, 0x97, 0x4c, 0x2d,
-	0x18, 0xb3, 0x31, 0x2b, 0x82, 0xd1, 0xac, 0x97, 0xf5, 0x87, 0x3e, 0x56, 0x1f, 0xb0, 0xac, 0x10,
-	0x35, 0x4e, 0x84, 0x85, 0x84, 0xc1, 0x1a, 0x46, 0x23, 0xe5, 0x63, 0x66, 0x21, 0xa3, 0x80, 0xa0,
-	0xba, 0xce, 0x8f, 0x90, 0x1b, 0x32, 0x3b, 0x8e, 0x50, 0xb9, 0x25, 0x60, 0x33, 0xdf, 0xce, 0x91,
-	0xee, 0x39, 0x4f, 0xbb, 0xba, 0xe7, 0x42, 0x6b, 0x3e, 0x68, 0x84, 0x3d, 0xd0, 0xb4, 0xe6, 0x61,
-	0xaa, 0x35, 0x9f, 0xaa, 0xc4, 0x14, 0x94, 0xb8, 0x0a, 0x1a, 0x62, 0xc8, 0x2f, 0xfc, 0xb8, 0x5b,
-	0xbd, 0x38, 0x56, 0x35, 0x75, 0x33, 0xee, 0xaf, 0xdc, 0x4d, 0xd9, 0x84, 0x2f, 0x74, 0xd7, 0xdd,
-	0xf3, 0x94, 0x4f, 0xfc, 0xe5, 0x6d, 0x49, 0xd4, 0x88, 0xa4, 0x7a, 0x73, 0xbd, 0x67, 0xa8, 0x66,
-	0x59, 0x91, 0xfd, 0xc1, 0x9b, 0x6e, 0x07, 0x29, 0x9f, 0xcf, 0x2c, 0x66, 0x9a, 0xc5, 0x58, 0x43,
-	0xf7, 0x8a, 0xa1, 0x75, 0xd9, 0xaa, 0x17, 0xa3, 0x3a, 0x55, 0x88, 0xed, 0xf3, 0x0e, 0x82, 0xca,
-	0xa3, 0xd6, 0x53, 0xf0, 0x08, 0x37, 0xf1, 0x14, 0x70, 0xf2, 0x3b, 0xa5, 0x21, 0xe0, 0xd5, 0x4f,
-	0xfc, 0x19, 0xe0, 0xa5, 0x4f, 0x2f, 0x19, 0x01, 0x5e, 0xbf, 0x69, 0x26, 0xd0, 0x4f, 0x99, 0x3a,
-	0xfc, 0xbd, 0xb1, 0x5d, 0x30, 0x63, 0x28, 0x2d, 0x6c, 0xe9, 0x59, 0x94, 0xf0, 0x4d, 0x39, 0x90,
-	0x72, 0xb4, 0x1a, 0x41, 0x0e, 0xdb, 0x4e, 0x3f, 0x2f, 0xe2, 0xe5, 0xf9, 0xdc, 0x4b, 0x84, 0x98,
-	0xcb, 0x49, 0x8c, 0xd8, 0xb4, 0x7b, 0xb6, 0x2c, 0xe7, 0xbe, 0x5b, 0x08, 0x98, 0xf5, 0x84, 0xb8,
-	0xe0, 0x69, 0x6c, 0x4f, 0x46, 0x61, 0x59, 0xfd, 0x63, 0x37, 0x39, 0x65, 0x0b, 0x3e, 0x62, 0x1e,
-	0xb6, 0xb9, 0xe8, 0x8d, 0x93, 0x58, 0x0e, 0x03, 0xa3, 0x8d, 0xfe, 0x90, 0xf5, 0x47, 0x18, 0x6a,
-	0xfd, 0xfb, 0x05, 0xd4, 0x5f, 0x59, 0xab, 0x78, 0xa3, 0xbd, 0x23, 0xfa, 0x19, 0xd6, 0x8e, 0xd4,
-	0x28, 0x5f, 0xa8, 0x03, 0x16, 0xed, 0x36, 0xab, 0x3c, 0xa6, 0x89, 0xe3, 0x4f, 0xd8, 0xdb, 0x39,
-	0x13, 0xd9, 0xf6, 0x5e, 0x28, 0x4d, 0xcc, 0xf8, 0x54, 0xb0, 0xfb, 0x57, 0xa2, 0x2e, 0xac, 0xbd,
-	0x50, 0x5b, 0x46, 0x2f, 0x00, 0xc7, 0xdb, 0x02, 0xb6, 0x9a, 0xda, 0xf9, 0x9a, 0xd6, 0xf9, 0x9a,
-	0xc7, 0xd2, 0xf9, 0xee, 0x5f, 0x89, 0xde, 0xc1, 0xb5, 0xd7, 0x72, 0xeb, 0x4d, 0xfe, 0x9d, 0xea,
-	0xfc, 0x28, 0xdc, 0xa6, 0xdf, 0x0d, 0x64, 0xb9, 0xf6, 0x16, 0x70, 0xb5, 0xc3, 0x32, 0xa3, 0xdd,
-	0xaa, 0xce, 0xe2, 0x82, 0xad, 0x72, 0x3b, 0x88, 0xe3, 0x74, 0xdf, 0xc1, 0xb5, 0x6f, 0x13, 0x61,
-	0x70, 0x41, 0xe9, 0x1a, 0x85, 0x07, 0x74, 0xed, 0xb1, 0x9c, 0xfa, 0x12, 0x40, 0x6f, 0xf7, 0x09,
-	0x1f, 0xb3, 0xa8, 0x4d, 0x3d, 0x1c, 0x32, 0xda, 0x6a, 0xef, 0x84, 0x91, 0x9c, 0xf4, 0x0f, 0x00,
-	0xfa, 0x7c, 0x50, 0xa5, 0xf3, 0xe8, 0xea, 0xb3, 0xb4, 0x80, 0xab, 0x6a, 0x9b, 0x55, 0xee, 0x16,
-	0xf1, 0x4c, 0xe0, 0xd4, 0xed, 0x20, 0x8e, 0x6b, 0x6a, 0x06, 0x1f, 0x76, 0x58, 0xa6, 0x54, 0xbf,
-	0x24, 0x9d, 0x07, 0xac, 0xf9, 0x55, 0x00, 0x03, 0x9f, 0x5b, 0xb9, 0xb5, 0x12, 0x15, 0x94, 0x4e,
-	0x5d, 0x70, 0x40, 0xa7, 0x88, 0xe3, 0x74, 0xff, 0xa8, 0x41, 0xe4, 0xf0, 0x97, 0x3c, 0x3d, 0x56,
-	0xc1, 0xd1, 0xd3, 0x80, 0x6c, 0x8e, 0x65, 0x4b, 0xd9, 0x5f, 0x8d, 0xec, 0x6a, 0x72, 0x1e, 0x69,
-	0x8a, 0x21, 0x7b, 0xa4, 0x5f, 0xc6, 0x5e, 0x28, 0xad, 0xec, 0x91, 0xf4, 0x02, 0x70, 0x3c, 0xdd,
-	0x23, 0x4d, 0x7e, 0xaa, 0x47, 0xfa, 0xe9, 0x77, 0x03, 0x59, 0x05, 0x8f, 0x34, 0xda, 0x34, 0x8f,
-	0xf4, 0x95, 0xdb, 0x41, 0x1c, 0xbc, 0xaf, 0x72, 0xdf, 0x8f, 0xcd, 0x2d, 0x2f, 0x22, 0xda, 0x9d,
-	0x8d, 0x0f, 0xd8, 0x57, 0x9f, 0xe6, 0x0a, 0xf8, 0x11, 0xe0, 0xcd, 0x90, 0x5f, 0x98, 0xce, 0xff,
-	0x67, 0x7b, 0x28, 0x4e, 0x98, 0x67, 0x41, 0xd9, 0x19, 0xac, 0x1f, 0xc4, 0xb1, 0x3c, 0xd5, 0xa7,
-	0xdc, 0x48, 0x3c, 0xaa, 0x4e, 0x55, 0xa0, 0x54, 0x9f, 0x1d, 0x0e, 0x9b, 0x27, 0xea, 0xb2, 0x26,
-	0x69, 0x2f, 0x53, 0x3e, 0x31, 0x5a, 0xcf, 0xaa, 0xb5, 0x2e, 0xe3, 0x55, 0x0b, 0x26, 0xd0, 0x38,
-	0x88, 0x63, 0x1d, 0x7d, 0xca, 0xcd, 0xab, 0xf5, 0x09, 0xa9, 0x33, 0x9f, 0x54, 0x2d, 0x25, 0x60,
-	0x4b, 0xd7, 0xa8, 0x89, 0xb2, 0x4a, 0xa3, 0xf7, 0x35, 0xb5, 0xbb, 0x22, 0x93, 0xf4, 0x30, 0x6a,
-	0x1f, 0xe8, 0xc8, 0x0b, 0x6f, 0x44, 0x7e, 0x11, 0xaa, 0xf0, 0x80, 0x87, 0xd1, 0x63, 0xb9, 0x53,
-	0xf3, 0x13, 0x5c, 0xd3, 0xde, 0x41, 0x56, 0x47, 0xe1, 0xd5, 0xcd, 0x2d, 0x01, 0x94, 0x09, 0xe8,
-	0xec, 0xd4, 0xd7, 0xa1, 0x97, 0x7c, 0x27, 0x8c, 0xe4, 0x3a, 0x13, 0xf0, 0x51, 0x87, 0x65, 0x5a,
-	0x98, 0xf6, 0x4e, 0xf4, 0x64, 0x5b, 0x21, 0x14, 0x7c, 0x13, 0x92, 0x0f, 0xbf, 0x82, 0x45, 0x44,
-	0x7c, 0x29, 0xea, 0xe8, 0x80, 0x7e, 0x31, 0xc9, 0x49, 0xff, 0x59, 0x83, 0x8d, 0x7c, 0x21, 0x7f,
-	0x97, 0xee, 0x87, 0xe4, 0x2b, 0xbd, 0x4c, 0x9f, 0xad, 0xc8, 0x2e, 0x9a, 0x9e, 0x99, 0xc8, 0x7b,
-	0x9a, 0x5e, 0xa9, 0xe9, 0x3e, 0xdc, 0x70, 0x0e, 0xa6, 0xb7, 0xfa, 0x61, 0x80, 0xe7, 0x11, 0x0f,
-	0xf1, 0x04, 0x36, 0x7c, 0xeb, 0xd2, 0x4a, 0xfb, 0xa1, 0x8e, 0x47, 0x94, 0x1b, 0x40, 0x1d, 0x79,
-	0x97, 0xd6, 0x7a, 0x1c, 0xe4, 0x77, 0x44, 0xa1, 0xb7, 0xf0, 0x71, 0xd1, 0xb4, 0xb4, 0xda, 0xf3,
-	0x70, 0xb7, 0x23, 0x4a, 0xfe, 0x56, 0x83, 0xba, 0x36, 0xa2, 0x23, 0xf7, 0x3b, 0x99, 0xd2, 0x5c,
-	0x91, 0x63, 0x95, 0x9e, 0xac, 0x42, 0x75, 0xa7, 0x67, 0x00, 0x75, 0xed, 0x66, 0x61, 0xc5, 0x14,
-	0x39, 0xd5, 0x6d, 0xff, 0x5a, 0x83, 0x75, 0x65, 0x52, 0x48, 0xe8, 0x11, 0xd1, 0xd7, 0xca, 0x3a,
-	0x8f, 0x57, 0x60, 0xba, 0x9e, 0x7f, 0xa9, 0xc1, 0xf5, 0x0e, 0xcb, 0x50, 0x21, 0x7b, 0x24, 0xa7,
-	0x2b, 0x97, 0xf1, 0x30, 0x98, 0xe7, 0x8a, 0x90, 0xf3, 0x90, 0xb6, 0x91, 0x2f, 0x0a, 0xca, 0x3c,
-	0x0a, 0x94, 0x80, 0x79, 0x94, 0x98, 0xae, 0x94, 0x7f, 0x6a, 0x70, 0xab, 0xb0, 0x9a, 0x7b, 0xe7,
-	0x41, 0x70, 0xe6, 0x92, 0x81, 0x1e, 0xbe, 0x4f, 0x0a, 0x57, 0xe5, 0xdf, 0x35, 0xd8, 0x7a, 0x25,
-	0xc4, 0x9c, 0x9d, 0xf2, 0x11, 0x9b, 0x1e, 0x2e, 0xd1, 0xf6, 0x11, 0xae, 0x26, 0x97, 0x33, 0x6d,
-	0x85, 0xdf, 0xac, 0x9e, 0xc0, 0xd5, 0xf7, 0x57, 0x0d, 0x36, 0x71, 0xd0, 0x6b, 0xf3, 0x91, 0x8b,
-	0x72, 0x2d, 0xbc, 0x8c, 0x67, 0x6b, 0x7b, 0xbe, 0x2a, 0xdd, 0x55, 0xf6, 0x7b, 0x0d, 0x1a, 0x38,
-	0x44, 0xfd, 0xa1, 0xdc, 0x1f, 0x4b, 0x24, 0x5b, 0xd3, 0xd3, 0x95, 0xb8, 0xf8, 0xc6, 0x75, 0xa2,
-	0x3e, 0xeb, 0xe9, 0x4a, 0x76, 0x28, 0x5e, 0xeb, 0xc2, 0xab, 0xad, 0x46, 0x3e, 0xdf, 0xdf, 0x99,
-	0x4f, 0x84, 0x5a, 0x81, 0xf0, 0x7c, 0x7b, 0x84, 0x80, 0xe7, 0xbb, 0xc0, 0xc3, 0x5f, 0x65, 0x8e,
-	0x86, 0xac, 0x3f, 0xd2, 0x05, 0x50, 0x3e, 0x08, 0xb9, 0xe8, 0xca, 0x0e, 0x0f, 0xd7, 0xbe, 0x87,
-	0x9c, 0x79, 0xf6, 0x81, 0x5a, 0x6f, 0xff, 0x17, 0x00, 0x00, 0xff, 0xff, 0x63, 0x74, 0x16, 0x84,
-	0x3c, 0x19, 0x00, 0x00,
+	// 1386 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xa4, 0x59, 0xdd, 0x6b, 0x1b, 0x47,
+	0x10, 0x8f, 0x5e, 0xda, 0x66, 0xec, 0xc4, 0xd2, 0xd9, 0x71, 0x52, 0x27, 0x6e, 0xda, 0xfc, 0x01,
+	0x4a, 0x6b, 0xd9, 0xce, 0x97, 0x93, 0xd6, 0x76, 0x6c, 0x13, 0x28, 0x28, 0xd8, 0xa6, 0x0f, 0xfd,
+	0x40, 0x9c, 0x75, 0x6b, 0xe9, 0xaa, 0x8f, 0x55, 0x6e, 0x4f, 0x32, 0x2a, 0x81, 0x42, 0x9f, 0x0a,
+	0x85, 0x42, 0xa1, 0xd0, 0xa7, 0x3e, 0xf5, 0x4f, 0xeb, 0x3f, 0x12, 0xf6, 0x53, 0xbb, 0x7b, 0x0a,
+	0x37, 0xab, 0x3c, 0xd9, 0xcc, 0xcc, 0x6f, 0x7e, 0x33, 0xb3, 0xb3, 0x33, 0x77, 0x27, 0xb8, 0xc1,
+	0x48, 0x36, 0x49, 0xdb, 0xa4, 0x3e, 0xca, 0x68, 0x4e, 0xa3, 0xcf, 0xe3, 0xb4, 0x3e, 0x20, 0x79,
+	0x9c, 0x77, 0xd3, 0x61, 0x87, 0xd5, 0xb5, 0x32, 0x4d, 0xc8, 0x30, 0x4f, 0xf3, 0x69, 0xb2, 0xb5,
+	0x71, 0xb7, 0x43, 0x69, 0xa7, 0x4f, 0x1e, 0x0a, 0xfb, 0x8b, 0xf1, 0xe5, 0x43, 0x32, 0x18, 0xe5,
+	0x53, 0x09, 0xdf, 0x58, 0x6d, 0x67, 0x24, 0xce, 0x49, 0x2b, 0xa1, 0x83, 0x38, 0x1d, 0x6a, 0x61,
+	0x42, 0xfa, 0xc4, 0x17, 0x46, 0xa3, 0x38, 0x6f, 0x77, 0x5d, 0x59, 0xb5, 0x43, 0x72, 0xcf, 0xaa,
+	0x9f, 0x32, 0x2d, 0x62, 0x1e, 0x47, 0xdc, 0xce, 0x53, 0xea, 0x73, 0x38, 0x42, 0xc5, 0xe1, 0xc8,
+	0x04, 0x87, 0x6b, 0x25, 0x38, 0xa4, 0x48, 0x73, 0xd4, 0x14, 0x47, 0x46, 0xfb, 0x44, 0x8b, 0x14,
+	0x83, 0x25, 0xaa, 0x4a, 0xff, 0x96, 0xe4, 0x26, 0xf7, 0x6e, 0x5b, 0x08, 0xdf, 0x5c, 0xa0, 0x3d,
+	0xdf, 0x9d, 0x49, 0x5a, 0x97, 0x34, 0x6b, 0xc9, 0xba, 0x2a, 0xe5, 0x9d, 0x38, 0x49, 0x54, 0x24,
+	0xad, 0x9c, 0xda, 0x8e, 0x36, 0x33, 0x32, 0xa0, 0x13, 0x9d, 0x5f, 0xeb, 0x32, 0xa3, 0x03, 0x5b,
+	0xad, 0x6b, 0xe2, 0x78, 0xd3, 0x35, 0x71, 0x84, 0xaa, 0x26, 0x8e, 0x4c, 0xd4, 0xc4, 0x85, 0x8a,
+	0x28, 0x85, 0x28, 0x35, 0xa1, 0xd7, 0x58, 0x97, 0x5e, 0xcd, 0x09, 0x98, 0xc7, 0xc1, 0xc3, 0x75,
+	0x34, 0x3a, 0x60, 0xa1, 0x14, 0xe1, 0x3a, 0xea, 0x0d, 0x0e, 0x94, 0x12, 0x0e, 0x75, 0x0e, 0xfd,
+	0xbe, 0x82, 0x2a, 0xb5, 0x00, 0xbb, 0x5d, 0xa1, 0xb2, 0xed, 0x64, 0x74, 0x3c, 0xd2, 0x32, 0x95,
+	0xac, 0x2d, 0xab, 0xc9, 0x5c, 0x6d, 0xd1, 0x0a, 0x4f, 0xd5, 0xb1, 0x11, 0x99, 0x0a, 0x89, 0xce,
+	0x73, 0xd3, 0x12, 0x89, 0x33, 0x62, 0xe3, 0x8b, 0x9f, 0x49, 0x3b, 0x57, 0xea, 0x7b, 0xbe, 0x9a,
+	0xda, 0x5a, 0x59, 0x24, 0xc7, 0xdf, 0x6d, 0xbb, 0x48, 0x36, 0xf7, 0xbd, 0x42, 0x8d, 0x6c, 0xad,
+	0x28, 0x91, 0xa2, 0xf6, 0x91, 0xba, 0x44, 0x5a, 0x5d, 0x00, 0x7f, 0xca, 0xc1, 0x74, 0x2e, 0xf6,
+	0x33, 0x85, 0xa5, 0xef, 0x81, 0xde, 0x56, 0xd5, 0x6d, 0x67, 0x44, 0xdc, 0xfa, 0xb8, 0xaf, 0x15,
+	0xaa, 0xc4, 0x05, 0xc5, 0xba, 0xac, 0x73, 0x41, 0xbe, 0xc6, 0x8b, 0x5d, 0xb4, 0x16, 0xf5, 0x9b,
+	0x89, 0x75, 0x99, 0xbe, 0xf0, 0xe5, 0xc5, 0xfb, 0x71, 0x3f, 0x65, 0x6c, 0xcc, 0xcb, 0xd8, 0x23,
+	0xc3, 0xd6, 0xc5, 0xb4, 0xe8, 0x7b, 0xd3, 0x33, 0x18, 0xc5, 0x8c, 0x5d, 0xd1, 0x2c, 0xd1, 0x25,
+	0xf5, 0xd4, 0xe2, 0x1f, 0xdd, 0x40, 0x19, 0x99, 0xd0, 0x1e, 0x71, 0x64, 0x6b, 0x93, 0xb8, 0x9f,
+	0x26, 0xbc, 0x18, 0xb6, 0xb4, 0xd6, 0xee, 0x92, 0x76, 0xcf, 0x11, 0xdd, 0x8a, 0xc7, 0x79, 0x97,
+	0x66, 0xe9, 0x2f, 0x8e, 0xe5, 0xd6, 0xff, 0x0d, 0xa8, 0xbe, 0xd2, 0xa3, 0xf3, 0x4c, 0xce, 0xd2,
+	0xe8, 0x57, 0x58, 0x3e, 0x14, 0x15, 0x7e, 0x29, 0x7a, 0x3a, 0xda, 0xa9, 0x97, 0xcd, 0xdc, 0xba,
+	0x6d, 0x7f, 0x4a, 0xde, 0x8c, 0x09, 0xcb, 0x37, 0x76, 0x43, 0x61, 0x6c, 0x44, 0x87, 0x8c, 0x3c,
+	0xb8, 0x16, 0xb5, 0x60, 0xf9, 0xa5, 0x38, 0x49, 0x7c, 0x00, 0xb6, 0xbd, 0x0e, 0x60, 0xbd, 0x2e,
+	0x37, 0x41, 0x5d, 0x6f, 0x82, 0xfa, 0x11, 0xdf, 0x04, 0x0f, 0xae, 0x45, 0x6f, 0x61, 0xe9, 0x35,
+	0xef, 0x08, 0xe5, 0x7f, 0xbb, 0xdc, 0xbf, 0x65, 0xae, 0xdd, 0xef, 0x04, 0xa2, 0x4c, 0x7a, 0x13,
+	0xb8, 0x7e, 0x42, 0x72, 0xc5, 0xbd, 0x55, 0xee, 0xc5, 0x18, 0x6b, 0xe6, 0x46, 0x10, 0xc6, 0xf0,
+	0xbe, 0x85, 0xa5, 0x6f, 0x53, 0xa6, 0xe4, 0x0c, 0x93, 0xb5, 0x65, 0x1e, 0x90, 0xb5, 0x83, 0x32,
+	0xec, 0xa6, 0xab, 0xf6, 0xc5, 0x86, 0xc0, 0x77, 0x95, 0xb4, 0x0f, 0xee, 0x2a, 0x0d, 0x2b, 0x76,
+	0x15, 0x3e, 0x00, 0xdb, 0x1e, 0xdf, 0x55, 0xca, 0x3f, 0xb6, 0xab, 0x5c, 0xf7, 0x3b, 0x81, 0x28,
+	0xaf, 0xab, 0x14, 0x37, 0xae, 0xab, 0x5c, 0xe6, 0x46, 0x10, 0xc6, 0xef, 0x2a, 0x29, 0x47, 0x77,
+	0x95, 0x32, 0x0f, 0xec, 0x2a, 0x83, 0x32, 0xec, 0x53, 0x00, 0x79, 0xdc, 0xa7, 0xb4, 0x4f, 0xa2,
+	0x06, 0xb6, 0x39, 0xb8, 0xb5, 0xe6, 0xde, 0x0e, 0x03, 0x19, 0xea, 0x1f, 0x00, 0x64, 0x7f, 0x60,
+	0xa9, 0x67, 0xd6, 0xe5, 0xbd, 0x34, 0x81, 0xeb, 0xe2, 0x98, 0x85, 0xef, 0x2d, 0x64, 0x4f, 0xd8,
+	0xae, 0x1b, 0x41, 0x18, 0x93, 0xd4, 0x08, 0x3e, 0x3e, 0x21, 0xb9, 0x60, 0xfd, 0x12, 0xd5, 0x0f,
+	0x36, 0xe7, 0x57, 0x01, 0x08, 0xbb, 0x6f, 0xf9, 0xd1, 0x72, 0x29, 0xc3, 0x64, 0x6a, 0x8c, 0x03,
+	0x32, 0xb5, 0x30, 0x86, 0xf7, 0xaf, 0x0a, 0x44, 0x46, 0x7e, 0x4c, 0xb3, 0x23, 0x61, 0x1c, 0x3d,
+	0x0b, 0xf0, 0x66, 0x50, 0x3a, 0x94, 0xbd, 0xc5, 0xc0, 0x26, 0x26, 0x02, 0x2b, 0xfb, 0x49, 0x22,
+	0xbb, 0xfc, 0x9c, 0x8a, 0x53, 0x78, 0x5c, 0xee, 0xd2, 0x83, 0x94, 0x37, 0x17, 0x85, 0xb5, 0x53,
+	0xf1, 0x88, 0x25, 0x61, 0xc7, 0x19, 0x1d, 0x08, 0xae, 0xe7, 0xe5, 0x5c, 0xf3, 0x70, 0xe5, 0x84,
+	0x66, 0xf6, 0xab, 0x22, 0xa3, 0x67, 0xbf, 0x5b, 0xde, 0xdd, 0x50, 0x58, 0x71, 0xf6, 0xe3, 0x03,
+	0xb0, 0xed, 0xf1, 0xb3, 0x5f, 0xf9, 0xc7, 0xce, 0x7e, 0xd7, 0xfd, 0x4e, 0x20, 0xca, 0x9b, 0xfd,
+	0x8a, 0x1b, 0x37, 0xfb, 0x5d, 0xe6, 0x46, 0x10, 0xc6, 0xde, 0xe9, 0xbc, 0x9f, 0x8f, 0xd4, 0x6b,
+	0x58, 0x84, 0x1c, 0xe3, 0xda, 0x3e, 0xe0, 0x5c, 0x5d, 0x98, 0x09, 0xe0, 0x47, 0x80, 0xb3, 0x2e,
+	0xbd, 0x52, 0x99, 0xbf, 0xe7, 0x78, 0x30, 0x13, 0x7e, 0xe6, 0xa5, 0x70, 0x1d, 0x79, 0x8b, 0x9f,
+	0x53, 0x45, 0x81, 0xbb, 0x8e, 0x36, 0x24, 0xe0, 0x3a, 0x72, 0x18, 0xbf, 0x54, 0x8a, 0x0b, 0x7d,
+	0x1d, 0x5d, 0x5c, 0x39, 0x61, 0x0a, 0xb5, 0xfd, 0x24, 0x91, 0xd6, 0xe7, 0x54, 0x3d, 0x88, 0x3e,
+	0x45, 0x65, 0xe6, 0x82, 0xca, 0xa9, 0x18, 0xac, 0xcb, 0x18, 0x25, 0x90, 0x47, 0xa9, 0xf8, 0xbe,
+	0xc6, 0x66, 0xe7, 0x23, 0x51, 0x97, 0x51, 0xce, 0x81, 0x13, 0xfe, 0xd6, 0x18, 0xa1, 0x17, 0xbc,
+	0x30, 0x0f, 0xb8, 0x8c, 0x0e, 0xca, 0x74, 0xcd, 0x4f, 0xb0, 0x24, 0x67, 0x07, 0x9a, 0xdd, 0x32,
+	0x2f, 0x4f, 0x6e, 0x0a, 0x20, 0x86, 0x80, 0xf4, 0x8e, 0x5d, 0xf3, 0x8e, 0xf3, 0xed, 0x30, 0x90,
+	0xc9, 0x8c, 0xc1, 0x27, 0x27, 0x24, 0x97, 0xc4, 0xb8, 0x5d, 0xef, 0xd0, 0x6e, 0x85, 0x40, 0xec,
+	0x27, 0x3c, 0x7e, 0xf9, 0x85, 0x98, 0x45, 0xc8, 0x65, 0x2f, 0xad, 0x03, 0xf2, 0xb5, 0x41, 0x86,
+	0xfa, 0x9f, 0x0a, 0xac, 0xcd, 0x14, 0xc7, 0x34, 0x3b, 0x93, 0x5f, 0x33, 0x30, 0x37, 0x73, 0x1e,
+	0x4e, 0xc7, 0xf3, 0x62, 0x51, 0xb8, 0x89, 0xec, 0xef, 0x0a, 0xac, 0x3a, 0x26, 0x4d, 0x19, 0xd8,
+	0x5e, 0xa0, 0xe7, 0xa6, 0x13, 0xd7, 0xf3, 0x05, 0xd1, 0xfe, 0x38, 0x56, 0x67, 0xf5, 0x81, 0xe3,
+	0xb8, 0x70, 0x1c, 0x6d, 0xb8, 0x69, 0x66, 0xab, 0x6c, 0xc2, 0x47, 0x01, 0xd3, 0x18, 0x79, 0xbd,
+	0x06, 0xb0, 0xea, 0x0e, 0x55, 0xc9, 0xb4, 0x17, 0x3a, 0x8b, 0x91, 0x74, 0x72, 0x14, 0xab, 0x03,
+	0xd6, 0x69, 0xe1, 0x46, 0xb1, 0x0b, 0x0a, 0x18, 0xc5, 0x0a, 0x38, 0x4b, 0x0e, 0x3d, 0x8a, 0x7d,
+	0x64, 0x39, 0x69, 0x07, 0xaa, 0xfb, 0x49, 0xd2, 0x74, 0xd2, 0x7b, 0x82, 0x4a, 0xaf, 0x19, 0x96,
+	0xdd, 0x1b, 0xb8, 0x25, 0x63, 0x6c, 0x7a, 0xc9, 0xbd, 0xc0, 0x26, 0xd7, 0x0c, 0xcd, 0xed, 0x8f,
+	0x0a, 0x54, 0xe5, 0x0a, 0x38, 0x34, 0x9f, 0xf9, 0x30, 0xc9, 0xf9, 0x18, 0xcd, 0xf4, 0x74, 0x11,
+	0xa8, 0xb9, 0x1d, 0x1d, 0xa8, 0xca, 0x3d, 0x12, 0x16, 0x8c, 0x8f, 0x29, 0x4f, 0xfb, 0xf7, 0x0a,
+	0xac, 0x88, 0xf5, 0x60, 0x11, 0x3d, 0x46, 0x6e, 0x94, 0x22, 0xcf, 0x93, 0x05, 0x90, 0x26, 0xe7,
+	0xdf, 0x2a, 0x70, 0xe3, 0x84, 0xe4, 0x56, 0x20, 0xbb, 0xa8, 0x1d, 0x53, 0x0c, 0xe3, 0x51, 0x30,
+	0xce, 0x04, 0xc1, 0xeb, 0xc1, 0xc7, 0xe2, 0x4c, 0xc9, 0x30, 0xf5, 0xf0, 0x20, 0x01, 0xf5, 0x28,
+	0x20, 0x4d, 0x28, 0xff, 0x55, 0xe0, 0x8e, 0xa7, 0x9d, 0xbd, 0xd9, 0xee, 0x07, 0x7b, 0x2e, 0xbc,
+	0xdf, 0x1e, 0x7c, 0x88, 0x0b, 0x13, 0xe5, 0xbf, 0x15, 0x58, 0x7f, 0xc5, 0xd8, 0x98, 0x9c, 0xd3,
+	0x1e, 0x19, 0x1e, 0x4c, 0xad, 0xe3, 0x43, 0x4c, 0xa2, 0xf9, 0x48, 0x1d, 0xe1, 0x37, 0x8b, 0x3b,
+	0x70, 0xd6, 0xbe, 0x6d, 0xf4, 0x5a, 0x7d, 0xa3, 0xc7, 0xac, 0xfd, 0x79, 0xb8, 0x80, 0xb5, 0x3f,
+	0x1f, 0x6e, 0x22, 0xfb, 0xb3, 0x02, 0x35, 0xdb, 0x44, 0xfc, 0xc1, 0xac, 0x8b, 0x02, 0x48, 0xc7,
+	0xf4, 0x6c, 0x21, 0xac, 0xfd, 0xac, 0x7b, 0x2a, 0x7e, 0x95, 0x90, 0x91, 0x6c, 0x63, 0x66, 0xad,
+	0x31, 0x2f, 0x1f, 0x35, 0xfc, 0x7e, 0x7f, 0xa7, 0x7e, 0xe1, 0x90, 0x0c, 0x88, 0xfb, 0xed, 0x00,
+	0x02, 0xee, 0xb7, 0x87, 0xb3, 0xbf, 0xf3, 0x1d, 0x76, 0x49, 0xbb, 0x27, 0x03, 0xc0, 0x7c, 0x62,
+	0x34, 0xd6, 0xe5, 0x19, 0xf2, 0x67, 0x1a, 0xfd, 0xcb, 0x8c, 0x24, 0xc0, 0x3c, 0xd3, 0x38, 0x88,
+	0x52, 0x92, 0x83, 0xe5, 0xef, 0x61, 0x86, 0xbe, 0xf8, 0x48, 0xe8, 0x1b, 0xef, 0x02, 0x00, 0x00,
+	0xff, 0xff, 0x53, 0x68, 0x2e, 0x26, 0x59, 0x1f, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -115,50 +128,879 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type IdentitydServiceClient interface {
+	//
+	// @fn CreateDomain
+	// @arg domain.id <optional> "domain id"
+	// @arg domain.parent.id "domain parent id"
+	// @arg domain.name "domain name"
+	// @arg domain.alias <optional> "domain alias"
+	// @arg domain.extra <optional> "extra data, json string"
+	// @ret domain
+	// @req
+	//   {
+	//     "domain": {
+	//       "name": "test",
+	//       "parent": {
+	//         "id": "default"
+	//       }
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	CreateDomain(ctx context.Context, in *CreateDomainRequest, opts ...grpc.CallOption) (*CreateDomainResponse, error)
+	//
+	// @fn DeleteDomain
+	// @arg domain.id "domain id"
+	// @ret
+	// @req
+	//   {
+	//     "domain": {
+	//       "id": "domain-id"
+	//     }
+	//   }
+	// @res
+	//   { }
+	// @err FailedPrecondition
+	// @err Internal
 	DeleteDomain(ctx context.Context, in *DeleteDomainRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	//
+	// @fn PatchDomain
+	// @arg domain.id "domain id"
+	// @arg domain.alias <optional> "domain alias"
+	// @arg domain.extra <optional> "extra data, json string"
+	// @ret domain
+	// @req
+	//   {
+	//     "domain": {
+	//       "id": "domain-id"
+	//       "alias": "renamed-domain"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	PatchDomain(ctx context.Context, in *PatchDomainRequest, opts ...grpc.CallOption) (*PatchDomainResponse, error)
+	//
+	// @fn GetDomain
+	// @arg domain.id "domain id"
+	// @ret domain
+	// @req
+	//   {
+	//     "domain": {
+	//       "id": "domain-id"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err InvalidArgument
+	// @err Internal
 	GetDomain(ctx context.Context, in *GetDomainRequest, opts ...grpc.CallOption) (*GetDomainResponse, error)
+	//
+	// @fn ListDomains
+	// @arg domain.id <optional> "domain id"
+	// @arg domain.name <optional> "domain name"
+	// @arg domain.alias <optional> "domain alias"
+	// @ret domains "list of domains"
+	// @req
+	//   { ... }
+	// @res
+	//   { ... }
+	// @err Internal
 	ListDomains(ctx context.Context, in *ListDomainsRequest, opts ...grpc.CallOption) (*ListDomainsResponse, error)
+	//
+	// @fn CreateAction
+	// @arg action.id <optional> "action id"
+	// @arg action.name "action name, format: <service>:<action>, example: identtiyd2:create_action"
+	// @arg action.alias <optional> "action alias"
+	// @arg action.description <optional> "action description"
+	// @arg action.extra <optional> "extra data, json string"
+	// @ret action
+	// @req
+	//   {
+	//     "action": {
+	//       "name": "identityd2:create_action"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
+	CreateAction(ctx context.Context, in *CreateActionRequest, opts ...grpc.CallOption) (*CreateActionResponse, error)
+	//
+	// @fn DeleteAction
+	// @arg action.id "action id"
+	// @ret
+	// @req
+	//   {
+	//     "action": {
+	//       "id": "action-id"
+	//     }
+	//   }
+	// @res
+	//   { }
+	// @err Internal
+	DeleteAction(ctx context.Context, in *DeleteActionRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	//
+	// @fn PatchAction
+	// @arg action.id "action id"
+	// @arg action.alias <optional> "action alias"
+	// @arg action.description <optional> "action description"
+	// @arg action.extra <optional> "extra data, json string"
+	// @ret action
+	// @req
+	//   {
+	//     "action": {
+	//       "id": "action-id",
+	//       "alias": "renamed-action-alias"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
+	PatchAction(ctx context.Context, in *PatchActionRequest, opts ...grpc.CallOption) (*PatchActionResponse, error)
+	//
+	// @fn GetAction
+	// @arg action.id "action id"
+	// @ret action
+	// @req
+	//   {
+	//     "action": {
+	//       "id": "action-id"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
+	GetAction(ctx context.Context, in *GetActionRequest, opts ...grpc.CallOption) (*GetActionResponse, error)
+	//
+	// @fn ListActions
+	// @unimplemented
+	// @arg action.id <optional> "action id"
+	// @arg action.name <optional> "action name"
+	// @arg action.alias <optional> "action alias"
+	// @ret actions "list of action"
+	// @req
+	//   { ... }
+	// @res
+	//   { ... }
+	// @err Internal
+	ListActions(ctx context.Context, in *ListActionsRequest, opts ...grpc.CallOption) (*ListActionsResponse, error)
+	//
+	// @fn CreateRole
+	// @arg role.id <optional> "role id"
+	// @arg role.name "role name"
+	// @arg role.alias <optional> "role alias"
+	// @arg role.description <optional> "role description"
+	// @arg role.extra <optional> "extra data, json string"
+	// @ret role
+	// @req
+	//   {
+	//     "role": {
+	//       "name": "admin"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	CreateRole(ctx context.Context, in *CreateRoleRequest, opts ...grpc.CallOption) (*CreateRoleResponse, error)
+	//
+	// @fn DeleteRole
+	// @arg role.id "role id"
+	// @ret
+	// @req
+	//   {
+	//     "role": {
+	//       "id": "role-id"
+	//     }
+	//   }
+	// @res
+	//   { }
+	// @err Internal
 	DeleteRole(ctx context.Context, in *DeleteRoleRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	//
+	// @fn PatchRole
+	// @arg role.id "role id"
+	// @arg role.alias <optional> "role alias"
+	// @arg role.description <optional> "role description"
+	// @arg role.extra <optional> "extra data, json string"
+	// @ret role
+	// @req
+	//   {
+	//     "role": {
+	//       "id": "role-id",
+	//       "alias": "renamed-role-alias"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	PatchRole(ctx context.Context, in *PatchRoleRequest, opts ...grpc.CallOption) (*PatchRoleResponse, error)
+	//
+	// @fn GetRole
+	// @arg role.id "role id"
+	// @ret role
+	// @req
+	//   {
+	//     "role": {
+	//       "id": "role-id"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err InvalidArgument
+	// @err Internal
 	GetRole(ctx context.Context, in *GetRoleRequest, opts ...grpc.CallOption) (*GetRoleResponse, error)
+	//
+	// @fn ListRoles
+	// @arg role.id <optional> "role id"
+	// @arg role.name <optional> "role name"
+	// @arg role.alias <optional> "role alias"
+	// @ret roles "list of role"
+	// @req
+	//   {
+	//     "role": {
+	//       "id": "role-id",
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	ListRoles(ctx context.Context, in *ListRolesRequest, opts ...grpc.CallOption) (*ListRolesResponse, error)
+	//
+	// @fn ListRolesForEntity
+	// @unimplemented
 	ListRolesForEntity(ctx context.Context, in *ListRolesForEntityRequest, opts ...grpc.CallOption) (*ListRolesForEntityResponse, error)
+	//
+	// @fn AddActionToRole
+	// @arg role.id "role id"
+	// @arg action.id "action id"
+	// @ret
+	// @req
+	//   {
+	//     "role": {
+	//       "id": "role-id"
+	//     },
+	//     "action": {
+	//       "id": "action-id"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
+	AddActionToRole(ctx context.Context, in *AddActionToRoleRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	//
+	// @fn RemoveActionFromRole
+	// @arg role.id "role id"
+	// @arg action.id "action id"
+	// @ret
+	// @req
+	//   {
+	//     "role": {
+	//       "id": "role-id"
+	//     },
+	//     "action": {
+	//       "id": "action-id"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
+	RemoveActionFromRole(ctx context.Context, in *RemoveActionFromRoleRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	//
+	// @fn CreateEntity
+	// @arg entity.id <optional> "entity id"
+	// @arg entity.name "entity name"
+	// @arg entity.alias <optional> "entity alias"
+	// @arg entity.password <optional> "if create entity for user, password MUST exists, password size from 8 to 128 bytes"
+	// @arg entity.extra <optional> "extra data, json string"
+	// @ret entity
+	// @req
+	//   {
+	//     "entity": {
+	//       "name": "entity-name",
+	//       "password": "password",
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	CreateEntity(ctx context.Context, in *CreateEntityRequest, opts ...grpc.CallOption) (*CreateEntityResponse, error)
+	//
+	// @fn DeleteEntity
+	// @arg entity.id "entity id"
+	// @ret
+	// @req
+	//   {
+	//     "entity": {
+	//       "id": "entity-id"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	DeleteEntity(ctx context.Context, in *DeleteEntityRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	//
+	// @fn PatchEntity
+	// @arg entity.id "entity id"
+	// @arg entity.alias <optional> "entity alias"
+	// @arg enttiy.password <optional> "entity password"
+	// @arg entity.extra <optional> "extra data, json string"
+	// @ret entity
+	// @req
+	//   {
+	//     "entity": {
+	//       "id": "entity-id",
+	//       "password": "new-password"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	PatchEntity(ctx context.Context, in *PatchEntityRequest, opts ...grpc.CallOption) (*PatchEntityResponse, error)
+	//
+	// @fn GetEnttiy
+	// @arg entity.id "entity id"
+	// @ret entity
+	// @req
+	//   {
+	//     "entity": {
+	//       "id": "entity-id"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	GetEntity(ctx context.Context, in *GetEntityRequest, opts ...grpc.CallOption) (*GetEntityResponse, error)
+	//
+	// @fn ListEntities
+	// @arg entity.id <optional> "entity id"
+	// @arg entity.name <optional> "entity name"
+	// @arg entity.alias <optional> "entity alias"
+	// @ret entities "list of entity"
+	// @req
+	//   {
+	//     "entity": {
+	//       "id": "entity-id"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	ListEntities(ctx context.Context, in *ListEntitiesRequest, opts ...grpc.CallOption) (*ListEntitiesResponse, error)
+	//
+	// @fn ShowEntity
+	// @unimplemented
 	ShowEntity(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*ShowEntityResponse, error)
+	//
+	// @fn AddRoleToEntity
+	// @arg role.id "role id"
+	// @arg entity.id "entity id"
+	// @ret
+	// @req
+	//   {
+	//     "role": {
+	//       "id": "role-id"
+	//     },
+	//     "entity": {
+	//       "id": "entity-id"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	AddRoleToEntity(ctx context.Context, in *AddRoleToEntityRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	//
+	// @fn RemoveRoleFromEntity
+	// @arg role.id "role id"
+	// @arg entity.id "entity id"
+	// @ret
+	// @req
+	//   {
+	//     "role": {
+	//       "id": "role-id"
+	//     },
+	//     "entity": {
+	//       "id": "entity-id"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	RemoveRoleFromEntity(ctx context.Context, in *RemoveRoleFromEntityRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	//
+	// @fn AddEntityToDomain
+	// @arg domain.id "domain id"
+	// @arg entity.id "entity id"
+	// @ret
+	// @req
+	//   {
+	//     "domain": {
+	//       "id": "domain-id"
+	//     },
+	//     "entity": {
+	//       "id": "entity-id"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	AddEntityToDomain(ctx context.Context, in *AddEntityToDomainRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	//
+	// @fn RemoveEntityFromDomain
+	// @arg domain.id "domain id"
+	// @arg entity.id "entity id"
+	// @ret
+	// @req
+	//   {
+	//     "domain": {
+	//       "id": "domain-id"
+	//     },
+	//     "entity": {
+	//       "id": "entity-id"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	RemoveEntityFromDomain(ctx context.Context, in *RemoveEntityFromDomainRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	//
+	// @fn CreateGroup
+	// @arg group.id <optional> "group id"
+	// @arg group.domain.id "create group in domain"
+	// @arg group.name "group name"
+	// @arg group.alias "group alias"
+	// @arg group.description "group description"
+	// @arg group.extra "extra data, json string"
+	// @ret group
+	// @req
+	//   {
+	//     "group": {
+	//       "name": "group-name",
+	//       "domain": {
+	//         "id": "domain-id"
+	//       }
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	CreateGroup(ctx context.Context, in *CreateGroupRequest, opts ...grpc.CallOption) (*CreateGroupResponse, error)
+	//
+	// @fn DeleteGroup
+	// @arg group.id "group id"
+	// @ret
+	// @req
+	//   {
+	//     "group": {
+	//       "id": "group-id"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	DeleteGroup(ctx context.Context, in *DeleteGroupRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	//
+	// @fn PatchGroup
+	// @arg group.id "group id"
+	// @arg group.alias <optional> "group alias"
+	// @arg group.description <optional> "group description"
+	// @arg group.extra <optional> "extra data, json string"
+	// @ret group
+	// @req
+	//   {
+	//     "group": {
+	//       "id": "group-id"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	PatchGroup(ctx context.Context, in *PatchGroupRequest, opts ...grpc.CallOption) (*PatchGroupResponse, error)
+	//
+	// @fn GetGroup
+	// @arg group.id "group id"
+	// @ret group
+	// @req
+	//   {
+	//     "group": {
+	//       "id": "group-id"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	GetGroup(ctx context.Context, in *GetGroupRequest, opts ...grpc.CallOption) (*GetGroupResponse, error)
+	//
+	// @fn ListGroups
+	// @arg group.id <optional> "group id"
+	// @arg group.domain.id <optional> "domain id"
+	// @arg group.name <optional> "group name"
+	// @arg group.alias <optional> "group alias"
+	// @ret groups "list of group"
+	// @req
+	//   {
+	//     "group": {
+	//       "id": "group-id"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	ListGroups(ctx context.Context, in *ListGroupsRequest, opts ...grpc.CallOption) (*ListGroupsResponse, error)
-	ListGroupsForEntity(ctx context.Context, in *ListGroupsForEntityRequest, opts ...grpc.CallOption) (*ListGroupsForEntityResponse, error)
+	//
+	// @fn ListGroupsForSubject
+	// @arg subject.id "subject id"
+	// @ret groups
+	// @req
+	//   { ... }
+	// @err Internal
+	ListGroupsForSubject(ctx context.Context, in *ListGroupsForSubjectRequest, opts ...grpc.CallOption) (*ListGroupsForSubjectResponse, error)
+	//
+	// @fn ListGroupsForObject
+	// @arg object.id "object id"
+	// @ret groups
+	// @req
+	//   { ... }
+	// @err Internal
+	ListGroupsForObject(ctx context.Context, in *ListGroupsForObjectRequest, opts ...grpc.CallOption) (*ListGroupsForObjectResponse, error)
+	//
+	// @fn ShowGroups
+	// @unimplemented
 	ShowGroups(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*ShowGroupsResponse, error)
+	//
+	// @fn AddRoleToGroup
+	// @arg role.id "role id"
+	// @arg group.id "group id"
+	// @ret
+	// @req
+	//   {
+	//     "role": {
+	//       "id": "role-id"
+	//     },
+	//     "group": {
+	//       "id": "group-id"
+	//     }
+	//   }
+	// @res
+	//   { }
+	// @err Internal
 	AddRoleToGroup(ctx context.Context, in *AddRoleToGroupRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	//
+	// @fn RemoveRoleFromGroup
+	// @arg role.id "role id"
+	// @arg group.id "group id"
+	// @ret
+	// @req
+	//   {
+	//     "role": {
+	//       "id": "role-id"
+	//     },
+	//     "group": {
+	//       "id": "group-id"
+	//     }
+	//   }
+	// @res
+	//   { }
+	// @err Internal
 	RemoveRoleFromGroup(ctx context.Context, in *RemoveRoleFromGroupRequest, opts ...grpc.CallOption) (*empty.Empty, error)
-	AddEntityToGroup(ctx context.Context, in *AddEntityToGroupRequest, opts ...grpc.CallOption) (*empty.Empty, error)
-	RemoveEntityFromGroup(ctx context.Context, in *RemoveEntityFromGroupRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	//
+	// @fn AddSubjectToGroup
+	// @arg subject.id "subject id"
+	// @arg group.id "group id"
+	// @ret
+	// @req
+	//   {
+	//     "subject": {
+	//       "id": "subject-id"
+	//     },
+	//     "group": {
+	//       "id": "group-id"
+	//     }
+	//   }
+	// @res
+	//   { }
+	// @err Internal
+	AddSubjectToGroup(ctx context.Context, in *AddSubjectToGroupRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	//
+	// @fn RemoveSubjectFromGroup
+	// @arg subject.id "subject id"
+	// @arg group.id "group id"
+	// @ret
+	// @req
+	//   {
+	//     "subject": {
+	//       "id": "subject-id"
+	//     },
+	//     "group": {
+	//       "id": "group-id"
+	//     }
+	//   }
+	// @res
+	//   { }
+	// @err Internal
+	RemoveSubjectFromGroup(ctx context.Context, in *RemoveSubjectFromGroupRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	//
+	// @fn AddObjectToGroup
+	// @arg object.id "object id"
+	// @arg group.id "group id"
+	// @ret
+	// @req
+	//   {
+	//     "object": {
+	//       "id": "object-id"
+	//     },
+	//     "group": {
+	//       "id": "group-id"
+	//     }
+	//   }
+	// @res
+	//   { }
+	// @err Internal
+	AddObjectToGroup(ctx context.Context, in *AddObjectToGroupRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	//
+	// @fn RemoveObjectFromGroup
+	// @arg object.id "object id"
+	// @arg group.id "group id"
+	// @ret
+	// @req
+	//   {
+	//     "object": {
+	//       "id": "object-id"
+	//     },
+	//     "group": {
+	//       "id": "group-id"
+	//     }
+	//   }
+	// @res
+	//   { }
+	// @err Internal
+	RemoveObjectFromGroup(ctx context.Context, in *RemoveObjectFromGroupRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	//
+	// @fn CreateCredential
+	// @arg credential.id <optional> "credential id"
+	// @arg credential.domain.id "domain id"
+	// @arg credential.entity.id "entity id"
+	// @arg credential.name "credential name"
+	// @arg credential.alias <optional> "credential alias"
+	// @arg credential.secret <optional> "credential secret"
+	// @arg credential.description <optional> "credential description"
+	// @arg credential.expires_at <optional> "expires time"
+	// @arg credential.roles.id <list> <optional> "list of role"
+	// @arg secret_size <optional> "secret size, default 32 bytes"
+	// @ret credential
+	// @req
+	//   {
+	//     "credential": {
+	//       "domain": {
+	//         "id": "domain-id"
+	//       },
+	//       "entity": {
+	//         "id": "entity-id"
+	//       },
+	//       "name": "cred-name",
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	CreateCredential(ctx context.Context, in *CreateCredentialRequest, opts ...grpc.CallOption) (*CreateCredentialResponse, error)
+	//
+	// @fn DeleteCredential
+	// @arg credential.id "credential id"
+	// @ret
+	// @req
+	//   {
+	//     "credential": {
+	//       "id": "credential-id"
+	//     }
+	//   }
+	// @res
+	//   { }
+	// @err Internal
 	DeleteCredential(ctx context.Context, in *DeleteCredentialRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	//
+	// @fn PatchCredential
+	// @arg credential.id "credential id"
+	// @arg credential.alias "credential alias"
+	// @arg credential.description "credential description"
+	// @ret credential
+	// @req
+	//   {
+	//     "credential": {
+	//       "id": "credential-id",
+	//       "alias": "renamed-credential-alias"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	PatchCredential(ctx context.Context, in *PatchCredentialRequest, opts ...grpc.CallOption) (*PatchCredentialResponse, error)
+	//
+	// @fn GetCredential
+	// @arg credential.id "credential id"
+	// @ret credential
+	// @req
+	//   {
+	//     "credential": {
+	//       "id": "credential-id",
+	//     }
+	//   }
+	// @res
+	//   { ... }
 	GetCredential(ctx context.Context, in *GetCredentialRequest, opts ...grpc.CallOption) (*GetCredentialResponse, error)
+	//
+	// @fn ListCredentials
+	// @arg credential.id <optional> "credential id"
+	// @arg credential.domain.id <optional> "domain id"
+	// @arg credential.entity.id <optional> "entity id"
+	// @arg credential.name <optional> "credential name"
+	// @arg credential.alias <optional> "credential alias"
+	// @ret credentials "list of credential"
+	// @req
+	//   {
+	//     "credential": {
+	//       "id": "credential-id"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	ListCredentials(ctx context.Context, in *ListCredentialsRequest, opts ...grpc.CallOption) (*ListCredentialsResponse, error)
+	//
+	// @fn ListCredentialsForEntity
+	// @unimplemented
 	ListCredentialsForEntity(ctx context.Context, in *ListCredentialsForEntityRequest, opts ...grpc.CallOption) (*ListCredentialsForEntityResponse, error)
+	//
+	// @fn IssueTokenByCredential
+	// @arg credential.id "credential id"
+	// @arg credential.domain.id "domain id"
+	// @arg timestamp "timestamp"
+	// @arg nonce "nonce"
+	// @arg hmac "=hmac(key, credential.id+timestamp+nonce), helper: pkg/identityd2/contrib/issue_token_by_credential.go:NewIssueTokenByCredentialRequest"
+	// @ret token
+	// @req
+	//   {
+	//     "credential": {
+	//       "id": "credential-id"
+	//     },
+	//     "timestamp": {
+	//       "seconds": 0,
+	//       "nanos": 0
+	//     },
+	//     "nonce": 0,
+	//     "hmac": "hmac"
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
+	// @err Unauthenticated
 	IssueTokenByCredential(ctx context.Context, in *IssueTokenByCredentialRequest, opts ...grpc.CallOption) (*IssueTokenByCredentialResponse, error)
+	//
+	// @fn IssueTokenByPassword
+	// @arg entity.domains.id "domain id, less 1 domain"
+	// @arg entity.id <optional> "entity id"
+	// @arg entity.name <optional> "entity name"
+	// @arg entity.password "entity password"
+	// @ret token
+	// @req
+	//   {
+	//     "entity": {
+	//       "domains": [{"id": "domain-id"}],
+	//       "name": "test",
+	//       "password": "test"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
+	// @err Unauthenticated
 	IssueTokenByPassword(ctx context.Context, in *IssueTokenByPasswordRequest, opts ...grpc.CallOption) (*IssueTokenByPasswordResponse, error)
+	//
+	// @fn IssueTokenByToken
+	// @arg token.domain.id "domain id"
+	// @arg token.text "token text"
+	// @ret token
+	// @req
+	//   {
+	//     "token": {
+	//       "domain": {
+	//         "id": "domain-id"
+	//       },
+	//       "text": "token-text"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
+	// @err Unauthenticated
 	IssueTokenByToken(ctx context.Context, in *IssueTokenByTokenRequest, opts ...grpc.CallOption) (*IssueTokenByTokenResponse, error)
+	//
+	// @fn RevokeToken
+	// @arg token.text "token text"
+	// @ret
+	// @req
+	//   {
+	//     "token": {
+	//       "text": "token-text"
+	//     }
+	//   }
+	// @res
+	//   { }
+	// @err Internal
+	// @err FailedPrecondition
 	RevokeToken(ctx context.Context, in *RevokeTokenRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	//
+	// @fn ValidateToken
+	// @arg token.text "token text"
+	// @ret
+	// @req
+	//   {
+	//     "token": {
+	//       "text": "token-text"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
+	// @err InvalidArgument
+	// @err Unauthenticated
 	ValidateToken(ctx context.Context, in *ValidateTokenRequest, opts ...grpc.CallOption) (*ValidateTokenResponse, error)
+	//
+	// @fn CheckToken
+	// @arg token.text "token text"
+	// @arg token.domain.id "domain id"
+	// @ret
+	// @req
+	//   {
+	//     "token": {
+	//       "domain": {
+	//         "id": "domain-id"
+	//       },
+	//       "text": "token-text"
+	//     }
+	//   }
+	// @err Internal
+	// @err InvalidArgument
+	// @err Unauthenticated
 	CheckToken(ctx context.Context, in *CheckTokenRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	//
+	// @fn AuthorizeToken
+	// @arg object.id "object id"
+	// @arg action.name "action name"
+	// @ret
+	// @req
+	//   {
+	//     "object": {
+	//       "id": "object-id"
+	//     },
+	//     "action": {
+	//       "name": "action-name"
+	//     }
+	//   }
+	// @res
+	// @err PermissionDenied
+	// @err Internal
+	AuthorizeToken(ctx context.Context, in *AuthorizeTokenRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 }
 
 type identitydServiceClient struct {
@@ -214,6 +1056,51 @@ func (c *identitydServiceClient) ListDomains(ctx context.Context, in *ListDomain
 	return out, nil
 }
 
+func (c *identitydServiceClient) CreateAction(ctx context.Context, in *CreateActionRequest, opts ...grpc.CallOption) (*CreateActionResponse, error) {
+	out := new(CreateActionResponse)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.identityd2.IdentitydService/CreateAction", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *identitydServiceClient) DeleteAction(ctx context.Context, in *DeleteActionRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.identityd2.IdentitydService/DeleteAction", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *identitydServiceClient) PatchAction(ctx context.Context, in *PatchActionRequest, opts ...grpc.CallOption) (*PatchActionResponse, error) {
+	out := new(PatchActionResponse)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.identityd2.IdentitydService/PatchAction", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *identitydServiceClient) GetAction(ctx context.Context, in *GetActionRequest, opts ...grpc.CallOption) (*GetActionResponse, error) {
+	out := new(GetActionResponse)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.identityd2.IdentitydService/GetAction", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *identitydServiceClient) ListActions(ctx context.Context, in *ListActionsRequest, opts ...grpc.CallOption) (*ListActionsResponse, error) {
+	out := new(ListActionsResponse)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.identityd2.IdentitydService/ListActions", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *identitydServiceClient) CreateRole(ctx context.Context, in *CreateRoleRequest, opts ...grpc.CallOption) (*CreateRoleResponse, error) {
 	out := new(CreateRoleResponse)
 	err := c.cc.Invoke(ctx, "/ai.metathings.service.identityd2.IdentitydService/CreateRole", in, out, opts...)
@@ -262,6 +1149,24 @@ func (c *identitydServiceClient) ListRoles(ctx context.Context, in *ListRolesReq
 func (c *identitydServiceClient) ListRolesForEntity(ctx context.Context, in *ListRolesForEntityRequest, opts ...grpc.CallOption) (*ListRolesForEntityResponse, error) {
 	out := new(ListRolesForEntityResponse)
 	err := c.cc.Invoke(ctx, "/ai.metathings.service.identityd2.IdentitydService/ListRolesForEntity", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *identitydServiceClient) AddActionToRole(ctx context.Context, in *AddActionToRoleRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.identityd2.IdentitydService/AddActionToRole", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *identitydServiceClient) RemoveActionFromRole(ctx context.Context, in *RemoveActionFromRoleRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.identityd2.IdentitydService/RemoveActionFromRole", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -403,9 +1308,18 @@ func (c *identitydServiceClient) ListGroups(ctx context.Context, in *ListGroupsR
 	return out, nil
 }
 
-func (c *identitydServiceClient) ListGroupsForEntity(ctx context.Context, in *ListGroupsForEntityRequest, opts ...grpc.CallOption) (*ListGroupsForEntityResponse, error) {
-	out := new(ListGroupsForEntityResponse)
-	err := c.cc.Invoke(ctx, "/ai.metathings.service.identityd2.IdentitydService/ListGroupsForEntity", in, out, opts...)
+func (c *identitydServiceClient) ListGroupsForSubject(ctx context.Context, in *ListGroupsForSubjectRequest, opts ...grpc.CallOption) (*ListGroupsForSubjectResponse, error) {
+	out := new(ListGroupsForSubjectResponse)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.identityd2.IdentitydService/ListGroupsForSubject", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *identitydServiceClient) ListGroupsForObject(ctx context.Context, in *ListGroupsForObjectRequest, opts ...grpc.CallOption) (*ListGroupsForObjectResponse, error) {
+	out := new(ListGroupsForObjectResponse)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.identityd2.IdentitydService/ListGroupsForObject", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -439,18 +1353,36 @@ func (c *identitydServiceClient) RemoveRoleFromGroup(ctx context.Context, in *Re
 	return out, nil
 }
 
-func (c *identitydServiceClient) AddEntityToGroup(ctx context.Context, in *AddEntityToGroupRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+func (c *identitydServiceClient) AddSubjectToGroup(ctx context.Context, in *AddSubjectToGroupRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
 	out := new(empty.Empty)
-	err := c.cc.Invoke(ctx, "/ai.metathings.service.identityd2.IdentitydService/AddEntityToGroup", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.identityd2.IdentitydService/AddSubjectToGroup", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *identitydServiceClient) RemoveEntityFromGroup(ctx context.Context, in *RemoveEntityFromGroupRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+func (c *identitydServiceClient) RemoveSubjectFromGroup(ctx context.Context, in *RemoveSubjectFromGroupRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
 	out := new(empty.Empty)
-	err := c.cc.Invoke(ctx, "/ai.metathings.service.identityd2.IdentitydService/RemoveEntityFromGroup", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.identityd2.IdentitydService/RemoveSubjectFromGroup", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *identitydServiceClient) AddObjectToGroup(ctx context.Context, in *AddObjectToGroupRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.identityd2.IdentitydService/AddObjectToGroup", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *identitydServiceClient) RemoveObjectFromGroup(ctx context.Context, in *RemoveObjectFromGroupRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.identityd2.IdentitydService/RemoveObjectFromGroup", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -565,52 +1497,890 @@ func (c *identitydServiceClient) CheckToken(ctx context.Context, in *CheckTokenR
 	return out, nil
 }
 
+func (c *identitydServiceClient) AuthorizeToken(ctx context.Context, in *AuthorizeTokenRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.identityd2.IdentitydService/AuthorizeToken", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // IdentitydServiceServer is the server API for IdentitydService service.
 type IdentitydServiceServer interface {
+	//
+	// @fn CreateDomain
+	// @arg domain.id <optional> "domain id"
+	// @arg domain.parent.id "domain parent id"
+	// @arg domain.name "domain name"
+	// @arg domain.alias <optional> "domain alias"
+	// @arg domain.extra <optional> "extra data, json string"
+	// @ret domain
+	// @req
+	//   {
+	//     "domain": {
+	//       "name": "test",
+	//       "parent": {
+	//         "id": "default"
+	//       }
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	CreateDomain(context.Context, *CreateDomainRequest) (*CreateDomainResponse, error)
+	//
+	// @fn DeleteDomain
+	// @arg domain.id "domain id"
+	// @ret
+	// @req
+	//   {
+	//     "domain": {
+	//       "id": "domain-id"
+	//     }
+	//   }
+	// @res
+	//   { }
+	// @err FailedPrecondition
+	// @err Internal
 	DeleteDomain(context.Context, *DeleteDomainRequest) (*empty.Empty, error)
+	//
+	// @fn PatchDomain
+	// @arg domain.id "domain id"
+	// @arg domain.alias <optional> "domain alias"
+	// @arg domain.extra <optional> "extra data, json string"
+	// @ret domain
+	// @req
+	//   {
+	//     "domain": {
+	//       "id": "domain-id"
+	//       "alias": "renamed-domain"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	PatchDomain(context.Context, *PatchDomainRequest) (*PatchDomainResponse, error)
+	//
+	// @fn GetDomain
+	// @arg domain.id "domain id"
+	// @ret domain
+	// @req
+	//   {
+	//     "domain": {
+	//       "id": "domain-id"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err InvalidArgument
+	// @err Internal
 	GetDomain(context.Context, *GetDomainRequest) (*GetDomainResponse, error)
+	//
+	// @fn ListDomains
+	// @arg domain.id <optional> "domain id"
+	// @arg domain.name <optional> "domain name"
+	// @arg domain.alias <optional> "domain alias"
+	// @ret domains "list of domains"
+	// @req
+	//   { ... }
+	// @res
+	//   { ... }
+	// @err Internal
 	ListDomains(context.Context, *ListDomainsRequest) (*ListDomainsResponse, error)
+	//
+	// @fn CreateAction
+	// @arg action.id <optional> "action id"
+	// @arg action.name "action name, format: <service>:<action>, example: identtiyd2:create_action"
+	// @arg action.alias <optional> "action alias"
+	// @arg action.description <optional> "action description"
+	// @arg action.extra <optional> "extra data, json string"
+	// @ret action
+	// @req
+	//   {
+	//     "action": {
+	//       "name": "identityd2:create_action"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
+	CreateAction(context.Context, *CreateActionRequest) (*CreateActionResponse, error)
+	//
+	// @fn DeleteAction
+	// @arg action.id "action id"
+	// @ret
+	// @req
+	//   {
+	//     "action": {
+	//       "id": "action-id"
+	//     }
+	//   }
+	// @res
+	//   { }
+	// @err Internal
+	DeleteAction(context.Context, *DeleteActionRequest) (*empty.Empty, error)
+	//
+	// @fn PatchAction
+	// @arg action.id "action id"
+	// @arg action.alias <optional> "action alias"
+	// @arg action.description <optional> "action description"
+	// @arg action.extra <optional> "extra data, json string"
+	// @ret action
+	// @req
+	//   {
+	//     "action": {
+	//       "id": "action-id",
+	//       "alias": "renamed-action-alias"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
+	PatchAction(context.Context, *PatchActionRequest) (*PatchActionResponse, error)
+	//
+	// @fn GetAction
+	// @arg action.id "action id"
+	// @ret action
+	// @req
+	//   {
+	//     "action": {
+	//       "id": "action-id"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
+	GetAction(context.Context, *GetActionRequest) (*GetActionResponse, error)
+	//
+	// @fn ListActions
+	// @unimplemented
+	// @arg action.id <optional> "action id"
+	// @arg action.name <optional> "action name"
+	// @arg action.alias <optional> "action alias"
+	// @ret actions "list of action"
+	// @req
+	//   { ... }
+	// @res
+	//   { ... }
+	// @err Internal
+	ListActions(context.Context, *ListActionsRequest) (*ListActionsResponse, error)
+	//
+	// @fn CreateRole
+	// @arg role.id <optional> "role id"
+	// @arg role.name "role name"
+	// @arg role.alias <optional> "role alias"
+	// @arg role.description <optional> "role description"
+	// @arg role.extra <optional> "extra data, json string"
+	// @ret role
+	// @req
+	//   {
+	//     "role": {
+	//       "name": "admin"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	CreateRole(context.Context, *CreateRoleRequest) (*CreateRoleResponse, error)
+	//
+	// @fn DeleteRole
+	// @arg role.id "role id"
+	// @ret
+	// @req
+	//   {
+	//     "role": {
+	//       "id": "role-id"
+	//     }
+	//   }
+	// @res
+	//   { }
+	// @err Internal
 	DeleteRole(context.Context, *DeleteRoleRequest) (*empty.Empty, error)
+	//
+	// @fn PatchRole
+	// @arg role.id "role id"
+	// @arg role.alias <optional> "role alias"
+	// @arg role.description <optional> "role description"
+	// @arg role.extra <optional> "extra data, json string"
+	// @ret role
+	// @req
+	//   {
+	//     "role": {
+	//       "id": "role-id",
+	//       "alias": "renamed-role-alias"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	PatchRole(context.Context, *PatchRoleRequest) (*PatchRoleResponse, error)
+	//
+	// @fn GetRole
+	// @arg role.id "role id"
+	// @ret role
+	// @req
+	//   {
+	//     "role": {
+	//       "id": "role-id"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err InvalidArgument
+	// @err Internal
 	GetRole(context.Context, *GetRoleRequest) (*GetRoleResponse, error)
+	//
+	// @fn ListRoles
+	// @arg role.id <optional> "role id"
+	// @arg role.name <optional> "role name"
+	// @arg role.alias <optional> "role alias"
+	// @ret roles "list of role"
+	// @req
+	//   {
+	//     "role": {
+	//       "id": "role-id",
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	ListRoles(context.Context, *ListRolesRequest) (*ListRolesResponse, error)
+	//
+	// @fn ListRolesForEntity
+	// @unimplemented
 	ListRolesForEntity(context.Context, *ListRolesForEntityRequest) (*ListRolesForEntityResponse, error)
+	//
+	// @fn AddActionToRole
+	// @arg role.id "role id"
+	// @arg action.id "action id"
+	// @ret
+	// @req
+	//   {
+	//     "role": {
+	//       "id": "role-id"
+	//     },
+	//     "action": {
+	//       "id": "action-id"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
+	AddActionToRole(context.Context, *AddActionToRoleRequest) (*empty.Empty, error)
+	//
+	// @fn RemoveActionFromRole
+	// @arg role.id "role id"
+	// @arg action.id "action id"
+	// @ret
+	// @req
+	//   {
+	//     "role": {
+	//       "id": "role-id"
+	//     },
+	//     "action": {
+	//       "id": "action-id"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
+	RemoveActionFromRole(context.Context, *RemoveActionFromRoleRequest) (*empty.Empty, error)
+	//
+	// @fn CreateEntity
+	// @arg entity.id <optional> "entity id"
+	// @arg entity.name "entity name"
+	// @arg entity.alias <optional> "entity alias"
+	// @arg entity.password <optional> "if create entity for user, password MUST exists, password size from 8 to 128 bytes"
+	// @arg entity.extra <optional> "extra data, json string"
+	// @ret entity
+	// @req
+	//   {
+	//     "entity": {
+	//       "name": "entity-name",
+	//       "password": "password",
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	CreateEntity(context.Context, *CreateEntityRequest) (*CreateEntityResponse, error)
+	//
+	// @fn DeleteEntity
+	// @arg entity.id "entity id"
+	// @ret
+	// @req
+	//   {
+	//     "entity": {
+	//       "id": "entity-id"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	DeleteEntity(context.Context, *DeleteEntityRequest) (*empty.Empty, error)
+	//
+	// @fn PatchEntity
+	// @arg entity.id "entity id"
+	// @arg entity.alias <optional> "entity alias"
+	// @arg enttiy.password <optional> "entity password"
+	// @arg entity.extra <optional> "extra data, json string"
+	// @ret entity
+	// @req
+	//   {
+	//     "entity": {
+	//       "id": "entity-id",
+	//       "password": "new-password"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	PatchEntity(context.Context, *PatchEntityRequest) (*PatchEntityResponse, error)
+	//
+	// @fn GetEnttiy
+	// @arg entity.id "entity id"
+	// @ret entity
+	// @req
+	//   {
+	//     "entity": {
+	//       "id": "entity-id"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	GetEntity(context.Context, *GetEntityRequest) (*GetEntityResponse, error)
+	//
+	// @fn ListEntities
+	// @arg entity.id <optional> "entity id"
+	// @arg entity.name <optional> "entity name"
+	// @arg entity.alias <optional> "entity alias"
+	// @ret entities "list of entity"
+	// @req
+	//   {
+	//     "entity": {
+	//       "id": "entity-id"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	ListEntities(context.Context, *ListEntitiesRequest) (*ListEntitiesResponse, error)
+	//
+	// @fn ShowEntity
+	// @unimplemented
 	ShowEntity(context.Context, *empty.Empty) (*ShowEntityResponse, error)
+	//
+	// @fn AddRoleToEntity
+	// @arg role.id "role id"
+	// @arg entity.id "entity id"
+	// @ret
+	// @req
+	//   {
+	//     "role": {
+	//       "id": "role-id"
+	//     },
+	//     "entity": {
+	//       "id": "entity-id"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	AddRoleToEntity(context.Context, *AddRoleToEntityRequest) (*empty.Empty, error)
+	//
+	// @fn RemoveRoleFromEntity
+	// @arg role.id "role id"
+	// @arg entity.id "entity id"
+	// @ret
+	// @req
+	//   {
+	//     "role": {
+	//       "id": "role-id"
+	//     },
+	//     "entity": {
+	//       "id": "entity-id"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	RemoveRoleFromEntity(context.Context, *RemoveRoleFromEntityRequest) (*empty.Empty, error)
+	//
+	// @fn AddEntityToDomain
+	// @arg domain.id "domain id"
+	// @arg entity.id "entity id"
+	// @ret
+	// @req
+	//   {
+	//     "domain": {
+	//       "id": "domain-id"
+	//     },
+	//     "entity": {
+	//       "id": "entity-id"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	AddEntityToDomain(context.Context, *AddEntityToDomainRequest) (*empty.Empty, error)
+	//
+	// @fn RemoveEntityFromDomain
+	// @arg domain.id "domain id"
+	// @arg entity.id "entity id"
+	// @ret
+	// @req
+	//   {
+	//     "domain": {
+	//       "id": "domain-id"
+	//     },
+	//     "entity": {
+	//       "id": "entity-id"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	RemoveEntityFromDomain(context.Context, *RemoveEntityFromDomainRequest) (*empty.Empty, error)
+	//
+	// @fn CreateGroup
+	// @arg group.id <optional> "group id"
+	// @arg group.domain.id "create group in domain"
+	// @arg group.name "group name"
+	// @arg group.alias "group alias"
+	// @arg group.description "group description"
+	// @arg group.extra "extra data, json string"
+	// @ret group
+	// @req
+	//   {
+	//     "group": {
+	//       "name": "group-name",
+	//       "domain": {
+	//         "id": "domain-id"
+	//       }
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	CreateGroup(context.Context, *CreateGroupRequest) (*CreateGroupResponse, error)
+	//
+	// @fn DeleteGroup
+	// @arg group.id "group id"
+	// @ret
+	// @req
+	//   {
+	//     "group": {
+	//       "id": "group-id"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	DeleteGroup(context.Context, *DeleteGroupRequest) (*empty.Empty, error)
+	//
+	// @fn PatchGroup
+	// @arg group.id "group id"
+	// @arg group.alias <optional> "group alias"
+	// @arg group.description <optional> "group description"
+	// @arg group.extra <optional> "extra data, json string"
+	// @ret group
+	// @req
+	//   {
+	//     "group": {
+	//       "id": "group-id"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	PatchGroup(context.Context, *PatchGroupRequest) (*PatchGroupResponse, error)
+	//
+	// @fn GetGroup
+	// @arg group.id "group id"
+	// @ret group
+	// @req
+	//   {
+	//     "group": {
+	//       "id": "group-id"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	GetGroup(context.Context, *GetGroupRequest) (*GetGroupResponse, error)
+	//
+	// @fn ListGroups
+	// @arg group.id <optional> "group id"
+	// @arg group.domain.id <optional> "domain id"
+	// @arg group.name <optional> "group name"
+	// @arg group.alias <optional> "group alias"
+	// @ret groups "list of group"
+	// @req
+	//   {
+	//     "group": {
+	//       "id": "group-id"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	ListGroups(context.Context, *ListGroupsRequest) (*ListGroupsResponse, error)
-	ListGroupsForEntity(context.Context, *ListGroupsForEntityRequest) (*ListGroupsForEntityResponse, error)
+	//
+	// @fn ListGroupsForSubject
+	// @arg subject.id "subject id"
+	// @ret groups
+	// @req
+	//   { ... }
+	// @err Internal
+	ListGroupsForSubject(context.Context, *ListGroupsForSubjectRequest) (*ListGroupsForSubjectResponse, error)
+	//
+	// @fn ListGroupsForObject
+	// @arg object.id "object id"
+	// @ret groups
+	// @req
+	//   { ... }
+	// @err Internal
+	ListGroupsForObject(context.Context, *ListGroupsForObjectRequest) (*ListGroupsForObjectResponse, error)
+	//
+	// @fn ShowGroups
+	// @unimplemented
 	ShowGroups(context.Context, *empty.Empty) (*ShowGroupsResponse, error)
+	//
+	// @fn AddRoleToGroup
+	// @arg role.id "role id"
+	// @arg group.id "group id"
+	// @ret
+	// @req
+	//   {
+	//     "role": {
+	//       "id": "role-id"
+	//     },
+	//     "group": {
+	//       "id": "group-id"
+	//     }
+	//   }
+	// @res
+	//   { }
+	// @err Internal
 	AddRoleToGroup(context.Context, *AddRoleToGroupRequest) (*empty.Empty, error)
+	//
+	// @fn RemoveRoleFromGroup
+	// @arg role.id "role id"
+	// @arg group.id "group id"
+	// @ret
+	// @req
+	//   {
+	//     "role": {
+	//       "id": "role-id"
+	//     },
+	//     "group": {
+	//       "id": "group-id"
+	//     }
+	//   }
+	// @res
+	//   { }
+	// @err Internal
 	RemoveRoleFromGroup(context.Context, *RemoveRoleFromGroupRequest) (*empty.Empty, error)
-	AddEntityToGroup(context.Context, *AddEntityToGroupRequest) (*empty.Empty, error)
-	RemoveEntityFromGroup(context.Context, *RemoveEntityFromGroupRequest) (*empty.Empty, error)
+	//
+	// @fn AddSubjectToGroup
+	// @arg subject.id "subject id"
+	// @arg group.id "group id"
+	// @ret
+	// @req
+	//   {
+	//     "subject": {
+	//       "id": "subject-id"
+	//     },
+	//     "group": {
+	//       "id": "group-id"
+	//     }
+	//   }
+	// @res
+	//   { }
+	// @err Internal
+	AddSubjectToGroup(context.Context, *AddSubjectToGroupRequest) (*empty.Empty, error)
+	//
+	// @fn RemoveSubjectFromGroup
+	// @arg subject.id "subject id"
+	// @arg group.id "group id"
+	// @ret
+	// @req
+	//   {
+	//     "subject": {
+	//       "id": "subject-id"
+	//     },
+	//     "group": {
+	//       "id": "group-id"
+	//     }
+	//   }
+	// @res
+	//   { }
+	// @err Internal
+	RemoveSubjectFromGroup(context.Context, *RemoveSubjectFromGroupRequest) (*empty.Empty, error)
+	//
+	// @fn AddObjectToGroup
+	// @arg object.id "object id"
+	// @arg group.id "group id"
+	// @ret
+	// @req
+	//   {
+	//     "object": {
+	//       "id": "object-id"
+	//     },
+	//     "group": {
+	//       "id": "group-id"
+	//     }
+	//   }
+	// @res
+	//   { }
+	// @err Internal
+	AddObjectToGroup(context.Context, *AddObjectToGroupRequest) (*empty.Empty, error)
+	//
+	// @fn RemoveObjectFromGroup
+	// @arg object.id "object id"
+	// @arg group.id "group id"
+	// @ret
+	// @req
+	//   {
+	//     "object": {
+	//       "id": "object-id"
+	//     },
+	//     "group": {
+	//       "id": "group-id"
+	//     }
+	//   }
+	// @res
+	//   { }
+	// @err Internal
+	RemoveObjectFromGroup(context.Context, *RemoveObjectFromGroupRequest) (*empty.Empty, error)
+	//
+	// @fn CreateCredential
+	// @arg credential.id <optional> "credential id"
+	// @arg credential.domain.id "domain id"
+	// @arg credential.entity.id "entity id"
+	// @arg credential.name "credential name"
+	// @arg credential.alias <optional> "credential alias"
+	// @arg credential.secret <optional> "credential secret"
+	// @arg credential.description <optional> "credential description"
+	// @arg credential.expires_at <optional> "expires time"
+	// @arg credential.roles.id <list> <optional> "list of role"
+	// @arg secret_size <optional> "secret size, default 32 bytes"
+	// @ret credential
+	// @req
+	//   {
+	//     "credential": {
+	//       "domain": {
+	//         "id": "domain-id"
+	//       },
+	//       "entity": {
+	//         "id": "entity-id"
+	//       },
+	//       "name": "cred-name",
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	CreateCredential(context.Context, *CreateCredentialRequest) (*CreateCredentialResponse, error)
+	//
+	// @fn DeleteCredential
+	// @arg credential.id "credential id"
+	// @ret
+	// @req
+	//   {
+	//     "credential": {
+	//       "id": "credential-id"
+	//     }
+	//   }
+	// @res
+	//   { }
+	// @err Internal
 	DeleteCredential(context.Context, *DeleteCredentialRequest) (*empty.Empty, error)
+	//
+	// @fn PatchCredential
+	// @arg credential.id "credential id"
+	// @arg credential.alias "credential alias"
+	// @arg credential.description "credential description"
+	// @ret credential
+	// @req
+	//   {
+	//     "credential": {
+	//       "id": "credential-id",
+	//       "alias": "renamed-credential-alias"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	PatchCredential(context.Context, *PatchCredentialRequest) (*PatchCredentialResponse, error)
+	//
+	// @fn GetCredential
+	// @arg credential.id "credential id"
+	// @ret credential
+	// @req
+	//   {
+	//     "credential": {
+	//       "id": "credential-id",
+	//     }
+	//   }
+	// @res
+	//   { ... }
 	GetCredential(context.Context, *GetCredentialRequest) (*GetCredentialResponse, error)
+	//
+	// @fn ListCredentials
+	// @arg credential.id <optional> "credential id"
+	// @arg credential.domain.id <optional> "domain id"
+	// @arg credential.entity.id <optional> "entity id"
+	// @arg credential.name <optional> "credential name"
+	// @arg credential.alias <optional> "credential alias"
+	// @ret credentials "list of credential"
+	// @req
+	//   {
+	//     "credential": {
+	//       "id": "credential-id"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	ListCredentials(context.Context, *ListCredentialsRequest) (*ListCredentialsResponse, error)
+	//
+	// @fn ListCredentialsForEntity
+	// @unimplemented
 	ListCredentialsForEntity(context.Context, *ListCredentialsForEntityRequest) (*ListCredentialsForEntityResponse, error)
+	//
+	// @fn IssueTokenByCredential
+	// @arg credential.id "credential id"
+	// @arg credential.domain.id "domain id"
+	// @arg timestamp "timestamp"
+	// @arg nonce "nonce"
+	// @arg hmac "=hmac(key, credential.id+timestamp+nonce), helper: pkg/identityd2/contrib/issue_token_by_credential.go:NewIssueTokenByCredentialRequest"
+	// @ret token
+	// @req
+	//   {
+	//     "credential": {
+	//       "id": "credential-id"
+	//     },
+	//     "timestamp": {
+	//       "seconds": 0,
+	//       "nanos": 0
+	//     },
+	//     "nonce": 0,
+	//     "hmac": "hmac"
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
+	// @err Unauthenticated
 	IssueTokenByCredential(context.Context, *IssueTokenByCredentialRequest) (*IssueTokenByCredentialResponse, error)
+	//
+	// @fn IssueTokenByPassword
+	// @arg entity.domains.id "domain id, less 1 domain"
+	// @arg entity.id <optional> "entity id"
+	// @arg entity.name <optional> "entity name"
+	// @arg entity.password "entity password"
+	// @ret token
+	// @req
+	//   {
+	//     "entity": {
+	//       "domains": [{"id": "domain-id"}],
+	//       "name": "test",
+	//       "password": "test"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
+	// @err Unauthenticated
 	IssueTokenByPassword(context.Context, *IssueTokenByPasswordRequest) (*IssueTokenByPasswordResponse, error)
+	//
+	// @fn IssueTokenByToken
+	// @arg token.domain.id "domain id"
+	// @arg token.text "token text"
+	// @ret token
+	// @req
+	//   {
+	//     "token": {
+	//       "domain": {
+	//         "id": "domain-id"
+	//       },
+	//       "text": "token-text"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
+	// @err Unauthenticated
 	IssueTokenByToken(context.Context, *IssueTokenByTokenRequest) (*IssueTokenByTokenResponse, error)
+	//
+	// @fn RevokeToken
+	// @arg token.text "token text"
+	// @ret
+	// @req
+	//   {
+	//     "token": {
+	//       "text": "token-text"
+	//     }
+	//   }
+	// @res
+	//   { }
+	// @err Internal
+	// @err FailedPrecondition
 	RevokeToken(context.Context, *RevokeTokenRequest) (*empty.Empty, error)
+	//
+	// @fn ValidateToken
+	// @arg token.text "token text"
+	// @ret
+	// @req
+	//   {
+	//     "token": {
+	//       "text": "token-text"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
+	// @err InvalidArgument
+	// @err Unauthenticated
 	ValidateToken(context.Context, *ValidateTokenRequest) (*ValidateTokenResponse, error)
+	//
+	// @fn CheckToken
+	// @arg token.text "token text"
+	// @arg token.domain.id "domain id"
+	// @ret
+	// @req
+	//   {
+	//     "token": {
+	//       "domain": {
+	//         "id": "domain-id"
+	//       },
+	//       "text": "token-text"
+	//     }
+	//   }
+	// @err Internal
+	// @err InvalidArgument
+	// @err Unauthenticated
 	CheckToken(context.Context, *CheckTokenRequest) (*empty.Empty, error)
+	//
+	// @fn AuthorizeToken
+	// @arg object.id "object id"
+	// @arg action.name "action name"
+	// @ret
+	// @req
+	//   {
+	//     "object": {
+	//       "id": "object-id"
+	//     },
+	//     "action": {
+	//       "name": "action-name"
+	//     }
+	//   }
+	// @res
+	// @err PermissionDenied
+	// @err Internal
+	AuthorizeToken(context.Context, *AuthorizeTokenRequest) (*empty.Empty, error)
 }
 
 func RegisterIdentitydServiceServer(s *grpc.Server, srv IdentitydServiceServer) {
@@ -703,6 +2473,96 @@ func _IdentitydService_ListDomains_Handler(srv interface{}, ctx context.Context,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(IdentitydServiceServer).ListDomains(ctx, req.(*ListDomainsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _IdentitydService_CreateAction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateActionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IdentitydServiceServer).CreateAction(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ai.metathings.service.identityd2.IdentitydService/CreateAction",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IdentitydServiceServer).CreateAction(ctx, req.(*CreateActionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _IdentitydService_DeleteAction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteActionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IdentitydServiceServer).DeleteAction(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ai.metathings.service.identityd2.IdentitydService/DeleteAction",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IdentitydServiceServer).DeleteAction(ctx, req.(*DeleteActionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _IdentitydService_PatchAction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PatchActionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IdentitydServiceServer).PatchAction(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ai.metathings.service.identityd2.IdentitydService/PatchAction",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IdentitydServiceServer).PatchAction(ctx, req.(*PatchActionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _IdentitydService_GetAction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetActionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IdentitydServiceServer).GetAction(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ai.metathings.service.identityd2.IdentitydService/GetAction",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IdentitydServiceServer).GetAction(ctx, req.(*GetActionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _IdentitydService_ListActions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListActionsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IdentitydServiceServer).ListActions(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ai.metathings.service.identityd2.IdentitydService/ListActions",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IdentitydServiceServer).ListActions(ctx, req.(*ListActionsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -811,6 +2671,42 @@ func _IdentitydService_ListRolesForEntity_Handler(srv interface{}, ctx context.C
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(IdentitydServiceServer).ListRolesForEntity(ctx, req.(*ListRolesForEntityRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _IdentitydService_AddActionToRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddActionToRoleRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IdentitydServiceServer).AddActionToRole(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ai.metathings.service.identityd2.IdentitydService/AddActionToRole",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IdentitydServiceServer).AddActionToRole(ctx, req.(*AddActionToRoleRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _IdentitydService_RemoveActionFromRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RemoveActionFromRoleRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IdentitydServiceServer).RemoveActionFromRole(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ai.metathings.service.identityd2.IdentitydService/RemoveActionFromRole",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IdentitydServiceServer).RemoveActionFromRole(ctx, req.(*RemoveActionFromRoleRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1085,20 +2981,38 @@ func _IdentitydService_ListGroups_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
-func _IdentitydService_ListGroupsForEntity_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListGroupsForEntityRequest)
+func _IdentitydService_ListGroupsForSubject_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListGroupsForSubjectRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(IdentitydServiceServer).ListGroupsForEntity(ctx, in)
+		return srv.(IdentitydServiceServer).ListGroupsForSubject(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/ai.metathings.service.identityd2.IdentitydService/ListGroupsForEntity",
+		FullMethod: "/ai.metathings.service.identityd2.IdentitydService/ListGroupsForSubject",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(IdentitydServiceServer).ListGroupsForEntity(ctx, req.(*ListGroupsForEntityRequest))
+		return srv.(IdentitydServiceServer).ListGroupsForSubject(ctx, req.(*ListGroupsForSubjectRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _IdentitydService_ListGroupsForObject_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListGroupsForObjectRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IdentitydServiceServer).ListGroupsForObject(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ai.metathings.service.identityd2.IdentitydService/ListGroupsForObject",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IdentitydServiceServer).ListGroupsForObject(ctx, req.(*ListGroupsForObjectRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1157,38 +3071,74 @@ func _IdentitydService_RemoveRoleFromGroup_Handler(srv interface{}, ctx context.
 	return interceptor(ctx, in, info, handler)
 }
 
-func _IdentitydService_AddEntityToGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AddEntityToGroupRequest)
+func _IdentitydService_AddSubjectToGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddSubjectToGroupRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(IdentitydServiceServer).AddEntityToGroup(ctx, in)
+		return srv.(IdentitydServiceServer).AddSubjectToGroup(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/ai.metathings.service.identityd2.IdentitydService/AddEntityToGroup",
+		FullMethod: "/ai.metathings.service.identityd2.IdentitydService/AddSubjectToGroup",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(IdentitydServiceServer).AddEntityToGroup(ctx, req.(*AddEntityToGroupRequest))
+		return srv.(IdentitydServiceServer).AddSubjectToGroup(ctx, req.(*AddSubjectToGroupRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _IdentitydService_RemoveEntityFromGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RemoveEntityFromGroupRequest)
+func _IdentitydService_RemoveSubjectFromGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RemoveSubjectFromGroupRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(IdentitydServiceServer).RemoveEntityFromGroup(ctx, in)
+		return srv.(IdentitydServiceServer).RemoveSubjectFromGroup(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/ai.metathings.service.identityd2.IdentitydService/RemoveEntityFromGroup",
+		FullMethod: "/ai.metathings.service.identityd2.IdentitydService/RemoveSubjectFromGroup",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(IdentitydServiceServer).RemoveEntityFromGroup(ctx, req.(*RemoveEntityFromGroupRequest))
+		return srv.(IdentitydServiceServer).RemoveSubjectFromGroup(ctx, req.(*RemoveSubjectFromGroupRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _IdentitydService_AddObjectToGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddObjectToGroupRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IdentitydServiceServer).AddObjectToGroup(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ai.metathings.service.identityd2.IdentitydService/AddObjectToGroup",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IdentitydServiceServer).AddObjectToGroup(ctx, req.(*AddObjectToGroupRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _IdentitydService_RemoveObjectFromGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RemoveObjectFromGroupRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IdentitydServiceServer).RemoveObjectFromGroup(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ai.metathings.service.identityd2.IdentitydService/RemoveObjectFromGroup",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IdentitydServiceServer).RemoveObjectFromGroup(ctx, req.(*RemoveObjectFromGroupRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1409,6 +3359,24 @@ func _IdentitydService_CheckToken_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _IdentitydService_AuthorizeToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AuthorizeTokenRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IdentitydServiceServer).AuthorizeToken(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ai.metathings.service.identityd2.IdentitydService/AuthorizeToken",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IdentitydServiceServer).AuthorizeToken(ctx, req.(*AuthorizeTokenRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _IdentitydService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "ai.metathings.service.identityd2.IdentitydService",
 	HandlerType: (*IdentitydServiceServer)(nil),
@@ -1434,6 +3402,26 @@ var _IdentitydService_serviceDesc = grpc.ServiceDesc{
 			Handler:    _IdentitydService_ListDomains_Handler,
 		},
 		{
+			MethodName: "CreateAction",
+			Handler:    _IdentitydService_CreateAction_Handler,
+		},
+		{
+			MethodName: "DeleteAction",
+			Handler:    _IdentitydService_DeleteAction_Handler,
+		},
+		{
+			MethodName: "PatchAction",
+			Handler:    _IdentitydService_PatchAction_Handler,
+		},
+		{
+			MethodName: "GetAction",
+			Handler:    _IdentitydService_GetAction_Handler,
+		},
+		{
+			MethodName: "ListActions",
+			Handler:    _IdentitydService_ListActions_Handler,
+		},
+		{
 			MethodName: "CreateRole",
 			Handler:    _IdentitydService_CreateRole_Handler,
 		},
@@ -1456,6 +3444,14 @@ var _IdentitydService_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListRolesForEntity",
 			Handler:    _IdentitydService_ListRolesForEntity_Handler,
+		},
+		{
+			MethodName: "AddActionToRole",
+			Handler:    _IdentitydService_AddActionToRole_Handler,
+		},
+		{
+			MethodName: "RemoveActionFromRole",
+			Handler:    _IdentitydService_RemoveActionFromRole_Handler,
 		},
 		{
 			MethodName: "CreateEntity",
@@ -1518,8 +3514,12 @@ var _IdentitydService_serviceDesc = grpc.ServiceDesc{
 			Handler:    _IdentitydService_ListGroups_Handler,
 		},
 		{
-			MethodName: "ListGroupsForEntity",
-			Handler:    _IdentitydService_ListGroupsForEntity_Handler,
+			MethodName: "ListGroupsForSubject",
+			Handler:    _IdentitydService_ListGroupsForSubject_Handler,
+		},
+		{
+			MethodName: "ListGroupsForObject",
+			Handler:    _IdentitydService_ListGroupsForObject_Handler,
 		},
 		{
 			MethodName: "ShowGroups",
@@ -1534,12 +3534,20 @@ var _IdentitydService_serviceDesc = grpc.ServiceDesc{
 			Handler:    _IdentitydService_RemoveRoleFromGroup_Handler,
 		},
 		{
-			MethodName: "AddEntityToGroup",
-			Handler:    _IdentitydService_AddEntityToGroup_Handler,
+			MethodName: "AddSubjectToGroup",
+			Handler:    _IdentitydService_AddSubjectToGroup_Handler,
 		},
 		{
-			MethodName: "RemoveEntityFromGroup",
-			Handler:    _IdentitydService_RemoveEntityFromGroup_Handler,
+			MethodName: "RemoveSubjectFromGroup",
+			Handler:    _IdentitydService_RemoveSubjectFromGroup_Handler,
+		},
+		{
+			MethodName: "AddObjectToGroup",
+			Handler:    _IdentitydService_AddObjectToGroup_Handler,
+		},
+		{
+			MethodName: "RemoveObjectFromGroup",
+			Handler:    _IdentitydService_RemoveObjectFromGroup_Handler,
 		},
 		{
 			MethodName: "CreateCredential",
@@ -1588,6 +3596,10 @@ var _IdentitydService_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CheckToken",
 			Handler:    _IdentitydService_CheckToken_Handler,
+		},
+		{
+			MethodName: "AuthorizeToken",
+			Handler:    _IdentitydService_AuthorizeToken_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

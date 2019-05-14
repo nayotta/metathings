@@ -1,10 +1,5 @@
 package cmd_contrib
 
-import (
-	app_cred_mgr "github.com/nayotta/metathings/pkg/common/application_credential_manager"
-	client_helper "github.com/nayotta/metathings/pkg/common/client"
-)
-
 type CredentialOptioner interface {
 	GetCredentialIdP() *string
 	GetCredentialId() string
@@ -46,6 +41,6 @@ func (self *CredentialOption) SetCredentialSecret(srt string) {
 	self.Credential.Secret = srt
 }
 
-func NewCredentialManager(cli_fty *client_helper.ClientFactory, opt CredentialOptioner) (app_cred_mgr.ApplicationCredentialManager, error) {
-	return app_cred_mgr.NewApplicationCredentialManager(cli_fty, opt.GetCredentialId(), opt.GetCredentialSecret())
+func NewCredentialManager() error {
+	panic("unimplemented")
 }

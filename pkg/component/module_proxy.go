@@ -22,7 +22,7 @@ type ModuleProxyStream interface {
 
 type moduleProxyStream struct {
 	deviced_pb.DevicedService_ConnectClient
-	session int32
+	session int64
 }
 
 func (self *moduleProxyStream) Send(val *any.Any) error {
@@ -55,7 +55,7 @@ func (self *moduleProxyStream) Recv() (*any.Any, error) {
 	return msg.GetStreamCall().GetValue(), nil
 }
 
-func NewModuleProxyStream(stm deviced_pb.DevicedService_ConnectClient, session int32) ModuleProxyStream {
+func NewModuleProxyStream(stm deviced_pb.DevicedService_ConnectClient, session int64) ModuleProxyStream {
 	return &moduleProxyStream{
 		DevicedService_ConnectClient: stm,
 		session: session,

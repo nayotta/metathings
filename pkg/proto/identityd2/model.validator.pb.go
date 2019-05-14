@@ -62,10 +62,40 @@ func (this *OpDomain) Validate() error {
 	// Validation of proto3 map<> fields is unsupported.
 	return nil
 }
+func (this *Action) Validate() error {
+	// Validation of proto3 map<> fields is unsupported.
+	return nil
+}
+func (this *OpAction) Validate() error {
+	if this.Id != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Id); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Id", err)
+		}
+	}
+	if this.Name != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Name); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Name", err)
+		}
+	}
+	if this.Alias != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Alias); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Alias", err)
+		}
+	}
+	if this.Description != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Description); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Description", err)
+		}
+	}
+	// Validation of proto3 map<> fields is unsupported.
+	return nil
+}
 func (this *Role) Validate() error {
-	if this.Domain != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Domain); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Domain", err)
+	for _, item := range this.Actions {
+		if item != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("Actions", err)
+			}
 		}
 	}
 	// Validation of proto3 map<> fields is unsupported.
@@ -77,11 +107,6 @@ func (this *OpRole) Validate() error {
 			return github_com_mwitkow_go_proto_validators.FieldError("Id", err)
 		}
 	}
-	if this.Domain != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Domain); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Domain", err)
-		}
-	}
 	if this.Name != nil {
 		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Name); err != nil {
 			return github_com_mwitkow_go_proto_validators.FieldError("Name", err)
@@ -90,6 +115,13 @@ func (this *OpRole) Validate() error {
 	if this.Alias != nil {
 		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Alias); err != nil {
 			return github_com_mwitkow_go_proto_validators.FieldError("Alias", err)
+		}
+	}
+	for _, item := range this.Actions {
+		if item != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("Actions", err)
+			}
 		}
 	}
 	if this.Description != nil {
@@ -183,10 +215,17 @@ func (this *Group) Validate() error {
 			}
 		}
 	}
-	for _, item := range this.Entities {
+	for _, item := range this.Subjects {
 		if item != nil {
 			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {
-				return github_com_mwitkow_go_proto_validators.FieldError("Entities", err)
+				return github_com_mwitkow_go_proto_validators.FieldError("Subjects", err)
+			}
+		}
+	}
+	for _, item := range this.Objects {
+		if item != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("Objects", err)
 			}
 		}
 	}
@@ -211,10 +250,17 @@ func (this *OpGroup) Validate() error {
 			}
 		}
 	}
-	for _, item := range this.Entities {
+	for _, item := range this.Subjects {
 		if item != nil {
 			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {
-				return github_com_mwitkow_go_proto_validators.FieldError("Entities", err)
+				return github_com_mwitkow_go_proto_validators.FieldError("Subjects", err)
+			}
+		}
+	}
+	for _, item := range this.Objects {
+		if item != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("Objects", err)
 			}
 		}
 	}

@@ -7,9 +7,9 @@ var (
 )
 
 type Storage interface {
-	AddBridgeToDevice(dev_id, br_id string) error
-	RemoveBridgeFromDevice(dev_id, br_id string) error
-	ListBridgesFromDevice(dev_id string) ([]string, error)
+	AddBridgeToDevice(dev_id string, sess int32, br_id string) error
+	RemoveBridgeFromDevice(dev_id string, sess int32, br_id string) error
+	ListBridgesFromDevice(dev_id string, sess int32) ([]string, error)
 }
 
 type StorageFactory func(...interface{}) (Storage, error)
