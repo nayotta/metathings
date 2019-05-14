@@ -88,7 +88,7 @@ func (self *MetathingsDevicedService) new_flow(dev_id, flw_id string) (flow.Flow
 	return f, nil
 }
 
-func (self *MetathingsDevicedService) is_ignore_method(md *grpc_helper.MethodDescription) bool {
+func (self *MetathingsDevicedService) IsIgnoreMethod(md *grpc_helper.MethodDescription) bool {
 	for _, m := range ignore_methods {
 		if md.Method == m {
 			return true

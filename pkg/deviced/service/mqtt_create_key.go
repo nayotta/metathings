@@ -2,31 +2,21 @@ package metathings_deviced_service
 
 import (
 	"context"
-	"errors"
 
 	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
+	identityd_validator "github.com/nayotta/metathings/pkg/identityd2/validator"
 	pb "github.com/nayotta/metathings/pkg/proto/deviced"
 )
 
 func (self *MetathingsDevicedService) ValidateCreateMqttKey(ctx context.Context, in interface{}) error {
-	return self.validate_chain(
-		[]interface{}{
-			func() (policy_helper.Validator, get_devicer) {
+	return self.validator.Validate(
+		identityd_validator.Providers{
+			func() (policy_helper.Validator, device_getter) {
 				req := in.(*pb.CreateMqttKeyRequest)
 				return req, req
 			},
 		},
-		[]interface{}{
-			func(x get_devicer) error {
-				dev := x.GetDevice()
-
-				if dev.GetId() == nil {
-					return errors.New("device.id is empty")
-				}
-
-				return nil
-			},
-		},
+		identityd_validator.Invokers{ensure_get_device_id},
 	)
 }
 
