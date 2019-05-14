@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+package ai.metathings.service.device_cloud;
+option go_package = "device_cloud";
+
+message MqttDeviceRequest {
+  int32 session_id = 1;
+  oneof payload {
+    Heartbeat heartbeat = 100;
+    HeartbeatSelectRes heartbeat_select_res = 101;
+    HeartbeatRes heartbeat_res = 102;
+  }
+}
+
+message MqttDeviceResponse {
+  oneof payload {
+    HeartbeatSelectReq heartbeat_select_req = 100;
+    HeartbeatRes heartbeat = 101;
+    HeartbeatReq heartbeat_req = 102;
+  }
+}
+
+// 100 hearbeat req
+message Heartbeat {
+  int32 status = 1;
+}
+
+// 100 heartbeat res
+message HeartbeatRes {
+  int32 status = 1;
+}
+
+// 102 stream heartbeat res
+message HeartbeatReq {
+  int32 status = 1;
+}
+
+// 101 heartbeat select host res
+message HeartbeatSelectRes {
+  int32 status = 1;
+}
+
+// 100 heartbeat select host req
+message HeartbeatSelectReq {
+  int32 status = 1;
+}
