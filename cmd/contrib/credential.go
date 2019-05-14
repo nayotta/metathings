@@ -1,6 +1,10 @@
 package cmd_contrib
 
 type CredentialOptioner interface {
+	GetCredentialDomainP() *string
+	GetCredentialDomain() string
+	SetCredentialDomain(string)
+
 	GetCredentialIdP() *string
 	GetCredentialId() string
 	SetCredentialId(string)
@@ -12,9 +16,22 @@ type CredentialOptioner interface {
 
 type CredentialOption struct {
 	Credential struct {
+		Domain string
 		Id     string
 		Secret string
 	}
+}
+
+func (self *CredentialOption) GetCredentialDomainP() *string {
+	return &self.Credential.Domain
+}
+
+func (self *CredentialOption) GetCredentialDomain() string {
+	return self.Credential.Domain
+}
+
+func (self *CredentialOption) SetCredentialDomain(dom string) {
+	self.Credential.Domain = dom
 }
 
 func (self *CredentialOption) GetCredentialIdP() *string {
@@ -39,8 +56,4 @@ func (self *CredentialOption) GetCredentialSecret() string {
 
 func (self *CredentialOption) SetCredentialSecret(srt string) {
 	self.Credential.Secret = srt
-}
-
-func NewCredentialManager() error {
-	panic("unimplemented")
 }
