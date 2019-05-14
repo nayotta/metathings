@@ -5,13 +5,12 @@ import (
 	token_helper "github.com/nayotta/metathings/pkg/common/token"
 )
 
-func NewTokener(opt CredentialOptioner, cli_fty *client_helper.ClientFactory) (token_helper.Tokener, error) {
-	var tknr token_helper.Tokener
-	var err error
+func NewTokener(opt CredentialOptioner, cli_fty *client_helper.ClientFactory) (tknr token_helper.Tokener, err error) {
+	tknr, err = token_helper.NewTokener(cli_fty, opt.GetCredentialDomain(), opt.GetCredentialId(), opt.GetCredentialSecret())
+	return
+}
 
-	if tknr, err = token_helper.NewTokener(cli_fty, opt.GetCredentialId(), opt.GetCredentialSecret()); err != nil {
-		return nil, err
-	}
-
-	return tknr, nil
+func NewNoExpireTokener(opt CredentialOptioner, cli_fty *client_helper.ClientFactory) (tknr token_helper.Tokener, err error) {
+	tknr, err = token_helper.NewNoExpireTokener(cli_fty, opt.GetCredentialDomain(), opt.GetCredentialId(), opt.GetCredentialSecret())
+	return
 }

@@ -11,5 +11,6 @@ dev:
     default:
       address: <metathings-address>
   credential:
+    domain: <credential-domain>
     id: <credential-id>
     secret: <credential-secret>

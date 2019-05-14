@@ -246,7 +246,7 @@ func runDeviced() error {
 			cmd_contrib.NewListener,
 			cmd_contrib.NewGrpcServer,
 			cmd_contrib.NewClientFactory,
-			cmd_contrib.NewTokener,
+			cmd_contrib.NewNoExpireTokener,
 			token_helper.NewTokenValidator,
 			NewSessionStorage,
 			NewSimpleStorage,

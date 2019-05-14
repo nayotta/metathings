@@ -116,7 +116,7 @@ func runTagd() error {
 			cmd_contrib.NewListener,
 			cmd_contrib.NewGrpcServer,
 			cmd_contrib.NewClientFactory,
-			cmd_contrib.NewTokener,
+			cmd_contrib.NewNoExpireTokener,
 			token_helper.NewTokenValidator,
 			authorizer.NewAuthorizer,
 			cmd_contrib.NewValidator,

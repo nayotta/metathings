@@ -26,5 +26,6 @@ dev:
     name: <simple-storage-name>
     # ...
   credential:
+    domain: <credential-domain>
     id: <credential-id>
     secret: <credential-key>
