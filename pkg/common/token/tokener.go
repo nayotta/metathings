@@ -4,9 +4,11 @@ import (
 	"context"
 	"sync"
 
+	"github.com/golang/protobuf/ptypes/wrappers"
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
 	const_helper "github.com/nayotta/metathings/pkg/common/constant"
 	identityd2_contrib "github.com/nayotta/metathings/pkg/identityd2/contrib"
+	identityd2_pb "github.com/nayotta/metathings/pkg/proto/identityd2"
 )
 
 type Tokener interface {
