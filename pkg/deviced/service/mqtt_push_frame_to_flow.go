@@ -13,10 +13,10 @@ import (
 func (self *MetathingsDevicedService) MqttPushFrameToFlow(ctx context.Context, req *pb.MqttPushFrameToFlowRequest) (*pb.MqttPushFrameToFlowResponse, error) {
 	var dev_id string
 
-	dev_id = req.GetFlowId().GetValue()
+	dev_id = req.GetDeviceId().GetValue()
 	dev_s, err := self.storage.GetDevice(dev_id)
 	if err != nil {
-		self.logger.WithError(err).Errorf("failed to get device")
+		self.logger.WithError(err).Errorf("failed to get device:%s", dev_id)
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
@@ -39,7 +39,7 @@ match_flow_loop:
 
 	if f == nil {
 		err = ErrFlowNotFound
-		self.logger.WithError(err).Errorf("failed to get flow")
+		self.logger.WithError(err).Errorf("failed to get flow:%s")
 		return nil, status.Errorf(codes.NotFound, err.Error())
 	}
 

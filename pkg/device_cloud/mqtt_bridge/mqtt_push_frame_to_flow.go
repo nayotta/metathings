@@ -34,26 +34,27 @@ func (that *PushFrameToFlowCenter) logD(flowID string, text string) {
 	that.logger.WithField("flowID", flowID).Debugf(text)
 }
 
-func (that *PushFrameToFlowCenter) pushFrameToFlowProcess(flowID string) {
-	go that.pubPushFrameToFlowResponse(flowID)
+func (that *PushFrameToFlowCenter) pushFrameToFlowProcess(deviceID string, flowID string) {
+	go that.pubPushFrameToFlowResponse(deviceID, flowID)
 }
 
 func (that *PushFrameToFlowCenter) pushFrameToFlowMsgCallback(client emitter.Emitter, msg emitter.Message) {
 	strs := strings.Split(msg.Topic(), "/")
 	switch len(strs) {
-	case 3:
+	case 5:
 		if strs[0] != "flow" {
 			that.logE("", ErrInvalidArgument, "unexcept topic 0 get")
 			return
 		}
 
-		if strs[2] != "up" {
+		if strs[3] != "up" {
 			that.logE("", ErrInvalidArgument, "unexcept topic 2 get")
 			return
 		}
 
-		flowID := strs[1]
-		go that.pushFrameToFlowProcess(flowID)
+		flowID := strs[2]
+		deviceID := strs[1]
+		go that.pushFrameToFlowProcess(deviceID, flowID)
 	default:
 		that.logE("", ErrInvalidArgument, "unexcept topic size get")
 		return
@@ -103,11 +104,12 @@ func (that *PushFrameToFlowCenter) subUpTopic() error {
 	return nil
 }
 
-func (that *PushFrameToFlowCenter) pubPushFrameToFlowResponse(flowID string) error {
-	deviceTopic := "flow/" + flowID + "/down/"
+func (that *PushFrameToFlowCenter) pubPushFrameToFlowResponse(deviceID string, flowID string) error {
+	deviceTopic := "flow/" + deviceID + "/" + flowID + "/down/"
 
 	hbreq := &deviced_pb.MqttPushFrameToFlowRequest{
-		FlowId: &wrappers.StringValue{Value: flowID},
+		DeviceId: &wrappers.StringValue{Value: deviceID},
+		FlowId:   &wrappers.StringValue{Value: flowID},
 	}
 
 	cli, cfn, err := that.cliFty.NewDevicedServiceClient()
@@ -153,7 +155,7 @@ func (that *PushFrameToFlowCenter) PushFrameToFlowLoop() error {
 // NewPushFrameToFlowCenter NewPushFrameToFlowCenter
 func NewPushFrameToFlowCenter(mqttBr *mqttBridge) (*PushFrameToFlowCenter, error) {
 	timeout := 10 * time.Second
-	upTopic := "flow/+/up/"
+	upTopic := "flow/+/+/up/"
 
 	return &PushFrameToFlowCenter{
 		host:    mqttBr.host,
