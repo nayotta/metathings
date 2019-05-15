@@ -116,14 +116,9 @@ func (that *PushFrameToFlowCenter) pubPushFrameToFlowResponse(flowID string) err
 	}
 	defer cfn()
 
-	_, err = cli.MqttPushFrameToFlow(context.Background(), hbreq)
+	resMsg, err := cli.MqttPushFrameToFlow(context.Background(), hbreq)
 	if err != nil {
 		return err
-	}
-
-	resMsg := &deviced_pb.MqttPushFrameToFlowResponse{
-		Id:       "",
-		Response: &deviced_pb.MqttPushFrameToFlowResponse_Ack_{},
 	}
 
 	res, err := proto.Marshal(resMsg)
