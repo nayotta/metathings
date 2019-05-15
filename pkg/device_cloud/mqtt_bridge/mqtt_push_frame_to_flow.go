@@ -45,7 +45,7 @@ func (that *PushFrameToFlowCenter) pushFrameToFlowMsgCallback(client emitter.Emi
 	strs := strings.Split(msg.Topic(), "/")
 	switch len(strs) {
 	case 5:
-		if strs[0] != "flow" {
+		if strs[1] != "flow" {
 			that.logE("", ErrInvalidArgument, "unexcept topic 0 get")
 			return
 		}
@@ -56,7 +56,7 @@ func (that *PushFrameToFlowCenter) pushFrameToFlowMsgCallback(client emitter.Emi
 		}
 
 		flowID := strs[2]
-		deviceID := strs[1]
+		deviceID := strs[0]
 		go that.pushFrameToFlowProcess(deviceID, flowID, msg.Payload())
 	default:
 		that.logE("", ErrInvalidArgument, "unexcept topic size get")
@@ -110,7 +110,7 @@ func (that *PushFrameToFlowCenter) subUpTopic() error {
 func (that *PushFrameToFlowCenter) pubPushFrameToFlowResponse(deviceID string, flowID string, frame []byte) error {
 	var frameStruct _struct.Struct
 
-	deviceTopic := "flow/" + deviceID + "/" + flowID + "/down/"
+	deviceTopic := deviceID + "/flow/" + flowID + "/down/"
 
 	err := json_pb.UnmarshalString(string(frame), &frameStruct)
 	if err != nil {
@@ -170,12 +170,12 @@ func (that *PushFrameToFlowCenter) PushFrameToFlowLoop() error {
 // NewPushFrameToFlowCenter NewPushFrameToFlowCenter
 func NewPushFrameToFlowCenter(mqttBr *mqttBridge) (*PushFrameToFlowCenter, error) {
 	timeout := 10 * time.Second
-	upTopic := "flow/+/+/up/"
+	upTopic := "+/flow/+/up/"
 
 	return &PushFrameToFlowCenter{
 		host:    mqttBr.host,
 		timeout: timeout,
-		downKey: mqttBr.downKey,
+		downKey: mqttBr.flowUpKey,
 		upKey:   mqttBr.flowUpKey,
 		upTopic: upTopic,
 		cliFty:  mqttBr.cliFty,

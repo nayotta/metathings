@@ -52,7 +52,8 @@ match_flow_loop:
 
 	res := &pb.MqttPushFrameToFlowResponse{
 		Id:       req.GetId().GetValue(),
-		Response: &pb.MqttPushFrameToFlowResponse_Ack_{},
+		Response: &pb.MqttPushFrameToFlowResponse_Ack_{
+			Ack:&pb.MqttPushFrameToFlowResponse_Ack{}},
 	}
 
 	return res, nil
