@@ -7,9 +7,12 @@ import (
 	"time"
 
 	emitter "github.com/emitter-io/go"
+	json_pb "github.com/golang/protobuf/jsonpb"
 	"github.com/golang/protobuf/proto"
+	_struct "github.com/golang/protobuf/ptypes/struct"
 	wrappers "github.com/golang/protobuf/ptypes/wrappers"
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
+	pb_helper "github.com/nayotta/metathings/pkg/common/protobuf"
 	deviced_pb "github.com/nayotta/metathings/pkg/proto/deviced"
 	log "github.com/sirupsen/logrus"
 )
@@ -34,8 +37,8 @@ func (that *PushFrameToFlowCenter) logD(flowID string, text string) {
 	that.logger.WithField("flowID", flowID).Debugf(text)
 }
 
-func (that *PushFrameToFlowCenter) pushFrameToFlowProcess(deviceID string, flowID string) {
-	go that.pubPushFrameToFlowResponse(deviceID, flowID)
+func (that *PushFrameToFlowCenter) pushFrameToFlowProcess(deviceID string, flowID string, frame []byte) {
+	go that.pubPushFrameToFlowResponse(deviceID, flowID, frame)
 }
 
 func (that *PushFrameToFlowCenter) pushFrameToFlowMsgCallback(client emitter.Emitter, msg emitter.Message) {
@@ -54,7 +57,7 @@ func (that *PushFrameToFlowCenter) pushFrameToFlowMsgCallback(client emitter.Emi
 
 		flowID := strs[2]
 		deviceID := strs[1]
-		go that.pushFrameToFlowProcess(deviceID, flowID)
+		go that.pushFrameToFlowProcess(deviceID, flowID, msg.Payload())
 	default:
 		that.logE("", ErrInvalidArgument, "unexcept topic size get")
 		return
@@ -104,12 +107,24 @@ func (that *PushFrameToFlowCenter) subUpTopic() error {
 	return nil
 }
 
-func (that *PushFrameToFlowCenter) pubPushFrameToFlowResponse(deviceID string, flowID string) error {
+func (that *PushFrameToFlowCenter) pubPushFrameToFlowResponse(deviceID string, flowID string, frame []byte) error {
+	var frameStruct _struct.Struct
+
 	deviceTopic := "flow/" + deviceID + "/" + flowID + "/down/"
 
+	err := json_pb.UnmarshalString(string(frame), &frameStruct)
+	if err != nil {
+		return err
+	}
+
+	now := pb_helper.Now()
 	hbreq := &deviced_pb.MqttPushFrameToFlowRequest{
 		DeviceId: &wrappers.StringValue{Value: deviceID},
 		FlowId:   &wrappers.StringValue{Value: flowID},
+		Frame: &deviced_pb.OpFrame{
+			Ts:   &now,
+			Data: &frameStruct,
+		},
 	}
 
 	cli, cfn, err := that.cliFty.NewDevicedServiceClient()
