@@ -11,6 +11,8 @@ func (that *mqttBridge) keygenCallback(_ emitter.Emitter, msg emitter.KeyGenResp
 	if msg.Status == 200 {
 		topicStr := msg.Channel
 		switch topicStr {
+		case "flow/+/up":
+			that.flowUpKey = msg.Key
 		case "+/up/#/":
 			that.upKey = msg.Key
 		case "+/statusup/#/":
@@ -48,6 +50,24 @@ func (that *mqttBridge) createUpKey() error {
 	// wait 5s for key response
 	for i := 0; i < 100; i++ {
 		if that.upKey != "" {
+			return nil
+		}
+		time.Sleep(50 * time.Millisecond)
+	}
+
+	return ErrMqttUpKeygenFailed
+}
+
+//createFlowUpKey
+func (that *mqttBridge) createFlowUpKey() error {
+	err := that.createSecretKey("flow/+/up/")
+	if err != nil {
+		return err
+	}
+
+	// wait 5s for key response
+	for i := 0; i < 100; i++ {
+		if that.flowUpKey != "" {
 			return nil
 		}
 		time.Sleep(50 * time.Millisecond)

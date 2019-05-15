@@ -34,6 +34,7 @@ type mqttBridge struct {
 	rootKey      string
 	upKey        string
 	downKey      string
+	flowUpKey    string
 	statusUpKey  string
 	configClient emitter.Emitter
 	cliFty       *client_helper.ClientFactory

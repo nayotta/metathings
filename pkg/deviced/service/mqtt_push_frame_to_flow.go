@@ -11,9 +11,7 @@ import (
 
 // MqttPushFrameToFlow MqttPushFrameToFlow
 func (self *MetathingsDevicedService) MqttPushFrameToFlow(ctx context.Context, req *pb.MqttPushFrameToFlowRequest) (*pb.MqttPushFrameToFlowResponse, error) {
-	var dev_r *pb.OpDevice
 	var dev_id string
-	var push_ack bool
 
 	dev_id = req.GetFlowId().GetValue()
 	dev_s, err := self.storage.GetDevice(dev_id)
@@ -53,7 +51,7 @@ match_flow_loop:
 	}
 
 	res := &pb.MqttPushFrameToFlowResponse{
-		Id: req.GetId().GetValue(),
+		Id:       req.GetId().GetValue(),
 		Response: &pb.MqttPushFrameToFlowResponse_Ack_{},
 	}
 

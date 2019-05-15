@@ -65,7 +65,7 @@ func (that *PushFrameToFlowCenter) pushFrameToFlowConnectCallback(_ emitter.Emit
 
 	err = that.subUpTopic()
 	if err != nil {
-		that.logE("", ErrMqttSubFailed, "heartbeat sub failed")
+		that.logE("", ErrMqttSubFailed, "pushFrameToFlow sub failed")
 	}
 }
 
@@ -104,7 +104,7 @@ func (that *PushFrameToFlowCenter) subUpTopic() error {
 }
 
 func (that *PushFrameToFlowCenter) pubPushFrameToFlowResponse(flowID string) error {
-	deviceTopic := "/flow/" + flowID + "/down/"
+	deviceTopic := "flow/" + flowID + "/down/"
 
 	hbreq := &deviced_pb.MqttPushFrameToFlowRequest{
 		FlowId: &wrappers.StringValue{Value: flowID},
@@ -153,13 +153,13 @@ func (that *PushFrameToFlowCenter) PushFrameToFlowLoop() error {
 // NewPushFrameToFlowCenter NewPushFrameToFlowCenter
 func NewPushFrameToFlowCenter(mqttBr *mqttBridge) (*PushFrameToFlowCenter, error) {
 	timeout := 10 * time.Second
-	upTopic := "/flow/+/up/"
+	upTopic := "flow/+/up/"
 
 	return &PushFrameToFlowCenter{
 		host:    mqttBr.host,
 		timeout: timeout,
 		downKey: mqttBr.downKey,
-		upKey:   mqttBr.upKey,
+		upKey:   mqttBr.flowUpKey,
 		upTopic: upTopic,
 		cliFty:  mqttBr.cliFty,
 		logger:  mqttBr.logger,
