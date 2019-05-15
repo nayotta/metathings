@@ -20,11 +20,11 @@ import (
 )
 
 var (
-	MtpURL             = "metathings.ai:21733"
+	MtpURL             = "10.1.1.130:21733"
 	MtpUsername        = "admin"
 	MtpPassword        = "admin"
 	MtpDefaultDomainID = "default"
-	MtpDeviceID        = "airswitch02"
+	MtpDeviceID        = "airswitch08"
 )
 
 var (

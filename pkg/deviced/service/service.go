@@ -51,6 +51,7 @@ var (
 	ignore_methods = []string{
 		"MqttHeartbeat",
 		"MqttHeartbeatSelect",
+		"MqttPushFrameToFlow",
 	}
 )
 

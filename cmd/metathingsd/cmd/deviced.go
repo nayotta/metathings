@@ -220,6 +220,11 @@ func NewMqttBridgeCenter(cli *client_helper.ClientFactory, opt cmd_contrib.MqttB
 		return nil, err
 	}
 
+	err = br.InitPushFrameToFlowLoop()
+	if err != nil {
+		return nil, err
+	}
+
 	return br, nil
 }
 

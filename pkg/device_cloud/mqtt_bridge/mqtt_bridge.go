@@ -19,6 +19,7 @@ type MqttBridge interface {
 
 	InitMqttBridge() error
 	InitHeartBeatLoop() error
+	InitPushFrameToFlowLoop() error
 	KeyGen(context.Context, *pb.GenKeyRequest) (*pb.GenKeyResponse, error)
 	KeyGenForDeviced(string) (string, error)
 	HeartBeatSelect(string) (int, error)
@@ -37,6 +38,7 @@ type mqttBridge struct {
 	configClient emitter.Emitter
 	cliFty       *client_helper.ClientFactory
 	heartbeat    *HeartBeatCenter
+	pushFrame    *PushFrameToFlowCenter
 	logger       log.FieldLogger
 }
 

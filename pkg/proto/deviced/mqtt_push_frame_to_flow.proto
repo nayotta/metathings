@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package ai.metathings.service.deviced;
+
+import "google/protobuf/wrappers.proto";
+
+import "github.com/mwitkow/go-proto-validators/validator.proto";
+
+import "model.proto";
+
+message MqttPushFrameToFlowRequest {
+  google.protobuf.StringValue id = 1 [(validator.field) = { msg_exists: true }];
+  google.protobuf.StringValue device_id = 2 [(validator.field) = { msg_exists: true }];
+  google.protobuf.StringValue flow_id = 3 [(validator.field) = { msg_exists: true }];
+  OpFrame frame = 4;
+}
+
+message MqttPushFrameToFlowResponse {
+  message Ack {
+  }
+
+  string id = 1;
+  oneof response {
+    Ack ack = 2;
+  }
+}
