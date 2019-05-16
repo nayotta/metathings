@@ -40,12 +40,12 @@ func (self *MetathingsDeviceServiceImpl) internal_main_loop() {
 	// handle message loop
 	for {
 		self.conn_stm_rwmtx.RLock()
-		if req, err = self.connection_stream().Recv(); err != nil {
+		conn := self.connection_stream()
+		self.conn_stm_rwmtx.RUnlock()
+		if req, err = conn.Recv(); err != nil {
 			self.logger.WithError(err).Errorf("failed to recv message from connection stream")
-			self.conn_stm_rwmtx.RUnlock()
 			return
 		}
-		self.conn_stm_rwmtx.RUnlock()
 
 		self.logger.WithFields(log.Fields{
 			"session": req.GetSessionId().GetValue(),
