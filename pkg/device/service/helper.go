@@ -22,6 +22,15 @@ func (self *MetathingsDeviceServiceImpl) context() context.Context {
 	return context_helper.WithToken(context.TODO(), self.tknr.GetToken())
 }
 
+func (self *MetathingsDeviceServiceImpl) context_with_sesion() context.Context {
+	return context_helper.NewOutgoingContext(
+		context.TODO(),
+		context_helper.WithTokenOp(self.tknr.GetToken()),
+		context_helper.WithSessionOp(self.generator_major_session()),
+	)
+
+}
+
 func (self *MetathingsDeviceServiceImpl) pb_device() *deviced_pb.OpDevice {
 	return &deviced_pb.OpDevice{Id: &wrappers.StringValue{Value: self.info.Id}}
 }

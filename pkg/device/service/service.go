@@ -1,6 +1,7 @@
 package metathings_device_service
 
 import (
+	"sync"
 	"time"
 
 	grpc_auth "github.com/grpc-ecosystem/go-grpc-middleware/auth"
@@ -26,6 +27,7 @@ type MetathingsDeviceService interface {
 type MetathingsDeviceServiceOption struct {
 	ModuleAliveTimeout time.Duration
 	HeartbeatInterval  time.Duration
+	ReconnectInterval  time.Duration
 }
 
 type MetathingsDeviceServiceImpl struct {
@@ -35,10 +37,13 @@ type MetathingsDeviceServiceImpl struct {
 	logger  log.FieldLogger
 	opt     *MetathingsDeviceServiceOption
 
-	info     *deviced_pb.Device
-	mdl_db   ModuleDatabase
-	conn_stm deviced_pb.DevicedService_ConnectClient
-	conn_cfn client_helper.CloseFn
+	info             *deviced_pb.Device
+	mdl_db           ModuleDatabase
+	conn_stm         deviced_pb.DevicedService_ConnectClient
+	conn_stm_wg_once *sync.Once
+	conn_stm_wg      *sync.WaitGroup
+	conn_stm_rwmtx   *sync.RWMutex
+	conn_cfn         client_helper.CloseFn
 
 	startup_session int32
 }
@@ -71,6 +76,10 @@ func (self *MetathingsDeviceServiceImpl) Err() error {
 	panic("unimplemented")
 }
 
+func (self *MetathingsDeviceServiceImpl) connection_stream() deviced_pb.DevicedService_ConnectClient {
+	return self.conn_stm
+}
+
 func NewMetathingsDeviceService(
 	tknr token_helper.Tokener,
 	cli_fty *client_helper.ClientFactory,
@@ -79,11 +88,14 @@ func NewMetathingsDeviceService(
 	opt *MetathingsDeviceServiceOption,
 ) (MetathingsDeviceService, error) {
 	srv := &MetathingsDeviceServiceImpl{
-		tknr:            tknr,
-		cli_fty:         cli_fty,
-		logger:          logger,
-		opt:             opt,
-		startup_session: session_helper.GenerateStartupSession(),
+		tknr:             tknr,
+		cli_fty:          cli_fty,
+		logger:           logger,
+		opt:              opt,
+		conn_stm_wg_once: new(sync.Once),
+		conn_stm_wg:      new(sync.WaitGroup),
+		conn_stm_rwmtx:   new(sync.RWMutex),
+		startup_session:  session_helper.GenerateStartupSession(),
 	}
 	srv.ServiceAuthFuncOverride = afo_helper.NewAuthFuncOverrider(tkvdr, srv, logger)
 
