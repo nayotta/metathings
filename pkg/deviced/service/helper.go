@@ -7,6 +7,7 @@ import (
 	deviced_helper "github.com/nayotta/metathings/pkg/deviced/helper"
 	simple_storage "github.com/nayotta/metathings/pkg/deviced/simple_storage"
 	storage "github.com/nayotta/metathings/pkg/deviced/storage"
+	state_pb "github.com/nayotta/metathings/pkg/proto/constant/state"
 	pb "github.com/nayotta/metathings/pkg/proto/deviced"
 )
 
@@ -158,4 +159,19 @@ func _ensure_get_object_device_id(x *pb.OpObject) error {
 		return errors.New("object.device.id is empty")
 	}
 	return nil
+}
+
+func ensure_device_online(s storage.Storage) func(device_getter) error {
+	return func(x device_getter) error {
+		dev_id := x.GetDevice().GetId().GetValue()
+		dev, err := s.GetDevice(dev_id)
+		if err != nil {
+			return err
+		}
+		if copy_device(dev).State != state_pb.DeviceState_DEVICE_STATE_ONLINE {
+			return ErrDeviceOffline
+		}
+
+		return nil
+	}
 }

@@ -8,4 +8,5 @@ var (
 	ErrBridgeClosed             = errors.New("bridge closed")
 	ErrTimeout                  = errors.New("timeout")
 	ErrDuplicatedDeviceInstance = errors.New("duplicated device instance")
+	ErrDeviceOffline            = errors.New("device offline")
 )
