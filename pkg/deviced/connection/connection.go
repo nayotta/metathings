@@ -320,6 +320,7 @@ func (self *connectionCenter) BuildConnection(dev *storage.Device, stm pb.Device
 func (self *connectionCenter) UnaryCall(dev *storage.Device, req *pb.OpUnaryCallValue) (*pb.UnaryCallValue, error) {
 	var startup_sess int32
 	var br_ids []string
+	var br_id string
 	var conn_br Bridge
 	var sess_br Bridge
 	var buf []byte
@@ -344,11 +345,18 @@ func (self *connectionCenter) UnaryCall(dev *storage.Device, req *pb.OpUnaryCall
 		"device":  dev_id,
 	}).Debugf("list bridges from device")
 
-	if conn_br, err = self.brfty.GetBridge(br_ids[0]); err != nil {
+	if len(br_ids) == 0 {
+		err = ErrDeviceOffline
+		self.logger.WithError(err).Debugf("device bridges is empty")
+		return nil, err
+	}
+	br_id = br_ids[0]
+
+	if conn_br, err = self.brfty.GetBridge(br_id); err != nil {
 		return nil, err
 	}
 	defer conn_br.Close()
-	self.logger.WithField("bridge", br_ids[0]).Debugf("get bridge")
+	self.logger.WithField("bridge", br_id).Debugf("get bridge")
 
 	if sess_br, err = self.brfty.BuildBridge(dev_id, sess); err != nil {
 		return nil, err
@@ -398,6 +406,7 @@ func (self *connectionCenter) UnaryCall(dev *storage.Device, req *pb.OpUnaryCall
 func (self *connectionCenter) StreamCall(dev *storage.Device, cfg *pb.OpStreamCallConfig, stm pb.DevicedService_StreamCallServer) error {
 	var startup_sess int32
 	var br_ids []string
+	var br_id string
 	var conn_br Bridge
 	var sess_br Bridge
 	var buf []byte
@@ -426,13 +435,19 @@ func (self *connectionCenter) StreamCall(dev *storage.Device, cfg *pb.OpStreamCa
 	}
 	logger.WithFields(log.Fields{
 		"bridges": br_ids,
+		"device":  dev_id,
 	}).Debugf("list bridges from device")
 
-	if conn_br, err = self.brfty.GetBridge(br_ids[0]); err != nil {
+	if len(br_ids) == 0 {
+		return ErrDeviceOffline
+	}
+	br_id = br_ids[0]
+
+	if conn_br, err = self.brfty.GetBridge(br_id); err != nil {
 		logger.WithError(err).Debugf("failed to get bridge from bridge factory")
 		return err
 	}
-	logger.WithField("bridge", br_ids[0]).Debugf("pick bridge")
+	logger.WithField("bridge", br_id).Debugf("pick bridge")
 
 	if sess_br, err = self.brfty.BuildBridge(dev_id, sess); err != nil {
 		logger.WithError(err).Debugf("failed to build bridge")

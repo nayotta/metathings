@@ -7,4 +7,5 @@ var (
 	ErrDuplicatedDevice  = errors.New("duplicated device")
 	ErrUnconnectedDevice = errors.New("unconnected device")
 	ErrFlowNotFound      = errors.New("flow not found")
+	ErrDeviceOffline     = errors.New("device offline")
 )
