@@ -1,6 +1,7 @@
 package metathings_device_service
 
 import (
+	"math"
 	"time"
 
 	log "github.com/sirupsen/logrus"
@@ -9,13 +10,19 @@ import (
 )
 
 func (self *MetathingsDeviceServiceImpl) main_loop() {
+	rc_ivl := self.opt.MinReconnectInterval
 	for {
-		self.internal_main_loop()
-		time.Sleep(self.opt.ReconnectInterval)
+		err := self.internal_main_loop()
+		if err != nil {
+			rc_ivl = time.Duration(math.Min(float64(rc_ivl*2), float64(self.opt.MaxReconnectInterval)))
+		} else {
+			rc_ivl = self.opt.MinReconnectInterval
+		}
+		time.Sleep(rc_ivl)
 	}
 }
 
-func (self *MetathingsDeviceServiceImpl) internal_main_loop() {
+func (self *MetathingsDeviceServiceImpl) internal_main_loop() error {
 	var err error
 	var req *deviced_pb.ConnectRequest
 
@@ -23,7 +30,7 @@ func (self *MetathingsDeviceServiceImpl) internal_main_loop() {
 	cli, cfn, err := self.cli_fty.NewDevicedServiceClient()
 	if err != nil {
 		self.logger.WithError(err).Errorf("failed to connect to deviced service")
-		return
+		return err
 	}
 	defer cfn()
 	self.conn_stm_wg_once.Do(func() { self.conn_stm_wg.Done() })
@@ -34,7 +41,7 @@ func (self *MetathingsDeviceServiceImpl) internal_main_loop() {
 	self.conn_stm_rwmtx.Unlock()
 	if err != nil {
 		self.logger.WithError(err).Errorf("failed to build connection to deviced")
-		return
+		return err
 	}
 
 	// handle message loop
@@ -44,7 +51,7 @@ func (self *MetathingsDeviceServiceImpl) internal_main_loop() {
 		self.conn_stm_rwmtx.RUnlock()
 		if req, err = conn.Recv(); err != nil {
 			self.logger.WithError(err).Errorf("failed to recv message from connection stream")
-			return
+			return nil
 		}
 
 		self.logger.WithFields(log.Fields{

@@ -25,9 +25,10 @@ type MetathingsDeviceService interface {
 }
 
 type MetathingsDeviceServiceOption struct {
-	ModuleAliveTimeout time.Duration
-	HeartbeatInterval  time.Duration
-	ReconnectInterval  time.Duration
+	ModuleAliveTimeout   time.Duration
+	HeartbeatInterval    time.Duration
+	MaxReconnectInterval time.Duration
+	MinReconnectInterval time.Duration
 }
 
 type MetathingsDeviceServiceImpl struct {
