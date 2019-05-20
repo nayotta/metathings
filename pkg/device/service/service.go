@@ -41,9 +41,9 @@ type MetathingsDeviceServiceImpl struct {
 	info             *deviced_pb.Device
 	mdl_db           ModuleDatabase
 	conn_stm         deviced_pb.DevicedService_ConnectClient
-	conn_stm_wg_once *sync.Once
-	conn_stm_wg      *sync.WaitGroup
 	conn_stm_rwmtx   *sync.RWMutex
+	conn_stm_wg      *sync.WaitGroup
+	conn_stm_wg_once *sync.Once
 	conn_cfn         client_helper.CloseFn
 
 	startup_session int32
@@ -93,9 +93,9 @@ func NewMetathingsDeviceService(
 		cli_fty:          cli_fty,
 		logger:           logger,
 		opt:              opt,
-		conn_stm_wg_once: new(sync.Once),
-		conn_stm_wg:      new(sync.WaitGroup),
 		conn_stm_rwmtx:   new(sync.RWMutex),
+		conn_stm_wg:      new(sync.WaitGroup),
+		conn_stm_wg_once: new(sync.Once),
 		startup_session:  session_helper.GenerateStartupSession(),
 	}
 	srv.ServiceAuthFuncOverride = afo_helper.NewAuthFuncOverrider(tkvdr, srv, logger)

@@ -6,6 +6,7 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
+	session_helper "github.com/nayotta/metathings/pkg/common/session"
 	deviced_pb "github.com/nayotta/metathings/pkg/proto/deviced"
 )
 
@@ -22,6 +23,10 @@ func (self *MetathingsDeviceServiceImpl) main_loop() {
 	}
 }
 
+func (self *MetathingsDeviceServiceImpl) _refresh_startup_session() {
+	self.startup_session = session_helper.GenerateStartupSession()
+}
+
 func (self *MetathingsDeviceServiceImpl) internal_main_loop() error {
 	var err error
 	var req *deviced_pb.ConnectRequest
@@ -33,7 +38,9 @@ func (self *MetathingsDeviceServiceImpl) internal_main_loop() error {
 		return err
 	}
 	defer cfn()
-	self.conn_stm_wg_once.Do(func() { self.conn_stm_wg.Done() })
+
+	// TODO(Peer): DONT refresh startup session
+	self._refresh_startup_session()
 
 	ctx := self.context_with_sesion()
 	self.conn_stm_rwmtx.Lock()
@@ -43,6 +50,7 @@ func (self *MetathingsDeviceServiceImpl) internal_main_loop() error {
 		self.logger.WithError(err).Errorf("failed to build connection to deviced")
 		return err
 	}
+	self.conn_stm_wg_once.Do(func() { self.conn_stm_wg.Done() })
 
 	// handle message loop
 	for {
