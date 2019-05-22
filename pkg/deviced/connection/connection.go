@@ -199,7 +199,7 @@ func (self *connectionCenter) south_from_bridge(dev *storage.Device, conn Connec
 
 	go func() {
 		var buf []byte
-
+		var ok bool
 		var err error
 
 		logger := self.logger.WithFields(log.Fields{
@@ -224,7 +224,11 @@ func (self *connectionCenter) south_from_bridge(dev *storage.Device, conn Connec
 			// TODO(Peer): catch receiving error
 			logger.Debugf("waiting")
 			select {
-			case buf = <-br.South().AsyncRecv():
+			case buf, ok = <-br.South().AsyncRecv():
+				if !ok {
+					logger.Warningf("bridge disconnected")
+					return
+				}
 				logger.Debugf("recv msg")
 			case <-quit:
 				logger.Debugf("catch quit signal")
