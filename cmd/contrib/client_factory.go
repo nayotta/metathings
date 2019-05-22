@@ -23,8 +23,5 @@ func NewClientFactory(opt ServiceEndpointsOptioner, logger log.FieldLogger) (*cl
 
 	logger.WithField("WithInsecureOptionFunc", true).Debugf("new client factory")
 
-	return client_helper.NewClientFactory(cfgs,
-		client_helper.WithInsecureOptionFunc(),
-	)
-
+	return client_helper.NewClientFactory(cfgs, client_helper.DefaultDialOptionFn())
 }

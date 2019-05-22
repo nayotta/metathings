@@ -99,7 +99,9 @@ func (self *MetathingsDeviceServiceImpl) handle_user_unary_request(req *deviced_
 		}
 	}
 
-	err = self.conn_stm.Send(res)
+	self.conn_stm_rwmtx.RLock()
+	defer self.conn_stm_rwmtx.RUnlock()
+	err = self.connection_stream().Send(res)
 	if err != nil {
 		logger.Debugf("failed to send msg")
 		return err

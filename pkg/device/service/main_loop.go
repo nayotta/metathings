@@ -1,21 +1,65 @@
 package metathings_device_service
 
 import (
+	"math"
+	"time"
+
 	log "github.com/sirupsen/logrus"
 
+	session_helper "github.com/nayotta/metathings/pkg/common/session"
 	deviced_pb "github.com/nayotta/metathings/pkg/proto/deviced"
 )
 
 func (self *MetathingsDeviceServiceImpl) main_loop() {
-	var req *deviced_pb.ConnectRequest
-	var err error
-
-	defer self.conn_cfn()
-
+	rc_ivl := self.opt.MinReconnectInterval
 	for {
-		if req, err = self.conn_stm.Recv(); err != nil {
-			self.logger.WithError(err).Errorf("failed to recv msg from connect stream")
-			return
+		err := self.internal_main_loop()
+		if err != nil {
+			rc_ivl = time.Duration(math.Min(float64(rc_ivl*2), float64(self.opt.MaxReconnectInterval)))
+		} else {
+			rc_ivl = self.opt.MinReconnectInterval
+		}
+		time.Sleep(rc_ivl)
+	}
+}
+
+func (self *MetathingsDeviceServiceImpl) _refresh_startup_session() {
+	self.startup_session = session_helper.GenerateStartupSession()
+}
+
+func (self *MetathingsDeviceServiceImpl) internal_main_loop() error {
+	var err error
+	var req *deviced_pb.ConnectRequest
+
+	// build connection
+	cli, cfn, err := self.cli_fty.NewDevicedServiceClient()
+	if err != nil {
+		self.logger.WithError(err).Errorf("failed to connect to deviced service")
+		return err
+	}
+	defer cfn()
+
+	// TODO(Peer): DONT refresh startup session
+	self._refresh_startup_session()
+
+	ctx := self.context_with_sesion()
+	self.conn_stm_rwmtx.Lock()
+	self.conn_stm, err = cli.Connect(ctx)
+	self.conn_stm_rwmtx.Unlock()
+	if err != nil {
+		self.logger.WithError(err).Errorf("failed to build connection to deviced")
+		return err
+	}
+	self.conn_stm_wg_once.Do(func() { self.conn_stm_wg.Done() })
+
+	// handle message loop
+	for {
+		self.conn_stm_rwmtx.RLock()
+		conn := self.connection_stream()
+		self.conn_stm_rwmtx.RUnlock()
+		if req, err = conn.Recv(); err != nil {
+			self.logger.WithError(err).Errorf("failed to recv message from connection stream")
+			return nil
 		}
 
 		self.logger.WithFields(log.Fields{

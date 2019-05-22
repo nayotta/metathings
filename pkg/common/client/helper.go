@@ -3,8 +3,10 @@ package client_helper
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/keepalive"
 
 	constant_helper "github.com/nayotta/metathings/pkg/common/constant"
 	component_pb "github.com/nayotta/metathings/pkg/proto/component"
@@ -148,8 +150,15 @@ func NewDefaultServiceConfigs(addr string) ServiceConfigs {
 	}
 }
 
-func WithInsecureOptionFunc() DialOptionFn {
+func DefaultDialOptionFn() DialOptionFn {
 	return func() []grpc.DialOption {
-		return []grpc.DialOption{grpc.WithInsecure()}
+		return []grpc.DialOption{
+			grpc.WithInsecure(),
+			grpc.WithKeepaliveParams(keepalive.ClientParameters{
+				Time:                13 * time.Second,
+				Timeout:             3 * time.Second,
+				PermitWithoutStream: true,
+			}),
+		}
 	}
 }

@@ -258,7 +258,7 @@ func new_client_factory_from_new_kernel_option(opt *NewKernelOption) (*client_he
 		return nil, ErrDeviceAddressRequired
 	}
 	srv_cfgs[client_helper.DEVICED_CONFIG] = client_helper.ServiceConfig{addr}
-	cli_fty, err = client_helper.NewClientFactory(srv_cfgs, client_helper.WithInsecureOptionFunc())
+	cli_fty, err = client_helper.NewClientFactory(srv_cfgs, client_helper.DefaultDialOptionFn())
 	if err != nil {
 		return nil, err
 	}
@@ -279,7 +279,7 @@ func new_client_factory_from_kernel_config(cfg *KernelConfig) (*client_helper.Cl
 		return nil, ErrDeviceAddressRequired
 	}
 	srv_cfgs[client_helper.DEVICE_CONFIG] = client_helper.ServiceConfig{addr}
-	cli_fty, err = client_helper.NewClientFactory(srv_cfgs, client_helper.WithInsecureOptionFunc())
+	cli_fty, err = client_helper.NewClientFactory(srv_cfgs, client_helper.DefaultDialOptionFn())
 	if err != nil {
 		return nil, err
 	}

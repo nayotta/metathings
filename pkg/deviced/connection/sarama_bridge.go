@@ -18,11 +18,11 @@ type saramaChannelOption struct {
 	Brokers []string
 }
 
-func newSaramaChannel(opt *saramaChannelOption, client sarama.Client, logger log.FieldLogger) Channel {
+func newSaramaChannel(opt *saramaChannelOption, produce_client sarama.Client, logger log.FieldLogger) Channel {
 	return &saramaChannel{
 		opt:             opt,
 		logger:          logger,
-		client:          client,
+		produce_client:  produce_client,
 		async_recv_once: new(sync.Once),
 		sync_send_once:  new(sync.Once),
 	}
@@ -32,9 +32,9 @@ type saramaChannel struct {
 	opt    *saramaChannelOption
 	logger log.FieldLogger
 
-	client   sarama.Client
-	producer sarama.SyncProducer
-	consumer *cluster.Consumer
+	produce_client sarama.Client
+	producer       sarama.SyncProducer
+	consumer       *cluster.Consumer
 
 	sending   chan []byte
 	receiving chan []byte
@@ -68,7 +68,7 @@ func (self *saramaChannel) consumer_topic() string {
 func (self *saramaChannel) init_producer() {
 	var err error
 
-	if self.producer, err = sarama.NewSyncProducerFromClient(self.client); err != nil {
+	if self.producer, err = sarama.NewSyncProducerFromClient(self.produce_client); err != nil {
 		panic(err)
 	}
 	self.logger.WithField("topic", self.producer_topic()).Debugf("init producer")
@@ -213,14 +213,13 @@ type saramaBridge struct {
 	opt    *saramaBridgeOption
 	logger log.FieldLogger
 
-	client sarama.Client
+	producer_client sarama.Client
 
 	north Channel
 	south Channel
 
-	client_once *sync.Once
-	north_once  *sync.Once
-	south_once  *sync.Once
+	north_once *sync.Once
+	south_once *sync.Once
 }
 
 func (self *saramaBridge) Id() string {
@@ -251,40 +250,40 @@ func (self *saramaBridge) Close() error {
 	return nil
 }
 
-func (self *saramaBridge) init_client() {
+func (self *saramaBridge) init_producer_client() {
 	var err error
 
 	cfg := sarama.NewConfig()
 	cfg.Producer.Return.Successes = true
 	cfg.Producer.Partitioner = sarama.NewRandomPartitioner
 
-	if self.client, err = sarama.NewClient(self.opt.Brokers, cfg); err != nil {
+	if self.producer_client, err = sarama.NewClient(self.opt.Brokers, cfg); err != nil {
 		self.logger.WithError(err).Fatalf("failed to create sarama client")
 	}
 }
 
-func (self *saramaBridge) init_north() {
-	self.client_once.Do(self.init_client)
+func (self *saramaBridge) init_client() {
+	self.init_producer_client()
+}
 
+func (self *saramaBridge) init_north() {
 	opt := &saramaChannelOption{
 		Id:      self.Id(),
 		Side:    NORTH_SIDE,
 		Brokers: self.opt.Brokers,
 	}
 
-	self.north = newSaramaChannel(opt, self.client, self.logger)
+	self.north = newSaramaChannel(opt, self.producer_client, self.logger)
 }
 
 func (self *saramaBridge) init_south() {
-	self.client_once.Do(self.init_client)
-
 	opt := &saramaChannelOption{
 		Id:      self.Id(),
 		Side:    SOUTH_SIDE,
 		Brokers: self.opt.Brokers,
 	}
 
-	self.south = newSaramaChannel(opt, self.client, self.logger)
+	self.south = newSaramaChannel(opt, self.producer_client, self.logger)
 }
 
 type saramaBridgeFactoryOption struct {
@@ -292,26 +291,49 @@ type saramaBridgeFactoryOption struct {
 }
 
 type saramaBridgeFactory struct {
-	opt    *saramaBridgeFactoryOption
+	opt       *saramaBridgeFactoryOption
+	prod_cli  sarama.Client
+	init_once sync.Once
+
 	logger log.FieldLogger
 }
 
+func (self *saramaBridgeFactory) init_producer_client() {
+	var err error
+
+	cfg := sarama.NewConfig()
+	cfg.Producer.Return.Successes = true
+	cfg.Producer.Partitioner = sarama.NewRandomPartitioner
+
+	if self.prod_cli, err = sarama.NewClient(self.opt.Brokers, cfg); err != nil {
+		self.logger.WithError(err).Fatalf("failed to init sarama producer client")
+	}
+}
+
+func (self *saramaBridgeFactory) init_client() {
+	self.init_producer_client()
+}
+
 func (self *saramaBridgeFactory) BuildBridge(device_id string, session int64) (Bridge, error) {
+	self.init_once.Do(self.init_client)
+
 	return self.GetBridge(parse_bridge_id(device_id, session))
 }
 
 func (self *saramaBridgeFactory) GetBridge(id string) (Bridge, error) {
+	self.init_once.Do(self.init_client)
+
 	opt := &saramaBridgeOption{
 		Id:      id,
 		Brokers: self.opt.Brokers,
 	}
 
 	br := &saramaBridge{
-		opt:         opt,
-		logger:      self.logger.WithField("bridge", id),
-		client_once: new(sync.Once),
-		north_once:  new(sync.Once),
-		south_once:  new(sync.Once),
+		opt:             opt,
+		logger:          self.logger.WithField("bridge", id),
+		producer_client: self.prod_cli,
+		north_once:      new(sync.Once),
+		south_once:      new(sync.Once),
 	}
 
 	return br, nil
