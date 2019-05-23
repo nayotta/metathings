@@ -309,6 +309,12 @@ func (self *connectionCenter) BuildConnection(dev *storage.Device, stm pb.Device
 			} else {
 				logger.Debugf("unset startup session")
 			}
+
+			if err = br.Close(); err != nil {
+				logger.WithError(err).Warningf("failed to close bridge")
+			} else {
+				logger.Debugf("bridge closed")
+			}
 		}
 		logger.WithField("bridge", br_id).Debugf("add bridge to device")
 	}

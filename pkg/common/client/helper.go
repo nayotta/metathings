@@ -155,8 +155,7 @@ func DefaultDialOptionFn() DialOptionFn {
 		return []grpc.DialOption{
 			grpc.WithInsecure(),
 			grpc.WithKeepaliveParams(keepalive.ClientParameters{
-				Time:                13 * time.Second,
-				Timeout:             3 * time.Second,
+				Timeout:             60 * time.Second,
 				PermitWithoutStream: true,
 			}),
 		}
