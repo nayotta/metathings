@@ -457,12 +457,14 @@ func (self *connectionCenter) StreamCall(dev *storage.Device, cfg *pb.OpStreamCa
 		logger.WithError(err).Debugf("failed to get bridge from bridge factory")
 		return err
 	}
+	defer conn_br.Close()
 	logger.WithField("bridge", br_id).Debugf("pick bridge")
 
 	if sess_br, err = self.brfty.BuildBridge(dev_id, sess); err != nil {
 		logger.WithError(err).Debugf("failed to build bridge")
 		return err
 	}
+	defer sess_br.Close()
 	logger.Debugf("build bridge")
 
 	go func() {

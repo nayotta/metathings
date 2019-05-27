@@ -1,15 +1,16 @@
 package metathings_deviced_connection
 
 import (
+	"context"
 	"fmt"
 	"sync"
 	"time"
 
 	"github.com/Shopify/sarama"
-	cluster "github.com/bsm/sarama-cluster"
 	log "github.com/sirupsen/logrus"
 
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
+	pool_helper "github.com/nayotta/metathings/pkg/common/pool"
 )
 
 type saramaChannelOption struct {
@@ -18,13 +19,19 @@ type saramaChannelOption struct {
 	Brokers []string
 }
 
-func newSaramaChannel(opt *saramaChannelOption, produce_client sarama.Client, logger log.FieldLogger) Channel {
+func newSaramaChannel(
+	opt *saramaChannelOption,
+	produce_client sarama.Client,
+	consumer_client_pool pool_helper.Pool,
+	logger log.FieldLogger,
+) Channel {
 	return &saramaChannel{
-		opt:             opt,
-		logger:          logger,
-		produce_client:  produce_client,
-		async_recv_once: new(sync.Once),
-		sync_send_once:  new(sync.Once),
+		opt:                  opt,
+		logger:               logger,
+		produce_client:       produce_client,
+		consumer_client_pool: consumer_client_pool,
+		async_recv_once:      new(sync.Once),
+		sync_send_once:       new(sync.Once),
 	}
 }
 
@@ -32,9 +39,11 @@ type saramaChannel struct {
 	opt    *saramaChannelOption
 	logger log.FieldLogger
 
-	produce_client sarama.Client
-	producer       sarama.SyncProducer
-	consumer       *cluster.Consumer
+	produce_client       sarama.Client
+	consumer_client      sarama.Client
+	consumer_client_pool pool_helper.Pool
+	producer             sarama.SyncProducer
+	consumer             sarama.ConsumerGroup
 
 	sending   chan []byte
 	receiving chan []byte
@@ -75,24 +84,50 @@ func (self *saramaChannel) init_producer() {
 }
 
 func (self *saramaChannel) init_consumer() {
-	var err error
-
-	config := cluster.NewConfig()
-	config.Consumer.Return.Errors = true
-	config.Group.Return.Notifications = true
-	config.Group.Heartbeat.Interval = 30 * time.Millisecond
-	config.Consumer.Offsets.Initial = sarama.OffsetOldest
-
-	if self.consumer, err = cluster.NewConsumer(self.opt.Brokers, self.opt.Id, []string{self.consumer_topic()}, config); err != nil {
-		self.logger.WithError(err).Warningf("failed to init consumer")
+	cli, err := self.consumer_client_pool.Get()
+	if err != nil {
+		self.logger.WithError(err).Warningf("failed to init sarama consumer client")
 		return
 	}
+	self.consumer_client = cli.(sarama.Client)
+
+	self.consumer, err = sarama.NewConsumerGroupFromClient(self.opt.Id, self.consumer_client)
+	if err != nil {
+		self.logger.WithError(err).Warningf("failed to init sarama consumer group")
+		return
+	}
+
 	self.logger.WithFields(log.Fields{
 		"group": self.opt.Id,
 		"topic": self.consumer_topic(),
 	}).Debugf("init consumer")
+}
 
-	return
+type saramaChannelConsumerGroupHandler struct {
+	receiving chan []byte
+	logger    log.FieldLogger
+}
+
+func (h *saramaChannelConsumerGroupHandler) Setup(sarama.ConsumerGroupSession) error {
+	h.logger.Debugf("consumer setup")
+
+	return nil
+}
+
+func (h *saramaChannelConsumerGroupHandler) Cleanup(sarama.ConsumerGroupSession) error {
+	h.logger.Debugf("consumer cleanup")
+
+	return nil
+}
+
+func (h *saramaChannelConsumerGroupHandler) ConsumeClaim(sess sarama.ConsumerGroupSession, claim sarama.ConsumerGroupClaim) error {
+	for msg := range claim.Messages() {
+		sess.MarkMessage(msg, "")
+		h.receiving <- msg.Value
+		h.logger.Debugf("recv msg")
+	}
+
+	return nil
 }
 
 func (self *saramaChannel) init_async_recv() {
@@ -105,6 +140,7 @@ func (self *saramaChannel) init_async_recv() {
 	})
 
 	self.receiving = make(chan []byte)
+
 	go func() {
 		defer func() {
 			close(self.receiving)
@@ -112,25 +148,17 @@ func (self *saramaChannel) init_async_recv() {
 		}()
 
 		for {
-			logger.Debugf("waiting")
-			select {
-			case msg, ok := <-self.consumer.Messages():
-				if ok {
-					self.consumer.MarkOffset(msg, "")
-					self.receiving <- msg.Value
-					logger.Debugf("recv msg")
-				}
-			case err := <-self.consumer.Errors():
-				self.recv_err = err
+			err := self.consumer.Consume(context.TODO(), []string{self.consumer_topic()}, &saramaChannelConsumerGroupHandler{
+				receiving: self.receiving,
+				logger:    logger,
+			})
+			if err != nil {
 				logger.WithError(err).Debugf("recv error")
 				return
-			case ntf := <-self.consumer.Notifications():
-				logger.WithField("notification", ntf).Debugf("rebalanced")
-			case prt := <-self.consumer.Partitions():
-				logger.WithField("partitions", prt).Debugf("partitions")
 			}
 		}
 	}()
+
 	logger.Debugf("init async recv")
 }
 
@@ -198,6 +226,11 @@ func (self *saramaChannel) Close() error {
 			self.logger.WithError(err).Warningf("failed to close consumer")
 			return err
 		}
+
+		if err = self.consumer_client_pool.Put(self.consumer_client); err != nil {
+			self.logger.WithError(err).Warningf("failed to put client back to pool")
+			return err
+		}
 	}
 
 	self.logger.Debugf("channel closed")
@@ -213,7 +246,8 @@ type saramaBridge struct {
 	opt    *saramaBridgeOption
 	logger log.FieldLogger
 
-	producer_client sarama.Client
+	producer_client      sarama.Client
+	consumer_client_pool pool_helper.Pool
 
 	north Channel
 	south Channel
@@ -273,7 +307,7 @@ func (self *saramaBridge) init_north() {
 		Brokers: self.opt.Brokers,
 	}
 
-	self.north = newSaramaChannel(opt, self.producer_client, self.logger)
+	self.north = newSaramaChannel(opt, self.producer_client, self.consumer_client_pool, self.logger)
 }
 
 func (self *saramaBridge) init_south() {
@@ -283,17 +317,22 @@ func (self *saramaBridge) init_south() {
 		Brokers: self.opt.Brokers,
 	}
 
-	self.south = newSaramaChannel(opt, self.producer_client, self.logger)
+	self.south = newSaramaChannel(opt, self.producer_client, self.consumer_client_pool, self.logger)
 }
 
 type saramaBridgeFactoryOption struct {
-	Brokers []string
+	Brokers  []string
+	Consumer struct {
+		Initial int
+		Max     int
+	}
 }
 
 type saramaBridgeFactory struct {
-	opt       *saramaBridgeFactoryOption
-	prod_cli  sarama.Client
-	init_once sync.Once
+	opt           *saramaBridgeFactoryOption
+	prod_cli      sarama.Client
+	cons_cli_pool pool_helper.Pool
+	init_once     sync.Once
 
 	logger log.FieldLogger
 }
@@ -310,8 +349,24 @@ func (self *saramaBridgeFactory) init_producer_client() {
 	}
 }
 
+func (self *saramaBridgeFactory) init_consumer_client_pool() {
+	var err error
+
+	if self.cons_cli_pool, err = pool_helper.NewPool(self.opt.Consumer.Initial, self.opt.Consumer.Max, func() (pool_helper.Client, error) {
+		cfg := sarama.NewConfig()
+		cfg.Consumer.Group.Heartbeat.Interval = 100 * time.Millisecond
+		cfg.Version = sarama.V2_0_0_0
+		cfg.Consumer.Offsets.Initial = sarama.OffsetOldest
+
+		return sarama.NewClient(self.opt.Brokers, cfg)
+	}); err != nil {
+		self.logger.WithError(err).Fatalf("failed to init sarama consumer client pool")
+	}
+}
+
 func (self *saramaBridgeFactory) init_client() {
 	self.init_producer_client()
+	self.init_consumer_client_pool()
 }
 
 func (self *saramaBridgeFactory) BuildBridge(device_id string, session int64) (Bridge, error) {
@@ -329,11 +384,12 @@ func (self *saramaBridgeFactory) GetBridge(id string) (Bridge, error) {
 	}
 
 	br := &saramaBridge{
-		opt:             opt,
-		logger:          self.logger.WithField("bridge", id),
-		producer_client: self.prod_cli,
-		north_once:      new(sync.Once),
-		south_once:      new(sync.Once),
+		opt:                  opt,
+		logger:               self.logger.WithField("bridge", id),
+		producer_client:      self.prod_cli,
+		consumer_client_pool: self.cons_cli_pool,
+		north_once:           new(sync.Once),
+		south_once:           new(sync.Once),
 	}
 
 	return br, nil
@@ -345,6 +401,8 @@ func new_sarama_bridge_factory(args ...interface{}) (BridgeFactory, error) {
 	var err error
 
 	opt := &saramaBridgeFactoryOption{}
+	opt.Consumer.Initial = 5
+	opt.Consumer.Max = 23
 
 	if err = opt_helper.Setopt(map[string]func(string, interface{}) error{
 		"logger": func(key string, val interface{}) error {
