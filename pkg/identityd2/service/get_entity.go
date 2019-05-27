@@ -26,6 +26,10 @@ func (self *MetathingsIdentitydService) ValidateGetEntity(ctx context.Context, i
 	)
 }
 
+func (self *MetathingsIdentitydService) AuthorizeGetEntity(ctx context.Context, in interface{}) error {
+	return self.authorize(ctx, in.(*pb.GetEntityRequest).GetEntity().GetId().GetValue(), "get_entity")
+}
+
 func (self *MetathingsIdentitydService) GetEntity(ctx context.Context, req *pb.GetEntityRequest) (*pb.GetEntityResponse, error) {
 	var ent_s *storage.Entity
 	var err error
