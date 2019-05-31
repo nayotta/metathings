@@ -39,7 +39,7 @@ imports:
 - name: github.com/go-daq/smbus
   version: 15ef727fb3205992e78eb887b88a90f952874459
 - name: github.com/go-redis/redis
-  version: b3d9bf10f6666b2ee5100a6f3f84f4caf3b4e37d
+  version: 75795aa4236dc7341eefac3bbe945e68c99ef9df
   subpackages:
   - internal
   - internal/consistenthash
