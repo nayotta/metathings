@@ -54,6 +54,7 @@ func (c *redisStreamChannel) get_client() (*redis.Client, error) {
 			c.get_logger().WithError(err).Debugf("failed to get redis client")
 			return nil, err
 		}
+		c.get_logger().WithField("pool_size", c.pool.Size()).Debugf("get client from pool")
 
 		// TODO(Peer): check client alive or not.
 		c.client = cli.(*redis.Client)
@@ -168,16 +169,21 @@ func (c *redisStreamChannel) init_async_recv() {
 				NoAck:    true,
 			}).Result()
 
-			// TODO(Peer): handle error
-			if err != nil {
+			switch err {
+			case redis.Nil:
+				continue
+			case nil:
+			default:
+				// TODO(Peer): handle error
 				logger.WithError(err).Debugf("recv error")
 				return
+
 			}
 
 			for _, val := range vals {
 				for _, msg := range val.Messages {
 					if buf, ok := msg.Values["value"]; ok {
-						c.receiving <- buf.([]byte)
+						c.receiving <- []byte(buf.(string))
 					}
 				}
 			}
@@ -197,13 +203,14 @@ func (c *redisStreamChannel) Close() error {
 	defer c.client_mutex.Unlock()
 
 	close(c.closed)
+	c.get_logger().Debugf("send close signal")
 
 	if err := c.pool.Put(c.client); err != nil {
 		return err
 	}
+	c.get_logger().WithField("pool_size", c.pool.Size()).Debugf("put client to pool")
 
 	c.get_logger().Debugf("channel closed")
-
 	return nil
 }
 
@@ -275,14 +282,19 @@ func (f *redisStreamBridge) Close() error {
 		if err = f.north.Close(); err != nil {
 			return err
 		}
+	} else {
+		f.logger.Debugf("north channel is empty")
 	}
 
 	if f.south != nil {
 		if err = f.south.Close(); err != nil {
 			return err
 		}
+	} else {
+		f.logger.Debugf("south channel is empty")
 	}
 
+	f.logger.Debugf("bridge closed")
 	return nil
 }
 
@@ -329,10 +341,12 @@ func (f *redisStreamBridgeFactory) init_pool() {
 }
 
 func (f *redisStreamBridgeFactory) BuildBridge(device_id string, sess int64) (Bridge, error) {
-	return f.GetBridge(parse_bridge_id(device_id, sess))
+	id := parse_bridge_id(device_id, sess)
+	defer f.logger.WithField("bridge", id).Debugf("build bridge")
+	return f.get_bridge(id)
 }
 
-func (f *redisStreamBridgeFactory) GetBridge(id string) (Bridge, error) {
+func (f *redisStreamBridgeFactory) get_bridge(id string) (Bridge, error) {
 	f.init_once.Do(f.init_pool)
 
 	opt := &redisStreamBridgeOption{
@@ -340,12 +354,20 @@ func (f *redisStreamBridgeFactory) GetBridge(id string) (Bridge, error) {
 	}
 
 	br := &redisStreamBridge{
-		opt:    opt,
-		logger: f.logger,
-		pool:   f.pool,
+		opt: opt,
+		logger: f.logger.WithFields(log.Fields{
+			"bridge": id,
+			"nonce":  generate_nonce(),
+		}),
+		pool: f.pool,
 	}
 
 	return br, nil
+}
+
+func (f *redisStreamBridgeFactory) GetBridge(id string) (Bridge, error) {
+	defer f.logger.WithField("bridge", id).Debugf("get bridge")
+	return f.get_bridge(id)
 }
 
 func new_redis_stream_bridge_factory(args ...interface{}) (BridgeFactory, error) {
@@ -354,6 +376,8 @@ func new_redis_stream_bridge_factory(args ...interface{}) (BridgeFactory, error)
 	var err error
 
 	opt := &redisStreamFactoryOption{}
+	opt.Pool.Initial = 5
+	opt.Pool.Max = 23
 
 	if err = opt_helper.Setopt(map[string]func(string, interface{}) error{
 		"logger": func(key string, val interface{}) error {

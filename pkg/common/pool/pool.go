@@ -28,7 +28,7 @@ func NewPool(initial, max int, new_client NewClient) (Pool, error) {
 
 	return &pool{
 		max:        max,
-		clients:    make(chan Client),
+		clients:    clients,
 		new_client: new_client,
 	}, nil
 }

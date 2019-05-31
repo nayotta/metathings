@@ -2,6 +2,7 @@ package metathings_deviced_connection
 
 import (
 	"fmt"
+	"math/rand"
 
 	"github.com/golang/protobuf/proto"
 	"github.com/golang/protobuf/ptypes/wrappers"
@@ -11,6 +12,19 @@ import (
 	session_helper "github.com/nayotta/metathings/pkg/common/session"
 	pb "github.com/nayotta/metathings/pkg/proto/deviced"
 )
+
+var (
+	NONCE_LENGTH  = 8
+	NONCE_LETTERS = []byte("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+)
+
+func generate_nonce() string {
+	buf := make([]byte, NONCE_LENGTH)
+	for i := 0; i < NONCE_LENGTH; i++ {
+		buf[i] = NONCE_LETTERS[rand.Intn(len(NONCE_LETTERS))]
+	}
+	return string(buf)
+}
 
 func parse_bridge_id(device string, session int64) string {
 	return id_helper.NewNamedId(fmt.Sprintf("device.%v.session.%08x", device, session))
