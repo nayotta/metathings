@@ -1,9 +1,10 @@
 package option_helper
 
 import (
-	"errors"
 	"fmt"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 )
 
 type Option interface {
@@ -177,28 +178,28 @@ func Copy(x Option) Option {
 	return o
 }
 
-var (
-	ErrInvalidArguments = errors.New("invalid arguments")
-)
+func InvalidArgument(key string) error {
+	return fmt.Errorf("invalid argument: %v", key)
+}
 
 type SetoptConds map[string]func(string, interface{}) error
 
 func Setopt(conds SetoptConds) func(...interface{}) error {
 	return func(args ...interface{}) error {
 		if len(args)%2 != 0 {
-			return ErrInvalidArguments
+			return InvalidArgument("arguments")
 		}
 
 		for i := 0; i < len(args); i += 2 {
 			key, ok := args[i].(string)
 			if !ok {
-				return ErrInvalidArguments
+				return InvalidArgument("arguments")
 			}
 			val := args[i+1]
 
 			cond, ok := conds[key]
 			if !ok {
-				return ErrInvalidArguments
+				return InvalidArgument(key)
 			}
 			if err := cond(key, val); err != nil {
 				return err
@@ -214,7 +215,29 @@ func ToString(v *string) func(string, interface{}) error {
 		var ok bool
 		*v, ok = val.(string)
 		if !ok {
-			return ErrInvalidArguments
+			return InvalidArgument(key)
+		}
+		return nil
+	}
+}
+
+func ToInt(v *int) func(string, interface{}) error {
+	return func(key string, val interface{}) error {
+		var ok bool
+		*v, ok = val.(int)
+		if !ok {
+			return InvalidArgument(key)
+		}
+		return nil
+	}
+}
+
+func ToInt32(v *int32) func(string, interface{}) error {
+	return func(key string, val interface{}) error {
+		var ok bool
+		*v, ok = val.(int32)
+		if !ok {
+			return InvalidArgument(key)
 		}
 		return nil
 	}
@@ -225,7 +248,18 @@ func ToDuration(v *time.Duration) func(string, interface{}) error {
 		var ok bool
 		*v, ok = val.(time.Duration)
 		if !ok {
-			return ErrInvalidArguments
+			return InvalidArgument(key)
+		}
+		return nil
+	}
+}
+
+func ToLogger(v *log.FieldLogger) func(string, interface{}) error {
+	return func(key string, val interface{}) error {
+		var ok bool
+		*v, ok = val.(log.FieldLogger)
+		if !ok {
+			return InvalidArgument(key)
 		}
 		return nil
 	}

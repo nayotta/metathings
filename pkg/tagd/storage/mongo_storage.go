@@ -171,7 +171,6 @@ func (self *MongoStorage) Query(tags []string) ([]string, error) {
 }
 
 func NewMongoStorage(args ...interface{}) (Storage, error) {
-	var ok bool
 	var logger log.FieldLogger
 	var err error
 	opt := NewMongoStorageOption()
@@ -181,12 +180,7 @@ func NewMongoStorage(args ...interface{}) (Storage, error) {
 		"database":   opt_helper.ToString(&opt.Database),
 		"collection": opt_helper.ToString(&opt.Collection),
 		"timeout":    opt_helper.ToDuration(&opt.Timeout),
-		"logger": func(key string, val interface{}) error {
-			if logger, ok = val.(log.FieldLogger); !ok {
-				return opt_helper.ErrInvalidArguments
-			}
-			return nil
-		},
+		"logger":     opt_helper.ToLogger(&logger),
 	})(args...); err != nil {
 		return nil, err
 	}

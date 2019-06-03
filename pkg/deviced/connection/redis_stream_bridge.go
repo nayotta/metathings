@@ -8,6 +8,7 @@ import (
 	"github.com/go-redis/redis"
 	log "github.com/sirupsen/logrus"
 
+	nonce_helper "github.com/nayotta/metathings/pkg/common/nonce"
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 	pool_helper "github.com/nayotta/metathings/pkg/common/pool"
 )
@@ -324,12 +325,9 @@ func (f *redisStreamBridgeFactory) init_pool() {
 
 	f.pool, err = pool_helper.NewPool(f.opt.Pool.Initial, f.opt.Pool.Max, func() (pool_helper.Client, error) {
 		opt := &redis.Options{
-			Addr: f.opt.Redis.Addr,
-			DB:   f.opt.Redis.DB,
-		}
-
-		if f.opt.Redis.Password != "" {
-			opt.Password = f.opt.Redis.Password
+			Addr:     f.opt.Redis.Addr,
+			DB:       f.opt.Redis.DB,
+			Password: f.opt.Redis.Password,
 		}
 
 		return redis.NewClient(opt), nil
@@ -357,7 +355,7 @@ func (f *redisStreamBridgeFactory) get_bridge(id string) (Bridge, error) {
 		opt: opt,
 		logger: f.logger.WithFields(log.Fields{
 			"bridge": id,
-			"nonce":  generate_nonce(),
+			"nonce":  nonce_helper.GenerateNonce(),
 		}),
 		pool: f.pool,
 	}
@@ -371,7 +369,6 @@ func (f *redisStreamBridgeFactory) GetBridge(id string) (Bridge, error) {
 }
 
 func new_redis_stream_bridge_factory(args ...interface{}) (BridgeFactory, error) {
-	var ok bool
 	var logger log.FieldLogger
 	var err error
 
@@ -380,38 +377,15 @@ func new_redis_stream_bridge_factory(args ...interface{}) (BridgeFactory, error)
 	opt.Pool.Max = 23
 
 	if err = opt_helper.Setopt(map[string]func(string, interface{}) error{
-		"logger": func(key string, val interface{}) error {
-			logger, ok = val.(log.FieldLogger)
-			if !ok {
-				return ErrInvalidArgument
-			}
-			logger = logger.WithField("#bridge_driver", "redis-stream")
-			return nil
-		},
-		"addr": func(key string, val interface{}) error {
-			opt.Redis.Addr, ok = val.(string)
-			if !ok {
-				return ErrInvalidArgument
-			}
-			return nil
-		},
-		"db": func(key string, val interface{}) error {
-			opt.Redis.DB, ok = val.(int)
-			if !ok {
-				return ErrInvalidArgument
-			}
-			return nil
-		},
-		"password": func(key string, val interface{}) error {
-			opt.Redis.Password, ok = val.(string)
-			if !ok {
-				return ErrInvalidArgument
-			}
-			return nil
-		},
+		"logger":   opt_helper.ToLogger(&logger),
+		"addr":     opt_helper.ToString(&opt.Redis.Addr),
+		"db":       opt_helper.ToInt(&opt.Redis.DB),
+		"password": opt_helper.ToString(&opt.Redis.Password),
 	})(args...); err != nil {
 		return nil, err
 	}
+
+	logger = logger.WithField("#bridge_driver", "redis-stream")
 
 	return &redisStreamBridgeFactory{
 		opt:    opt,

@@ -193,25 +193,12 @@ func (fss *FileSimpleStorage) ListObjects(obj *Object) ([]*Object, error) {
 }
 
 func new_file_simple_storage(args ...interface{}) (SimpleStorage, error) {
-	var ok bool
 	var logger log.FieldLogger
 	opt := &FileSimpleStorageOption{}
 
 	err := opt_helper.Setopt(map[string]func(string, interface{}) error{
-		"home": func(key string, val interface{}) error {
-			opt.Home, ok = val.(string)
-			if !ok {
-				return opt_helper.ErrInvalidArguments
-			}
-			return nil
-		},
-		"logger": func(key string, val interface{}) error {
-			logger, ok = val.(log.FieldLogger)
-			if !ok {
-				return opt_helper.ErrInvalidArguments
-			}
-			return nil
-		},
+		"home":   opt_helper.ToString(&opt.Home),
+		"logger": opt_helper.ToLogger(&logger),
 	})(args...)
 	if err != nil {
 		return nil, err

@@ -77,8 +77,6 @@ import:
   - status
 - package: github.com/go-redis/redis
   version: ~6.15.3
-- package: github.com/bsm/sarama-cluster
-  version: ~2.1.15
 - package: github.com/mongodb/mongo-go-driver
   version: ~0.2.0
   subpackages:

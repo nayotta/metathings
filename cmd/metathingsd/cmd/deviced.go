@@ -3,7 +3,6 @@ package cmd
 import (
 	"context"
 
-	"github.com/mongodb/mongo-go-driver/mongo"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"go.uber.org/fx"
@@ -13,6 +12,7 @@ import (
 	cfg_helper "github.com/nayotta/metathings/pkg/common/config"
 	token_helper "github.com/nayotta/metathings/pkg/common/token"
 	connection "github.com/nayotta/metathings/pkg/deviced/connection"
+	flow "github.com/nayotta/metathings/pkg/deviced/flow"
 	service "github.com/nayotta/metathings/pkg/deviced/service"
 	session_storage "github.com/nayotta/metathings/pkg/deviced/session_storage"
 	simple_storage "github.com/nayotta/metathings/pkg/deviced/simple_storage"
@@ -34,8 +34,10 @@ type DevicedOption struct {
 			Uri      string
 			Database string
 		}
-		Kafka struct {
-			Brokers []string
+		Redis struct {
+			Addr     string
+			DB       int
+			Password string
 		}
 	}
 }
@@ -231,8 +233,6 @@ func NewSimpleStorage(opt *DevicedOption, logger log.FieldLogger) (simple_storag
 
 func NewMetathingsDevicedServiceOption(opt *DevicedOption) *service.MetathingsDevicedServiceOption {
 	o := &service.MetathingsDevicedServiceOption{}
-	o.Flow.MongoDatabase = opt.Flow.Mongo.Database
-	o.Flow.KafkaBrokers = opt.Flow.Kafka.Brokers
 	return o
 }
 
@@ -251,13 +251,21 @@ func runDeviced() error {
 			NewSessionStorage,
 			NewSimpleStorage,
 			NewConnectionCenter,
-			func(opt *DevicedOption) (*mongo.Client, error) {
-				return mongo.Connect(context.TODO(), opt.Flow.Mongo.Uri)
-			},
 			NewDevicedStorage,
 			NewMetathingsDevicedServiceOption,
 			authorizer.NewAuthorizer,
 			cmd_contrib.NewValidator,
+			func(opt *DevicedOption, logger log.FieldLogger) (flow.FlowFactory, error) {
+				return flow.NewFlowFactory(
+					"default",
+					"redis_stream_addr", opt.Flow.Redis.Addr,
+					"redis_stream_db", opt.Flow.Redis.DB,
+					"redis_stream_password", opt.Flow.Redis.Password,
+					"mongo_uri", opt.Flow.Mongo.Uri,
+					"mongo_database", opt.Flow.Mongo.Database,
+					"logger", logger,
+				)
+			},
 			service.NewMetathingsDevicedService,
 		),
 		fx.Invoke(

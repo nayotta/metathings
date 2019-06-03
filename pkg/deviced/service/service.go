@@ -4,7 +4,6 @@ import (
 	"context"
 
 	grpc_auth "github.com/grpc-ecosystem/go-grpc-middleware/auth"
-	"github.com/mongodb/mongo-go-driver/mongo"
 	log "github.com/sirupsen/logrus"
 
 	afo_helper "github.com/nayotta/metathings/pkg/common/auth_func_overrider"
@@ -23,12 +22,7 @@ import (
 	identityd_pb "github.com/nayotta/metathings/pkg/proto/identityd2"
 )
 
-type MetathingsDevicedServiceOption struct {
-	Flow struct {
-		MongoDatabase string
-		KafkaBrokers  []string
-	}
-}
+type MetathingsDevicedServiceOption struct{}
 
 type MetathingsDevicedService struct {
 	grpc_auth.ServiceAuthFuncOverride
@@ -43,7 +37,7 @@ type MetathingsDevicedService struct {
 	validator       identityd_validator.Validator
 	tkvdr           token_helper.TokenValidator
 	cc              connection.ConnectionCenter
-	mgo_cli         *mongo.Client
+	flw_fty         flow.FlowFactory
 }
 
 func (self *MetathingsDevicedService) get_device_by_context(ctx context.Context) (*storage.Device, error) {
@@ -61,23 +55,10 @@ func (self *MetathingsDevicedService) get_device_by_context(ctx context.Context)
 }
 
 func (self *MetathingsDevicedService) new_flow(dev_id, flw_id string) (flow.Flow, error) {
-	mgo_db := self.mgo_cli.Database(self.opt.Flow.MongoDatabase)
-	flw_opt := &flow.FlowOption{
-		Id:         flw_id,
-		DevId:      dev_id,
-		KfkBrokers: self.opt.Flow.KafkaBrokers,
-	}
-
-	f, err := flow.NewFlow(
-		"option", flw_opt,
-		"logger", self.logger,
-		"mongo_database", mgo_db,
-	)
-	if err != nil {
-		return nil, err
-	}
-
-	return f, nil
+	return self.flw_fty.New(&flow.FlowOption{
+		FlowId:   flw_id,
+		DeviceId: dev_id,
+	})
 }
 
 func (self *MetathingsDevicedService) IsIgnoreMethod(md *grpc_helper.MethodDescription) bool {
@@ -96,7 +77,7 @@ func NewMetathingsDevicedService(
 	cc connection.ConnectionCenter,
 	tknr token_helper.Tokener,
 	cli_fty *client_helper.ClientFactory,
-	mgo_cli *mongo.Client,
+	flw_fty flow.FlowFactory,
 ) (pb.DevicedServiceServer, error) {
 	srv := &MetathingsDevicedService{
 		opt:             opt,
@@ -110,7 +91,7 @@ func NewMetathingsDevicedService(
 		cc:              cc,
 		tknr:            tknr,
 		cli_fty:         cli_fty,
-		mgo_cli:         mgo_cli,
+		flw_fty:         flw_fty,
 	}
 	srv.ServiceAuthFuncOverride = afo_helper.NewAuthFuncOverrider(tkvdr, srv, logger)
 

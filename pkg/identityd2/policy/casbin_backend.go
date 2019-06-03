@@ -556,27 +556,15 @@ func casbin_backend_factory(args ...interface{}) (Backend, error) {
 	opt := new_casbin_backend_option()
 
 	err := opt_helper.Setopt(map[string]func(string, interface{}) error{
-		"logger": func(key string, val interface{}) error {
-			logger, ok = val.(log.FieldLogger)
-			if !ok {
-				return opt_helper.ErrInvalidArguments
-			}
-			return nil
-		},
+		"logger": opt_helper.ToLogger(&logger),
 		"client_factory": func(key string, val interface{}) error {
 			cli_fty, ok = val.(*client_helper.ClientFactory)
 			if !ok {
-				return opt_helper.ErrInvalidArguments
+				return opt_helper.InvalidArgument("client_factory")
 			}
 			return nil
 		},
-		"casbin_enforcer_handler": func(key string, val interface{}) error {
-			opt.EnforcerHandler, ok = val.(int32)
-			if !ok {
-				return opt_helper.ErrInvalidArguments
-			}
-			return nil
-		},
+		"casbin_enforcer_handler": opt_helper.ToInt32(&opt.EnforcerHandler),
 	})(args...)
 	if err != nil {
 		return nil, err

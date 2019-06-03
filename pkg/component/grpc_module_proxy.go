@@ -203,17 +203,11 @@ func (self *GrpcModuleProxyFactory) NewModuleProxy(args ...interface{}) (ModuleP
 	p := &GrpcModuleProxy{}
 
 	if err := opt_helper.Setopt(map[string]func(key string, val interface{}) error{
-		"logger": func(key string, val interface{}) error {
-			var ok bool
-			if p.logger, ok = val.(log.FieldLogger); !ok {
-				return opt_helper.ErrInvalidArguments
-			}
-			return nil
-		},
+		"logger": opt_helper.ToLogger(&p.logger),
 		"client_factory": func(key string, val interface{}) error {
 			var ok bool
 			if p.cli_fty, ok = val.(GrpcModuleServiceClientFactory); !ok {
-				return opt_helper.ErrInvalidArguments
+				return opt_helper.InvalidArgument("client_factory")
 			}
 			return nil
 		},
