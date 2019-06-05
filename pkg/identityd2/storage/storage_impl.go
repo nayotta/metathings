@@ -1361,7 +1361,7 @@ func (self *StorageImpl) list_credentials(cred *Credential) ([]*Credential, erro
 		c.DomainId = cred.DomainId
 	}
 	if cred.EntityId != nil {
-		c.DomainId = cred.DomainId
+		c.EntityId = cred.EntityId
 	}
 	if cred.Name != nil {
 		c.Name = cred.Name

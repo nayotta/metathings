@@ -15,9 +15,9 @@ var _ = fmt.Errorf
 var _ = math.Inf
 
 func (this *ListCredentialsForEntityRequest) Validate() error {
-	if this.Credential != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Credential); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Credential", err)
+	if this.Entity != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Entity); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Entity", err)
 		}
 	}
 	return nil
