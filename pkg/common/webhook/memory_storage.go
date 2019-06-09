@@ -47,9 +47,9 @@ func (s *MemoryStorage) ListWebhooks(wh *Webhook) ([]*Webhook, error) {
 }
 
 func (s *MemoryStorage) GetWebhook(id string) (*Webhook, error) {
-	wh, ok := s.whs[id]
-	if !ok {
-		return nil, ErrWebhookNotFound
+	wh, err := s.get_webhook(id)
+	if err != nil {
+		return nil, err
 	}
 
 	s.logger.WithField("webhook", id).Debugf("get webhook")
@@ -57,8 +57,34 @@ func (s *MemoryStorage) GetWebhook(id string) (*Webhook, error) {
 	return wh, nil
 }
 
+func (s *MemoryStorage) get_webhook(id string) (*Webhook, error) {
+	wh, ok := s.whs[id]
+	if !ok {
+		return nil, ErrWebhookNotFound
+	}
+
+	return wh, nil
+}
+
 func (s *MemoryStorage) UpdateWebhook(id string, wh *Webhook) (*Webhook, error) {
-	panic("unimplemented")
+	twh, ok := s.whs[id]
+	if !ok {
+		return nil, ErrWebhookNotFound
+	}
+
+	if wh.Url != nil {
+		twh.Url = wh.Url
+	}
+
+	if wh.ContentType != nil {
+		twh.ContentType = wh.ContentType
+	}
+
+	s.whs[id] = deepcopy_webhook(twh)
+
+	s.logger.WithField("webhook", id).Debugf("update webhook")
+
+	return s.get_webhook(id)
 }
 
 type MemoryStorageFactory struct{}

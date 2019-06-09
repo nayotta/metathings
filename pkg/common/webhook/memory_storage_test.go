@@ -9,26 +9,6 @@ import (
 	log_helper "github.com/nayotta/metathings/pkg/common/log"
 )
 
-var (
-	test_default_webhook_id           = "default"
-	test_default_webhook_url          = "http://www.example.com/webhook"
-	test_default_webhook_content_type = "application/json"
-	test_default_webhook              = &Webhook{
-		Id:          &test_default_webhook_id,
-		Url:         &test_default_webhook_url,
-		ContentType: &test_default_webhook_content_type,
-	}
-
-	test_webhook_id           = "test"
-	test_webhook_url          = "http://www.example1.com/webhook"
-	test_webhook_content_type = "application/json"
-	test_webhook              = &Webhook{
-		Id:          &test_webhook_id,
-		Url:         &test_webhook_url,
-		ContentType: &test_webhook_content_type,
-	}
-)
-
 type memoryStorageTestSuite struct {
 	logger  log.FieldLogger
 	storage *MemoryStorage

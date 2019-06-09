@@ -8,13 +8,8 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	id_helper "github.com/nayotta/metathings/pkg/common/id"
+	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 )
-
-type Event interface {
-	Action() string
-	Keys() []string
-	Val(key string) interface{}
-}
 
 type Webhook struct {
 	Id          *string
@@ -28,7 +23,7 @@ type WebhookService interface {
 	List(*Webhook) ([]*Webhook, error)
 	Get(id string) (*Webhook, error)
 	Update(id string, wh *Webhook) (*Webhook, error)
-	Trigger(evt Event) error
+	Trigger(evt interface{}) error
 }
 
 type WebhookServiceOption struct {
@@ -47,8 +42,15 @@ func (s *webhookService) get_logger() log.FieldLogger {
 }
 
 func (s *webhookService) Add(wh *Webhook) (*Webhook, error) {
-	id := id_helper.NewId()
-	wh.Id = &id
+	if wh.Id == nil {
+		id := id_helper.NewId()
+		wh.Id = &id
+	}
+
+	if wh.ContentType == nil {
+		wh.ContentType = &s.opt.ContentType
+	}
+
 	wh, err := s.storage.CreateWebhook(wh)
 	if err != nil {
 		s.get_logger().WithError(err).Debugf("failed to add webhook to storage")
@@ -103,7 +105,7 @@ func (s *webhookService) Update(id string, wh *Webhook) (*Webhook, error) {
 	return wh, nil
 }
 
-func (s *webhookService) Trigger(evt Event) error {
+func (s *webhookService) Trigger(evt interface{}) error {
 	whs, err := s.storage.ListWebhooks(nil)
 	if err != nil {
 		s.get_logger().WithError(err).Debugf("failed to list webhooks in storage")
@@ -128,6 +130,27 @@ func (s *webhookService) Trigger(evt Event) error {
 	return nil
 }
 
-func NewWebhookService() (WebhookService, error) {
-	return &webhookService{}, nil
+func NewWebhookService(opt *WebhookServiceOption, args ...interface{}) (WebhookService, error) {
+	var logger log.FieldLogger
+	var storage Storage
+
+	if err := opt_helper.Setopt(map[string]func(string, interface{}) error{
+		"logger": opt_helper.ToLogger(&logger),
+		"storage": func(_ string, val interface{}) error {
+			var ok bool
+			storage, ok = val.(Storage)
+			if !ok {
+				return opt_helper.InvalidArgument("storage")
+			}
+			return nil
+		},
+	})(args...); err != nil {
+		return nil, err
+	}
+
+	return &webhookService{
+		opt:     opt,
+		storage: storage,
+		logger:  logger,
+	}, nil
 }
