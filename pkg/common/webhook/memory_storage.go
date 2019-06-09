@@ -73,7 +73,8 @@ func (*MemoryStorageFactory) New(args ...interface{}) (Storage, error) {
 	}
 
 	return &MemoryStorage{
-		whs: make(map[string]*Webhook),
+		whs:    make(map[string]*Webhook),
+		logger: logger,
 	}, nil
 }
 
