@@ -115,8 +115,17 @@ func (self *MetathingsIdentitydService) CreateCredential(ctx context.Context, re
 	}
 	cred_s.Secret = &srt_str
 
+	cred_r := copy_credential_with_secret(cred_s)
+	if err = self.webhook.Trigger(map[string]interface{}{
+		"action":     "create_credential",
+		"credential": cred_r,
+	}); err != nil {
+		self.logger.WithError(err).Errorf("failed to trigger create credential webhook")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
 	res := &pb.CreateCredentialResponse{
-		Credential: copy_credential_with_secret(cred_s),
+		Credential: cred_r,
 	}
 
 	self.logger.WithField("id", id_str).Infof("create credential")

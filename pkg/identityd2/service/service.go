@@ -10,6 +10,7 @@ import (
 	"google.golang.org/grpc/status"
 
 	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
+	webhook_helper "github.com/nayotta/metathings/pkg/common/webhook"
 	policy "github.com/nayotta/metathings/pkg/identityd2/policy"
 	storage "github.com/nayotta/metathings/pkg/identityd2/storage"
 	validator "github.com/nayotta/metathings/pkg/identityd2/validator"
@@ -27,6 +28,7 @@ type MetathingsIdentitydService struct {
 	storage   storage.Storage
 	validator validator.Validator
 	backend   policy.Backend
+	webhook   webhook_helper.WebhookService
 }
 
 var (
@@ -153,6 +155,7 @@ func NewMetathingsIdentitydService(
 	storage storage.Storage,
 	validator validator.Validator,
 	backend policy.Backend,
+	webhook webhook_helper.WebhookService,
 ) (pb.IdentitydServiceServer, error) {
 	return &MetathingsIdentitydService{
 		opt:       opt,
@@ -160,5 +163,6 @@ func NewMetathingsIdentitydService(
 		storage:   storage,
 		validator: validator,
 		backend:   backend,
+		webhook:   webhook,
 	}, nil
 }

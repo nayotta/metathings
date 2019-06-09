@@ -63,6 +63,14 @@ func (self *MetathingsIdentitydService) DeleteCredential(ctx context.Context, re
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
+	if err = self.webhook.Trigger(map[string]interface{}{
+		"action":     "delete_credential",
+		"credential": &pb.Credential{Id: cred_id_str},
+	}); err != nil {
+		self.logger.WithError(err).Errorf("failed to trigger delete credential webhook")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
 	self.logger.WithFields(log.Fields{
 		"credential_id": cred_id_str,
 	}).Infof("delete credential")
