@@ -3,16 +3,18 @@ package webhook_helper
 import (
 	"net/http"
 	"net/http/httptest"
+	"strconv"
 	"testing"
 	"time"
 
 	"github.com/stretchr/testify/suite"
 
 	log_helper "github.com/nayotta/metathings/pkg/common/log"
+	passwd_helper "github.com/nayotta/metathings/pkg/common/passwd"
 )
 
 var (
-	TEST_TRIGGER_TIMEOUT = 1 * time.Millisecond
+	TEST_TRIGGER_TIMEOUT = 50 * time.Millisecond
 )
 
 type WebhookServiceTestSuite struct {
@@ -39,12 +41,27 @@ func (s *WebhookServiceTestSuite) SetupTest() {
 	s.whs = whs.(*webhookService)
 
 	s.triggered = make(chan struct{})
-	s.ts = httptest.NewServer(http.HandlerFunc(func(http.ResponseWriter, *http.Request) {
-		close(s.triggered)
+	s.ts = httptest.NewServer(http.HandlerFunc(func(_ http.ResponseWriter, r *http.Request) {
+		id := r.Header.Get("MT-Webhook-Id")
+		ts_s := r.Header.Get("MT-Webhook-Timestamp")
+		nonce_s := r.Header.Get("MT-Webhook-Nonce")
+		hmac := r.Header.Get("MT-Webhook-HMAC")
+
+		nsec, err := strconv.ParseInt(ts_s, 10, 64)
+		s.Nil(err)
+		ts := time.Unix(0, nsec)
+		nonce, err := strconv.ParseInt(nonce_s, 10, 64)
+		s.Nil(err)
+
+		if passwd_helper.ValidateHmac(hmac, *s.wh.Secret, id, ts, nonce) {
+			close(s.triggered)
+		}
 	}))
 
+	secret := "c2VjcmV0" // base64("secret")
 	wh := &Webhook{
-		Url: &s.ts.URL,
+		Url:    &s.ts.URL,
+		Secret: &secret,
 	}
 	wh, err = whs.Add(wh)
 	s.Nil(err)
@@ -53,16 +70,34 @@ func (s *WebhookServiceTestSuite) SetupTest() {
 		Id:          wh.Id,
 		Url:         &s.ts.URL,
 		ContentType: &s.whs.opt.ContentType,
+		Secret:      wh.Secret,
 	}
 }
 
 func (s *WebhookServiceTestSuite) TestAdd() {
 	tmp_triggered := make(chan struct{})
-	tmp_ts := httptest.NewServer(http.HandlerFunc(func(http.ResponseWriter, *http.Request) {
-		close(tmp_triggered)
+	tmp_ts := httptest.NewServer(http.HandlerFunc(func(_ http.ResponseWriter, r *http.Request) {
+		id := r.Header.Get("MT-Webhook-Id")
+		ts_s := r.Header.Get("MT-Webhook-Timestamp")
+		nonce_s := r.Header.Get("MT-Webhook-Nonce")
+		hmac := r.Header.Get("MT-Webhook-HMAC")
+
+		nsec, err := strconv.ParseInt(ts_s, 10, 64)
+		s.Nil(err)
+		ts := time.Unix(0, nsec)
+		nonce, err := strconv.ParseInt(nonce_s, 10, 64)
+		s.Nil(err)
+
+		if passwd_helper.ValidateHmac(hmac, *s.wh.Secret, id, ts, nonce) {
+			close(tmp_triggered)
+		}
 	}))
 
-	wh, err := s.whs.Add(&Webhook{Url: &tmp_ts.URL})
+	secret := "c2VjcmV0" // base64("secret")
+	wh, err := s.whs.Add(&Webhook{
+		Url:    &tmp_ts.URL,
+		Secret: &secret,
+	})
 	s.Nil(err)
 
 	s.Equal(tmp_ts.URL, *wh.Url)

@@ -13,7 +13,7 @@ type MemoryStorage struct {
 }
 
 func (s *MemoryStorage) CreateWebhook(wh *Webhook) (*Webhook, error) {
-	s.whs[*wh.Id] = wh
+	s.whs[*wh.Id] = deepcopy_webhook(wh)
 
 	s.logger.Debugf("create webhook")
 
@@ -63,6 +63,10 @@ func (s *MemoryStorage) get_webhook(id string) (*Webhook, error) {
 		return nil, ErrWebhookNotFound
 	}
 
+	wh = deepcopy_webhook(wh)
+	// erase secret field
+	wh.Secret = nil
+
 	return wh, nil
 }
 
@@ -78,6 +82,10 @@ func (s *MemoryStorage) UpdateWebhook(id string, wh *Webhook) (*Webhook, error) 
 
 	if wh.ContentType != nil {
 		twh.ContentType = wh.ContentType
+	}
+
+	if wh.Secret != nil {
+		twh.Secret = wh.Secret
 	}
 
 	s.whs[id] = deepcopy_webhook(twh)

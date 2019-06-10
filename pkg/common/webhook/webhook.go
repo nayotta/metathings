@@ -3,18 +3,23 @@ package webhook_helper
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
+	"math/rand"
 	"net/http"
+	"time"
 
 	log "github.com/sirupsen/logrus"
 
 	id_helper "github.com/nayotta/metathings/pkg/common/id"
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
+	passwd_helper "github.com/nayotta/metathings/pkg/common/passwd"
 )
 
 type Webhook struct {
 	Id          *string
 	Url         *string
 	ContentType *string
+	Secret      *string
 }
 
 type WebhookService interface {
@@ -120,7 +125,20 @@ func (s *webhookService) Trigger(evt interface{}) error {
 
 	for _, wh := range whs {
 		go func(wh *Webhook) {
-			if _, err := http.Post(*wh.Url, s.opt.ContentType, bytes.NewReader(buf)); err != nil {
+			req, err := http.NewRequest("POST", *wh.Url, bytes.NewReader(buf))
+			if err != nil {
+				s.get_logger().WithError(err).Warningf("failed to new http request")
+				return
+			}
+
+			ct := s.opt.ContentType
+			if wh.ContentType != nil {
+				ct = *wh.ContentType
+			}
+			req.Header.Set("Content-Type", ct)
+			s.set_webhook_request_header(wh, req)
+
+			if _, err := http.DefaultClient.Do(req); err != nil {
 				s.get_logger().WithError(err).Warningf("failed to trigger event")
 			}
 		}(wh)
@@ -128,6 +146,17 @@ func (s *webhookService) Trigger(evt interface{}) error {
 
 	s.get_logger().Debugf("trigger event")
 	return nil
+}
+
+func (s *webhookService) set_webhook_request_header(wh *Webhook, req *http.Request) {
+	ts := time.Now()
+	nonce := rand.Int63()
+	hmac := passwd_helper.MustParseHmac(*wh.Secret, *wh.Id, ts, nonce)
+
+	req.Header.Set("MT-Webhook-Id", *wh.Id)
+	req.Header.Set("MT-Webhook-Timestamp", fmt.Sprintf("%v", ts.UnixNano()))
+	req.Header.Set("MT-Webhook-Nonce", fmt.Sprintf("%v", nonce))
+	req.Header.Set("MT-Webhook-HMAC", hmac)
 }
 
 func NewWebhookService(opt *WebhookServiceOption, args ...interface{}) (WebhookService, error) {
