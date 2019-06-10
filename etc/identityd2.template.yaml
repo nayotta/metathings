@@ -3,6 +3,11 @@ dev:
   service_endpoint:
     default:
       address: <metathings-address>
+  webhook_service:
+    default:
+      content_type: application/json
+    <name>:
+      url: <webhook-callback-url>
   storage:
     driver: sqlite3
     uri: <storage-uri>

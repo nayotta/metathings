@@ -121,7 +121,7 @@ func (s *webhookService) Trigger(evt interface{}) error {
 	for _, wh := range whs {
 		go func(wh *Webhook) {
 			if _, err := http.Post(*wh.Url, s.opt.ContentType, bytes.NewReader(buf)); err != nil {
-				s.get_logger().WithError(err).Debugf("failed to trigger event")
+				s.get_logger().WithError(err).Warningf("failed to trigger event")
 			}
 		}(wh)
 	}

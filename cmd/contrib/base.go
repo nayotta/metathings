@@ -21,6 +21,7 @@ type ServiceBaseOption struct {
 	ListenOption              `mapstructure:",squash"`
 	TransportCredentialOption `mapstructure:",squash"`
 	StorageOption             `mapstructure:",squash"`
+	WebhookServiceOption      `mapstructure:",squash"`
 }
 
 func (self *ServiceBaseOption) GetStorage() StorageOptioner {
@@ -33,7 +34,8 @@ func (self *ServiceBaseOption) GetTransportCredential() TransportCredentialOptio
 
 func CreateServiceBaseOption() ServiceBaseOption {
 	return ServiceBaseOption{
-		BaseOption: CreateBaseOption(),
+		BaseOption:           CreateBaseOption(),
+		WebhookServiceOption: CreateWebhookServiceOption(),
 	}
 }
 

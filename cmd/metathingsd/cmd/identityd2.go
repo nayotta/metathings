@@ -79,8 +79,10 @@ func GetIdentityd2Options() (
 	cmd_contrib.StorageOptioner,
 	cmd_contrib.LoggerOptioner,
 	cmd_contrib.ServiceEndpointsOptioner,
+	cmd_contrib.WebhookServiceOptioner,
 ) {
 	return identityd2_opt,
+		identityd2_opt,
 		identityd2_opt,
 		identityd2_opt,
 		identityd2_opt,
@@ -209,6 +211,7 @@ func runIdentityd2() error {
 			cmd_contrib.NewGrpcServer,
 			cmd_contrib.NewClientFactory,
 			cmd_contrib.NewValidator,
+			cmd_contrib.NewWebhookService,
 			NewIdentityd2Storage,
 			NewIdentityd2Backend,
 			NewMetathingsIdentitydServiceOption,
