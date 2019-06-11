@@ -1,7 +1,7 @@
 package metathings_deviced_flow
 
 import (
-	"context"
+	"strconv"
 	"strings"
 	"sync"
 	"testing"
@@ -24,29 +24,43 @@ const (
 )
 
 type FlowImplTestSuite struct {
-	mgo_cli *mongo.Client
-	opt     *FlowOption
-	flow    *FlowImpl
-	enc     *jsonpb.Marshaler
-	dec     *jsonpb.Unmarshaler
-	push_at time.Time
+	mgo_cli  *mongo.Client
+	opt      *FlowOption
+	flow     *flow
+	flow_fty *flowFactory
+	enc      *jsonpb.Marshaler
+	dec      *jsonpb.Unmarshaler
+	push_at  time.Time
 	suite.Suite
 }
 
 func (s *FlowImplTestSuite) SetupTest() {
 	var opt FlowOption
 
-	uri := test_helper.GetTestMongoUri()
-	opt.Id = test_helper.GetenvWithDefault("MTT_FLOW_ID", "floooow")
-	opt.DevId = test_helper.GetenvWithDefault("MTT_DEVICE_ID", "deeeev")
-	opt.KfkBrokers = test_helper.GetTestKafkaBrokers()
+	mgo_uri := test_helper.GetTestMongoUri()
+	mgo_db := test_helper.GetTestMongoDatabase()
+	rs_addr := test_helper.GetTestRedisAddr()
+	rs_db, err := strconv.Atoi(test_helper.GetTestRedisDB())
+	s.Nil(err)
+
+	opt.FlowId = test_helper.GetenvWithDefault("MTT_FLOW_ID", "floooow")
+	opt.DeviceId = test_helper.GetenvWithDefault("MTT_DEVICE_ID", "deeeev")
 
 	logger, err := log_helper.NewLogger("test", "debug")
 	s.Nil(err)
-	mgo_cli, err := mongo.Connect(context.TODO(), uri)
+
+	flw_fty, err := new_default_flow_factory(
+		"redis_stream_addr", rs_addr,
+		"redis_stream_db", rs_db,
+		"mongo_uri", mgo_uri,
+		"mongo_database", mgo_db,
+		"logger", logger,
+	)
+	s.flow_fty = flw_fty.(*flowFactory)
+
+	flw, err := s.flow_fty.New(&opt)
 	s.Nil(err)
-	s.flow, err = new_flow_impl("option", &opt, "logger", logger, "mongo_client", mgo_cli)
-	s.Nil(err)
+	s.flow = flw.(*flow)
 
 	// clean up database
 	s.Nil(s.flow.mgo_db.Drop(s.flow.context()))

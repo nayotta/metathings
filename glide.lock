@@ -1,8 +1,6 @@
-hash: 667559a3ad3efe814802f78e3716231d225e431ce604e7619270593126b2ab12
-updated: 2019-05-06T13:42:24.807581+08:00
+hash: 57cd53841d508b07d1d4cfbe7693bbf7b4b1923a5dfdb087477fd207f7e527cd
+updated: 2019-06-03T13:35:52.61866+08:00
 imports:
-- name: github.com/bsm/sarama-cluster
-  version: c618e605e15c0d7535f6c96ff8efbb0dba4fd66c
 - name: github.com/casbin/casbin
   version: 695c374a6617e9cdc930e8666307a772577cbd70
   subpackages:
@@ -20,33 +18,18 @@ imports:
   version: 460e8e43b282a1a68219df600ef63442b81faf5f
   subpackages:
   - kafka
-- name: github.com/DataDog/zstd
-  version: c7161f8c63c045cbc7ca051dcc969dd0e4054de2
-- name: github.com/davecgh/go-spew
-  version: d8f796af33cc11cb798c1aaeb27a4ebc5099927d
-  subpackages:
-  - spew
-- name: github.com/eapache/go-resiliency
-  version: ea41b0fad31007accc7f806884dcdf3da98b79ce
-  subpackages:
-  - breaker
-- name: github.com/eapache/go-xerial-snappy
-  version: 776d5712da21bc4762676d614db1d8a64f4238b0
-- name: github.com/eapache/queue
-  version: 093482f3f8ce946c05bcba64badd2c82369e084d
 - name: github.com/fsnotify/fsnotify
   version: ccc981bf80385c528a65fbfdd49bf2d8da22aa23
 - name: github.com/go-daq/smbus
   version: 15ef727fb3205992e78eb887b88a90f952874459
 - name: github.com/go-redis/redis
-  version: b3d9bf10f6666b2ee5100a6f3f84f4caf3b4e37d
+  version: 75795aa4236dc7341eefac3bbe945e68c99ef9df
   subpackages:
   - internal
   - internal/consistenthash
   - internal/hashtag
   - internal/pool
   - internal/proto
-  - internal/singleflight
   - internal/util
 - name: github.com/go-stack/stack
   version: 2fee6af1a9795aafbe0253a0cfbdf668e1fb8a9a
@@ -94,7 +77,7 @@ imports:
 - name: github.com/inconshreveable/mousetrap
   version: 76626ae9c91c4f2a10f34cad8ce83ea42c93bb75
 - name: github.com/jinzhu/gorm
-  version: 5c0f6716ad1e3a6b6a8afa56afeff747032a6926
+  version: b7156195f7f3415f97c20abbd6aff894b847fee8
   subpackages:
   - dialects/sqlite
 - name: github.com/jinzhu/inflection
@@ -153,23 +136,15 @@ imports:
   subpackages:
   - protoc-gen-govalidators
 - name: github.com/nayotta/viper
-  version: 0b05c0f44a230bf4ce45b54c67e119302d450731
+  version: b5e8006cbee93ec955a89ab31e0e3ce3204f3736
 - name: github.com/parnurzeal/gorequest
   version: a578a48e8d6ca8b01a3b18314c43c6716bb5f5a3
 - name: github.com/pelletier/go-toml
   version: 81a861c69d25a841d0c4394f0e6f84bc8c5afae0
-- name: github.com/pierrec/lz4
-  version: 623b5a2f4d2a41e411730dcdfbfdaeb5c0c4564e
-  subpackages:
-  - internal/xxh32
 - name: github.com/pkg/errors
   version: 059132a15dd08d6704c67711dae0cf35ab991756
-- name: github.com/rcrowley/go-metrics
-  version: 3113b8401b8a98917cde58f8bbd42a1b1c03b1fd
 - name: github.com/satori/go.uuid
   version: f58768cc1a7a7e77a3bd49e98cdd21419399b6a3
-- name: github.com/Shopify/sarama
-  version: f3f4f5f1acf1a26acb582cfb158c2433f37288b4
 - name: github.com/sirupsen/logrus
   version: ad15b42461921f1fb3529b058c6786c6a45d5162
 - name: github.com/spf13/afero
@@ -179,7 +154,7 @@ imports:
 - name: github.com/spf13/cast
   version: 8c9545af88b134710ab1cd196795e7f2388358d7
 - name: github.com/spf13/cobra
-  version: ef82de70bb3f60c65fb8eebacbb2d122ef517385
+  version: 67fc4837d267bc9bfd6e47f77783fcc3dffc68de
 - name: github.com/spf13/jwalterweatherman
   version: 94f6ae3ed3bceceafa716478c5fbf8d29ca601a1
 - name: github.com/spf13/pflag
@@ -280,6 +255,10 @@ imports:
 - name: gopkg.in/yaml.v2
   version: 5420a8b6744d3b0345ab293f6fcba19c978f1183
 testImports:
+- name: github.com/davecgh/go-spew
+  version: d8f796af33cc11cb798c1aaeb27a4ebc5099927d
+  subpackages:
+  - spew
 - name: github.com/pmezard/go-difflib
   version: 792786c7400a136282c1664665ae0a8db921c6c2
   subpackages:

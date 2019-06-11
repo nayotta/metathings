@@ -30,6 +30,14 @@ func GetTestKafkaBrokers() []string {
 	return strings.Split(brokers, ",")
 }
 
+func GetTestRedisAddr() string {
+	return GetenvWithDefault("MTT_REDIS_ADDR", "127.0.0.1:6379")
+}
+
+func GetTestRedisDB() string {
+	return GetenvWithDefault("MTT_REDIS_DB", "0")
+}
+
 func GetTestPolicydAddress() string {
 	return GetenvWithDefault("MTT_POLICYD_ADDRESS", "localhost:21733")
 }

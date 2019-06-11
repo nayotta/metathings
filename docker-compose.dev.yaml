@@ -70,7 +70,6 @@ services:
     - ./etc:/etc/metathings
     networks:
     - metathings-backend
-    - metathings-kafka
     expose:
     - "5001"
     ports:
@@ -102,6 +101,3 @@ networks:
   metathings-backend:
     external:
       name: metathings-backend
-  metathings-kafka:
-    external:
-      name: metathings-kafka

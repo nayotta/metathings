@@ -60,7 +60,6 @@ services:
     - ./etc/deviced.yaml:/etc/metathings/deviced.yaml
     networks:
     - metathings-backend
-    - metathings-kafka
     expose:
     - "5001"
     restart: on-failure
@@ -87,6 +86,3 @@ networks:
   metathings-backend:
     external:
       name: metathings-backend
-  metathings-kafka:
-    external:
-      name: metathings-kafka

@@ -4,19 +4,20 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"sync"
+	"strings"
 	"time"
 
-	"github.com/Shopify/sarama"
-	cluster "github.com/bsm/sarama-cluster"
+	"github.com/go-redis/redis"
 	"github.com/golang/protobuf/jsonpb"
 	struct_ "github.com/golang/protobuf/ptypes/struct"
 	"github.com/mongodb/mongo-go-driver/bson"
 	"github.com/mongodb/mongo-go-driver/mongo"
 	log "github.com/sirupsen/logrus"
 
-	id_helper "github.com/nayotta/metathings/pkg/common/id"
+	mongo_helper "github.com/nayotta/metathings/pkg/common/mongo"
+	nonce_helper "github.com/nayotta/metathings/pkg/common/nonce"
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
+	pool_helper "github.com/nayotta/metathings/pkg/common/pool"
 	pb_helper "github.com/nayotta/metathings/pkg/common/protobuf"
 	pb "github.com/nayotta/metathings/pkg/proto/deviced"
 )
@@ -26,84 +27,48 @@ var (
 	json_decoder = jsonpb.Unmarshaler{}
 )
 
-type FlowOption struct {
-	Id         string
-	DevId      string
-	KfkBrokers []string
+type flow struct {
+	opt       *FlowOption
+	close_cbs []func() error
+	logger    log.FieldLogger
+
+	mgo_db *mongo.Database
+	rs_cli *redis.Client
 }
 
-type FlowImpl struct {
-	opt           *FlowOption
-	mgo_db        *mongo.Database
-	kfk_prod      sarama.SyncProducer
-	kfk_prod_once *sync.Once
-	logger        log.FieldLogger
-}
-
-func (f *FlowImpl) mongo_collection() *mongo.Collection {
+func (f *flow) mongo_collection() *mongo.Collection {
 	return f.mgo_db.Collection("mtflw." + f.Id())
 }
 
-func (f *FlowImpl) kafka_topic() string {
-	return "mtflw." + f.Id()
+func (f *flow) redis_stream_key() string {
+	return "mt.flw." + f.Id()
 }
 
-func (f *FlowImpl) init_sarama_producer() {
-	var err error
-	cfg := sarama.NewConfig()
-	cfg.Producer.Return.Successes = true
-	cfg.Producer.Partitioner = sarama.NewRandomPartitioner
-
-	f.kfk_prod, err = sarama.NewSyncProducer(f.opt.KfkBrokers, cfg)
-	if err != nil {
-		// TODO(Peer): handle error
-		panic(err)
-	}
-	f.logger.WithField("topic", f.kafka_topic()).Debugf("init sarama producer")
-}
-
-func (f *FlowImpl) new_sarama_cluster_consumer(grp string, topics []string) (*cluster.Consumer, error) {
-	cfg := cluster.NewConfig()
-	cfg.Consumer.Return.Errors = true
-	cfg.Group.Return.Notifications = true
-	cfg.Group.Heartbeat.Interval = 100 * time.Millisecond
-	consumer, err := cluster.NewConsumer(f.opt.KfkBrokers, grp, topics, cfg)
-	if err != nil {
-		return nil, err
-	}
-	return consumer, nil
-}
-
-func (f *FlowImpl) get_sarama_producer() sarama.SyncProducer {
-	f.kfk_prod_once.Do(f.init_sarama_producer)
-	return f.kfk_prod
-}
-
-func (f *FlowImpl) context() context.Context {
+func (f *flow) context() context.Context {
 	return context.TODO()
 }
 
-func (f *FlowImpl) Id() string {
-	return f.opt.Id
+func (f *flow) Id() string {
+	return f.opt.FlowId
 }
 
-func (f *FlowImpl) Device() string {
-	return f.opt.DevId
+func (f *flow) Device() string {
+	return f.opt.DeviceId
 }
 
-func (f *FlowImpl) Close() error {
+func (f *flow) Close() error {
 	var err error
 
-	if f.kfk_prod != nil {
-		if err = f.kfk_prod.Close(); err != nil {
-			return err
+	for _, cb := range f.close_cbs {
+		if err = cb(); err != nil {
+			f.logger.WithError(err).Debugf("failed to close callback")
 		}
 	}
 
-	return nil
+	return err
 }
 
-func (f *FlowImpl) PushFrame(frm *pb.Frame) error {
+func (f *flow) PushFrame(frm *pb.Frame) error {
 	ts := pb_helper.Now()
 	frm.Ts = &ts
 
@@ -113,37 +78,37 @@ func (f *FlowImpl) PushFrame(frm *pb.Frame) error {
 		return err
 	}
 
-	// TODO(Peer): dont push frame to kafka when noone pull frame.
-	err = f.push_frame_to_kafka(frm)
+	// TODO(Peer): dont push frame to redis stream when noone pull frame.
+	err = f.push_frame_to_redis_stream(frm)
 	if err != nil {
-		f.logger.WithError(err).Errorf("failed to push frame to kafka")
+		f.logger.WithError(err).Errorf("failed to push frame to redis stream")
 		return err
 	}
+
+	f.logger.Debugf("push frame")
 
 	return nil
 }
 
-func (f *FlowImpl) push_frame_to_kafka(frm *pb.Frame) error {
+func (f *flow) push_frame_to_redis_stream(frm *pb.Frame) error {
 	frm_txt, err := json_encoder.MarshalToString(frm)
 	if err != nil {
 		return err
 	}
 
-	msg := &sarama.ProducerMessage{
-		Topic:     f.kafka_topic(),
-		Value:     sarama.ByteEncoder(frm_txt),
-		Partition: -1,
-	}
-
-	_, _, err = f.get_sarama_producer().SendMessage(msg)
-	if err != nil {
+	if err := f.rs_cli.XAdd(&redis.XAddArgs{
+		Stream: f.redis_stream_key(),
+		Values: map[string]interface{}{
+			"value": frm_txt,
+		},
+	}).Err(); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (f *FlowImpl) push_frame_to_mgo(frm *pb.Frame) error {
+func (f *flow) push_frame_to_mgo(frm *pb.Frame) error {
 	frm_dat := frm.GetData()
 	frm_dat_txt, err := json_encoder.MarshalToString(frm_dat)
 	if err != nil {
@@ -166,52 +131,83 @@ func (f *FlowImpl) push_frame_to_mgo(frm *pb.Frame) error {
 	return nil
 }
 
-func (f *FlowImpl) PullFrame() (<-chan *pb.Frame, <-chan struct{}) {
-	frm_chan := make(chan *pb.Frame)
-	quit_chan := make(chan struct{})
+func (f *flow) pull_frame_from_redis_stream() (<-chan *pb.Frame, <-chan struct{}) {
+	frm_ch := make(chan *pb.Frame)
+	quit_ch := make(chan struct{})
 
-	go func() {
-		defer close(frm_chan)
+	go f.pull_frame_from_redis_stream_loop(frm_ch, quit_ch)
 
-		grp := id_helper.NewId()
-		consumer, err := f.new_sarama_cluster_consumer(grp, []string{f.kafka_topic()})
-		defer consumer.Close()
-		if err != nil {
-			f.logger.WithError(err).Debugf("failed to new sarama cluster consumer")
+	return frm_ch, quit_ch
+}
+
+func (f *flow) pull_frame_from_redis_stream_loop(frm_ch chan<- *pb.Frame, quit_ch chan struct{}) {
+	defer close(frm_ch)
+
+	var err error
+	cli := f.rs_cli
+	key := f.redis_stream_key()
+
+	nonce := nonce_helper.GenerateNonce()
+
+	if err = cli.XGroupCreateMkStream(key, nonce, "$").Err(); err != nil {
+		f.logger.WithError(err).Debugf("failed to create redis stream group")
+		return
+	}
+	defer func() {
+		if err = cli.XGroupDestroy(key, nonce).Err(); err != nil {
+			f.logger.WithError(err).Debugf("failed to destory redis stream group")
+		}
+
+	}()
+
+	for {
+		select {
+		case <-quit_ch:
+			f.logger.Debugf("catch quit signal from outside")
+			return
+		default:
+		}
+
+		vals, err := cli.XReadGroup(&redis.XReadGroupArgs{
+			Group:    nonce,
+			Consumer: nonce,
+			Streams:  []string{key, ">"},
+			Count:    1,
+			Block:    3 * time.Second,
+			NoAck:    true,
+		}).Result()
+
+		switch err {
+		case redis.Nil:
+			continue
+		case nil:
+		default:
+			f.logger.WithError(err).Debugf("failed to read redis stream")
 			return
 		}
 
-		for {
-			select {
-			case <-quit_chan:
-				f.logger.Debugf("receive quit signal from outside")
-				return
-			case msg, ok := <-consumer.Messages():
-				if ok {
-					consumer.MarkOffset(msg, "")
+		for _, val := range vals {
+			for _, msg := range val.Messages {
+				if buf, ok := msg.Values["value"]; ok {
 					var frm pb.Frame
-					err = json_decoder.Unmarshal(bytes.NewReader(msg.Value), &frm)
-					if err != nil {
-						f.logger.WithError(err).Debugf("failed to decode frame from message")
+					if err = json_decoder.Unmarshal(strings.NewReader(buf.(string)), &frm); err != nil {
+						f.logger.WithError(err).Warningf("failed to unmarshal message to frame")
 						return
 					}
-					frm_chan <- &frm
+
+					frm_ch <- &frm
+					f.logger.Debugf("pull frame")
 				}
-			case err := <-consumer.Errors():
-				f.logger.WithError(err).Debugf("failed to receive message from kafka")
-				return
-			case ntf := <-consumer.Notifications():
-				f.logger.WithField("notification", ntf).Debugf("receive notification from kafka")
-			case prt := <-consumer.Partitions():
-				f.logger.WithField("partition", prt).Debugf("receive partition change from kafka")
 			}
 		}
-	}()
-
-	return frm_chan, quit_chan
+	}
 }
 
-func (f *FlowImpl) QueryFrame(flrs ...*FlowFilter) ([]*pb.Frame, error) {
+func (f *flow) PullFrame() (<-chan *pb.Frame, <-chan struct{}) {
+	return f.pull_frame_from_redis_stream()
+}
+
+func (f *flow) QueryFrame(flrs ...*FlowFilter) ([]*pb.Frame, error) {
 	var ret []*pb.Frame
 
 	coll := f.mongo_collection()
@@ -227,7 +223,7 @@ func (f *FlowImpl) QueryFrame(flrs ...*FlowFilter) ([]*pb.Frame, error) {
 	return ret, nil
 }
 
-func (f *FlowImpl) query_frame(coll *mongo.Collection, flr *FlowFilter) ([]*pb.Frame, error) {
+func (f *flow) query_frame(coll *mongo.Collection, flr *FlowFilter) ([]*pb.Frame, error) {
 	flr_buf := bson.M{}
 
 	if !flr.BeginAt.Equal(time.Time{}) {
@@ -286,43 +282,115 @@ func (f *FlowImpl) query_frame(coll *mongo.Collection, flr *FlowFilter) ([]*pb.F
 	return frms, nil
 }
 
-func new_flow_impl(args ...interface{}) (*FlowImpl, error) {
-	var ok bool
-	var logger log.FieldLogger
-	var opt *FlowOption
-	var mgo_db *mongo.Database
+type flowFactoryOption struct {
+	MongoUri         string
+	MongoDatabase    string
+	MongoPoolInitial int
+	MongoPoolMax     int
 
-	err := opt_helper.Setopt(map[string]func(string, interface{}) error{
-		"option": func(key string, val interface{}) error {
-			opt, ok = val.(*FlowOption)
-			if !ok {
-				return opt_helper.ErrInvalidArguments
-			}
-			return nil
-		},
-		"logger": func(key string, val interface{}) error {
-			logger, ok = val.(log.FieldLogger)
-			if !ok {
-				return opt_helper.ErrInvalidArguments
-			}
-			return nil
-		},
-		"mongo_database": func(key string, val interface{}) error {
-			mgo_db, ok = val.(*mongo.Database)
-			if !ok {
-				return opt_helper.ErrInvalidArguments
-			}
-			return nil
-		},
-	})(args...)
+	RedisStreamAddr        string
+	RedisStreamDB          int
+	RedisStreamPassword    string
+	RedisStreamPoolInitial int
+	RedisStreamPoolMax     int
+}
+
+type flowFactory struct {
+	opt    *flowFactoryOption
+	logger log.FieldLogger
+
+	redis_stream_pool pool_helper.Pool
+	mongo_pool        pool_helper.Pool
+}
+
+func (ff *flowFactory) New(opt *FlowOption) (Flow, error) {
+	cli, err := ff.mongo_pool.Get()
 	if err != nil {
+		ff.logger.WithError(err).Debugf("failed to get mongo client in pool")
 		return nil, err
 	}
 
-	return &FlowImpl{
-		opt:           opt,
-		mgo_db:        mgo_db,
-		logger:        logger,
-		kfk_prod_once: new(sync.Once),
+	mgo_cli := cli.(*mongo_helper.MongoClientWrapper)
+	mgo_db := mgo_cli.Database(ff.opt.MongoDatabase)
+
+	cli, err = ff.redis_stream_pool.Get()
+	if err != nil {
+		ff.logger.WithError(err).Debugf("failed to get redis stream client in pool")
+		return nil, err
+	}
+
+	rs_cli := cli.(*redis.Client)
+
+	return &flow{
+		opt:    opt,
+		mgo_db: mgo_db,
+		rs_cli: rs_cli,
+		logger: ff.logger,
+		close_cbs: []func() error{
+			func() error {
+				return ff.mongo_pool.Put(mgo_cli)
+			},
+			func() error {
+				return ff.redis_stream_pool.Put(rs_cli)
+			},
+		},
 	}, nil
+}
+
+func new_default_flow_factory(args ...interface{}) (FlowFactory, error) {
+	var logger log.FieldLogger
+	opt := new(flowFactoryOption)
+
+	opt.MongoPoolInitial = 2
+	opt.MongoPoolMax = 5
+	opt.RedisStreamPoolInitial = 5
+	opt.RedisStreamPoolMax = 23
+
+	if err := opt_helper.Setopt(map[string]func(string, interface{}) error{
+		"redis_stream_addr":     opt_helper.ToString(&opt.RedisStreamAddr),
+		"redis_stream_db":       opt_helper.ToInt(&opt.RedisStreamDB),
+		"redis_stream_password": opt_helper.ToString(&opt.RedisStreamPassword),
+		"mongo_uri":             opt_helper.ToString(&opt.MongoUri),
+		"mongo_database":        opt_helper.ToString(&opt.MongoDatabase),
+		"logger":                opt_helper.ToLogger(&logger),
+	})(args...); err != nil {
+		return nil, err
+	}
+
+	rspool, err := pool_helper.NewPool(opt.RedisStreamPoolInitial, opt.MongoPoolMax, func() (pool_helper.Client, error) {
+		rdopt := &redis.Options{
+			Addr:     opt.RedisStreamAddr,
+			DB:       opt.RedisStreamDB,
+			Password: opt.RedisStreamPassword,
+		}
+
+		return redis.NewClient(rdopt), nil
+	})
+
+	if err != nil {
+		logger.WithError(err).Debugf("failed to new redis stream pool")
+		return nil, err
+	}
+
+	mgopool, err := pool_helper.NewPool(opt.MongoPoolInitial, opt.MongoPoolMax, func() (pool_helper.Client, error) {
+		return mongo_helper.NewMongoClient(opt.MongoUri)
+	})
+
+	if err != nil {
+		logger.WithError(err).Debugf("failed to new mongo pool")
+		return nil, err
+	}
+
+	fty := &flowFactory{
+		opt:               opt,
+		logger:            logger,
+		redis_stream_pool: rspool,
+		mongo_pool:        mgopool,
+	}
+
+	return fty, nil
+}
+
+func init() {
+	register_flow_factory("default", new_default_flow_factory)
 }
