@@ -860,7 +860,16 @@ service IdentitydService {
 	rpc ListCredentials(ListCredentialsRequest) returns (ListCredentialsResponse) {}
 	/*
 	 * @fn ListCredentialsForEntity
-	 * @unimplemented
+	 * @arg entity.id "entity id"
+	 * @req
+	 *   {
+	 *     "entity": {
+	 *       "id": "entity-id"
+	 *     }
+	 *   }
+	 * @res
+	 *   { ... }
+	 * @err Internal
 	 */
 	rpc ListCredentialsForEntity(ListCredentialsForEntityRequest) returns (ListCredentialsForEntityResponse) {}
 	/*

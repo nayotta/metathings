@@ -42,7 +42,7 @@ func (self *MetathingsIdentitydService) IssueTokenByPassword(ctx context.Context
 	dom_id_str := dom_id.GetValue()
 
 	ent_passwd := ent.GetPassword()
-	if ent_passwd == nil {
+	if ent_passwd == nil || ent_passwd.GetValue() == "" {
 		err = errors.New("entity.password is empty")
 		self.logger.WithError(err).Warningf("failed to validate request data")
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())

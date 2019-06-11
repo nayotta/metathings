@@ -145,10 +145,6 @@ func (self *MetathingsIdentitydService) ShowGroups(context.Context, *empty.Empty
 	panic("unimplemented")
 }
 
-func (self *MetathingsIdentitydService) ListCredentialsForEntity(context.Context, *pb.ListCredentialsForEntityRequest) (*pb.ListCredentialsForEntityResponse, error) {
-	panic("unimplemented")
-}
-
 func NewMetathingsIdentitydService(
 	opt *MetathingsIdentitydServiceOption,
 	logger log.FieldLogger,

@@ -868,7 +868,16 @@ type IdentitydServiceClient interface {
 	ListCredentials(ctx context.Context, in *ListCredentialsRequest, opts ...grpc.CallOption) (*ListCredentialsResponse, error)
 	//
 	// @fn ListCredentialsForEntity
-	// @unimplemented
+	// @arg entity.id "entity id"
+	// @req
+	//   {
+	//     "entity": {
+	//       "id": "entity-id"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	ListCredentialsForEntity(ctx context.Context, in *ListCredentialsForEntityRequest, opts ...grpc.CallOption) (*ListCredentialsForEntityResponse, error)
 	//
 	// @fn IssueTokenByCredential
@@ -2248,7 +2257,16 @@ type IdentitydServiceServer interface {
 	ListCredentials(context.Context, *ListCredentialsRequest) (*ListCredentialsResponse, error)
 	//
 	// @fn ListCredentialsForEntity
-	// @unimplemented
+	// @arg entity.id "entity id"
+	// @req
+	//   {
+	//     "entity": {
+	//       "id": "entity-id"
+	//     }
+	//   }
+	// @res
+	//   { ... }
+	// @err Internal
 	ListCredentialsForEntity(context.Context, *ListCredentialsForEntityRequest) (*ListCredentialsForEntityResponse, error)
 	//
 	// @fn IssueTokenByCredential
