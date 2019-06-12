@@ -53,6 +53,11 @@ var (
 	testRoleDescription = "test-role-description"
 	testRoleExtra       = "test-role-extra"
 
+	testActionID          = "test-action-id"
+	testActionName        = "test-action-name"
+	testActionAlias       = "test-action-alias"
+	testActionDescription = "test-action-description"
+
 	testCredentialID         = "test-credential-id"
 	testCredentialName       = "test-credential-name"
 	testCredentialAlias      = "test-credential-alias"
@@ -174,6 +179,17 @@ func (suite *storageImplTestSuite) SetupTest() {
 		fmt.Println("SetupTest add entity to domain error:", err.Error())
 	}
 
+	act := Action{
+		Id:          &testActionID,
+		Name:        &testActionName,
+		Alias:       &testActionAlias,
+		Description: &testActionDescription,
+	}
+	_, err = suite.s.CreateAction(&act)
+	if err != nil {
+		fmt.Println("SetupTest create action error:", err.Error())
+	}
+
 	rol := Role{
 		Id:          &testRoleID,
 		Name:        &testRoleName,
@@ -195,6 +211,11 @@ func (suite *storageImplTestSuite) SetupTest() {
 	err = suite.s.AddRoleToGroup(testGroupID, testRoleID)
 	if err != nil {
 		fmt.Println("SetupTest add role to group error:", err.Error())
+	}
+
+	err = suite.s.AddActionToRole(testRoleID, testActionID)
+	if err != nil {
+		fmt.Println("SetupTest add action to role error:", err.Error())
 	}
 
 	cred := Credential{
@@ -378,6 +399,7 @@ func (suite *storageImplTestSuite) TestGetRole() {
 	rol, err := suite.s.GetRole(testRoleID)
 	suite.Nil(err)
 	suite.Equal(testRoleName, *rol.Name)
+	suite.Len(rol.Actions, 1)
 }
 
 func (suite *storageImplTestSuite) TestlistRoles() {
