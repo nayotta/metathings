@@ -126,11 +126,25 @@ func copy_action(x *storage.Action) *pb.Action {
 	return y
 }
 
+func copy_action_view(x *storage.Action) *pb.Action {
+	return &pb.Action{Id: *x.Id}
+}
+
+func copy_actions_view(xs []*storage.Action) []*pb.Action {
+	ys := []*pb.Action{}
+	for _, x := range xs {
+		ys = append(ys, copy_action_view(x))
+	}
+
+	return ys
+}
+
 func copy_role(x *storage.Role) *pb.Role {
 	y := &pb.Role{
 		Id:          *x.Id,
 		Name:        *x.Name,
 		Alias:       *x.Alias,
+		Actions:     copy_actions_view(x.Actions),
 		Description: copy_string(x.Description),
 		Extra:       copy_extra(x.Extra),
 	}
