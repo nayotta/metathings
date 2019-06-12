@@ -19,7 +19,6 @@ type NewGrpcServerParams struct {
 }
 
 func NewGrpcServer(params NewGrpcServerParams, lc fx.Lifecycle) *grpc.Server {
-
 	opts := []grpc.ServerOption{
 		grpc.UnaryInterceptor(grpc_helper.UnaryServerInterceptor()),
 		grpc.StreamInterceptor(grpc_helper.StreamServerInterceptor()),

@@ -8,22 +8,14 @@ import (
 	"github.com/spf13/cobra"
 
 	cmd_contrib "github.com/nayotta/metathings/cmd/contrib"
-	cmd_helper "github.com/nayotta/metathings/pkg/common/cmd"
 )
 
 const (
 	METATHINGSD_PREFIX = "mtd"
 )
 
-// DEPRECATED(Peer): rename to _rootOption
-type _rootOptions struct {
-	cmd_helper.RootOptions `mapstructure:",squash"`
-	Service                string
-}
-
 var (
-	root_opts *_rootOptions
-	base_opt  *cmd_contrib.BaseOption
+	base_opt *cmd_contrib.BaseOption
 )
 
 var (
