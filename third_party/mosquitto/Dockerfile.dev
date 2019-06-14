@@ -1,0 +1,5 @@
+FROM nayotta/metathings-development
+
+COPY ./third_party/mosquitto/mosquitto-plugin.yaml /etc/metathings/mosquitto-plugin.yaml
+COPY ./third_party/mosquitto/mosquitto-plugin.dev_start.sh /usr/local/sbin/mosquitto-plugin.dev_start.sh
+CMD /usr/local/sbin/mosquitto-plugin.dev_start.sh

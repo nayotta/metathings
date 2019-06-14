@@ -5,13 +5,15 @@ import (
 	"net"
 	"net/http"
 
+	log "github.com/sirupsen/logrus"
 	"go.uber.org/fx"
 )
 
 type NewHttpServerParams struct {
 	fx.In
 
-	Lis net.Listener
+	Lis    net.Listener
+	Logger log.FieldLogger
 }
 
 func NewHttpServer(params NewHttpServerParams, lc fx.Lifecycle) *http.Server {
@@ -20,10 +22,12 @@ func NewHttpServer(params NewHttpServerParams, lc fx.Lifecycle) *http.Server {
 	lc.Append(fx.Hook{
 		OnStart: func(context.Context) error {
 			go s.Serve(params.Lis)
+			params.Logger.Infof("http server started")
 			return nil
 		},
 		OnStop: func(context.Context) error {
 			s.Close()
+			params.Logger.Infof("http server stoped")
 			return nil
 		},
 	})

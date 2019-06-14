@@ -9,13 +9,15 @@ import (
 	"google.golang.org/grpc/credentials"
 
 	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
+	log "github.com/sirupsen/logrus"
 )
 
 type NewGrpcServerParams struct {
 	fx.In
 
-	Lis   net.Listener
-	Creds credentials.TransportCredentials
+	Lis    net.Listener
+	Creds  credentials.TransportCredentials
+	Logger log.FieldLogger
 }
 
 func NewGrpcServer(params NewGrpcServerParams, lc fx.Lifecycle) *grpc.Server {
@@ -33,10 +35,12 @@ func NewGrpcServer(params NewGrpcServerParams, lc fx.Lifecycle) *grpc.Server {
 	lc.Append(fx.Hook{
 		OnStart: func(context.Context) error {
 			go s.Serve(params.Lis)
+			params.Logger.Infof("grpc server started")
 			return nil
 		},
 		OnStop: func(context.Context) error {
 			s.Stop()
+			params.Logger.Infof("grpc server stoped")
 			return nil
 		},
 	})

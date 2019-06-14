@@ -21,9 +21,9 @@ type WebhookOptioner interface {
 }
 
 type WebhookOption struct {
-	Url         string
-	ContentType string
-	Secret      string
+	Url         string `mapstructure:"url"`
+	ContentType string `mapstructure:"content_type"`
+	Secret      string `mapstructure:"secret"`
 }
 
 func (o *WebhookOption) GetContentTypeP() *string {
@@ -118,10 +118,12 @@ func NewWebhookService(opt WebhookServiceOptioner, logger log.FieldLogger) (webh
 			wh := opt.GetWebhook(k)
 			wh_url := wh.GetUrl()
 			wh_ct := wh.GetContentType()
+			wh_srt := wh.GetSecret()
 
 			if _, err = whs.Add(&webhook_helper.Webhook{
 				Url:         &wh_url,
 				ContentType: &wh_ct,
+				Secret:      &wh_srt,
 			}); err != nil {
 				return nil, err
 			}

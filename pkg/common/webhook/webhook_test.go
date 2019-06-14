@@ -3,14 +3,12 @@ package webhook_helper
 import (
 	"net/http"
 	"net/http/httptest"
-	"strconv"
 	"testing"
 	"time"
 
 	"github.com/stretchr/testify/suite"
 
 	log_helper "github.com/nayotta/metathings/pkg/common/log"
-	passwd_helper "github.com/nayotta/metathings/pkg/common/passwd"
 )
 
 var (
@@ -42,18 +40,7 @@ func (s *WebhookServiceTestSuite) SetupTest() {
 
 	s.triggered = make(chan struct{})
 	s.ts = httptest.NewServer(http.HandlerFunc(func(_ http.ResponseWriter, r *http.Request) {
-		id := r.Header.Get("MT-Webhook-Id")
-		ts_s := r.Header.Get("MT-Webhook-Timestamp")
-		nonce_s := r.Header.Get("MT-Webhook-Nonce")
-		hmac := r.Header.Get("MT-Webhook-HMAC")
-
-		nsec, err := strconv.ParseInt(ts_s, 10, 64)
-		s.Nil(err)
-		ts := time.Unix(0, nsec)
-		nonce, err := strconv.ParseInt(nonce_s, 10, 64)
-		s.Nil(err)
-
-		if passwd_helper.ValidateHmac(hmac, *s.wh.Secret, id, ts, nonce) {
+		if ValidateHmac(*s.wh.Secret, r) {
 			close(s.triggered)
 		}
 	}))
@@ -77,18 +64,7 @@ func (s *WebhookServiceTestSuite) SetupTest() {
 func (s *WebhookServiceTestSuite) TestAdd() {
 	tmp_triggered := make(chan struct{})
 	tmp_ts := httptest.NewServer(http.HandlerFunc(func(_ http.ResponseWriter, r *http.Request) {
-		id := r.Header.Get("MT-Webhook-Id")
-		ts_s := r.Header.Get("MT-Webhook-Timestamp")
-		nonce_s := r.Header.Get("MT-Webhook-Nonce")
-		hmac := r.Header.Get("MT-Webhook-HMAC")
-
-		nsec, err := strconv.ParseInt(ts_s, 10, 64)
-		s.Nil(err)
-		ts := time.Unix(0, nsec)
-		nonce, err := strconv.ParseInt(nonce_s, 10, 64)
-		s.Nil(err)
-
-		if passwd_helper.ValidateHmac(hmac, *s.wh.Secret, id, ts, nonce) {
+		if ValidateHmac(*s.wh.Secret, r) {
 			close(tmp_triggered)
 		}
 	}))
