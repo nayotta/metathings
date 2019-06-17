@@ -113,7 +113,7 @@ func (self *MetathingsIdentitydService) AuthFuncOverride(ctx context.Context, fu
 		if err = self.revoke_token(*tkn.Id); err != nil {
 			self.logger.WithError(err).Warningf("failed to revoke token")
 		}
-		return ctx, status.Errorf(codes.Unauthenticated, err.Error())
+		return ctx, status.Errorf(codes.Unauthenticated, ErrInvalidToken.Error())
 	}
 
 	if self.is_refreshable_token(tkn) {

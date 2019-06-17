@@ -3,6 +3,8 @@ package cmd
 import (
 	"context"
 	"fmt"
+	"math/rand"
+	"time"
 
 	"github.com/golang/protobuf/ptypes/wrappers"
 	log "github.com/sirupsen/logrus"
@@ -12,6 +14,8 @@ import (
 	cmd_contrib "github.com/nayotta/metathings/cmd/contrib"
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
 	cmd_helper "github.com/nayotta/metathings/pkg/common/cmd"
+	passwd_helper "github.com/nayotta/metathings/pkg/common/passwd"
+	pb_helper "github.com/nayotta/metathings/pkg/common/protobuf"
 	pb "github.com/nayotta/metathings/pkg/proto/identityd2"
 )
 
@@ -22,6 +26,8 @@ type IssueTokenOption struct {
 	Password                     string
 	CredentialId                 string
 	CredentialSecret             string
+	Timestamp                    int64
+	Nonce                        int64
 	Token                        string
 
 	Env bool
@@ -89,11 +95,27 @@ func issue_token_by_password(opt *IssueTokenOption, cli pb.IdentitydServiceClien
 }
 
 func issue_token_by_credential(opt *IssueTokenOption, cli pb.IdentitydServiceClient) (*pb.Token, error) {
+	var ts time.Time
+	if opt.Timestamp == 0 {
+		ts = time.Now()
+	} else {
+		ts = time.Unix(0, opt.Timestamp)
+	}
+	pb_ts := pb_helper.FromTime(ts)
+
+	if opt.Nonce == 0 {
+		opt.Nonce = rand.Int63()
+	}
+
+	hmac := passwd_helper.MustParseHmac(opt.CredentialSecret, opt.CredentialId, ts, opt.Nonce)
+
 	req := &pb.IssueTokenByCredentialRequest{
 		Credential: &pb.OpCredential{
-			Id:     &wrappers.StringValue{Value: opt.CredentialId},
-			Secret: &wrappers.StringValue{Value: opt.CredentialSecret},
+			Id: &wrappers.StringValue{Value: opt.CredentialId},
 		},
+		Timestamp: &pb_ts,
+		Nonce:     &wrappers.Int64Value{Value: opt.Nonce},
+		Hmac:      &wrappers.StringValue{Value: hmac},
 	}
 
 	res, err := cli.IssueTokenByCredential(context.Background(), req)
@@ -190,6 +212,8 @@ func init() {
 	flags.StringVar(&issue_token_opt.Token, "token", "", "Token for issue token by token mode")
 	flags.StringVar(&issue_token_opt.CredentialId, "credential-id", "", "Credential ID for issue token by credential mode")
 	flags.StringVar(&issue_token_opt.CredentialSecret, "credential-secret", "", "Credential Secret for issue token by credential mode")
+	flags.Int64Var(&issue_token_opt.Timestamp, "timestamp", 0, "Timestamp for issue token by credential mode")
+	flags.Int64Var(&issue_token_opt.Nonce, "nonce", 0, "Nonce for issue token by credential mode")
 	flags.BoolVar(&issue_token_opt.Env, "env", false, "Output as shell script for setup shell environment")
 
 	tokenCmd.AddCommand(issueTokenCmd)

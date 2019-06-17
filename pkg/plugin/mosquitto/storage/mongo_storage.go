@@ -19,6 +19,10 @@ type MongoStorageOption struct {
 		Database   string
 		Collection string
 	}
+	Pool struct {
+		Initial int
+		Max     int
+	}
 }
 
 type MongoStorage struct {
@@ -54,7 +58,11 @@ func (s *MongoStorage) get_collection() (*mongo.Collection, func(), error) {
 	close := func() {
 		s.pool.Put(cli)
 	}
-	return cli.Database(s.opt.Mongo.Database).Collection(s.opt.Mongo.Collection), close, nil
+
+	db := cli.Database(s.opt.Mongo.Database)
+	coll := db.Collection(s.opt.Mongo.Collection)
+
+	return coll, close, nil
 }
 
 func (s *MongoStorage) add_user(coll *mongo.Collection, u *User) (err error) {
@@ -262,6 +270,8 @@ type MongoStorageFactory struct{}
 func (*MongoStorageFactory) New(args ...interface{}) (Storage, error) {
 	var logger log.FieldLogger
 	opt := &MongoStorageOption{}
+	opt.Pool.Initial = 5
+	opt.Pool.Max = 17
 
 	if err := opt_helper.Setopt(map[string]func(string, interface{}) error{
 		"logger":     opt_helper.ToLogger(&logger),
@@ -272,8 +282,17 @@ func (*MongoStorageFactory) New(args ...interface{}) (Storage, error) {
 		return nil, err
 	}
 
+	pool, err := pool_helper.NewPool(opt.Pool.Initial, opt.Pool.Max, func() (pool_helper.Client, error) {
+		return mongo_helper.NewMongoClient(opt.Mongo.Uri)
+	})
+	if err != nil {
+		return nil, err
+	}
+
 	return &MongoStorage{
+		opt:    opt,
 		logger: logger,
+		pool:   pool,
 	}, nil
 }
 
