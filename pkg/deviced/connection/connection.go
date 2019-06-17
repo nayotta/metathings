@@ -297,15 +297,17 @@ func (self *connectionCenter) new_south_from_bridge_handler(dev *storage.Device,
 		var err error
 
 		stm_req := req.GetStreamCall()
-		switch stm_req.Union.(type) {
-		case *pb.OpStreamCallValue_Exit:
-			logger.Debugf("recv exit msg")
-			return context.Canceled
-		default:
-			if err = south.Send(req); err != nil {
-				logger.WithError(err).Debugf("failed to send msg")
-				return err
+		if stm_req != nil {
+			switch stm_req.Union.(type) {
+			case *pb.OpStreamCallValue_Exit:
+				logger.Debugf("recv exit msg")
+				return context.Canceled
 			}
+		}
+
+		if err = south.Send(req); err != nil {
+			logger.WithError(err).Debugf("failed to send msg")
+			return err
 		}
 
 		logger.Debugf("send dev req")
