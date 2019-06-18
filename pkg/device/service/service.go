@@ -1,11 +1,13 @@
 package metathings_device_service
 
 import (
+	"context"
 	"sync"
 	"time"
 
 	grpc_auth "github.com/grpc-ecosystem/go-grpc-middleware/auth"
 	log "github.com/sirupsen/logrus"
+	"go.uber.org/fx"
 
 	afo_helper "github.com/nayotta/metathings/pkg/common/auth_func_overrider"
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
@@ -20,8 +22,6 @@ type MetathingsDeviceService interface {
 	pb.DeviceServiceServer
 	Start() error
 	Stop() error
-	Wait() chan bool
-	Err() error
 }
 
 type MetathingsDeviceServiceOption struct {
@@ -37,6 +37,7 @@ type MetathingsDeviceServiceImpl struct {
 	cli_fty *client_helper.ClientFactory
 	logger  log.FieldLogger
 	opt     *MetathingsDeviceServiceOption
+	app     *fx.App
 
 	info             *deviced_pb.Device
 	mdl_db           ModuleDatabase
@@ -66,15 +67,7 @@ func (self *MetathingsDeviceServiceImpl) IsIgnoreMethod(md *grpc_helper.MethodDe
 }
 
 func (self *MetathingsDeviceServiceImpl) Stop() error {
-	panic("unimplemented")
-}
-
-func (self *MetathingsDeviceServiceImpl) Wait() chan bool {
-	panic("unimplemented")
-}
-
-func (self *MetathingsDeviceServiceImpl) Err() error {
-	panic("unimplemented")
+	return self.app.Stop(context.TODO())
 }
 
 func (self *MetathingsDeviceServiceImpl) connection_stream() deviced_pb.DevicedService_ConnectClient {
@@ -87,6 +80,7 @@ func NewMetathingsDeviceService(
 	logger log.FieldLogger,
 	tkvdr token_helper.TokenValidator,
 	opt *MetathingsDeviceServiceOption,
+	app **fx.App,
 ) (MetathingsDeviceService, error) {
 	srv := &MetathingsDeviceServiceImpl{
 		tknr:             tknr,
@@ -97,6 +91,7 @@ func NewMetathingsDeviceService(
 		conn_stm_wg:      new(sync.WaitGroup),
 		conn_stm_wg_once: new(sync.Once),
 		startup_session:  session_helper.GenerateStartupSession(),
+		app:              *app,
 	}
 	srv.ServiceAuthFuncOverride = afo_helper.NewAuthFuncOverrider(tkvdr, srv, logger)
 

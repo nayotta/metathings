@@ -74,10 +74,12 @@ func NewMetathingsDeviceServiceOption(opt *RunDeviceOption) *service.MetathingsD
 
 func run_device() error {
 	var err error
+	var app *fx.App
 
-	app := fx.New(
+	app = fx.New(
 		fx.NopLogger,
 		fx.Provide(
+			func() **fx.App { return &app },
 			GetRunDeviceOptions,
 			cmd_contrib.NewLogger("device"),
 			cmd_contrib.NewClientFactory,

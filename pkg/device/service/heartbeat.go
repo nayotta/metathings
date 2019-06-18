@@ -85,6 +85,9 @@ func (self *MetathingsDeviceServiceImpl) heartbeat_once() {
 
 	_, err = cli.Heartbeat(self.context(), req)
 	if err != nil {
+		// TODO(Peer): reconncect streaming, not stop device and restart
+		defer self.Stop()
+
 		self.logger.WithError(err).Warningf("failed to heartbeat")
 		return
 	}
