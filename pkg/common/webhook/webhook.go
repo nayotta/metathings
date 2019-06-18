@@ -2,6 +2,7 @@ package webhook_helper
 
 import (
 	"bytes"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"math/rand"
@@ -52,9 +53,10 @@ func (s *webhookService) Add(wh *Webhook) (*Webhook, error) {
 		wh.Id = &id
 	}
 
-	if wh.ContentType == nil {
+	if wh.ContentType == nil || *wh.ContentType == "" {
 		wh.ContentType = &s.opt.ContentType
 	}
+	*wh.Secret = base64.StdEncoding.EncodeToString([]byte(*wh.Secret))
 
 	wh, err := s.storage.CreateWebhook(wh)
 	if err != nil {

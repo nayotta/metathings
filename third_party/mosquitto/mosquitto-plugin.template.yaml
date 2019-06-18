@@ -1,0 +1,12 @@
+dev:
+  listen: 0.0.0.0:21883
+  verbose: true
+  webhook:
+    secret: <webhook-secret>
+  log:
+    level: debug
+  mosquitto_storage:
+    driver: mongo
+    uri: <mongo-uri>
+    database: mqGate  # DONT MOVE!
+    collection: users # DONT MOVE!

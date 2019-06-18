@@ -1,0 +1,36 @@
+version: "3"
+services:
+  metathings-mosquitto-mongo:
+    image: mongo
+    expose:
+    - "27017"
+    networks:
+    - metathings-backend
+  metathings-mosquitto:
+    image: coldfire84/mosquitto-auth
+    ports:
+    - "1883:1883"
+    networks:
+    - metathings-backend
+    volumes:
+    - ./mosquitto.conf:/mosquitto/config/mosquitto.conf
+  metathings-mosquitto-plugin:
+    environment:
+    - MTD_STAGE=dev
+    build:
+      context: ../../
+      dockerfile: ./third_party/mosquitto/Dockerfile.dev
+    image: nayotta/metathings-mosquitto-plugin
+    volumes:
+    - ./mosquitto-plugin.yaml:/etc/metathings/mosquitto-plugin.yaml
+    - ./../../:/go/src/github.com/nayotta/metathings
+    networks:
+    - metathings-backend
+    expose:
+    - "21883"
+    ports:
+    - "21883:21883"
+networks:
+  metathings-backend:
+    external:
+      name: metathings-backend
