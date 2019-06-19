@@ -1,0 +1,423 @@
+swagger: "2.0"
+
+info:
+  version: 1.0.0
+  title: Device Cloud Service API
+  description: ""
+
+host: metathings.ai
+basePath: /v1/device_cloud
+
+paths:
+  "/actions/issue_module_token":
+    post:
+      summary: Issue Module Token
+      description: ""
+      parameters:
+      - name: request
+        in: body
+        required: true
+        description: ""
+        schema:
+          required:
+          - credential
+          properties:
+            credential:
+              $ref: "#/definitions/Credential"
+            timestamp:
+              type: integer
+            nonce:
+              type: integer
+            hmac:
+              type: string
+          example: |
+            {
+              "credential": {
+                "id": "<credential_id>"
+              },
+              "timestamp": <timestamp>,
+              "nonce": <nonce>,
+              "hmac": <hmac>
+            }
+      responses:
+        200:
+          description: ""
+          schema:
+            properties:
+              credential:
+                $ref: "#/definitions/Credential"
+            example: |
+              {}
+
+  "/actions/show_module":
+    post:
+      summary: Show Module By Token
+      description: ""
+      parameters:
+      - $ref: "#/parameters/authorization"
+      responses:
+        200:
+          description: ""
+          schema:
+            properties:
+              module:
+                $ref: "#/definitions/Module"
+
+  "/actions/heartbeat":
+    post:
+      summary: Module Heartbeat
+      description: ""
+      parameters:
+      - name: request
+        in: body
+        description: ""
+        schema:
+          required:
+          - module
+          properties:
+            module:
+              $ref: "#/definitions/Module"
+      responses:
+        204:
+          description: ""
+
+  "/actions/put_object":
+    post:
+      summary: Put Object to Simple Storage
+      description: ""
+      parameters:
+      - name: request
+        in: body
+        description: ""
+        schema:
+          required:
+          - object
+          - content
+          properties:
+            object:
+              $ref: "#/definitions/Object"
+            content:
+              type: string
+      responses:
+        204:
+          description: ""
+
+  "/actions/remove_object":
+    post:
+      summary: Remove Object From Simple Storage
+      description: ""
+      parameters:
+      - name: request
+        in: body
+        description: ""
+        schema:
+          required:
+          - object
+          properties:
+            object:
+              $ref: "#/definitions/Object"
+      responses:
+        204:
+          description: ""
+
+  "/actions/rename_object":
+    post:
+      summary: Rename Object in Simple Storage
+      description: ""
+      parameters:
+      - name: request
+        in: body
+        description: ""
+        schema:
+          required:
+          - source
+          - destination
+          properties:
+            source:
+              $ref: "#/definitions/Object"
+            destination:
+              $ref: "#/definitions/Object"
+      responses:
+        204:
+          description: ""
+
+  "/actions/get_object":
+    post:
+      summary: Get Object from Simple Storage
+      description: ""
+      parameters:
+      - name: request
+        in: body
+        description: ""
+        schema:
+          required:
+          - object
+          properties:
+            object:
+              $ref: "#/definitions/Object"
+      responses:
+        200:
+          description: ""
+          schema:
+            required:
+            - object
+            properties:
+              object:
+                $ref: "#/definitions/Object"
+
+  "/actions/get_object_content":
+    post:
+      summary:  Get Object Content from Simple Storage
+      description: ""
+      parameters:
+      - name: request
+        in: body
+        description: ""
+        schema:
+          required:
+          - object
+          properties:
+            object:
+              $ref: "#/definitions/Object"
+      responses:
+        200:
+          description: ""
+          schema:
+            required:
+            - content
+            properties:
+              content:
+                type: string
+
+  "/actions/list_objects":
+    post:
+      summary: List Objects in Simple Storage
+      description: ""
+      parameters:
+      - name: request
+        in: body
+        description: ""
+        schema:
+          required:
+          - object
+          properties:
+            object:
+              $ref: "#/definitions/Object"
+      responses:
+        200:
+          description: ""
+          schema:
+            required:
+            - objects
+            properties:
+              objects:
+                type: array
+                items:
+                  $ref: "#/definitions/Object"
+
+parameters:
+  authorization:
+    name: authorization
+    in: header
+    schema:
+      type: string
+      example: mt <token>
+  timestamp:
+    name: timestamp
+    in: body
+    schema:
+      type: integer
+  nonce:
+    name: nonce
+    in: body
+    schema:
+      type: integer
+  hmac:
+    name: hmac
+    in: body
+    schema:
+      type: string
+
+definitions:
+  Object:
+    properties:
+      device:
+        $ref: "#/definitions/Device"
+      prefix:
+        type: string
+      name:
+        type: string
+      length:
+        type: integer
+      etag:
+        type: string
+      last_modified:
+        type: integer
+  Flow:
+    properties:
+      id:
+        type: string
+      device_id:
+        type: string
+      name:
+        type: string
+      alias:
+        type: string
+  Module:
+    properties:
+      id:
+        type: string
+      state:
+        type: string
+      endpoint:
+        type: string
+      component:
+        type: string
+      name:
+        type: string
+      alias:
+        type: string
+      heartbeat_at:
+        type: string
+  Device:
+    properties:
+      id:
+        type: string
+      kind:
+        type: string
+      state:
+        type: string
+      name:
+        type: string
+      alias:
+        type: string
+      modules:
+        type: array
+        items:
+          $ref: "#/definitions/Module"
+      heartbeat_at:
+        type: string
+      flows:
+        type: array
+        items:
+          $ref: "#/definitions/Flow"
+  Domain:
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      alias:
+        type: string
+      parent:
+        type: object
+      children:
+        type: array
+        items:
+          type: object
+      extra:
+        type: object
+  Action:
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      alias:
+        type: string
+      description:
+        type: string
+      extra:
+        type: object
+  Role:
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      alias:
+        type: string
+      description:
+        type: string
+      actions:
+        type: array
+        items:
+          $ref: "#/definitions/Action"
+      extra:
+        type: object
+  Group:
+    properties:
+      id:
+        type: string
+      domain:
+        $ref: "#/definitions/Domain"
+      roles:
+        type: array
+        items:
+          $ref: "#/definitions/Role"
+      subjects:
+        type: array
+        items:
+          $ref: "#/definitions/Entity"
+      objects:
+        type: array
+        items:
+          $ref: "#/definitions/Entity"
+      name:
+        type: string
+      alias:
+        type: string
+      description:
+        type: string
+      extra:
+        type: object
+  Entity:
+    properties:
+      id:
+        type: string
+      domains:
+        type: array
+        items:
+          $ref: "#/definitions/Domain"
+      groups:
+        type: array
+        items:
+          $ref: "#/definitions/Group"
+      roles:
+        type: array
+        items:
+          $ref: "#/definitions/Role"
+      name:
+        type: string
+      password:
+        type: string
+      extra:
+        type: object
+  Credential:
+    properties:
+      id:
+        type: string
+      domain:
+        $ref: "#/definitions/Domain"
+      roles:
+        type: array
+        items:
+          $ref: "#/definitions/Role"
+      entity:
+        $ref: "#/definitions/Entity"
+      name:
+        type: string
+      alias:
+        type: string
+      secret:
+        type: string
+      description:
+        type: string
+      expires_at:
+        type: string
+  Token:
+    properties:
+      id:
+        type: string
+      issued_at:
+        type: integer

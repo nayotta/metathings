@@ -96,7 +96,7 @@ message OpObject {
 	google.protobuf.StringValue name = 3;
 	google.protobuf.Int64Value length = 4;
 	google.protobuf.StringValue etag = 5;
-	google.protobuf.Timestamp liast_modified = 6;
+	google.protobuf.Timestamp last_modified = 6;
 }
 
 message ErrorValue {
