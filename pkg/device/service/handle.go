@@ -2,6 +2,7 @@ package metathings_device_service
 
 import (
 	"context"
+	"fmt"
 	"math"
 	"sync"
 	"time"
@@ -41,6 +42,44 @@ func (self *MetathingsDeviceServiceImpl) handle(req *deviced_pb.ConnectRequest) 
 }
 
 func (self *MetathingsDeviceServiceImpl) handle_system_request(req *deviced_pb.ConnectRequest) error {
+	switch req.Union.(type) {
+	case *deviced_pb.ConnectRequest_UnaryCall:
+		return self.handle_system_unary_request(req)
+	case *deviced_pb.ConnectRequest_StreamCall:
+		return self.handle_system_stream_request(req)
+	default:
+		self.logger.WithField("union", req.Union).Debugf("unsupported union type")
+		return nil
+	}
+}
+
+func (self *MetathingsDeviceServiceImpl) handle_system_unary_request(req *deviced_pb.ConnectRequest) error {
+	req_val := req.GetUnaryCall()
+	sess := req.GetSessionId().GetValue()
+	component := req_val.GetComponent().GetValue()
+	name := req_val.GetName().GetValue()
+	method := req_val.GetMethod().GetValue()
+
+	logger := self.logger.WithFields(log.Fields{
+		"#session":   sess,
+		"#component": component,
+		"#name":      name,
+		"#method":    method,
+	})
+
+	req_sign := fmt.Sprintf("%v$%v$%v", component, name, method)
+
+	switch req_sign {
+	case "system$system$pong":
+		logger.Debugf("receive pong response")
+		return nil
+	default:
+		self.logger.WithField("sign", req_sign).Warningf("unsupported request sign")
+		return nil
+	}
+}
+
+func (self *MetathingsDeviceServiceImpl) handle_system_stream_request(req *deviced_pb.ConnectRequest) error {
 	panic("unimplemented")
 }
 
@@ -52,7 +91,7 @@ func (self *MetathingsDeviceServiceImpl) handle_user_request(req *deviced_pb.Con
 		return self.handle_user_stream_request(req)
 	default:
 		self.logger.WithField("union", req.Union).Debugf("unsupported union type")
-		panic("unimplemented")
+		return nil
 	}
 }
 
@@ -62,7 +101,7 @@ func (self *MetathingsDeviceServiceImpl) handle_user_unary_request(req *deviced_
 	kind := req.GetKind()
 	component := req_val.GetComponent().GetValue()
 	name := req_val.GetName().GetValue()
-	method := req_val.GetName().GetValue()
+	method := req_val.GetMethod().GetValue()
 
 	logger := self.logger.WithFields(log.Fields{
 		"#session":   sess,

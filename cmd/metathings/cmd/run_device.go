@@ -2,13 +2,16 @@ package cmd
 
 import (
 	"context"
+	"os"
 	"time"
 
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"go.uber.org/fx"
 
 	cmd_contrib "github.com/nayotta/metathings/cmd/contrib"
 	cmd_helper "github.com/nayotta/metathings/pkg/common/cmd"
+	fx_helper "github.com/nayotta/metathings/pkg/common/fx"
 	token_helper "github.com/nayotta/metathings/pkg/common/token"
 	service "github.com/nayotta/metathings/pkg/device/service"
 	pb "github.com/nayotta/metathings/pkg/proto/device"
@@ -69,6 +72,7 @@ func NewMetathingsDeviceServiceOption(opt *RunDeviceOption) *service.MetathingsD
 		HeartbeatInterval:    17 * time.Second,
 		MinReconnectInterval: 7 * time.Second,
 		MaxReconnectInterval: 137 * time.Second,
+		PingInterval:         29 * time.Second,
 	}
 }
 
@@ -79,7 +83,7 @@ func run_device() error {
 	app = fx.New(
 		fx.NopLogger,
 		fx.Provide(
-			func() **fx.App { return &app },
+			fx_helper.NewFxAppGetter(&app),
 			GetRunDeviceOptions,
 			cmd_contrib.NewLogger("device"),
 			cmd_contrib.NewClientFactory,
@@ -95,12 +99,17 @@ func run_device() error {
 			cmd_contrib.NewGrpcServer,
 		),
 		fx.Invoke(
-			func(lc fx.Lifecycle, srv service.MetathingsDeviceService) error {
+			func(lc fx.Lifecycle, srv service.MetathingsDeviceService, logger log.FieldLogger) error {
 				lc.Append(fx.Hook{
 					OnStart: func(context.Context) error {
 						if err = srv.Start(); err != nil {
 							return err
 						}
+						return nil
+					},
+					OnStop: func(context.Context) error {
+						defer os.Exit(1)
+						logger.Infof("receive exit signal")
 						return nil
 					},
 				})

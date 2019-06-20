@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/grpc-ecosystem/go-grpc-middleware/util/metautils"
@@ -103,4 +104,16 @@ func HandleGRPCError(logger log.FieldLogger, err error, format string, args ...i
 	logger.WithError(err).Errorf(format, args...)
 
 	return err
+}
+
+func GetSessionFromContext(ctx context.Context) int64 {
+	var x int64
+	var err error
+
+	x, err = strconv.ParseInt(metautils.ExtractIncoming(ctx).Get("session"), 0, 64)
+	if err != nil {
+		return 0
+	}
+
+	return x
 }

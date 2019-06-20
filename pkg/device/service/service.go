@@ -7,10 +7,10 @@ import (
 
 	grpc_auth "github.com/grpc-ecosystem/go-grpc-middleware/auth"
 	log "github.com/sirupsen/logrus"
-	"go.uber.org/fx"
 
 	afo_helper "github.com/nayotta/metathings/pkg/common/auth_func_overrider"
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
+	fx_helper "github.com/nayotta/metathings/pkg/common/fx"
 	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
 	session_helper "github.com/nayotta/metathings/pkg/common/session"
 	token_helper "github.com/nayotta/metathings/pkg/common/token"
@@ -29,15 +29,16 @@ type MetathingsDeviceServiceOption struct {
 	HeartbeatInterval    time.Duration
 	MaxReconnectInterval time.Duration
 	MinReconnectInterval time.Duration
+	PingInterval         time.Duration
 }
 
 type MetathingsDeviceServiceImpl struct {
 	grpc_auth.ServiceAuthFuncOverride
-	tknr    token_helper.Tokener
-	cli_fty *client_helper.ClientFactory
-	logger  log.FieldLogger
-	opt     *MetathingsDeviceServiceOption
-	app     *fx.App
+	tknr       token_helper.Tokener
+	cli_fty    *client_helper.ClientFactory
+	logger     log.FieldLogger
+	opt        *MetathingsDeviceServiceOption
+	app_getter *fx_helper.FxAppGetter
 
 	info             *deviced_pb.Device
 	mdl_db           ModuleDatabase
@@ -67,7 +68,7 @@ func (self *MetathingsDeviceServiceImpl) IsIgnoreMethod(md *grpc_helper.MethodDe
 }
 
 func (self *MetathingsDeviceServiceImpl) Stop() error {
-	return self.app.Stop(context.TODO())
+	return self.app_getter.Get().Stop(context.TODO())
 }
 
 func (self *MetathingsDeviceServiceImpl) connection_stream() deviced_pb.DevicedService_ConnectClient {
@@ -80,7 +81,7 @@ func NewMetathingsDeviceService(
 	logger log.FieldLogger,
 	tkvdr token_helper.TokenValidator,
 	opt *MetathingsDeviceServiceOption,
-	app **fx.App,
+	app_getter *fx_helper.FxAppGetter,
 ) (MetathingsDeviceService, error) {
 	srv := &MetathingsDeviceServiceImpl{
 		tknr:             tknr,
@@ -91,7 +92,7 @@ func NewMetathingsDeviceService(
 		conn_stm_wg:      new(sync.WaitGroup),
 		conn_stm_wg_once: new(sync.Once),
 		startup_session:  session_helper.GenerateStartupSession(),
-		app:              *app,
+		app_getter:       app_getter,
 	}
 	srv.ServiceAuthFuncOverride = afo_helper.NewAuthFuncOverrider(tkvdr, srv, logger)
 
