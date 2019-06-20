@@ -2,16 +2,15 @@ package metathings_deviced_connection
 
 import (
 	"context"
-	"strconv"
 	"sync"
 
 	"github.com/golang/protobuf/proto"
 	"github.com/golang/protobuf/ptypes/wrappers"
-	"github.com/grpc-ecosystem/go-grpc-middleware/util/metautils"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
+	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
 	session_helper "github.com/nayotta/metathings/pkg/common/session"
 	session_storage "github.com/nayotta/metathings/pkg/deviced/session_storage"
 	storage "github.com/nayotta/metathings/pkg/deviced/storage"
@@ -85,18 +84,6 @@ type connectionCenter struct {
 	brfty           BridgeFactory
 	storage         Storage
 	session_storage session_storage.SessionStorage
-}
-
-func (self *connectionCenter) get_session_from_context(ctx context.Context) int64 {
-	var x int64
-	var err error
-
-	x, err = strconv.ParseInt(metautils.ExtractIncoming(ctx).Get("session"), 0, 64)
-	if err != nil {
-		return 0
-	}
-
-	return x
 }
 
 func (self *connectionCenter) connection_loop(dev *storage.Device, conn Connection, br Bridge, stm pb.DevicedService_ConnectServer) {
@@ -180,6 +167,28 @@ func (self *connectionCenter) south_to_bridge(
 			}
 		}(south_recv_chan, south)
 
+		ic := NewConnectResponseInterceptorChain(
+			NewConnectResponseUnaryCallMatcher(pb.ConnectMessageKind_CONNECT_MESSAGE_KIND_SYSTEM, "system", "system", "ping"), ConnectResponseInterceptor(func(req *pb.ConnectResponse) error {
+				pong_pkt := &pb.ConnectRequest{
+					SessionId: &wrappers.Int64Value{Value: 0},
+					Kind:      pb.ConnectMessageKind_CONNECT_MESSAGE_KIND_SYSTEM,
+					Union: &pb.ConnectRequest_UnaryCall{
+						UnaryCall: &pb.OpUnaryCallValue{
+							Name:      &wrappers.StringValue{Value: "system"},
+							Component: &wrappers.StringValue{Value: "system"},
+							Method:    &wrappers.StringValue{Value: "pong"},
+						},
+					},
+				}
+
+				if err := south.Send(pong_pkt); err != nil {
+					return err
+				}
+
+				return InterceptorStop
+			},
+			))
+
 		for epoch := uint64(0); ; epoch++ {
 			logger = logger.WithField("epoch", epoch)
 			is_temp_sess := false
@@ -194,6 +203,13 @@ func (self *connectionCenter) south_to_bridge(
 			case <-quit:
 				logger.Debugf("catch quit signal")
 				return
+			}
+
+			if err = ic(res); err != nil {
+				if err != InterceptorStop {
+					logger.WithError(err).Warningf("failed to intercept response")
+				}
+				continue
 			}
 
 			if buf, err = proto.Marshal(res); err != nil {
@@ -319,7 +335,7 @@ func (self *connectionCenter) new_south_from_bridge_handler(dev *storage.Device,
 func (self *connectionCenter) BuildConnection(dev *storage.Device, stm pb.DevicedService_ConnectServer) (Connection, error) {
 	var cleanup_cb func()
 	ctx := stm.Context()
-	sess := self.get_session_from_context(ctx)
+	sess := grpc_helper.GetSessionFromContext(ctx)
 	dev_id := *dev.Id
 
 	logger := self.logger.WithFields(log.Fields{

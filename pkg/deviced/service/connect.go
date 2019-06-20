@@ -4,6 +4,8 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
+	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
+	session_helper "github.com/nayotta/metathings/pkg/common/session"
 	connection "github.com/nayotta/metathings/pkg/deviced/connection"
 	storage "github.com/nayotta/metathings/pkg/deviced/storage"
 	pb "github.com/nayotta/metathings/pkg/proto/deviced"
@@ -21,6 +23,13 @@ func (self *MetathingsDevicedService) Connect(stream pb.DevicedService_ConnectSe
 		return status.Errorf(codes.Internal, err.Error())
 	}
 
+	sess := grpc_helper.GetSessionFromContext(ctx)
+	defer func() {
+		if session_helper.IsMajorSession(sess) {
+			self.offline_device(*dev_s.Id)
+		}
+	}()
+
 	if conn, err = self.cc.BuildConnection(dev_s, stream); err != nil {
 		self.logger.WithError(err).Errorf("failed to build connection")
 		return status.Errorf(codes.Internal, err.Error())
@@ -28,6 +37,7 @@ func (self *MetathingsDevicedService) Connect(stream pb.DevicedService_ConnectSe
 	defer conn.Cleanup()
 
 	self.logger.WithFields(log.Fields{
+		"session":   sess,
 		"device_id": *dev_s.Id,
 		"kind":      *dev_s.Kind,
 		"name":      *dev_s.Name,
