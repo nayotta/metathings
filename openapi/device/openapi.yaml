@@ -1,0 +1,61 @@
+openapi: 3.0.0
+
+info:
+  title: Device Service API
+  description: Device service API description
+  version: 0.1.0
+
+servers:
+- url: http://device-cloud.metathings.ai
+  description: device cloud service address
+
+paths:
+  "/actions/issue_module_token":
+    post:
+      summary: Issue Module Token
+      description: issue module token for module
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+              - credential
+              properties:
+                credential:
+                  $ref: "#/components/schemas/Credential"
+                timestamp:
+                  type: number
+                nonce:
+                  type: string
+                hmac:
+                  type: string
+              example: |
+                {
+                  "credential": {
+                    "id": "credential-id"
+                  },
+                  "timestamp": <timestamp>,
+                  "nonce": <nonce>,
+                  "hmac": "hmac"
+                }
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                properties:
+                  token:
+                    $ref: "#/components/schemas/Token"
+              example:
+                $ref: "#/components/examples/Token"
+
+components:
+  schemas:
+    Credential:
+      $ref: "../identityd2/model.yaml#components/schemas/Credential"
+    Token:
+      $ref: "../identityd2/model.yaml#components/schemas/Token"
+  examples:
+    Token:
+      $ref: "../identityd2/example.yaml#components/examples/Token"

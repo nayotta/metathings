@@ -1,0 +1,41 @@
+oepnapi: 3.0.0
+
+components:
+  examples:
+    Credential:
+      credential:
+        id: "aa817348fb68449da66046fa2e96c8a0"
+        domain:
+          id: "default"
+        roles:
+        - id: "52c89394db3d4e5498e9a763f46d1a4c"
+        entity:
+          id: "c3e70fe431e8457893c05e42daafdbc8"
+        name: "peer.echo.device"
+        alias: "peer.echo.device"
+        expires_at: "2119-05-29T09:27:35.004687471Z"
+    CredentialWithSecret:
+      credential:
+        id: "aa817348fb68449da66046fa2e96c8a0"
+        domain:
+          id: "default"
+        roles:
+        - id: "52c89394db3d4e5498e9a763f46d1a4c"
+        entity:
+          id: "c3e70fe431e8457893c05e42daafdbc8"
+        name: "peer.echo.device"
+        alias: "peer.echo.device"
+        secret: "G0cpkM/g3ORAStnfRBM1G+CGp123PsJDAkrb5SrTCP8="
+        expires_at: "2119-05-29T09:27:35.004687471Z"
+    Token:
+      token:
+        id: "980b8057848248cd816f1a013c36ef6d"
+        issued_at: "2019-06-22T09:24:30.223704045Z"
+        expires_at: "2019-06-22T10:24:30.223704045Z"
+        entity:
+          id: "9ea1a6c567724550b8d7ce110815fb2c"
+        roles:
+        - id: "52c89394db3d4e5498e9a763f46d1a4c"
+        domain:
+          id: "default"
+        text: "980b8057848248cd816f1a013c36ef6d"
