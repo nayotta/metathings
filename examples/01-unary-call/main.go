@@ -80,7 +80,7 @@ func main() {
 		},
 	}
 
-	ctx := context_helper.WithToken(context.Background(), "mt "+token)
+	ctx := context_helper.WithToken(context.Background(), "Bearer "+token)
 
 	conn, err := grpc.Dial(deviced_addr, grpc.WithInsecure())
 	if err != nil {

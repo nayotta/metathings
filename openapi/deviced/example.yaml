@@ -1,0 +1,21 @@
+openapi: 3.0.2
+
+components:
+  examples:
+    Module:
+      module:
+        id: 49b98264a885480ab8ec24a43daec2d1
+        state: offline
+        deviceId: 865889e11f19475fb8c0c3c8d126823a
+        endpoint: mtp://localhost:13403
+        component: echo
+        name: echo
+    Object:
+      object:
+        device:
+          id: 865889e11f19475fb8c0c3c8d126823a
+        prefix: echo
+        name: hello.txt
+        length: 13
+        etag: SFwycTQPqhWWl1VLkVHMkO28yYE=
+        lastModified: 2019-06-24T06:13:20.145173103Z

@@ -16,11 +16,11 @@ func WithToken(ctx context.Context, token string) context.Context {
 
 func WithTokenOp(token string) func(metadata.MD) metadata.MD {
 	return func(md metadata.MD) metadata.MD {
-		if !strings.HasPrefix(token, "mt") {
-			token = "mt " + strings.Trim(token, " ")
+		if !strings.HasPrefix(token, "Bearer") {
+			token = "Bearer " + strings.Trim(token, " ")
 		}
 
-		md.Append("authorization", token)
+		md.Append("Authorization", token)
 		return md
 	}
 }
