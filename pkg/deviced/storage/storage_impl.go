@@ -191,6 +191,17 @@ func (self *StorageImpl) get_device(id string) (*Device, error) {
 	return dev, nil
 }
 
+func (self *StorageImpl) get_device_by_module_id(id string) (*Device, error) {
+	var err error
+	var mdl Module
+
+	if err = self.db.Select("device_id").First(&mdl, "id = ?", id).Error; err != nil {
+		return nil, err
+	}
+
+	return self.get_device(*mdl.DeviceId)
+}
+
 func (self *StorageImpl) list_devices(dev *Device) ([]*Device, error) {
 	var err error
 	var devs_t []*Device
@@ -318,6 +329,18 @@ func (self *StorageImpl) ListDevices(dev *Device) ([]*Device, error) {
 	self.logger.Debugf("list devices")
 
 	return devs, nil
+}
+
+func (self *StorageImpl) GetDeviceByModuleId(id string) (*Device, error) {
+	var dev *Device
+	var err error
+
+	if dev, err = self.get_device_by_module_id(id); err != nil {
+		self.logger.WithError(err).Debugf("failed to get device by module id")
+		return nil, err
+	}
+
+	return dev, nil
 }
 
 func (self *StorageImpl) CreateModule(mdl *Module) (*Module, error) {

@@ -116,6 +116,10 @@ type device_getter interface {
 	GetDevice() *pb.OpDevice
 }
 
+type module_getter interface {
+	GetModule() *pb.OpModule
+}
+
 type object_getter interface {
 	GetObject() *pb.OpObject
 }
@@ -131,6 +135,13 @@ type destination_getter interface {
 func ensure_get_device_id(x device_getter) error {
 	if x.GetDevice().GetId() == nil {
 		return errors.New("device.id is empty")
+	}
+	return nil
+}
+
+func ensure_get_module_id(x module_getter) error {
+	if x.GetModule().GetId() == nil {
+		return errors.New("module.id is empty")
 	}
 	return nil
 }
