@@ -16,7 +16,7 @@ paths:
       - Device Cloud
       summary: Issue Module Token
       description: issue module token for module
-      security: {}
+      security: []
       requestBody:
         content:
           application/json:
@@ -184,7 +184,7 @@ paths:
           description: OK
           content:
             application/json:
-              schemas:
+              schema:
                 properties:
                   content:
                     type: string
@@ -207,7 +207,7 @@ paths:
 
       responses:
         "200":
-          destination: OK
+          description: OK
           content:
             application/json:
               schema:
@@ -240,55 +240,64 @@ components:
     Object:
       $ref: "../deviced/example.yaml#/components/examples/Object"
     IssueModuleTokenRequest:
-      credential:
-        id: cdf279da5b44463f98d909b053e51932
-      timestamp: 0
-      nonce: 0
-      hmac: Ogr+LABFhmISdnNmqJWs3WI8i6npjN84cWAe04wi+W0=
+      value:
+        credential:
+          id: cdf279da5b44463f98d909b053e51932
+        timestamp: 0
+        nonce: 0
+        hmac: Ogr+LABFhmISdnNmqJWs3WI8i6npjN84cWAe04wi+W0=
     ModuleForHeartbeat:
-      module:
-        id: 49b98264a885480ab8ec24a43daec2d1
+      value:
+        module:
+          id: 49b98264a885480ab8ec24a43daec2d1
     PutObjectRequest:
-      object:
-        device:
-          id: 865889e11f19475fb8c0c3c8d126823a
-        prefix: echo
-        name: hello.txt
-      content: "hello, world"
+      value:
+        object:
+          device:
+            id: 865889e11f19475fb8c0c3c8d126823a
+          prefix: echo
+          name: hello.txt
+        content: "hello, world"
     RemoveObjectRequest:
-      object:
-        device:
-          id: 865889e11f19475fb8c0c3c8d126823a
-        prefix: echo
-        name: hello.txt
+      value:
+        object:
+          device:
+            id: 865889e11f19475fb8c0c3c8d126823a
+          prefix: echo
+          name: hello.txt
     RenameObjectRequest:
-      source:
-        device:
-          id: 865889e11f19475fb8c0c3c8d126823a
-        prefix: echo
-        name: hello.txt
-      destination:
-        device:
-          id: 865889e11f19475fb8c0c3c8d126823a
-        prefix: echo
-        name: greet.txt
+      value:
+        source:
+          device:
+            id: 865889e11f19475fb8c0c3c8d126823a
+          prefix: echo
+          name: hello.txt
+        destination:
+          device:
+            id: 865889e11f19475fb8c0c3c8d126823a
+          prefix: echo
+          name: greet.txt
     GetObjectRequest:
-      object:
-        device:
-          id: 865889e11f19475fb8c0c3c8d126823a
-        prefix: echo
-        name: hello.txt
+      value:
+        object:
+          device:
+            id: 865889e11f19475fb8c0c3c8d126823a
+          prefix: echo
+          name: hello.txt
     GetObjectContentRequest:
-      object:
-        device:
-          id: 865889e11f19475fb8c0c3c8d126823a
-        prefix: echo
-        name: hello.txt
+      value:
+        object:
+          device:
+            id: 865889e11f19475fb8c0c3c8d126823a
+          prefix: echo
+          name: hello.txt
     GetObjectContentResponse:
-      content: "hello, world"
+      value:
+        content: "hello, world"
     ListObjectsResponse:
-      objects:
-      - $ref: "#/components/examples/Object"
+      value:
+        objects:
+        - $ref: "#/components/examples/Object"
 
   securitySchemes:
     bearerAuth:
