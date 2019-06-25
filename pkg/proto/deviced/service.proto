@@ -10,6 +10,7 @@ import "delete_device.proto";
 import "patch_device.proto";
 import "get_device.proto";
 import "list_devices.proto";
+import "get_device_by_module.proto";
 
 import "unary_call.proto";
 import "stream_call.proto";
@@ -36,6 +37,7 @@ service DevicedService {
 	rpc PatchDevice(PatchDeviceRequest) returns (PatchDeviceResponse) {}
 	rpc GetDevice(GetDeviceRequest) returns (GetDeviceResponse) {}
 	rpc ListDevices(ListDevicesRequest) returns (ListDevicesResponse) {}
+	rpc GetDeviceByModule(GetDeviceByModuleRequest) returns (GetDeviceByModuleResponse) {}
 
 	// Calling
 	rpc UnaryCall(UnaryCallRequest) returns (UnaryCallResponse) {}

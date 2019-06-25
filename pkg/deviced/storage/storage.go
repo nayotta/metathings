@@ -53,6 +53,7 @@ type Storage interface {
 	PatchDevice(id string, device *Device) (*Device, error)
 	GetDevice(id string) (*Device, error)
 	ListDevices(*Device) ([]*Device, error)
+	GetDeviceByModuleId(id string) (*Device, error)
 
 	CreateModule(*Module) (*Module, error)
 	DeleteModule(id string) error
