@@ -76,7 +76,7 @@ paths:
                 module:
                   $ref: "#/components/schemas/Module"
             example:
-              $ref: "#/components/examples/ModuleForHeartbeat"
+              $ref: "#/components/examples/HeartbeatRequest"
       responses:
         "204":
           description: No Content
@@ -246,10 +246,10 @@ components:
         timestamp: 0
         nonce: 0
         hmac: Ogr+LABFhmISdnNmqJWs3WI8i6npjN84cWAe04wi+W0=
-    ModuleForHeartbeat:
+    HeartbeatRequest:
       value:
         module:
-          id: 49b98264a885480ab8ec24a43daec2d1
+          name: echo
     PutObjectRequest:
       value:
         object:
