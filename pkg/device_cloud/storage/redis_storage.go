@@ -73,6 +73,10 @@ func (s *RedisStorage) UnconnectDevice(sess string, dev_id string) error {
 	panic("unimplemented")
 }
 
+func (s *RedisStorage) GetHeartbeatAt(mdl_id string) (time.Time, error) {
+	panic("unimplemented")
+}
+
 type RedisStorageFactory struct{}
 
 func (f *RedisStorageFactory) New(args ...interface{}) (Storage, error) {

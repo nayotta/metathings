@@ -6,18 +6,23 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
+	context_helper "github.com/nayotta/metathings/pkg/common/context"
+	token_helper "github.com/nayotta/metathings/pkg/common/token"
 	storage "github.com/nayotta/metathings/pkg/device_cloud/storage"
 )
 
 type MetathingsDeviceCloudServiceOption struct {
-	SessionID string
+	Session struct {
+		Id string
+	}
 }
 
 type MetathingsDeviceCloudService struct {
 	opt     *MetathingsDeviceCloudServiceOption
 	logger  log.FieldLogger
 	storage storage.Storage
-	cli_fty client_helper.ClientFactory
+	cli_fty *client_helper.ClientFactory
+	tknr    token_helper.Tokener
 }
 
 func (s *MetathingsDeviceCloudService) get_logger() log.FieldLogger {
@@ -25,9 +30,9 @@ func (s *MetathingsDeviceCloudService) get_logger() log.FieldLogger {
 }
 
 func (s *MetathingsDeviceCloudService) context() context.Context {
-	panic("unimplemented")
+	return context_helper.WithToken(context.TODO(), s.tknr.GetToken())
 }
 
 func (s *MetathingsDeviceCloudService) get_session_id() string {
-	return s.opt.SessionID
+	return s.opt.Session.Id
 }

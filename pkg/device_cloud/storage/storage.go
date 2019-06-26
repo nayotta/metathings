@@ -3,6 +3,7 @@ package metathings_device_cloud_storage
 import (
 	"errors"
 	"sync"
+	"time"
 )
 
 var (
@@ -16,6 +17,7 @@ var (
 
 type Storage interface {
 	Heartbeat(mdl_id string) error
+	GetHeartbeatAt(mdl_id string) (time.Time, error)
 	IsConnected(sess string, dev_id string) error
 	ConnectDevice(sess string, dev_id string) error
 	UnconnectDevice(sess string, dev_id string) error

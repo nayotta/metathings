@@ -89,7 +89,7 @@ func GetTokenFromContext(ctx context.Context) (string, error) {
 }
 
 func GetSubjectTokenFromContext(ctx context.Context) (string, error) {
-	return AuthFromMD(ctx, "Bearer", "authorization-subject")
+	return AuthFromMD(ctx, "Bearer", "Authorization-Subject")
 }
 
 func HandleGRPCError(logger log.FieldLogger, err error, format string, args ...interface{}) error {
@@ -110,7 +110,7 @@ func GetSessionFromContext(ctx context.Context) int64 {
 	var x int64
 	var err error
 
-	x, err = strconv.ParseInt(metautils.ExtractIncoming(ctx).Get("session"), 0, 64)
+	x, err = strconv.ParseInt(metautils.ExtractIncoming(ctx).Get("MT-Session"), 0, 64)
 	if err != nil {
 		return 0
 	}

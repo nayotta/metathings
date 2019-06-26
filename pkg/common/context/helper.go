@@ -25,16 +25,16 @@ func WithTokenOp(token string) func(metadata.MD) metadata.MD {
 	}
 }
 
-func WithSessionIdOp(sess_id string) func(metadata.MD) metadata.MD {
+func WithSessionOp(sess int64) func(metadata.MD) metadata.MD {
 	return func(md metadata.MD) metadata.MD {
-		md.Append("session-id", sess_id)
+		md.Append("MT-Session", strconv.FormatInt(sess, 10))
 		return md
 	}
 }
 
-func WithSessionOp(sess int64) func(metadata.MD) metadata.MD {
+func WithDeviceOp(dev string) func(metadata.MD) metadata.MD {
 	return func(md metadata.MD) metadata.MD {
-		md.Append("session", strconv.FormatInt(sess, 10))
+		md.Append("MT-Device", dev)
 		return md
 	}
 }
