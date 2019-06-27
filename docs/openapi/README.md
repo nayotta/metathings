@@ -37,6 +37,6 @@ $ docker run --rm -p 80:8080 swaggerapi/swagger-ui
 
 打开浏览器, 输入网址: http://localhost
 
-打开网页之后, 输入: http://localhost:8000/openapi/device/openapi.yaml
+打开网页之后, 输入: http://localhost:8000/openapi/device_cloud/openapi.yaml
 
 最后点击 `Explore` 按钮即可
