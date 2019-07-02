@@ -34,6 +34,10 @@ func GetTestRedisAddr() string {
 	return GetenvWithDefault("MTT_REDIS_ADDR", "127.0.0.1:6379")
 }
 
+func GetTestRedisPassword() string {
+	return GetenvWithDefault("MTT_REDIS_PASSWORD", "")
+}
+
 func GetTestRedisDB() string {
 	return GetenvWithDefault("MTT_REDIS_DB", "0")
 }

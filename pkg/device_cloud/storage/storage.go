@@ -7,20 +7,21 @@ import (
 )
 
 var (
-	ErrInvalidStorageDriver = errors.New("invalid storage driver")
-)
-
-var (
+	ErrInvalidStorageDriver        = errors.New("invalid storage driver")
 	ErrConnectedByOtherDeviceCloud = errors.New("connected by other device cloud")
 	ErrNotConnected                = errors.New("not connected")
+
+	NOTIME = time.Unix(0, 0)
 )
 
 type Storage interface {
 	Heartbeat(mdl_id string) error
 	GetHeartbeatAt(mdl_id string) (time.Time, error)
-	IsConnected(sess string, dev_id string) error
-	ConnectDevice(sess string, dev_id string) error
-	UnconnectDevice(sess string, dev_id string) error
+	SetModuleSession(mdl_id string, sess int64) error
+	GetModuleSession(mdl_id string) (int64, error)
+	SetDeviceConnectSession(dev_id string, sess string) error
+	UnsetDeviceConnectSession(dev_id string, sess string) error
+	GetDeviceConnectSession(dev_id string) (string, error)
 }
 
 type StorageFactory interface {

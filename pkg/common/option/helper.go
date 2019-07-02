@@ -243,6 +243,17 @@ func ToInt32(v *int32) func(string, interface{}) error {
 	}
 }
 
+func ToInt64(v *int64) func(string, interface{}) error {
+	return func(key string, val interface{}) error {
+		var ok bool
+		*v, ok = val.(int64)
+		if !ok {
+			return InvalidArgument(key)
+		}
+		return nil
+	}
+}
+
 func ToDuration(v *time.Duration) func(string, interface{}) error {
 	return func(key string, val interface{}) error {
 		var ok bool
