@@ -332,10 +332,10 @@ func (f *RedisStorageFactory) New(args ...interface{}) (Storage, error) {
 	opt.Redis.Pool.Max = 5
 
 	if err = opt_helper.Setopt(map[string]func(string, interface{}) error{
-		"logger":       opt_helper.ToLogger(&logger),
-		"redis_addr":   opt_helper.ToString(&opt.Redis.Address),
-		"redis_passwd": opt_helper.ToString(&opt.Redis.Password),
-		"redis_db":     opt_helper.ToInt(&opt.Redis.Db),
+		"logger": opt_helper.ToLogger(&logger),
+		"addr":   opt_helper.ToString(&opt.Redis.Address),
+		"passwd": opt_helper.ToString(&opt.Redis.Password),
+		"db":     opt_helper.ToInt(&opt.Redis.Db),
 	})(args...); err != nil {
 		return nil, err
 	}

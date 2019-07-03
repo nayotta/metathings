@@ -36,9 +36,9 @@ func (suite *redisStorageTestSuite) SetupTest() {
 
 	stor, err := NewStorage("redis",
 		"logger", logger,
-		"redis_addr", redis_addr,
-		"redis_passwd", redis_passwd,
-		"redis_db", redis_db,
+		"addr", redis_addr,
+		"passwd", redis_passwd,
+		"db", redis_db,
 	)
 	suite.Nil(err)
 
