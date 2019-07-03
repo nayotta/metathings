@@ -94,6 +94,24 @@ services:
     - "5002:5002"
     restart: on-failure
 
+  device_cloud:
+    environment:
+    - MTD_STAGE=dev
+    build:
+      context: .
+      dockerfile: dockerfile/Dockerfile.device_cloud.dev
+    image: nayotta/metathings-device_cloud-development
+    volumes:
+    - .:/go/src/github.com/nayotta/metathings
+    - ./etc/device_cloud.yaml:/etc/metathings/device_cloud.yaml
+    networks:
+    - metathings-backend
+    expose:
+    - "5003"
+    ports:
+    - "5003:5003"
+    restart: on-failure
+
 networks:
   metathings-frontend:
     external:

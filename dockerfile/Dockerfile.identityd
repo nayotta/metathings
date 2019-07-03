@@ -1,5 +1,0 @@
-FROM nayotta/metathingsd
-
-COPY ./etc/identityd.yaml /etc/metathings/identityd.yaml
-COPY ./script/identityd_start.sh /usr/local/sbin/identityd_start.sh
-CMD /usr/local/sbin/identityd_start.sh
