@@ -81,6 +81,9 @@ import:
   version: ~0.2.0
   subpackages:
   - mongo
+- package: github.com/goiiot/libmqtt
+- package: github.com/gorilla/mux
+  version: ~1.7.3
 testImport:
 - package: github.com/stretchr/testify
   version: ~1.2.2
