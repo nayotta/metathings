@@ -27,7 +27,7 @@ paths:
                 credential:
                   $ref: "#/components/schemas/Credential"
                 timestamp:
-                  type: number
+                  type: string
                 nonce:
                   type: integer
                 hmac:
@@ -249,7 +249,7 @@ components:
       value:
         credential:
           id: cdf279da5b44463f98d909b053e51932
-        timestamp: 0
+        timestamp: 2006-01-02T15:04:05.999999999Z
         nonce: 0
         hmac: Ogr+LABFhmISdnNmqJWs3WI8i6npjN84cWAe04wi+W0=
     HeartbeatRequest:
