@@ -1,7 +1,6 @@
 package metathings_device_cloud_service
 
 import (
-	"encoding/json"
 	"net/http"
 
 	pb "github.com/nayotta/metathings/pkg/proto/deviced"
@@ -12,23 +11,62 @@ type HeartbeatRequest struct {
 }
 
 func (s *MetathingsDeviceCloudService) Heartbeat(w http.ResponseWriter, r *http.Request) {
-	dec := json.NewDecoder(r.Body)
-	req := new(HeartbeatRequest)
-	err := dec.Decode(req)
+	tkn_txt := GetTokenFromHeader(r)
+	req_mdl_sess := GetSessionFromHeader(r)
+	tkn, err := s.tkvdr.Validate(tkn_txt)
 	if err != nil {
+		s.get_logger().WithError(err).Errorf("failed to validate token")
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+	mdl_id := tkn.Entity.Id
+
+	// TODO(Peer): match name with module name.
+	req := new(HeartbeatRequest)
+	err = ParseHttpRequestBody(r, req)
+	if err != nil {
+		s.get_logger().WithError(err).Errorf("failed to parse request body")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	// TODO(Peer): Get module id from token not request
-	mdl_id := req.Module.GetId().GetValue()
+	cur_mdl_sess, err := s.storage.GetModuleSession(mdl_id)
+	if err != nil {
+		s.get_logger().WithError(err).Errorf("failed to get module session")
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	if cur_mdl_sess != 0 && cur_mdl_sess != req_mdl_sess {
+		s.get_logger().Warningf("current module session not 0, maybe duplicated")
+		w.WriteHeader(http.StatusConflict)
+		return
+	}
+
+	err = s.storage.SetModuleSession(mdl_id, req_mdl_sess)
+	if err != nil {
+		s.get_logger().WithError(err).Errorf("failed to set module session in storage")
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 
 	err = s.storage.Heartbeat(mdl_id)
 	if err != nil {
+		s.get_logger().WithError(err).Errorf("failed to heartbeat in storage")
 		w.WriteHeader(http.StatusBadRequest)
+		return
 	}
 
-	go s.try_to_build_device_connection_by_module_id(mdl_id)
+	// TODO(Peer): cache device data in device cloud
+	dev, err := s.get_device_by_module_id(mdl_id)
+	if err != nil {
+		s.get_logger().WithError(err).Errorf("failed to get device by module id")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
 
+	go s.try_to_build_device_connection(dev)
+
+	s.get_logger().Debugf("heartbeat")
 	w.WriteHeader(http.StatusNoContent)
 }

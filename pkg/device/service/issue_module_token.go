@@ -2,11 +2,13 @@ package metathings_device_service
 
 import (
 	"context"
+	"time"
 
 	"github.com/golang/protobuf/ptypes/wrappers"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
+	protobuf_helper "github.com/nayotta/metathings/pkg/common/protobuf"
 	pb "github.com/nayotta/metathings/pkg/proto/device"
 	identityd2_pb "github.com/nayotta/metathings/pkg/proto/identityd2"
 )
@@ -19,16 +21,47 @@ func (self *MetathingsDeviceServiceImpl) IssueModuleToken(ctx context.Context, r
 	}
 	defer cfn()
 
+	tkn, err := IssueModuleTokenWithClient(
+		cli, context.TODO(),
+		req.GetCredential().GetId().GetValue(),
+		protobuf_helper.ToTime(*req.GetTimestamp()),
+		req.GetNonce().GetValue(),
+		req.GetHmac().GetValue(),
+	)
+
+	if err != nil {
+		self.logger.WithError(err).Errorf("failed to issue token in identityd2 service")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
+	res := &pb.IssueModuleTokenResponse{
+		Token: tkn,
+	}
+
+	self.logger.Debugf("issue module token")
+
+	return res, nil
+}
+
+func IssueModuleTokenWithClient(cli identityd2_pb.IdentitydServiceClient, ctx context.Context, credential_id string, timestamp time.Time, nonce int64, hmac string) (*identityd2_pb.Token, error) {
+	ts_pb := protobuf_helper.FromTime(timestamp)
 	itc_req := &identityd2_pb.IssueTokenByCredentialRequest{
-		Credential: req.GetCredential(),
-		Timestamp:  req.GetTimestamp(),
-		Nonce:      req.GetNonce(),
-		Hmac:       req.GetHmac(),
+		Credential: &identityd2_pb.OpCredential{
+			Id: &wrappers.StringValue{
+				Value: credential_id,
+			},
+		},
+		Timestamp: &ts_pb,
+		Nonce: &wrappers.Int64Value{
+			Value: nonce,
+		},
+		Hmac: &wrappers.StringValue{
+			Value: hmac,
+		},
 	}
 	itc_res, err := cli.IssueTokenByCredential(context.Background(), itc_req)
 	if err != nil {
-		self.logger.WithError(err).Errorf("failed to issue token by credential from identityd2 service")
-		return nil, status.Errorf(codes.Internal, err.Error())
+		return nil, err
 	}
 
 	tkn0 := itc_res.GetToken()
@@ -46,15 +79,8 @@ func (self *MetathingsDeviceServiceImpl) IssueModuleToken(ctx context.Context, r
 	}
 	itt_res, err := cli.IssueTokenByToken(context.Background(), itt_req)
 	if err != nil {
-		self.logger.WithError(err).Errorf("failed to issue token by token from identityd2 service")
-		return nil, status.Errorf(codes.Internal, err.Error())
+		return nil, err
 	}
 
-	res := &pb.IssueModuleTokenResponse{
-		Token: itt_res.GetToken(),
-	}
-
-	self.logger.Debugf("issue module token")
-
-	return res, nil
+	return itt_res.GetToken(), nil
 }
