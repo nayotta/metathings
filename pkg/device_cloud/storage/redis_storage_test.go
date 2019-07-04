@@ -46,20 +46,16 @@ func (suite *redisStorageTestSuite) SetupTest() {
 }
 
 func (suite *redisStorageTestSuite) TestHeartbeat() {
-	suite.s.opt.Module.Heartbeat.Timeout = 100 * time.Millisecond
-
-	err := suite.s.Heartbeat(testModuleID)
-	suite.Nil(err)
-
 	t, err := suite.s.GetHeartbeatAt(testModuleID)
 	suite.Nil(err)
-	suite.True(int64(time.Now().Sub(t)) < int64(100*time.Millisecond))
+	suite.Equal(NOTIME, t)
 
-	time.Sleep(200 * time.Millisecond)
+	err = suite.s.Heartbeat(testModuleID)
+	suite.Nil(err)
 
 	t, err = suite.s.GetHeartbeatAt(testModuleID)
 	suite.Nil(err)
-	suite.True(t.Equal(NOTIME))
+	suite.True(int64(time.Now().Sub(t)) < int64(100*time.Millisecond))
 }
 
 func (suite *redisStorageTestSuite) TestModuleSession() {

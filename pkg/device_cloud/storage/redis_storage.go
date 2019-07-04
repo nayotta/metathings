@@ -18,9 +18,6 @@ type RedisStorageOption struct {
 		Session struct {
 			Timeout time.Duration
 		}
-		Heartbeat struct {
-			Timeout time.Duration
-		}
 	}
 	Device struct {
 		Session struct {
@@ -90,7 +87,7 @@ func (s *RedisStorage) Heartbeat(mdl_id string) error {
 
 func (s *RedisStorage) heartbeat(cli *redis.Client, mdl_id string) error {
 	now := time.Now()
-	if err := cli.Set(s.module_heartbeat_key(mdl_id), now.UnixNano(), s.opt.Module.Heartbeat.Timeout).Err(); err != nil {
+	if err := cli.Set(s.module_heartbeat_key(mdl_id), now.UnixNano(), 0).Err(); err != nil {
 		return err
 	}
 
@@ -196,7 +193,9 @@ func (s *RedisStorage) GetDeviceConnectSession(dev_id string) (string, error) {
 
 	sess, err := s.get_device_connect_session(cli, dev_id)
 	if err != nil {
-		s.get_logger().WithError(err).Debugf("failed to get device connect session")
+		if err != ErrNotConnected {
+			s.get_logger().WithError(err).Debugf("failed to get device connect session")
+		}
 		return "", err
 	}
 
@@ -326,7 +325,6 @@ func (f *RedisStorageFactory) New(args ...interface{}) (Storage, error) {
 
 	opt := &RedisStorageOption{}
 	opt.Module.Session.Timeout = 127 * time.Second
-	opt.Module.Heartbeat.Timeout = 113 * time.Second
 	opt.Device.Session.Timeout = 131 * time.Second
 	opt.Redis.Pool.Init = 1
 	opt.Redis.Pool.Max = 5
