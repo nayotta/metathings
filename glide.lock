@@ -1,5 +1,5 @@
-hash: 9c73b312f15ff9d6eeddb5535d0d887153ab75d2033923352265070307936283
-updated: 2019-07-02T16:42:11.354505+08:00
+hash: 9cabb7ec671963a7e4ec685d63105e4611d84258826929737251b8b571691157
+updated: 2019-07-05T10:57:22.122844+08:00
 imports:
 - name: github.com/casbin/casbin
   version: 695c374a6617e9cdc930e8666307a772577cbd70
@@ -18,6 +18,10 @@ imports:
   version: 460e8e43b282a1a68219df600ef63442b81faf5f
   subpackages:
   - kafka
+- name: github.com/eclipse/paho.mqtt.golang
+  version: adca289fdcf8c883800aafa545bc263452290bae
+  subpackages:
+  - packets
 - name: github.com/fsnotify/fsnotify
   version: ccc981bf80385c528a65fbfdd49bf2d8da22aa23
 - name: github.com/go-daq/smbus
@@ -61,6 +65,8 @@ imports:
   version: 2e65f85255dbc3072edf28d6b5b8efc472979f5a
 - name: github.com/gorilla/mux
   version: 00bdffe0f3c77e27d2cf6f5c70232a2d3e4d9c15
+- name: github.com/gorilla/websocket
+  version: ae1634f6a98965ded3b8789c626cb4e0bd78c3de
 - name: github.com/grpc-ecosystem/go-grpc-middleware
   version: c250d6563d4d4c20252cd865923440e829844f4e
   subpackages:
@@ -206,7 +212,9 @@ imports:
   - http2
   - http2/hpack
   - idna
+  - internal/socks
   - internal/timeseries
+  - proxy
   - trace
 - name: golang.org/x/sync
   version: 1d60e4601c6fd243af51cc01ddf169918a5407ca

@@ -2,10 +2,11 @@ package metathings_device_cloud_service
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"time"
 
-	"github.com/gogo/protobuf/jsonpb"
+	"github.com/golang/protobuf/jsonpb"
 	device_service "github.com/nayotta/metathings/pkg/device/service"
 	log "github.com/sirupsen/logrus"
 )
@@ -57,6 +58,9 @@ func (s *MetathingsDeviceCloudService) IssueModuleToken(w http.ResponseWriter, r
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+
+	// TODO(Peer): marshal by jsonpb.Marshaler not write by code
+	buf = fmt.Sprintf(`{"token": %v}`, buf)
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)

@@ -13,4 +13,5 @@ var (
 	ErrInvalidArguments           = errors.New("invalid arguments")
 	ErrSubscribedSession          = errors.New("subscribed session")
 	ErrUnsubscribedSession        = errors.New("unsubscribed session")
+	ErrStartTimeout               = errors.New("start timeout")
 )

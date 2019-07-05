@@ -91,6 +91,11 @@ func (dc *DeviceConnection) handle_user_unary_request(req *pb.ConnectRequest) er
 	})
 
 	mdl_prx, err := dc.get_module_proxy(name)
+	if err != nil {
+		logger.WithError(err).Debugf("failed to get module proxy")
+		return err
+	}
+	defer mdl_prx.Close()
 
 	res_any, err := mdl_prx.UnaryCall(context.TODO(), method, req_val.GetValue())
 	var res *pb.ConnectResponse

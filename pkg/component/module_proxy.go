@@ -65,6 +65,7 @@ func NewModuleProxyStream(stm deviced_pb.DevicedService_ConnectClient, session i
 type ModuleProxy interface {
 	UnaryCall(ctx context.Context, method string, req *any.Any) (*any.Any, error)
 	StreamCall(ctx context.Context, method string, stm ModuleProxyStream) error
+	Close() error
 }
 
 type ModuleProxyFactory interface {

@@ -145,6 +145,7 @@ func runDeviceCloud() error {
 				sr := r.PathPrefix("/v1/device_cloud").Subrouter()
 				sr.HandleFunc("/actions/heartbeat", srv.Heartbeat).Methods("POST")
 				sr.HandleFunc("/actions/issue_module_token", srv.IssueModuleToken).Methods("POST")
+				sr.HandleFunc("/actions/show_module", srv.ShowModule).Methods("POST")
 				s.Handler = r
 			},
 		),

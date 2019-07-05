@@ -8,7 +8,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/goiiot/libmqtt"
 	"github.com/golang/protobuf/ptypes/wrappers"
 	log "github.com/sirupsen/logrus"
 
@@ -117,7 +116,7 @@ type DeviceConnectionOption struct {
 			Id string
 		}
 		Connection struct {
-			Mqtt struct {
+			MQTT struct {
 				Address  string
 				Username string
 				Password string
@@ -468,25 +467,14 @@ func (dc *DeviceConnection) build_mqtt_module_proxy(mdl *pb.Module) (component.M
 		return nil, err
 	}
 
-	mqtt_cli, err := libmqtt.NewClient(
-		libmqtt.WithVersion(libmqtt.V5, true),
-		libmqtt.WithServer(dc.opt.DeviceCloud.Connection.Mqtt.Address),
-		libmqtt.WithIdentity(dc.opt.DeviceCloud.Connection.Mqtt.Username, dc.opt.DeviceCloud.Connection.Mqtt.Password),
-		libmqtt.WithKeepalive(10, 1.2),
-		libmqtt.WithAutoReconnect(true),
-		libmqtt.WithBackoffStrategy(time.Second, 5*time.Second, 1.2),
-	)
-	if err != nil {
-		dc.logger.WithError(err).Debugf("failed to new mqtt client")
-		return nil, err
-	}
-
 	prx, err := component.NewModuleProxy(
 		"mqtt",
 		"logger", dc.logger,
 		"module_id", mdl_id,
 		"session_id", mdl_sess,
-		"mqtt_client", mqtt_cli,
+		"mqtt_address", dc.opt.DeviceCloud.Connection.MQTT.Address,
+		"mqtt_username", dc.opt.DeviceCloud.Connection.MQTT.Username,
+		"mqtt_password", dc.opt.DeviceCloud.Connection.MQTT.Password,
 	)
 	if err != nil {
 		dc.logger.WithError(err).Debugf("failed to new module proxy")
@@ -583,9 +571,9 @@ func NewDeviceConnection(args ...interface{}) (*DeviceConnection, error) {
 			}
 			return nil
 		},
-		"mqtt_address":         opt_helper.ToString(&dc.opt.DeviceCloud.Connection.Mqtt.Address),
-		"mqtt_username":        opt_helper.ToString(&dc.opt.DeviceCloud.Connection.Mqtt.Username),
-		"mqtt_password":        opt_helper.ToString(&dc.opt.DeviceCloud.Connection.Mqtt.Password),
+		"mqtt_address":         opt_helper.ToString(&dc.opt.DeviceCloud.Connection.MQTT.Address),
+		"mqtt_username":        opt_helper.ToString(&dc.opt.DeviceCloud.Connection.MQTT.Username),
+		"mqtt_password":        opt_helper.ToString(&dc.opt.DeviceCloud.Connection.MQTT.Password),
 		"device_cloud_session": opt_helper.ToString(&dc.opt.DeviceCloud.Session.Id),
 	})(args...); err != nil {
 		return nil, err
