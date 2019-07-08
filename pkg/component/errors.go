@@ -5,6 +5,7 @@ import "errors"
 var (
 	ErrUnaryCallTimeout           = errors.New("unary call timeout")
 	ErrStreamCallConfigAckTimeout = errors.New("stream call config ack timeout")
+	ErrStreamCallConfig           = errors.New("stream call config error")
 	ErrUnexceptedResponse         = errors.New("unexpected response")
 	ErrBadScheme                  = errors.New("bad scheme")
 	ErrBadServiceEndpoint         = errors.New("bad service endpoint")

@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/tls"
 	"fmt"
+	"math/rand"
 	"sync"
 	"time"
 
@@ -49,9 +50,13 @@ type MqttModuleProxyOption struct {
 type MqttModuleProxy struct {
 	opt        *MqttModuleProxyOption
 	c          mqtt.Client
-	sess_chans map[int64]chan []byte
+	sess_chans map[int64]chan *pb.UpStreamFrame
 	mtx        sync.Mutex
 	logger     log.FieldLogger
+}
+
+func (p *MqttModuleProxy) get_logger() log.FieldLogger {
+	return p.logger
 }
 
 func (p *MqttModuleProxy) get_client() (mqtt.Client, error) {
@@ -115,23 +120,26 @@ func (p *MqttModuleProxy) extra_session_from_topic(topic string) int64 {
 }
 
 func (p *MqttModuleProxy) handle_message(c mqtt.Client, m mqtt.Message) {
-	sess := p.extra_session_from_topic(m.Topic())
-	if sess != -1 {
-		p.dispatch_message(sess, m.Payload())
+	if sess := p.extra_session_from_topic(m.Topic()); sess != -1 {
+		var res pb.UpStreamFrame
+		if err := proto.Unmarshal(m.Payload(), &res); err != nil {
+			p.get_logger().WithError(err).Warningf("failed to unmarshal UpStreamFrame")
+			return
+
+		}
+
+		p.mtx.Lock()
+		defer p.mtx.Unlock()
+
+		if ch, ok := p.sess_chans[sess]; ok {
+			ch <- &res
+		} else {
+			p.get_logger().Warningf("receive message with unscribed session, drop it")
+		}
 	}
 }
 
-func (p *MqttModuleProxy) dispatch_message(sess int64, msg []byte) {
-	p.mtx.Lock()
-	defer p.mtx.Unlock()
-
-	ch, ok := p.sess_chans[sess]
-	if ok {
-		ch <- msg
-	}
-}
-
-func (p *MqttModuleProxy) subscribe_session(sess int64) (chan []byte, error) {
+func (p *MqttModuleProxy) subscribe_session(sess int64) (chan *pb.UpStreamFrame, error) {
 	p.mtx.Lock()
 	defer p.mtx.Unlock()
 
@@ -139,14 +147,14 @@ func (p *MqttModuleProxy) subscribe_session(sess int64) (chan []byte, error) {
 		return nil, ErrSubscribedSession
 	}
 
-	ch := make(chan []byte)
+	ch := make(chan *pb.UpStreamFrame)
 	p.sess_chans[sess] = ch
 
 	return ch, nil
 }
 
 func (p *MqttModuleProxy) unsubscribe_session(sess int64) error {
-	var ch chan []byte
+	var ch chan *pb.UpStreamFrame
 	var ok bool
 
 	p.mtx.Lock()
@@ -162,14 +170,19 @@ func (p *MqttModuleProxy) unsubscribe_session(sess int64) error {
 	return nil
 }
 
-func (p *MqttModuleProxy) publish_message(sess int64, msg []byte) error {
+func (p *MqttModuleProxy) publish_message(sess int64, msg *pb.DownStreamFrame) error {
 	cli, err := p.get_client()
 	if err != nil {
 		return err
 	}
 
+	buf, err := proto.Marshal(msg)
+	if err != nil {
+		return err
+	}
+
 	topic := p.mqtt_topic(p.opt.Module.Id, sess, MQTT_DOWNSTREAM)
-	if token := cli.Publish(topic, p.opt.MQTT.QoS, false, msg); token.Wait() && token.Error() != nil {
+	if token := cli.Publish(topic, p.opt.MQTT.QoS, false, buf); token.Wait() && token.Error() != nil {
 		return token.Error()
 	}
 
@@ -182,6 +195,10 @@ func (p *MqttModuleProxy) startup_session() int32 {
 
 func (p *MqttModuleProxy) generate_temp_session() int64 {
 	return session_helper.NewSession(p.startup_session(), session_helper.GenerateTempSession())
+}
+
+func (p *MqttModuleProxy) generate_minor_session() int64 {
+	return session_helper.NewSession(p.startup_session(), session_helper.GenerateMinorSession())
 }
 
 func (p *MqttModuleProxy) mqtt_topic(mdl_id string, sess interface{}, dir string) string {
@@ -200,22 +217,17 @@ func (p *MqttModuleProxy) UnaryCall(ctx context.Context, method string, value *a
 	temp_sess := p.generate_temp_session()
 
 	req := &pb.DownStreamFrame{
-		SessionId: &wrappers.Int64Value{Value: temp_sess},
-		Kind:      pb.StreamFrameKind_STREAM_FRAME_KIND_USER,
+		Kind: pb.StreamFrameKind_STREAM_FRAME_KIND_USER,
 		Union: &pb.DownStreamFrame_UnaryCall{
 			UnaryCall: &pb.OpUnaryCallValue{
-				Method: &wrappers.StringValue{Value: method},
-				Value:  value,
+				Session: &wrappers.Int64Value{Value: temp_sess},
+				Method:  &wrappers.StringValue{Value: method},
+				Value:   value,
 			},
 		},
 	}
 
-	buf, err := proto.Marshal(req)
-	if err != nil {
-		return nil, err
-	}
-
-	err = p.publish_message(p.opt.Session.Id, buf)
+	err := p.publish_message(p.opt.Session.Id, req)
 	if err != nil {
 		return nil, err
 	}
@@ -226,16 +238,11 @@ func (p *MqttModuleProxy) UnaryCall(ctx context.Context, method string, value *a
 	}
 	defer p.unsubscribe_session(temp_sess)
 
+	var res *pb.UpStreamFrame
 	select {
-	case buf = <-ch:
+	case res = <-ch:
 	case <-time.After(p.opt.Config.UnaryCallTimeout):
 		return nil, ErrUnaryCallTimeout
-	}
-
-	res := pb.UpStreamFrame{}
-	err = proto.Unmarshal(buf, &res)
-	if err != nil {
-		return nil, err
 	}
 
 	uc := res.GetUnaryCall()
@@ -246,7 +253,105 @@ func (p *MqttModuleProxy) UnaryCall(ctx context.Context, method string, value *a
 	return uc.GetValue(), nil
 }
 
+func (p *MqttModuleProxy) init_downstream(sess int64, ds_recv_ch chan *pb.UpStreamFrame, method string) error {
+	ack := rand.Int63()
+	cfg_req := &pb.DownStreamFrame{
+		Kind: pb.StreamFrameKind_STREAM_FRAME_KIND_USER,
+		Union: &pb.DownStreamFrame_StreamCall{
+			StreamCall: &pb.OpStreamCallValue{
+				Union: &pb.OpStreamCallValue_Config{
+					Config: &pb.OpStreamCallConfig{
+						Session: &wrappers.Int64Value{Value: sess},
+						Method:  &wrappers.StringValue{Value: method},
+						Ack:     &wrappers.Int64Value{Value: ack},
+					},
+				},
+			},
+		},
+	}
+
+	err := p.publish_message(p.opt.Session.Id, cfg_req)
+	if err != nil {
+		return err
+	}
+
+	var cfg_res *pb.UpStreamFrame
+	select {
+	case cfg_res = <-ds_recv_ch:
+	case <-time.After(p.opt.Config.StreamCallConfigAckTimeout):
+		return ErrStreamCallConfigAckTimeout
+	}
+
+	var res_ack int64
+	if stm_res := cfg_res.GetStreamCall(); stm_res != nil {
+		if ack_res := stm_res.GetAck(); ack_res != nil {
+			res_ack = ack_res.GetValue()
+		}
+	}
+
+	if res_ack != ack {
+		return ErrStreamCallConfig
+	}
+
+	return nil
+}
+
 func (p *MqttModuleProxy) StreamCall(ctx context.Context, method string, upstm ModuleProxyStream) error {
+	minor_sess := p.generate_minor_session()
+	ch, err := p.subscribe_session(minor_sess)
+	if err != nil {
+		return err
+	}
+	defer p.unsubscribe_session(minor_sess)
+
+	if err = p.init_downstream(minor_sess, ch, method); err != nil {
+		return err
+	}
+	p.get_logger().Debugf("downstream initialized")
+
+	north2south_wait := make(chan struct{}, 1)
+	south2north_wait := make(chan struct{}, 1)
+	go p.stm_north2south(upstm, minor_sess, north2south_wait)
+	go p.stm_south2north(upstm, minor_sess, ch, south2north_wait)
+
+	p.get_logger().Debugf("stream call started")
+	select {
+	case <-north2south_wait:
+	case <-south2north_wait:
+	}
+
+	p.get_logger().Debugf("stream call done")
+
+	return nil
+}
+
+func (p *MqttModuleProxy) stm_north2south(north ModuleProxyStream, sess int64, wait chan struct{}) {
+	// var val *any.Any
+	// var err error
+
+	// logger := p.logger.WithFields(log.Fields{
+	// 	"dir": "NS",
+	// })
+
+	// defer close(wait)
+	// for epoch := uint64(0); ; epoch++ {
+	// 	logger := logger.WithFields(log.Fields{
+	// 		"epoch": epoch,
+	// 	})
+
+	// 	if val, err = north.Recv(); err != nil {
+	// 		logger.WithError(err).Debugf("failed to recv msg from north side stream")
+	// 		return
+	// 	}
+	// 	logger.Debugf("recv msg from north side stream")
+
+	// 	req := &pb.DownStreamFrame{}
+	// }
+
+	panic("unimplemented")
+}
+
+func (p *MqttModuleProxy) stm_south2north(north ModuleProxyStream, sess int64, downch chan *pb.UpStreamFrame, wait chan struct{}) {
 	panic("unimplemented")
 }
 
@@ -271,7 +376,7 @@ func (f *MqttModuleProxyFactory) NewModuleProxy(args ...interface{}) (ModuleProx
 
 	p := &MqttModuleProxy{
 		opt:        opt,
-		sess_chans: make(map[int64]chan []byte),
+		sess_chans: make(map[int64]chan *pb.UpStreamFrame),
 	}
 
 	if err := opt_helper.Setopt(map[string]func(string, interface{}) error{
