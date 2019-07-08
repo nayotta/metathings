@@ -196,14 +196,14 @@ func handle_frame(cli mqtt.Client, mdl_id string, dstm_frm *pb.DownStreamFrame) 
 		panic(err)
 	}
 
-	sess_id := dstm_frm.GetSessionId().GetValue()
+	sess := unary.GetSession().GetValue()
 	ustm_frm := pb.UpStreamFrame{
-		SessionId: sess_id,
-		Kind:      pb.StreamFrameKind_STREAM_FRAME_KIND_USER,
+		Kind: pb.StreamFrameKind_STREAM_FRAME_KIND_USER,
 		Union: &pb.UpStreamFrame_UnaryCall{
 			UnaryCall: &pb.UnaryCallValue{
-				Method: method,
-				Value:  res_any,
+				Session: sess,
+				Method:  method,
+				Value:   res_any,
 			},
 		},
 	}
@@ -213,7 +213,7 @@ func handle_frame(cli mqtt.Client, mdl_id string, dstm_frm *pb.DownStreamFrame) 
 		panic(err)
 	}
 
-	topic := fmt.Sprintf("mt/modules/%v/sessions/%v/upstream", mdl_id, sess_id)
+	topic := fmt.Sprintf("mt/modules/%v/sessions/%v/upstream", mdl_id, sess)
 	cli.Publish(topic, byte(0), false, buf)
 }
 
