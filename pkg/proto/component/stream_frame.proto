@@ -15,13 +15,15 @@ enum StreamFrameKind {
 }
 
 message OpStreamCallConfig {
-	google.protobuf.StringValue method = 1;
-	google.protobuf.Int64Value ack = 2;
+	google.protobuf.Int64Value session = 1;
+	google.protobuf.StringValue method = 2;
+	google.protobuf.Int64Value ack = 3;
 }
 
 message StreamCallConfig {
-	string method = 1;
-	int64 ack = 2;
+	int64 session = 1;
+	string method = 2;
+	int64 ack = 3;
 }
 
 message OpStreamCallAck {
@@ -36,13 +38,15 @@ message OpStreamCallExit {}
 message StreamCallExit {}
 
 message OpUnaryCallValue {
-	google.protobuf.StringValue method = 1 [(validator.field) = {msg_exists: true}];
-	google.protobuf.Any value = 2 [(validator.field) = {msg_exists: true}];
+	google.protobuf.Int64Value session = 1 [(validator.field) = {msg_exists: true}];
+	google.protobuf.StringValue method = 2 [(validator.field) = {msg_exists: true}];
+	google.protobuf.Any value = 3 [(validator.field) = {msg_exists: true}];
 }
 
 message UnaryCallValue {
-	string method = 1;
-	google.protobuf.Any value = 2;
+	int64 session = 1;
+	string method = 2;
+	google.protobuf.Any value = 3;
 }
 
 message OpStreamCallValue {
@@ -69,20 +73,18 @@ message ErrorValue {
 }
 
 message UpStreamFrame {
-	int64 session_id = 1;
-	StreamFrameKind kind = 2;
+	StreamFrameKind kind = 1;
 	oneof union {
-		UnaryCallValue unary_call = 3;
-		StreamCallValue stream_call = 4;
+		UnaryCallValue unary_call = 2;
+		StreamCallValue stream_call = 3;
 		ErrorValue error = 9;
 	}
 }
 
 message DownStreamFrame {
-	google.protobuf.Int64Value session_id = 1 [(validator.field) = {msg_exists: true}];
-	StreamFrameKind kind = 2 [(validator.field) = {msg_exists: true}];
+	StreamFrameKind kind = 1 [(validator.field) = {msg_exists: true}];
 	oneof union {
-		OpUnaryCallValue unary_call = 3;
-		OpStreamCallValue stream_call = 4;
+		OpUnaryCallValue unary_call = 2;
+		OpStreamCallValue stream_call = 3;
 	}
 }

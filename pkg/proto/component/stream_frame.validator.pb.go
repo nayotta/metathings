@@ -17,6 +17,11 @@ var _ = fmt.Errorf
 var _ = math.Inf
 
 func (this *OpStreamCallConfig) Validate() error {
+	if this.Session != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Session); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Session", err)
+		}
+	}
 	if this.Method != nil {
 		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Method); err != nil {
 			return github_com_mwitkow_go_proto_validators.FieldError("Method", err)
@@ -50,6 +55,14 @@ func (this *StreamCallExit) Validate() error {
 	return nil
 }
 func (this *OpUnaryCallValue) Validate() error {
+	if nil == this.Session {
+		return github_com_mwitkow_go_proto_validators.FieldError("Session", fmt.Errorf("message must exist"))
+	}
+	if this.Session != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Session); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Session", err)
+		}
+	}
 	if nil == this.Method {
 		return github_com_mwitkow_go_proto_validators.FieldError("Method", fmt.Errorf("message must exist"))
 	}
@@ -166,14 +179,6 @@ func (this *UpStreamFrame) Validate() error {
 	return nil
 }
 func (this *DownStreamFrame) Validate() error {
-	if nil == this.SessionId {
-		return github_com_mwitkow_go_proto_validators.FieldError("SessionId", fmt.Errorf("message must exist"))
-	}
-	if this.SessionId != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.SessionId); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("SessionId", err)
-		}
-	}
 	if oneOfNester, ok := this.GetUnion().(*DownStreamFrame_UnaryCall); ok {
 		if oneOfNester.UnaryCall != nil {
 			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.UnaryCall); err != nil {
