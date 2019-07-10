@@ -224,6 +224,40 @@ paths:
                       $ref: "#/components/schemas/Object"
               example:
                 $ref: "#/components/examples/ListObjectsResponse"
+  "/actions/push_frame_to_flow":
+    post:
+      tags:
+      - Device Cloud
+      summary: Push Frame To Device Cloud
+      description: push data frame to device cloud
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                id:
+                  type: string
+                flow:
+                  $ref: "#/components/schemas/Flow"
+                config_ack:
+                  type: bool
+                push_ack:
+                  type: bool
+            example:
+              $ref: "#/components/examples/PushFrameToFlowRequest"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: string
+                  session:
+                    type: string
+              example:
+                  $ref: "#/components/examples/PushFrameToFlowResponse"
 
 security:
 - bearerAuth: []
@@ -304,6 +338,17 @@ components:
       value:
         objects:
         - $ref: "#/components/examples/Object"
+    PushFrameToFlowRequest:
+      value:
+        id: a39b15f6a2ea11e990a96c4008bb5d9a
+        flow:
+          name: temperature
+        config_ack: true
+        push_ack: true
+    PushFrameToFlowResponse:
+      value:
+        id: a39b15f6a2ea11e990a96c4008bb5d9a
+        session: e031306c61c04a9aad1ce7b38953977f
 
   securitySchemes:
     bearerAuth:
