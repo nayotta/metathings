@@ -125,7 +125,6 @@ func (p *MqttModuleProxy) handle_message(c mqtt.Client, m mqtt.Message) {
 		if err := proto.Unmarshal(m.Payload(), &res); err != nil {
 			p.get_logger().WithError(err).Warningf("failed to unmarshal UpStreamFrame")
 			return
-
 		}
 
 		p.mtx.Lock()
@@ -133,8 +132,6 @@ func (p *MqttModuleProxy) handle_message(c mqtt.Client, m mqtt.Message) {
 
 		if ch, ok := p.sess_chans[sess]; ok {
 			ch <- &res
-		} else {
-			p.get_logger().Warningf("receive message with unscribed session, drop it")
 		}
 	}
 }
@@ -149,6 +146,7 @@ func (p *MqttModuleProxy) subscribe_session(sess int64) (chan *pb.UpStreamFrame,
 
 	ch := make(chan *pb.UpStreamFrame)
 	p.sess_chans[sess] = ch
+	p.get_logger().WithField("session", sess).Debugf("subscribe session")
 
 	return ch, nil
 }
@@ -166,6 +164,7 @@ func (p *MqttModuleProxy) unsubscribe_session(sess int64) error {
 
 	close(ch)
 	delete(p.sess_chans, sess)
+	p.get_logger().WithField("session", sess).Debugf("unsubscribe session")
 
 	return nil
 }
@@ -326,33 +325,79 @@ func (p *MqttModuleProxy) StreamCall(ctx context.Context, method string, upstm M
 }
 
 func (p *MqttModuleProxy) stm_north2south(north ModuleProxyStream, sess int64, wait chan struct{}) {
-	// var val *any.Any
-	// var err error
+	var val *any.Any
+	var err error
 
-	// logger := p.logger.WithFields(log.Fields{
-	// 	"dir": "NS",
-	// })
+	logger := p.logger.WithFields(log.Fields{
+		"dir":     "NS",
+		"session": sess,
+	})
 
-	// defer close(wait)
-	// for epoch := uint64(0); ; epoch++ {
-	// 	logger := logger.WithFields(log.Fields{
-	// 		"epoch": epoch,
-	// 	})
+	defer close(wait)
+	for epoch := uint64(0); ; epoch++ {
+		logger := logger.WithFields(log.Fields{
+			"epoch": epoch,
+		})
 
-	// 	if val, err = north.Recv(); err != nil {
-	// 		logger.WithError(err).Debugf("failed to recv msg from north side stream")
-	// 		return
-	// 	}
-	// 	logger.Debugf("recv msg from north side stream")
+		if val, err = north.Recv(); err != nil {
+			logger.WithError(err).Debugf("failed to recv msg")
+			return
+		}
+		logger.Debugf("recv msg")
 
-	// 	req := &pb.DownStreamFrame{}
-	// }
+		dsf := &pb.DownStreamFrame{
+			Kind: pb.StreamFrameKind_STREAM_FRAME_KIND_USER,
+			Union: &pb.DownStreamFrame_StreamCall{
+				StreamCall: &pb.OpStreamCallValue{
+					Union: &pb.OpStreamCallValue_Value{
+						Value: val,
+					},
+				},
+			},
+		}
 
-	panic("unimplemented")
+		if err = p.publish_message(sess, dsf); err != nil {
+			logger.WithError(err).Debugf("failed to send msg")
+			return
+		}
+		logger.Debugf("send msg")
+	}
 }
 
-func (p *MqttModuleProxy) stm_south2north(north ModuleProxyStream, sess int64, downch chan *pb.UpStreamFrame, wait chan struct{}) {
-	panic("unimplemented")
+func (p *MqttModuleProxy) stm_south2north(north ModuleProxyStream, sess int64, south_recv_ch chan *pb.UpStreamFrame, wait chan struct{}) {
+	var usf *pb.UpStreamFrame
+	var err error
+	var ok bool
+
+	logger := p.get_logger().WithFields(log.Fields{
+		"dir":     "SN",
+		"session": sess,
+	})
+
+	defer close(wait)
+	for epoch := uint64(0); ; epoch++ {
+		logger := logger.WithFields(log.Fields{
+			"epoch": epoch,
+		})
+
+		if usf, ok = <-south_recv_ch; !ok {
+			logger.Debugf("failed to recv msg")
+			return
+		}
+		logger.Debugf("recv msg")
+
+		stream := usf.GetStreamCall()
+		if stream == nil {
+			logger.Debugf("unexpected up stream frame")
+			return
+		}
+
+		if err = north.Send(stream.GetValue()); err != nil {
+			logger.Debugf("failed to send msg")
+			return
+		}
+		logger.Debugf("send msg")
+	}
 }
 
 func (p *MqttModuleProxy) Close() error {
@@ -391,6 +436,7 @@ func (f *MqttModuleProxyFactory) NewModuleProxy(args ...interface{}) (ModuleProx
 	})(args...); err != nil {
 		return nil, err
 	}
+	p.logger = p.logger.WithField("id", string([]byte(id_helper.NewId())[:6]))
 
 	return p, nil
 }

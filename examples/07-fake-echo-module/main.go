@@ -70,7 +70,6 @@ func main() {
 }
 
 func issue_module_token(cli *http.Client) string {
-
 	ts := time.Now()
 	nonce := rand.Int63()
 	hmac := passwd_helper.MustParseHmac(cred_srt, cred_id, ts, nonce)
@@ -157,20 +156,39 @@ func start(http_cli *http.Client) {
 
 func new_handler(cli mqtt.Client, mdl_id string) mqtt.MessageHandler {
 	return func(c mqtt.Client, m mqtt.Message) {
+		sess := extra_session_from_topic(m.Topic(), mdl_id, "downstream")
 		var frm pb.DownStreamFrame
 		if err := proto.Unmarshal(m.Payload(), &frm); err != nil {
 			panic(err)
 		}
 
-		go handle_frame(c, mdl_id, &frm)
+		go handle_frame(c, mdl_id, sess, &frm)
 	}
 }
 
-func handle_frame(cli mqtt.Client, mdl_id string, dstm_frm *pb.DownStreamFrame) {
+func extra_session_from_topic(topic string, mdl_id string, dir string) (ret int64) {
+	if n, err := fmt.Sscanf(topic, "mt/modules/"+mdl_id+"/sessions/%d/"+dir, &ret); err != nil || n != 1 {
+		return -1
+	}
+	return
+}
+
+func handle_frame(cli mqtt.Client, mdl_id string, sess int64, dstm_frm *pb.DownStreamFrame) {
 	if dstm_frm.Kind != pb.StreamFrameKind_STREAM_FRAME_KIND_USER {
 		panic("unexpected stream frame type")
 	}
 
+	switch dstm_frm.Union.(type) {
+	case *pb.DownStreamFrame_UnaryCall:
+		handle_unary_call_frame(cli, mdl_id, sess, dstm_frm)
+	case *pb.DownStreamFrame_StreamCall:
+		handle_stream_call_frame(cli, mdl_id, sess, dstm_frm)
+	default:
+		panic("unexpected stream frame type")
+	}
+}
+
+func handle_unary_call_frame(cli mqtt.Client, mdl_id string, sess int64, dstm_frm *pb.DownStreamFrame) {
 	unary := dstm_frm.GetUnaryCall()
 	if unary == nil {
 		panic("unary data is null")
@@ -196,12 +214,12 @@ func handle_frame(cli mqtt.Client, mdl_id string, dstm_frm *pb.DownStreamFrame) 
 		panic(err)
 	}
 
-	sess := unary.GetSession().GetValue()
+	temp_sess := unary.GetSession().GetValue()
 	ustm_frm := pb.UpStreamFrame{
 		Kind: pb.StreamFrameKind_STREAM_FRAME_KIND_USER,
 		Union: &pb.UpStreamFrame_UnaryCall{
 			UnaryCall: &pb.UnaryCallValue{
-				Session: sess,
+				Session: temp_sess,
 				Method:  method,
 				Value:   res_any,
 			},
@@ -213,8 +231,99 @@ func handle_frame(cli mqtt.Client, mdl_id string, dstm_frm *pb.DownStreamFrame) 
 		panic(err)
 	}
 
+	topic := fmt.Sprintf("mt/modules/%v/sessions/%v/upstream", mdl_id, temp_sess)
+	if tkn := cli.Publish(topic, byte(0), false, buf); tkn.Wait() && tkn.Error() != nil {
+		panic(tkn.Error())
+	}
+}
+
+func handle_stream_call_frame(cli mqtt.Client, mdl_id string, sess int64, dstm_frm *pb.DownStreamFrame) {
+	switch sess {
+	case mdl_sess:
+		handle_stream_call_config_frame(cli, mdl_id, sess, dstm_frm)
+	default:
+		handle_stream_call_data_frame(cli, mdl_id, sess, dstm_frm)
+	}
+}
+
+func handle_stream_call_config_frame(cli mqtt.Client, mdl_id string, sess int64, dstm_frm *pb.DownStreamFrame) {
+	stream := dstm_frm.GetStreamCall()
+	if stream == nil {
+		panic("stream config is null")
+	}
+
+	cfg := stream.GetConfig()
+
+	method := cfg.GetMethod().GetValue()
+	if method != "StreamingEcho" {
+		panic("unsupported method: " + method)
+	}
+
+	ack := cfg.GetAck().GetValue()
+
+	ustm_frm := pb.UpStreamFrame{
+		Kind: pb.StreamFrameKind_STREAM_FRAME_KIND_USER,
+		Union: &pb.UpStreamFrame_StreamCall{
+			StreamCall: &pb.StreamCallValue{
+				Union: &pb.StreamCallValue_Ack{
+					Ack: &pb.StreamCallAck{Value: ack},
+				},
+			},
+		},
+	}
+
+	buf, err := proto.Marshal(&ustm_frm)
+	if err != nil {
+		panic(err)
+	}
+
+	topic := fmt.Sprintf("mt/modules/%v/sessions/%v/upstream", mdl_id, cfg.GetSession().GetValue())
+	if tkn := cli.Publish(topic, byte(0), false, buf); tkn.Wait() && tkn.Error() != nil {
+		panic(tkn.Error())
+	}
+}
+
+func handle_stream_call_data_frame(cli mqtt.Client, mdl_id string, sess int64, dstm_frm *pb.DownStreamFrame) {
+	stream := dstm_frm.GetStreamCall()
+	if stream == nil {
+		panic("stream data is null")
+	}
+
+	var req echo_pb.StreamingEchoRequest
+	err := ptypes.UnmarshalAny(stream.GetValue(), &req)
+	if err != nil {
+		panic(err)
+	}
+
+	txt := req.GetText().GetValue()
+	fmt.Println("recv msg: ", txt)
+
+	res := echo_pb.StreamingEchoResponse{Text: txt}
+	res_any, err := ptypes.MarshalAny(&res)
+	if err != nil {
+		panic(err)
+	}
+
+	ustm_frm := pb.UpStreamFrame{
+		Kind: pb.StreamFrameKind_STREAM_FRAME_KIND_USER,
+		Union: &pb.UpStreamFrame_StreamCall{
+			StreamCall: &pb.StreamCallValue{
+				Union: &pb.StreamCallValue_Value{
+					Value: res_any,
+				},
+			},
+		},
+	}
+
+	buf, err := proto.Marshal(&ustm_frm)
+	if err != nil {
+		panic(err)
+	}
+
 	topic := fmt.Sprintf("mt/modules/%v/sessions/%v/upstream", mdl_id, sess)
-	cli.Publish(topic, byte(0), false, buf)
+	if tkn := cli.Publish(topic, byte(0), false, buf); tkn.Wait() && tkn.Error() != nil {
+		panic(tkn.Error())
+	}
 }
 
 func show_module_id(cli *http.Client) string {

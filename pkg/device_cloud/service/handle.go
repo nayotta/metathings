@@ -3,10 +3,18 @@ package metathings_device_cloud_service
 import (
 	"context"
 	"fmt"
+	"math"
+	"sync"
+	"time"
 
-	pb "github.com/nayotta/metathings/pkg/proto/deviced"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc/status"
+
+	client_helper "github.com/nayotta/metathings/pkg/common/client"
+	context_helper "github.com/nayotta/metathings/pkg/common/context"
+	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
+	cpt "github.com/nayotta/metathings/pkg/component"
+	pb "github.com/nayotta/metathings/pkg/proto/deviced"
 )
 
 func (dc *DeviceConnection) handle(req *pb.ConnectRequest) error {
@@ -143,5 +151,117 @@ func (dc *DeviceConnection) handle_user_unary_request(req *pb.ConnectRequest) er
 }
 
 func (dc *DeviceConnection) handle_user_stream_request(req *pb.ConnectRequest) error {
-	panic("unimplemented")
+	var cli pb.DevicedServiceClient
+	var cfn client_helper.CloseFn
+	var stm pb.DevicedService_ConnectClient
+	var err error
+
+	req_val := req.GetStreamCall()
+	req_sess := req.GetSessionId().GetValue()
+	cfg := req_val.GetConfig()
+	name := cfg.GetName().GetValue()
+	component := cfg.GetComponent().GetValue()
+	method := cfg.GetMethod().GetValue()
+
+	logger := dc.logger.WithFields(log.Fields{
+		"#session":   req_sess,
+		"#component": component,
+		"#name":      name,
+		"#method":    method,
+	})
+
+	if cli, cfn, err = dc.cli_fty.NewDevicedServiceClient(); err != nil {
+		logger.WithError(err).Debugf("failed to new deviced service client")
+		return err
+	}
+	defer cfn()
+	logger.Debugf("new deviced service client")
+
+	ctx := context_helper.NewOutgoingContext(
+		context.Background(),
+		context_helper.WithTokenOp(dc.tknr.GetToken()),
+		context_helper.WithSessionOp(req_sess),
+		context_helper.WithDeviceOp(dc.opt.Device.Id),
+	)
+	if stm, err = cli.Connect(ctx); err != nil {
+		logger.WithError(err).Debugf("failed to connect to deviced service")
+		return err
+	}
+	logger.Debugf("create deviced stream")
+
+	acked := make(chan struct{})
+	acked_once := new(sync.Once)
+	go func() {
+		for cnt := 0; cnt < dc.opt.Config.MaxSendConfigResponseRetry; cnt++ {
+			select {
+			case _, ok := <-acked:
+				if !ok {
+					return
+				}
+			default:
+			}
+
+			cfg_res := &pb.ConnectResponse{
+				SessionId: req_sess,
+				Kind:      req.GetKind(),
+				Union: &pb.ConnectResponse_StreamCall{
+					StreamCall: &pb.StreamCallValue{
+						Union: &pb.StreamCallValue_Config{
+							Config: &pb.StreamCallConfig{
+								Name:      name,
+								Component: component,
+								Method:    method,
+							},
+						},
+					},
+				},
+			}
+
+			if err = stm.Send(cfg_res); err != nil {
+				logger.WithError(err).Debugf("failed to send config response")
+				return
+			}
+			logger.Debugf("send config response")
+			time.Sleep(time.Duration(math.Min((float64(cnt)*dc.opt.Config.SendConfigResponseIntervalA)+dc.opt.Config.SendConfigResponseIntervalB, dc.opt.Config.MaxSendConfigResponseInterval)) * time.Millisecond)
+		}
+		select {
+		case _, ok := <-acked:
+			if !ok {
+				return
+			}
+		default:
+			logger.Warningf("failed to recv config ack")
+		}
+	}()
+
+	mdl_prx, err := dc.get_module_proxy(name)
+	if err != nil {
+		logger.WithError(err).Debugf("failed to stream call")
+		return err
+	}
+
+	stm = grpc_helper.NewHijackStream(stm, func(stm_ *grpc_helper.HijackStream, req *pb.ConnectRequest) error {
+		switch req.GetStreamCall().Union.(type) {
+		case *pb.OpStreamCallValue_Value:
+			stm_.RecvChan() <- req
+		case *pb.OpStreamCallValue_Config:
+		case *pb.OpStreamCallValue_ConfigAck:
+			logger.Debugf("recv config ack")
+			acked_once.Do(func() { close(acked) })
+		case *pb.OpStreamCallValue_Exit:
+			logger.Debugf("recv exit")
+			return context.Canceled
+		}
+
+		return nil
+	})
+
+	err = mdl_prx.StreamCall(context.Background(), method, cpt.NewModuleProxyStream(stm, req_sess))
+	if err != nil {
+		logger.WithError(err).Debugf("failed to stream call")
+		return err
+	}
+	logger.Debugf("stream closed")
+
+	return nil
 }

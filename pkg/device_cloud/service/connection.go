@@ -143,6 +143,11 @@ type DeviceConnectionOption struct {
 		MaxReconnectInterval time.Duration
 
 		PingInterval time.Duration
+
+		SendConfigResponseIntervalA   float64
+		SendConfigResponseIntervalB   float64
+		MaxSendConfigResponseInterval float64
+		MaxSendConfigResponseRetry    int
 	}
 }
 
@@ -538,6 +543,10 @@ func NewDeviceConnection(args ...interface{}) (*DeviceConnection, error) {
 	opt.Config.MinReconnectInterval = 3 * time.Second
 	opt.Config.MaxReconnectInterval = 17 * time.Second
 	opt.Config.PingInterval = 27 * time.Second
+	opt.Config.SendConfigResponseIntervalA = float64(300)
+	opt.Config.SendConfigResponseIntervalB = float64(300)
+	opt.Config.MaxSendConfigResponseInterval = float64(3000)
+	opt.Config.MaxSendConfigResponseRetry = 16
 
 	dc := &DeviceConnection{
 		opt: opt,
