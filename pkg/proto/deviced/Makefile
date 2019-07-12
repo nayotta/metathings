@@ -10,5 +10,6 @@ all:
 	--descriptor_set_out=service.protoset \
 	--include_imports \
 	--go_out=plugins=grpc:. \
+	--js_out=. \
 	--govalidators_out=. \
 	$(PROTO_FILES)
