@@ -3,8 +3,6 @@ package metathings_device_service
 import (
 	"context"
 	"errors"
-	"net/url"
-	"strings"
 	"time"
 
 	"github.com/golang/protobuf/ptypes/any"
@@ -111,27 +109,22 @@ func (self *ModuleImpl) StreamCall(ctx context.Context, cfg_req *deviced_pb.Conn
 	return nil
 }
 
-func (self *ModuleImpl) new_module_proxy_by_endpoint(ep string) (component.ModuleProxy, error) {
-	u, err := url.Parse(ep)
+func (self *ModuleImpl) new_module_proxy_by_endpoint(endpoint string) (component.ModuleProxy, error) {
+	ep, err := component.ParseEndpoint(endpoint)
 	if err != nil {
 		return nil, err
 	}
 
-	scheme := strings.ToLower(u.Scheme)
-	if !strings.HasPrefix(scheme, "mtp") {
+	if !ep.IsMetathingsProtocol() {
 		return nil, ErrInvalidEndpoint
 	}
 
-	proxy_driver := "grpc"
-	if strings.HasPrefix(scheme, "mtp+") {
-		proxy_driver = strings.TrimPrefix(scheme, "mtp+")
-	}
-
+	proxy_driver := ep.GetTransportProtocol("grpc")
 	switch proxy_driver {
 	case "grpc":
 		return component.NewModuleProxy(proxy_driver,
 			"logger", self.logger,
-			"client_factory", component.NewGrpcModuleServiceClientFactory(u.Host))
+			"client_factory", component.NewGrpcModuleServiceClientFactory(ep.Host))
 	}
 
 	return nil, ErrInvalidModuleProxyDriver

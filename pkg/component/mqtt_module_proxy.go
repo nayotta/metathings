@@ -112,7 +112,7 @@ func (p *MqttModuleProxy) new_client() (mqtt.Client, error) {
 func (p *MqttModuleProxy) extra_session_from_topic(topic string) int64 {
 	var sess int64
 
-	if n, err := fmt.Sscanf(topic, "mt/modules/"+p.opt.Module.Id+"/sessions/%d/upstream", &sess); err != nil || n != 1 {
+	if n, err := fmt.Sscanf(topic, "mt/modules/"+p.opt.Module.Id+"/proxy/sessions/%d/upstream", &sess); err != nil || n != 1 {
 		return -1
 	}
 
@@ -209,7 +209,7 @@ func (p *MqttModuleProxy) mqtt_topic(mdl_id string, sess interface{}, dir string
 		s = sess.(string)
 	}
 
-	return fmt.Sprintf("mt/modules/%v/sessions/%v/%v", mdl_id, s, dir)
+	return fmt.Sprintf("mt/modules/%v/proxy/sessions/%v/%v", mdl_id, s, dir)
 }
 
 func (p *MqttModuleProxy) UnaryCall(ctx context.Context, method string, value *any.Any) (*any.Any, error) {

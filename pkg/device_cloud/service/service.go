@@ -43,6 +43,14 @@ func (s *MetathingsDeviceCloudService) context() context.Context {
 	return context_helper.WithToken(context.TODO(), s.tknr.GetToken())
 }
 
+func (s *MetathingsDeviceCloudService) context_with_device(dev_id string) context.Context {
+	return context_helper.NewOutgoingContext(
+		context.TODO(),
+		context_helper.WithTokenOp(s.tknr.GetToken()),
+		context_helper.WithDeviceOp(dev_id),
+	)
+}
+
 func (s *MetathingsDeviceCloudService) get_session_id() string {
 	return s.opt.Session.Id
 }

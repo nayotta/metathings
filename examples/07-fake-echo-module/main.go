@@ -133,7 +133,7 @@ func start(http_cli *http.Client) {
 	hostname, _ := os.Hostname()
 	mqtt_username := cred_id
 	mqtt_password := mosquitto_service.ParseMosquittoPluginPassword(cred_id, cred_srt)
-	topic := fmt.Sprintf("mt/modules/%v/sessions/+/downstream", mdl_id)
+	topic := fmt.Sprintf("mt/modules/%v/proxy/sessions/+/downstream", mdl_id)
 	fmt.Println(topic)
 	opts := mqtt.NewClientOptions().
 		AddBroker(mqtt_addr).
@@ -167,7 +167,7 @@ func new_handler(cli mqtt.Client, mdl_id string) mqtt.MessageHandler {
 }
 
 func extra_session_from_topic(topic string, mdl_id string, dir string) (ret int64) {
-	if n, err := fmt.Sscanf(topic, "mt/modules/"+mdl_id+"/sessions/%d/"+dir, &ret); err != nil || n != 1 {
+	if n, err := fmt.Sscanf(topic, "mt/modules/"+mdl_id+"/proxy/sessions/%d/"+dir, &ret); err != nil || n != 1 {
 		return -1
 	}
 	return
@@ -231,7 +231,7 @@ func handle_unary_call_frame(cli mqtt.Client, mdl_id string, sess int64, dstm_fr
 		panic(err)
 	}
 
-	topic := fmt.Sprintf("mt/modules/%v/sessions/%v/upstream", mdl_id, temp_sess)
+	topic := fmt.Sprintf("mt/modules/%v/proxy/sessions/%v/upstream", mdl_id, temp_sess)
 	if tkn := cli.Publish(topic, byte(0), false, buf); tkn.Wait() && tkn.Error() != nil {
 		panic(tkn.Error())
 	}
@@ -277,7 +277,7 @@ func handle_stream_call_config_frame(cli mqtt.Client, mdl_id string, sess int64,
 		panic(err)
 	}
 
-	topic := fmt.Sprintf("mt/modules/%v/sessions/%v/upstream", mdl_id, cfg.GetSession().GetValue())
+	topic := fmt.Sprintf("mt/modules/%v/proxy/sessions/%v/upstream", mdl_id, cfg.GetSession().GetValue())
 	if tkn := cli.Publish(topic, byte(0), false, buf); tkn.Wait() && tkn.Error() != nil {
 		panic(tkn.Error())
 	}
@@ -320,7 +320,7 @@ func handle_stream_call_data_frame(cli mqtt.Client, mdl_id string, sess int64, d
 		panic(err)
 	}
 
-	topic := fmt.Sprintf("mt/modules/%v/sessions/%v/upstream", mdl_id, sess)
+	topic := fmt.Sprintf("mt/modules/%v/proxy/sessions/%v/upstream", mdl_id, sess)
 	if tkn := cli.Publish(topic, byte(0), false, buf); tkn.Wait() && tkn.Error() != nil {
 		panic(tkn.Error())
 	}

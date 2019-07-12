@@ -3,8 +3,6 @@ package metathings_device_cloud_service
 import (
 	"context"
 	"math"
-	"net/url"
-	"strings"
 	"sync"
 	"time"
 
@@ -500,23 +498,17 @@ func (dc *DeviceConnection) get_module_proxy(name string) (component.ModuleProxy
 		return nil, err
 	}
 
-	ep := mdl.GetEndpoint()
-	prx_drv := "mqtt"
-	u, err := url.Parse(ep)
+	ep, err := component.ParseEndpoint(mdl.GetEndpoint())
 	if err != nil {
 		dc.logger.WithError(err).Debugf("bad module endpoint")
 		return nil, ErrBadModuleEndpoint
 	}
-	scheme := strings.ToLower(u.Scheme)
-	if !strings.HasPrefix(scheme, "mtp") {
+
+	if !ep.IsMetathingsProtocol() {
 		return nil, ErrBadModuleEndpoint
 	}
 
-	if strings.HasPrefix(scheme, "mtp+") {
-		prx_drv = strings.TrimPrefix(scheme, "mtp+")
-	}
-
-	switch prx_drv {
+	switch ep.GetTransportProtocol("mqtt") {
 	case "mqtt":
 		if mdl_prx, err = dc.build_mqtt_module_proxy(mdl); err != nil {
 			dc.logger.WithError(err).Debugf("failed to build mqtt module proxy")
