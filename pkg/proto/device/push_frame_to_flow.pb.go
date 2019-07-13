@@ -21,7 +21,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
 type PushFrameToFlowRequest struct {
 	Id *wrappers.StringValue `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -103,78 +103,12 @@ func (m *PushFrameToFlowRequest) GetFrame() *deviced.OpFrame {
 	return nil
 }
 
-// XXX_OneofFuncs is for the internal use of the proto package.
-func (*PushFrameToFlowRequest) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) error, func(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error), func(msg proto.Message) (n int), []interface{}) {
-	return _PushFrameToFlowRequest_OneofMarshaler, _PushFrameToFlowRequest_OneofUnmarshaler, _PushFrameToFlowRequest_OneofSizer, []interface{}{
+// XXX_OneofWrappers is for the internal use of the proto package.
+func (*PushFrameToFlowRequest) XXX_OneofWrappers() []interface{} {
+	return []interface{}{
 		(*PushFrameToFlowRequest_Config_)(nil),
 		(*PushFrameToFlowRequest_Frame)(nil),
 	}
-}
-
-func _PushFrameToFlowRequest_OneofMarshaler(msg proto.Message, b *proto.Buffer) error {
-	m := msg.(*PushFrameToFlowRequest)
-	// request
-	switch x := m.Request.(type) {
-	case *PushFrameToFlowRequest_Config_:
-		b.EncodeVarint(2<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Config); err != nil {
-			return err
-		}
-	case *PushFrameToFlowRequest_Frame:
-		b.EncodeVarint(3<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Frame); err != nil {
-			return err
-		}
-	case nil:
-	default:
-		return fmt.Errorf("PushFrameToFlowRequest.Request has unexpected type %T", x)
-	}
-	return nil
-}
-
-func _PushFrameToFlowRequest_OneofUnmarshaler(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error) {
-	m := msg.(*PushFrameToFlowRequest)
-	switch tag {
-	case 2: // request.config
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(PushFrameToFlowRequest_Config)
-		err := b.DecodeMessage(msg)
-		m.Request = &PushFrameToFlowRequest_Config_{msg}
-		return true, err
-	case 3: // request.frame
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(deviced.OpFrame)
-		err := b.DecodeMessage(msg)
-		m.Request = &PushFrameToFlowRequest_Frame{msg}
-		return true, err
-	default:
-		return false, nil
-	}
-}
-
-func _PushFrameToFlowRequest_OneofSizer(msg proto.Message) (n int) {
-	m := msg.(*PushFrameToFlowRequest)
-	// request
-	switch x := m.Request.(type) {
-	case *PushFrameToFlowRequest_Config_:
-		s := proto.Size(x.Config)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *PushFrameToFlowRequest_Frame:
-		s := proto.Size(x.Frame)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case nil:
-	default:
-		panic(fmt.Sprintf("proto: unexpected type %T in oneof", x))
-	}
-	return n
 }
 
 type PushFrameToFlowRequest_Config struct {
@@ -298,59 +232,11 @@ func (m *PushFrameToFlowResponse) GetAck() *PushFrameToFlowResponse_Ack {
 	return nil
 }
 
-// XXX_OneofFuncs is for the internal use of the proto package.
-func (*PushFrameToFlowResponse) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) error, func(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error), func(msg proto.Message) (n int), []interface{}) {
-	return _PushFrameToFlowResponse_OneofMarshaler, _PushFrameToFlowResponse_OneofUnmarshaler, _PushFrameToFlowResponse_OneofSizer, []interface{}{
+// XXX_OneofWrappers is for the internal use of the proto package.
+func (*PushFrameToFlowResponse) XXX_OneofWrappers() []interface{} {
+	return []interface{}{
 		(*PushFrameToFlowResponse_Ack_)(nil),
 	}
-}
-
-func _PushFrameToFlowResponse_OneofMarshaler(msg proto.Message, b *proto.Buffer) error {
-	m := msg.(*PushFrameToFlowResponse)
-	// response
-	switch x := m.Response.(type) {
-	case *PushFrameToFlowResponse_Ack_:
-		b.EncodeVarint(2<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Ack); err != nil {
-			return err
-		}
-	case nil:
-	default:
-		return fmt.Errorf("PushFrameToFlowResponse.Response has unexpected type %T", x)
-	}
-	return nil
-}
-
-func _PushFrameToFlowResponse_OneofUnmarshaler(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error) {
-	m := msg.(*PushFrameToFlowResponse)
-	switch tag {
-	case 2: // response.ack
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(PushFrameToFlowResponse_Ack)
-		err := b.DecodeMessage(msg)
-		m.Response = &PushFrameToFlowResponse_Ack_{msg}
-		return true, err
-	default:
-		return false, nil
-	}
-}
-
-func _PushFrameToFlowResponse_OneofSizer(msg proto.Message) (n int) {
-	m := msg.(*PushFrameToFlowResponse)
-	// response
-	switch x := m.Response.(type) {
-	case *PushFrameToFlowResponse_Ack_:
-		s := proto.Size(x.Ack)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case nil:
-	default:
-		panic(fmt.Sprintf("proto: unexpected type %T in oneof", x))
-	}
-	return n
 }
 
 type PushFrameToFlowResponse_Ack struct {

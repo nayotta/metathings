@@ -25,7 +25,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
 type Device struct {
 	Id                   string               `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -1082,116 +1082,14 @@ func (m *OpStreamCallValue) GetExit() *OpStreamCallExit {
 	return nil
 }
 
-// XXX_OneofFuncs is for the internal use of the proto package.
-func (*OpStreamCallValue) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) error, func(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error), func(msg proto.Message) (n int), []interface{}) {
-	return _OpStreamCallValue_OneofMarshaler, _OpStreamCallValue_OneofUnmarshaler, _OpStreamCallValue_OneofSizer, []interface{}{
+// XXX_OneofWrappers is for the internal use of the proto package.
+func (*OpStreamCallValue) XXX_OneofWrappers() []interface{} {
+	return []interface{}{
 		(*OpStreamCallValue_Value)(nil),
 		(*OpStreamCallValue_Config)(nil),
 		(*OpStreamCallValue_ConfigAck)(nil),
 		(*OpStreamCallValue_Exit)(nil),
 	}
-}
-
-func _OpStreamCallValue_OneofMarshaler(msg proto.Message, b *proto.Buffer) error {
-	m := msg.(*OpStreamCallValue)
-	// union
-	switch x := m.Union.(type) {
-	case *OpStreamCallValue_Value:
-		b.EncodeVarint(1<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Value); err != nil {
-			return err
-		}
-	case *OpStreamCallValue_Config:
-		b.EncodeVarint(2<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Config); err != nil {
-			return err
-		}
-	case *OpStreamCallValue_ConfigAck:
-		b.EncodeVarint(3<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.ConfigAck); err != nil {
-			return err
-		}
-	case *OpStreamCallValue_Exit:
-		b.EncodeVarint(4<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Exit); err != nil {
-			return err
-		}
-	case nil:
-	default:
-		return fmt.Errorf("OpStreamCallValue.Union has unexpected type %T", x)
-	}
-	return nil
-}
-
-func _OpStreamCallValue_OneofUnmarshaler(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error) {
-	m := msg.(*OpStreamCallValue)
-	switch tag {
-	case 1: // union.value
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(any.Any)
-		err := b.DecodeMessage(msg)
-		m.Union = &OpStreamCallValue_Value{msg}
-		return true, err
-	case 2: // union.config
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(OpStreamCallConfig)
-		err := b.DecodeMessage(msg)
-		m.Union = &OpStreamCallValue_Config{msg}
-		return true, err
-	case 3: // union.config_ack
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(OpStreamCallConfigAck)
-		err := b.DecodeMessage(msg)
-		m.Union = &OpStreamCallValue_ConfigAck{msg}
-		return true, err
-	case 4: // union.exit
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(OpStreamCallExit)
-		err := b.DecodeMessage(msg)
-		m.Union = &OpStreamCallValue_Exit{msg}
-		return true, err
-	default:
-		return false, nil
-	}
-}
-
-func _OpStreamCallValue_OneofSizer(msg proto.Message) (n int) {
-	m := msg.(*OpStreamCallValue)
-	// union
-	switch x := m.Union.(type) {
-	case *OpStreamCallValue_Value:
-		s := proto.Size(x.Value)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *OpStreamCallValue_Config:
-		s := proto.Size(x.Config)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *OpStreamCallValue_ConfigAck:
-		s := proto.Size(x.ConfigAck)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *OpStreamCallValue_Exit:
-		s := proto.Size(x.Exit)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case nil:
-	default:
-		panic(fmt.Sprintf("proto: unexpected type %T in oneof", x))
-	}
-	return n
 }
 
 type StreamCallValue struct {
@@ -1294,116 +1192,14 @@ func (m *StreamCallValue) GetExit() *StreamCallExit {
 	return nil
 }
 
-// XXX_OneofFuncs is for the internal use of the proto package.
-func (*StreamCallValue) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) error, func(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error), func(msg proto.Message) (n int), []interface{}) {
-	return _StreamCallValue_OneofMarshaler, _StreamCallValue_OneofUnmarshaler, _StreamCallValue_OneofSizer, []interface{}{
+// XXX_OneofWrappers is for the internal use of the proto package.
+func (*StreamCallValue) XXX_OneofWrappers() []interface{} {
+	return []interface{}{
 		(*StreamCallValue_Value)(nil),
 		(*StreamCallValue_Config)(nil),
 		(*StreamCallValue_ConfigAck)(nil),
 		(*StreamCallValue_Exit)(nil),
 	}
-}
-
-func _StreamCallValue_OneofMarshaler(msg proto.Message, b *proto.Buffer) error {
-	m := msg.(*StreamCallValue)
-	// union
-	switch x := m.Union.(type) {
-	case *StreamCallValue_Value:
-		b.EncodeVarint(1<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Value); err != nil {
-			return err
-		}
-	case *StreamCallValue_Config:
-		b.EncodeVarint(2<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Config); err != nil {
-			return err
-		}
-	case *StreamCallValue_ConfigAck:
-		b.EncodeVarint(3<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.ConfigAck); err != nil {
-			return err
-		}
-	case *StreamCallValue_Exit:
-		b.EncodeVarint(4<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Exit); err != nil {
-			return err
-		}
-	case nil:
-	default:
-		return fmt.Errorf("StreamCallValue.Union has unexpected type %T", x)
-	}
-	return nil
-}
-
-func _StreamCallValue_OneofUnmarshaler(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error) {
-	m := msg.(*StreamCallValue)
-	switch tag {
-	case 1: // union.value
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(any.Any)
-		err := b.DecodeMessage(msg)
-		m.Union = &StreamCallValue_Value{msg}
-		return true, err
-	case 2: // union.config
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(StreamCallConfig)
-		err := b.DecodeMessage(msg)
-		m.Union = &StreamCallValue_Config{msg}
-		return true, err
-	case 3: // union.config_ack
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(StreamCallConfigAck)
-		err := b.DecodeMessage(msg)
-		m.Union = &StreamCallValue_ConfigAck{msg}
-		return true, err
-	case 4: // union.exit
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(StreamCallExit)
-		err := b.DecodeMessage(msg)
-		m.Union = &StreamCallValue_Exit{msg}
-		return true, err
-	default:
-		return false, nil
-	}
-}
-
-func _StreamCallValue_OneofSizer(msg proto.Message) (n int) {
-	m := msg.(*StreamCallValue)
-	// union
-	switch x := m.Union.(type) {
-	case *StreamCallValue_Value:
-		s := proto.Size(x.Value)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *StreamCallValue_Config:
-		s := proto.Size(x.Config)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *StreamCallValue_ConfigAck:
-		s := proto.Size(x.ConfigAck)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *StreamCallValue_Exit:
-		s := proto.Size(x.Exit)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case nil:
-	default:
-		panic(fmt.Sprintf("proto: unexpected type %T in oneof", x))
-	}
-	return n
 }
 
 type OpStreamCallConfig struct {

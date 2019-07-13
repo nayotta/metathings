@@ -3,17 +3,19 @@
 
 package deviced
 
-import github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import _ "github.com/golang/protobuf/ptypes/any"
-import _ "github.com/golang/protobuf/ptypes/struct"
-import _ "github.com/golang/protobuf/ptypes/timestamp"
-import _ "github.com/golang/protobuf/ptypes/wrappers"
-import _ "github.com/nayotta/metathings/pkg/proto/constant/kind"
-import _ "github.com/nayotta/metathings/pkg/proto/constant/state"
-import _ "github.com/nayotta/metathings/pkg/proto/identityd2"
+import (
+	fmt "fmt"
+	math "math"
+	proto "github.com/golang/protobuf/proto"
+	_ "github.com/golang/protobuf/ptypes/any"
+	_ "github.com/golang/protobuf/ptypes/timestamp"
+	_ "github.com/golang/protobuf/ptypes/struct"
+	_ "github.com/nayotta/metathings/pkg/proto/identityd2"
+	_ "github.com/nayotta/metathings/pkg/proto/constant/state"
+	_ "github.com/nayotta/metathings/pkg/proto/constant/kind"
+	_ "github.com/golang/protobuf/ptypes/wrappers"
+	github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal

@@ -3,13 +3,15 @@
 
 package component
 
-import fmt "fmt"
-import go_proto_validators "github.com/mwitkow/go-proto-validators"
-import proto "github.com/golang/protobuf/proto"
-import math "math"
-import _ "github.com/golang/protobuf/ptypes/wrappers"
-import _ "github.com/golang/protobuf/ptypes/any"
-import _ "github.com/mwitkow/go-proto-validators"
+import (
+	fmt "fmt"
+	math "math"
+	proto "github.com/golang/protobuf/proto"
+	_ "github.com/golang/protobuf/ptypes/any"
+	_ "github.com/mwitkow/go-proto-validators"
+	_ "github.com/golang/protobuf/ptypes/wrappers"
+	github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -18,27 +20,27 @@ var _ = math.Inf
 
 func (this *UnaryCallRequest) Validate() error {
 	if nil == this.Method {
-		return go_proto_validators.FieldError("Method", fmt.Errorf("message must exist"))
+		return github_com_mwitkow_go_proto_validators.FieldError("Method", fmt.Errorf("message must exist"))
 	}
 	if this.Method != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Method); err != nil {
-			return go_proto_validators.FieldError("Method", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Method); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Method", err)
 		}
 	}
 	if nil == this.Value {
-		return go_proto_validators.FieldError("Value", fmt.Errorf("message must exist"))
+		return github_com_mwitkow_go_proto_validators.FieldError("Value", fmt.Errorf("message must exist"))
 	}
 	if this.Value != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Value); err != nil {
-			return go_proto_validators.FieldError("Value", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Value); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Value", err)
 		}
 	}
 	return nil
 }
 func (this *UnaryCallResponse) Validate() error {
 	if this.Value != nil {
-		if err := go_proto_validators.CallValidatorIfExists(this.Value); err != nil {
-			return go_proto_validators.FieldError("Value", err)
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Value); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Value", err)
 		}
 	}
 	return nil
