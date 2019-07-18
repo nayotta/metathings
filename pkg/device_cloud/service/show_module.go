@@ -1,10 +1,9 @@
 package metathings_device_cloud_service
 
 import (
-	"fmt"
 	"net/http"
 
-	"github.com/golang/protobuf/jsonpb"
+	device_pb "github.com/nayotta/metathings/pkg/proto/device"
 )
 
 func (s *MetathingsDeviceCloudService) ShowModule(w http.ResponseWriter, r *http.Request) {
@@ -27,15 +26,15 @@ func (s *MetathingsDeviceCloudService) ShowModule(w http.ResponseWriter, r *http
 
 	for _, mdl := range dev.Modules {
 		if mdl.Id == mdl_id {
-			codec := jsonpb.Marshaler{}
-			buf, err := codec.MarshalToString(mdl)
+			res := &device_pb.ShowModuleResponse{
+				Module: mdl,
+			}
+			buf, err := ParseHttpResponseBody(res)
 			if err != nil {
 				s.get_logger().WithError(err).Errorf("failed to marshal response")
 				w.WriteHeader(http.StatusInternalServerError)
 				return
 			}
-
-			buf = fmt.Sprintf(`{"module": %v}`, buf)
 
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)

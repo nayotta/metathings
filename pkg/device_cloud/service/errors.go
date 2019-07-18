@@ -6,4 +6,6 @@ var (
 	ErrModuleNotFound               = errors.New("module not found")
 	ErrBadModuleEndpoint            = errors.New("bad module endpoint")
 	ErrUnsupportedModuleProxyDriver = errors.New("unsupported module proxy driver")
+	ErrUnsupportedFlowChannelDriver = errors.New("unsupported flow channel driver")
+	ErrUnmatchedRequestId           = errors.New("unmatched request id")
 )

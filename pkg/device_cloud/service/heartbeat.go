@@ -3,12 +3,8 @@ package metathings_device_cloud_service
 import (
 	"net/http"
 
-	pb "github.com/nayotta/metathings/pkg/proto/deviced"
+	device_pb "github.com/nayotta/metathings/pkg/proto/device"
 )
-
-type HeartbeatRequest struct {
-	Module pb.OpModule
-}
 
 func (s *MetathingsDeviceCloudService) Heartbeat(w http.ResponseWriter, r *http.Request) {
 	tkn_txt := GetTokenFromHeader(r)
@@ -21,8 +17,8 @@ func (s *MetathingsDeviceCloudService) Heartbeat(w http.ResponseWriter, r *http.
 	}
 	mdl_id := tkn.Entity.Id
 
-	// TODO(Peer): match name with module name.
-	req := new(HeartbeatRequest)
+	// TODO(Peer): match token module name with request body module name
+	req := new(device_pb.HeartbeatRequest)
 	err = ParseHttpRequestBody(r, req)
 	if err != nil {
 		s.get_logger().WithError(err).Errorf("failed to parse request body")

@@ -146,6 +146,7 @@ func runDeviceCloud() error {
 				sr.HandleFunc("/actions/heartbeat", srv.Heartbeat).Methods("POST")
 				sr.HandleFunc("/actions/issue_module_token", srv.IssueModuleToken).Methods("POST")
 				sr.HandleFunc("/actions/show_module", srv.ShowModule).Methods("POST")
+				sr.HandleFunc("/actions/push_frame_to_flow", srv.PushFrameToFlow).Methods("POST")
 				s.Handler = r
 			},
 		),

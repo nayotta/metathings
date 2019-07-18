@@ -232,6 +232,17 @@ func ToByte(v *byte) func(string, interface{}) error {
 	}
 }
 
+func ToBool(v *bool) func(string, interface{}) error {
+	return func(key string, val interface{}) error {
+		var ok bool
+		*v, ok = val.(bool)
+		if !ok {
+			return InvalidArgument(key)
+		}
+		return nil
+	}
+}
+
 func ToInt(v *int) func(string, interface{}) error {
 	return func(key string, val interface{}) error {
 		var ok bool
