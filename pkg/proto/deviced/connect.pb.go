@@ -20,7 +20,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
 type ConnectMessageKind int32
 
@@ -152,97 +152,13 @@ func (m *ConnectResponse) GetErr() *ErrorValue {
 	return nil
 }
 
-// XXX_OneofFuncs is for the internal use of the proto package.
-func (*ConnectResponse) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) error, func(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error), func(msg proto.Message) (n int), []interface{}) {
-	return _ConnectResponse_OneofMarshaler, _ConnectResponse_OneofUnmarshaler, _ConnectResponse_OneofSizer, []interface{}{
+// XXX_OneofWrappers is for the internal use of the proto package.
+func (*ConnectResponse) XXX_OneofWrappers() []interface{} {
+	return []interface{}{
 		(*ConnectResponse_UnaryCall)(nil),
 		(*ConnectResponse_StreamCall)(nil),
 		(*ConnectResponse_Err)(nil),
 	}
-}
-
-func _ConnectResponse_OneofMarshaler(msg proto.Message, b *proto.Buffer) error {
-	m := msg.(*ConnectResponse)
-	// union
-	switch x := m.Union.(type) {
-	case *ConnectResponse_UnaryCall:
-		b.EncodeVarint(3<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.UnaryCall); err != nil {
-			return err
-		}
-	case *ConnectResponse_StreamCall:
-		b.EncodeVarint(4<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.StreamCall); err != nil {
-			return err
-		}
-	case *ConnectResponse_Err:
-		b.EncodeVarint(9<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Err); err != nil {
-			return err
-		}
-	case nil:
-	default:
-		return fmt.Errorf("ConnectResponse.Union has unexpected type %T", x)
-	}
-	return nil
-}
-
-func _ConnectResponse_OneofUnmarshaler(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error) {
-	m := msg.(*ConnectResponse)
-	switch tag {
-	case 3: // union.unary_call
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(UnaryCallValue)
-		err := b.DecodeMessage(msg)
-		m.Union = &ConnectResponse_UnaryCall{msg}
-		return true, err
-	case 4: // union.stream_call
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(StreamCallValue)
-		err := b.DecodeMessage(msg)
-		m.Union = &ConnectResponse_StreamCall{msg}
-		return true, err
-	case 9: // union.err
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(ErrorValue)
-		err := b.DecodeMessage(msg)
-		m.Union = &ConnectResponse_Err{msg}
-		return true, err
-	default:
-		return false, nil
-	}
-}
-
-func _ConnectResponse_OneofSizer(msg proto.Message) (n int) {
-	m := msg.(*ConnectResponse)
-	// union
-	switch x := m.Union.(type) {
-	case *ConnectResponse_UnaryCall:
-		s := proto.Size(x.UnaryCall)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *ConnectResponse_StreamCall:
-		s := proto.Size(x.StreamCall)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *ConnectResponse_Err:
-		s := proto.Size(x.Err)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case nil:
-	default:
-		panic(fmt.Sprintf("proto: unexpected type %T in oneof", x))
-	}
-	return n
 }
 
 type ConnectRequest struct {
@@ -333,78 +249,12 @@ func (m *ConnectRequest) GetStreamCall() *OpStreamCallValue {
 	return nil
 }
 
-// XXX_OneofFuncs is for the internal use of the proto package.
-func (*ConnectRequest) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) error, func(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error), func(msg proto.Message) (n int), []interface{}) {
-	return _ConnectRequest_OneofMarshaler, _ConnectRequest_OneofUnmarshaler, _ConnectRequest_OneofSizer, []interface{}{
+// XXX_OneofWrappers is for the internal use of the proto package.
+func (*ConnectRequest) XXX_OneofWrappers() []interface{} {
+	return []interface{}{
 		(*ConnectRequest_UnaryCall)(nil),
 		(*ConnectRequest_StreamCall)(nil),
 	}
-}
-
-func _ConnectRequest_OneofMarshaler(msg proto.Message, b *proto.Buffer) error {
-	m := msg.(*ConnectRequest)
-	// union
-	switch x := m.Union.(type) {
-	case *ConnectRequest_UnaryCall:
-		b.EncodeVarint(3<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.UnaryCall); err != nil {
-			return err
-		}
-	case *ConnectRequest_StreamCall:
-		b.EncodeVarint(4<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.StreamCall); err != nil {
-			return err
-		}
-	case nil:
-	default:
-		return fmt.Errorf("ConnectRequest.Union has unexpected type %T", x)
-	}
-	return nil
-}
-
-func _ConnectRequest_OneofUnmarshaler(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error) {
-	m := msg.(*ConnectRequest)
-	switch tag {
-	case 3: // union.unary_call
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(OpUnaryCallValue)
-		err := b.DecodeMessage(msg)
-		m.Union = &ConnectRequest_UnaryCall{msg}
-		return true, err
-	case 4: // union.stream_call
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(OpStreamCallValue)
-		err := b.DecodeMessage(msg)
-		m.Union = &ConnectRequest_StreamCall{msg}
-		return true, err
-	default:
-		return false, nil
-	}
-}
-
-func _ConnectRequest_OneofSizer(msg proto.Message) (n int) {
-	m := msg.(*ConnectRequest)
-	// union
-	switch x := m.Union.(type) {
-	case *ConnectRequest_UnaryCall:
-		s := proto.Size(x.UnaryCall)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *ConnectRequest_StreamCall:
-		s := proto.Size(x.StreamCall)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case nil:
-	default:
-		panic(fmt.Sprintf("proto: unexpected type %T in oneof", x))
-	}
-	return n
 }
 
 func init() {

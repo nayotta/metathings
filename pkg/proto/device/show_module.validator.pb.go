@@ -3,11 +3,13 @@
 
 package ai_metathings_service_device
 
-import github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-import _ "github.com/nayotta/metathings/pkg/proto/deviced"
+import (
+	fmt "fmt"
+	math "math"
+	proto "github.com/golang/protobuf/proto"
+	_ "github.com/nayotta/metathings/pkg/proto/deviced"
+	github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal

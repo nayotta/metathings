@@ -3,13 +3,15 @@
 
 package ai_metathings_service_device
 
-import fmt "fmt"
-import github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
-import proto "github.com/golang/protobuf/proto"
-import math "math"
-import _ "github.com/golang/protobuf/ptypes/wrappers"
-import _ "github.com/mwitkow/go-proto-validators"
-import _ "github.com/nayotta/metathings/pkg/proto/deviced"
+import (
+	fmt "fmt"
+	math "math"
+	proto "github.com/golang/protobuf/proto"
+	_ "github.com/golang/protobuf/ptypes/wrappers"
+	_ "github.com/mwitkow/go-proto-validators"
+	_ "github.com/nayotta/metathings/pkg/proto/deviced"
+	github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
@@ -29,6 +31,13 @@ func (this *PushFrameToFlowRequest) Validate() error {
 		if oneOfNester.Config != nil {
 			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.Config); err != nil {
 				return github_com_mwitkow_go_proto_validators.FieldError("Config", err)
+			}
+		}
+	}
+	if oneOfNester, ok := this.GetRequest().(*PushFrameToFlowRequest_Ping_); ok {
+		if oneOfNester.Ping != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.Ping); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("Ping", err)
 			}
 		}
 	}
@@ -62,7 +71,24 @@ func (this *PushFrameToFlowRequest_Config) Validate() error {
 	}
 	return nil
 }
+func (this *PushFrameToFlowRequest_Ping) Validate() error {
+	return nil
+}
 func (this *PushFrameToFlowResponse) Validate() error {
+	if oneOfNester, ok := this.GetResponse().(*PushFrameToFlowResponse_Config_); ok {
+		if oneOfNester.Config != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.Config); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("Config", err)
+			}
+		}
+	}
+	if oneOfNester, ok := this.GetResponse().(*PushFrameToFlowResponse_Pong_); ok {
+		if oneOfNester.Pong != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.Pong); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("Pong", err)
+			}
+		}
+	}
 	if oneOfNester, ok := this.GetResponse().(*PushFrameToFlowResponse_Ack_); ok {
 		if oneOfNester.Ack != nil {
 			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.Ack); err != nil {
@@ -72,6 +98,12 @@ func (this *PushFrameToFlowResponse) Validate() error {
 	}
 	return nil
 }
+func (this *PushFrameToFlowResponse_Config) Validate() error {
+	return nil
+}
 func (this *PushFrameToFlowResponse_Ack) Validate() error {
+	return nil
+}
+func (this *PushFrameToFlowResponse_Pong) Validate() error {
 	return nil
 }

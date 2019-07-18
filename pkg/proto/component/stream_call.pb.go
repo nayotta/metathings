@@ -21,7 +21,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
 type StreamCallRequest struct {
 	// Types that are valid to be assigned to Request:
@@ -95,78 +95,12 @@ func (m *StreamCallRequest) GetData() *StreamCallDataRequest {
 	return nil
 }
 
-// XXX_OneofFuncs is for the internal use of the proto package.
-func (*StreamCallRequest) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) error, func(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error), func(msg proto.Message) (n int), []interface{}) {
-	return _StreamCallRequest_OneofMarshaler, _StreamCallRequest_OneofUnmarshaler, _StreamCallRequest_OneofSizer, []interface{}{
+// XXX_OneofWrappers is for the internal use of the proto package.
+func (*StreamCallRequest) XXX_OneofWrappers() []interface{} {
+	return []interface{}{
 		(*StreamCallRequest_Config)(nil),
 		(*StreamCallRequest_Data)(nil),
 	}
-}
-
-func _StreamCallRequest_OneofMarshaler(msg proto.Message, b *proto.Buffer) error {
-	m := msg.(*StreamCallRequest)
-	// request
-	switch x := m.Request.(type) {
-	case *StreamCallRequest_Config:
-		b.EncodeVarint(1<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Config); err != nil {
-			return err
-		}
-	case *StreamCallRequest_Data:
-		b.EncodeVarint(21<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Data); err != nil {
-			return err
-		}
-	case nil:
-	default:
-		return fmt.Errorf("StreamCallRequest.Request has unexpected type %T", x)
-	}
-	return nil
-}
-
-func _StreamCallRequest_OneofUnmarshaler(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error) {
-	m := msg.(*StreamCallRequest)
-	switch tag {
-	case 1: // request.config
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(StreamCallConfigRequest)
-		err := b.DecodeMessage(msg)
-		m.Request = &StreamCallRequest_Config{msg}
-		return true, err
-	case 21: // request.data
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(StreamCallDataRequest)
-		err := b.DecodeMessage(msg)
-		m.Request = &StreamCallRequest_Data{msg}
-		return true, err
-	default:
-		return false, nil
-	}
-}
-
-func _StreamCallRequest_OneofSizer(msg proto.Message) (n int) {
-	m := msg.(*StreamCallRequest)
-	// request
-	switch x := m.Request.(type) {
-	case *StreamCallRequest_Config:
-		s := proto.Size(x.Config)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *StreamCallRequest_Data:
-		s := proto.Size(x.Data)
-		n += 2 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case nil:
-	default:
-		panic(fmt.Sprintf("proto: unexpected type %T in oneof", x))
-	}
-	return n
 }
 
 type StreamCallConfigRequest struct {
@@ -319,78 +253,12 @@ func (m *StreamCallResponse) GetData() *StreamCallDataResponse {
 	return nil
 }
 
-// XXX_OneofFuncs is for the internal use of the proto package.
-func (*StreamCallResponse) XXX_OneofFuncs() (func(msg proto.Message, b *proto.Buffer) error, func(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error), func(msg proto.Message) (n int), []interface{}) {
-	return _StreamCallResponse_OneofMarshaler, _StreamCallResponse_OneofUnmarshaler, _StreamCallResponse_OneofSizer, []interface{}{
+// XXX_OneofWrappers is for the internal use of the proto package.
+func (*StreamCallResponse) XXX_OneofWrappers() []interface{} {
+	return []interface{}{
 		(*StreamCallResponse_Config)(nil),
 		(*StreamCallResponse_Data)(nil),
 	}
-}
-
-func _StreamCallResponse_OneofMarshaler(msg proto.Message, b *proto.Buffer) error {
-	m := msg.(*StreamCallResponse)
-	// response
-	switch x := m.Response.(type) {
-	case *StreamCallResponse_Config:
-		b.EncodeVarint(1<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Config); err != nil {
-			return err
-		}
-	case *StreamCallResponse_Data:
-		b.EncodeVarint(21<<3 | proto.WireBytes)
-		if err := b.EncodeMessage(x.Data); err != nil {
-			return err
-		}
-	case nil:
-	default:
-		return fmt.Errorf("StreamCallResponse.Response has unexpected type %T", x)
-	}
-	return nil
-}
-
-func _StreamCallResponse_OneofUnmarshaler(msg proto.Message, tag, wire int, b *proto.Buffer) (bool, error) {
-	m := msg.(*StreamCallResponse)
-	switch tag {
-	case 1: // response.config
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(StreamCallConfigResponse)
-		err := b.DecodeMessage(msg)
-		m.Response = &StreamCallResponse_Config{msg}
-		return true, err
-	case 21: // response.data
-		if wire != proto.WireBytes {
-			return true, proto.ErrInternalBadWireType
-		}
-		msg := new(StreamCallDataResponse)
-		err := b.DecodeMessage(msg)
-		m.Response = &StreamCallResponse_Data{msg}
-		return true, err
-	default:
-		return false, nil
-	}
-}
-
-func _StreamCallResponse_OneofSizer(msg proto.Message) (n int) {
-	m := msg.(*StreamCallResponse)
-	// response
-	switch x := m.Response.(type) {
-	case *StreamCallResponse_Config:
-		s := proto.Size(x.Config)
-		n += 1 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case *StreamCallResponse_Data:
-		s := proto.Size(x.Data)
-		n += 2 // tag and wire
-		n += proto.SizeVarint(uint64(s))
-		n += s
-	case nil:
-	default:
-		panic(fmt.Sprintf("proto: unexpected type %T in oneof", x))
-	}
-	return n
 }
 
 type StreamCallConfigResponse struct {

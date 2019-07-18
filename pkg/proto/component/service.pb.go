@@ -8,6 +8,8 @@ import (
 	fmt "fmt"
 	proto "github.com/golang/protobuf/proto"
 	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
 	math "math"
 )
 
@@ -20,7 +22,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
 func init() { proto.RegisterFile("service.proto", fileDescriptor_a0b84a42fa06f626) }
 
@@ -108,6 +110,17 @@ func (x *moduleServiceStreamCallClient) Recv() (*StreamCallResponse, error) {
 type ModuleServiceServer interface {
 	UnaryCall(context.Context, *UnaryCallRequest) (*UnaryCallResponse, error)
 	StreamCall(ModuleService_StreamCallServer) error
+}
+
+// UnimplementedModuleServiceServer can be embedded to have forward compatible implementations.
+type UnimplementedModuleServiceServer struct {
+}
+
+func (*UnimplementedModuleServiceServer) UnaryCall(ctx context.Context, req *UnaryCallRequest) (*UnaryCallResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UnaryCall not implemented")
+}
+func (*UnimplementedModuleServiceServer) StreamCall(srv ModuleService_StreamCallServer) error {
+	return status.Errorf(codes.Unimplemented, "method StreamCall not implemented")
 }
 
 func RegisterModuleServiceServer(s *grpc.Server, srv ModuleServiceServer) {
