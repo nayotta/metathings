@@ -19,6 +19,7 @@ import:
   version: ~1.9.1
   subpackages:
   - dialects/sqlite
+  - dialects/postgres
 - package: github.com/mwitkow/go-proto-validators
   subpackages:
   - protoc-gen-govalidators

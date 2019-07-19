@@ -50,7 +50,7 @@ func main() {
 		mdl_sess = rand.Int63()
 	}
 
-	cli := &http.Client{}
+	cli := http.DefaultClient
 	if token == "" {
 		token = issue_module_token(cli)
 	}
@@ -112,7 +112,6 @@ func issue_module_token(cli *http.Client) string {
 	}
 
 	return tmp_tkn_res.Token.Text
-
 }
 
 func heartbeat(cli *http.Client) {

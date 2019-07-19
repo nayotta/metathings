@@ -1,6 +1,16 @@
 version: "3"
 services:
 
+  db:
+    image: postgres:alpine
+    environment:
+      POSTGRES_PASSWORD: p0stgr3s
+    networks:
+    - metathings-backend
+    expose:
+    - "5432"
+    restart: on-failure
+
   metathings:
     build:
       context: .
