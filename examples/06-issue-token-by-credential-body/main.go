@@ -50,6 +50,9 @@ func main() {
 	req := map[string]interface{}{
 		"credential": map[string]interface{}{
 			"id": id,
+			"domain": map[string]interface{}{
+				"id": domain,
+			},
 		},
 		"timestamp": ts.Format(time.RFC3339Nano),
 		"nonce":     nonce,
