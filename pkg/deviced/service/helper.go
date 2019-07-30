@@ -3,6 +3,9 @@ package metathings_deviced_service
 import (
 	"errors"
 
+	"github.com/golang/protobuf/ptypes"
+	tspb "github.com/golang/protobuf/ptypes/timestamp"
+
 	pb_helper "github.com/nayotta/metathings/pkg/common/protobuf"
 	deviced_helper "github.com/nayotta/metathings/pkg/deviced/helper"
 	simple_storage "github.com/nayotta/metathings/pkg/deviced/simple_storage"
@@ -19,14 +22,20 @@ func parse_object(x *pb.OpObject) *simple_storage.Object {
 }
 
 func copy_device(x *storage.Device) *pb.Device {
+	var hbt *tspb.Timestamp
+	if x.HeartbeatAt != nil {
+		hbt, _ = ptypes.TimestampProto(*x.HeartbeatAt)
+	}
+
 	y := &pb.Device{
-		Id:      *x.Id,
-		Kind:    deviced_helper.DEVICE_KIND_ENUMER.ToValue(*x.Kind),
-		State:   deviced_helper.DEVICE_STATE_ENUMER.ToValue(*x.State),
-		Name:    *x.Name,
-		Alias:   *x.Alias,
-		Modules: copy_modules(x.Modules),
-		Flows:   copy_flows(x.Flows),
+		Id:          *x.Id,
+		Kind:        deviced_helper.DEVICE_KIND_ENUMER.ToValue(*x.Kind),
+		State:       deviced_helper.DEVICE_STATE_ENUMER.ToValue(*x.State),
+		HeartbeatAt: hbt,
+		Name:        *x.Name,
+		Alias:       *x.Alias,
+		Modules:     copy_modules(x.Modules),
+		Flows:       copy_flows(x.Flows),
 	}
 
 	return y

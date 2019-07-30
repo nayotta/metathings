@@ -24,6 +24,7 @@ import (
 	"github.com/spf13/pflag"
 
 	id_helper "github.com/nayotta/metathings/pkg/common/id"
+	passwd_helper "github.com/nayotta/metathings/pkg/common/passwd"
 	mosquitto_service "github.com/nayotta/metathings/pkg/plugin/mosquitto/service"
 	device_pb "github.com/nayotta/metathings/pkg/proto/device"
 	deviced_pb "github.com/nayotta/metathings/pkg/proto/deviced"
@@ -50,7 +51,7 @@ func main() {
 	pflag.IntVar(&times, "times", 3, "Repeat to send data times")
 	pflag.Parse()
 
-	token = os.Getenv("MT_TOKEN")
+	token = issue_module_token(http.DefaultClient)
 
 	dec := jsonpb.Unmarshaler{}
 
@@ -272,4 +273,49 @@ func new_message_handler() func(mqtt.Client, mqtt.Message) {
 			fmt.Println("recv pong res")
 		}
 	}
+}
+
+func issue_module_token(cli *http.Client) string {
+	ts := time.Now()
+	nonce := rand.Int63()
+	hmac := passwd_helper.MustParseHmac(cred_srt, cred_id, ts, nonce)
+
+	imt_req := map[string]interface{}{
+		"credential": map[string]interface{}{
+			"id": cred_id,
+		},
+		"timestamp": ts.Format(time.RFC3339Nano),
+		"nonce":     nonce,
+		"hmac":      hmac,
+	}
+
+	buf, err := json.Marshal(imt_req)
+	if err != nil {
+		panic(err)
+	}
+
+	imt_url := fmt.Sprintf("%v/actions/issue_module_token", device_cloud_addr)
+	req, err := http.NewRequest("POST", imt_url, bytes.NewReader(buf))
+	if err != nil {
+		panic(err)
+	}
+	req.Header.Set("Content-Type", "application/json")
+
+	res, err := cli.Do(req)
+	if err != nil {
+		panic(err)
+	}
+
+	buf, err = ioutil.ReadAll(res.Body)
+	if err != nil {
+		panic(err)
+	}
+
+	tmp_tkn_res := struct{ Token struct{ Text string } }{}
+	err = json.Unmarshal(buf, &tmp_tkn_res)
+	if err != nil {
+		panic(err)
+	}
+
+	return tmp_tkn_res.Token.Text
 }

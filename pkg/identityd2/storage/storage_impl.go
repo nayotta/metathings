@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/postgres"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	log "github.com/sirupsen/logrus"
 )
@@ -1692,7 +1693,7 @@ func (self *StorageImpl) IsInitialized() (bool, error) {
 	var err error
 	var cnt int
 
-	if err = self.db.Model(&SystemConfig{}).Where("key", SYSTEM_CONFIG_INITIALIZE).Count(&cnt).Error; err != nil {
+	if err = self.db.Model(&SystemConfig{}).Where("key = ?", SYSTEM_CONFIG_INITIALIZE).Count(&cnt).Error; err != nil {
 		return false, err
 	}
 

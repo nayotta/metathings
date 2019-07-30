@@ -1,6 +1,7 @@
 package metathings_deviced_service
 
 import (
+	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
@@ -9,7 +10,6 @@ import (
 	connection "github.com/nayotta/metathings/pkg/deviced/connection"
 	storage "github.com/nayotta/metathings/pkg/deviced/storage"
 	pb "github.com/nayotta/metathings/pkg/proto/deviced"
-	log "github.com/sirupsen/logrus"
 )
 
 func (self *MetathingsDevicedService) Connect(stream pb.DevicedService_ConnectServer) error {
