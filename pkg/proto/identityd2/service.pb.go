@@ -9,6 +9,8 @@ import (
 	proto "github.com/golang/protobuf/proto"
 	empty "github.com/golang/protobuf/ptypes/empty"
 	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
 	math "math"
 )
 
@@ -21,7 +23,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
 func init() { proto.RegisterFile("service.proto", fileDescriptor_a0b84a42fa06f626) }
 
@@ -2399,6 +2401,176 @@ type IdentitydServiceServer interface {
 	// @err PermissionDenied
 	// @err Internal
 	AuthorizeToken(context.Context, *AuthorizeTokenRequest) (*empty.Empty, error)
+}
+
+// UnimplementedIdentitydServiceServer can be embedded to have forward compatible implementations.
+type UnimplementedIdentitydServiceServer struct {
+}
+
+func (*UnimplementedIdentitydServiceServer) CreateDomain(ctx context.Context, req *CreateDomainRequest) (*CreateDomainResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateDomain not implemented")
+}
+func (*UnimplementedIdentitydServiceServer) DeleteDomain(ctx context.Context, req *DeleteDomainRequest) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteDomain not implemented")
+}
+func (*UnimplementedIdentitydServiceServer) PatchDomain(ctx context.Context, req *PatchDomainRequest) (*PatchDomainResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PatchDomain not implemented")
+}
+func (*UnimplementedIdentitydServiceServer) GetDomain(ctx context.Context, req *GetDomainRequest) (*GetDomainResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetDomain not implemented")
+}
+func (*UnimplementedIdentitydServiceServer) ListDomains(ctx context.Context, req *ListDomainsRequest) (*ListDomainsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListDomains not implemented")
+}
+func (*UnimplementedIdentitydServiceServer) CreateAction(ctx context.Context, req *CreateActionRequest) (*CreateActionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateAction not implemented")
+}
+func (*UnimplementedIdentitydServiceServer) DeleteAction(ctx context.Context, req *DeleteActionRequest) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteAction not implemented")
+}
+func (*UnimplementedIdentitydServiceServer) PatchAction(ctx context.Context, req *PatchActionRequest) (*PatchActionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PatchAction not implemented")
+}
+func (*UnimplementedIdentitydServiceServer) GetAction(ctx context.Context, req *GetActionRequest) (*GetActionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAction not implemented")
+}
+func (*UnimplementedIdentitydServiceServer) ListActions(ctx context.Context, req *ListActionsRequest) (*ListActionsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListActions not implemented")
+}
+func (*UnimplementedIdentitydServiceServer) CreateRole(ctx context.Context, req *CreateRoleRequest) (*CreateRoleResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateRole not implemented")
+}
+func (*UnimplementedIdentitydServiceServer) DeleteRole(ctx context.Context, req *DeleteRoleRequest) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteRole not implemented")
+}
+func (*UnimplementedIdentitydServiceServer) PatchRole(ctx context.Context, req *PatchRoleRequest) (*PatchRoleResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PatchRole not implemented")
+}
+func (*UnimplementedIdentitydServiceServer) GetRole(ctx context.Context, req *GetRoleRequest) (*GetRoleResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetRole not implemented")
+}
+func (*UnimplementedIdentitydServiceServer) ListRoles(ctx context.Context, req *ListRolesRequest) (*ListRolesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListRoles not implemented")
+}
+func (*UnimplementedIdentitydServiceServer) ListRolesForEntity(ctx context.Context, req *ListRolesForEntityRequest) (*ListRolesForEntityResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListRolesForEntity not implemented")
+}
+func (*UnimplementedIdentitydServiceServer) AddActionToRole(ctx context.Context, req *AddActionToRoleRequest) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddActionToRole not implemented")
+}
+func (*UnimplementedIdentitydServiceServer) RemoveActionFromRole(ctx context.Context, req *RemoveActionFromRoleRequest) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RemoveActionFromRole not implemented")
+}
+func (*UnimplementedIdentitydServiceServer) CreateEntity(ctx context.Context, req *CreateEntityRequest) (*CreateEntityResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateEntity not implemented")
+}
+func (*UnimplementedIdentitydServiceServer) DeleteEntity(ctx context.Context, req *DeleteEntityRequest) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteEntity not implemented")
+}
+func (*UnimplementedIdentitydServiceServer) PatchEntity(ctx context.Context, req *PatchEntityRequest) (*PatchEntityResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PatchEntity not implemented")
+}
+func (*UnimplementedIdentitydServiceServer) GetEntity(ctx context.Context, req *GetEntityRequest) (*GetEntityResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetEntity not implemented")
+}
+func (*UnimplementedIdentitydServiceServer) ListEntities(ctx context.Context, req *ListEntitiesRequest) (*ListEntitiesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListEntities not implemented")
+}
+func (*UnimplementedIdentitydServiceServer) ShowEntity(ctx context.Context, req *empty.Empty) (*ShowEntityResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ShowEntity not implemented")
+}
+func (*UnimplementedIdentitydServiceServer) AddRoleToEntity(ctx context.Context, req *AddRoleToEntityRequest) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddRoleToEntity not implemented")
+}
+func (*UnimplementedIdentitydServiceServer) RemoveRoleFromEntity(ctx context.Context, req *RemoveRoleFromEntityRequest) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RemoveRoleFromEntity not implemented")
+}
+func (*UnimplementedIdentitydServiceServer) AddEntityToDomain(ctx context.Context, req *AddEntityToDomainRequest) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddEntityToDomain not implemented")
+}
+func (*UnimplementedIdentitydServiceServer) RemoveEntityFromDomain(ctx context.Context, req *RemoveEntityFromDomainRequest) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RemoveEntityFromDomain not implemented")
+}
+func (*UnimplementedIdentitydServiceServer) CreateGroup(ctx context.Context, req *CreateGroupRequest) (*CreateGroupResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateGroup not implemented")
+}
+func (*UnimplementedIdentitydServiceServer) DeleteGroup(ctx context.Context, req *DeleteGroupRequest) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteGroup not implemented")
+}
+func (*UnimplementedIdentitydServiceServer) PatchGroup(ctx context.Context, req *PatchGroupRequest) (*PatchGroupResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PatchGroup not implemented")
+}
+func (*UnimplementedIdentitydServiceServer) GetGroup(ctx context.Context, req *GetGroupRequest) (*GetGroupResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetGroup not implemented")
+}
+func (*UnimplementedIdentitydServiceServer) ListGroups(ctx context.Context, req *ListGroupsRequest) (*ListGroupsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListGroups not implemented")
+}
+func (*UnimplementedIdentitydServiceServer) ListGroupsForSubject(ctx context.Context, req *ListGroupsForSubjectRequest) (*ListGroupsForSubjectResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListGroupsForSubject not implemented")
+}
+func (*UnimplementedIdentitydServiceServer) ListGroupsForObject(ctx context.Context, req *ListGroupsForObjectRequest) (*ListGroupsForObjectResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListGroupsForObject not implemented")
+}
+func (*UnimplementedIdentitydServiceServer) ShowGroups(ctx context.Context, req *empty.Empty) (*ShowGroupsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ShowGroups not implemented")
+}
+func (*UnimplementedIdentitydServiceServer) AddRoleToGroup(ctx context.Context, req *AddRoleToGroupRequest) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddRoleToGroup not implemented")
+}
+func (*UnimplementedIdentitydServiceServer) RemoveRoleFromGroup(ctx context.Context, req *RemoveRoleFromGroupRequest) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RemoveRoleFromGroup not implemented")
+}
+func (*UnimplementedIdentitydServiceServer) AddSubjectToGroup(ctx context.Context, req *AddSubjectToGroupRequest) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddSubjectToGroup not implemented")
+}
+func (*UnimplementedIdentitydServiceServer) RemoveSubjectFromGroup(ctx context.Context, req *RemoveSubjectFromGroupRequest) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RemoveSubjectFromGroup not implemented")
+}
+func (*UnimplementedIdentitydServiceServer) AddObjectToGroup(ctx context.Context, req *AddObjectToGroupRequest) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddObjectToGroup not implemented")
+}
+func (*UnimplementedIdentitydServiceServer) RemoveObjectFromGroup(ctx context.Context, req *RemoveObjectFromGroupRequest) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RemoveObjectFromGroup not implemented")
+}
+func (*UnimplementedIdentitydServiceServer) CreateCredential(ctx context.Context, req *CreateCredentialRequest) (*CreateCredentialResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateCredential not implemented")
+}
+func (*UnimplementedIdentitydServiceServer) DeleteCredential(ctx context.Context, req *DeleteCredentialRequest) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteCredential not implemented")
+}
+func (*UnimplementedIdentitydServiceServer) PatchCredential(ctx context.Context, req *PatchCredentialRequest) (*PatchCredentialResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PatchCredential not implemented")
+}
+func (*UnimplementedIdentitydServiceServer) GetCredential(ctx context.Context, req *GetCredentialRequest) (*GetCredentialResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetCredential not implemented")
+}
+func (*UnimplementedIdentitydServiceServer) ListCredentials(ctx context.Context, req *ListCredentialsRequest) (*ListCredentialsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListCredentials not implemented")
+}
+func (*UnimplementedIdentitydServiceServer) ListCredentialsForEntity(ctx context.Context, req *ListCredentialsForEntityRequest) (*ListCredentialsForEntityResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListCredentialsForEntity not implemented")
+}
+func (*UnimplementedIdentitydServiceServer) IssueTokenByCredential(ctx context.Context, req *IssueTokenByCredentialRequest) (*IssueTokenByCredentialResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method IssueTokenByCredential not implemented")
+}
+func (*UnimplementedIdentitydServiceServer) IssueTokenByPassword(ctx context.Context, req *IssueTokenByPasswordRequest) (*IssueTokenByPasswordResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method IssueTokenByPassword not implemented")
+}
+func (*UnimplementedIdentitydServiceServer) IssueTokenByToken(ctx context.Context, req *IssueTokenByTokenRequest) (*IssueTokenByTokenResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method IssueTokenByToken not implemented")
+}
+func (*UnimplementedIdentitydServiceServer) RevokeToken(ctx context.Context, req *RevokeTokenRequest) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RevokeToken not implemented")
+}
+func (*UnimplementedIdentitydServiceServer) ValidateToken(ctx context.Context, req *ValidateTokenRequest) (*ValidateTokenResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ValidateToken not implemented")
+}
+func (*UnimplementedIdentitydServiceServer) CheckToken(ctx context.Context, req *CheckTokenRequest) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CheckToken not implemented")
+}
+func (*UnimplementedIdentitydServiceServer) AuthorizeToken(ctx context.Context, req *AuthorizeTokenRequest) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AuthorizeToken not implemented")
 }
 
 func RegisterIdentitydServiceServer(s *grpc.Server, srv IdentitydServiceServer) {

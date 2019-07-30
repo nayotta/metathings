@@ -8,6 +8,8 @@ import (
 	fmt "fmt"
 	proto "github.com/golang/protobuf/proto"
 	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
 	math "math"
 )
 
@@ -20,7 +22,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
 type NewEnforcerRequest struct {
 	ModelText            string   `protobuf:"bytes,1,opt,name=modelText,proto3" json:"modelText,omitempty"`
@@ -1351,6 +1353,134 @@ type PolicydServiceServer interface {
 	AddPresetPolicy(context.Context, *PolicyRequest) (*BoolReply, error)
 	RemovePresetPolicy(context.Context, *PolicyRequest) (*BoolReply, error)
 	Initialize(context.Context, *EmptyRequest) (*EmptyReply, error)
+}
+
+// UnimplementedPolicydServiceServer can be embedded to have forward compatible implementations.
+type UnimplementedPolicydServiceServer struct {
+}
+
+func (*UnimplementedPolicydServiceServer) NewEnforcer(ctx context.Context, req *NewEnforcerRequest) (*NewEnforcerReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method NewEnforcer not implemented")
+}
+func (*UnimplementedPolicydServiceServer) NewAdapter(ctx context.Context, req *NewAdapterRequest) (*NewAdapterReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method NewAdapter not implemented")
+}
+func (*UnimplementedPolicydServiceServer) Enforce(ctx context.Context, req *EnforceRequest) (*BoolReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Enforce not implemented")
+}
+func (*UnimplementedPolicydServiceServer) EnforceBucket(ctx context.Context, req *EnforceBucketRequest) (*BoolReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method EnforceBucket not implemented")
+}
+func (*UnimplementedPolicydServiceServer) LoadPolicy(ctx context.Context, req *EmptyRequest) (*EmptyReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method LoadPolicy not implemented")
+}
+func (*UnimplementedPolicydServiceServer) SavePolicy(ctx context.Context, req *EmptyRequest) (*EmptyReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SavePolicy not implemented")
+}
+func (*UnimplementedPolicydServiceServer) AddPolicy(ctx context.Context, req *PolicyRequest) (*BoolReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddPolicy not implemented")
+}
+func (*UnimplementedPolicydServiceServer) AddNamedPolicy(ctx context.Context, req *PolicyRequest) (*BoolReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddNamedPolicy not implemented")
+}
+func (*UnimplementedPolicydServiceServer) RemovePolicy(ctx context.Context, req *PolicyRequest) (*BoolReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RemovePolicy not implemented")
+}
+func (*UnimplementedPolicydServiceServer) RemoveNamedPolicy(ctx context.Context, req *PolicyRequest) (*BoolReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RemoveNamedPolicy not implemented")
+}
+func (*UnimplementedPolicydServiceServer) RemoveFilteredPolicy(ctx context.Context, req *FilteredPolicyRequest) (*BoolReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RemoveFilteredPolicy not implemented")
+}
+func (*UnimplementedPolicydServiceServer) RemoveFilteredNamedPolicy(ctx context.Context, req *FilteredPolicyRequest) (*BoolReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RemoveFilteredNamedPolicy not implemented")
+}
+func (*UnimplementedPolicydServiceServer) GetPolicy(ctx context.Context, req *EmptyRequest) (*Array2DReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetPolicy not implemented")
+}
+func (*UnimplementedPolicydServiceServer) GetNamedPolicy(ctx context.Context, req *PolicyRequest) (*Array2DReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetNamedPolicy not implemented")
+}
+func (*UnimplementedPolicydServiceServer) GetFilteredPolicy(ctx context.Context, req *FilteredPolicyRequest) (*Array2DReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetFilteredPolicy not implemented")
+}
+func (*UnimplementedPolicydServiceServer) GetFilteredNamedPolicy(ctx context.Context, req *FilteredPolicyRequest) (*Array2DReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetFilteredNamedPolicy not implemented")
+}
+func (*UnimplementedPolicydServiceServer) AddGroupingPolicy(ctx context.Context, req *PolicyRequest) (*BoolReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddGroupingPolicy not implemented")
+}
+func (*UnimplementedPolicydServiceServer) AddNamedGroupingPolicy(ctx context.Context, req *PolicyRequest) (*BoolReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddNamedGroupingPolicy not implemented")
+}
+func (*UnimplementedPolicydServiceServer) RemoveGroupingPolicy(ctx context.Context, req *PolicyRequest) (*BoolReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RemoveGroupingPolicy not implemented")
+}
+func (*UnimplementedPolicydServiceServer) RemoveNamedGroupingPolicy(ctx context.Context, req *PolicyRequest) (*BoolReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RemoveNamedGroupingPolicy not implemented")
+}
+func (*UnimplementedPolicydServiceServer) RemoveFilteredGroupingPolicy(ctx context.Context, req *FilteredPolicyRequest) (*BoolReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RemoveFilteredGroupingPolicy not implemented")
+}
+func (*UnimplementedPolicydServiceServer) RemoveFilteredNamedGroupingPolicy(ctx context.Context, req *FilteredPolicyRequest) (*BoolReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RemoveFilteredNamedGroupingPolicy not implemented")
+}
+func (*UnimplementedPolicydServiceServer) GetGroupingPolicy(ctx context.Context, req *EmptyRequest) (*Array2DReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetGroupingPolicy not implemented")
+}
+func (*UnimplementedPolicydServiceServer) GetNamedGroupingPolicy(ctx context.Context, req *PolicyRequest) (*Array2DReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetNamedGroupingPolicy not implemented")
+}
+func (*UnimplementedPolicydServiceServer) GetFilteredGroupingPolicy(ctx context.Context, req *FilteredPolicyRequest) (*Array2DReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetFilteredGroupingPolicy not implemented")
+}
+func (*UnimplementedPolicydServiceServer) GetFilteredNamedGroupingPolicy(ctx context.Context, req *FilteredPolicyRequest) (*Array2DReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetFilteredNamedGroupingPolicy not implemented")
+}
+func (*UnimplementedPolicydServiceServer) GetAllSubjects(ctx context.Context, req *EmptyRequest) (*ArrayReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllSubjects not implemented")
+}
+func (*UnimplementedPolicydServiceServer) GetAllNamedSubjects(ctx context.Context, req *SimpleGetRequest) (*ArrayReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllNamedSubjects not implemented")
+}
+func (*UnimplementedPolicydServiceServer) GetAllObjects(ctx context.Context, req *EmptyRequest) (*ArrayReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllObjects not implemented")
+}
+func (*UnimplementedPolicydServiceServer) GetAllNamedObjects(ctx context.Context, req *SimpleGetRequest) (*ArrayReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllNamedObjects not implemented")
+}
+func (*UnimplementedPolicydServiceServer) GetAllActions(ctx context.Context, req *EmptyRequest) (*ArrayReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllActions not implemented")
+}
+func (*UnimplementedPolicydServiceServer) GetAllNamedActions(ctx context.Context, req *SimpleGetRequest) (*ArrayReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllNamedActions not implemented")
+}
+func (*UnimplementedPolicydServiceServer) GetAllRoles(ctx context.Context, req *EmptyRequest) (*ArrayReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllRoles not implemented")
+}
+func (*UnimplementedPolicydServiceServer) GetAllNamedRoles(ctx context.Context, req *SimpleGetRequest) (*ArrayReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllNamedRoles not implemented")
+}
+func (*UnimplementedPolicydServiceServer) HasPolicy(ctx context.Context, req *PolicyRequest) (*BoolReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method HasPolicy not implemented")
+}
+func (*UnimplementedPolicydServiceServer) HasNamedPolicy(ctx context.Context, req *PolicyRequest) (*BoolReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method HasNamedPolicy not implemented")
+}
+func (*UnimplementedPolicydServiceServer) HasGroupingPolicy(ctx context.Context, req *PolicyRequest) (*BoolReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method HasGroupingPolicy not implemented")
+}
+func (*UnimplementedPolicydServiceServer) HasNamedGroupingPolicy(ctx context.Context, req *PolicyRequest) (*BoolReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method HasNamedGroupingPolicy not implemented")
+}
+func (*UnimplementedPolicydServiceServer) AddPresetPolicy(ctx context.Context, req *PolicyRequest) (*BoolReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddPresetPolicy not implemented")
+}
+func (*UnimplementedPolicydServiceServer) RemovePresetPolicy(ctx context.Context, req *PolicyRequest) (*BoolReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RemovePresetPolicy not implemented")
+}
+func (*UnimplementedPolicydServiceServer) Initialize(ctx context.Context, req *EmptyRequest) (*EmptyReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Initialize not implemented")
 }
 
 func RegisterPolicydServiceServer(s *grpc.Server, srv PolicydServiceServer) {

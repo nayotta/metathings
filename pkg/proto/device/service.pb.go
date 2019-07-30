@@ -9,6 +9,8 @@ import (
 	proto "github.com/golang/protobuf/proto"
 	empty "github.com/golang/protobuf/ptypes/empty"
 	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
 	math "math"
 )
 
@@ -21,7 +23,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
 func init() { proto.RegisterFile("service.proto", fileDescriptor_a0b84a42fa06f626) }
 
@@ -225,6 +227,44 @@ type DeviceServiceServer interface {
 	GetObjectContent(context.Context, *GetObjectContentRequest) (*GetObjectContentResponse, error)
 	GetObjectStreamingContent(context.Context, *GetObjectStreamingContentRequest) (*GetObjectStreamingContentResponse, error)
 	ListObjects(context.Context, *ListObjectsRequest) (*ListObjectsResponse, error)
+}
+
+// UnimplementedDeviceServiceServer can be embedded to have forward compatible implementations.
+type UnimplementedDeviceServiceServer struct {
+}
+
+func (*UnimplementedDeviceServiceServer) IssueModuleToken(ctx context.Context, req *IssueModuleTokenRequest) (*IssueModuleTokenResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method IssueModuleToken not implemented")
+}
+func (*UnimplementedDeviceServiceServer) ShowModule(ctx context.Context, req *empty.Empty) (*ShowModuleResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ShowModule not implemented")
+}
+func (*UnimplementedDeviceServiceServer) Heartbeat(ctx context.Context, req *HeartbeatRequest) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Heartbeat not implemented")
+}
+func (*UnimplementedDeviceServiceServer) PushFrameToFlow(srv DeviceService_PushFrameToFlowServer) error {
+	return status.Errorf(codes.Unimplemented, "method PushFrameToFlow not implemented")
+}
+func (*UnimplementedDeviceServiceServer) PutObject(ctx context.Context, req *PutObjectRequest) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PutObject not implemented")
+}
+func (*UnimplementedDeviceServiceServer) RemoveObject(ctx context.Context, req *RemoveObjectRequest) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RemoveObject not implemented")
+}
+func (*UnimplementedDeviceServiceServer) RenameObject(ctx context.Context, req *RenameObjectRequest) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RenameObject not implemented")
+}
+func (*UnimplementedDeviceServiceServer) GetObject(ctx context.Context, req *GetObjectRequest) (*GetObjectResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetObject not implemented")
+}
+func (*UnimplementedDeviceServiceServer) GetObjectContent(ctx context.Context, req *GetObjectContentRequest) (*GetObjectContentResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetObjectContent not implemented")
+}
+func (*UnimplementedDeviceServiceServer) GetObjectStreamingContent(ctx context.Context, req *GetObjectStreamingContentRequest) (*GetObjectStreamingContentResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetObjectStreamingContent not implemented")
+}
+func (*UnimplementedDeviceServiceServer) ListObjects(ctx context.Context, req *ListObjectsRequest) (*ListObjectsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListObjects not implemented")
 }
 
 func RegisterDeviceServiceServer(s *grpc.Server, srv DeviceServiceServer) {

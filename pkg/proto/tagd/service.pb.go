@@ -9,6 +9,8 @@ import (
 	proto "github.com/golang/protobuf/proto"
 	empty "github.com/golang/protobuf/ptypes/empty"
 	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
 	math "math"
 )
 
@@ -21,7 +23,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
 func init() { proto.RegisterFile("service.proto", fileDescriptor_a0b84a42fa06f626) }
 
@@ -124,6 +126,26 @@ type TagdServiceServer interface {
 	Remove(context.Context, *RemoveRequest) (*empty.Empty, error)
 	Get(context.Context, *GetRequest) (*GetResponse, error)
 	Query(context.Context, *QueryRequest) (*QueryResponse, error)
+}
+
+// UnimplementedTagdServiceServer can be embedded to have forward compatible implementations.
+type UnimplementedTagdServiceServer struct {
+}
+
+func (*UnimplementedTagdServiceServer) Tag(ctx context.Context, req *TagRequest) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Tag not implemented")
+}
+func (*UnimplementedTagdServiceServer) Untag(ctx context.Context, req *UntagRequest) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Untag not implemented")
+}
+func (*UnimplementedTagdServiceServer) Remove(ctx context.Context, req *RemoveRequest) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Remove not implemented")
+}
+func (*UnimplementedTagdServiceServer) Get(ctx context.Context, req *GetRequest) (*GetResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Get not implemented")
+}
+func (*UnimplementedTagdServiceServer) Query(ctx context.Context, req *QueryRequest) (*QueryResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Query not implemented")
 }
 
 func RegisterTagdServiceServer(s *grpc.Server, srv TagdServiceServer) {

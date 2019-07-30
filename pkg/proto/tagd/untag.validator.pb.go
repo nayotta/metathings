@@ -3,12 +3,14 @@
 
 package tagd
 
-import fmt "fmt"
-import github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
-import proto "github.com/golang/protobuf/proto"
-import math "math"
-import _ "github.com/golang/protobuf/ptypes/wrappers"
-import _ "github.com/mwitkow/go-proto-validators"
+import (
+	fmt "fmt"
+	math "math"
+	proto "github.com/golang/protobuf/proto"
+	_ "github.com/mwitkow/go-proto-validators"
+	_ "github.com/golang/protobuf/ptypes/wrappers"
+	github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
+)
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
