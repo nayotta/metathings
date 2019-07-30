@@ -98,6 +98,8 @@ func (self *GrpcModuleProxy) StreamCall(ctx context.Context, method string, upst
 	return nil
 }
 
+func (self *GrpcModuleProxy) Close() error { return nil }
+
 func (self *GrpcModuleProxy) recv_cfg_msg(stm deviced_pb.DevicedService_ConnectClient) (*deviced_pb.ConnectRequest, error) {
 	req, err := stm.Recv()
 	if err != nil {

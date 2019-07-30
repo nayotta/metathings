@@ -9,7 +9,6 @@ import (
 	proto "github.com/golang/protobuf/proto"
 	_ "github.com/mwitkow/go-proto-validators"
 	_ "github.com/nayotta/metathings/pkg/proto/deviced"
-	_ "github.com/golang/protobuf/ptypes/wrappers"
 	github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
 )
 

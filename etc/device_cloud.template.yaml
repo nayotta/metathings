@@ -1,0 +1,20 @@
+dev:
+  listen: 127.0.0.1:5003
+  verbose: true
+  log:
+    level: info
+  service_endpoint:
+    default:
+      address: <metathings-address>
+  storage:
+    driver: redis>
+    addr: <redis-address>
+    db: <redis-db>
+    password: <redis-password>
+  credential:
+    domain: <credential-domain>
+    id: <credential-id>
+    secret: <credential-secret>
+  connection:
+    mqtt:
+      address: <mqtt-address>

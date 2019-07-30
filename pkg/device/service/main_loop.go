@@ -11,15 +11,15 @@ import (
 )
 
 func (self *MetathingsDeviceServiceImpl) main_loop() {
-	rc_ivl := self.opt.MinReconnectInterval
+	rc_tvl := self.opt.MinReconnectInterval
 	for {
 		err := self.internal_main_loop()
 		if err != nil {
-			rc_ivl = time.Duration(math.Min(float64(rc_ivl*2), float64(self.opt.MaxReconnectInterval)))
+			rc_tvl = time.Duration(math.Min(float64(rc_tvl*2), float64(self.opt.MaxReconnectInterval)))
 		} else {
-			rc_ivl = self.opt.MinReconnectInterval
+			rc_tvl = self.opt.MinReconnectInterval
 		}
-		time.Sleep(rc_ivl)
+		time.Sleep(rc_tvl)
 	}
 }
 

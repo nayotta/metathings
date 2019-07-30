@@ -1,5 +1,0 @@
-FROM nayotta/metathings-development
-
-COPY ./etc/sensord.yaml /etc/metathings/snesord.yaml
-COPY ./script/sensord.dev_start.sh /usr/local/sbin/sensord.dev_start.sh
-CMD /usr/local/sbin/sensord.dev_start.sh

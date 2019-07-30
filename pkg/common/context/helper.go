@@ -16,25 +16,25 @@ func WithToken(ctx context.Context, token string) context.Context {
 
 func WithTokenOp(token string) func(metadata.MD) metadata.MD {
 	return func(md metadata.MD) metadata.MD {
-		if !strings.HasPrefix(token, "mt") {
-			token = "mt " + strings.Trim(token, " ")
+		if !strings.HasPrefix(token, "Bearer") {
+			token = "Bearer " + strings.Trim(token, " ")
 		}
 
-		md.Append("authorization", token)
-		return md
-	}
-}
-
-func WithSessionIdOp(sess_id string) func(metadata.MD) metadata.MD {
-	return func(md metadata.MD) metadata.MD {
-		md.Append("session-id", sess_id)
+		md.Append("Authorization", token)
 		return md
 	}
 }
 
 func WithSessionOp(sess int64) func(metadata.MD) metadata.MD {
 	return func(md metadata.MD) metadata.MD {
-		md.Append("session", strconv.FormatInt(sess, 10))
+		md.Append("MT-Session", strconv.FormatInt(sess, 10))
+		return md
+	}
+}
+
+func WithDeviceOp(dev string) func(metadata.MD) metadata.MD {
+	return func(md metadata.MD) metadata.MD {
+		md.Append("MT-Device", dev)
 		return md
 	}
 }

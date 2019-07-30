@@ -7,13 +7,13 @@ import (
 	fmt "fmt"
 	math "math"
 	proto "github.com/golang/protobuf/proto"
+	_ "github.com/nayotta/metathings/pkg/proto/constant/kind"
+	_ "github.com/golang/protobuf/ptypes/wrappers"
 	_ "github.com/golang/protobuf/ptypes/any"
 	_ "github.com/golang/protobuf/ptypes/timestamp"
 	_ "github.com/golang/protobuf/ptypes/struct"
 	_ "github.com/nayotta/metathings/pkg/proto/identityd2"
 	_ "github.com/nayotta/metathings/pkg/proto/constant/state"
-	_ "github.com/nayotta/metathings/pkg/proto/constant/kind"
-	_ "github.com/golang/protobuf/ptypes/wrappers"
 	github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
 )
 
@@ -218,9 +218,9 @@ func (this *OpObject) Validate() error {
 			return github_com_mwitkow_go_proto_validators.FieldError("Etag", err)
 		}
 	}
-	if this.LiastModified != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.LiastModified); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("LiastModified", err)
+	if this.LastModified != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.LastModified); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("LastModified", err)
 		}
 	}
 	return nil

@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package ai.metathings.service.deviced;
+
+import "github.com/mwitkow/go-proto-validators/validator.proto";
+
+import "model.proto";
+
+message GetDeviceByModuleRequest {
+	OpModule module = 1 [(validator.field) = {msg_exists: true}];
+}
+
+message GetDeviceByModuleResponse {
+	Device device = 1;
+}

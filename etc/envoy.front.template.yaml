@@ -33,6 +33,10 @@ static_resources:
                   prefix: "/ai.metathings.service.tagd.TagdService"
                 route:
                   cluster: tagd
+              - match:
+                  prefix: "/v1/device_cloud"
+                route:
+                  cluster: device_cloud
           http_filters:
           - name: envoy.router
             config: {}
@@ -73,6 +77,14 @@ static_resources:
     - socket_address:
         address: tagd
         port_value: 5002
+  - name: device_cloud
+    connect_timeout: 5s
+    type: strict_dns
+    lb_policy: round_robin
+    hosts:
+    - socket_address:
+        address: device_cloud
+        port_value: 5003
 admin:
   access_log_path: "/dev/null"
   address:

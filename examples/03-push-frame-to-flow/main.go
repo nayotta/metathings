@@ -42,7 +42,7 @@ device=%v
 flow=%v
 `, deviced_addr, device_id, flow_name)
 
-	ctx := context_helper.WithToken(context.Background(), "mt "+token)
+	ctx := context_helper.WithToken(context.Background(), "Bearer "+token)
 	conn, err := grpc.Dial(deviced_addr, grpc.WithInsecure())
 	if err != nil {
 		panic(err)

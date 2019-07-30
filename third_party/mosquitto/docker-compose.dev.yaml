@@ -6,6 +6,8 @@ services:
     - "27017"
     networks:
     - metathings-backend
+    volumes:
+    - ./../../data/mosquitto/mongo:/data/db
   metathings-mosquitto:
     image: coldfire84/mosquitto-auth
     ports:

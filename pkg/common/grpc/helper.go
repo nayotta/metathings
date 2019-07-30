@@ -66,7 +66,7 @@ func AuthFromMD(ctx context.Context, expectedScheme string, headerAuthorize ...s
 	if len(headerAuthorize) > 0 {
 		authorize = headerAuthorize[0]
 	} else {
-		authorize = "authorization"
+		authorize = "Authorization"
 	}
 
 	val := metautils.ExtractIncoming(ctx).Get(authorize)
@@ -85,11 +85,11 @@ func AuthFromMD(ctx context.Context, expectedScheme string, headerAuthorize ...s
 }
 
 func GetTokenFromContext(ctx context.Context) (string, error) {
-	return AuthFromMD(ctx, "mt", "authorization")
+	return AuthFromMD(ctx, "Bearer", "Authorization")
 }
 
 func GetSubjectTokenFromContext(ctx context.Context) (string, error) {
-	return AuthFromMD(ctx, "mt", "authorization-subject")
+	return AuthFromMD(ctx, "Bearer", "Authorization-Subject")
 }
 
 func HandleGRPCError(logger log.FieldLogger, err error, format string, args ...interface{}) error {
@@ -110,7 +110,7 @@ func GetSessionFromContext(ctx context.Context) int64 {
 	var x int64
 	var err error
 
-	x, err = strconv.ParseInt(metautils.ExtractIncoming(ctx).Get("session"), 0, 64)
+	x, err = strconv.ParseInt(metautils.ExtractIncoming(ctx).Get("MT-Session"), 0, 64)
 	if err != nil {
 		return 0
 	}

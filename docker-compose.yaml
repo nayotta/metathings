@@ -79,6 +79,21 @@ services:
     - "5002"
     restart: on-failure
 
+  device_cloud:
+    environment:
+    - MTD_STAGE=debug
+    build:
+      context: .
+      dockerfile: dockerfile/Dockerfile.device_cloud
+    image: nayotta/device_cloud
+    volumes:
+    - ./etc/device_cloud.yaml:/etc/metathings/device_cloud.yaml
+    networks:
+    - metathings-backend
+    expose:
+    - "5003"
+    restart: on-failure
+
 networks:
   metathings-frontend:
     external:

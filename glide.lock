@@ -1,5 +1,5 @@
-hash: 57cd53841d508b07d1d4cfbe7693bbf7b4b1923a5dfdb087477fd207f7e527cd
-updated: 2019-06-03T13:35:52.61866+08:00
+hash: b81d07ade65fb67c511db2152b46b5afa1238287bb7628b1cffe5afb0021c747
+updated: 2019-07-17T13:46:37.213239+08:00
 imports:
 - name: github.com/casbin/casbin
   version: 695c374a6617e9cdc930e8666307a772577cbd70
@@ -14,14 +14,12 @@ imports:
   - util
 - name: github.com/casbin/gorm-adapter
   version: e74a050c51a4c12323e72f0c7ab445fb2daf6b40
-- name: github.com/confluentinc/confluent-kafka-go
-  version: 460e8e43b282a1a68219df600ef63442b81faf5f
+- name: github.com/eclipse/paho.mqtt.golang
+  version: adca289fdcf8c883800aafa545bc263452290bae
   subpackages:
-  - kafka
+  - packets
 - name: github.com/fsnotify/fsnotify
   version: ccc981bf80385c528a65fbfdd49bf2d8da22aa23
-- name: github.com/go-daq/smbus
-  version: 15ef727fb3205992e78eb887b88a90f952874459
 - name: github.com/go-redis/redis
   version: 75795aa4236dc7341eefac3bbe945e68c99ef9df
   subpackages:
@@ -36,14 +34,17 @@ imports:
 - name: github.com/gogo/protobuf
   version: 636bf0302bc95575d69441b25a2603156ffdddf1
   subpackages:
+  - jsonpb
   - proto
   - protoc-gen-gogo/descriptor
+  - sortkeys
+  - types
 - name: github.com/golang/mock
   version: 8a44ef6e8be577e050008c7886f24fc705d709fb
   subpackages:
   - gomock
 - name: github.com/golang/protobuf
-  version: aa810b61a9c79d51363740d207bb46cf8e620ed5
+  version: 6c65a5562fc06764971b7c5d05c76c75e84bdbf7
   subpackages:
   - jsonpb
   - proto
@@ -57,6 +58,8 @@ imports:
   - ptypes/wrappers
 - name: github.com/golang/snappy
   version: 2e65f85255dbc3072edf28d6b5b8efc472979f5a
+- name: github.com/gorilla/mux
+  version: 00bdffe0f3c77e27d2cf6f5c70232a2d3e4d9c15
 - name: github.com/grpc-ecosystem/go-grpc-middleware
   version: c250d6563d4d4c20252cd865923440e829844f4e
   subpackages:
@@ -77,7 +80,7 @@ imports:
 - name: github.com/inconshreveable/mousetrap
   version: 76626ae9c91c4f2a10f34cad8ce83ea42c93bb75
 - name: github.com/jinzhu/gorm
-  version: b7156195f7f3415f97c20abbd6aff894b847fee8
+  version: 836fb2c19d84dac7b0272958dfb9af7cf0d0ade4
   subpackages:
   - dialects/sqlite
 - name: github.com/jinzhu/inflection
@@ -90,8 +93,6 @@ imports:
   version: 9eb73efc1fcc404148b56765b0d3f61d9a5ef8ee
   subpackages:
   - oid
-- name: github.com/lovoo/goka
-  version: 3da18a1c44d31288d515a7a3f8e93d3d31bb0537
 - name: github.com/magiconair/properties
   version: c2353362d570a7bfa228149c62842019201cfb71
 - name: github.com/mattn/go-sqlite3
@@ -154,7 +155,7 @@ imports:
 - name: github.com/spf13/cast
   version: 8c9545af88b134710ab1cd196795e7f2388358d7
 - name: github.com/spf13/cobra
-  version: 67fc4837d267bc9bfd6e47f77783fcc3dffc68de
+  version: f2b07da1e2c38d5f12845a4f607e2e1018cbb1f5
 - name: github.com/spf13/jwalterweatherman
   version: 94f6ae3ed3bceceafa716478c5fbf8d29ca601a1
 - name: github.com/spf13/pflag
@@ -165,8 +166,6 @@ imports:
   version: 7eeb5667e42c09cb51bf7b7c28aea8c56767da90
 - name: github.com/xdg/stringprep
   version: 73f8eece6fdcd902c185bf651de50f3828bed5ed
-- name: github.com/yuin/gopher-lua
-  version: afd0ecd19d39ec7934808cec084e17011691ae5f
 - name: go.uber.org/atomic
   version: df976f2515e274675050de7b3f42545de80594fd
 - name: go.uber.org/dig
@@ -202,8 +201,11 @@ imports:
   - http2
   - http2/hpack
   - idna
+  - internal/socks
   - internal/timeseries
+  - proxy
   - trace
+  - websocket
 - name: golang.org/x/sync
   version: 1d60e4601c6fd243af51cc01ddf169918a5407ca
   subpackages:

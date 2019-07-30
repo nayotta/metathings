@@ -6,6 +6,7 @@ import (
 
 	flow "github.com/nayotta/metathings/pkg/deviced/flow"
 	pb "github.com/nayotta/metathings/pkg/proto/deviced"
+	log "github.com/sirupsen/logrus"
 )
 
 func (self *MetathingsDevicedService) PushFrameToFlow(stm pb.DevicedService_PushFrameToFlowServer) error {
@@ -15,10 +16,12 @@ func (self *MetathingsDevicedService) PushFrameToFlow(stm pb.DevicedService_Push
 		return status.Errorf(codes.Internal, err.Error())
 	}
 
+	var logger log.FieldLogger
 	var dev_r *pb.OpDevice
 	var dev_id string
 	var cfg_ack, push_ack bool
 
+	req_id := req.GetId().GetValue()
 	cfg := req.GetConfig()
 	dev_r = cfg.GetDevice()
 	dev_id = dev_r.GetId().GetValue()
@@ -47,6 +50,17 @@ match_flow_loop:
 			}
 			defer f.Close()
 
+			logger = self.logger.WithFields(log.Fields{
+				"device": dev_id,
+				"flow":   flw_n_r,
+			})
+
+			logger.WithFields(log.Fields{
+				"cfg_ack":  cfg_ack,
+				"push_ack": push_ack,
+				"request":  req_id,
+			}).Debugf("recv flow config request")
+
 			break match_flow_loop
 		}
 	}
@@ -59,21 +73,24 @@ match_flow_loop:
 
 	if cfg_ack {
 		err = stm.Send(&pb.PushFrameToFlowResponse{
-			Id:       req.GetId().GetValue(),
+			Id:       req_id,
 			Response: &pb.PushFrameToFlowResponse_Ack_{Ack: &pb.PushFrameToFlowResponse_Ack{}},
 		})
 		if err != nil {
 			self.logger.WithError(err).Errorf("failed to send config ack message")
 			return status.Errorf(codes.Internal, err.Error())
 		}
+		logger.WithField("request", req_id).Debugf("send flow config ack response")
 	}
 
 	for {
 		req, err = stm.Recv()
+		req_id = req.GetId().GetValue()
 		if err != nil {
 			self.logger.WithError(err).Errorf("failed to receive frame request")
 			return status.Errorf(codes.Internal, err.Error())
 		}
+		logger.WithField("request", req_id).Debugf("recv data request")
 
 		opfrm := req.GetFrame()
 		err = f.PushFrame(&pb.Frame{Data: opfrm.GetData()})
@@ -81,6 +98,7 @@ match_flow_loop:
 			self.logger.WithError(err).Errorf("failed to push frame to flow")
 			return status.Errorf(codes.Internal, err.Error())
 		}
+		logger.WithField("request", req_id).Debugf("push frame to flow")
 
 		if push_ack {
 			err = stm.Send(&pb.PushFrameToFlowResponse{
@@ -91,6 +109,7 @@ match_flow_loop:
 				self.logger.WithError(err).Errorf("failed to send push ack message")
 				return status.Errorf(codes.Internal, err.Error())
 			}
+			logger.WithField("request", req_id).Debugf("send flow data ack response")
 		}
 	}
 }

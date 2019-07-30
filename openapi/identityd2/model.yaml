@@ -1,0 +1,142 @@
+openapi: 3.0.2
+
+components:
+  schemas:
+    Domain:
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        alias:
+          type: string
+        parent:
+          $ref: "#/components/schemas/Domain"
+        children:
+          type: array
+          items:
+            $ref: "#/components/schemas/Domain"
+        extra:
+          type: object
+    Action:
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        alias:
+          type: string
+        description:
+          type: string
+        extra:
+          type: object
+    Role:
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        alias:
+          type: string
+        description:
+          type: string
+        actions:
+          type: array
+          items:
+            $ref: "#/components/schemas/Action"
+        extra:
+          type: object
+    Group:
+      properties:
+        id:
+          type: string
+        domain:
+          $ref: "#/components/schemas/Domain"
+        roles:
+          type: array
+          items:
+            $ref: "#/components/schemas/Role"
+        subjects:
+          type: array
+          items:
+            $ref: "#/components/schemas/Entity"
+        objects:
+          type: array
+          items:
+            $ref: "#/components/schemas/Entity"
+        name:
+          type: string
+        alias:
+          type: string
+        description:
+          type: string
+        extra:
+          type: object
+    Entity:
+      properties:
+        id:
+          type: string
+        domains:
+          type: array
+          items:
+            $ref: "#/components/schemas/Domain"
+        groups:
+          type: array
+          items:
+            $ref: "#/components/schemas/Group"
+        roles:
+          type: array
+          items:
+            $ref: "#/components/schemas/Role"
+        name:
+          type: string
+        password:
+          type: string
+        extra:
+          type: object
+    Credential:
+      properties:
+        id:
+          type: string
+        domain:
+          $ref: "#/components/schemas/Domain"
+        roles:
+          type: array
+          items:
+            $ref: "#/components/schemas/Role"
+        entity:
+          $ref: "#/components/schemas/Entity"
+        name:
+          type: string
+        alias:
+          type: string
+        secret:
+          type: string
+        description:
+          type: string
+        expires_at:
+          type: number
+    Token:
+      properties:
+        id:
+          type: string
+        issued_at:
+          type: number
+        expires_at:
+          type: number
+        entity:
+          $ref: "#/components/schemas/Entity"
+        roles:
+          type: array
+          items:
+            $ref: "#/components/schemas/Role"
+        domain:
+          $ref: "#/components/schemas/Domain"
+        credential:
+          $ref: "#/components/schemas/Credential"
+        text:
+          type: string
+        groups:
+          type: array
+          items:
+            $ref: "#/components/schemas/Group"

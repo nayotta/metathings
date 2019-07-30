@@ -4,6 +4,7 @@ import (
 	"context"
 
 	grpc_auth "github.com/grpc-ecosystem/go-grpc-middleware/auth"
+	"github.com/grpc-ecosystem/go-grpc-middleware/util/metautils"
 	log "github.com/sirupsen/logrus"
 
 	afo_helper "github.com/nayotta/metathings/pkg/common/auth_func_overrider"
@@ -47,9 +48,14 @@ func (self *MetathingsDevicedService) get_device_by_context(ctx context.Context)
 	var dev_s *storage.Device
 	var err error
 
-	tkn = context_helper.ExtractToken(ctx)
+	// try to get device id from context
+	dev_id := metautils.ExtractIncoming(ctx).Get("MT-Device")
+	if dev_id == "" {
+		tkn = context_helper.ExtractToken(ctx)
+		dev_id = tkn.Entity.Id
+	}
 
-	if dev_s, err = self.storage.GetDevice(tkn.Entity.Id); err != nil {
+	if dev_s, err = self.storage.GetDevice(dev_id); err != nil {
 		return nil, err
 	}
 

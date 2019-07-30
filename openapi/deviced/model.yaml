@@ -1,0 +1,66 @@
+openapi: 3.0.2
+
+components:
+  schemas:
+    Object:
+      properties:
+        device:
+          $ref: "#/components/schemas/Device"
+        prefix:
+          type: string
+        name:
+          type: string
+        length:
+          type: integer
+        etag:
+          type: string
+        last_modified:
+          type: integer
+    Flow:
+      properties:
+        id:
+          type: string
+        device_id:
+          type: string
+        name:
+          type: string
+        alias:
+          type: string
+    Module:
+      properties:
+        id:
+          type: string
+        state:
+          type: string
+        endpoint:
+          type: string
+        component:
+          type: string
+        name:
+          type: string
+        alias:
+          type: string
+        heartbeat_at:
+          type: string
+    Device:
+      properties:
+        id:
+          type: string
+        kind:
+          type: string
+        state:
+          type: string
+        name:
+          type: string
+        alias:
+          type: string
+        modules:
+          type: array
+          items:
+            $ref: "#/components/schemas/Module"
+        heartbeat_at:
+          type: string
+        flows:
+          type: array
+          items:
+            $ref: "#/components/schemas/Flow"

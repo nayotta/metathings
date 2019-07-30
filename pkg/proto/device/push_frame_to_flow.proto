@@ -14,19 +14,27 @@ message PushFrameToFlowRequest {
 		google.protobuf.BoolValue config_ack = 2;
 		google.protobuf.BoolValue push_ack = 3;
 	}
+	message Ping {}
 
 	google.protobuf.StringValue id = 1 [(validator.field) = {msg_exists: true}];
 	oneof request {
 		Config config = 2;
-		ai.metathings.service.deviced.OpFrame frame = 3;
+		Ping ping = 3;
+		ai.metathings.service.deviced.OpFrame frame = 4;
 	}
 }
 
 message PushFrameToFlowResponse {
+	message Config {
+		string session = 1;
+	}
 	message Ack {}
+	message Pong {}
 
 	string id = 1;
 	oneof response {
-		Ack ack = 2;
+		Config config = 2;
+		Pong pong = 3;
+		Ack ack = 4;
 	}
 }

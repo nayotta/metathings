@@ -27,7 +27,7 @@ func (self *tokener) GetToken() string {
 	self.mtx.Lock()
 	defer self.mtx.Unlock()
 
-	return "mt " + self.credential_token
+	return "Bearer " + self.credential_token
 }
 
 func (self *tokener) issueToken() error {
