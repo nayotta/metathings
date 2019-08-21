@@ -1,0 +1,57 @@
+module github.com/nayotta/metathings
+
+go 1.12
+
+require (
+	github.com/Knetic/govaluate v0.0.0-20171022003610-9aa49832a739
+	github.com/casbin/casbin v1.6.0
+	github.com/casbin/gorm-adapter v0.0.0-20190318080705-e74a050c51a4
+	github.com/eclipse/paho.mqtt.golang v1.2.0
+	github.com/fsnotify/fsnotify v0.0.0-20180830220226-ccc981bf8038
+	github.com/go-redis/redis v0.0.0-20190503082931-75795aa4236d
+	github.com/go-stack/stack v1.8.0
+	github.com/gogo/protobuf v1.1.1
+	github.com/golang/mock v0.0.0-20181024150832-8a44ef6e8be5
+	github.com/golang/protobuf v1.3.2
+	github.com/golang/snappy v0.0.0-20180518054509-2e65f85255db
+	github.com/gorilla/mux v1.7.3
+	github.com/grpc-ecosystem/go-grpc-middleware v1.0.0
+	github.com/hashicorp/hcl v0.0.0-20180906183839-65a6292f0157
+	github.com/inconshreveable/mousetrap v1.0.0
+	github.com/jinzhu/gorm v1.9.10
+	github.com/jinzhu/inflection v0.0.0-20180308033659-04140366298a
+	github.com/konsorten/go-windows-terminal-sequences v1.0.1
+	github.com/lib/pq v0.0.0-20181016162627-9eb73efc1fcc
+	github.com/magiconair/properties v1.8.0
+	github.com/mattn/go-sqlite3 v1.10.0
+	github.com/mitchellh/mapstructure v0.0.0-20181005045135-3536a929eddd
+	github.com/mongodb/mongo-go-driver v0.2.0
+	github.com/mwitkow/go-proto-validators v0.0.0-20180403085117-0950a7990007
+	github.com/nayotta/viper v0.0.0-20180528085333-019fa2bda1e5
+	github.com/parnurzeal/gorequest v0.2.15
+	github.com/pelletier/go-toml v0.0.0-20180930205832-81a861c69d25
+	github.com/pkg/errors v0.0.0-20181023235946-059132a15dd0
+	github.com/satori/go.uuid v1.2.0
+	github.com/sirupsen/logrus v1.1.1
+	github.com/spf13/afero v1.1.2
+	github.com/spf13/cast v1.3.0
+	github.com/spf13/cobra v0.0.5
+	github.com/spf13/jwalterweatherman v1.1.0
+	github.com/spf13/pflag v0.0.0-20181024212040-082b515c9490
+	github.com/stianeikeland/go-rpio v4.2.0+incompatible
+	github.com/xdg/scram v0.0.0-20180814205039-7eeb5667e42c
+	github.com/xdg/stringprep v0.0.0-20180714160509-73f8eece6fdc
+	go.uber.org/atomic v1.4.0
+	go.uber.org/dig v1.7.0
+	go.uber.org/fx v1.7.1
+	go.uber.org/multierr v1.1.0
+	gobot.io/x/gobot v1.12.0
+	golang.org/x/crypto v0.0.0-20181030022821-bc7917b19d8f
+	golang.org/x/net v0.0.0-20181114220301-adae6a3d119a
+	golang.org/x/sync v0.0.0-20180314180146-1d60e4601c6f
+	golang.org/x/sys v0.0.0-20181029174526-d69651ed3497
+	golang.org/x/text v0.0.0-20181029195918-cd89ac83aaa7
+	google.golang.org/genproto v0.0.0-20181029155118-b69ba1387ce2
+	google.golang.org/grpc v1.16.0
+	gopkg.in/yaml.v2 v2.2.1
+)
