@@ -3,8 +3,8 @@ package mongo_helper
 import (
 	"context"
 
-	"github.com/mongodb/mongo-go-driver/mongo"
-	"github.com/mongodb/mongo-go-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type MongoClientWrapper struct {
@@ -22,7 +22,8 @@ func NewMongoClient(uri string, opts ...*options.ClientOptions) (*MongoClientWra
 	ctx := context.TODO()
 	ctx, cancel := context.WithCancel(ctx)
 
-	client, err := mongo.Connect(ctx, uri, opts...)
+	opts = append(opts, options.Client().ApplyURI(uri))
+	client, err := mongo.Connect(ctx, opts...)
 	if err != nil {
 		cancel()
 		return nil, err

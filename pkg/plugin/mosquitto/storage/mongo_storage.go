@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/mongodb/mongo-go-driver/bson"
-	"github.com/mongodb/mongo-go-driver/mongo"
 	log "github.com/sirupsen/logrus"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 
 	mongo_helper "github.com/nayotta/metathings/pkg/common/mongo"
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
