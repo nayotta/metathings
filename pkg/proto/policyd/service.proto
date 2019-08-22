@@ -1,150 +1,63 @@
-// Copyright 2018 The casbin Authors. All Rights Reserved.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//      http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 syntax = "proto3";
 
 package ai.metathings.service.policyd;
 option go_package = "policyd";
 
+import "github.com/casbin/casbin-server/proto/casbin.proto";
+
 service PolicydService {
-  rpc NewEnforcer (NewEnforcerRequest) returns (NewEnforcerReply) {}
-  rpc NewAdapter (NewAdapterRequest) returns (NewAdapterReply) {}
+  // Casbin server functions
+  rpc NewEnforcer (proto.NewEnforcerRequest) returns (proto.NewEnforcerReply) {}
+  rpc NewAdapter (proto.NewAdapterRequest) returns (proto.NewAdapterReply) {}
 
-  rpc Enforce (EnforceRequest) returns (BoolReply) {}
-  rpc EnforceBucket (EnforceBucketRequest) returns (BoolReply) {}
+  rpc Enforce (proto.EnforceRequest) returns (proto.BoolReply) {}
 
-  rpc LoadPolicy (EmptyRequest) returns (EmptyReply) {}
-  rpc SavePolicy (EmptyRequest) returns (EmptyReply) {}
+  rpc LoadPolicy (proto.EmptyRequest) returns (proto.EmptyReply) {}
+  rpc SavePolicy (proto.EmptyRequest) returns (proto.EmptyReply) {}
 
-  rpc AddPolicy (PolicyRequest) returns (BoolReply) {}
-  rpc AddNamedPolicy (PolicyRequest) returns (BoolReply) {}
-  rpc RemovePolicy (PolicyRequest) returns (BoolReply) {}
-  rpc RemoveNamedPolicy (PolicyRequest) returns (BoolReply) {}
-  rpc RemoveFilteredPolicy (FilteredPolicyRequest) returns (BoolReply) {}
-  rpc RemoveFilteredNamedPolicy (FilteredPolicyRequest) returns (BoolReply) {}
-  rpc GetPolicy (EmptyRequest) returns (Array2DReply) {}
-  rpc GetNamedPolicy (PolicyRequest) returns (Array2DReply) {}
-  rpc GetFilteredPolicy (FilteredPolicyRequest) returns (Array2DReply) {}
-  rpc GetFilteredNamedPolicy (FilteredPolicyRequest) returns (Array2DReply) {}
+  rpc AddPolicy (proto.PolicyRequest) returns (proto.BoolReply) {}
+  rpc AddNamedPolicy (proto.PolicyRequest) returns (proto.BoolReply) {}
+  rpc RemovePolicy (proto.PolicyRequest) returns (proto.BoolReply) {}
+  rpc RemoveNamedPolicy (proto.PolicyRequest) returns (proto.BoolReply) {}
+  rpc RemoveFilteredPolicy (proto.FilteredPolicyRequest) returns (proto.BoolReply) {}
+  rpc RemoveFilteredNamedPolicy (proto.FilteredPolicyRequest) returns (proto.BoolReply) {}
+  rpc GetPolicy (proto.EmptyRequest) returns (proto.Array2DReply) {}
+  rpc GetNamedPolicy (proto.PolicyRequest) returns (proto.Array2DReply) {}
+  rpc GetFilteredPolicy (proto.FilteredPolicyRequest) returns (proto.Array2DReply) {}
+  rpc GetFilteredNamedPolicy (proto.FilteredPolicyRequest) returns (proto.Array2DReply) {}
 
-  rpc AddGroupingPolicy (PolicyRequest) returns (BoolReply) {}
-  rpc AddNamedGroupingPolicy (PolicyRequest) returns (BoolReply) {}
-  rpc RemoveGroupingPolicy (PolicyRequest) returns (BoolReply) {}
-  rpc RemoveNamedGroupingPolicy (PolicyRequest) returns (BoolReply) {}
-  rpc RemoveFilteredGroupingPolicy (FilteredPolicyRequest) returns (BoolReply) {}
-  rpc RemoveFilteredNamedGroupingPolicy (FilteredPolicyRequest) returns (BoolReply) {}
-  rpc GetGroupingPolicy (EmptyRequest) returns (Array2DReply) {}
-  rpc GetNamedGroupingPolicy(PolicyRequest) returns (Array2DReply) {}
-  rpc GetFilteredGroupingPolicy (FilteredPolicyRequest) returns (Array2DReply) {}
-  rpc GetFilteredNamedGroupingPolicy (FilteredPolicyRequest) returns (Array2DReply) {}
+  rpc AddGroupingPolicy (proto.PolicyRequest) returns (proto.BoolReply) {}
+  rpc AddNamedGroupingPolicy (proto.PolicyRequest) returns (proto.BoolReply) {}
+  rpc RemoveGroupingPolicy (proto.PolicyRequest) returns (proto.BoolReply) {}
+  rpc RemoveNamedGroupingPolicy (proto.PolicyRequest) returns (proto.BoolReply) {}
+  rpc RemoveFilteredGroupingPolicy (proto.FilteredPolicyRequest) returns (proto.BoolReply) {}
+  rpc RemoveFilteredNamedGroupingPolicy (proto.FilteredPolicyRequest) returns (proto.BoolReply) {}
+  rpc GetGroupingPolicy (proto.EmptyRequest) returns (proto.Array2DReply) {}
+  rpc GetNamedGroupingPolicy(proto.PolicyRequest) returns (proto.Array2DReply) {}
+  rpc GetFilteredGroupingPolicy (proto.FilteredPolicyRequest) returns (proto.Array2DReply) {}
+  rpc GetFilteredNamedGroupingPolicy (proto.FilteredPolicyRequest) returns (proto.Array2DReply) {}
 
-  rpc GetAllSubjects (EmptyRequest) returns (ArrayReply) {}
-  rpc GetAllNamedSubjects (SimpleGetRequest) returns (ArrayReply) {}
-  rpc GetAllObjects (EmptyRequest) returns (ArrayReply) {}
-  rpc GetAllNamedObjects (SimpleGetRequest) returns (ArrayReply) {}
-  rpc GetAllActions (EmptyRequest) returns (ArrayReply) {}
-  rpc GetAllNamedActions (SimpleGetRequest) returns (ArrayReply) {}
-  rpc GetAllRoles (EmptyRequest) returns (ArrayReply) {}
-  rpc GetAllNamedRoles (SimpleGetRequest) returns (ArrayReply) {}
+  rpc GetAllSubjects (proto.EmptyRequest) returns (proto.ArrayReply) {}
+  rpc GetAllNamedSubjects (proto.SimpleGetRequest) returns (proto.ArrayReply) {}
+  rpc GetAllObjects (proto.EmptyRequest) returns (proto.ArrayReply) {}
+  rpc GetAllNamedObjects (proto.SimpleGetRequest) returns (proto.ArrayReply) {}
+  rpc GetAllActions (proto.EmptyRequest) returns (proto.ArrayReply) {}
+  rpc GetAllNamedActions (proto.SimpleGetRequest) returns (proto.ArrayReply) {}
+  rpc GetAllRoles (proto.EmptyRequest) returns (proto.ArrayReply) {}
+  rpc GetAllNamedRoles (proto.SimpleGetRequest) returns (proto.ArrayReply) {}
 
-  rpc HasPolicy (PolicyRequest) returns (BoolReply) {}
-  rpc HasNamedPolicy (PolicyRequest) returns (BoolReply) {}
-  rpc HasGroupingPolicy (PolicyRequest) returns (BoolReply) {}
-  rpc HasNamedGroupingPolicy (PolicyRequest) returns (BoolReply) {}
+  rpc HasPolicy (proto.PolicyRequest) returns (proto.BoolReply) {}
+  rpc HasNamedPolicy (proto.PolicyRequest) returns (proto.BoolReply) {}
+  rpc HasGroupingPolicy (proto.PolicyRequest) returns (proto.BoolReply) {}
+  rpc HasNamedGroupingPolicy (proto.PolicyRequest) returns (proto.BoolReply) {}
 
-  rpc AddPresetPolicy(PolicyRequest) returns (BoolReply) {}
-  rpc RemovePresetPolicy(PolicyRequest) returns (BoolReply) {}
-  rpc Initialize(EmptyRequest) returns (EmptyReply) {}
-}
-
-message NewEnforcerRequest {
-  string modelText = 1;
-  int32 adapterHandle = 2;
-}
-
-message NewEnforcerReply {
-  int32 handler = 1;
-}
-
-message NewAdapterRequest {
-  string adapterName = 1;
-  string driverName = 2;
-  string connectString = 3;
-}
-
-message NewAdapterReply {
-  int32 handler = 1;
-}
-
-message EnforceRequest {
-  int32 enforcerHandler = 1;
-  repeated string params = 2;
+  // Custom functions
+  rpc EnforceBucket (EnforceBucketRequest) returns (proto.BoolReply) {}
+  rpc AddPresetPolicy(proto.PolicyRequest) returns (proto.BoolReply) {}
+  rpc RemovePresetPolicy(proto.PolicyRequest) returns (proto.BoolReply) {}
+  rpc Initialize(proto.EmptyRequest) returns (proto.EmptyReply) {}
 }
 
 message EnforceBucketRequest {
-  repeated EnforceRequest requests = 1;
-}
-
-message BoolReply {
-  bool res = 1;
-}
-
-message EmptyRequest {
-  int32 handler = 1;
-}
-
-message EmptyReply {
-}
-
-message PolicyRequest {
-  int32 enforcerHandler = 1;
-  string pType = 2;
-  repeated string params = 3;
-}
-
-message SimpleGetRequest {
-  int32 enforcerHandler = 1;
-  string pType = 2;
-}
-
-message ArrayReply {
-  repeated string array = 1;
-}
-
-message FilteredPolicyRequest {
-  int32 enforcerHandler = 1;
-  string pType = 2;
-  int32 fieldIndex = 3;
-  repeated string fieldValues = 4;
-}
-
-message UserRoleRequest {
-  int32 enforcerHandler = 1;
-  string user = 2;
-  string role = 3;
-}
-
-message PermissionRequest {
-  int32 enforcerHandler = 1;
-  string user = 2;
-  repeated string permissions = 3;
-}
-
-message Array2DReply {
-  message d {
-    repeated string d1 = 1;
-  }
-
-  repeated d d2 = 1;
+  repeated proto.EnforceRequest requests = 1;
 }
