@@ -27,7 +27,7 @@ func (self *MetathingsDevicedService) ValidateUnaryCall(ctx context.Context, in 
 }
 
 func (self *MetathingsDevicedService) AuthorizeUnaryCall(ctx context.Context, in interface{}) error {
-	return self.authorizer.Authorize(ctx, in.(*pb.UnaryCallRequest).GetDevice().GetId().GetValue(), "unary_call")
+	return self.authorizer.Authorize(ctx, in.(*pb.UnaryCallRequest).GetDevice().GetId().GetValue(), "deviced:unary_call")
 }
 
 func (self *MetathingsDevicedService) UnaryCall(ctx context.Context, req *pb.UnaryCallRequest) (*pb.UnaryCallResponse, error) {

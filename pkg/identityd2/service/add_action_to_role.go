@@ -12,7 +12,7 @@ import (
 )
 
 func (self *MetathingsIdentitydService) AuthorizeAddActionToRole(ctx context.Context, in interface{}) error {
-	return self.authorize(ctx, in.(*pb.AddActionToRoleRequest).GetRole().GetId().GetValue(), "add_action_to_role")
+	return self.authorize(ctx, in.(*pb.AddActionToRoleRequest).GetRole().GetId().GetValue(), "identityd2:add_action_to_role")
 }
 
 func (self *MetathingsIdentitydService) AddActionToRole(ctx context.Context, req *pb.AddActionToRoleRequest) (*empty.Empty, error) {

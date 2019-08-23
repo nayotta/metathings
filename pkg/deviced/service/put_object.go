@@ -30,7 +30,7 @@ func (self *MetathingsDevicedService) ValidatePutObject(ctx context.Context, in 
 }
 
 func (self *MetathingsDevicedService) AuthorizePutObject(ctx context.Context, in interface{}) error {
-	return self.authorizer.Authorize(ctx, in.(*pb.PutObjectRequest).GetObject().GetDevice().GetId().GetValue(), "put_object")
+	return self.authorizer.Authorize(ctx, in.(*pb.PutObjectRequest).GetObject().GetDevice().GetId().GetValue(), "deviced:put_object")
 }
 
 func (self *MetathingsDevicedService) PutObject(ctx context.Context, req *pb.PutObjectRequest) (*empty.Empty, error) {

@@ -29,7 +29,7 @@ func (self *MetathingsIdentitydService) ValidateDeleteCredential(ctx context.Con
 }
 
 func (self *MetathingsIdentitydService) AuthorizeDeleteCredential(ctx context.Context, in interface{}) error {
-	return self.authorize(ctx, in.(*pb.DeleteCredentialRequest).GetCredential().GetId().GetValue(), "delete_credential")
+	return self.authorize(ctx, in.(*pb.DeleteCredentialRequest).GetCredential().GetId().GetValue(), "identityd2:delete_credential")
 }
 
 func (self *MetathingsIdentitydService) DeleteCredential(ctx context.Context, req *pb.DeleteCredentialRequest) (*empty.Empty, error) {

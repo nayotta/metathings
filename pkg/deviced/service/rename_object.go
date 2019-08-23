@@ -41,7 +41,7 @@ func (self *MetathingsDevicedService) ValidateRenameObject(ctx context.Context, 
 }
 
 func (self *MetathingsDevicedService) AuthorizeRenameObject(ctx context.Context, in interface{}) error {
-	return self.authorizer.Authorize(ctx, in.(*pb.RenameObjectRequest).GetSource().GetDevice().GetId().GetValue(), "rename_object")
+	return self.authorizer.Authorize(ctx, in.(*pb.RenameObjectRequest).GetSource().GetDevice().GetId().GetValue(), "deviced:rename_object")
 }
 
 func (self *MetathingsDevicedService) RenameObject(ctx context.Context, req *pb.RenameObjectRequest) (*empty.Empty, error) {

@@ -27,7 +27,7 @@ func (self *MetathingsIdentitydService) ValidateGetDomain(ctx context.Context, i
 }
 
 func (self *MetathingsIdentitydService) AuthorizeGetDomain(ctx context.Context, in interface{}) error {
-	return self.authorize(ctx, in.(*pb.GetDomainRequest).GetDomain().GetId().GetValue(), "get_domain")
+	return self.authorize(ctx, in.(*pb.GetDomainRequest).GetDomain().GetId().GetValue(), "identityd2:get_domain")
 }
 
 func (self *MetathingsIdentitydService) GetDomain(ctx context.Context, req *pb.GetDomainRequest) (*pb.GetDomainResponse, error) {

@@ -29,7 +29,7 @@ func (self *MetathingsIdentitydService) ValidateAddRoleToEntity(ctx context.Cont
 }
 
 func (self *MetathingsIdentitydService) AuthorizeAddRoleToEntity(ctx context.Context, in interface{}) error {
-	return self.authorize(ctx, in.(*pb.AddRoleToEntityRequest).GetEntity().GetId().GetValue(), "add_role_to_entity")
+	return self.authorize(ctx, in.(*pb.AddRoleToEntityRequest).GetEntity().GetId().GetValue(), "identityd2:add_role_to_entity")
 }
 
 func (self *MetathingsIdentitydService) AddRoleToEntity(ctx context.Context, req *pb.AddRoleToEntityRequest) (*empty.Empty, error) {

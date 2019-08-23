@@ -26,7 +26,7 @@ func (self *MetathingsIdentitydService) ValidateDeleteEntity(ctx context.Context
 }
 
 func (self *MetathingsIdentitydService) AuthorizeDeleteEntity(ctx context.Context, in interface{}) error {
-	return self.authorize(ctx, in.(*pb.DeleteEntityRequest).GetEntity().GetId().GetValue(), "delete_entity")
+	return self.authorize(ctx, in.(*pb.DeleteEntityRequest).GetEntity().GetId().GetValue(), "identityd2:delete_entity")
 }
 
 func (self *MetathingsIdentitydService) DeleteEntity(ctx context.Context, req *pb.DeleteEntityRequest) (*empty.Empty, error) {

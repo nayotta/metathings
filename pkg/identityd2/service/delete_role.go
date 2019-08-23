@@ -26,7 +26,7 @@ func (self *MetathingsIdentitydService) ValidateDeleteRole(ctx context.Context, 
 }
 
 func (self *MetathingsIdentitydService) AuthorizeDeleteRole(ctx context.Context, in interface{}) error {
-	return self.authorize(ctx, in.(*pb.DeleteRoleRequest).GetRole().GetId().GetValue(), "delete_role")
+	return self.authorize(ctx, in.(*pb.DeleteRoleRequest).GetRole().GetId().GetValue(), "identityd2:delete_role")
 }
 
 func (self *MetathingsIdentitydService) DeleteRole(ctx context.Context, req *pb.DeleteRoleRequest) (*empty.Empty, error) {
