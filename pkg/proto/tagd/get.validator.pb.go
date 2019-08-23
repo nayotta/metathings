@@ -7,8 +7,8 @@ import (
 	fmt "fmt"
 	math "math"
 	proto "github.com/golang/protobuf/proto"
-	_ "github.com/mwitkow/go-proto-validators"
 	_ "github.com/golang/protobuf/ptypes/wrappers"
+	_ "github.com/mwitkow/go-proto-validators"
 	github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
 )
 
@@ -24,6 +24,14 @@ func (this *GetRequest) Validate() error {
 	if this.Id != nil {
 		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Id); err != nil {
 			return github_com_mwitkow_go_proto_validators.FieldError("Id", err)
+		}
+	}
+	if nil == this.Namespace {
+		return github_com_mwitkow_go_proto_validators.FieldError("Namespace", fmt.Errorf("message must exist"))
+	}
+	if this.Namespace != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Namespace); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Namespace", err)
 		}
 	}
 	return nil

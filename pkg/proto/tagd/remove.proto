@@ -8,4 +8,5 @@ import "github.com/mwitkow/go-proto-validators/validator.proto";
 
 message RemoveRequest {
 	google.protobuf.StringValue id = 1 [(validator.field) = {msg_exists: true}];
+	google.protobuf.StringValue namespace = 2 [(validator.field) = {msg_exists: true}];
 }

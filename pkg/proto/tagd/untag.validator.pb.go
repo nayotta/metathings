@@ -33,5 +33,13 @@ func (this *UntagRequest) Validate() error {
 			}
 		}
 	}
+	if nil == this.Namespace {
+		return github_com_mwitkow_go_proto_validators.FieldError("Namespace", fmt.Errorf("message must exist"))
+	}
+	if this.Namespace != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Namespace); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Namespace", err)
+		}
+	}
 	return nil
 }

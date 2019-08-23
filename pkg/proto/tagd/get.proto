@@ -8,9 +8,11 @@ import "github.com/mwitkow/go-proto-validators/validator.proto";
 
 message GetRequest {
 	google.protobuf.StringValue id = 1 [(validator.field) = {msg_exists: true}];
+	google.protobuf.StringValue namespace = 2 [(validator.field) = {msg_exists: true}];
 }
 
 message GetResponse {
 	string id = 1;
 	repeated string tags = 2;
+	string namespace = 3;
 }
