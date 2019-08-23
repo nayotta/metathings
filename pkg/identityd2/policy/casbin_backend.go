@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	casbin_pb "github.com/casbin/casbin-server/proto"
 	log "github.com/sirupsen/logrus"
 
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
@@ -44,7 +45,7 @@ func (cb *CasbinBackend) context() context.Context {
 func (cb *CasbinBackend) _add_grouping_policy(cli pb.PolicydServiceClient, g, ent, grp, rol string) error {
 	var err error
 
-	req := &pb.PolicyRequest{
+	req := &casbin_pb.PolicyRequest{
 		EnforcerHandler: cb.opt.EnforcerHandler,
 		PType:           g,
 		Params:          []string{ent, grp, rol},
@@ -59,7 +60,7 @@ func (cb *CasbinBackend) _add_grouping_policy(cli pb.PolicydServiceClient, g, en
 func (cb *CasbinBackend) _remove_grouping_policy(cli pb.PolicydServiceClient, g, ent, grp, rol string) error {
 	var err error
 
-	req := &pb.PolicyRequest{
+	req := &casbin_pb.PolicyRequest{
 		EnforcerHandler: cb.opt.EnforcerHandler,
 		PType:           g,
 		Params:          []string{ent, grp, rol},
@@ -73,10 +74,10 @@ func (cb *CasbinBackend) _remove_grouping_policy(cli pb.PolicydServiceClient, g,
 
 func (cb *CasbinBackend) _list_grouping_policies(cli pb.PolicydServiceClient, g, ent, grp string) ([][]string, error) {
 	var err error
-	var res *pb.Array2DReply
+	var res *casbin_pb.Array2DReply
 	var ys [][]string
 
-	req := &pb.FilteredPolicyRequest{
+	req := &casbin_pb.FilteredPolicyRequest{
 		EnforcerHandler: cb.opt.EnforcerHandler,
 		PType:           g,
 		FieldIndex:      0,
@@ -96,10 +97,10 @@ func (cb *CasbinBackend) _list_grouping_policies(cli pb.PolicydServiceClient, g,
 
 func (cb *CasbinBackend) _list_policies(cli pb.PolicydServiceClient, p, rol, grp string) ([][]string, error) {
 	var err error
-	var res *pb.Array2DReply
+	var res *casbin_pb.Array2DReply
 	var ys [][]string
 
-	req := &pb.FilteredPolicyRequest{
+	req := &casbin_pb.FilteredPolicyRequest{
 		EnforcerHandler: cb.opt.EnforcerHandler,
 		PType:           p,
 		FieldIndex:      0,
@@ -119,7 +120,7 @@ func (cb *CasbinBackend) _list_policies(cli pb.PolicydServiceClient, p, rol, grp
 func (cb *CasbinBackend) _remove_subject_from_group(cli pb.PolicydServiceClient, grp *storage.Group, sub *storage.Entity) error {
 	var err error
 
-	req := &pb.FilteredPolicyRequest{
+	req := &casbin_pb.FilteredPolicyRequest{
 		EnforcerHandler: cb.opt.EnforcerHandler,
 		PType:           CASBIN_BACKEND_SUBJECT_PTYPE,
 		FieldIndex:      0,
@@ -141,7 +142,7 @@ func (cb *CasbinBackend) _add_role_to_group(cli pb.PolicydServiceClient, grp *st
 	obj_rol_s := cb.convert_role_for_object(grp)
 
 	for _, act := range rol.Actions {
-		req := &pb.PolicyRequest{
+		req := &casbin_pb.PolicyRequest{
 			EnforcerHandler: cb.opt.EnforcerHandler,
 			PType:           CASBIN_BACKEND_POLICY_PTYPE,
 			Params:          []string{sub_rol_s, grp_s, obj_rol_s, *act.Name},
@@ -167,7 +168,7 @@ func (cb *CasbinBackend) _remove_role_from_group(cli pb.PolicydServiceClient, gr
 	sub_rol_s := cb.convert_role(grp, rol)
 	grp_s := cb.convert_group(grp)
 
-	req := &pb.FilteredPolicyRequest{
+	req := &casbin_pb.FilteredPolicyRequest{
 		EnforcerHandler: cb.opt.EnforcerHandler,
 		PType:           CASBIN_BACKEND_POLICY_PTYPE,
 		FieldIndex:      0,
@@ -184,7 +185,7 @@ func (cb *CasbinBackend) _remove_role_from_group(cli pb.PolicydServiceClient, gr
 func (cb *CasbinBackend) _remove_group_about_subject(cli pb.PolicydServiceClient, grp *storage.Group) error {
 	var err error
 
-	req := &pb.FilteredPolicyRequest{
+	req := &casbin_pb.FilteredPolicyRequest{
 		EnforcerHandler: cb.opt.EnforcerHandler,
 		PType:           CASBIN_BACKEND_SUBJECT_PTYPE,
 		FieldIndex:      1,
@@ -201,7 +202,7 @@ func (cb *CasbinBackend) _remove_group_about_subject(cli pb.PolicydServiceClient
 func (cb *CasbinBackend) _remove_group_about_object(cli pb.PolicydServiceClient, grp *storage.Group) error {
 	var err error
 
-	req := &pb.FilteredPolicyRequest{
+	req := &casbin_pb.FilteredPolicyRequest{
 		EnforcerHandler: cb.opt.EnforcerHandler,
 		PType:           CASBIN_BACKEND_OBJECT_PTYPE,
 		FieldIndex:      1,
@@ -218,7 +219,7 @@ func (cb *CasbinBackend) _remove_group_about_object(cli pb.PolicydServiceClient,
 func (cb *CasbinBackend) _remove_group_about_policy(cli pb.PolicydServiceClient, grp *storage.Group) error {
 	var err error
 
-	req := &pb.FilteredPolicyRequest{
+	req := &casbin_pb.FilteredPolicyRequest{
 		EnforcerHandler: cb.opt.EnforcerHandler,
 		PType:           CASBIN_BACKEND_POLICY_PTYPE,
 		FieldIndex:      1,
@@ -235,7 +236,7 @@ func (cb *CasbinBackend) _remove_group_about_policy(cli pb.PolicydServiceClient,
 func (cb *CasbinBackend) _add_role_to_entity(cli pb.PolicydServiceClient, ent *storage.Entity, rol *storage.Role) error {
 	var err error
 
-	req := &pb.PolicyRequest{
+	req := &casbin_pb.PolicyRequest{
 		EnforcerHandler: cb.opt.EnforcerHandler,
 		PType:           CASBIN_BACKEND_UNGROUPING_PTYPE,
 		Params:          []string{cb.convert_entity(ent), CASBIN_BACKEND_UNGROUPING, cb.convert_ungrouping_role(rol)},
@@ -250,7 +251,7 @@ func (cb *CasbinBackend) _add_role_to_entity(cli pb.PolicydServiceClient, ent *s
 func (cb *CasbinBackend) _remove_role_from_entity(cli pb.PolicydServiceClient, ent *storage.Entity, rol *storage.Role) error {
 	var err error
 
-	req := &pb.FilteredPolicyRequest{
+	req := &casbin_pb.FilteredPolicyRequest{
 		EnforcerHandler: cb.opt.EnforcerHandler,
 		PType:           CASBIN_BACKEND_UNGROUPING_PTYPE,
 		FieldIndex:      0,
@@ -269,8 +270,8 @@ func (cb *CasbinBackend) _enforce(cli pb.PolicydServiceClient, sub, obj *storage
 	sub_s := cb.convert_subject(sub)
 	obj_s := cb.convert_object(obj)
 
-	reqs := []*pb.EnforceRequest{
-		&pb.EnforceRequest{
+	reqs := []*casbin_pb.EnforceRequest{
+		&casbin_pb.EnforceRequest{
 			EnforcerHandler: cb.opt.EnforcerHandler,
 			Params:          []string{cb.convert_entity(sub), CASBIN_BACKEND_UNGROUPING, obj_s, *act.Name},
 		},
@@ -278,7 +279,7 @@ func (cb *CasbinBackend) _enforce(cli pb.PolicydServiceClient, sub, obj *storage
 	for _, grp := range sub.Groups {
 		grp_s := cb.convert_group(grp)
 
-		reqs = append(reqs, &pb.EnforceRequest{
+		reqs = append(reqs, &casbin_pb.EnforceRequest{
 			EnforcerHandler: cb.opt.EnforcerHandler,
 			Params:          []string{sub_s, grp_s, obj_s, *act.Name},
 		})
@@ -582,7 +583,7 @@ func casbin_backend_factory(args ...interface{}) (Backend, error) {
 		logger:  logger,
 	}
 
-	if _, err = cli.Initialize(b.context(), &pb.EmptyRequest{Handler: opt.EnforcerHandler}); err != nil {
+	if _, err = cli.Initialize(b.context(), &casbin_pb.EmptyRequest{Handler: opt.EnforcerHandler}); err != nil {
 		return nil, err
 	}
 

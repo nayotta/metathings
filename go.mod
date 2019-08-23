@@ -3,8 +3,7 @@ module github.com/nayotta/metathings
 go 1.12
 
 require (
-	github.com/casbin/casbin v1.9.1
-	github.com/casbin/gorm-adapter v1.0.0
+	github.com/casbin/casbin-server v0.0.0-20190819123413-794fa382fddb
 	github.com/eclipse/paho.mqtt.golang v1.2.0
 	github.com/go-redis/redis v6.15.2+incompatible
 	github.com/gogo/protobuf v1.2.1
@@ -12,7 +11,6 @@ require (
 	github.com/gorilla/mux v1.7.3
 	github.com/grpc-ecosystem/go-grpc-middleware v1.0.0
 	github.com/jinzhu/gorm v1.9.10
-	github.com/mongodb/mongo-go-driver v1.1.0
 	github.com/mwitkow/go-proto-validators v0.1.0
 	github.com/nayotta/viper v1.0.2
 	github.com/satori/go.uuid v1.2.0
@@ -27,6 +25,5 @@ require (
 	go.uber.org/fx v1.9.0
 	go.uber.org/multierr v1.1.0 // indirect
 	golang.org/x/crypto v0.0.0-20190820162420-60c769a6c586
-	golang.org/x/net v0.0.0-20190404232315-eb5bcb51f2a3
 	google.golang.org/grpc v1.23.0
 )
