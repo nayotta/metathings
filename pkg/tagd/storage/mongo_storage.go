@@ -60,6 +60,15 @@ func (self *MongoStorage) context() context.Context {
 }
 
 func (self *MongoStorage) get_tags_by_id(id string) ([]string, error) {
+	ex, err := self.exist_tag(id)
+	if err != nil {
+		return nil, err
+	}
+
+	if !ex {
+		return nil, ErrNotFound
+	}
+
 	exclude_fields := bson.M{
 		MONGO_TAG_ID: 0,
 		"_id":        0,
@@ -70,7 +79,6 @@ func (self *MongoStorage) get_tags_by_id(id string) ([]string, error) {
 		return nil, err
 	}
 
-	found := false
 	var tags []string
 	for cur.Next(self.context()) {
 		var res bson.M
@@ -81,25 +89,54 @@ func (self *MongoStorage) get_tags_by_id(id string) ([]string, error) {
 		for tag, _ := range res {
 			tags = append(tags, tag)
 		}
-		found = true
-	}
-	if !found {
-		return nil, ErrNotFound
 	}
 
 	return tags, nil
 }
 
-func (self *MongoStorage) Tag(id string, tags []string) error {
-	m := bson.M{}
-	m[MONGO_TAG_ID] = id
-	for _, tag := range tags {
-		m[tag] = MONGO_TAG_PAD
+func (self *MongoStorage) exist_tag(id string) (bool, error) {
+	coll := self.get_collection()
+	size, err := coll.CountDocuments(
+		self.context(),
+		bson.M{MONGO_TAG_ID: id},
+		options.Count().SetLimit(1))
+	if err != nil {
+		return false, err
 	}
 
-	_, err := self.get_collection().InsertOne(self.context(), m)
+	return size > 0, nil
+}
+
+func (self *MongoStorage) Tag(id string, tags []string) error {
+	ex, err := self.exist_tag(id)
 	if err != nil {
 		return err
+	}
+
+	if ex {
+		flt := bson.M{}
+		flt[MONGO_TAG_ID] = id
+		doc := bson.M{}
+		for _, tag := range tags {
+			doc[tag] = MONGO_TAG_PAD
+		}
+
+		doc = bson.M{"$set": doc}
+		_, err = self.get_collection().UpdateOne(self.context(), flt, doc)
+		if err != nil {
+			return err
+		}
+	} else {
+		doc := bson.M{}
+		doc[MONGO_TAG_ID] = id
+		for _, tag := range tags {
+			doc[tag] = MONGO_TAG_PAD
+		}
+
+		_, err = self.get_collection().InsertOne(self.context(), doc)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
