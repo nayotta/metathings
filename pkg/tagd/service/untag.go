@@ -19,20 +19,22 @@ func (ts *MetathingsTagdService) Untag(ctx context.Context, req *pb.UntagRequest
 	logger := ts.GetLogger()
 
 	id := req.GetId().GetValue()
+	ns := req.GetNamespace().GetValue()
 	var tags []string
 
 	for _, tag := range req.GetTags() {
 		tags = append(tags, tag.GetValue())
 	}
 
-	err := ts.stor.Untag(id, tags)
+	err := ts.stor.Untag(ns, id, tags)
 	if err != nil {
 		logger.WithError(err).Errorf("failed to untag")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 	logger.WithFields(log.Fields{
-		"id":   id,
-		"tags": tags,
+		"id":        id,
+		"namespace": ns,
+		"tags":      tags,
 	}).Debugf("untag")
 
 	return &empty.Empty{}, nil

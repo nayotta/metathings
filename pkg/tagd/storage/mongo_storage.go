@@ -14,6 +14,7 @@ import (
 
 const (
 	MONGO_TAG_ID  = "##id"
+	MONGO_TAG_NS  = "##ns"
 	MONGO_TAG_PAD = "x"
 )
 
@@ -47,8 +48,11 @@ func (self *MongoStorage) connect() error {
 	return nil
 }
 
-func (self *MongoStorage) tag_filter_by_id(id string) bson.M {
-	return bson.M{MONGO_TAG_ID: id}
+func (self *MongoStorage) tag_filter_by_id(ns string, id string) bson.M {
+	return bson.M{
+		MONGO_TAG_ID: id,
+		MONGO_TAG_NS: ns,
+	}
 }
 
 func (self *MongoStorage) get_collection() *mongo.Collection {
@@ -59,8 +63,8 @@ func (self *MongoStorage) context() context.Context {
 	return context.TODO()
 }
 
-func (self *MongoStorage) get_tags_by_id(id string) ([]string, error) {
-	ex, err := self.exist_tag(id)
+func (self *MongoStorage) get_tags_by_id(ns string, id string) ([]string, error) {
+	ex, err := self.exist_tag(ns, id)
 	if err != nil {
 		return nil, err
 	}
@@ -71,10 +75,11 @@ func (self *MongoStorage) get_tags_by_id(id string) ([]string, error) {
 
 	exclude_fields := bson.M{
 		MONGO_TAG_ID: 0,
+		MONGO_TAG_NS: 0,
 		"_id":        0,
 	}
 	opts := &options.FindOptions{Projection: exclude_fields}
-	cur, err := self.get_collection().Find(self.context(), self.tag_filter_by_id(id), opts)
+	cur, err := self.get_collection().Find(self.context(), self.tag_filter_by_id(ns, id), opts)
 	if err != nil {
 		return nil, err
 	}
@@ -94,11 +99,14 @@ func (self *MongoStorage) get_tags_by_id(id string) ([]string, error) {
 	return tags, nil
 }
 
-func (self *MongoStorage) exist_tag(id string) (bool, error) {
+func (self *MongoStorage) exist_tag(ns string, id string) (bool, error) {
 	coll := self.get_collection()
 	size, err := coll.CountDocuments(
 		self.context(),
-		bson.M{MONGO_TAG_ID: id},
+		bson.M{
+			MONGO_TAG_ID: id,
+			MONGO_TAG_NS: ns,
+		},
 		options.Count().SetLimit(1))
 	if err != nil {
 		return false, err
@@ -107,15 +115,14 @@ func (self *MongoStorage) exist_tag(id string) (bool, error) {
 	return size > 0, nil
 }
 
-func (self *MongoStorage) Tag(id string, tags []string) error {
-	ex, err := self.exist_tag(id)
+func (self *MongoStorage) Tag(ns string, id string, tags []string) error {
+	ex, err := self.exist_tag(ns, id)
 	if err != nil {
 		return err
 	}
 
 	if ex {
-		flt := bson.M{}
-		flt[MONGO_TAG_ID] = id
+		flt := self.tag_filter_by_id(ns, id)
 		doc := bson.M{}
 		for _, tag := range tags {
 			doc[tag] = MONGO_TAG_PAD
@@ -127,8 +134,7 @@ func (self *MongoStorage) Tag(id string, tags []string) error {
 			return err
 		}
 	} else {
-		doc := bson.M{}
-		doc[MONGO_TAG_ID] = id
+		doc := self.tag_filter_by_id(ns, id)
 		for _, tag := range tags {
 			doc[tag] = MONGO_TAG_PAD
 		}
@@ -142,14 +148,14 @@ func (self *MongoStorage) Tag(id string, tags []string) error {
 	return nil
 }
 
-func (self *MongoStorage) Untag(id string, tags []string) error {
+func (self *MongoStorage) Untag(ns string, id string, tags []string) error {
 	unsets := bson.M{}
 	for _, tag := range tags {
 		unsets[tag] = ""
 	}
-	update := bson.M{"$unset": unsets}
+	doc := bson.M{"$unset": unsets}
 
-	_, err := self.get_collection().UpdateOne(self.context(), self.tag_filter_by_id(id), update)
+	_, err := self.get_collection().UpdateOne(self.context(), self.tag_filter_by_id(ns, id), doc)
 	if err != nil {
 		return err
 	}
@@ -157,23 +163,23 @@ func (self *MongoStorage) Untag(id string, tags []string) error {
 	return nil
 }
 
-func (self *MongoStorage) Remove(id string) error {
-	if _, err := self.get_collection().DeleteOne(self.context(), self.tag_filter_by_id(id)); err != nil {
+func (self *MongoStorage) Remove(ns string, id string) error {
+	if _, err := self.get_collection().DeleteOne(self.context(), self.tag_filter_by_id(ns, id)); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (self *MongoStorage) Get(id string) ([]string, error) {
-	tags, err := self.get_tags_by_id(id)
+func (self *MongoStorage) Get(ns string, id string) ([]string, error) {
+	tags, err := self.get_tags_by_id(ns, id)
 	if err != nil {
 		return nil, err
 	}
 	return tags, nil
 }
 
-func (self *MongoStorage) Query(tags []string) ([]string, error) {
+func (self *MongoStorage) Query(ns string, tags []string) ([]string, error) {
 	if len(tags) == 0 {
 		return nil, nil
 	}
@@ -182,6 +188,7 @@ func (self *MongoStorage) Query(tags []string) ([]string, error) {
 	for _, tag := range tags {
 		query[tag] = MONGO_TAG_PAD
 	}
+	query[MONGO_TAG_NS] = ns
 	opts := &options.FindOptions{
 		Projection: bson.M{MONGO_TAG_ID: 1},
 	}

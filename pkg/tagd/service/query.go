@@ -13,16 +13,17 @@ func (ts *MetathingsTagdService) Query(ctx context.Context, req *pb.QueryRequest
 	var tags []string
 	logger := ts.GetLogger()
 
+	ns := req.GetNamespace().GetValue()
 	for _, tag := range req.GetTags() {
 		tags = append(tags, tag.GetValue())
 	}
 
-	ids, err := ts.stor.Query(tags)
+	ids, err := ts.stor.Query(ns, tags)
 	if err != nil {
 		logger.WithError(err).Errorf("failed to query tags")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
-	logger.Debugf("query tags")
+	logger.WithField("namespace", ns).Debugf("query tags")
 
 	res := &pb.QueryResponse{
 		Tags: tags,
