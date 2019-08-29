@@ -38,6 +38,10 @@ func NewBackend(name string, args ...interface{}) (Backend, error) {
 	return fty(args...)
 }
 
+func NewCachedBackend(name string, args ...interface{}) (Backend, error) {
+	panic("unimplemented")
+}
+
 func init() {
 	backend_factories = make(map[string]BackendFactory)
 }

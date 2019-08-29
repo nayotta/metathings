@@ -2,7 +2,6 @@ package metathings_identityd2_policy
 
 import (
 	"context"
-	"fmt"
 
 	casbin_pb "github.com/casbin/casbin-server/proto"
 	log "github.com/sirupsen/logrus"
@@ -124,7 +123,7 @@ func (cb *CasbinBackend) _remove_subject_from_group(cli pb.PolicydServiceClient,
 		EnforcerHandler: cb.opt.EnforcerHandler,
 		PType:           CASBIN_BACKEND_SUBJECT_PTYPE,
 		FieldIndex:      0,
-		FieldValues:     []string{cb.convert_subject(sub), cb.convert_group(grp)},
+		FieldValues:     []string{ConvertSubject(sub), ConvertGroup(grp)},
 	}
 
 	if _, err = cli.RemoveFilteredNamedGroupingPolicy(cb.context(), req); err != nil {
@@ -137,9 +136,9 @@ func (cb *CasbinBackend) _remove_subject_from_group(cli pb.PolicydServiceClient,
 func (cb *CasbinBackend) _add_role_to_group(cli pb.PolicydServiceClient, grp *storage.Group, rol *storage.Role) error {
 	var err error
 
-	sub_rol_s := cb.convert_role(grp, rol)
-	grp_s := cb.convert_group(grp)
-	obj_rol_s := cb.convert_role_for_object(grp)
+	sub_rol_s := ConvertRole(grp, rol)
+	grp_s := ConvertGroup(grp)
+	obj_rol_s := ConvertRoleForObject(grp)
 
 	for _, act := range rol.Actions {
 		req := &casbin_pb.PolicyRequest{
@@ -154,7 +153,7 @@ func (cb *CasbinBackend) _add_role_to_group(cli pb.PolicydServiceClient, grp *st
 	}
 
 	for _, sub := range grp.Subjects {
-		if err = cb._add_grouping_policy(cli, CASBIN_BACKEND_SUBJECT_PTYPE, cb.convert_subject(sub), cb.convert_group(grp), sub_rol_s); err != nil {
+		if err = cb._add_grouping_policy(cli, CASBIN_BACKEND_SUBJECT_PTYPE, ConvertSubject(sub), ConvertGroup(grp), sub_rol_s); err != nil {
 			return err
 		}
 	}
@@ -165,8 +164,8 @@ func (cb *CasbinBackend) _add_role_to_group(cli pb.PolicydServiceClient, grp *st
 func (cb *CasbinBackend) _remove_role_from_group(cli pb.PolicydServiceClient, grp *storage.Group, rol *storage.Role) error {
 	var err error
 
-	sub_rol_s := cb.convert_role(grp, rol)
-	grp_s := cb.convert_group(grp)
+	sub_rol_s := ConvertRole(grp, rol)
+	grp_s := ConvertGroup(grp)
 
 	req := &casbin_pb.FilteredPolicyRequest{
 		EnforcerHandler: cb.opt.EnforcerHandler,
@@ -189,7 +188,7 @@ func (cb *CasbinBackend) _remove_group_about_subject(cli pb.PolicydServiceClient
 		EnforcerHandler: cb.opt.EnforcerHandler,
 		PType:           CASBIN_BACKEND_SUBJECT_PTYPE,
 		FieldIndex:      1,
-		FieldValues:     []string{cb.convert_group(grp)},
+		FieldValues:     []string{ConvertGroup(grp)},
 	}
 
 	if _, err = cli.RemoveFilteredNamedGroupingPolicy(cb.context(), req); err != nil {
@@ -206,7 +205,7 @@ func (cb *CasbinBackend) _remove_group_about_object(cli pb.PolicydServiceClient,
 		EnforcerHandler: cb.opt.EnforcerHandler,
 		PType:           CASBIN_BACKEND_OBJECT_PTYPE,
 		FieldIndex:      1,
-		FieldValues:     []string{cb.convert_group(grp)},
+		FieldValues:     []string{ConvertGroup(grp)},
 	}
 
 	if _, err = cli.RemoveFilteredNamedGroupingPolicy(cb.context(), req); err != nil {
@@ -223,7 +222,7 @@ func (cb *CasbinBackend) _remove_group_about_policy(cli pb.PolicydServiceClient,
 		EnforcerHandler: cb.opt.EnforcerHandler,
 		PType:           CASBIN_BACKEND_POLICY_PTYPE,
 		FieldIndex:      1,
-		FieldValues:     []string{cb.convert_group(grp)},
+		FieldValues:     []string{ConvertGroup(grp)},
 	}
 
 	if _, err = cli.RemoveFilteredNamedPolicy(cb.context(), req); err != nil {
@@ -239,7 +238,7 @@ func (cb *CasbinBackend) _add_role_to_entity(cli pb.PolicydServiceClient, ent *s
 	req := &casbin_pb.PolicyRequest{
 		EnforcerHandler: cb.opt.EnforcerHandler,
 		PType:           CASBIN_BACKEND_UNGROUPING_PTYPE,
-		Params:          []string{cb.convert_entity(ent), CASBIN_BACKEND_UNGROUPING, cb.convert_ungrouping_role(rol)},
+		Params:          []string{ConvertEntity(ent), CASBIN_BACKEND_UNGROUPING, ConvertUngroupingRole(rol)},
 	}
 	if _, err = cli.AddNamedGroupingPolicy(cb.context(), req); err != nil {
 		return err
@@ -255,7 +254,7 @@ func (cb *CasbinBackend) _remove_role_from_entity(cli pb.PolicydServiceClient, e
 		EnforcerHandler: cb.opt.EnforcerHandler,
 		PType:           CASBIN_BACKEND_UNGROUPING_PTYPE,
 		FieldIndex:      0,
-		FieldValues:     []string{cb.convert_entity(ent), CASBIN_BACKEND_UNGROUPING, cb.convert_ungrouping_role(rol)},
+		FieldValues:     []string{ConvertEntity(ent), CASBIN_BACKEND_UNGROUPING, ConvertUngroupingRole(rol)},
 	}
 	if _, err = cli.RemoveFilteredNamedGroupingPolicy(cb.context(), req); err != nil {
 		return err
@@ -267,17 +266,17 @@ func (cb *CasbinBackend) _remove_role_from_entity(cli pb.PolicydServiceClient, e
 func (cb *CasbinBackend) _enforce(cli pb.PolicydServiceClient, sub, obj *storage.Entity, act *storage.Action) error {
 	var err error
 
-	sub_s := cb.convert_subject(sub)
-	obj_s := cb.convert_object(obj)
+	sub_s := ConvertSubject(sub)
+	obj_s := ConvertObject(obj)
 
 	reqs := []*casbin_pb.EnforceRequest{
 		&casbin_pb.EnforceRequest{
 			EnforcerHandler: cb.opt.EnforcerHandler,
-			Params:          []string{cb.convert_entity(sub), CASBIN_BACKEND_UNGROUPING, obj_s, *act.Name},
+			Params:          []string{ConvertEntity(sub), CASBIN_BACKEND_UNGROUPING, obj_s, *act.Name},
 		},
 	}
 	for _, grp := range sub.Groups {
-		grp_s := cb.convert_group(grp)
+		grp_s := ConvertGroup(grp)
 
 		reqs = append(reqs, &casbin_pb.EnforceRequest{
 			EnforcerHandler: cb.opt.EnforcerHandler,
@@ -296,48 +295,6 @@ func (cb *CasbinBackend) _enforce(cli pb.PolicydServiceClient, sub, obj *storage
 	}
 
 	return nil
-}
-
-func (cb *CasbinBackend) convert_group(grp *storage.Group) string {
-	return fmt.Sprintf("dom.%s.grp.%s", *grp.DomainId, *grp.Id)
-}
-
-func (cb *CasbinBackend) convert_subject(sub *storage.Entity) string {
-	return fmt.Sprintf("sub.%s", *sub.Id)
-}
-
-func (cb *CasbinBackend) convert_object(obj *storage.Entity) string {
-	return fmt.Sprintf("obj.%s", *obj.Id)
-}
-
-func (cb *CasbinBackend) convert_entity(ent *storage.Entity) string {
-	return fmt.Sprintf("ent.%s", *ent.Id)
-}
-
-func (cb *CasbinBackend) convert_role_for_object(grp *storage.Group) string {
-	return fmt.Sprintf("dom.%s.grp.%s.data", *grp.DomainId, *grp.Id)
-}
-
-func (cb *CasbinBackend) convert_role_for_subject(grp *storage.Group, rol *storage.Role) string {
-	return fmt.Sprintf("dom.%s.grp.%s.rol.%s", *grp.DomainId, *grp.Id, *rol.Name)
-}
-
-func (cb *CasbinBackend) convert_roles_for_subject(grp *storage.Group) []string {
-	var ys []string
-
-	for _, r := range grp.Roles {
-		ys = append(ys, cb.convert_role_for_subject(grp, r))
-	}
-
-	return ys
-}
-
-func (cb *CasbinBackend) convert_role(grp *storage.Group, rol *storage.Role) string {
-	return fmt.Sprintf("dom.%s.grp.%s.rol.%s", *grp.DomainId, *grp.Id, *rol.Name)
-}
-
-func (cb *CasbinBackend) convert_ungrouping_role(rol *storage.Role) string {
-	return fmt.Sprintf("rol.%s", *rol.Name)
 }
 
 func (cb *CasbinBackend) Enforce(sub, obj *storage.Entity, act *storage.Action) error {
@@ -396,8 +353,8 @@ func (cb *CasbinBackend) AddSubjectToGroup(grp *storage.Group, sub *storage.Enti
 		return err
 	}
 
-	for _, r := range cb.convert_roles_for_subject(grp) {
-		if err = cb._add_grouping_policy(cli, CASBIN_BACKEND_SUBJECT_PTYPE, cb.convert_subject(sub), cb.convert_group(grp), r); err != nil {
+	for _, r := range ConvertRolesForSubject(grp) {
+		if err = cb._add_grouping_policy(cli, CASBIN_BACKEND_SUBJECT_PTYPE, ConvertSubject(sub), ConvertGroup(grp), r); err != nil {
 			return err
 		}
 	}
@@ -437,7 +394,7 @@ func (cb *CasbinBackend) AddObjectToGroup(grp *storage.Group, obj *storage.Entit
 	}
 	defer cfn()
 
-	err = cb._add_grouping_policy(cli, CASBIN_BACKEND_OBJECT_PTYPE, cb.convert_object(obj), cb.convert_group(grp), cb.convert_role_for_object(grp))
+	err = cb._add_grouping_policy(cli, CASBIN_BACKEND_OBJECT_PTYPE, ConvertObject(obj), ConvertGroup(grp), ConvertRoleForObject(grp))
 	if err != nil {
 		return err
 	}
@@ -457,7 +414,7 @@ func (cb *CasbinBackend) RemoveObjectFromGroup(grp *storage.Group, obj *storage.
 	}
 	defer cfn()
 
-	err = cb._remove_grouping_policy(cli, CASBIN_BACKEND_OBJECT_PTYPE, cb.convert_object(obj), cb.convert_group(grp), cb.convert_role_for_object(grp))
+	err = cb._remove_grouping_policy(cli, CASBIN_BACKEND_OBJECT_PTYPE, ConvertObject(obj), ConvertGroup(grp), ConvertRoleForObject(grp))
 	if err != nil {
 		return err
 	}
