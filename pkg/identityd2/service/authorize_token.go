@@ -2,6 +2,7 @@ package metathings_identityd2_service
 
 import (
 	"context"
+	"time"
 
 	"github.com/golang/protobuf/ptypes/empty"
 	log "github.com/sirupsen/logrus"
@@ -84,9 +85,17 @@ func (self *MetathingsIdentitydService) authorize(ctx context.Context, object, a
 		Name: &action,
 	}
 
-	if err = self.backend.Enforce(sub, obj, act); err != nil {
+	start := time.Now()
+	err = self.backend.Enforce(sub, obj, act)
+	self.logger.WithFields(log.Fields{
+		"elapse":  time.Since(start),
+		"subject": tkn.Entity.Id,
+		"object":  object,
+		"action":  action,
+	}).Debugf("enforce")
+
+	if err != nil {
 		return err
 	}
-
 	return nil
 }

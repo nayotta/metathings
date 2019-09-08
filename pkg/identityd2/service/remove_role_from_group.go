@@ -47,7 +47,7 @@ func (self *MetathingsIdentitydService) RemoveRoleFromGroup(ctx context.Context,
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
-	rol_s, err := self.storage.GetRole(rol_id_str)
+	rol_s, err := self.storage.GetRoleWithFullActions(rol_id_str)
 	if err != nil {
 		self.logger.WithError(err).Errorf("failed to get role in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())

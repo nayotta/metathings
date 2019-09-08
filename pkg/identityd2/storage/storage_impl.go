@@ -1739,7 +1739,7 @@ func new_db(s *StorageImpl, driver, uri string) error {
 }
 
 func init_db(s *StorageImpl) error {
-	s.db.AutoMigrate(
+	if err := s.db.AutoMigrate(
 		&Domain{},
 		&Action{},
 		&Role{},
@@ -1755,7 +1755,9 @@ func init_db(s *StorageImpl) error {
 		&GroupRoleMapping{},
 		&CredentialRoleMapping{},
 		&SystemConfig{},
-	)
+	).Error; err != nil {
+		return err
+	}
 
 	return nil
 }

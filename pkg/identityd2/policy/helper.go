@@ -47,3 +47,7 @@ func ConvertRole(grp *storage.Group, rol *storage.Role) string {
 func ConvertUngroupingRole(rol *storage.Role) string {
 	return fmt.Sprintf("rol.%s", *rol.Name)
 }
+
+func ConvertAction(act *storage.Action) string {
+	return *act.Name
+}

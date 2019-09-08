@@ -164,14 +164,11 @@ func (cb *CasbinBackend) _add_role_to_group(cli pb.PolicydServiceClient, grp *st
 func (cb *CasbinBackend) _remove_role_from_group(cli pb.PolicydServiceClient, grp *storage.Group, rol *storage.Role) error {
 	var err error
 
-	sub_rol_s := ConvertRole(grp, rol)
-	grp_s := ConvertGroup(grp)
-
 	req := &casbin_pb.FilteredPolicyRequest{
 		EnforcerHandler: cb.opt.EnforcerHandler,
 		PType:           CASBIN_BACKEND_POLICY_PTYPE,
 		FieldIndex:      0,
-		FieldValues:     []string{sub_rol_s, grp_s},
+		FieldValues:     []string{ConvertRole(grp, rol), ConvertGroup(grp)},
 	}
 
 	if _, err = cli.RemoveFilteredNamedPolicy(cb.context(), req); err != nil {

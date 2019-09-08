@@ -45,3 +45,11 @@ func GetTestRedisDB() string {
 func GetTestPolicydAddress() string {
 	return GetenvWithDefault("MTT_POLICYD_ADDRESS", "localhost:21733")
 }
+
+func GetTestPolicydDriverName() string {
+	return GetenvWithDefault("MTT_POLICYD_DRIVER_NAME", "postgres")
+}
+
+func GetTestPolicydConnectString() string {
+	return GetenvWithDefault("MTT_POLICYD_CONNECT_STRING", "host=127.0.0.1 port=5432 user=postgres password=postgres sslmode=disable")
+}
