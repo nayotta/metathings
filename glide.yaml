@@ -24,7 +24,7 @@ import:
   subpackages:
   - protoc-gen-govalidators
 - package: github.com/nayotta/viper
-  version: ~1.0.2
+  version: master
 - package: github.com/parnurzeal/gorequest
   version: ~0.2.15
 - package: github.com/satori/go.uuid

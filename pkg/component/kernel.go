@@ -2,18 +2,24 @@ package metathings_component
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 	"io/ioutil"
 	"strings"
 
+	"github.com/golang/protobuf/jsonpb"
+	"github.com/golang/protobuf/proto"
+	"github.com/golang/protobuf/ptypes"
 	"github.com/golang/protobuf/ptypes/empty"
+	stpb "github.com/golang/protobuf/ptypes/struct"
 	"github.com/golang/protobuf/ptypes/wrappers"
 	log "github.com/sirupsen/logrus"
 
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
 	const_helper "github.com/nayotta/metathings/pkg/common/constant"
 	context_helper "github.com/nayotta/metathings/pkg/common/context"
+	id_helper "github.com/nayotta/metathings/pkg/common/id"
 	log_helper "github.com/nayotta/metathings/pkg/common/log"
 	identityd2_contrib "github.com/nayotta/metathings/pkg/identityd2/contrib"
 	device_pb "github.com/nayotta/metathings/pkg/proto/device"
@@ -231,6 +237,104 @@ func (k *Kernel) Heartbeat() error {
 	return nil
 }
 
+type FrameStream struct {
+	stream   device_pb.DeviceService_PushFrameToFlowClient
+	push_ack bool
+	close_cb func() error
+}
+
+func (fs *FrameStream) PushFrame(frm *deviced_pb.OpFrame) error {
+	req_id := id_helper.NewId()
+	req := &device_pb.PushFrameToFlowRequest{
+		Id: &wrappers.StringValue{Value: req_id},
+		Request: &device_pb.PushFrameToFlowRequest_Frame{
+			Frame: frm,
+		},
+	}
+
+	err := fs.stream.Send(req)
+	if err != nil {
+		return err
+	}
+
+	if fs.push_ack {
+		res, err := fs.stream.Recv()
+		if err != nil {
+			return err
+		}
+
+		if res.GetId() != req_id || res.GetAck() == nil {
+			return ErrUnexceptedResponse
+		}
+	}
+
+	return nil
+}
+
+func (fs *FrameStream) Push(dat interface{}) error {
+	var dat_js string
+	var err error
+
+	switch msg := dat.(type) {
+	case proto.Message:
+		dat_js, err = new(jsonpb.Marshaler).MarshalToString(msg)
+		if err != nil {
+			return err
+		}
+	case map[string]interface{}:
+		buf, err := json.Marshal(msg)
+		if err != nil {
+			return err
+		}
+		dat_js = string(buf)
+	}
+
+	var st stpb.Struct
+	err = jsonpb.UnmarshalString(dat_js, &st)
+	if err != nil {
+		return err
+	}
+
+	frm := &deviced_pb.OpFrame{
+		Ts:   ptypes.TimestampNow(),
+		Data: &st,
+	}
+
+	return fs.PushFrame(frm)
+}
+
+func (fs *FrameStream) Close() error {
+	return fs.close_cb()
+}
+
+func (k *Kernel) NewFrameStream(flow string) (*FrameStream, error) {
+	cli, cfn, err := k.cli_fty.NewDeviceServiceClient()
+	if err != nil {
+		return nil, err
+	}
+
+	kc := k.Config()
+	config_ack := kc.GetBool("flow.config_ack")
+	push_ack := kc.GetBool("flow.push_ack")
+
+	stm, err := _build_push_frame_to_flow_stream(cli, k.Context(), flow, config_ack, push_ack)
+	if err != nil {
+		defer cfn()
+		return nil, err
+	}
+
+	fs := &FrameStream{
+		stream:   stm,
+		push_ack: push_ack,
+		close_cb: func() error {
+			cfn()
+			return nil
+		},
+	}
+
+	return fs, nil
+}
+
 func (k *Kernel) Config() *KernelConfig {
 	return k.cfg.Sub(k.cfg.GetString("stage"))
 }
@@ -286,10 +390,10 @@ func new_client_factory_from_kernel_config(cfg *KernelConfig) (*client_helper.Cl
 	return cli_fty, nil
 }
 
-func _get_module_config_text(cli pb.DeviceServiceClient, ctx context.Context, mdl_id string) (string, error) {
+func _get_module_config_text(cli pb.DeviceServiceClient, ctx context.Context, mdl_name string) (string, error) {
 	req := &device_pb.GetObjectContentRequest{
 		Object: &deviced_pb.OpObject{
-			Name: &wrappers.StringValue{Value: fmt.Sprintf("%s/sys/config", mdl_id)},
+			Name: &wrappers.StringValue{Value: fmt.Sprintf("%s/sys/config", mdl_name)},
 		},
 	}
 	res, err := cli.GetObjectContent(ctx, req)
@@ -428,6 +532,44 @@ func _issue_module_token(cli pb.DeviceServiceClient, ctx context.Context, id, se
 	return res.GetToken(), nil
 }
 
+func _build_push_frame_to_flow_stream(cli pb.DeviceServiceClient, ctx context.Context, flow string, config_ack, push_ack bool) (pb.DeviceService_PushFrameToFlowClient, error) {
+	stm, err := cli.PushFrameToFlow(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	cfg_req_id := id_helper.NewId()
+	cfg_req := &device_pb.PushFrameToFlowRequest{
+		Id: &wrappers.StringValue{Value: cfg_req_id},
+		Request: &device_pb.PushFrameToFlowRequest_Config_{
+			Config: &device_pb.PushFrameToFlowRequest_Config{
+				Flow: &deviced_pb.OpFlow{
+					Name: &wrappers.StringValue{Value: flow},
+				},
+				ConfigAck: &wrappers.BoolValue{Value: config_ack},
+				PushAck:   &wrappers.BoolValue{Value: push_ack},
+			},
+		},
+	}
+	err = stm.Send(cfg_req)
+	if err != nil {
+		return nil, err
+	}
+
+	if config_ack {
+		res, err := stm.Recv()
+		if err != nil {
+			return nil, err
+		}
+
+		if res.GetId() != cfg_req_id || res.GetAck() == nil {
+			return nil, ErrUnexceptedResponse
+		}
+	}
+
+	return stm, nil
+}
+
 func NewKernel(opt *NewKernelOption) (*Kernel, error) {
 	var err error
 	var cfg_txt string
@@ -457,7 +599,7 @@ func NewKernel(opt *NewKernelOption) (*Kernel, error) {
 			return nil, err
 		}
 
-		cfg_txt, err = _get_module_config_text(cli, ctx, mdl.Id)
+		cfg_txt, err = _get_module_config_text(cli, ctx, mdl.Name)
 		if err != nil {
 			return nil, err
 		}

@@ -1,5 +1,5 @@
-hash: b81d07ade65fb67c511db2152b46b5afa1238287bb7628b1cffe5afb0021c747
-updated: 2019-07-17T13:46:37.213239+08:00
+hash: ae85224e220b7b03aff18ac007ccdbe770ef6e2c73bedbc242635c9e9c6d4ac7
+updated: 2019-08-09T14:05:53.106285+08:00
 imports:
 - name: github.com/casbin/casbin
   version: 695c374a6617e9cdc930e8666307a772577cbd70
@@ -34,11 +34,8 @@ imports:
 - name: github.com/gogo/protobuf
   version: 636bf0302bc95575d69441b25a2603156ffdddf1
   subpackages:
-  - jsonpb
   - proto
   - protoc-gen-gogo/descriptor
-  - sortkeys
-  - types
 - name: github.com/golang/mock
   version: 8a44ef6e8be577e050008c7886f24fc705d709fb
   subpackages:
@@ -139,7 +136,7 @@ imports:
   subpackages:
   - protoc-gen-govalidators
 - name: github.com/nayotta/viper
-  version: b5e8006cbee93ec955a89ab31e0e3ce3204f3736
+  version: 019fa2bda1e56d898bc2744f700e07bf2fff79de
 - name: github.com/parnurzeal/gorequest
   version: a578a48e8d6ca8b01a3b18314c43c6716bb5f5a3
 - name: github.com/pelletier/go-toml
