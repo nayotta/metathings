@@ -8,6 +8,7 @@ import "github.com/mwitkow/go-proto-validators/validator.proto";
 
 message QueryRequest {
 	repeated google.protobuf.StringValue tags = 1;
+	google.protobuf.StringValue namespace = 2 [(validator.field) = {msg_exists: true}];
 }
 
 message QueryResponse {

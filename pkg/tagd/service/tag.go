@@ -19,27 +19,29 @@ func (ts *MetathingsTagdService) Tag(ctx context.Context, req *pb.TagRequest) (*
 	logger := ts.GetLogger()
 
 	id := req.GetId().GetValue()
-	var tags []string
+	ns := req.GetNamespace().GetValue()
 
+	var tags []string
 	for _, tag := range req.GetTags() {
 		tags = append(tags, tag.GetValue())
 	}
 
-	err := ts.stor.Tag(id, tags)
+	err := ts.stor.Tag(ns, id, tags)
 	if err != nil {
 		logger.WithError(err).Errorf("failed to tag")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
 	if err != nil {
-		defer ts.stor.Remove(id)
+		defer ts.stor.Remove(ns, id)
 		logger.WithError(err).Errorf("failed to add tag in enforcer")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
 	logger.WithFields(log.Fields{
-		"id":   id,
-		"tags": tags,
+		"id":        id,
+		"namespace": ns,
+		"tags":      tags,
 	}).Debugf("tag")
 
 	return &empty.Empty{}, nil

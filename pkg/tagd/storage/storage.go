@@ -1,11 +1,11 @@
 package metathings_tagd_storage
 
 type Storage interface {
-	Tag(id string, tags []string) error
-	Untag(id string, tags []string) error
-	Remove(id string) error
-	Get(id string) ([]string, error)
-	Query(tags []string) ([]string, error)
+	Tag(ns string, id string, tags []string) error
+	Untag(ns string, id string, tags []string) error
+	Remove(ns string, id string) error
+	Get(ns string, id string) ([]string, error)
+	Query(ns string, tags []string) ([]string, error)
 }
 
 var storage_factories map[string]func(...interface{}) (Storage, error)
