@@ -25,7 +25,7 @@ func (self *MetathingsIdentitydService) ValidatePatchAction(ctx context.Context,
 }
 
 func (self *MetathingsIdentitydService) AuthorizePatchAction(ctx context.Context, in interface{}) error {
-	return self.authorize(ctx, in.(*pb.PatchActionRequest).GetAction().GetId().GetValue(), "patch_action")
+	return self.authorize(ctx, in.(*pb.PatchActionRequest).GetAction().GetId().GetValue(), "identityd2:patch_action")
 }
 
 func (self *MetathingsIdentitydService) PatchAction(ctx context.Context, req *pb.PatchActionRequest) (*pb.PatchActionResponse, error) {

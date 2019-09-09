@@ -38,7 +38,7 @@ func (self *MetathingsIdentitydService) AuthorizeRevokeToken(ctx context.Context
 		return err
 	}
 
-	return self.authorize(ctx, *tkn_s.Id, "revoke_token")
+	return self.authorize(ctx, *tkn_s.Id, "identityd2:revoke_token")
 }
 
 func (self *MetathingsIdentitydService) RevokeToken(ctx context.Context, req *pb.RevokeTokenRequest) (*empty.Empty, error) {

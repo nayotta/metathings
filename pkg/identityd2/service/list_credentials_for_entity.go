@@ -27,7 +27,7 @@ func (self *MetathingsIdentitydService) ValidateListCredentialsForEntity(ctx con
 }
 
 func (self *MetathingsIdentitydService) AuthorizeListCredentialsForEntity(ctx context.Context, in interface{}) error {
-	return self.authorize(ctx, in.(*pb.ListCredentialsForEntityRequest).GetEntity().GetId().GetValue(), "list_credentials_for_entity")
+	return self.authorize(ctx, in.(*pb.ListCredentialsForEntityRequest).GetEntity().GetId().GetValue(), "identityd2:list_credentials_for_entity")
 }
 
 func (self *MetathingsIdentitydService) ListCredentialsForEntity(ctx context.Context, req *pb.ListCredentialsForEntityRequest) (*pb.ListCredentialsForEntityResponse, error) {

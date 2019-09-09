@@ -26,7 +26,7 @@ func (self *MetathingsDevicedService) ValidateGetDeviceByModule(ctx context.Cont
 }
 
 func (self *MetathingsDevicedService) AuthorizeGetDeviceByModule(ctx context.Context, in interface{}) error {
-	return self.authorizer.Authorize(ctx, in.(*pb.GetDeviceByModuleRequest).GetModule().GetId().GetValue(), "get_device_by_module")
+	return self.authorizer.Authorize(ctx, in.(*pb.GetDeviceByModuleRequest).GetModule().GetId().GetValue(), "deviced:get_device_by_module")
 }
 
 func (self *MetathingsDevicedService) GetDeviceByModule(ctx context.Context, req *pb.GetDeviceByModuleRequest) (*pb.GetDeviceByModuleResponse, error) {

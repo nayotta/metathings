@@ -31,7 +31,7 @@ func (self *MetathingsDevicedService) ValidateHeartbeat(ctx context.Context, in 
 }
 
 func (self *MetathingsDevicedService) AuthorizeHeartbeat(ctx context.Context, in interface{}) error {
-	return self.authorizer.Authorize(ctx, in.(*pb.HeartbeatRequest).GetDevice().GetId().GetValue(), "heartbeat")
+	return self.authorizer.Authorize(ctx, in.(*pb.HeartbeatRequest).GetDevice().GetId().GetValue(), "deviced:heartbeat")
 }
 
 func (self *MetathingsDevicedService) Heartbeat(ctx context.Context, req *pb.HeartbeatRequest) (*empty.Empty, error) {

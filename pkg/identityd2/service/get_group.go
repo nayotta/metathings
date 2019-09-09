@@ -27,7 +27,7 @@ func (self *MetathingsIdentitydService) ValidateGetGroup(ctx context.Context, in
 }
 
 func (self *MetathingsIdentitydService) AuthorizeGetGroup(ctx context.Context, in interface{}) error {
-	return self.authorize(ctx, in.(*pb.GetGroupRequest).GetGroup().GetId().GetValue(), "get_group")
+	return self.authorize(ctx, in.(*pb.GetGroupRequest).GetGroup().GetId().GetValue(), "identityd2:get_group")
 }
 
 func (self *MetathingsIdentitydService) GetGroup(ctx context.Context, req *pb.GetGroupRequest) (*pb.GetGroupResponse, error) {

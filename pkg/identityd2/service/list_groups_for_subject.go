@@ -24,7 +24,7 @@ func (self *MetathingsIdentitydService) ValidateListGroupsForSubject(ctx context
 }
 
 func (self *MetathingsIdentitydService) AuthorizeListGroupsForSubject(ctx context.Context, in interface{}) error {
-	return self.authorize(ctx, in.(*pb.ListGroupsForSubjectRequest).GetSubject().GetId().GetValue(), "list_groups_for_subject")
+	return self.authorize(ctx, in.(*pb.ListGroupsForSubjectRequest).GetSubject().GetId().GetValue(), "identityd2:list_groups_for_subject")
 }
 
 func (self *MetathingsIdentitydService) ListGroupsForSubject(ctx context.Context, req *pb.ListGroupsForSubjectRequest) (*pb.ListGroupsForSubjectResponse, error) {

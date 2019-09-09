@@ -31,7 +31,7 @@ func (self *MetathingsIdentitydService) ValidateAddObjectToGroup(ctx context.Con
 }
 
 func (self *MetathingsIdentitydService) AuthorizeAddObjectToGroup(ctx context.Context, in interface{}) error {
-	return self.authorize(ctx, in.(*pb.AddObjectToGroupRequest).GetGroup().GetId().GetValue(), "add_object_to_group")
+	return self.authorize(ctx, in.(*pb.AddObjectToGroupRequest).GetGroup().GetId().GetValue(), "identityd2:add_object_to_group")
 }
 
 func (self *MetathingsIdentitydService) AddObjectToGroup(ctx context.Context, req *pb.AddObjectToGroupRequest) (*empty.Empty, error) {

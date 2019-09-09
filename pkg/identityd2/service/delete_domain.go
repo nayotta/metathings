@@ -28,7 +28,7 @@ func (self *MetathingsIdentitydService) ValidateDeleteDomain(ctx context.Context
 }
 
 func (self *MetathingsIdentitydService) AuthorizeDeleteDomain(ctx context.Context, in interface{}) error {
-	return self.authorize(ctx, in.(*pb.DeleteDomainRequest).GetDomain().GetId().GetValue(), "delete_domain")
+	return self.authorize(ctx, in.(*pb.DeleteDomainRequest).GetDomain().GetId().GetValue(), "identityd2:delete_domain")
 }
 
 func (self *MetathingsIdentitydService) DeleteDomain(ctx context.Context, req *pb.DeleteDomainRequest) (*empty.Empty, error) {

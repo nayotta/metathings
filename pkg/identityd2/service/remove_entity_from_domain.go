@@ -31,7 +31,7 @@ func (self *MetathingsIdentitydService) ValidateRemoveEntityFromDomain(ctx conte
 }
 
 func (self *MetathingsIdentitydService) AuthorizeRemoveEntityFromDomain(ctx context.Context, in interface{}) error {
-	return self.authorize(ctx, in.(*pb.RemoveEntityFromDomainRequest).GetDomain().GetId().GetValue(), "remove_entity_from_domain")
+	return self.authorize(ctx, in.(*pb.RemoveEntityFromDomainRequest).GetDomain().GetId().GetValue(), "identityd2:remove_entity_from_domain")
 }
 
 func (self *MetathingsIdentitydService) RemoveEntityFromDomain(ctx context.Context, req *pb.RemoveEntityFromDomainRequest) (*empty.Empty, error) {

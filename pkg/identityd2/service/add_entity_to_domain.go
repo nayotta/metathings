@@ -29,7 +29,7 @@ func (self *MetathingsIdentitydService) ValidateAddEntityToDomain(ctx context.Co
 }
 
 func (self *MetathingsIdentitydService) AuthorizeAddEntityToDomain(ctx context.Context, in interface{}) error {
-	return self.authorize(ctx, in.(*pb.AddEntityToDomainRequest).GetDomain().GetId().GetValue(), "add_entity_to_domain")
+	return self.authorize(ctx, in.(*pb.AddEntityToDomainRequest).GetDomain().GetId().GetValue(), "identityd2:add_entity_to_domain")
 }
 
 func (self *MetathingsIdentitydService) AddEntityToDomain(ctx context.Context, req *pb.AddEntityToDomainRequest) (*empty.Empty, error) {

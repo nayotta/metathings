@@ -25,7 +25,7 @@ func (self *MetathingsIdentitydService) ValidateGetCredential(ctx context.Contex
 }
 
 func (self *MetathingsIdentitydService) AuthorizeGetCredential(ctx context.Context, in interface{}) error {
-	return self.authorize(ctx, in.(*pb.GetCredentialRequest).GetCredential().GetId().GetValue(), "get_credential")
+	return self.authorize(ctx, in.(*pb.GetCredentialRequest).GetCredential().GetId().GetValue(), "identityd2:get_credential")
 }
 
 func (self *MetathingsIdentitydService) GetCredential(ctx context.Context, req *pb.GetCredentialRequest) (*pb.GetCredentialResponse, error) {

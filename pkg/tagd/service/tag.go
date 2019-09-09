@@ -11,6 +11,10 @@ import (
 	pb "github.com/nayotta/metathings/pkg/proto/tagd"
 )
 
+func (ts *MetathingsTagdService) AuthorizeTag(ctx context.Context, in interface{}) error {
+	return ts.authorizer.Authorize(ctx, in.(*pb.TagRequest).GetId().GetValue(), TAGD_TAG)
+}
+
 func (ts *MetathingsTagdService) Tag(ctx context.Context, req *pb.TagRequest) (*empty.Empty, error) {
 	logger := ts.GetLogger()
 

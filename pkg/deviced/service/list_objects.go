@@ -27,7 +27,7 @@ func (self *MetathingsDevicedService) ValidateListObjects(ctx context.Context, i
 }
 
 func (self *MetathingsDevicedService) AuthorizeListObjects(ctx context.Context, in interface{}) error {
-	return self.authorizer.Authorize(ctx, in.(*pb.ListObjectsRequest).GetObject().GetDevice().GetId().GetValue(), "list_objects")
+	return self.authorizer.Authorize(ctx, in.(*pb.ListObjectsRequest).GetObject().GetDevice().GetId().GetValue(), "deviced:list_objects")
 }
 
 func (self *MetathingsDevicedService) ListObjects(ctx context.Context, req *pb.ListObjectsRequest) (*pb.ListObjectsResponse, error) {
