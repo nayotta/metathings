@@ -10,8 +10,13 @@ dev:
       url: <webhook-callback-url>
       secret: <webhook-secret>
   storage:
-    driver: sqlite3
+    driver: postgres
     uri: <storage-uri>
+  cache:
+    driver: mongo  # only support mongo now
+    uri: <mongo-uri>
+    database: <mongo-database>
+    collection: <mongo-collection>
   verbose: true
   log:
     level: debug

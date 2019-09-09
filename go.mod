@@ -7,16 +7,22 @@ require (
 	github.com/eclipse/paho.mqtt.golang v1.2.0
 	github.com/go-redis/redis v6.15.2+incompatible
 	github.com/gogo/protobuf v1.2.1
+	github.com/golang/mock v1.2.0
 	github.com/golang/protobuf v1.3.2
 	github.com/gorilla/mux v1.7.3
 	github.com/grpc-ecosystem/go-grpc-middleware v1.0.0
+	github.com/hashicorp/golang-lru v0.5.3 // indirect
 	github.com/jinzhu/gorm v1.9.10
+	github.com/mongodb/mongo-go-driver v1.1.0
 	github.com/mwitkow/go-proto-validators v0.1.0
+	github.com/nayotta/metathings-component-echo v0.0.0-20190411035501-27156471f72a
 	github.com/nayotta/viper v1.0.2
 	github.com/satori/go.uuid v1.2.0
 	github.com/sirupsen/logrus v1.4.2
 	github.com/spf13/cobra v0.0.5
 	github.com/spf13/pflag v1.0.3
+	github.com/stianeikeland/go-rpio v4.2.0+incompatible
+	github.com/stretchr/testify v1.3.0
 	github.com/xdg/scram v0.0.0-20180814205039-7eeb5667e42c // indirect
 	github.com/xdg/stringprep v1.0.0 // indirect
 	go.mongodb.org/mongo-driver v1.1.0

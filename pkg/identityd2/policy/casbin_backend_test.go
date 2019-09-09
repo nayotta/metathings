@@ -143,10 +143,13 @@ m = (g2(r.sub, r.grp, p.sub) && g3(r.obj, r.grp, p.obj) && r.grp == p.grp && r.a
 	cli, cfn, err := cli_fty.NewPolicydServiceClient()
 	s.Nil(err)
 	defer cfn()
+
+	drv_name := test_helper.GetTestPolicydDriverName()
+	conn_str := test_helper.GetTestPolicydConnectString()
 	new_adapter_res, err := cli.NewAdapter(context.TODO(), &casbin_pb.NewAdapterRequest{
-		DriverName:    "gorm",
-		AdapterName:   "sqlite3",
-		ConnectString: ":memory:",
+		DriverName:    drv_name,
+		ConnectString: conn_str,
+		DbSpecified:   true,
 	})
 	s.Nil(err)
 
@@ -191,11 +194,11 @@ func (s *casbinBackendTestSuite) TestDeleteGroup() {
 
 	s.Nil(s.b.DeleteGroup(test_group))
 
-	rs, err := s.b._list_grouping_policies(cli, CASBIN_BACKEND_SUBJECT_PTYPE, s.b.convert_subject(test_subject), s.b.convert_group(test_group))
+	rs, err := s.b._list_grouping_policies(cli, CASBIN_BACKEND_SUBJECT_PTYPE, ConvertSubject(test_subject), ConvertGroup(test_group))
 	s.Nil(err)
 	s.Len(rs, 0)
 
-	rs, err = s.b._list_grouping_policies(cli, CASBIN_BACKEND_OBJECT_PTYPE, s.b.convert_object(test_object), s.b.convert_group(test_group))
+	rs, err = s.b._list_grouping_policies(cli, CASBIN_BACKEND_OBJECT_PTYPE, ConvertObject(test_object), ConvertGroup(test_group))
 	s.Nil(err)
 	s.Len(rs, 0)
 
@@ -209,7 +212,7 @@ func (s *casbinBackendTestSuite) TestAddSubjectToGroup() {
 
 	s.Nil(s.b.AddSubjectToGroup(test_group, test_subject2))
 
-	rs, err := s.b._list_grouping_policies(cli, CASBIN_BACKEND_SUBJECT_PTYPE, s.b.convert_subject(test_subject2), s.b.convert_group(test_group))
+	rs, err := s.b._list_grouping_policies(cli, CASBIN_BACKEND_SUBJECT_PTYPE, ConvertSubject(test_subject2), ConvertGroup(test_group))
 	s.Nil(err)
 	s.Len(rs, 1)
 
@@ -223,7 +226,7 @@ func (s *casbinBackendTestSuite) TestRemoveSubjectFromGroup() {
 
 	s.Nil(s.b.RemoveSubjectFromGroup(test_group, test_subject))
 
-	rs, err := s.b._list_grouping_policies(cli, CASBIN_BACKEND_SUBJECT_PTYPE, s.b.convert_subject(test_subject), s.b.convert_group(test_group))
+	rs, err := s.b._list_grouping_policies(cli, CASBIN_BACKEND_SUBJECT_PTYPE, ConvertSubject(test_subject), ConvertGroup(test_group))
 	s.Nil(err)
 	s.Len(rs, 0)
 
@@ -237,7 +240,7 @@ func (s *casbinBackendTestSuite) TestAddObjectToGroup() {
 
 	s.Nil(s.b.AddObjectToGroup(test_group, test_object2))
 
-	rs, err := s.b._list_grouping_policies(cli, CASBIN_BACKEND_OBJECT_PTYPE, s.b.convert_object(test_object2), s.b.convert_group(test_group))
+	rs, err := s.b._list_grouping_policies(cli, CASBIN_BACKEND_OBJECT_PTYPE, ConvertObject(test_object2), ConvertGroup(test_group))
 	s.Nil(err)
 	s.Len(rs, 1)
 
@@ -251,7 +254,7 @@ func (s *casbinBackendTestSuite) TestRemoveObjectFromGroup() {
 
 	s.Nil(s.b.RemoveObjectFromGroup(test_group, test_object))
 
-	rs, err := s.b._list_grouping_policies(cli, CASBIN_BACKEND_OBJECT_PTYPE, s.b.convert_object(test_object), s.b.convert_group(test_group))
+	rs, err := s.b._list_grouping_policies(cli, CASBIN_BACKEND_OBJECT_PTYPE, ConvertObject(test_object), ConvertGroup(test_group))
 	s.Nil(err)
 	s.Len(rs, 0)
 

@@ -39,6 +39,15 @@ func (self *MetathingsIdentitydService) DeleteGroup(ctx context.Context, req *pb
 		self.logger.WithError(err).Errorf("failed to get group in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
+	rols := []*storage.Role{}
+	for _, rol := range grp_s.Roles {
+		r, err := self.storage.GetRoleWithFullActions(*rol.Id)
+		if err != nil {
+			return nil, err
+		}
+		rols = append(rols, r)
+	}
+	grp_s.Roles = rols
 
 	if err = self.backend.DeleteGroup(grp_s); err != nil {
 		self.logger.WithError(err).Errorf("failed to delet group in backend")

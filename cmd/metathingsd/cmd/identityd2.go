@@ -13,6 +13,7 @@ import (
 	cmd_helper "github.com/nayotta/metathings/pkg/common/cmd"
 	const_helper "github.com/nayotta/metathings/pkg/common/constant"
 	id_helper "github.com/nayotta/metathings/pkg/common/id"
+	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 	passwd_helper "github.com/nayotta/metathings/pkg/common/passwd"
 	policy "github.com/nayotta/metathings/pkg/identityd2/policy"
 	service "github.com/nayotta/metathings/pkg/identityd2/service"
@@ -102,7 +103,43 @@ func NewMetathingsIdentitydServiceOption(opt *Identityd2Option) *service.Metathi
 }
 
 func NewIdentityd2Backend(cli_fty *client_helper.ClientFactory, logger log.FieldLogger) (policy.Backend, error) {
-	return policy.NewBackend("casbin", "logger", logger, "client_factory", cli_fty, "casbin_enforcer_handler", int32(0))
+	base_backend, err := policy.NewBackend(
+		"casbin",
+		"logger", logger,
+		"client_factory", cli_fty,
+		"casbin_enforcer_handler", int32(0),
+	)
+	if err != nil {
+		return nil, err
+	}
+	logger.Debugf("new casbin backend")
+
+	vc := cmd_helper.GetFromStage().Sub("cache")
+	if vc == nil {
+		return base_backend, nil
+	}
+
+	var cache_backend policy.Backend
+	drv := vc.GetString("driver")
+	switch drv {
+	case "mongo":
+		cache_backend, err = policy.NewBackend(
+			"cache",
+			"logger", logger,
+			"mongo_uri", vc.GetString("uri"),
+			"mongo_database", vc.GetString("database"),
+			"mongo_collection", vc.GetString("collection"),
+			"backend", base_backend,
+		)
+		if err != nil {
+			return nil, err
+		}
+	default:
+		return nil, opt_helper.InvalidArgument("driver")
+	}
+	logger.Debugf("new cache backend")
+
+	return cache_backend, nil
 }
 
 func initIdentityd2() error {

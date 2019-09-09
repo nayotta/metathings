@@ -71,7 +71,7 @@ func (self *MetathingsPolicydService) RemoveFilteredPolicy(ctx context.Context, 
 }
 
 func (self *MetathingsPolicydService) RemoveFilteredNamedPolicy(ctx context.Context, in *casbin_pb.FilteredPolicyRequest) (*casbin_pb.BoolReply, error) {
-	return self.Server.RemoveFilteredNamedGroupingPolicy(ctx, in)
+	return self.Server.RemoveFilteredNamedPolicy(ctx, in)
 }
 
 func (self *MetathingsPolicydService) GetPolicy(ctx context.Context, in *casbin_pb.EmptyRequest) (*casbin_pb.Array2DReply, error) {
@@ -285,8 +285,7 @@ func NewMetathingsPolicydService(
 	}
 
 	new_adapter_res, err := srv.NewAdapter(ctx, &casbin_pb.NewAdapterRequest{
-		DriverName:    "gorm",
-		AdapterName:   opt.AdapterDriver,
+		DriverName:    opt.AdapterDriver,
 		ConnectString: opt.AdapterUri,
 	})
 	if err != nil {
