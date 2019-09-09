@@ -4,10 +4,10 @@ import (
 	"context"
 	"time"
 
-	"github.com/mongodb/mongo-go-driver/bson"
-	"github.com/mongodb/mongo-go-driver/mongo"
-	"github.com/mongodb/mongo-go-driver/mongo/options"
 	log "github.com/sirupsen/logrus"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 )
@@ -40,7 +40,7 @@ type MongoStorage struct {
 func (self *MongoStorage) connect() error {
 	var err error
 
-	if self.client, err = mongo.Connect(self.context(), self.opt.Uri); err != nil {
+	if self.client, err = mongo.Connect(self.context(), options.Client().ApplyURI(self.opt.Uri)); err != nil {
 		return err
 	}
 

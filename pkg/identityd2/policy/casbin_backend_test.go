@@ -4,6 +4,7 @@ import (
 	"context"
 	"testing"
 
+	casbin_pb "github.com/casbin/casbin-server/proto"
 	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/suite"
 
@@ -12,7 +13,6 @@ import (
 	log_helper "github.com/nayotta/metathings/pkg/common/log"
 	test_helper "github.com/nayotta/metathings/pkg/common/test"
 	storage "github.com/nayotta/metathings/pkg/identityd2/storage"
-	policyd_pb "github.com/nayotta/metathings/pkg/proto/policyd"
 )
 
 var (
@@ -143,14 +143,14 @@ m = (g2(r.sub, r.grp, p.sub) && g3(r.obj, r.grp, p.obj) && r.grp == p.grp && r.a
 	cli, cfn, err := cli_fty.NewPolicydServiceClient()
 	s.Nil(err)
 	defer cfn()
-	new_adapter_res, err := cli.NewAdapter(context.TODO(), &policyd_pb.NewAdapterRequest{
+	new_adapter_res, err := cli.NewAdapter(context.TODO(), &casbin_pb.NewAdapterRequest{
 		DriverName:    "gorm",
 		AdapterName:   "sqlite3",
 		ConnectString: ":memory:",
 	})
 	s.Nil(err)
 
-	new_enforcer_res, err := cli.NewEnforcer(context.TODO(), &policyd_pb.NewEnforcerRequest{
+	new_enforcer_res, err := cli.NewEnforcer(context.TODO(), &casbin_pb.NewEnforcerRequest{
 		ModelText:     mdl_txt,
 		AdapterHandle: new_adapter_res.Handler,
 	})
@@ -159,7 +159,7 @@ m = (g2(r.sub, r.grp, p.sub) && g3(r.obj, r.grp, p.obj) && r.grp == p.grp && r.a
 	opt.EnforcerHandler = new_enforcer_res.Handler
 	s.enforcer_handler = new_adapter_res.Handler
 
-	_, err = cli.AddPolicy(context.TODO(), &policyd_pb.PolicyRequest{
+	_, err = cli.AddPolicy(context.TODO(), &casbin_pb.PolicyRequest{
 		EnforcerHandler: new_adapter_res.Handler,
 		Params:          []string{"rol.sysadmin", CASBIN_BACKEND_UNGROUPING, "any", "any"},
 	})

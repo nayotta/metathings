@@ -6,6 +6,7 @@ package policyd
 import (
 	context "context"
 	fmt "fmt"
+	proto1 "github.com/casbin/casbin-server/proto"
 	proto "github.com/golang/protobuf/proto"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
@@ -24,245 +25,18 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
-type NewEnforcerRequest struct {
-	ModelText            string   `protobuf:"bytes,1,opt,name=modelText,proto3" json:"modelText,omitempty"`
-	AdapterHandle        int32    `protobuf:"varint,2,opt,name=adapterHandle,proto3" json:"adapterHandle,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *NewEnforcerRequest) Reset()         { *m = NewEnforcerRequest{} }
-func (m *NewEnforcerRequest) String() string { return proto.CompactTextString(m) }
-func (*NewEnforcerRequest) ProtoMessage()    {}
-func (*NewEnforcerRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_a0b84a42fa06f626, []int{0}
-}
-
-func (m *NewEnforcerRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_NewEnforcerRequest.Unmarshal(m, b)
-}
-func (m *NewEnforcerRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_NewEnforcerRequest.Marshal(b, m, deterministic)
-}
-func (m *NewEnforcerRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_NewEnforcerRequest.Merge(m, src)
-}
-func (m *NewEnforcerRequest) XXX_Size() int {
-	return xxx_messageInfo_NewEnforcerRequest.Size(m)
-}
-func (m *NewEnforcerRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_NewEnforcerRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_NewEnforcerRequest proto.InternalMessageInfo
-
-func (m *NewEnforcerRequest) GetModelText() string {
-	if m != nil {
-		return m.ModelText
-	}
-	return ""
-}
-
-func (m *NewEnforcerRequest) GetAdapterHandle() int32 {
-	if m != nil {
-		return m.AdapterHandle
-	}
-	return 0
-}
-
-type NewEnforcerReply struct {
-	Handler              int32    `protobuf:"varint,1,opt,name=handler,proto3" json:"handler,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *NewEnforcerReply) Reset()         { *m = NewEnforcerReply{} }
-func (m *NewEnforcerReply) String() string { return proto.CompactTextString(m) }
-func (*NewEnforcerReply) ProtoMessage()    {}
-func (*NewEnforcerReply) Descriptor() ([]byte, []int) {
-	return fileDescriptor_a0b84a42fa06f626, []int{1}
-}
-
-func (m *NewEnforcerReply) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_NewEnforcerReply.Unmarshal(m, b)
-}
-func (m *NewEnforcerReply) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_NewEnforcerReply.Marshal(b, m, deterministic)
-}
-func (m *NewEnforcerReply) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_NewEnforcerReply.Merge(m, src)
-}
-func (m *NewEnforcerReply) XXX_Size() int {
-	return xxx_messageInfo_NewEnforcerReply.Size(m)
-}
-func (m *NewEnforcerReply) XXX_DiscardUnknown() {
-	xxx_messageInfo_NewEnforcerReply.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_NewEnforcerReply proto.InternalMessageInfo
-
-func (m *NewEnforcerReply) GetHandler() int32 {
-	if m != nil {
-		return m.Handler
-	}
-	return 0
-}
-
-type NewAdapterRequest struct {
-	AdapterName          string   `protobuf:"bytes,1,opt,name=adapterName,proto3" json:"adapterName,omitempty"`
-	DriverName           string   `protobuf:"bytes,2,opt,name=driverName,proto3" json:"driverName,omitempty"`
-	ConnectString        string   `protobuf:"bytes,3,opt,name=connectString,proto3" json:"connectString,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *NewAdapterRequest) Reset()         { *m = NewAdapterRequest{} }
-func (m *NewAdapterRequest) String() string { return proto.CompactTextString(m) }
-func (*NewAdapterRequest) ProtoMessage()    {}
-func (*NewAdapterRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_a0b84a42fa06f626, []int{2}
-}
-
-func (m *NewAdapterRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_NewAdapterRequest.Unmarshal(m, b)
-}
-func (m *NewAdapterRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_NewAdapterRequest.Marshal(b, m, deterministic)
-}
-func (m *NewAdapterRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_NewAdapterRequest.Merge(m, src)
-}
-func (m *NewAdapterRequest) XXX_Size() int {
-	return xxx_messageInfo_NewAdapterRequest.Size(m)
-}
-func (m *NewAdapterRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_NewAdapterRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_NewAdapterRequest proto.InternalMessageInfo
-
-func (m *NewAdapterRequest) GetAdapterName() string {
-	if m != nil {
-		return m.AdapterName
-	}
-	return ""
-}
-
-func (m *NewAdapterRequest) GetDriverName() string {
-	if m != nil {
-		return m.DriverName
-	}
-	return ""
-}
-
-func (m *NewAdapterRequest) GetConnectString() string {
-	if m != nil {
-		return m.ConnectString
-	}
-	return ""
-}
-
-type NewAdapterReply struct {
-	Handler              int32    `protobuf:"varint,1,opt,name=handler,proto3" json:"handler,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *NewAdapterReply) Reset()         { *m = NewAdapterReply{} }
-func (m *NewAdapterReply) String() string { return proto.CompactTextString(m) }
-func (*NewAdapterReply) ProtoMessage()    {}
-func (*NewAdapterReply) Descriptor() ([]byte, []int) {
-	return fileDescriptor_a0b84a42fa06f626, []int{3}
-}
-
-func (m *NewAdapterReply) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_NewAdapterReply.Unmarshal(m, b)
-}
-func (m *NewAdapterReply) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_NewAdapterReply.Marshal(b, m, deterministic)
-}
-func (m *NewAdapterReply) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_NewAdapterReply.Merge(m, src)
-}
-func (m *NewAdapterReply) XXX_Size() int {
-	return xxx_messageInfo_NewAdapterReply.Size(m)
-}
-func (m *NewAdapterReply) XXX_DiscardUnknown() {
-	xxx_messageInfo_NewAdapterReply.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_NewAdapterReply proto.InternalMessageInfo
-
-func (m *NewAdapterReply) GetHandler() int32 {
-	if m != nil {
-		return m.Handler
-	}
-	return 0
-}
-
-type EnforceRequest struct {
-	EnforcerHandler      int32    `protobuf:"varint,1,opt,name=enforcerHandler,proto3" json:"enforcerHandler,omitempty"`
-	Params               []string `protobuf:"bytes,2,rep,name=params,proto3" json:"params,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *EnforceRequest) Reset()         { *m = EnforceRequest{} }
-func (m *EnforceRequest) String() string { return proto.CompactTextString(m) }
-func (*EnforceRequest) ProtoMessage()    {}
-func (*EnforceRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_a0b84a42fa06f626, []int{4}
-}
-
-func (m *EnforceRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_EnforceRequest.Unmarshal(m, b)
-}
-func (m *EnforceRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_EnforceRequest.Marshal(b, m, deterministic)
-}
-func (m *EnforceRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_EnforceRequest.Merge(m, src)
-}
-func (m *EnforceRequest) XXX_Size() int {
-	return xxx_messageInfo_EnforceRequest.Size(m)
-}
-func (m *EnforceRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_EnforceRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_EnforceRequest proto.InternalMessageInfo
-
-func (m *EnforceRequest) GetEnforcerHandler() int32 {
-	if m != nil {
-		return m.EnforcerHandler
-	}
-	return 0
-}
-
-func (m *EnforceRequest) GetParams() []string {
-	if m != nil {
-		return m.Params
-	}
-	return nil
-}
-
 type EnforceBucketRequest struct {
-	Requests             []*EnforceRequest `protobuf:"bytes,1,rep,name=requests,proto3" json:"requests,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
-	XXX_unrecognized     []byte            `json:"-"`
-	XXX_sizecache        int32             `json:"-"`
+	Requests             []*proto1.EnforceRequest `protobuf:"bytes,1,rep,name=requests,proto3" json:"requests,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}                 `json:"-"`
+	XXX_unrecognized     []byte                   `json:"-"`
+	XXX_sizecache        int32                    `json:"-"`
 }
 
 func (m *EnforceBucketRequest) Reset()         { *m = EnforceBucketRequest{} }
 func (m *EnforceBucketRequest) String() string { return proto.CompactTextString(m) }
 func (*EnforceBucketRequest) ProtoMessage()    {}
 func (*EnforceBucketRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_a0b84a42fa06f626, []int{5}
+	return fileDescriptor_a0b84a42fa06f626, []int{0}
 }
 
 func (m *EnforceBucketRequest) XXX_Unmarshal(b []byte) error {
@@ -283,599 +57,61 @@ func (m *EnforceBucketRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_EnforceBucketRequest proto.InternalMessageInfo
 
-func (m *EnforceBucketRequest) GetRequests() []*EnforceRequest {
+func (m *EnforceBucketRequest) GetRequests() []*proto1.EnforceRequest {
 	if m != nil {
 		return m.Requests
 	}
 	return nil
 }
 
-type BoolReply struct {
-	Res                  bool     `protobuf:"varint,1,opt,name=res,proto3" json:"res,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *BoolReply) Reset()         { *m = BoolReply{} }
-func (m *BoolReply) String() string { return proto.CompactTextString(m) }
-func (*BoolReply) ProtoMessage()    {}
-func (*BoolReply) Descriptor() ([]byte, []int) {
-	return fileDescriptor_a0b84a42fa06f626, []int{6}
-}
-
-func (m *BoolReply) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_BoolReply.Unmarshal(m, b)
-}
-func (m *BoolReply) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_BoolReply.Marshal(b, m, deterministic)
-}
-func (m *BoolReply) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_BoolReply.Merge(m, src)
-}
-func (m *BoolReply) XXX_Size() int {
-	return xxx_messageInfo_BoolReply.Size(m)
-}
-func (m *BoolReply) XXX_DiscardUnknown() {
-	xxx_messageInfo_BoolReply.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_BoolReply proto.InternalMessageInfo
-
-func (m *BoolReply) GetRes() bool {
-	if m != nil {
-		return m.Res
-	}
-	return false
-}
-
-type EmptyRequest struct {
-	Handler              int32    `protobuf:"varint,1,opt,name=handler,proto3" json:"handler,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *EmptyRequest) Reset()         { *m = EmptyRequest{} }
-func (m *EmptyRequest) String() string { return proto.CompactTextString(m) }
-func (*EmptyRequest) ProtoMessage()    {}
-func (*EmptyRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_a0b84a42fa06f626, []int{7}
-}
-
-func (m *EmptyRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_EmptyRequest.Unmarshal(m, b)
-}
-func (m *EmptyRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_EmptyRequest.Marshal(b, m, deterministic)
-}
-func (m *EmptyRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_EmptyRequest.Merge(m, src)
-}
-func (m *EmptyRequest) XXX_Size() int {
-	return xxx_messageInfo_EmptyRequest.Size(m)
-}
-func (m *EmptyRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_EmptyRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_EmptyRequest proto.InternalMessageInfo
-
-func (m *EmptyRequest) GetHandler() int32 {
-	if m != nil {
-		return m.Handler
-	}
-	return 0
-}
-
-type EmptyReply struct {
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *EmptyReply) Reset()         { *m = EmptyReply{} }
-func (m *EmptyReply) String() string { return proto.CompactTextString(m) }
-func (*EmptyReply) ProtoMessage()    {}
-func (*EmptyReply) Descriptor() ([]byte, []int) {
-	return fileDescriptor_a0b84a42fa06f626, []int{8}
-}
-
-func (m *EmptyReply) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_EmptyReply.Unmarshal(m, b)
-}
-func (m *EmptyReply) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_EmptyReply.Marshal(b, m, deterministic)
-}
-func (m *EmptyReply) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_EmptyReply.Merge(m, src)
-}
-func (m *EmptyReply) XXX_Size() int {
-	return xxx_messageInfo_EmptyReply.Size(m)
-}
-func (m *EmptyReply) XXX_DiscardUnknown() {
-	xxx_messageInfo_EmptyReply.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_EmptyReply proto.InternalMessageInfo
-
-type PolicyRequest struct {
-	EnforcerHandler      int32    `protobuf:"varint,1,opt,name=enforcerHandler,proto3" json:"enforcerHandler,omitempty"`
-	PType                string   `protobuf:"bytes,2,opt,name=pType,proto3" json:"pType,omitempty"`
-	Params               []string `protobuf:"bytes,3,rep,name=params,proto3" json:"params,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *PolicyRequest) Reset()         { *m = PolicyRequest{} }
-func (m *PolicyRequest) String() string { return proto.CompactTextString(m) }
-func (*PolicyRequest) ProtoMessage()    {}
-func (*PolicyRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_a0b84a42fa06f626, []int{9}
-}
-
-func (m *PolicyRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_PolicyRequest.Unmarshal(m, b)
-}
-func (m *PolicyRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_PolicyRequest.Marshal(b, m, deterministic)
-}
-func (m *PolicyRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_PolicyRequest.Merge(m, src)
-}
-func (m *PolicyRequest) XXX_Size() int {
-	return xxx_messageInfo_PolicyRequest.Size(m)
-}
-func (m *PolicyRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_PolicyRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_PolicyRequest proto.InternalMessageInfo
-
-func (m *PolicyRequest) GetEnforcerHandler() int32 {
-	if m != nil {
-		return m.EnforcerHandler
-	}
-	return 0
-}
-
-func (m *PolicyRequest) GetPType() string {
-	if m != nil {
-		return m.PType
-	}
-	return ""
-}
-
-func (m *PolicyRequest) GetParams() []string {
-	if m != nil {
-		return m.Params
-	}
-	return nil
-}
-
-type SimpleGetRequest struct {
-	EnforcerHandler      int32    `protobuf:"varint,1,opt,name=enforcerHandler,proto3" json:"enforcerHandler,omitempty"`
-	PType                string   `protobuf:"bytes,2,opt,name=pType,proto3" json:"pType,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *SimpleGetRequest) Reset()         { *m = SimpleGetRequest{} }
-func (m *SimpleGetRequest) String() string { return proto.CompactTextString(m) }
-func (*SimpleGetRequest) ProtoMessage()    {}
-func (*SimpleGetRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_a0b84a42fa06f626, []int{10}
-}
-
-func (m *SimpleGetRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_SimpleGetRequest.Unmarshal(m, b)
-}
-func (m *SimpleGetRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_SimpleGetRequest.Marshal(b, m, deterministic)
-}
-func (m *SimpleGetRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_SimpleGetRequest.Merge(m, src)
-}
-func (m *SimpleGetRequest) XXX_Size() int {
-	return xxx_messageInfo_SimpleGetRequest.Size(m)
-}
-func (m *SimpleGetRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_SimpleGetRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_SimpleGetRequest proto.InternalMessageInfo
-
-func (m *SimpleGetRequest) GetEnforcerHandler() int32 {
-	if m != nil {
-		return m.EnforcerHandler
-	}
-	return 0
-}
-
-func (m *SimpleGetRequest) GetPType() string {
-	if m != nil {
-		return m.PType
-	}
-	return ""
-}
-
-type ArrayReply struct {
-	Array                []string `protobuf:"bytes,1,rep,name=array,proto3" json:"array,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *ArrayReply) Reset()         { *m = ArrayReply{} }
-func (m *ArrayReply) String() string { return proto.CompactTextString(m) }
-func (*ArrayReply) ProtoMessage()    {}
-func (*ArrayReply) Descriptor() ([]byte, []int) {
-	return fileDescriptor_a0b84a42fa06f626, []int{11}
-}
-
-func (m *ArrayReply) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_ArrayReply.Unmarshal(m, b)
-}
-func (m *ArrayReply) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_ArrayReply.Marshal(b, m, deterministic)
-}
-func (m *ArrayReply) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ArrayReply.Merge(m, src)
-}
-func (m *ArrayReply) XXX_Size() int {
-	return xxx_messageInfo_ArrayReply.Size(m)
-}
-func (m *ArrayReply) XXX_DiscardUnknown() {
-	xxx_messageInfo_ArrayReply.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_ArrayReply proto.InternalMessageInfo
-
-func (m *ArrayReply) GetArray() []string {
-	if m != nil {
-		return m.Array
-	}
-	return nil
-}
-
-type FilteredPolicyRequest struct {
-	EnforcerHandler      int32    `protobuf:"varint,1,opt,name=enforcerHandler,proto3" json:"enforcerHandler,omitempty"`
-	PType                string   `protobuf:"bytes,2,opt,name=pType,proto3" json:"pType,omitempty"`
-	FieldIndex           int32    `protobuf:"varint,3,opt,name=fieldIndex,proto3" json:"fieldIndex,omitempty"`
-	FieldValues          []string `protobuf:"bytes,4,rep,name=fieldValues,proto3" json:"fieldValues,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *FilteredPolicyRequest) Reset()         { *m = FilteredPolicyRequest{} }
-func (m *FilteredPolicyRequest) String() string { return proto.CompactTextString(m) }
-func (*FilteredPolicyRequest) ProtoMessage()    {}
-func (*FilteredPolicyRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_a0b84a42fa06f626, []int{12}
-}
-
-func (m *FilteredPolicyRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_FilteredPolicyRequest.Unmarshal(m, b)
-}
-func (m *FilteredPolicyRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_FilteredPolicyRequest.Marshal(b, m, deterministic)
-}
-func (m *FilteredPolicyRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_FilteredPolicyRequest.Merge(m, src)
-}
-func (m *FilteredPolicyRequest) XXX_Size() int {
-	return xxx_messageInfo_FilteredPolicyRequest.Size(m)
-}
-func (m *FilteredPolicyRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_FilteredPolicyRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_FilteredPolicyRequest proto.InternalMessageInfo
-
-func (m *FilteredPolicyRequest) GetEnforcerHandler() int32 {
-	if m != nil {
-		return m.EnforcerHandler
-	}
-	return 0
-}
-
-func (m *FilteredPolicyRequest) GetPType() string {
-	if m != nil {
-		return m.PType
-	}
-	return ""
-}
-
-func (m *FilteredPolicyRequest) GetFieldIndex() int32 {
-	if m != nil {
-		return m.FieldIndex
-	}
-	return 0
-}
-
-func (m *FilteredPolicyRequest) GetFieldValues() []string {
-	if m != nil {
-		return m.FieldValues
-	}
-	return nil
-}
-
-type UserRoleRequest struct {
-	EnforcerHandler      int32    `protobuf:"varint,1,opt,name=enforcerHandler,proto3" json:"enforcerHandler,omitempty"`
-	User                 string   `protobuf:"bytes,2,opt,name=user,proto3" json:"user,omitempty"`
-	Role                 string   `protobuf:"bytes,3,opt,name=role,proto3" json:"role,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *UserRoleRequest) Reset()         { *m = UserRoleRequest{} }
-func (m *UserRoleRequest) String() string { return proto.CompactTextString(m) }
-func (*UserRoleRequest) ProtoMessage()    {}
-func (*UserRoleRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_a0b84a42fa06f626, []int{13}
-}
-
-func (m *UserRoleRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_UserRoleRequest.Unmarshal(m, b)
-}
-func (m *UserRoleRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_UserRoleRequest.Marshal(b, m, deterministic)
-}
-func (m *UserRoleRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_UserRoleRequest.Merge(m, src)
-}
-func (m *UserRoleRequest) XXX_Size() int {
-	return xxx_messageInfo_UserRoleRequest.Size(m)
-}
-func (m *UserRoleRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_UserRoleRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_UserRoleRequest proto.InternalMessageInfo
-
-func (m *UserRoleRequest) GetEnforcerHandler() int32 {
-	if m != nil {
-		return m.EnforcerHandler
-	}
-	return 0
-}
-
-func (m *UserRoleRequest) GetUser() string {
-	if m != nil {
-		return m.User
-	}
-	return ""
-}
-
-func (m *UserRoleRequest) GetRole() string {
-	if m != nil {
-		return m.Role
-	}
-	return ""
-}
-
-type PermissionRequest struct {
-	EnforcerHandler      int32    `protobuf:"varint,1,opt,name=enforcerHandler,proto3" json:"enforcerHandler,omitempty"`
-	User                 string   `protobuf:"bytes,2,opt,name=user,proto3" json:"user,omitempty"`
-	Permissions          []string `protobuf:"bytes,3,rep,name=permissions,proto3" json:"permissions,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *PermissionRequest) Reset()         { *m = PermissionRequest{} }
-func (m *PermissionRequest) String() string { return proto.CompactTextString(m) }
-func (*PermissionRequest) ProtoMessage()    {}
-func (*PermissionRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_a0b84a42fa06f626, []int{14}
-}
-
-func (m *PermissionRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_PermissionRequest.Unmarshal(m, b)
-}
-func (m *PermissionRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_PermissionRequest.Marshal(b, m, deterministic)
-}
-func (m *PermissionRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_PermissionRequest.Merge(m, src)
-}
-func (m *PermissionRequest) XXX_Size() int {
-	return xxx_messageInfo_PermissionRequest.Size(m)
-}
-func (m *PermissionRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_PermissionRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_PermissionRequest proto.InternalMessageInfo
-
-func (m *PermissionRequest) GetEnforcerHandler() int32 {
-	if m != nil {
-		return m.EnforcerHandler
-	}
-	return 0
-}
-
-func (m *PermissionRequest) GetUser() string {
-	if m != nil {
-		return m.User
-	}
-	return ""
-}
-
-func (m *PermissionRequest) GetPermissions() []string {
-	if m != nil {
-		return m.Permissions
-	}
-	return nil
-}
-
-type Array2DReply struct {
-	D2                   []*Array2DReplyD `protobuf:"bytes,1,rep,name=d2,proto3" json:"d2,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}         `json:"-"`
-	XXX_unrecognized     []byte           `json:"-"`
-	XXX_sizecache        int32            `json:"-"`
-}
-
-func (m *Array2DReply) Reset()         { *m = Array2DReply{} }
-func (m *Array2DReply) String() string { return proto.CompactTextString(m) }
-func (*Array2DReply) ProtoMessage()    {}
-func (*Array2DReply) Descriptor() ([]byte, []int) {
-	return fileDescriptor_a0b84a42fa06f626, []int{15}
-}
-
-func (m *Array2DReply) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_Array2DReply.Unmarshal(m, b)
-}
-func (m *Array2DReply) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_Array2DReply.Marshal(b, m, deterministic)
-}
-func (m *Array2DReply) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Array2DReply.Merge(m, src)
-}
-func (m *Array2DReply) XXX_Size() int {
-	return xxx_messageInfo_Array2DReply.Size(m)
-}
-func (m *Array2DReply) XXX_DiscardUnknown() {
-	xxx_messageInfo_Array2DReply.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_Array2DReply proto.InternalMessageInfo
-
-func (m *Array2DReply) GetD2() []*Array2DReplyD {
-	if m != nil {
-		return m.D2
-	}
-	return nil
-}
-
-type Array2DReplyD struct {
-	D1                   []string `protobuf:"bytes,1,rep,name=d1,proto3" json:"d1,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *Array2DReplyD) Reset()         { *m = Array2DReplyD{} }
-func (m *Array2DReplyD) String() string { return proto.CompactTextString(m) }
-func (*Array2DReplyD) ProtoMessage()    {}
-func (*Array2DReplyD) Descriptor() ([]byte, []int) {
-	return fileDescriptor_a0b84a42fa06f626, []int{15, 0}
-}
-
-func (m *Array2DReplyD) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_Array2DReplyD.Unmarshal(m, b)
-}
-func (m *Array2DReplyD) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_Array2DReplyD.Marshal(b, m, deterministic)
-}
-func (m *Array2DReplyD) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Array2DReplyD.Merge(m, src)
-}
-func (m *Array2DReplyD) XXX_Size() int {
-	return xxx_messageInfo_Array2DReplyD.Size(m)
-}
-func (m *Array2DReplyD) XXX_DiscardUnknown() {
-	xxx_messageInfo_Array2DReplyD.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_Array2DReplyD proto.InternalMessageInfo
-
-func (m *Array2DReplyD) GetD1() []string {
-	if m != nil {
-		return m.D1
-	}
-	return nil
-}
-
 func init() {
-	proto.RegisterType((*NewEnforcerRequest)(nil), "ai.metathings.service.policyd.NewEnforcerRequest")
-	proto.RegisterType((*NewEnforcerReply)(nil), "ai.metathings.service.policyd.NewEnforcerReply")
-	proto.RegisterType((*NewAdapterRequest)(nil), "ai.metathings.service.policyd.NewAdapterRequest")
-	proto.RegisterType((*NewAdapterReply)(nil), "ai.metathings.service.policyd.NewAdapterReply")
-	proto.RegisterType((*EnforceRequest)(nil), "ai.metathings.service.policyd.EnforceRequest")
 	proto.RegisterType((*EnforceBucketRequest)(nil), "ai.metathings.service.policyd.EnforceBucketRequest")
-	proto.RegisterType((*BoolReply)(nil), "ai.metathings.service.policyd.BoolReply")
-	proto.RegisterType((*EmptyRequest)(nil), "ai.metathings.service.policyd.EmptyRequest")
-	proto.RegisterType((*EmptyReply)(nil), "ai.metathings.service.policyd.EmptyReply")
-	proto.RegisterType((*PolicyRequest)(nil), "ai.metathings.service.policyd.PolicyRequest")
-	proto.RegisterType((*SimpleGetRequest)(nil), "ai.metathings.service.policyd.SimpleGetRequest")
-	proto.RegisterType((*ArrayReply)(nil), "ai.metathings.service.policyd.ArrayReply")
-	proto.RegisterType((*FilteredPolicyRequest)(nil), "ai.metathings.service.policyd.FilteredPolicyRequest")
-	proto.RegisterType((*UserRoleRequest)(nil), "ai.metathings.service.policyd.UserRoleRequest")
-	proto.RegisterType((*PermissionRequest)(nil), "ai.metathings.service.policyd.PermissionRequest")
-	proto.RegisterType((*Array2DReply)(nil), "ai.metathings.service.policyd.Array2DReply")
-	proto.RegisterType((*Array2DReplyD)(nil), "ai.metathings.service.policyd.Array2DReply.d")
 }
 
 func init() { proto.RegisterFile("service.proto", fileDescriptor_a0b84a42fa06f626) }
 
 var fileDescriptor_a0b84a42fa06f626 = []byte{
-	// 974 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xc4, 0x98, 0xcd, 0x6e, 0xdb, 0x46,
-	0x10, 0xc7, 0x43, 0x29, 0x8e, 0xc3, 0x91, 0x25, 0x5b, 0x1b, 0xd7, 0x50, 0x84, 0xc4, 0x50, 0x89,
-	0x1c, 0x54, 0x38, 0x55, 0x6b, 0xa5, 0xd7, 0x1e, 0x64, 0x34, 0x95, 0x0c, 0x14, 0x4e, 0x40, 0xa5,
-	0x45, 0xd1, 0xdb, 0x9a, 0x3b, 0x96, 0xe9, 0xf0, 0xab, 0xbb, 0x2b, 0xc7, 0x6a, 0x11, 0x20, 0x97,
-	0x3c, 0x44, 0xdf, 0xab, 0x0f, 0x54, 0x70, 0xf9, 0x61, 0x52, 0x4d, 0x23, 0xd3, 0x16, 0xd9, 0x1b,
-	0x77, 0xb4, 0x3b, 0xbf, 0xf9, 0xef, 0x70, 0x86, 0xbb, 0x82, 0xa6, 0x40, 0x7e, 0x69, 0x5b, 0x38,
-	0x08, 0xb8, 0x2f, 0x7d, 0xf2, 0x94, 0xda, 0x03, 0x17, 0x25, 0x95, 0xe7, 0xb6, 0x37, 0x13, 0x83,
-	0xf4, 0x47, 0xdf, 0xb1, 0xad, 0x05, 0x33, 0x7e, 0x05, 0x72, 0x82, 0xef, 0x5e, 0x7a, 0x67, 0x3e,
-	0xb7, 0x90, 0x9b, 0xf8, 0xfb, 0x1c, 0x85, 0x24, 0x4f, 0x40, 0x77, 0x7d, 0x86, 0xce, 0x1b, 0xbc,
-	0x92, 0x1d, 0xad, 0xa7, 0xf5, 0x75, 0xf3, 0xda, 0x40, 0x9e, 0x41, 0x93, 0x32, 0x1a, 0x48, 0xe4,
-	0x13, 0xea, 0x31, 0x07, 0x3b, 0xb5, 0x9e, 0xd6, 0xdf, 0x30, 0xf3, 0x46, 0xe3, 0x39, 0xec, 0xe4,
-	0x3c, 0x07, 0xce, 0x82, 0x74, 0x60, 0xf3, 0x5c, 0xfd, 0xca, 0x95, 0xd7, 0x0d, 0x33, 0x19, 0x1a,
-	0x7f, 0x42, 0xfb, 0x04, 0xdf, 0x8d, 0x22, 0x0f, 0x49, 0x18, 0x3d, 0x68, 0xc4, 0x3e, 0x4f, 0xa8,
-	0x8b, 0x71, 0x20, 0x59, 0x13, 0xd9, 0x07, 0x60, 0xdc, 0xbe, 0x8c, 0x27, 0xd4, 0xd4, 0x84, 0x8c,
-	0x25, 0x0c, 0xd5, 0xf2, 0x3d, 0x0f, 0x2d, 0x39, 0x95, 0xdc, 0xf6, 0x66, 0x9d, 0xba, 0x9a, 0x92,
-	0x37, 0x1a, 0x07, 0xb0, 0x9d, 0x85, 0x7f, 0x3e, 0x52, 0x13, 0x5a, 0xb1, 0xa8, 0x24, 0xcc, 0x3e,
-	0x6c, 0x63, 0x2c, 0x73, 0x92, 0x5b, 0xb3, 0x6c, 0x26, 0x7b, 0xf0, 0x20, 0xa0, 0x9c, 0xba, 0xa2,
-	0x53, 0xeb, 0xd5, 0xfb, 0xba, 0x19, 0x8f, 0x0c, 0x0a, 0xbb, 0xb1, 0xcf, 0xa3, 0xb9, 0xf5, 0x16,
-	0x65, 0xe2, 0xf9, 0x18, 0x1e, 0xf2, 0xe8, 0x51, 0x74, 0xb4, 0x5e, 0xbd, 0xdf, 0x18, 0x7e, 0x3d,
-	0xf8, 0x6c, 0x3e, 0x07, 0xf9, 0xd0, 0xcc, 0x74, 0xb9, 0xf1, 0x14, 0xf4, 0x23, 0xdf, 0x77, 0x22,
-	0x75, 0x3b, 0x50, 0xe7, 0x28, 0x54, 0x94, 0x0f, 0xcd, 0xf0, 0xd1, 0xe8, 0xc3, 0xd6, 0x4b, 0x37,
-	0x90, 0x8b, 0x84, 0xfc, 0xdf, 0xfa, 0xb7, 0x00, 0xe2, 0x99, 0x81, 0xb3, 0x30, 0x66, 0xd0, 0x7c,
-	0xad, 0xd0, 0xc5, 0x37, 0x63, 0x17, 0x36, 0x82, 0x37, 0x8b, 0x20, 0x49, 0x5b, 0x34, 0xc8, 0x6c,
-	0x51, 0x3d, 0xb7, 0x45, 0x26, 0xec, 0x4c, 0x6d, 0x37, 0x70, 0x70, 0x7c, 0xbd, 0x3d, 0x77, 0x64,
-	0x19, 0x06, 0xc0, 0x88, 0x73, 0x1a, 0x49, 0x09, 0xe7, 0xd0, 0x70, 0xa4, 0x76, 0x5a, 0x37, 0xa3,
-	0x81, 0xf1, 0x97, 0x06, 0x5f, 0xfc, 0x68, 0x3b, 0x12, 0x39, 0xb2, 0xf5, 0x2a, 0xdd, 0x07, 0x38,
-	0xb3, 0xd1, 0x61, 0xc7, 0x1e, 0xc3, 0x2b, 0xf5, 0x62, 0x6e, 0x98, 0x19, 0x4b, 0xf8, 0xf6, 0xab,
-	0xd1, 0x2f, 0xd4, 0x99, 0xa3, 0xe8, 0xdc, 0x57, 0x51, 0x65, 0x4d, 0x86, 0x05, 0xdb, 0x3f, 0x0b,
-	0xe4, 0xa6, 0xef, 0xdc, 0xe2, 0x5d, 0x24, 0x70, 0x7f, 0x2e, 0x90, 0xc7, 0x31, 0xa9, 0xe7, 0xd0,
-	0xc6, 0x7d, 0x07, 0xe3, 0x2a, 0x51, 0xcf, 0x86, 0x80, 0xf6, 0x6b, 0xe4, 0xae, 0x2d, 0x84, 0xed,
-	0x7b, 0xeb, 0xc1, 0xf4, 0xa0, 0x11, 0xa4, 0x2e, 0x93, 0x44, 0x67, 0x4d, 0xc6, 0x29, 0x6c, 0xa9,
-	0xcc, 0x0c, 0x7f, 0x88, 0x72, 0xf3, 0x3d, 0xd4, 0xd8, 0xf0, 0x86, 0x25, 0x90, 0x5d, 0x38, 0x60,
-	0x66, 0x8d, 0x0d, 0xbb, 0x8f, 0x40, 0x63, 0xa4, 0x05, 0x35, 0x76, 0x18, 0x27, 0xb7, 0xc6, 0x0e,
-	0x87, 0x7f, 0x3f, 0x83, 0x56, 0x94, 0x51, 0x36, 0x8d, 0x5c, 0x10, 0x01, 0x8d, 0x4c, 0xcf, 0x22,
-	0x87, 0x2b, 0x48, 0xff, 0xee, 0x9c, 0xdd, 0x6f, 0x8a, 0x2c, 0x09, 0x0b, 0xe8, 0x1e, 0x09, 0x00,
-	0xae, 0xbb, 0x0f, 0xf9, 0x76, 0xb5, 0x83, 0x7c, 0x97, 0xec, 0x0e, 0x0a, 0xac, 0x88, 0x88, 0x0c,
-	0x36, 0xe3, 0x20, 0x48, 0xb1, 0x7e, 0xd2, 0xed, 0xaf, 0x98, 0x9e, 0xb6, 0x18, 0xa5, 0xab, 0x99,
-	0x6b, 0x6a, 0xe4, 0xc5, 0xcd, 0x58, 0xb9, 0x16, 0x58, 0x88, 0x78, 0x06, 0xf0, 0x93, 0x4f, 0xe3,
-	0x32, 0x25, 0x07, 0xab, 0x70, 0x99, 0x7e, 0xd7, 0xfd, 0xea, 0x66, 0x93, 0x53, 0xce, 0x94, 0x5e,
-	0x62, 0xe9, 0x1c, 0x04, 0x7d, 0xc4, 0x12, 0x39, 0xcf, 0x57, 0xac, 0xcc, 0x35, 0xa7, 0x42, 0xdb,
-	0x76, 0x01, 0xad, 0x11, 0x63, 0xe1, 0xf7, 0xb2, 0x7c, 0xd6, 0x39, 0x6c, 0x99, 0xe8, 0xfa, 0xe9,
-	0xe6, 0x95, 0x47, 0x72, 0xa1, 0x1d, 0x91, 0xaa, 0x11, 0x76, 0x05, 0xbb, 0x11, 0x2e, 0xff, 0xb1,
-	0x20, 0xdf, 0xad, 0xf0, 0xf1, 0xc9, 0x6f, 0x4b, 0x21, 0xf2, 0x7b, 0x78, 0x9c, 0x27, 0x67, 0x05,
-	0x97, 0x8f, 0x9f, 0x81, 0x3e, 0x46, 0x79, 0x9b, 0x5a, 0x38, 0x28, 0xd0, 0xc8, 0x55, 0x42, 0x5b,
-	0x63, 0x94, 0xb7, 0xcf, 0x66, 0x41, 0xdc, 0x15, 0xb4, 0xc7, 0x28, 0xd7, 0x92, 0xcd, 0x82, 0xe4,
-	0xf7, 0xb0, 0x97, 0x21, 0xdf, 0x3d, 0x9b, 0x85, 0xf7, 0xb9, 0x3d, 0x62, 0x6c, 0xcc, 0xfd, 0x79,
-	0x60, 0x7b, 0xb3, 0xd2, 0x0b, 0x87, 0xc3, 0x5e, 0xd2, 0x7d, 0x2a, 0x63, 0x06, 0x49, 0xb1, 0x56,
-	0x46, 0x9c, 0x27, 0x45, 0x5a, 0xad, 0xd0, 0x0f, 0x1a, 0x3c, 0xc9, 0x37, 0x87, 0x25, 0x74, 0xf9,
-	0xfd, 0xe1, 0xa3, 0x06, 0x5f, 0x7e, 0xa2, 0x3f, 0x55, 0x1e, 0x87, 0xaf, 0xea, 0x79, 0x09, 0x5b,
-	0x66, 0xbf, 0x9a, 0xab, 0x32, 0xbe, 0x7b, 0xbe, 0x0b, 0x62, 0x3f, 0x68, 0xf0, 0x38, 0xd3, 0x3e,
-	0xd6, 0xb2, 0xcf, 0x05, 0x43, 0xf8, 0xa8, 0xc1, 0xfe, 0x72, 0x07, 0xfb, 0x3f, 0xe2, 0xb8, 0x50,
-	0x5f, 0x8c, 0x91, 0xe3, 0x4c, 0xe7, 0xa7, 0x17, 0x68, 0x49, 0xb1, 0xde, 0xb3, 0xda, 0xf5, 0xdd,
-	0xd1, 0xb8, 0x47, 0x04, 0x3c, 0x8a, 0x58, 0x4a, 0x6d, 0x0a, 0x5c, 0x75, 0x1f, 0x58, 0xbe, 0xd3,
-	0x16, 0x83, 0xda, 0xd0, 0x8c, 0xa0, 0xaf, 0x4a, 0xd7, 0xc7, 0x81, 0x64, 0xf4, 0xbd, 0xaa, 0x56,
-	0xde, 0xc8, 0x92, 0xe1, 0xb5, 0xb0, 0x32, 0x79, 0x09, 0xaf, 0x5c, 0x79, 0x33, 0x68, 0x44, 0xcc,
-	0xf0, 0x02, 0x5f, 0xa6, 0xb8, 0x00, 0x76, 0x32, 0xe2, 0x22, 0x5a, 0xb9, 0xd2, 0x10, 0xf4, 0x09,
-	0x15, 0x55, 0xdc, 0x5c, 0x26, 0x54, 0x54, 0x73, 0xc0, 0x77, 0xa1, 0x3d, 0xa1, 0xa2, 0xca, 0x63,
-	0x51, 0x22, 0xad, 0x32, 0xe6, 0x5b, 0xd8, 0x0e, 0xef, 0x9b, 0x1c, 0x45, 0x7a, 0xa0, 0x2f, 0x0f,
-	0xe6, 0x01, 0x89, 0x6f, 0x82, 0xd5, 0xf0, 0xce, 0x00, 0x8e, 0x3d, 0x5b, 0xda, 0xd4, 0xb1, 0xff,
-	0xc0, 0xf2, 0x2e, 0xed, 0x47, 0xfa, 0x6f, 0x9b, 0xb1, 0xfd, 0xf4, 0x81, 0xfa, 0x0b, 0xfe, 0xc5,
-	0x3f, 0x01, 0x00, 0x00, 0xff, 0xff, 0x74, 0xbe, 0x59, 0x20, 0x93, 0x17, 0x00, 0x00,
+	// 625 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x96, 0xf1, 0x6f, 0xd2, 0x40,
+	0x14, 0xc7, 0x35, 0x26, 0x4e, 0x1e, 0x82, 0xa3, 0x63, 0x38, 0xc8, 0x34, 0xba, 0x9f, 0xfc, 0xc5,
+	0x2e, 0x32, 0xb7, 0xe9, 0xcc, 0x94, 0x32, 0x11, 0x96, 0x38, 0x46, 0x20, 0x4b, 0x8c, 0xbf, 0x1d,
+	0xed, 0xc9, 0x4e, 0xdb, 0x5e, 0xbd, 0x1e, 0x5b, 0xf0, 0x2f, 0xf3, 0xcf, 0x33, 0xeb, 0xdd, 0x75,
+	0x85, 0x14, 0xe4, 0xca, 0x7e, 0x02, 0xde, 0xbd, 0xef, 0xe7, 0xbd, 0xbb, 0x7e, 0xe9, 0x3d, 0x28,
+	0x84, 0x98, 0x5d, 0x11, 0x1b, 0x9b, 0x01, 0xa3, 0x9c, 0x1a, 0xcf, 0x10, 0x31, 0x3d, 0xcc, 0x11,
+	0xbf, 0x24, 0xfe, 0x28, 0x34, 0xe3, 0x45, 0xea, 0x12, 0x7b, 0xe2, 0xd4, 0xea, 0x23, 0xc2, 0x2f,
+	0xc7, 0x43, 0xd3, 0xa6, 0xde, 0xae, 0x8d, 0xc2, 0x21, 0xf1, 0xe5, 0xc7, 0xeb, 0x9b, 0x4c, 0xcc,
+	0x76, 0x23, 0x8a, 0x8c, 0x09, 0xe4, 0xce, 0x29, 0x94, 0x5b, 0xfe, 0x0f, 0xca, 0x6c, 0xdc, 0x1c,
+	0xdb, 0xbf, 0x30, 0xef, 0xe3, 0xdf, 0x63, 0x1c, 0x72, 0xe3, 0x0d, 0x3c, 0x62, 0xe2, 0x6b, 0xb8,
+	0x75, 0xff, 0xc5, 0x83, 0x57, 0xf9, 0xfa, 0xa6, 0x50, 0x98, 0x32, 0x5d, 0x26, 0xf6, 0xe3, 0xb4,
+	0xfa, 0xdf, 0x4d, 0x28, 0xf6, 0x44, 0x2b, 0x03, 0xd1, 0x99, 0x71, 0x02, 0xf9, 0x2e, 0xbe, 0x96,
+	0x0a, 0x66, 0x54, 0x25, 0x22, 0x11, 0x93, 0x98, 0xda, 0xd3, 0xb4, 0xa5, 0xc0, 0x9d, 0xec, 0xdc,
+	0x33, 0x1a, 0x00, 0x5d, 0x7c, 0x6d, 0x39, 0x28, 0xe0, 0x98, 0x19, 0x5b, 0xb7, 0x89, 0x32, 0xa4,
+	0x10, 0x95, 0x94, 0x15, 0x41, 0x78, 0x0b, 0x6b, 0x12, 0x6a, 0xa4, 0xef, 0xa2, 0xb6, 0x2e, 0xc3,
+	0x4d, 0x4a, 0x5d, 0xa5, 0x3a, 0x00, 0xf8, 0x4a, 0x91, 0x23, 0xb6, 0x64, 0x6c, 0x28, 0xa1, 0x17,
+	0xf0, 0x89, 0x92, 0x95, 0xa6, 0x83, 0xb1, 0x6e, 0x80, 0xae, 0xb0, 0xb6, 0x6e, 0x1f, 0x72, 0x96,
+	0xa3, 0xca, 0x95, 0x65, 0x86, 0xf8, 0xb9, 0xa8, 0xcd, 0x23, 0x28, 0x5a, 0x8e, 0xd3, 0x45, 0x1e,
+	0xd6, 0xd7, 0xbe, 0x83, 0xc7, 0x7d, 0xec, 0xd1, 0xb8, 0xd9, 0xe5, 0x95, 0xc7, 0x50, 0x12, 0xca,
+	0x6c, 0x85, 0x3b, 0x50, 0x16, 0xf2, 0x2f, 0xc4, 0xe5, 0x98, 0xc5, 0x84, 0x6d, 0x99, 0x3b, 0x1d,
+	0x5e, 0x44, 0x3a, 0x83, 0xea, 0x34, 0x29, 0xd9, 0x90, 0x3e, 0xee, 0x10, 0x72, 0x6d, 0xcc, 0x17,
+	0x3d, 0x3b, 0x15, 0xb4, 0x18, 0x43, 0x93, 0xfa, 0xe7, 0xdb, 0x03, 0x29, 0xb6, 0x31, 0xff, 0xff,
+	0x69, 0xcc, 0x91, 0x77, 0xa0, 0xd4, 0xc6, 0x5c, 0xeb, 0x34, 0xe6, 0x90, 0xce, 0xa0, 0x92, 0x20,
+	0x2d, 0x7f, 0x1a, 0x73, 0xf7, 0x55, 0xb2, 0x1c, 0xa7, 0xcd, 0xe8, 0x38, 0x20, 0xfe, 0x48, 0xfb,
+	0x41, 0x37, 0xa1, 0xa2, 0xdc, 0x99, 0x99, 0xd1, 0x50, 0x66, 0xc9, 0x4c, 0x68, 0x29, 0x93, 0xac,
+	0xd6, 0x48, 0x0f, 0xb6, 0xa7, 0xbd, 0x36, 0x43, 0xd2, 0xb7, 0xdb, 0x05, 0xbc, 0x4c, 0x71, 0xef,
+	0xca, 0xd8, 0x4f, 0x91, 0x9b, 0x66, 0x30, 0x3a, 0x6e, 0x6e, 0x45, 0x26, 0x5a, 0xfe, 0xb4, 0xe6,
+	0x60, 0x7a, 0x50, 0x4d, 0x78, 0x51, 0x6b, 0x5b, 0x73, 0x88, 0x17, 0xf0, 0x7c, 0xd6, 0xdd, 0x77,
+	0x81, 0x3d, 0x8a, 0xfe, 0xbd, 0x96, 0xeb, 0x0e, 0xc6, 0xc3, 0x9f, 0xd8, 0xe6, 0xe1, 0xe2, 0xf7,
+	0x76, 0xa4, 0x56, 0xda, 0x13, 0xd8, 0x10, 0xda, 0xa8, 0x9b, 0x18, 0xa0, 0x6e, 0xb4, 0x01, 0xf1,
+	0x02, 0x17, 0xb7, 0xe3, 0xab, 0x35, 0x1d, 0xf2, 0x1e, 0x0a, 0x02, 0x72, 0xae, 0x5d, 0xbf, 0x09,
+	0x46, 0xa2, 0xfe, 0xf9, 0x6a, 0xe5, 0x2d, 0x9b, 0x13, 0xea, 0x67, 0x2f, 0xaf, 0xf4, 0x7a, 0xe5,
+	0x0f, 0x21, 0x2f, 0x18, 0x7d, 0xea, 0x62, 0x9d, 0xe2, 0x0d, 0x58, 0x4f, 0x14, 0x17, 0x6a, 0xbd,
+	0xd2, 0xfb, 0x90, 0xeb, 0xa0, 0x30, 0xcb, 0xad, 0xdb, 0x41, 0x61, 0xb6, 0xcb, 0xef, 0x18, 0x4a,
+	0x1d, 0x14, 0xae, 0xf2, 0x4a, 0x55, 0xa5, 0x33, 0x33, 0xbe, 0x41, 0x61, 0x6a, 0xec, 0x33, 0xf6,
+	0xcc, 0x85, 0xb3, 0xa5, 0x99, 0x36, 0x24, 0xa6, 0x92, 0x3f, 0xc0, 0x93, 0x9b, 0x29, 0x86, 0xe1,
+	0x30, 0xbe, 0x46, 0x97, 0x6f, 0xeb, 0x23, 0x18, 0x72, 0x1e, 0xc9, 0xa6, 0x3f, 0x00, 0x38, 0xf5,
+	0x09, 0x27, 0xc8, 0x25, 0x7f, 0xf0, 0xf2, 0xa3, 0x57, 0x33, 0xf7, 0x7d, 0x4d, 0x6e, 0x74, 0xf8,
+	0x30, 0x5a, 0xde, 0xfb, 0x17, 0x00, 0x00, 0xff, 0xff, 0xac, 0x74, 0x4c, 0x40, 0x7b, 0x0b, 0x00,
+	0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -890,47 +126,49 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type PolicydServiceClient interface {
-	NewEnforcer(ctx context.Context, in *NewEnforcerRequest, opts ...grpc.CallOption) (*NewEnforcerReply, error)
-	NewAdapter(ctx context.Context, in *NewAdapterRequest, opts ...grpc.CallOption) (*NewAdapterReply, error)
-	Enforce(ctx context.Context, in *EnforceRequest, opts ...grpc.CallOption) (*BoolReply, error)
-	EnforceBucket(ctx context.Context, in *EnforceBucketRequest, opts ...grpc.CallOption) (*BoolReply, error)
-	LoadPolicy(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*EmptyReply, error)
-	SavePolicy(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*EmptyReply, error)
-	AddPolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*BoolReply, error)
-	AddNamedPolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*BoolReply, error)
-	RemovePolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*BoolReply, error)
-	RemoveNamedPolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*BoolReply, error)
-	RemoveFilteredPolicy(ctx context.Context, in *FilteredPolicyRequest, opts ...grpc.CallOption) (*BoolReply, error)
-	RemoveFilteredNamedPolicy(ctx context.Context, in *FilteredPolicyRequest, opts ...grpc.CallOption) (*BoolReply, error)
-	GetPolicy(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*Array2DReply, error)
-	GetNamedPolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*Array2DReply, error)
-	GetFilteredPolicy(ctx context.Context, in *FilteredPolicyRequest, opts ...grpc.CallOption) (*Array2DReply, error)
-	GetFilteredNamedPolicy(ctx context.Context, in *FilteredPolicyRequest, opts ...grpc.CallOption) (*Array2DReply, error)
-	AddGroupingPolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*BoolReply, error)
-	AddNamedGroupingPolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*BoolReply, error)
-	RemoveGroupingPolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*BoolReply, error)
-	RemoveNamedGroupingPolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*BoolReply, error)
-	RemoveFilteredGroupingPolicy(ctx context.Context, in *FilteredPolicyRequest, opts ...grpc.CallOption) (*BoolReply, error)
-	RemoveFilteredNamedGroupingPolicy(ctx context.Context, in *FilteredPolicyRequest, opts ...grpc.CallOption) (*BoolReply, error)
-	GetGroupingPolicy(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*Array2DReply, error)
-	GetNamedGroupingPolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*Array2DReply, error)
-	GetFilteredGroupingPolicy(ctx context.Context, in *FilteredPolicyRequest, opts ...grpc.CallOption) (*Array2DReply, error)
-	GetFilteredNamedGroupingPolicy(ctx context.Context, in *FilteredPolicyRequest, opts ...grpc.CallOption) (*Array2DReply, error)
-	GetAllSubjects(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*ArrayReply, error)
-	GetAllNamedSubjects(ctx context.Context, in *SimpleGetRequest, opts ...grpc.CallOption) (*ArrayReply, error)
-	GetAllObjects(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*ArrayReply, error)
-	GetAllNamedObjects(ctx context.Context, in *SimpleGetRequest, opts ...grpc.CallOption) (*ArrayReply, error)
-	GetAllActions(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*ArrayReply, error)
-	GetAllNamedActions(ctx context.Context, in *SimpleGetRequest, opts ...grpc.CallOption) (*ArrayReply, error)
-	GetAllRoles(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*ArrayReply, error)
-	GetAllNamedRoles(ctx context.Context, in *SimpleGetRequest, opts ...grpc.CallOption) (*ArrayReply, error)
-	HasPolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*BoolReply, error)
-	HasNamedPolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*BoolReply, error)
-	HasGroupingPolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*BoolReply, error)
-	HasNamedGroupingPolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*BoolReply, error)
-	AddPresetPolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*BoolReply, error)
-	RemovePresetPolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*BoolReply, error)
-	Initialize(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*EmptyReply, error)
+	// Casbin server functions
+	NewEnforcer(ctx context.Context, in *proto1.NewEnforcerRequest, opts ...grpc.CallOption) (*proto1.NewEnforcerReply, error)
+	NewAdapter(ctx context.Context, in *proto1.NewAdapterRequest, opts ...grpc.CallOption) (*proto1.NewAdapterReply, error)
+	Enforce(ctx context.Context, in *proto1.EnforceRequest, opts ...grpc.CallOption) (*proto1.BoolReply, error)
+	LoadPolicy(ctx context.Context, in *proto1.EmptyRequest, opts ...grpc.CallOption) (*proto1.EmptyReply, error)
+	SavePolicy(ctx context.Context, in *proto1.EmptyRequest, opts ...grpc.CallOption) (*proto1.EmptyReply, error)
+	AddPolicy(ctx context.Context, in *proto1.PolicyRequest, opts ...grpc.CallOption) (*proto1.BoolReply, error)
+	AddNamedPolicy(ctx context.Context, in *proto1.PolicyRequest, opts ...grpc.CallOption) (*proto1.BoolReply, error)
+	RemovePolicy(ctx context.Context, in *proto1.PolicyRequest, opts ...grpc.CallOption) (*proto1.BoolReply, error)
+	RemoveNamedPolicy(ctx context.Context, in *proto1.PolicyRequest, opts ...grpc.CallOption) (*proto1.BoolReply, error)
+	RemoveFilteredPolicy(ctx context.Context, in *proto1.FilteredPolicyRequest, opts ...grpc.CallOption) (*proto1.BoolReply, error)
+	RemoveFilteredNamedPolicy(ctx context.Context, in *proto1.FilteredPolicyRequest, opts ...grpc.CallOption) (*proto1.BoolReply, error)
+	GetPolicy(ctx context.Context, in *proto1.EmptyRequest, opts ...grpc.CallOption) (*proto1.Array2DReply, error)
+	GetNamedPolicy(ctx context.Context, in *proto1.PolicyRequest, opts ...grpc.CallOption) (*proto1.Array2DReply, error)
+	GetFilteredPolicy(ctx context.Context, in *proto1.FilteredPolicyRequest, opts ...grpc.CallOption) (*proto1.Array2DReply, error)
+	GetFilteredNamedPolicy(ctx context.Context, in *proto1.FilteredPolicyRequest, opts ...grpc.CallOption) (*proto1.Array2DReply, error)
+	AddGroupingPolicy(ctx context.Context, in *proto1.PolicyRequest, opts ...grpc.CallOption) (*proto1.BoolReply, error)
+	AddNamedGroupingPolicy(ctx context.Context, in *proto1.PolicyRequest, opts ...grpc.CallOption) (*proto1.BoolReply, error)
+	RemoveGroupingPolicy(ctx context.Context, in *proto1.PolicyRequest, opts ...grpc.CallOption) (*proto1.BoolReply, error)
+	RemoveNamedGroupingPolicy(ctx context.Context, in *proto1.PolicyRequest, opts ...grpc.CallOption) (*proto1.BoolReply, error)
+	RemoveFilteredGroupingPolicy(ctx context.Context, in *proto1.FilteredPolicyRequest, opts ...grpc.CallOption) (*proto1.BoolReply, error)
+	RemoveFilteredNamedGroupingPolicy(ctx context.Context, in *proto1.FilteredPolicyRequest, opts ...grpc.CallOption) (*proto1.BoolReply, error)
+	GetGroupingPolicy(ctx context.Context, in *proto1.EmptyRequest, opts ...grpc.CallOption) (*proto1.Array2DReply, error)
+	GetNamedGroupingPolicy(ctx context.Context, in *proto1.PolicyRequest, opts ...grpc.CallOption) (*proto1.Array2DReply, error)
+	GetFilteredGroupingPolicy(ctx context.Context, in *proto1.FilteredPolicyRequest, opts ...grpc.CallOption) (*proto1.Array2DReply, error)
+	GetFilteredNamedGroupingPolicy(ctx context.Context, in *proto1.FilteredPolicyRequest, opts ...grpc.CallOption) (*proto1.Array2DReply, error)
+	GetAllSubjects(ctx context.Context, in *proto1.EmptyRequest, opts ...grpc.CallOption) (*proto1.ArrayReply, error)
+	GetAllNamedSubjects(ctx context.Context, in *proto1.SimpleGetRequest, opts ...grpc.CallOption) (*proto1.ArrayReply, error)
+	GetAllObjects(ctx context.Context, in *proto1.EmptyRequest, opts ...grpc.CallOption) (*proto1.ArrayReply, error)
+	GetAllNamedObjects(ctx context.Context, in *proto1.SimpleGetRequest, opts ...grpc.CallOption) (*proto1.ArrayReply, error)
+	GetAllActions(ctx context.Context, in *proto1.EmptyRequest, opts ...grpc.CallOption) (*proto1.ArrayReply, error)
+	GetAllNamedActions(ctx context.Context, in *proto1.SimpleGetRequest, opts ...grpc.CallOption) (*proto1.ArrayReply, error)
+	GetAllRoles(ctx context.Context, in *proto1.EmptyRequest, opts ...grpc.CallOption) (*proto1.ArrayReply, error)
+	GetAllNamedRoles(ctx context.Context, in *proto1.SimpleGetRequest, opts ...grpc.CallOption) (*proto1.ArrayReply, error)
+	HasPolicy(ctx context.Context, in *proto1.PolicyRequest, opts ...grpc.CallOption) (*proto1.BoolReply, error)
+	HasNamedPolicy(ctx context.Context, in *proto1.PolicyRequest, opts ...grpc.CallOption) (*proto1.BoolReply, error)
+	HasGroupingPolicy(ctx context.Context, in *proto1.PolicyRequest, opts ...grpc.CallOption) (*proto1.BoolReply, error)
+	HasNamedGroupingPolicy(ctx context.Context, in *proto1.PolicyRequest, opts ...grpc.CallOption) (*proto1.BoolReply, error)
+	// Custom functions
+	EnforceBucket(ctx context.Context, in *EnforceBucketRequest, opts ...grpc.CallOption) (*proto1.BoolReply, error)
+	AddPresetPolicy(ctx context.Context, in *proto1.PolicyRequest, opts ...grpc.CallOption) (*proto1.BoolReply, error)
+	RemovePresetPolicy(ctx context.Context, in *proto1.PolicyRequest, opts ...grpc.CallOption) (*proto1.BoolReply, error)
+	Initialize(ctx context.Context, in *proto1.EmptyRequest, opts ...grpc.CallOption) (*proto1.EmptyReply, error)
 }
 
 type policydServiceClient struct {
@@ -941,8 +179,8 @@ func NewPolicydServiceClient(cc *grpc.ClientConn) PolicydServiceClient {
 	return &policydServiceClient{cc}
 }
 
-func (c *policydServiceClient) NewEnforcer(ctx context.Context, in *NewEnforcerRequest, opts ...grpc.CallOption) (*NewEnforcerReply, error) {
-	out := new(NewEnforcerReply)
+func (c *policydServiceClient) NewEnforcer(ctx context.Context, in *proto1.NewEnforcerRequest, opts ...grpc.CallOption) (*proto1.NewEnforcerReply, error) {
+	out := new(proto1.NewEnforcerReply)
 	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/NewEnforcer", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -950,8 +188,8 @@ func (c *policydServiceClient) NewEnforcer(ctx context.Context, in *NewEnforcerR
 	return out, nil
 }
 
-func (c *policydServiceClient) NewAdapter(ctx context.Context, in *NewAdapterRequest, opts ...grpc.CallOption) (*NewAdapterReply, error) {
-	out := new(NewAdapterReply)
+func (c *policydServiceClient) NewAdapter(ctx context.Context, in *proto1.NewAdapterRequest, opts ...grpc.CallOption) (*proto1.NewAdapterReply, error) {
+	out := new(proto1.NewAdapterReply)
 	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/NewAdapter", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -959,8 +197,8 @@ func (c *policydServiceClient) NewAdapter(ctx context.Context, in *NewAdapterReq
 	return out, nil
 }
 
-func (c *policydServiceClient) Enforce(ctx context.Context, in *EnforceRequest, opts ...grpc.CallOption) (*BoolReply, error) {
-	out := new(BoolReply)
+func (c *policydServiceClient) Enforce(ctx context.Context, in *proto1.EnforceRequest, opts ...grpc.CallOption) (*proto1.BoolReply, error) {
+	out := new(proto1.BoolReply)
 	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/Enforce", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -968,17 +206,8 @@ func (c *policydServiceClient) Enforce(ctx context.Context, in *EnforceRequest, 
 	return out, nil
 }
 
-func (c *policydServiceClient) EnforceBucket(ctx context.Context, in *EnforceBucketRequest, opts ...grpc.CallOption) (*BoolReply, error) {
-	out := new(BoolReply)
-	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/EnforceBucket", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *policydServiceClient) LoadPolicy(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*EmptyReply, error) {
-	out := new(EmptyReply)
+func (c *policydServiceClient) LoadPolicy(ctx context.Context, in *proto1.EmptyRequest, opts ...grpc.CallOption) (*proto1.EmptyReply, error) {
+	out := new(proto1.EmptyReply)
 	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/LoadPolicy", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -986,8 +215,8 @@ func (c *policydServiceClient) LoadPolicy(ctx context.Context, in *EmptyRequest,
 	return out, nil
 }
 
-func (c *policydServiceClient) SavePolicy(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*EmptyReply, error) {
-	out := new(EmptyReply)
+func (c *policydServiceClient) SavePolicy(ctx context.Context, in *proto1.EmptyRequest, opts ...grpc.CallOption) (*proto1.EmptyReply, error) {
+	out := new(proto1.EmptyReply)
 	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/SavePolicy", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -995,8 +224,8 @@ func (c *policydServiceClient) SavePolicy(ctx context.Context, in *EmptyRequest,
 	return out, nil
 }
 
-func (c *policydServiceClient) AddPolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*BoolReply, error) {
-	out := new(BoolReply)
+func (c *policydServiceClient) AddPolicy(ctx context.Context, in *proto1.PolicyRequest, opts ...grpc.CallOption) (*proto1.BoolReply, error) {
+	out := new(proto1.BoolReply)
 	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/AddPolicy", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -1004,8 +233,8 @@ func (c *policydServiceClient) AddPolicy(ctx context.Context, in *PolicyRequest,
 	return out, nil
 }
 
-func (c *policydServiceClient) AddNamedPolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*BoolReply, error) {
-	out := new(BoolReply)
+func (c *policydServiceClient) AddNamedPolicy(ctx context.Context, in *proto1.PolicyRequest, opts ...grpc.CallOption) (*proto1.BoolReply, error) {
+	out := new(proto1.BoolReply)
 	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/AddNamedPolicy", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -1013,8 +242,8 @@ func (c *policydServiceClient) AddNamedPolicy(ctx context.Context, in *PolicyReq
 	return out, nil
 }
 
-func (c *policydServiceClient) RemovePolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*BoolReply, error) {
-	out := new(BoolReply)
+func (c *policydServiceClient) RemovePolicy(ctx context.Context, in *proto1.PolicyRequest, opts ...grpc.CallOption) (*proto1.BoolReply, error) {
+	out := new(proto1.BoolReply)
 	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/RemovePolicy", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -1022,8 +251,8 @@ func (c *policydServiceClient) RemovePolicy(ctx context.Context, in *PolicyReque
 	return out, nil
 }
 
-func (c *policydServiceClient) RemoveNamedPolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*BoolReply, error) {
-	out := new(BoolReply)
+func (c *policydServiceClient) RemoveNamedPolicy(ctx context.Context, in *proto1.PolicyRequest, opts ...grpc.CallOption) (*proto1.BoolReply, error) {
+	out := new(proto1.BoolReply)
 	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/RemoveNamedPolicy", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -1031,8 +260,8 @@ func (c *policydServiceClient) RemoveNamedPolicy(ctx context.Context, in *Policy
 	return out, nil
 }
 
-func (c *policydServiceClient) RemoveFilteredPolicy(ctx context.Context, in *FilteredPolicyRequest, opts ...grpc.CallOption) (*BoolReply, error) {
-	out := new(BoolReply)
+func (c *policydServiceClient) RemoveFilteredPolicy(ctx context.Context, in *proto1.FilteredPolicyRequest, opts ...grpc.CallOption) (*proto1.BoolReply, error) {
+	out := new(proto1.BoolReply)
 	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/RemoveFilteredPolicy", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -1040,8 +269,8 @@ func (c *policydServiceClient) RemoveFilteredPolicy(ctx context.Context, in *Fil
 	return out, nil
 }
 
-func (c *policydServiceClient) RemoveFilteredNamedPolicy(ctx context.Context, in *FilteredPolicyRequest, opts ...grpc.CallOption) (*BoolReply, error) {
-	out := new(BoolReply)
+func (c *policydServiceClient) RemoveFilteredNamedPolicy(ctx context.Context, in *proto1.FilteredPolicyRequest, opts ...grpc.CallOption) (*proto1.BoolReply, error) {
+	out := new(proto1.BoolReply)
 	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/RemoveFilteredNamedPolicy", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -1049,8 +278,8 @@ func (c *policydServiceClient) RemoveFilteredNamedPolicy(ctx context.Context, in
 	return out, nil
 }
 
-func (c *policydServiceClient) GetPolicy(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*Array2DReply, error) {
-	out := new(Array2DReply)
+func (c *policydServiceClient) GetPolicy(ctx context.Context, in *proto1.EmptyRequest, opts ...grpc.CallOption) (*proto1.Array2DReply, error) {
+	out := new(proto1.Array2DReply)
 	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/GetPolicy", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -1058,8 +287,8 @@ func (c *policydServiceClient) GetPolicy(ctx context.Context, in *EmptyRequest, 
 	return out, nil
 }
 
-func (c *policydServiceClient) GetNamedPolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*Array2DReply, error) {
-	out := new(Array2DReply)
+func (c *policydServiceClient) GetNamedPolicy(ctx context.Context, in *proto1.PolicyRequest, opts ...grpc.CallOption) (*proto1.Array2DReply, error) {
+	out := new(proto1.Array2DReply)
 	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/GetNamedPolicy", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -1067,8 +296,8 @@ func (c *policydServiceClient) GetNamedPolicy(ctx context.Context, in *PolicyReq
 	return out, nil
 }
 
-func (c *policydServiceClient) GetFilteredPolicy(ctx context.Context, in *FilteredPolicyRequest, opts ...grpc.CallOption) (*Array2DReply, error) {
-	out := new(Array2DReply)
+func (c *policydServiceClient) GetFilteredPolicy(ctx context.Context, in *proto1.FilteredPolicyRequest, opts ...grpc.CallOption) (*proto1.Array2DReply, error) {
+	out := new(proto1.Array2DReply)
 	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/GetFilteredPolicy", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -1076,8 +305,8 @@ func (c *policydServiceClient) GetFilteredPolicy(ctx context.Context, in *Filter
 	return out, nil
 }
 
-func (c *policydServiceClient) GetFilteredNamedPolicy(ctx context.Context, in *FilteredPolicyRequest, opts ...grpc.CallOption) (*Array2DReply, error) {
-	out := new(Array2DReply)
+func (c *policydServiceClient) GetFilteredNamedPolicy(ctx context.Context, in *proto1.FilteredPolicyRequest, opts ...grpc.CallOption) (*proto1.Array2DReply, error) {
+	out := new(proto1.Array2DReply)
 	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/GetFilteredNamedPolicy", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -1085,8 +314,8 @@ func (c *policydServiceClient) GetFilteredNamedPolicy(ctx context.Context, in *F
 	return out, nil
 }
 
-func (c *policydServiceClient) AddGroupingPolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*BoolReply, error) {
-	out := new(BoolReply)
+func (c *policydServiceClient) AddGroupingPolicy(ctx context.Context, in *proto1.PolicyRequest, opts ...grpc.CallOption) (*proto1.BoolReply, error) {
+	out := new(proto1.BoolReply)
 	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/AddGroupingPolicy", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -1094,8 +323,8 @@ func (c *policydServiceClient) AddGroupingPolicy(ctx context.Context, in *Policy
 	return out, nil
 }
 
-func (c *policydServiceClient) AddNamedGroupingPolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*BoolReply, error) {
-	out := new(BoolReply)
+func (c *policydServiceClient) AddNamedGroupingPolicy(ctx context.Context, in *proto1.PolicyRequest, opts ...grpc.CallOption) (*proto1.BoolReply, error) {
+	out := new(proto1.BoolReply)
 	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/AddNamedGroupingPolicy", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -1103,8 +332,8 @@ func (c *policydServiceClient) AddNamedGroupingPolicy(ctx context.Context, in *P
 	return out, nil
 }
 
-func (c *policydServiceClient) RemoveGroupingPolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*BoolReply, error) {
-	out := new(BoolReply)
+func (c *policydServiceClient) RemoveGroupingPolicy(ctx context.Context, in *proto1.PolicyRequest, opts ...grpc.CallOption) (*proto1.BoolReply, error) {
+	out := new(proto1.BoolReply)
 	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/RemoveGroupingPolicy", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -1112,8 +341,8 @@ func (c *policydServiceClient) RemoveGroupingPolicy(ctx context.Context, in *Pol
 	return out, nil
 }
 
-func (c *policydServiceClient) RemoveNamedGroupingPolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*BoolReply, error) {
-	out := new(BoolReply)
+func (c *policydServiceClient) RemoveNamedGroupingPolicy(ctx context.Context, in *proto1.PolicyRequest, opts ...grpc.CallOption) (*proto1.BoolReply, error) {
+	out := new(proto1.BoolReply)
 	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/RemoveNamedGroupingPolicy", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -1121,8 +350,8 @@ func (c *policydServiceClient) RemoveNamedGroupingPolicy(ctx context.Context, in
 	return out, nil
 }
 
-func (c *policydServiceClient) RemoveFilteredGroupingPolicy(ctx context.Context, in *FilteredPolicyRequest, opts ...grpc.CallOption) (*BoolReply, error) {
-	out := new(BoolReply)
+func (c *policydServiceClient) RemoveFilteredGroupingPolicy(ctx context.Context, in *proto1.FilteredPolicyRequest, opts ...grpc.CallOption) (*proto1.BoolReply, error) {
+	out := new(proto1.BoolReply)
 	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/RemoveFilteredGroupingPolicy", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -1130,8 +359,8 @@ func (c *policydServiceClient) RemoveFilteredGroupingPolicy(ctx context.Context,
 	return out, nil
 }
 
-func (c *policydServiceClient) RemoveFilteredNamedGroupingPolicy(ctx context.Context, in *FilteredPolicyRequest, opts ...grpc.CallOption) (*BoolReply, error) {
-	out := new(BoolReply)
+func (c *policydServiceClient) RemoveFilteredNamedGroupingPolicy(ctx context.Context, in *proto1.FilteredPolicyRequest, opts ...grpc.CallOption) (*proto1.BoolReply, error) {
+	out := new(proto1.BoolReply)
 	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/RemoveFilteredNamedGroupingPolicy", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -1139,8 +368,8 @@ func (c *policydServiceClient) RemoveFilteredNamedGroupingPolicy(ctx context.Con
 	return out, nil
 }
 
-func (c *policydServiceClient) GetGroupingPolicy(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*Array2DReply, error) {
-	out := new(Array2DReply)
+func (c *policydServiceClient) GetGroupingPolicy(ctx context.Context, in *proto1.EmptyRequest, opts ...grpc.CallOption) (*proto1.Array2DReply, error) {
+	out := new(proto1.Array2DReply)
 	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/GetGroupingPolicy", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -1148,8 +377,8 @@ func (c *policydServiceClient) GetGroupingPolicy(ctx context.Context, in *EmptyR
 	return out, nil
 }
 
-func (c *policydServiceClient) GetNamedGroupingPolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*Array2DReply, error) {
-	out := new(Array2DReply)
+func (c *policydServiceClient) GetNamedGroupingPolicy(ctx context.Context, in *proto1.PolicyRequest, opts ...grpc.CallOption) (*proto1.Array2DReply, error) {
+	out := new(proto1.Array2DReply)
 	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/GetNamedGroupingPolicy", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -1157,8 +386,8 @@ func (c *policydServiceClient) GetNamedGroupingPolicy(ctx context.Context, in *P
 	return out, nil
 }
 
-func (c *policydServiceClient) GetFilteredGroupingPolicy(ctx context.Context, in *FilteredPolicyRequest, opts ...grpc.CallOption) (*Array2DReply, error) {
-	out := new(Array2DReply)
+func (c *policydServiceClient) GetFilteredGroupingPolicy(ctx context.Context, in *proto1.FilteredPolicyRequest, opts ...grpc.CallOption) (*proto1.Array2DReply, error) {
+	out := new(proto1.Array2DReply)
 	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/GetFilteredGroupingPolicy", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -1166,8 +395,8 @@ func (c *policydServiceClient) GetFilteredGroupingPolicy(ctx context.Context, in
 	return out, nil
 }
 
-func (c *policydServiceClient) GetFilteredNamedGroupingPolicy(ctx context.Context, in *FilteredPolicyRequest, opts ...grpc.CallOption) (*Array2DReply, error) {
-	out := new(Array2DReply)
+func (c *policydServiceClient) GetFilteredNamedGroupingPolicy(ctx context.Context, in *proto1.FilteredPolicyRequest, opts ...grpc.CallOption) (*proto1.Array2DReply, error) {
+	out := new(proto1.Array2DReply)
 	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/GetFilteredNamedGroupingPolicy", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -1175,8 +404,8 @@ func (c *policydServiceClient) GetFilteredNamedGroupingPolicy(ctx context.Contex
 	return out, nil
 }
 
-func (c *policydServiceClient) GetAllSubjects(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*ArrayReply, error) {
-	out := new(ArrayReply)
+func (c *policydServiceClient) GetAllSubjects(ctx context.Context, in *proto1.EmptyRequest, opts ...grpc.CallOption) (*proto1.ArrayReply, error) {
+	out := new(proto1.ArrayReply)
 	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/GetAllSubjects", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -1184,8 +413,8 @@ func (c *policydServiceClient) GetAllSubjects(ctx context.Context, in *EmptyRequ
 	return out, nil
 }
 
-func (c *policydServiceClient) GetAllNamedSubjects(ctx context.Context, in *SimpleGetRequest, opts ...grpc.CallOption) (*ArrayReply, error) {
-	out := new(ArrayReply)
+func (c *policydServiceClient) GetAllNamedSubjects(ctx context.Context, in *proto1.SimpleGetRequest, opts ...grpc.CallOption) (*proto1.ArrayReply, error) {
+	out := new(proto1.ArrayReply)
 	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/GetAllNamedSubjects", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -1193,8 +422,8 @@ func (c *policydServiceClient) GetAllNamedSubjects(ctx context.Context, in *Simp
 	return out, nil
 }
 
-func (c *policydServiceClient) GetAllObjects(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*ArrayReply, error) {
-	out := new(ArrayReply)
+func (c *policydServiceClient) GetAllObjects(ctx context.Context, in *proto1.EmptyRequest, opts ...grpc.CallOption) (*proto1.ArrayReply, error) {
+	out := new(proto1.ArrayReply)
 	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/GetAllObjects", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -1202,8 +431,8 @@ func (c *policydServiceClient) GetAllObjects(ctx context.Context, in *EmptyReque
 	return out, nil
 }
 
-func (c *policydServiceClient) GetAllNamedObjects(ctx context.Context, in *SimpleGetRequest, opts ...grpc.CallOption) (*ArrayReply, error) {
-	out := new(ArrayReply)
+func (c *policydServiceClient) GetAllNamedObjects(ctx context.Context, in *proto1.SimpleGetRequest, opts ...grpc.CallOption) (*proto1.ArrayReply, error) {
+	out := new(proto1.ArrayReply)
 	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/GetAllNamedObjects", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -1211,8 +440,8 @@ func (c *policydServiceClient) GetAllNamedObjects(ctx context.Context, in *Simpl
 	return out, nil
 }
 
-func (c *policydServiceClient) GetAllActions(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*ArrayReply, error) {
-	out := new(ArrayReply)
+func (c *policydServiceClient) GetAllActions(ctx context.Context, in *proto1.EmptyRequest, opts ...grpc.CallOption) (*proto1.ArrayReply, error) {
+	out := new(proto1.ArrayReply)
 	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/GetAllActions", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -1220,8 +449,8 @@ func (c *policydServiceClient) GetAllActions(ctx context.Context, in *EmptyReque
 	return out, nil
 }
 
-func (c *policydServiceClient) GetAllNamedActions(ctx context.Context, in *SimpleGetRequest, opts ...grpc.CallOption) (*ArrayReply, error) {
-	out := new(ArrayReply)
+func (c *policydServiceClient) GetAllNamedActions(ctx context.Context, in *proto1.SimpleGetRequest, opts ...grpc.CallOption) (*proto1.ArrayReply, error) {
+	out := new(proto1.ArrayReply)
 	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/GetAllNamedActions", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -1229,8 +458,8 @@ func (c *policydServiceClient) GetAllNamedActions(ctx context.Context, in *Simpl
 	return out, nil
 }
 
-func (c *policydServiceClient) GetAllRoles(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*ArrayReply, error) {
-	out := new(ArrayReply)
+func (c *policydServiceClient) GetAllRoles(ctx context.Context, in *proto1.EmptyRequest, opts ...grpc.CallOption) (*proto1.ArrayReply, error) {
+	out := new(proto1.ArrayReply)
 	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/GetAllRoles", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -1238,8 +467,8 @@ func (c *policydServiceClient) GetAllRoles(ctx context.Context, in *EmptyRequest
 	return out, nil
 }
 
-func (c *policydServiceClient) GetAllNamedRoles(ctx context.Context, in *SimpleGetRequest, opts ...grpc.CallOption) (*ArrayReply, error) {
-	out := new(ArrayReply)
+func (c *policydServiceClient) GetAllNamedRoles(ctx context.Context, in *proto1.SimpleGetRequest, opts ...grpc.CallOption) (*proto1.ArrayReply, error) {
+	out := new(proto1.ArrayReply)
 	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/GetAllNamedRoles", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -1247,8 +476,8 @@ func (c *policydServiceClient) GetAllNamedRoles(ctx context.Context, in *SimpleG
 	return out, nil
 }
 
-func (c *policydServiceClient) HasPolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*BoolReply, error) {
-	out := new(BoolReply)
+func (c *policydServiceClient) HasPolicy(ctx context.Context, in *proto1.PolicyRequest, opts ...grpc.CallOption) (*proto1.BoolReply, error) {
+	out := new(proto1.BoolReply)
 	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/HasPolicy", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -1256,8 +485,8 @@ func (c *policydServiceClient) HasPolicy(ctx context.Context, in *PolicyRequest,
 	return out, nil
 }
 
-func (c *policydServiceClient) HasNamedPolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*BoolReply, error) {
-	out := new(BoolReply)
+func (c *policydServiceClient) HasNamedPolicy(ctx context.Context, in *proto1.PolicyRequest, opts ...grpc.CallOption) (*proto1.BoolReply, error) {
+	out := new(proto1.BoolReply)
 	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/HasNamedPolicy", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -1265,8 +494,8 @@ func (c *policydServiceClient) HasNamedPolicy(ctx context.Context, in *PolicyReq
 	return out, nil
 }
 
-func (c *policydServiceClient) HasGroupingPolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*BoolReply, error) {
-	out := new(BoolReply)
+func (c *policydServiceClient) HasGroupingPolicy(ctx context.Context, in *proto1.PolicyRequest, opts ...grpc.CallOption) (*proto1.BoolReply, error) {
+	out := new(proto1.BoolReply)
 	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/HasGroupingPolicy", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -1274,8 +503,8 @@ func (c *policydServiceClient) HasGroupingPolicy(ctx context.Context, in *Policy
 	return out, nil
 }
 
-func (c *policydServiceClient) HasNamedGroupingPolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*BoolReply, error) {
-	out := new(BoolReply)
+func (c *policydServiceClient) HasNamedGroupingPolicy(ctx context.Context, in *proto1.PolicyRequest, opts ...grpc.CallOption) (*proto1.BoolReply, error) {
+	out := new(proto1.BoolReply)
 	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/HasNamedGroupingPolicy", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -1283,8 +512,17 @@ func (c *policydServiceClient) HasNamedGroupingPolicy(ctx context.Context, in *P
 	return out, nil
 }
 
-func (c *policydServiceClient) AddPresetPolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*BoolReply, error) {
-	out := new(BoolReply)
+func (c *policydServiceClient) EnforceBucket(ctx context.Context, in *EnforceBucketRequest, opts ...grpc.CallOption) (*proto1.BoolReply, error) {
+	out := new(proto1.BoolReply)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/EnforceBucket", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *policydServiceClient) AddPresetPolicy(ctx context.Context, in *proto1.PolicyRequest, opts ...grpc.CallOption) (*proto1.BoolReply, error) {
+	out := new(proto1.BoolReply)
 	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/AddPresetPolicy", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -1292,8 +530,8 @@ func (c *policydServiceClient) AddPresetPolicy(ctx context.Context, in *PolicyRe
 	return out, nil
 }
 
-func (c *policydServiceClient) RemovePresetPolicy(ctx context.Context, in *PolicyRequest, opts ...grpc.CallOption) (*BoolReply, error) {
-	out := new(BoolReply)
+func (c *policydServiceClient) RemovePresetPolicy(ctx context.Context, in *proto1.PolicyRequest, opts ...grpc.CallOption) (*proto1.BoolReply, error) {
+	out := new(proto1.BoolReply)
 	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/RemovePresetPolicy", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -1301,8 +539,8 @@ func (c *policydServiceClient) RemovePresetPolicy(ctx context.Context, in *Polic
 	return out, nil
 }
 
-func (c *policydServiceClient) Initialize(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*EmptyReply, error) {
-	out := new(EmptyReply)
+func (c *policydServiceClient) Initialize(ctx context.Context, in *proto1.EmptyRequest, opts ...grpc.CallOption) (*proto1.EmptyReply, error) {
+	out := new(proto1.EmptyReply)
 	err := c.cc.Invoke(ctx, "/ai.metathings.service.policyd.PolicydService/Initialize", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -1312,174 +550,176 @@ func (c *policydServiceClient) Initialize(ctx context.Context, in *EmptyRequest,
 
 // PolicydServiceServer is the server API for PolicydService service.
 type PolicydServiceServer interface {
-	NewEnforcer(context.Context, *NewEnforcerRequest) (*NewEnforcerReply, error)
-	NewAdapter(context.Context, *NewAdapterRequest) (*NewAdapterReply, error)
-	Enforce(context.Context, *EnforceRequest) (*BoolReply, error)
-	EnforceBucket(context.Context, *EnforceBucketRequest) (*BoolReply, error)
-	LoadPolicy(context.Context, *EmptyRequest) (*EmptyReply, error)
-	SavePolicy(context.Context, *EmptyRequest) (*EmptyReply, error)
-	AddPolicy(context.Context, *PolicyRequest) (*BoolReply, error)
-	AddNamedPolicy(context.Context, *PolicyRequest) (*BoolReply, error)
-	RemovePolicy(context.Context, *PolicyRequest) (*BoolReply, error)
-	RemoveNamedPolicy(context.Context, *PolicyRequest) (*BoolReply, error)
-	RemoveFilteredPolicy(context.Context, *FilteredPolicyRequest) (*BoolReply, error)
-	RemoveFilteredNamedPolicy(context.Context, *FilteredPolicyRequest) (*BoolReply, error)
-	GetPolicy(context.Context, *EmptyRequest) (*Array2DReply, error)
-	GetNamedPolicy(context.Context, *PolicyRequest) (*Array2DReply, error)
-	GetFilteredPolicy(context.Context, *FilteredPolicyRequest) (*Array2DReply, error)
-	GetFilteredNamedPolicy(context.Context, *FilteredPolicyRequest) (*Array2DReply, error)
-	AddGroupingPolicy(context.Context, *PolicyRequest) (*BoolReply, error)
-	AddNamedGroupingPolicy(context.Context, *PolicyRequest) (*BoolReply, error)
-	RemoveGroupingPolicy(context.Context, *PolicyRequest) (*BoolReply, error)
-	RemoveNamedGroupingPolicy(context.Context, *PolicyRequest) (*BoolReply, error)
-	RemoveFilteredGroupingPolicy(context.Context, *FilteredPolicyRequest) (*BoolReply, error)
-	RemoveFilteredNamedGroupingPolicy(context.Context, *FilteredPolicyRequest) (*BoolReply, error)
-	GetGroupingPolicy(context.Context, *EmptyRequest) (*Array2DReply, error)
-	GetNamedGroupingPolicy(context.Context, *PolicyRequest) (*Array2DReply, error)
-	GetFilteredGroupingPolicy(context.Context, *FilteredPolicyRequest) (*Array2DReply, error)
-	GetFilteredNamedGroupingPolicy(context.Context, *FilteredPolicyRequest) (*Array2DReply, error)
-	GetAllSubjects(context.Context, *EmptyRequest) (*ArrayReply, error)
-	GetAllNamedSubjects(context.Context, *SimpleGetRequest) (*ArrayReply, error)
-	GetAllObjects(context.Context, *EmptyRequest) (*ArrayReply, error)
-	GetAllNamedObjects(context.Context, *SimpleGetRequest) (*ArrayReply, error)
-	GetAllActions(context.Context, *EmptyRequest) (*ArrayReply, error)
-	GetAllNamedActions(context.Context, *SimpleGetRequest) (*ArrayReply, error)
-	GetAllRoles(context.Context, *EmptyRequest) (*ArrayReply, error)
-	GetAllNamedRoles(context.Context, *SimpleGetRequest) (*ArrayReply, error)
-	HasPolicy(context.Context, *PolicyRequest) (*BoolReply, error)
-	HasNamedPolicy(context.Context, *PolicyRequest) (*BoolReply, error)
-	HasGroupingPolicy(context.Context, *PolicyRequest) (*BoolReply, error)
-	HasNamedGroupingPolicy(context.Context, *PolicyRequest) (*BoolReply, error)
-	AddPresetPolicy(context.Context, *PolicyRequest) (*BoolReply, error)
-	RemovePresetPolicy(context.Context, *PolicyRequest) (*BoolReply, error)
-	Initialize(context.Context, *EmptyRequest) (*EmptyReply, error)
+	// Casbin server functions
+	NewEnforcer(context.Context, *proto1.NewEnforcerRequest) (*proto1.NewEnforcerReply, error)
+	NewAdapter(context.Context, *proto1.NewAdapterRequest) (*proto1.NewAdapterReply, error)
+	Enforce(context.Context, *proto1.EnforceRequest) (*proto1.BoolReply, error)
+	LoadPolicy(context.Context, *proto1.EmptyRequest) (*proto1.EmptyReply, error)
+	SavePolicy(context.Context, *proto1.EmptyRequest) (*proto1.EmptyReply, error)
+	AddPolicy(context.Context, *proto1.PolicyRequest) (*proto1.BoolReply, error)
+	AddNamedPolicy(context.Context, *proto1.PolicyRequest) (*proto1.BoolReply, error)
+	RemovePolicy(context.Context, *proto1.PolicyRequest) (*proto1.BoolReply, error)
+	RemoveNamedPolicy(context.Context, *proto1.PolicyRequest) (*proto1.BoolReply, error)
+	RemoveFilteredPolicy(context.Context, *proto1.FilteredPolicyRequest) (*proto1.BoolReply, error)
+	RemoveFilteredNamedPolicy(context.Context, *proto1.FilteredPolicyRequest) (*proto1.BoolReply, error)
+	GetPolicy(context.Context, *proto1.EmptyRequest) (*proto1.Array2DReply, error)
+	GetNamedPolicy(context.Context, *proto1.PolicyRequest) (*proto1.Array2DReply, error)
+	GetFilteredPolicy(context.Context, *proto1.FilteredPolicyRequest) (*proto1.Array2DReply, error)
+	GetFilteredNamedPolicy(context.Context, *proto1.FilteredPolicyRequest) (*proto1.Array2DReply, error)
+	AddGroupingPolicy(context.Context, *proto1.PolicyRequest) (*proto1.BoolReply, error)
+	AddNamedGroupingPolicy(context.Context, *proto1.PolicyRequest) (*proto1.BoolReply, error)
+	RemoveGroupingPolicy(context.Context, *proto1.PolicyRequest) (*proto1.BoolReply, error)
+	RemoveNamedGroupingPolicy(context.Context, *proto1.PolicyRequest) (*proto1.BoolReply, error)
+	RemoveFilteredGroupingPolicy(context.Context, *proto1.FilteredPolicyRequest) (*proto1.BoolReply, error)
+	RemoveFilteredNamedGroupingPolicy(context.Context, *proto1.FilteredPolicyRequest) (*proto1.BoolReply, error)
+	GetGroupingPolicy(context.Context, *proto1.EmptyRequest) (*proto1.Array2DReply, error)
+	GetNamedGroupingPolicy(context.Context, *proto1.PolicyRequest) (*proto1.Array2DReply, error)
+	GetFilteredGroupingPolicy(context.Context, *proto1.FilteredPolicyRequest) (*proto1.Array2DReply, error)
+	GetFilteredNamedGroupingPolicy(context.Context, *proto1.FilteredPolicyRequest) (*proto1.Array2DReply, error)
+	GetAllSubjects(context.Context, *proto1.EmptyRequest) (*proto1.ArrayReply, error)
+	GetAllNamedSubjects(context.Context, *proto1.SimpleGetRequest) (*proto1.ArrayReply, error)
+	GetAllObjects(context.Context, *proto1.EmptyRequest) (*proto1.ArrayReply, error)
+	GetAllNamedObjects(context.Context, *proto1.SimpleGetRequest) (*proto1.ArrayReply, error)
+	GetAllActions(context.Context, *proto1.EmptyRequest) (*proto1.ArrayReply, error)
+	GetAllNamedActions(context.Context, *proto1.SimpleGetRequest) (*proto1.ArrayReply, error)
+	GetAllRoles(context.Context, *proto1.EmptyRequest) (*proto1.ArrayReply, error)
+	GetAllNamedRoles(context.Context, *proto1.SimpleGetRequest) (*proto1.ArrayReply, error)
+	HasPolicy(context.Context, *proto1.PolicyRequest) (*proto1.BoolReply, error)
+	HasNamedPolicy(context.Context, *proto1.PolicyRequest) (*proto1.BoolReply, error)
+	HasGroupingPolicy(context.Context, *proto1.PolicyRequest) (*proto1.BoolReply, error)
+	HasNamedGroupingPolicy(context.Context, *proto1.PolicyRequest) (*proto1.BoolReply, error)
+	// Custom functions
+	EnforceBucket(context.Context, *EnforceBucketRequest) (*proto1.BoolReply, error)
+	AddPresetPolicy(context.Context, *proto1.PolicyRequest) (*proto1.BoolReply, error)
+	RemovePresetPolicy(context.Context, *proto1.PolicyRequest) (*proto1.BoolReply, error)
+	Initialize(context.Context, *proto1.EmptyRequest) (*proto1.EmptyReply, error)
 }
 
 // UnimplementedPolicydServiceServer can be embedded to have forward compatible implementations.
 type UnimplementedPolicydServiceServer struct {
 }
 
-func (*UnimplementedPolicydServiceServer) NewEnforcer(ctx context.Context, req *NewEnforcerRequest) (*NewEnforcerReply, error) {
+func (*UnimplementedPolicydServiceServer) NewEnforcer(ctx context.Context, req *proto1.NewEnforcerRequest) (*proto1.NewEnforcerReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method NewEnforcer not implemented")
 }
-func (*UnimplementedPolicydServiceServer) NewAdapter(ctx context.Context, req *NewAdapterRequest) (*NewAdapterReply, error) {
+func (*UnimplementedPolicydServiceServer) NewAdapter(ctx context.Context, req *proto1.NewAdapterRequest) (*proto1.NewAdapterReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method NewAdapter not implemented")
 }
-func (*UnimplementedPolicydServiceServer) Enforce(ctx context.Context, req *EnforceRequest) (*BoolReply, error) {
+func (*UnimplementedPolicydServiceServer) Enforce(ctx context.Context, req *proto1.EnforceRequest) (*proto1.BoolReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Enforce not implemented")
 }
-func (*UnimplementedPolicydServiceServer) EnforceBucket(ctx context.Context, req *EnforceBucketRequest) (*BoolReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method EnforceBucket not implemented")
-}
-func (*UnimplementedPolicydServiceServer) LoadPolicy(ctx context.Context, req *EmptyRequest) (*EmptyReply, error) {
+func (*UnimplementedPolicydServiceServer) LoadPolicy(ctx context.Context, req *proto1.EmptyRequest) (*proto1.EmptyReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method LoadPolicy not implemented")
 }
-func (*UnimplementedPolicydServiceServer) SavePolicy(ctx context.Context, req *EmptyRequest) (*EmptyReply, error) {
+func (*UnimplementedPolicydServiceServer) SavePolicy(ctx context.Context, req *proto1.EmptyRequest) (*proto1.EmptyReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SavePolicy not implemented")
 }
-func (*UnimplementedPolicydServiceServer) AddPolicy(ctx context.Context, req *PolicyRequest) (*BoolReply, error) {
+func (*UnimplementedPolicydServiceServer) AddPolicy(ctx context.Context, req *proto1.PolicyRequest) (*proto1.BoolReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddPolicy not implemented")
 }
-func (*UnimplementedPolicydServiceServer) AddNamedPolicy(ctx context.Context, req *PolicyRequest) (*BoolReply, error) {
+func (*UnimplementedPolicydServiceServer) AddNamedPolicy(ctx context.Context, req *proto1.PolicyRequest) (*proto1.BoolReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddNamedPolicy not implemented")
 }
-func (*UnimplementedPolicydServiceServer) RemovePolicy(ctx context.Context, req *PolicyRequest) (*BoolReply, error) {
+func (*UnimplementedPolicydServiceServer) RemovePolicy(ctx context.Context, req *proto1.PolicyRequest) (*proto1.BoolReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RemovePolicy not implemented")
 }
-func (*UnimplementedPolicydServiceServer) RemoveNamedPolicy(ctx context.Context, req *PolicyRequest) (*BoolReply, error) {
+func (*UnimplementedPolicydServiceServer) RemoveNamedPolicy(ctx context.Context, req *proto1.PolicyRequest) (*proto1.BoolReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RemoveNamedPolicy not implemented")
 }
-func (*UnimplementedPolicydServiceServer) RemoveFilteredPolicy(ctx context.Context, req *FilteredPolicyRequest) (*BoolReply, error) {
+func (*UnimplementedPolicydServiceServer) RemoveFilteredPolicy(ctx context.Context, req *proto1.FilteredPolicyRequest) (*proto1.BoolReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RemoveFilteredPolicy not implemented")
 }
-func (*UnimplementedPolicydServiceServer) RemoveFilteredNamedPolicy(ctx context.Context, req *FilteredPolicyRequest) (*BoolReply, error) {
+func (*UnimplementedPolicydServiceServer) RemoveFilteredNamedPolicy(ctx context.Context, req *proto1.FilteredPolicyRequest) (*proto1.BoolReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RemoveFilteredNamedPolicy not implemented")
 }
-func (*UnimplementedPolicydServiceServer) GetPolicy(ctx context.Context, req *EmptyRequest) (*Array2DReply, error) {
+func (*UnimplementedPolicydServiceServer) GetPolicy(ctx context.Context, req *proto1.EmptyRequest) (*proto1.Array2DReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetPolicy not implemented")
 }
-func (*UnimplementedPolicydServiceServer) GetNamedPolicy(ctx context.Context, req *PolicyRequest) (*Array2DReply, error) {
+func (*UnimplementedPolicydServiceServer) GetNamedPolicy(ctx context.Context, req *proto1.PolicyRequest) (*proto1.Array2DReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetNamedPolicy not implemented")
 }
-func (*UnimplementedPolicydServiceServer) GetFilteredPolicy(ctx context.Context, req *FilteredPolicyRequest) (*Array2DReply, error) {
+func (*UnimplementedPolicydServiceServer) GetFilteredPolicy(ctx context.Context, req *proto1.FilteredPolicyRequest) (*proto1.Array2DReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetFilteredPolicy not implemented")
 }
-func (*UnimplementedPolicydServiceServer) GetFilteredNamedPolicy(ctx context.Context, req *FilteredPolicyRequest) (*Array2DReply, error) {
+func (*UnimplementedPolicydServiceServer) GetFilteredNamedPolicy(ctx context.Context, req *proto1.FilteredPolicyRequest) (*proto1.Array2DReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetFilteredNamedPolicy not implemented")
 }
-func (*UnimplementedPolicydServiceServer) AddGroupingPolicy(ctx context.Context, req *PolicyRequest) (*BoolReply, error) {
+func (*UnimplementedPolicydServiceServer) AddGroupingPolicy(ctx context.Context, req *proto1.PolicyRequest) (*proto1.BoolReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddGroupingPolicy not implemented")
 }
-func (*UnimplementedPolicydServiceServer) AddNamedGroupingPolicy(ctx context.Context, req *PolicyRequest) (*BoolReply, error) {
+func (*UnimplementedPolicydServiceServer) AddNamedGroupingPolicy(ctx context.Context, req *proto1.PolicyRequest) (*proto1.BoolReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddNamedGroupingPolicy not implemented")
 }
-func (*UnimplementedPolicydServiceServer) RemoveGroupingPolicy(ctx context.Context, req *PolicyRequest) (*BoolReply, error) {
+func (*UnimplementedPolicydServiceServer) RemoveGroupingPolicy(ctx context.Context, req *proto1.PolicyRequest) (*proto1.BoolReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RemoveGroupingPolicy not implemented")
 }
-func (*UnimplementedPolicydServiceServer) RemoveNamedGroupingPolicy(ctx context.Context, req *PolicyRequest) (*BoolReply, error) {
+func (*UnimplementedPolicydServiceServer) RemoveNamedGroupingPolicy(ctx context.Context, req *proto1.PolicyRequest) (*proto1.BoolReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RemoveNamedGroupingPolicy not implemented")
 }
-func (*UnimplementedPolicydServiceServer) RemoveFilteredGroupingPolicy(ctx context.Context, req *FilteredPolicyRequest) (*BoolReply, error) {
+func (*UnimplementedPolicydServiceServer) RemoveFilteredGroupingPolicy(ctx context.Context, req *proto1.FilteredPolicyRequest) (*proto1.BoolReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RemoveFilteredGroupingPolicy not implemented")
 }
-func (*UnimplementedPolicydServiceServer) RemoveFilteredNamedGroupingPolicy(ctx context.Context, req *FilteredPolicyRequest) (*BoolReply, error) {
+func (*UnimplementedPolicydServiceServer) RemoveFilteredNamedGroupingPolicy(ctx context.Context, req *proto1.FilteredPolicyRequest) (*proto1.BoolReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RemoveFilteredNamedGroupingPolicy not implemented")
 }
-func (*UnimplementedPolicydServiceServer) GetGroupingPolicy(ctx context.Context, req *EmptyRequest) (*Array2DReply, error) {
+func (*UnimplementedPolicydServiceServer) GetGroupingPolicy(ctx context.Context, req *proto1.EmptyRequest) (*proto1.Array2DReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetGroupingPolicy not implemented")
 }
-func (*UnimplementedPolicydServiceServer) GetNamedGroupingPolicy(ctx context.Context, req *PolicyRequest) (*Array2DReply, error) {
+func (*UnimplementedPolicydServiceServer) GetNamedGroupingPolicy(ctx context.Context, req *proto1.PolicyRequest) (*proto1.Array2DReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetNamedGroupingPolicy not implemented")
 }
-func (*UnimplementedPolicydServiceServer) GetFilteredGroupingPolicy(ctx context.Context, req *FilteredPolicyRequest) (*Array2DReply, error) {
+func (*UnimplementedPolicydServiceServer) GetFilteredGroupingPolicy(ctx context.Context, req *proto1.FilteredPolicyRequest) (*proto1.Array2DReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetFilteredGroupingPolicy not implemented")
 }
-func (*UnimplementedPolicydServiceServer) GetFilteredNamedGroupingPolicy(ctx context.Context, req *FilteredPolicyRequest) (*Array2DReply, error) {
+func (*UnimplementedPolicydServiceServer) GetFilteredNamedGroupingPolicy(ctx context.Context, req *proto1.FilteredPolicyRequest) (*proto1.Array2DReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetFilteredNamedGroupingPolicy not implemented")
 }
-func (*UnimplementedPolicydServiceServer) GetAllSubjects(ctx context.Context, req *EmptyRequest) (*ArrayReply, error) {
+func (*UnimplementedPolicydServiceServer) GetAllSubjects(ctx context.Context, req *proto1.EmptyRequest) (*proto1.ArrayReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAllSubjects not implemented")
 }
-func (*UnimplementedPolicydServiceServer) GetAllNamedSubjects(ctx context.Context, req *SimpleGetRequest) (*ArrayReply, error) {
+func (*UnimplementedPolicydServiceServer) GetAllNamedSubjects(ctx context.Context, req *proto1.SimpleGetRequest) (*proto1.ArrayReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAllNamedSubjects not implemented")
 }
-func (*UnimplementedPolicydServiceServer) GetAllObjects(ctx context.Context, req *EmptyRequest) (*ArrayReply, error) {
+func (*UnimplementedPolicydServiceServer) GetAllObjects(ctx context.Context, req *proto1.EmptyRequest) (*proto1.ArrayReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAllObjects not implemented")
 }
-func (*UnimplementedPolicydServiceServer) GetAllNamedObjects(ctx context.Context, req *SimpleGetRequest) (*ArrayReply, error) {
+func (*UnimplementedPolicydServiceServer) GetAllNamedObjects(ctx context.Context, req *proto1.SimpleGetRequest) (*proto1.ArrayReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAllNamedObjects not implemented")
 }
-func (*UnimplementedPolicydServiceServer) GetAllActions(ctx context.Context, req *EmptyRequest) (*ArrayReply, error) {
+func (*UnimplementedPolicydServiceServer) GetAllActions(ctx context.Context, req *proto1.EmptyRequest) (*proto1.ArrayReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAllActions not implemented")
 }
-func (*UnimplementedPolicydServiceServer) GetAllNamedActions(ctx context.Context, req *SimpleGetRequest) (*ArrayReply, error) {
+func (*UnimplementedPolicydServiceServer) GetAllNamedActions(ctx context.Context, req *proto1.SimpleGetRequest) (*proto1.ArrayReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAllNamedActions not implemented")
 }
-func (*UnimplementedPolicydServiceServer) GetAllRoles(ctx context.Context, req *EmptyRequest) (*ArrayReply, error) {
+func (*UnimplementedPolicydServiceServer) GetAllRoles(ctx context.Context, req *proto1.EmptyRequest) (*proto1.ArrayReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAllRoles not implemented")
 }
-func (*UnimplementedPolicydServiceServer) GetAllNamedRoles(ctx context.Context, req *SimpleGetRequest) (*ArrayReply, error) {
+func (*UnimplementedPolicydServiceServer) GetAllNamedRoles(ctx context.Context, req *proto1.SimpleGetRequest) (*proto1.ArrayReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAllNamedRoles not implemented")
 }
-func (*UnimplementedPolicydServiceServer) HasPolicy(ctx context.Context, req *PolicyRequest) (*BoolReply, error) {
+func (*UnimplementedPolicydServiceServer) HasPolicy(ctx context.Context, req *proto1.PolicyRequest) (*proto1.BoolReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method HasPolicy not implemented")
 }
-func (*UnimplementedPolicydServiceServer) HasNamedPolicy(ctx context.Context, req *PolicyRequest) (*BoolReply, error) {
+func (*UnimplementedPolicydServiceServer) HasNamedPolicy(ctx context.Context, req *proto1.PolicyRequest) (*proto1.BoolReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method HasNamedPolicy not implemented")
 }
-func (*UnimplementedPolicydServiceServer) HasGroupingPolicy(ctx context.Context, req *PolicyRequest) (*BoolReply, error) {
+func (*UnimplementedPolicydServiceServer) HasGroupingPolicy(ctx context.Context, req *proto1.PolicyRequest) (*proto1.BoolReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method HasGroupingPolicy not implemented")
 }
-func (*UnimplementedPolicydServiceServer) HasNamedGroupingPolicy(ctx context.Context, req *PolicyRequest) (*BoolReply, error) {
+func (*UnimplementedPolicydServiceServer) HasNamedGroupingPolicy(ctx context.Context, req *proto1.PolicyRequest) (*proto1.BoolReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method HasNamedGroupingPolicy not implemented")
 }
-func (*UnimplementedPolicydServiceServer) AddPresetPolicy(ctx context.Context, req *PolicyRequest) (*BoolReply, error) {
+func (*UnimplementedPolicydServiceServer) EnforceBucket(ctx context.Context, req *EnforceBucketRequest) (*proto1.BoolReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method EnforceBucket not implemented")
+}
+func (*UnimplementedPolicydServiceServer) AddPresetPolicy(ctx context.Context, req *proto1.PolicyRequest) (*proto1.BoolReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddPresetPolicy not implemented")
 }
-func (*UnimplementedPolicydServiceServer) RemovePresetPolicy(ctx context.Context, req *PolicyRequest) (*BoolReply, error) {
+func (*UnimplementedPolicydServiceServer) RemovePresetPolicy(ctx context.Context, req *proto1.PolicyRequest) (*proto1.BoolReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RemovePresetPolicy not implemented")
 }
-func (*UnimplementedPolicydServiceServer) Initialize(ctx context.Context, req *EmptyRequest) (*EmptyReply, error) {
+func (*UnimplementedPolicydServiceServer) Initialize(ctx context.Context, req *proto1.EmptyRequest) (*proto1.EmptyReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Initialize not implemented")
 }
 
@@ -1488,7 +728,7 @@ func RegisterPolicydServiceServer(s *grpc.Server, srv PolicydServiceServer) {
 }
 
 func _PolicydService_NewEnforcer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(NewEnforcerRequest)
+	in := new(proto1.NewEnforcerRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -1500,13 +740,13 @@ func _PolicydService_NewEnforcer_Handler(srv interface{}, ctx context.Context, d
 		FullMethod: "/ai.metathings.service.policyd.PolicydService/NewEnforcer",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PolicydServiceServer).NewEnforcer(ctx, req.(*NewEnforcerRequest))
+		return srv.(PolicydServiceServer).NewEnforcer(ctx, req.(*proto1.NewEnforcerRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _PolicydService_NewAdapter_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(NewAdapterRequest)
+	in := new(proto1.NewAdapterRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -1518,13 +758,13 @@ func _PolicydService_NewAdapter_Handler(srv interface{}, ctx context.Context, de
 		FullMethod: "/ai.metathings.service.policyd.PolicydService/NewAdapter",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PolicydServiceServer).NewAdapter(ctx, req.(*NewAdapterRequest))
+		return srv.(PolicydServiceServer).NewAdapter(ctx, req.(*proto1.NewAdapterRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _PolicydService_Enforce_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(EnforceRequest)
+	in := new(proto1.EnforceRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -1536,7 +776,619 @@ func _PolicydService_Enforce_Handler(srv interface{}, ctx context.Context, dec f
 		FullMethod: "/ai.metathings.service.policyd.PolicydService/Enforce",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PolicydServiceServer).Enforce(ctx, req.(*EnforceRequest))
+		return srv.(PolicydServiceServer).Enforce(ctx, req.(*proto1.EnforceRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PolicydService_LoadPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(proto1.EmptyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PolicydServiceServer).LoadPolicy(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ai.metathings.service.policyd.PolicydService/LoadPolicy",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PolicydServiceServer).LoadPolicy(ctx, req.(*proto1.EmptyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PolicydService_SavePolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(proto1.EmptyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PolicydServiceServer).SavePolicy(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ai.metathings.service.policyd.PolicydService/SavePolicy",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PolicydServiceServer).SavePolicy(ctx, req.(*proto1.EmptyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PolicydService_AddPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(proto1.PolicyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PolicydServiceServer).AddPolicy(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ai.metathings.service.policyd.PolicydService/AddPolicy",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PolicydServiceServer).AddPolicy(ctx, req.(*proto1.PolicyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PolicydService_AddNamedPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(proto1.PolicyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PolicydServiceServer).AddNamedPolicy(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ai.metathings.service.policyd.PolicydService/AddNamedPolicy",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PolicydServiceServer).AddNamedPolicy(ctx, req.(*proto1.PolicyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PolicydService_RemovePolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(proto1.PolicyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PolicydServiceServer).RemovePolicy(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ai.metathings.service.policyd.PolicydService/RemovePolicy",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PolicydServiceServer).RemovePolicy(ctx, req.(*proto1.PolicyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PolicydService_RemoveNamedPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(proto1.PolicyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PolicydServiceServer).RemoveNamedPolicy(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ai.metathings.service.policyd.PolicydService/RemoveNamedPolicy",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PolicydServiceServer).RemoveNamedPolicy(ctx, req.(*proto1.PolicyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PolicydService_RemoveFilteredPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(proto1.FilteredPolicyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PolicydServiceServer).RemoveFilteredPolicy(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ai.metathings.service.policyd.PolicydService/RemoveFilteredPolicy",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PolicydServiceServer).RemoveFilteredPolicy(ctx, req.(*proto1.FilteredPolicyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PolicydService_RemoveFilteredNamedPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(proto1.FilteredPolicyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PolicydServiceServer).RemoveFilteredNamedPolicy(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ai.metathings.service.policyd.PolicydService/RemoveFilteredNamedPolicy",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PolicydServiceServer).RemoveFilteredNamedPolicy(ctx, req.(*proto1.FilteredPolicyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PolicydService_GetPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(proto1.EmptyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PolicydServiceServer).GetPolicy(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ai.metathings.service.policyd.PolicydService/GetPolicy",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PolicydServiceServer).GetPolicy(ctx, req.(*proto1.EmptyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PolicydService_GetNamedPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(proto1.PolicyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PolicydServiceServer).GetNamedPolicy(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ai.metathings.service.policyd.PolicydService/GetNamedPolicy",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PolicydServiceServer).GetNamedPolicy(ctx, req.(*proto1.PolicyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PolicydService_GetFilteredPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(proto1.FilteredPolicyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PolicydServiceServer).GetFilteredPolicy(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ai.metathings.service.policyd.PolicydService/GetFilteredPolicy",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PolicydServiceServer).GetFilteredPolicy(ctx, req.(*proto1.FilteredPolicyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PolicydService_GetFilteredNamedPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(proto1.FilteredPolicyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PolicydServiceServer).GetFilteredNamedPolicy(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ai.metathings.service.policyd.PolicydService/GetFilteredNamedPolicy",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PolicydServiceServer).GetFilteredNamedPolicy(ctx, req.(*proto1.FilteredPolicyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PolicydService_AddGroupingPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(proto1.PolicyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PolicydServiceServer).AddGroupingPolicy(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ai.metathings.service.policyd.PolicydService/AddGroupingPolicy",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PolicydServiceServer).AddGroupingPolicy(ctx, req.(*proto1.PolicyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PolicydService_AddNamedGroupingPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(proto1.PolicyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PolicydServiceServer).AddNamedGroupingPolicy(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ai.metathings.service.policyd.PolicydService/AddNamedGroupingPolicy",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PolicydServiceServer).AddNamedGroupingPolicy(ctx, req.(*proto1.PolicyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PolicydService_RemoveGroupingPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(proto1.PolicyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PolicydServiceServer).RemoveGroupingPolicy(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ai.metathings.service.policyd.PolicydService/RemoveGroupingPolicy",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PolicydServiceServer).RemoveGroupingPolicy(ctx, req.(*proto1.PolicyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PolicydService_RemoveNamedGroupingPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(proto1.PolicyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PolicydServiceServer).RemoveNamedGroupingPolicy(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ai.metathings.service.policyd.PolicydService/RemoveNamedGroupingPolicy",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PolicydServiceServer).RemoveNamedGroupingPolicy(ctx, req.(*proto1.PolicyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PolicydService_RemoveFilteredGroupingPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(proto1.FilteredPolicyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PolicydServiceServer).RemoveFilteredGroupingPolicy(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ai.metathings.service.policyd.PolicydService/RemoveFilteredGroupingPolicy",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PolicydServiceServer).RemoveFilteredGroupingPolicy(ctx, req.(*proto1.FilteredPolicyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PolicydService_RemoveFilteredNamedGroupingPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(proto1.FilteredPolicyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PolicydServiceServer).RemoveFilteredNamedGroupingPolicy(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ai.metathings.service.policyd.PolicydService/RemoveFilteredNamedGroupingPolicy",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PolicydServiceServer).RemoveFilteredNamedGroupingPolicy(ctx, req.(*proto1.FilteredPolicyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PolicydService_GetGroupingPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(proto1.EmptyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PolicydServiceServer).GetGroupingPolicy(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ai.metathings.service.policyd.PolicydService/GetGroupingPolicy",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PolicydServiceServer).GetGroupingPolicy(ctx, req.(*proto1.EmptyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PolicydService_GetNamedGroupingPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(proto1.PolicyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PolicydServiceServer).GetNamedGroupingPolicy(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ai.metathings.service.policyd.PolicydService/GetNamedGroupingPolicy",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PolicydServiceServer).GetNamedGroupingPolicy(ctx, req.(*proto1.PolicyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PolicydService_GetFilteredGroupingPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(proto1.FilteredPolicyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PolicydServiceServer).GetFilteredGroupingPolicy(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ai.metathings.service.policyd.PolicydService/GetFilteredGroupingPolicy",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PolicydServiceServer).GetFilteredGroupingPolicy(ctx, req.(*proto1.FilteredPolicyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PolicydService_GetFilteredNamedGroupingPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(proto1.FilteredPolicyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PolicydServiceServer).GetFilteredNamedGroupingPolicy(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ai.metathings.service.policyd.PolicydService/GetFilteredNamedGroupingPolicy",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PolicydServiceServer).GetFilteredNamedGroupingPolicy(ctx, req.(*proto1.FilteredPolicyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PolicydService_GetAllSubjects_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(proto1.EmptyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PolicydServiceServer).GetAllSubjects(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ai.metathings.service.policyd.PolicydService/GetAllSubjects",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PolicydServiceServer).GetAllSubjects(ctx, req.(*proto1.EmptyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PolicydService_GetAllNamedSubjects_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(proto1.SimpleGetRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PolicydServiceServer).GetAllNamedSubjects(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ai.metathings.service.policyd.PolicydService/GetAllNamedSubjects",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PolicydServiceServer).GetAllNamedSubjects(ctx, req.(*proto1.SimpleGetRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PolicydService_GetAllObjects_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(proto1.EmptyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PolicydServiceServer).GetAllObjects(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ai.metathings.service.policyd.PolicydService/GetAllObjects",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PolicydServiceServer).GetAllObjects(ctx, req.(*proto1.EmptyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PolicydService_GetAllNamedObjects_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(proto1.SimpleGetRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PolicydServiceServer).GetAllNamedObjects(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ai.metathings.service.policyd.PolicydService/GetAllNamedObjects",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PolicydServiceServer).GetAllNamedObjects(ctx, req.(*proto1.SimpleGetRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PolicydService_GetAllActions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(proto1.EmptyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PolicydServiceServer).GetAllActions(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ai.metathings.service.policyd.PolicydService/GetAllActions",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PolicydServiceServer).GetAllActions(ctx, req.(*proto1.EmptyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PolicydService_GetAllNamedActions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(proto1.SimpleGetRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PolicydServiceServer).GetAllNamedActions(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ai.metathings.service.policyd.PolicydService/GetAllNamedActions",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PolicydServiceServer).GetAllNamedActions(ctx, req.(*proto1.SimpleGetRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PolicydService_GetAllRoles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(proto1.EmptyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PolicydServiceServer).GetAllRoles(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ai.metathings.service.policyd.PolicydService/GetAllRoles",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PolicydServiceServer).GetAllRoles(ctx, req.(*proto1.EmptyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PolicydService_GetAllNamedRoles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(proto1.SimpleGetRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PolicydServiceServer).GetAllNamedRoles(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ai.metathings.service.policyd.PolicydService/GetAllNamedRoles",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PolicydServiceServer).GetAllNamedRoles(ctx, req.(*proto1.SimpleGetRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PolicydService_HasPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(proto1.PolicyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PolicydServiceServer).HasPolicy(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ai.metathings.service.policyd.PolicydService/HasPolicy",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PolicydServiceServer).HasPolicy(ctx, req.(*proto1.PolicyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PolicydService_HasNamedPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(proto1.PolicyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PolicydServiceServer).HasNamedPolicy(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ai.metathings.service.policyd.PolicydService/HasNamedPolicy",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PolicydServiceServer).HasNamedPolicy(ctx, req.(*proto1.PolicyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PolicydService_HasGroupingPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(proto1.PolicyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PolicydServiceServer).HasGroupingPolicy(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ai.metathings.service.policyd.PolicydService/HasGroupingPolicy",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PolicydServiceServer).HasGroupingPolicy(ctx, req.(*proto1.PolicyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PolicydService_HasNamedGroupingPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(proto1.PolicyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PolicydServiceServer).HasNamedGroupingPolicy(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ai.metathings.service.policyd.PolicydService/HasNamedGroupingPolicy",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PolicydServiceServer).HasNamedGroupingPolicy(ctx, req.(*proto1.PolicyRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1559,620 +1411,8 @@ func _PolicydService_EnforceBucket_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PolicydService_LoadPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(EmptyRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PolicydServiceServer).LoadPolicy(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/ai.metathings.service.policyd.PolicydService/LoadPolicy",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PolicydServiceServer).LoadPolicy(ctx, req.(*EmptyRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PolicydService_SavePolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(EmptyRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PolicydServiceServer).SavePolicy(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/ai.metathings.service.policyd.PolicydService/SavePolicy",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PolicydServiceServer).SavePolicy(ctx, req.(*EmptyRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PolicydService_AddPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(PolicyRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PolicydServiceServer).AddPolicy(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/ai.metathings.service.policyd.PolicydService/AddPolicy",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PolicydServiceServer).AddPolicy(ctx, req.(*PolicyRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PolicydService_AddNamedPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(PolicyRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PolicydServiceServer).AddNamedPolicy(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/ai.metathings.service.policyd.PolicydService/AddNamedPolicy",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PolicydServiceServer).AddNamedPolicy(ctx, req.(*PolicyRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PolicydService_RemovePolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(PolicyRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PolicydServiceServer).RemovePolicy(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/ai.metathings.service.policyd.PolicydService/RemovePolicy",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PolicydServiceServer).RemovePolicy(ctx, req.(*PolicyRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PolicydService_RemoveNamedPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(PolicyRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PolicydServiceServer).RemoveNamedPolicy(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/ai.metathings.service.policyd.PolicydService/RemoveNamedPolicy",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PolicydServiceServer).RemoveNamedPolicy(ctx, req.(*PolicyRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PolicydService_RemoveFilteredPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(FilteredPolicyRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PolicydServiceServer).RemoveFilteredPolicy(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/ai.metathings.service.policyd.PolicydService/RemoveFilteredPolicy",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PolicydServiceServer).RemoveFilteredPolicy(ctx, req.(*FilteredPolicyRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PolicydService_RemoveFilteredNamedPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(FilteredPolicyRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PolicydServiceServer).RemoveFilteredNamedPolicy(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/ai.metathings.service.policyd.PolicydService/RemoveFilteredNamedPolicy",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PolicydServiceServer).RemoveFilteredNamedPolicy(ctx, req.(*FilteredPolicyRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PolicydService_GetPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(EmptyRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PolicydServiceServer).GetPolicy(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/ai.metathings.service.policyd.PolicydService/GetPolicy",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PolicydServiceServer).GetPolicy(ctx, req.(*EmptyRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PolicydService_GetNamedPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(PolicyRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PolicydServiceServer).GetNamedPolicy(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/ai.metathings.service.policyd.PolicydService/GetNamedPolicy",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PolicydServiceServer).GetNamedPolicy(ctx, req.(*PolicyRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PolicydService_GetFilteredPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(FilteredPolicyRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PolicydServiceServer).GetFilteredPolicy(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/ai.metathings.service.policyd.PolicydService/GetFilteredPolicy",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PolicydServiceServer).GetFilteredPolicy(ctx, req.(*FilteredPolicyRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PolicydService_GetFilteredNamedPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(FilteredPolicyRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PolicydServiceServer).GetFilteredNamedPolicy(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/ai.metathings.service.policyd.PolicydService/GetFilteredNamedPolicy",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PolicydServiceServer).GetFilteredNamedPolicy(ctx, req.(*FilteredPolicyRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PolicydService_AddGroupingPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(PolicyRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PolicydServiceServer).AddGroupingPolicy(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/ai.metathings.service.policyd.PolicydService/AddGroupingPolicy",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PolicydServiceServer).AddGroupingPolicy(ctx, req.(*PolicyRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PolicydService_AddNamedGroupingPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(PolicyRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PolicydServiceServer).AddNamedGroupingPolicy(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/ai.metathings.service.policyd.PolicydService/AddNamedGroupingPolicy",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PolicydServiceServer).AddNamedGroupingPolicy(ctx, req.(*PolicyRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PolicydService_RemoveGroupingPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(PolicyRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PolicydServiceServer).RemoveGroupingPolicy(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/ai.metathings.service.policyd.PolicydService/RemoveGroupingPolicy",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PolicydServiceServer).RemoveGroupingPolicy(ctx, req.(*PolicyRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PolicydService_RemoveNamedGroupingPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(PolicyRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PolicydServiceServer).RemoveNamedGroupingPolicy(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/ai.metathings.service.policyd.PolicydService/RemoveNamedGroupingPolicy",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PolicydServiceServer).RemoveNamedGroupingPolicy(ctx, req.(*PolicyRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PolicydService_RemoveFilteredGroupingPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(FilteredPolicyRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PolicydServiceServer).RemoveFilteredGroupingPolicy(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/ai.metathings.service.policyd.PolicydService/RemoveFilteredGroupingPolicy",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PolicydServiceServer).RemoveFilteredGroupingPolicy(ctx, req.(*FilteredPolicyRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PolicydService_RemoveFilteredNamedGroupingPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(FilteredPolicyRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PolicydServiceServer).RemoveFilteredNamedGroupingPolicy(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/ai.metathings.service.policyd.PolicydService/RemoveFilteredNamedGroupingPolicy",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PolicydServiceServer).RemoveFilteredNamedGroupingPolicy(ctx, req.(*FilteredPolicyRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PolicydService_GetGroupingPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(EmptyRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PolicydServiceServer).GetGroupingPolicy(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/ai.metathings.service.policyd.PolicydService/GetGroupingPolicy",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PolicydServiceServer).GetGroupingPolicy(ctx, req.(*EmptyRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PolicydService_GetNamedGroupingPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(PolicyRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PolicydServiceServer).GetNamedGroupingPolicy(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/ai.metathings.service.policyd.PolicydService/GetNamedGroupingPolicy",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PolicydServiceServer).GetNamedGroupingPolicy(ctx, req.(*PolicyRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PolicydService_GetFilteredGroupingPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(FilteredPolicyRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PolicydServiceServer).GetFilteredGroupingPolicy(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/ai.metathings.service.policyd.PolicydService/GetFilteredGroupingPolicy",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PolicydServiceServer).GetFilteredGroupingPolicy(ctx, req.(*FilteredPolicyRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PolicydService_GetFilteredNamedGroupingPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(FilteredPolicyRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PolicydServiceServer).GetFilteredNamedGroupingPolicy(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/ai.metathings.service.policyd.PolicydService/GetFilteredNamedGroupingPolicy",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PolicydServiceServer).GetFilteredNamedGroupingPolicy(ctx, req.(*FilteredPolicyRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PolicydService_GetAllSubjects_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(EmptyRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PolicydServiceServer).GetAllSubjects(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/ai.metathings.service.policyd.PolicydService/GetAllSubjects",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PolicydServiceServer).GetAllSubjects(ctx, req.(*EmptyRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PolicydService_GetAllNamedSubjects_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SimpleGetRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PolicydServiceServer).GetAllNamedSubjects(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/ai.metathings.service.policyd.PolicydService/GetAllNamedSubjects",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PolicydServiceServer).GetAllNamedSubjects(ctx, req.(*SimpleGetRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PolicydService_GetAllObjects_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(EmptyRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PolicydServiceServer).GetAllObjects(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/ai.metathings.service.policyd.PolicydService/GetAllObjects",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PolicydServiceServer).GetAllObjects(ctx, req.(*EmptyRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PolicydService_GetAllNamedObjects_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SimpleGetRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PolicydServiceServer).GetAllNamedObjects(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/ai.metathings.service.policyd.PolicydService/GetAllNamedObjects",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PolicydServiceServer).GetAllNamedObjects(ctx, req.(*SimpleGetRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PolicydService_GetAllActions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(EmptyRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PolicydServiceServer).GetAllActions(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/ai.metathings.service.policyd.PolicydService/GetAllActions",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PolicydServiceServer).GetAllActions(ctx, req.(*EmptyRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PolicydService_GetAllNamedActions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SimpleGetRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PolicydServiceServer).GetAllNamedActions(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/ai.metathings.service.policyd.PolicydService/GetAllNamedActions",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PolicydServiceServer).GetAllNamedActions(ctx, req.(*SimpleGetRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PolicydService_GetAllRoles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(EmptyRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PolicydServiceServer).GetAllRoles(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/ai.metathings.service.policyd.PolicydService/GetAllRoles",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PolicydServiceServer).GetAllRoles(ctx, req.(*EmptyRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PolicydService_GetAllNamedRoles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SimpleGetRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PolicydServiceServer).GetAllNamedRoles(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/ai.metathings.service.policyd.PolicydService/GetAllNamedRoles",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PolicydServiceServer).GetAllNamedRoles(ctx, req.(*SimpleGetRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PolicydService_HasPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(PolicyRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PolicydServiceServer).HasPolicy(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/ai.metathings.service.policyd.PolicydService/HasPolicy",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PolicydServiceServer).HasPolicy(ctx, req.(*PolicyRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PolicydService_HasNamedPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(PolicyRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PolicydServiceServer).HasNamedPolicy(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/ai.metathings.service.policyd.PolicydService/HasNamedPolicy",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PolicydServiceServer).HasNamedPolicy(ctx, req.(*PolicyRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PolicydService_HasGroupingPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(PolicyRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PolicydServiceServer).HasGroupingPolicy(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/ai.metathings.service.policyd.PolicydService/HasGroupingPolicy",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PolicydServiceServer).HasGroupingPolicy(ctx, req.(*PolicyRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PolicydService_HasNamedGroupingPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(PolicyRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PolicydServiceServer).HasNamedGroupingPolicy(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/ai.metathings.service.policyd.PolicydService/HasNamedGroupingPolicy",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PolicydServiceServer).HasNamedGroupingPolicy(ctx, req.(*PolicyRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _PolicydService_AddPresetPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(PolicyRequest)
+	in := new(proto1.PolicyRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -2184,13 +1424,13 @@ func _PolicydService_AddPresetPolicy_Handler(srv interface{}, ctx context.Contex
 		FullMethod: "/ai.metathings.service.policyd.PolicydService/AddPresetPolicy",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PolicydServiceServer).AddPresetPolicy(ctx, req.(*PolicyRequest))
+		return srv.(PolicydServiceServer).AddPresetPolicy(ctx, req.(*proto1.PolicyRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _PolicydService_RemovePresetPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(PolicyRequest)
+	in := new(proto1.PolicyRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -2202,13 +1442,13 @@ func _PolicydService_RemovePresetPolicy_Handler(srv interface{}, ctx context.Con
 		FullMethod: "/ai.metathings.service.policyd.PolicydService/RemovePresetPolicy",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PolicydServiceServer).RemovePresetPolicy(ctx, req.(*PolicyRequest))
+		return srv.(PolicydServiceServer).RemovePresetPolicy(ctx, req.(*proto1.PolicyRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _PolicydService_Initialize_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(EmptyRequest)
+	in := new(proto1.EmptyRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -2220,7 +1460,7 @@ func _PolicydService_Initialize_Handler(srv interface{}, ctx context.Context, de
 		FullMethod: "/ai.metathings.service.policyd.PolicydService/Initialize",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PolicydServiceServer).Initialize(ctx, req.(*EmptyRequest))
+		return srv.(PolicydServiceServer).Initialize(ctx, req.(*proto1.EmptyRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -2240,10 +1480,6 @@ var _PolicydService_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Enforce",
 			Handler:    _PolicydService_Enforce_Handler,
-		},
-		{
-			MethodName: "EnforceBucket",
-			Handler:    _PolicydService_EnforceBucket_Handler,
 		},
 		{
 			MethodName: "LoadPolicy",
@@ -2380,6 +1616,10 @@ var _PolicydService_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "HasNamedGroupingPolicy",
 			Handler:    _PolicydService_HasNamedGroupingPolicy_Handler,
+		},
+		{
+			MethodName: "EnforceBucket",
+			Handler:    _PolicydService_EnforceBucket_Handler,
 		},
 		{
 			MethodName: "AddPresetPolicy",
