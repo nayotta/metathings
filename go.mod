@@ -7,7 +7,6 @@ require (
 	github.com/eclipse/paho.mqtt.golang v1.2.0
 	github.com/go-redis/redis v6.15.2+incompatible
 	github.com/gogo/protobuf v1.2.1
-	github.com/golang/mock v1.2.0
 	github.com/golang/protobuf v1.3.2
 	github.com/gorilla/mux v1.7.3
 	github.com/grpc-ecosystem/go-grpc-middleware v1.0.0
