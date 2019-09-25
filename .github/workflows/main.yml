@@ -1,0 +1,67 @@
+name: Metathings Main Action
+on:
+  release:
+    types: [created]
+
+jobs:
+  build-metathingsd:
+    name: build-metathingsd
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        goos: ["linux", "darwin"]
+        goarch: ["amd64"]
+    steps:
+      - uses: actions/checkout@master
+      - uses: actions/setup-go@v1
+        with:
+          go-version: "1.12"
+      - name: build-metathings
+        env:
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+          CGO_ENABLED: 0
+        run: |
+          go build -o metathingsd cmd/metathingsd/main.go
+          tar zcvf metathingsd.tar.gz metathingsd
+      - name: upload-assert
+        uses: PeerXu/upload-asset@v1
+        with:
+          file: metathingsd.tar.gz
+          os: ${{ matrix.goos }}
+          arch: ${{ matrix.goarch }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  build-metathings:
+    name: build-metathings
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        goos: ["linux", "darwin"]
+        goarch: ["amd64", "arm", "arm64"]
+        exclude:
+        - goos: darwin
+          goarch: arm
+        - goos: darwin
+          goarch: arm64
+    steps:
+      - uses: actions/checkout@master
+      - uses: actions/setup-go@v1
+        with:
+          go-version: "1.12"
+      - name: build-metathings
+        env:
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+          CGO_ENABLED: 0
+        run: |
+          go build -o metathings cmd/metathings/main.go
+          tar zcvf metathings.tar.gz metathings
+      - name: upload-assert
+        uses: PeerXu/upload-asset@v1
+        with:
+          file: metathings.tar.gz
+          os: ${{ matrix.goos }}
+          arch: ${{ matrix.goarch }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

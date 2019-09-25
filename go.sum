@@ -68,7 +68,6 @@ github.com/gorilla/mux v1.7.3/go.mod h1:1lud6UwP+6orDFRuTfBEV8e9/aOM/c4fVVCaMa2z
 github.com/grpc-ecosystem/go-grpc-middleware v1.0.0 h1:Iju5GlWwrvL6UBg4zJJt3btmonfrMlCDdsejg4CZE7c=
 github.com/grpc-ecosystem/go-grpc-middleware v1.0.0/go.mod h1:FiyG127CGDf3tlThmgyCl78X/SZQqEOJBCDaAfeWzPs=
 github.com/hashicorp/golang-lru v0.5.0/go.mod h1:/m3WP610KZHVQ1SGc6re/UDhFvYD7pJ4Ao+sR/qLZy8=
-github.com/hashicorp/golang-lru v0.5.3 h1:YPkqC67at8FYaadspW/6uE0COsBxS2656RLEr8Bppgk=
 github.com/hashicorp/golang-lru v0.5.3/go.mod h1:iADmTwqILo4mZ8BN3D2Q6+9jd8WM5uGBxy+E8yxSoD4=
 github.com/hashicorp/hcl v1.0.0 h1:0Anlzjpi4vEasTeNFn2mLJgTSwt0+6sfsiTG8qcWGx4=
 github.com/hashicorp/hcl v1.0.0/go.mod h1:E5yfLk+7swimpb2L/Alb/PJmXilQ/rhwaUYs4T20WEQ=
@@ -104,8 +103,8 @@ github.com/mwitkow/go-proto-validators v0.1.0 h1:2Org0/cGKUUUDzoLSRSsGJDqyLWrb5l
 github.com/mwitkow/go-proto-validators v0.1.0/go.mod h1:bA3eoTMLQkf/A7h7JOC3ddMBLXwS19KK7DEeSPL1O+4=
 github.com/nayotta/metathings-component-echo v0.0.0-20190411035501-27156471f72a h1:HrYxOzzeBvQPM1J4HYgEeRV/0kYB1Hax0gXofVIaJzA=
 github.com/nayotta/metathings-component-echo v0.0.0-20190411035501-27156471f72a/go.mod h1:Xj6U2g4AbmEZ6QSPBaKYRSK9knTOjTPkAe0ruLsmB9k=
-github.com/nayotta/viper v1.0.2 h1:JjyJ+Xvmc/zkqOnUrWjsOMJBmiRNQHE4uiPbbNHHQxg=
-github.com/nayotta/viper v1.0.2/go.mod h1:TydYWw0LanADuGhHn2OE5MoBDBjcVG83Jg1g3Cft1pI=
+github.com/nayotta/viper v1.0.3-0.20190508033408-0b05c0f44a23 h1:V2MyjtgF6hTD/RDkoarf9Gjqur5mlC0bn2HEcS6Y5dA=
+github.com/nayotta/viper v1.0.3-0.20190508033408-0b05c0f44a23/go.mod h1:TydYWw0LanADuGhHn2OE5MoBDBjcVG83Jg1g3Cft1pI=
 github.com/onsi/ginkgo v1.6.0/go.mod h1:lLunBs/Ym6LB5Z9jYTR76FiuTmxDTDusOGeTQH+WWjE=
 github.com/onsi/ginkgo v1.7.0/go.mod h1:lLunBs/Ym6LB5Z9jYTR76FiuTmxDTDusOGeTQH+WWjE=
 github.com/onsi/gomega v1.4.3/go.mod h1:ex+gbHU/CVuBBDIJjb2X0qEXbFg53c61hWP/1CpauHY=
