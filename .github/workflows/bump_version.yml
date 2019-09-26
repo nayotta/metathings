@@ -10,7 +10,7 @@ jobs:
     steps:
     - uses: actions/checkout@master
     - name: Bump Version and Push Tag
-      uses: anothrNick/github-tag-action@master
+      uses: PeerXu/github-tag-action@master
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         REPO_OWNER: nayotta
