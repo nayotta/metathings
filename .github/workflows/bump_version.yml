@@ -13,5 +13,5 @@ jobs:
       uses: PeerXu/github-tag-action@master
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        REPO_OWNER: nayotta
         DEFAULT_BUMP: patch
+        WITH_V: true
