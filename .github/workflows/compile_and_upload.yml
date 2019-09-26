@@ -1,11 +1,10 @@
-name: Metathings Main Action
+name: Compile Binary and Upload Asset
 on:
   release:
     types: [created]
 
 jobs:
-  build-metathingsd:
-    name: build-metathingsd
+  compile-metathingsd-and-upload-asset:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -16,7 +15,7 @@ jobs:
       - uses: actions/setup-go@v1
         with:
           go-version: "1.12"
-      - name: build-metathings
+      - name: Compile Metathingsd Binary
         env:
           GOOS: ${{ matrix.goos }}
           GOARCH: ${{ matrix.goarch }}
@@ -24,7 +23,7 @@ jobs:
         run: |
           go build -o metathingsd cmd/metathingsd/main.go
           tar zcvf metathingsd.tar.gz metathingsd
-      - name: upload-assert
+      - name: Upload Metathingsd Asset
         uses: PeerXu/upload-asset@v1
         with:
           file: metathingsd.tar.gz
@@ -32,8 +31,7 @@ jobs:
           arch: ${{ matrix.goarch }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  build-metathings:
-    name: build-metathings
+  compile-metathings-and-upload-asset:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -49,7 +47,7 @@ jobs:
       - uses: actions/setup-go@v1
         with:
           go-version: "1.12"
-      - name: build-metathings
+      - name: Compile Metathings Binary
         env:
           GOOS: ${{ matrix.goos }}
           GOARCH: ${{ matrix.goarch }}
@@ -57,7 +55,7 @@ jobs:
         run: |
           go build -o metathings cmd/metathings/main.go
           tar zcvf metathings.tar.gz metathings
-      - name: upload-assert
+      - name: Upload Metathings Asset
         uses: PeerXu/upload-asset@v1
         with:
           file: metathings.tar.gz
