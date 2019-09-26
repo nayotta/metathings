@@ -15,7 +15,7 @@ require (
 	github.com/mongodb/mongo-go-driver v1.1.0
 	github.com/mwitkow/go-proto-validators v0.1.0
 	github.com/nayotta/metathings-component-echo v0.0.0-20190411035501-27156471f72a
-	github.com/nayotta/viper v1.0.2
+	github.com/nayotta/viper v1.0.3-0.20190508033408-0b05c0f44a23
 	github.com/satori/go.uuid v1.2.0
 	github.com/sirupsen/logrus v1.4.2
 	github.com/spf13/cobra v0.0.5
