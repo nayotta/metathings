@@ -51,4 +51,8 @@ func init() {
 	flags.StringVar(base_opt.GetLevelP(), "log-level", "info", "Logging Level[debug, info, warn, error]")
 	flags.StringVar(base_opt.GetCredentialIdP(), "application-credential-id", "", "MetaThings Application Credential ID")
 	flags.StringVar(base_opt.GetCredentialSecretP(), "application-credential-secret", "", "MetaThings Application Credential Secret")
+	flags.StringVar(base_opt.GetKeyFileP(), "key", "", "Transport Credential Key")
+	flags.StringVar(base_opt.GetCertFileP(), "cert", "", "Transport Credential Cert")
+	flags.BoolVar(base_opt.GetInsecureP(), "insecure", false, "Do not verify transport credential")
+	flags.BoolVar(base_opt.GetPlainTextP(), "plaintext", false, "Transport data without tls")
 }

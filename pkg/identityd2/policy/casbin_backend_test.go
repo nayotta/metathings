@@ -137,7 +137,7 @@ m = (g2(r.sub, r.grp, p.sub) && g3(r.obj, r.grp, p.obj) && r.grp == p.grp && r.a
 
 	srv_opt := cmd_contrib.CreateServiceEndpointsOption()
 	srv_opt.ServiceEndpoint[client_helper.DEFAULT_CONFIG.String()].Address = test_helper.GetTestPolicydAddress()
-	cli_fty, err = cmd_contrib.NewClientFactory(&srv_opt, logger)
+	cli_fty, err = cmd_contrib.NewClientFactory(&srv_opt, nil, logger)
 	s.Nil(err)
 
 	cli, cfn, err := cli_fty.NewPolicydServiceClient()

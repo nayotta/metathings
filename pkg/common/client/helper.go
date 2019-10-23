@@ -59,21 +59,17 @@ func (self ServiceConfigs) SetServiceConfig(typ ClientType, cfg ServiceConfig) {
 	self[typ] = cfg
 }
 
-type DialOptionFn func() []grpc.DialOption
-
 type ServiceConfig struct {
 	Address string
 }
 
 type ClientFactory struct {
-	defaultDialOptionFn DialOptionFn
-	configs             ServiceConfigs
+	defaultDialOption []grpc.DialOption
+	configs           ServiceConfigs
 }
 
 func (f *ClientFactory) NewConnection(cfg_val ClientType, opts ...grpc.DialOption) (*grpc.ClientConn, error) {
-	if f.defaultDialOptionFn != nil {
-		opts = append(opts, f.defaultDialOptionFn()...)
-	}
+	opts = append(opts, f.defaultDialOption...)
 
 	cfg, ok := f.configs[cfg_val]
 	if !ok {
@@ -133,14 +129,14 @@ func (f *ClientFactory) NewModuleSerivceClient(opts ...grpc.DialOption) (compone
 	return component_pb.NewModuleServiceClient(conn), conn.Close, nil
 }
 
-func NewClientFactory(configs ServiceConfigs, optFn DialOptionFn) (*ClientFactory, error) {
+func NewClientFactory(configs ServiceConfigs, opts []grpc.DialOption) (*ClientFactory, error) {
 	if _, ok := configs[DEFAULT_CONFIG]; !ok {
 		return nil, ErrMissingDefaultConfig
 	}
 
 	return &ClientFactory{
-		configs:             configs,
-		defaultDialOptionFn: optFn,
+		configs:           configs,
+		defaultDialOption: opts,
 	}, nil
 }
 
@@ -150,14 +146,11 @@ func NewDefaultServiceConfigs(addr string) ServiceConfigs {
 	}
 }
 
-func DefaultDialOptionFn() DialOptionFn {
-	return func() []grpc.DialOption {
-		return []grpc.DialOption{
-			grpc.WithInsecure(),
-			grpc.WithKeepaliveParams(keepalive.ClientParameters{
-				Timeout:             60 * time.Second,
-				PermitWithoutStream: true,
-			}),
-		}
+func DefaultDialOption() []grpc.DialOption {
+	return []grpc.DialOption{
+		grpc.WithKeepaliveParams(keepalive.ClientParameters{
+			Timeout:             3600 * time.Second,
+			PermitWithoutStream: true,
+		}),
 	}
 }
