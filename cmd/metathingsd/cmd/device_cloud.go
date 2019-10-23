@@ -85,8 +85,10 @@ func GetDeviceCloudOptions() (
 	cmd_contrib.LoggerOptioner,
 	cmd_contrib.ServiceEndpointsOptioner,
 	cmd_contrib.CredentialOptioner,
+	cmd_contrib.TransportCredentialOptioner,
 ) {
 	return device_cloud_opt,
+		device_cloud_opt,
 		device_cloud_opt,
 		device_cloud_opt,
 		device_cloud_opt,
@@ -129,6 +131,7 @@ func runDeviceCloud() error {
 		fx.NopLogger,
 		fx.Provide(
 			GetDeviceCloudOptions,
+			cmd_contrib.NewTransportCredentials,
 			cmd_contrib.NewLogger("device_cloud"),
 			cmd_contrib.NewListener,
 			cmd_contrib.NewHttpServer,
