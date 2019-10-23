@@ -19,6 +19,16 @@ import "pull_frame_from_flow.proto";
 import "push_frame_to_flow.proto";
 import "query_frames_from_flow.proto";
 
+import "create_flow_set.proto";
+import "delete_flow_set.proto";
+import "patch_flow_set.proto";
+import "get_flow_set.proto";
+import "list_flow_sets.proto";
+import "add_flows_to_flow_set.proto";
+import "remove_flows_from_flow_set.proto";
+import "pull_frame_from_flow_set.proto";
+import "query_frames_from_flow_set.proto";
+
 import "put_object.proto";
 import "remove_object.proto";
 import "rename_object.proto";
@@ -47,6 +57,17 @@ service DevicedService {
 	rpc PullFrameFromFlow(PullFrameFromFlowRequest) returns (stream PullFrameFromFlowResponse) {}
 	rpc PushFrameToFlow(stream PushFrameToFlowRequest) returns (stream PushFrameToFlowResponse) {}
 	rpc QueryFramesFromFlow(QueryFramesFromFlowRequest) returns (QueryFramesFromFlowResponse) {}
+
+	// Flow Set
+	rpc CreateFlowSet(CreateFlowSetRequest) returns (CreateFlowSetResponse) {}
+	rpc DeleteFlowSet(DeleteFlowSetRequest) returns (google.protobuf.Empty) {}
+	rpc PatchFlowSet(PatchFlowSetRequest) returns (PatchFlowSetResponse) {}
+	rpc GetFlowSet(GetFlowSetRequest) returns (GetFlowSetResponse) {}
+	rpc ListFlowSets(ListFlowSetsRequest) returns (ListFlowSetsResponse) {}
+	rpc AddFlowsToFlowSet(AddFlowsToFlowSet) returns (google.protobuf.Empty) {}
+	rpc RemoveFlowsFromFlowSet(RemoveFlowsFromFlowSet) returns (google.protobuf.Empty) {}
+	rpc PullFrameFromFlowSet(PullFrameFromFlowSetRequest) returns (stream PullFrameFromFlowSetResponse) {}
+	rpc QueryFramesFromFlowSet(QueryFramesFromFlowSetRequest) returns (QueryFramesFromFlowSetResponse) {}
 
 	// Simple Storage
 	rpc PutObject(PutObjectRequest) returns (google.protobuf.Empty) {}

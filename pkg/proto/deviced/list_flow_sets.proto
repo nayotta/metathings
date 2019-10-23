@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package ai.metathings.service.deviced;
+
+import "model.proto";
+
+message ListFlowSetsRequest {
+	OpFlowSet flow_set = 1;
+}
+
+message ListFlowSetsResponse {
+	FlowSet flow_set = 1;
+}
