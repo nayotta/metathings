@@ -3,6 +3,7 @@ package cmd_contrib
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	"github.com/jeremywohl/flatten"
 	"gopkg.in/yaml.v2"
@@ -62,13 +63,13 @@ func processYamlOutput(in interface{}) error {
 }
 
 func processShellOutput(in interface{}) error {
-	fltm, err := flatten.Flatten(in.(map[string]interface{}), "mt", flatten.UnderscoreStyle)
+	fltm, err := flatten.Flatten(in.(map[string]interface{}), "mt_", flatten.UnderscoreStyle)
 	if err != nil {
 		return err
 	}
 
 	for k, v := range fltm {
-		fmt.Printf("export %v=%v\n", k, v)
+		fmt.Printf("export %v=\"%v\"\n", strings.ToUpper(k), v)
 	}
 	return nil
 }

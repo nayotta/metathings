@@ -3,7 +3,6 @@ package cmd
 import (
 	"context"
 	"errors"
-	"fmt"
 
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/golang/protobuf/ptypes/wrappers"
@@ -78,8 +77,6 @@ func create_credential() error {
 			func(lc fx.Lifecycle, opt *CreateCredentialOption, cli_fty *client_helper.ClientFactory) {
 				lc.Append(fx.Hook{
 					OnStart: func(context.Context) error {
-						fmt.Println("name: ", create_credential_opt.Name)
-						fmt.Println("token: ", create_credential_opt.Token)
 						cli, cfn, err := cli_fty.NewIdentityd2ServiceClient()
 						if err != nil {
 							return err
