@@ -223,6 +223,10 @@ func initIdentityd2() error {
 							return err
 						}
 
+						if err = stor.Initialize(); err != nil {
+							return err
+						}
+
 						return nil
 					},
 				})
