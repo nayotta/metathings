@@ -1673,7 +1673,7 @@ func (self *StorageImpl) Initialize() error {
 
 	if ok, err = self.IsInitialized(); err != nil {
 		return err
-	} else if !ok {
+	} else if ok {
 		return ErrInitialized
 	}
 
