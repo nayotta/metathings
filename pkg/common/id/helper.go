@@ -5,7 +5,7 @@ import (
 
 	uuid "github.com/satori/go.uuid"
 
-	"github.com/nayotta/metathings/pkg/common/rand"
+	rand_helper "github.com/nayotta/metathings/pkg/common/rand"
 )
 
 func NewId() string {

@@ -3,9 +3,9 @@ package cmd
 import (
 	"strings"
 
-	"github.com/nayotta/viper"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 
 	cmd_contrib "github.com/nayotta/metathings/cmd/contrib"
 )

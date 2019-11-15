@@ -16,6 +16,7 @@ import (
 	stpb "github.com/golang/protobuf/ptypes/struct"
 	"github.com/golang/protobuf/ptypes/wrappers"
 	log "github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 
@@ -29,7 +30,6 @@ import (
 	pb "github.com/nayotta/metathings/pkg/proto/device"
 	deviced_pb "github.com/nayotta/metathings/pkg/proto/deviced"
 	identityd2_pb "github.com/nayotta/metathings/pkg/proto/identityd2"
-	"github.com/nayotta/viper"
 )
 
 type KernelConfig struct {
