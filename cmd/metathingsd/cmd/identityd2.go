@@ -147,6 +147,7 @@ func initIdentityd2() error {
 		fx.NopLogger,
 		fx.Provide(
 			GetIdentityd2Options,
+			cmd_contrib.NewTransportCredentials,
 			cmd_contrib.NewLogger("identityd2"),
 			cmd_contrib.NewClientFactory,
 			NewIdentityd2Backend,
@@ -219,6 +220,10 @@ func initIdentityd2() error {
 						}
 
 						if err = bck.AddRoleToEntity(admin, sysadmin); err != nil {
+							return err
+						}
+
+						if err = stor.Initialize(); err != nil {
 							return err
 						}
 

@@ -138,10 +138,6 @@ func (self *MetathingsIdentitydService) ListRolesForEntity(context.Context, *pb.
 	panic("unimplemented")
 }
 
-func (self *MetathingsIdentitydService) ShowEntity(context.Context, *empty.Empty) (*pb.ShowEntityResponse, error) {
-	panic("unimplemented")
-}
-
 func (self *MetathingsIdentitydService) ShowGroups(context.Context, *empty.Empty) (*pb.ShowGroupsResponse, error) {
 	panic("unimplemented")
 }

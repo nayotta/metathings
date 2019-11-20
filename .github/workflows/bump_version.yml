@@ -3,7 +3,6 @@ on:
   push:
     branches:
     - master
-
 jobs:
   bump-version:
     runs-on: ubuntu-latest

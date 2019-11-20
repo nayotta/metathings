@@ -2,6 +2,7 @@ package metathings_component
 
 import (
 	"context"
+	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -15,6 +16,9 @@ import (
 	stpb "github.com/golang/protobuf/ptypes/struct"
 	"github.com/golang/protobuf/ptypes/wrappers"
 	log "github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
 	const_helper "github.com/nayotta/metathings/pkg/common/constant"
@@ -26,7 +30,6 @@ import (
 	pb "github.com/nayotta/metathings/pkg/proto/device"
 	deviced_pb "github.com/nayotta/metathings/pkg/proto/deviced"
 	identityd2_pb "github.com/nayotta/metathings/pkg/proto/identityd2"
-	"github.com/nayotta/viper"
 )
 
 type KernelConfig struct {
@@ -344,6 +347,12 @@ type NewKernelOption struct {
 		Id     string
 		Secret string
 	}
+	TransportCredential struct {
+		Insecure  bool
+		PlainText bool
+		Key       string
+		Cert      string
+	}
 	ServiceEndpoints map[string]string
 	ConfigText       string
 }
@@ -362,7 +371,17 @@ func new_client_factory_from_new_kernel_option(opt *NewKernelOption) (*client_he
 		return nil, ErrDeviceAddressRequired
 	}
 	srv_cfgs[client_helper.DEVICED_CONFIG] = client_helper.ServiceConfig{addr}
-	cli_fty, err = client_helper.NewClientFactory(srv_cfgs, client_helper.DefaultDialOptionFn())
+
+	srv_opts := client_helper.DefaultDialOption()
+	if opt.TransportCredential.PlainText {
+		srv_opts = append(srv_opts, grpc.WithInsecure())
+	} else if opt.TransportCredential.Insecure {
+		srv_opts = append(srv_opts, grpc.WithTransportCredentials(credentials.NewTLS(&tls.Config{InsecureSkipVerify: true})))
+	} else if opt.TransportCredential.Key != "" && opt.TransportCredential.Cert != "" {
+		panic("unimplemented")
+	}
+
+	cli_fty, err = client_helper.NewClientFactory(srv_cfgs, client_helper.DefaultDialOption())
 	if err != nil {
 		return nil, err
 	}
@@ -370,24 +389,17 @@ func new_client_factory_from_new_kernel_option(opt *NewKernelOption) (*client_he
 }
 
 func new_client_factory_from_kernel_config(cfg *KernelConfig) (*client_helper.ClientFactory, error) {
-	var err error
-	var cli_fty *client_helper.ClientFactory
+	opt := NewKernelOption{
+		ServiceEndpoints: map[string]string{},
+	}
+	opt.ServiceEndpoints["default"] = cfg.GetString("service_endpoint.default.address")
+	opt.ServiceEndpoints["device"] = cfg.GetString("service_endpoint.device.address")
+	opt.TransportCredential.Insecure = cfg.GetBool("transport_credential.insecure")
+	opt.TransportCredential.PlainText = cfg.GetBool("transport_credential.plain_text")
+	opt.TransportCredential.Key = cfg.GetString("transport_credential.key")
+	opt.TransportCredential.Cert = cfg.GetString("transport_credential.cert")
+	return new_client_factory_from_new_kernel_option(&opt)
 
-	addr := cfg.GetString("service_endpoint.default.address")
-	if addr == "" {
-		return nil, ErrDefaultAddressRequired
-	}
-	srv_cfgs := client_helper.NewDefaultServiceConfigs(addr)
-	addr = cfg.GetString("service_endpoint.device.address")
-	if addr == "" {
-		return nil, ErrDeviceAddressRequired
-	}
-	srv_cfgs[client_helper.DEVICE_CONFIG] = client_helper.ServiceConfig{addr}
-	cli_fty, err = client_helper.NewClientFactory(srv_cfgs, client_helper.DefaultDialOptionFn())
-	if err != nil {
-		return nil, err
-	}
-	return cli_fty, nil
 }
 
 func _get_module_config_text(cli pb.DeviceServiceClient, ctx context.Context, mdl_name string) (string, error) {

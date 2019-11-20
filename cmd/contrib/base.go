@@ -1,12 +1,17 @@
 package cmd_contrib
 
 type BaseOption struct {
-	ConfigOption           `mapstructure:",squash"`
-	StageOption            `mapstructure:",squash"`
-	VerboseOption          `mapstructure:",squash"`
-	LoggerOption           `mapstructure:",squash"`
-	CredentialOption       `mapstructure:",squash"`
-	ServiceEndpointsOption `mapstructure:",squash"`
+	ConfigOption              `mapstructure:",squash"`
+	StageOption               `mapstructure:",squash"`
+	VerboseOption             `mapstructure:",squash"`
+	LoggerOption              `mapstructure:",squash"`
+	CredentialOption          `mapstructure:",squash"`
+	ServiceEndpointsOption    `mapstructure:",squash"`
+	TransportCredentialOption `mapstructure:",squash"`
+}
+
+func (self *BaseOption) GetTransportCredential() TransportCredentialOptioner {
+	return &self.TransportCredentialOption
 }
 
 func CreateBaseOption() BaseOption {
@@ -16,20 +21,15 @@ func CreateBaseOption() BaseOption {
 }
 
 type ServiceBaseOption struct {
-	BaseOption                `mapstructure:",squash"`
-	ServiceOption             `mapstructure:",squash"`
-	ListenOption              `mapstructure:",squash"`
-	TransportCredentialOption `mapstructure:",squash"`
-	StorageOption             `mapstructure:",squash"`
-	WebhookServiceOption      `mapstructure:",squash"`
+	BaseOption           `mapstructure:",squash"`
+	ServiceOption        `mapstructure:",squash"`
+	ListenOption         `mapstructure:",squash"`
+	StorageOption        `mapstructure:",squash"`
+	WebhookServiceOption `mapstructure:",squash"`
 }
 
 func (self *ServiceBaseOption) GetStorage() StorageOptioner {
 	return &self.StorageOption
-}
-
-func (self *ServiceBaseOption) GetTransportCredential() TransportCredentialOptioner {
-	return &self.TransportCredentialOption
 }
 
 func CreateServiceBaseOption() ServiceBaseOption {
@@ -40,9 +40,9 @@ func CreateServiceBaseOption() ServiceBaseOption {
 }
 
 type ClientBaseOption struct {
-	BaseOption                `mapstructure:",squash"`
-	ListenOption              `mapstructure:",squash"`
-	TransportCredentialOption `mapstructure:",squash"`
+	BaseOption   `mapstructure:",squash"`
+	ListenOption `mapstructure:",squash"`
+	OutputOption `mapstructure:",squash"`
 }
 
 func CreateClientBaseOption() ClientBaseOption {

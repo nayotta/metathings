@@ -3,7 +3,7 @@ package webhook_helper
 import (
 	"bytes"
 
-	"github.com/nayotta/viper"
+	"github.com/spf13/viper"
 )
 
 type Event struct {

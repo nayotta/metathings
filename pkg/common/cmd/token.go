@@ -2,7 +2,7 @@ package cmd_helper
 
 import "github.com/spf13/viper"
 
-func GetStageFromEnv(vs ...*viper.Viper) string {
+func GetTokenFromEnv(vs ...*viper.Viper) string {
 	var v *viper.Viper
 
 	if len(vs) > 0 {
@@ -11,9 +11,6 @@ func GetStageFromEnv(vs ...*viper.Viper) string {
 		v = viper.GetViper()
 	}
 
-	stage := v.GetString("stage")
-	if stage == "" {
-		stage = "dev"
-	}
-	return stage
+	token := v.GetString("token")
+	return token
 }

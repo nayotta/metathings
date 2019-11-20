@@ -3,9 +3,9 @@ package cmd
 import (
 	"strings"
 
-	"github.com/nayotta/viper"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 
 	cmd_contrib "github.com/nayotta/metathings/cmd/contrib"
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
@@ -80,6 +80,10 @@ func init() {
 	flags.StringVarP(base_opt.GetConfigP(), "config", "c", "", "Config file")
 	flags.BoolVar(base_opt.GetVerboseP(), "verbose", false, "Verbose mode")
 	flags.StringVar(base_opt.GetLevelP(), "log-level", "info", "Logging level[debug, info, warn, error]")
+	flags.StringVar(base_opt.GetKeyFileP(), "key", "", "Transport Credential Key")
+	flags.StringVar(base_opt.GetCertFileP(), "cert", "", "Transport Credential Cert")
+	flags.BoolVar(base_opt.GetInsecureP(), "insecure", false, "Do not verify transport credential")
+	flags.BoolVar(base_opt.GetPlainTextP(), "plaintext", false, "Transport data without tls")
 
 	flags.StringVar(base_opt.GetServiceEndpoint(client_helper.DEFAULT_CONFIG).GetAddressP(), "addr", constant_helper.CONSTANT_METATHINGSD_DEFAULT_HOST, "MetaThings Service Address")
 }

@@ -3,8 +3,8 @@ package cmd_helper
 import (
 	"strings"
 
-	"github.com/nayotta/viper"
 	log "github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 
 	cmd_contrib "github.com/nayotta/metathings/cmd/contrib"
 	net_helper "github.com/nayotta/metathings/pkg/common/net"

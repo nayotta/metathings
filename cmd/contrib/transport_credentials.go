@@ -1,12 +1,24 @@
 package cmd_contrib
 
-import "google.golang.org/grpc/credentials"
+import (
+	"crypto/tls"
+
+	"google.golang.org/grpc/credentials"
+)
 
 type GetTransportCredentialOptioner interface {
 	GetTransportCredential() TransportCredentialOptioner
 }
 
 type TransportCredentialOptioner interface {
+	GetInsecureP() *bool
+	GetInsecure() bool
+	SetInsecure(bool)
+
+	GetPlainTextP() *bool
+	GetPlainText() bool
+	SetPlainText(bool)
+
 	GetCertFileP() *string
 	GetCertFile() string
 	SetCertFile(string)
@@ -17,8 +29,34 @@ type TransportCredentialOptioner interface {
 }
 
 type TransportCredentialOption struct {
-	CertFile string
-	KeyFile  string
+	Insecure  bool
+	PlainText bool
+	CertFile  string
+	KeyFile   string
+}
+
+func (self *TransportCredentialOption) GetInsecureP() *bool {
+	return &self.Insecure
+}
+
+func (self *TransportCredentialOption) GetInsecure() bool {
+	return self.Insecure
+}
+
+func (self *TransportCredentialOption) SetInsecure(insecure bool) {
+	self.Insecure = insecure
+}
+
+func (self *TransportCredentialOption) GetPlainTextP() *bool {
+	return &self.PlainText
+}
+
+func (self *TransportCredentialOption) GetPlainText() bool {
+	return self.PlainText
+}
+
+func (self *TransportCredentialOption) SetPlainText(plaintext bool) {
+	self.PlainText = plaintext
 }
 
 func (self *TransportCredentialOption) GetCertFileP() *string {
@@ -50,6 +88,12 @@ func NewTransportCredentials(opt TransportCredentialOptioner) (credentials.Trans
 	key_file := opt.GetKeyFile()
 	if cert_file != "" && key_file != "" {
 		return credentials.NewServerTLSFromFile(cert_file, key_file)
+	} else if opt.GetInsecure() {
+		return credentials.NewTLS(&tls.Config{
+			InsecureSkipVerify: true,
+		}), nil
+	} else if opt.GetPlainText() {
+		return nil, nil
 	}
 	return nil, nil
 }

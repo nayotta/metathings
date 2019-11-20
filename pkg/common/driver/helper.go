@@ -3,7 +3,7 @@ package driver_helper
 import (
 	"plugin"
 
-	"github.com/nayotta/viper"
+	"github.com/spf13/viper"
 
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 )

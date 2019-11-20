@@ -876,6 +876,19 @@ func (suite *storageImplTestSuite) TestListTokens() {
 	suite.Len(tkns, 1)
 }
 
+func (suite *storageImplTestSuite) TestInitialize() {
+	ok, err := suite.s.IsInitialized()
+	suite.Nil(err)
+	suite.False(ok)
+
+	err = suite.s.Initialize()
+	suite.Nil(err)
+
+	ok, err = suite.s.IsInitialized()
+	suite.Nil(err)
+	suite.True(ok)
+}
+
 func TestStorageImplTestSuite(t *testing.T) {
 	suite.Run(t, new(storageImplTestSuite))
 }

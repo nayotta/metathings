@@ -65,9 +65,11 @@ var (
 func GetIssueTokenOptions() (
 	*IssueTokenOption,
 	cmd_contrib.ServiceEndpointsOptioner,
+	cmd_contrib.TransportCredentialOptioner,
 	cmd_contrib.LoggerOptioner,
 ) {
 	return issue_token_opt,
+		issue_token_opt,
 		issue_token_opt,
 		issue_token_opt
 
@@ -147,6 +149,7 @@ func issue_token() error {
 		fx.Provide(
 			GetIssueTokenOptions,
 			cmd_contrib.NewLogger("issue_token"),
+			cmd_contrib.NewTransportCredentials,
 			cmd_contrib.NewClientFactory,
 		),
 		fx.Invoke(

@@ -26,10 +26,16 @@ type ModuleServiceInitializer interface {
 }
 
 type ModuleOption struct {
-	Config           string
-	CredentialId     string
-	CredentialSecret string
-	Addresses        []string
+	Config              string
+	CredentialId        string
+	CredentialSecret    string
+	Addresses           []string
+	TransportCredential struct {
+		Insecure  bool
+		PlainText bool
+		Key       string
+		Cert      string
+	}
 }
 
 type Module struct {
@@ -48,6 +54,10 @@ func (m *Module) init_flags() error {
 	m.flags.StringVarP(&m.opt.Config, "config", "c", "", "Config file")
 	m.flags.StringVar(&m.opt.CredentialId, "credential-id", "", "Module Credential Id")
 	m.flags.StringVar(&m.opt.CredentialSecret, "credential-secret", "", "Module Credential Secret")
+	m.flags.BoolVar(&m.opt.TransportCredential.Insecure, "insecure", false, "Transport data in tls with insecure mode")
+	m.flags.BoolVar(&m.opt.TransportCredential.PlainText, "plaintext", false, "Transport data without tls")
+	m.flags.StringVar(&m.opt.TransportCredential.Key, "key", "", "Transport credential key")
+	m.flags.StringVar(&m.opt.TransportCredential.Cert, "cert", "", "Transport credential cert")
 	m.flags.StringArrayVar(&m.opt.Addresses, "addresses", []string{"device:127.0.0.1:5002", "default:metathings.ai:21733"}, "Metathings Service Addresses")
 
 	err := m.flags.Parse(os.Args[1:])
@@ -87,6 +97,10 @@ func (m *Module) init_kernel() error {
 		opt.Credential.Id = m.opt.CredentialId
 		opt.Credential.Secret = m.opt.CredentialSecret
 		opt.ServiceEndpoints, err = parse_service_endpoints(m.opt.Addresses)
+		opt.TransportCredential.Insecure = m.opt.TransportCredential.Insecure
+		opt.TransportCredential.PlainText = m.opt.TransportCredential.PlainText
+		opt.TransportCredential.Key = m.opt.TransportCredential.Key
+		opt.TransportCredential.Cert = m.opt.TransportCredential.Cert
 		if err != nil {
 			return err
 		}
