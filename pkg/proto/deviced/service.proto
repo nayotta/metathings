@@ -64,8 +64,8 @@ service DevicedService {
 	rpc PatchFlowSet(PatchFlowSetRequest) returns (PatchFlowSetResponse) {}
 	rpc GetFlowSet(GetFlowSetRequest) returns (GetFlowSetResponse) {}
 	rpc ListFlowSets(ListFlowSetsRequest) returns (ListFlowSetsResponse) {}
-	rpc AddFlowsToFlowSet(AddFlowsToFlowSet) returns (google.protobuf.Empty) {}
-	rpc RemoveFlowsFromFlowSet(RemoveFlowsFromFlowSet) returns (google.protobuf.Empty) {}
+	rpc AddFlowsToFlowSet(AddFlowsToFlowSetRequest) returns (google.protobuf.Empty) {}
+	rpc RemoveFlowsFromFlowSet(RemoveFlowsFromFlowSetRequest) returns (google.protobuf.Empty) {}
 	rpc PullFrameFromFlowSet(PullFrameFromFlowSetRequest) returns (stream PullFrameFromFlowSetResponse) {}
 	rpc QueryFramesFromFlowSet(QueryFramesFromFlowSetRequest) returns (QueryFramesFromFlowSetResponse) {}
 

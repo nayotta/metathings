@@ -179,6 +179,41 @@ func (this *OpFrame) Validate() error {
 	}
 	return nil
 }
+func (this *FlowSet) Validate() error {
+	for _, item := range this.Flows {
+		if item != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("Flows", err)
+			}
+		}
+	}
+	return nil
+}
+func (this *OpFlowSet) Validate() error {
+	if this.Id != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Id); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Id", err)
+		}
+	}
+	if this.Name != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Name); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Name", err)
+		}
+	}
+	if this.Alias != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Alias); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Alias", err)
+		}
+	}
+	for _, item := range this.Flows {
+		if item != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("Flows", err)
+			}
+		}
+	}
+	return nil
+}
 func (this *Object) Validate() error {
 	if this.Device != nil {
 		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Device); err != nil {

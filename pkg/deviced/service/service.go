@@ -3,6 +3,7 @@ package metathings_deviced_service
 import (
 	"context"
 
+	"github.com/golang/protobuf/ptypes/empty"
 	grpc_auth "github.com/grpc-ecosystem/go-grpc-middleware/auth"
 	"github.com/grpc-ecosystem/go-grpc-middleware/util/metautils"
 	log "github.com/sirupsen/logrus"
@@ -108,6 +109,42 @@ func (self *MetathingsDevicedService) offline_device(dev_id string) (err error) 
 
 func (self *MetathingsDevicedService) IsIgnoreMethod(md *grpc_helper.MethodDescription) bool {
 	return false
+}
+
+func (self *MetathingsDevicedService) CreateFlowSet(context.Context, *pb.CreateFlowSetRequest) (*pb.CreateFlowSetResponse, error) {
+	panic("unimplemented")
+}
+
+func (self *MetathingsDevicedService) DeleteFlowSet(context.Context, *pb.DeleteFlowSetRequest) (*empty.Empty, error) {
+	panic("unimplemented")
+}
+
+func (self *MetathingsDevicedService) PatchFlowSet(context.Context, *pb.PatchFlowSetRequest) (*pb.PatchFlowSetResponse, error) {
+	panic("unimplemented")
+}
+
+func (self *MetathingsDevicedService) GetFlowSet(context.Context, *pb.GetFlowSetRequest) (*pb.GetFlowSetResponse, error) {
+	panic("unimplemented")
+}
+
+func (self *MetathingsDevicedService) ListFlowSets(context.Context, *pb.ListFlowSetsRequest) (*pb.ListFlowSetsResponse, error) {
+	panic("unimplemented")
+}
+
+func (self *MetathingsDevicedService) AddFlowsToFlowSet(context.Context, *pb.AddFlowsToFlowSetRequest) (*empty.Empty, error) {
+	panic("unimplemented")
+}
+
+func (self *MetathingsDevicedService) RemoveFlowsFromFlowSet(context.Context, *pb.RemoveFlowsFromFlowSetRequest) (*empty.Empty, error) {
+	panic("unimplemented")
+}
+
+func (self *MetathingsDevicedService) PullFrameFromFlowSet(*pb.PullFrameFromFlowSetRequest, pb.DevicedService_PullFrameFromFlowSetServer) error {
+	panic("unimplemented")
+}
+
+func (self *MetathingsDevicedService) QueryFramesFromFlowSet(context.Context, *pb.QueryFramesFromFlowSetRequest) (*pb.QueryFramesFromFlowSetResponse, error) {
+	panic("unimplemented")
 }
 
 func NewMetathingsDevicedService(

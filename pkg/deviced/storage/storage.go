@@ -47,6 +47,24 @@ type Module struct {
 	Device *Device `gorm:"-"`
 }
 
+type FlowSet struct {
+	Id        *string
+	CreatedAt time.Time
+	UpdatedAt time.Time
+
+	Name  *string `gorm:"column:name"`
+	Alias *string `gorm:"column:alias"`
+
+	Flows []*Flow `gorm:"-"`
+}
+
+type FlowFlowSetMapping struct {
+	CreatedAt time.Time
+
+	FlowId    *string `gorm:"flow_id"`
+	FlowSetId *string `gorm:"flow_set_id"`
+}
+
 type Storage interface {
 	CreateDevice(*Device) (*Device, error)
 	DeleteDevice(id string) error
@@ -66,6 +84,14 @@ type Storage interface {
 	PatchFlow(id string, flow *Flow) (*Flow, error)
 	GetFlow(id string) (*Flow, error)
 	ListFlows(*Flow) ([]*Flow, error)
+
+	CreateFlowSet(*FlowSet) (*FlowSet, error)
+	DeleteFlowSet(id string) error
+	PatchFlowSet(id string, flow_set *FlowSet) (*FlowSet, error)
+	GetFlowSet(id string) (*FlowSet, error)
+	ListFlowSets(*FlowSet) ([]*FlowSet, error)
+	AddFlowToFlowSet(flow_set_id, flow_id string) error
+	RemoveFlowFromFlowSet(flow_set_id, flow_id string) error
 }
 
 func NewStorage(driver, uri string, args ...interface{}) (Storage, error) {

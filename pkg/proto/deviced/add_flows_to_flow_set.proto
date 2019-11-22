@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package ai.metathings.service.identityd2;
+package ai.metathings.service.deviced;
 
 import "github.com/mwitkow/go-proto-validators/validator.proto";
 

@@ -6,13 +6,13 @@ import "google/protobuf/timestamp.proto";
 
 import "model.proto";
 
-message QueryFramesFromFlowRequest {
+message QueryFramesFromFlowSetRequest {
 	OpDevice device = 1;
 	google.protobuf.Timestamp from = 2;
 	google.protobuf.Timestamp to = 3;
 }
 
-message QueryFramesFromFlowResponse {
+message QueryFramesFromFlowSetResponse {
 	message Pack {
 		Flow flow = 1;
 		repeated Frame frames = 2;
