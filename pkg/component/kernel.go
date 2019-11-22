@@ -379,6 +379,8 @@ func new_client_factory_from_new_kernel_option(opt *NewKernelOption) (*client_he
 		srv_opts = append(srv_opts, grpc.WithTransportCredentials(credentials.NewTLS(&tls.Config{InsecureSkipVerify: true})))
 	} else if opt.TransportCredential.Key != "" && opt.TransportCredential.Cert != "" {
 		panic("unimplemented")
+	} else if opt.TransportCredential.Key == "" && opt.TransportCredential.Cert == "" {
+		srv_opts = append(srv_opts, grpc.WithTransportCredentials(credentials.NewTLS(nil)))
 	}
 
 	cli_fty, err = client_helper.NewClientFactory(srv_cfgs, client_helper.DefaultDialOption())

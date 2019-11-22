@@ -95,7 +95,6 @@ func run_device() error {
 			func(x service.MetathingsDeviceService) pb.DeviceServiceServer {
 				return x
 			},
-			cmd_contrib.NewTransportCredentials,
 			cmd_contrib.NewListener,
 			cmd_contrib.NewGrpcServer,
 		),
