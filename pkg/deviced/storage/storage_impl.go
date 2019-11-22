@@ -25,8 +25,69 @@ func (self *StorageImpl) get_flow(id string) (*Flow, error) {
 	return flw, nil
 }
 
-func (self *StorageImpl) list_flowsets(flwst *FlowSet) ([]*FlowSet, error) {
-	panic("unimplemented")
+func (self *StorageImpl) list_flow_sets(flwst *FlowSet) ([]*FlowSet, error) {
+	var err error
+	var flwsts_t []*FlowSet
+	var flwsts []*FlowSet
+
+	fs := &FlowSet{}
+	if flwst.Id != nil {
+		fs.Id = flwst.Id
+	}
+
+	if flwst.Alias != nil {
+		fs.Alias = flwst.Alias
+	}
+
+	if flwst.Name != nil {
+		fs.Name = flwst.Name
+	}
+
+	if err = self.db.Find(&flwsts_t, fs).Error; err != nil {
+		return nil, err
+	}
+
+	for _, fs = range flwsts_t {
+		if flwst, err = self.get_flow_set(*fs.Id); err != nil {
+			return nil, err
+		}
+		flwsts = append(flwsts, flwst)
+	}
+
+	return flwsts, nil
+}
+
+func (self *StorageImpl) internal_list_view_flows(flwst *FlowSet) ([]*Flow, error) {
+	var err error
+	var flws []*Flow
+	var flw_flwst_maps []*FlowFlowSetMapping
+
+	if err = self.db.Find(&flw_flwst_maps, "flow_set_id = ?", *flwst.Id).Error; err != nil {
+		return nil, err
+	}
+
+	for _, ffm := range flw_flwst_maps {
+		flws = append(flws, &Flow{
+			Id: ffm.FlowId,
+		})
+	}
+
+	return flws, nil
+}
+
+func (self *StorageImpl) get_flow_set(id string) (*FlowSet, error) {
+	var err error
+	flwst := &FlowSet{}
+
+	if err = self.db.First(flwst, "id = ?", id).Error; err != nil {
+		return nil, err
+	}
+
+	if flwst.Flows, err = self.internal_list_view_flows(flwst); err != nil {
+		return nil, err
+	}
+
+	return flwst, nil
 }
 
 func (self *StorageImpl) list_flows_by_device_id(id string) ([]*Flow, error) {
@@ -84,10 +145,6 @@ func (self *StorageImpl) list_flows(flw *Flow) ([]*Flow, error) {
 	}
 
 	return flws, nil
-}
-
-func (self *StorageImpl) get_flow_set(id string) (*FlowSet, error) {
-	panic("unimplemented")
 }
 
 func (self *StorageImpl) get_module(id string) (*Module, error) {
@@ -529,27 +586,27 @@ func (self *StorageImpl) CreateFlowSet(flwst *FlowSet) (*FlowSet, error) {
 	var err error
 
 	if err = self.db.Create(flwst).Error; err != nil {
-		self.logger.WithError(err).Debugf("failed to create flowset")
+		self.logger.WithError(err).Debugf("failed to create flow set")
 		return nil, err
 	}
 
 	if flwst, err = self.get_flow_set(*flwst.Id); err != nil {
-		self.logger.WithError(err).Debugf("failed to get flowset")
+		self.logger.WithError(err).Debugf("failed to get flow set")
 		return nil, err
 	}
 
-	self.logger.WithField("id", *flwst.Id).Debugf("create flowset")
+	self.logger.WithField("id", *flwst.Id).Debugf("create flow set")
 
 	return flwst, nil
 }
 
 func (self *StorageImpl) DeleteFlowSet(id string) error {
 	if err := self.db.Delete(&FlowSet{}, "id = ?", id).Error; err != nil {
-		self.logger.WithError(err).Debugf("failed to delete flowset")
+		self.logger.WithError(err).Debugf("failed to delete flow set")
 		return err
 	}
 
-	self.logger.WithField("id", id).Debugf("delete flowset")
+	self.logger.WithField("id", id).Debugf("delete flow set")
 
 	return nil
 }
@@ -563,16 +620,16 @@ func (self *StorageImpl) PatchFlowSet(id string, flwst *FlowSet) (*FlowSet, erro
 	}
 
 	if err = self.db.Model(&FlowSet{Id: &id}).Update(fs).Error; err != nil {
-		self.logger.WithError(err).Debugf("failed to patch flowset")
+		self.logger.WithError(err).Debugf("failed to patch flow set")
 		return nil, err
 	}
 
 	if flwst, err = self.get_flow_set(id); err != nil {
-		self.logger.WithError(err).Debugf("failed to get flowset")
+		self.logger.WithError(err).Debugf("failed to get flow set")
 		return nil, err
 	}
 
-	self.logger.WithField("id", id).Debugf("patch flowset")
+	self.logger.WithField("id", id).Debugf("patch flow set")
 
 	return flwst, nil
 }
@@ -582,11 +639,11 @@ func (self *StorageImpl) GetFlowSet(id string) (*FlowSet, error) {
 	var err error
 
 	if flwst, err = self.get_flow_set(id); err != nil {
-		self.logger.WithError(err).Debugf("failed to get flowset")
+		self.logger.WithError(err).Debugf("failed to get flow set")
 		return nil, err
 	}
 
-	self.logger.WithField("id", id).Debugf("get flowset")
+	self.logger.WithField("id", id).Debugf("get flow set")
 
 	return flwst, nil
 }
@@ -595,22 +652,47 @@ func (self *StorageImpl) ListFlowSets(flwst *FlowSet) ([]*FlowSet, error) {
 	var flwsts []*FlowSet
 	var err error
 
-	if flwsts, err = self.list_flowsets(flwst); err != nil {
-		self.logger.WithError(err).Debugf("failed to list flowsets")
+	if flwsts, err = self.list_flow_sets(flwst); err != nil {
+		self.logger.WithError(err).Debugf("failed to list flow sets")
 		return nil, err
 	}
 
-	self.logger.Debugf("list flowsets")
+	self.logger.Debugf("list flow sets")
 
 	return flwsts, nil
 }
 
 func (self *StorageImpl) AddFlowToFlowSet(flwst_id, flw_id string) error {
-	panic("unimplemented")
+	m := &FlowFlowSetMapping{
+		FlowSetId: &flwst_id,
+		FlowId:    &flw_id,
+	}
+
+	if err := self.db.Create(m).Error; err != nil {
+		self.logger.WithError(err).Debugf("failed to add flow to flow set")
+		return err
+	}
+
+	self.logger.WithFields(log.Fields{
+		"flow_id":     flw_id,
+		"flow_set_id": flwst_id,
+	})
+
+	return nil
 }
 
 func (self *StorageImpl) RemoveFlowFromFlowSet(flwst_id, flw_id string) error {
-	panic("unimplemented")
+	if err := self.db.Delete(&FlowFlowSetMapping{}, "flow_set_id = ? and flow_id = ?", flwst_id, flw_id).Error; err != nil {
+		self.logger.WithError(err).Debugf("failed to remove flow from flow set")
+		return err
+	}
+
+	self.logger.WithFields(log.Fields{
+		"flow_set_id": flwst_id,
+		"flow_id":     flw_id,
+	})
+
+	return nil
 }
 
 func init_args(s *StorageImpl, args ...interface{}) error {

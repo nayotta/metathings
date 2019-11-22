@@ -192,6 +192,7 @@ func (self *StorageImpl) AddEntityToDomain(domain_id, entity_id string) error {
 func (self *StorageImpl) RemoveEntityFromDomain(domain_id, entity_id string) error {
 	if err := self.db.Delete(&EntityDomainMapping{}, "domain_id = ? and entity_id = ?", domain_id, entity_id).Error; err != nil {
 		self.logger.WithError(err).Debugf("failed to remove entity from domain")
+		return err
 	}
 
 	self.logger.WithFields(log.Fields{
