@@ -95,5 +95,5 @@ func NewTransportCredentials(opt TransportCredentialOptioner) (credentials.Trans
 	} else if opt.GetPlainText() {
 		return nil, nil
 	}
-	return nil, nil
+	return credentials.NewTLS(nil), nil
 }
