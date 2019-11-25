@@ -149,7 +149,7 @@ func issue_token() error {
 		fx.Provide(
 			GetIssueTokenOptions,
 			cmd_contrib.NewLogger("issue_token"),
-			cmd_contrib.NewTransportCredentials,
+			cmd_contrib.NewClientTransportCredentials,
 			cmd_contrib.NewClientFactory,
 		),
 		fx.Invoke(

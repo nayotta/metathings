@@ -130,7 +130,7 @@ func runPolicyd() error {
 		fx.NopLogger,
 		fx.Provide(
 			GetPolicydOptions,
-			cmd_contrib.NewTransportCredentials,
+			cmd_contrib.NewServerTransportCredentials,
 			cmd_contrib.NewLogger("policyd"),
 			cmd_contrib.NewListener,
 			cmd_contrib.NewGrpcServer,

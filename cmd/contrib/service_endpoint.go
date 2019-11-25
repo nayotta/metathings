@@ -5,12 +5,14 @@ import (
 )
 
 type ServiceEndpointOptioner interface {
+	TransportCredentialOptioner
 	GetAddressP() *string
 	GetAddress() string
 	SetAddress(string)
 }
 
 type ServiceEndpointOption struct {
+	TransportCredentialOption
 	Address string
 }
 

@@ -241,7 +241,7 @@ func runDeviced() error {
 		fx.NopLogger,
 		fx.Provide(
 			GetDevicedOptions,
-			cmd_contrib.NewTransportCredentials,
+			cmd_contrib.NewServerTransportCredentials,
 			cmd_contrib.NewLogger("deviced"),
 			cmd_contrib.NewListener,
 			cmd_contrib.NewGrpcServer,
