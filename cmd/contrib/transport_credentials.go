@@ -84,30 +84,11 @@ func (self *TransportCredentialOption) SetKeyFile(key_file string) {
 }
 
 func NewClientTransportCredentials(opt TransportCredentialOptioner) (credentials.TransportCredentials, error) {
-	// cert_file := opt.GetCertFile()
-	// key_file := opt.GetKeyFile()
-	// if cert_file != "" && key_file != "" {
-	// 	return credentials.NewServerTLSFromFile(cert_file, key_file)
-	// } else if opt.GetInsecure() {
-	// 	return credentials.NewTLS(&tls.Config{
-	// 		InsecureSkipVerify: true,
-	// 	}), nil
-	// } else if opt.GetPlainText() {
-	// 	return nil, nil
-	// }
-	// return credentials.NewTLS(nil), nil
 	return client_helper.NewClientTransportCredentials(
 		opt.GetCertFile(), opt.GetKeyFile(),
 		opt.GetPlainText(), opt.GetInsecure())
 }
 
 func NewServerTransportCredentials(opt TransportCredentialOptioner) (credentials.TransportCredentials, error) {
-	// cert_file := opt.GetCertFile()
-	// key_file := opt.GetKeyFile()
-	// if cert_file != "" && key_file != "" {
-	// 	return credentials.NewServerTLSFromFile(cert_file, key_file)
-	// } else {
-	// 	return nil, nil
-	// }
 	return client_helper.NewServerTransportCredentials(opt.GetCertFile(), opt.GetKeyFile())
 }
