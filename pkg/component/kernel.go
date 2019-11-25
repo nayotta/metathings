@@ -2,7 +2,6 @@ package metathings_component
 
 import (
 	"context"
-	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -17,8 +16,6 @@ import (
 	"github.com/golang/protobuf/ptypes/wrappers"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials"
 
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
 	const_helper "github.com/nayotta/metathings/pkg/common/constant"
@@ -387,18 +384,7 @@ func new_client_factory_from_new_kernel_option(opt *NewKernelOption) (*client_he
 		return nil, err
 	}
 
-	srv_opts := client_helper.DefaultDialOption()
-	if opt.TransportCredential.PlainText {
-		srv_opts = append(srv_opts, grpc.WithInsecure())
-	} else if opt.TransportCredential.Insecure {
-		srv_opts = append(srv_opts, grpc.WithTransportCredentials(credentials.NewTLS(&tls.Config{InsecureSkipVerify: true})))
-	} else if opt.TransportCredential.KeyFile != "" && opt.TransportCredential.CertFile != "" {
-		panic("unimplemented")
-	} else if opt.TransportCredential.KeyFile == "" && opt.TransportCredential.CertFile == "" {
-		srv_opts = append(srv_opts, grpc.WithTransportCredentials(credentials.NewTLS(nil)))
-	}
-
-	cli_fty, err = client_helper.NewClientFactory(srv_cfgs, srv_opts)
+	cli_fty, err = client_helper.NewClientFactory(srv_cfgs, client_helper.DefaultDialOption())
 	if err != nil {
 		return nil, err
 	}
@@ -430,9 +416,8 @@ func new_client_factory_from_kernel_config(cfg *KernelConfig) (*client_helper.Cl
 	if err != nil {
 		return nil, err
 	}
-	cfg.Sub("transport_credential").Unmarshal(&opt.TransportCredential)
-	return new_client_factory_from_new_kernel_option(&opt)
 
+	return new_client_factory_from_new_kernel_option(&opt)
 }
 
 func _get_module_config_text(cli pb.DeviceServiceClient, ctx context.Context, mdl_name string) (string, error) {
