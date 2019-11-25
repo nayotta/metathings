@@ -347,59 +347,90 @@ type NewKernelOption struct {
 		Id     string
 		Secret string
 	}
-	TransportCredential struct {
-		Insecure  bool
-		PlainText bool
-		Key       string
-		Cert      string
+	TransportCredential TransportCredential
+	ServiceEndpoints    map[string]ServiceEndpoint
+	ConfigText          string
+}
+
+func new_service_config_from_service_endpoint(ep ServiceEndpoint) (client_helper.ServiceConfig, error) {
+	cred, err := client_helper.NewClientTransportCredentials(ep.CertFile, ep.KeyFile, ep.PlainText, ep.Insecure)
+	if err != nil {
+		return client_helper.ServiceConfig{}, err
 	}
-	ServiceEndpoints map[string]string
-	ConfigText       string
+
+	return client_helper.ServiceConfig{
+		Address:              ep.Address,
+		TransportCredentials: cred,
+	}, nil
 }
 
 func new_client_factory_from_new_kernel_option(opt *NewKernelOption) (*client_helper.ClientFactory, error) {
 	var err error
 	var cli_fty *client_helper.ClientFactory
 
-	addr, ok := opt.ServiceEndpoints["default"]
+	ep, ok := opt.ServiceEndpoints["default"]
 	if !ok {
 		return nil, ErrDefaultAddressRequired
 	}
-	srv_cfgs := client_helper.NewDefaultServiceConfigs(addr)
-	addr, ok = opt.ServiceEndpoints["device"]
+	srv_cfgs := client_helper.ServiceConfigs{}
+	srv_cfgs[client_helper.DEFAULT_CONFIG], err = new_service_config_from_service_endpoint(ep)
+	if err != nil {
+		return nil, err
+	}
+
+	ep, ok = opt.ServiceEndpoints["device"]
 	if !ok {
 		return nil, ErrDeviceAddressRequired
 	}
-	srv_cfgs[client_helper.DEVICED_CONFIG] = client_helper.ServiceConfig{addr}
+	srv_cfgs[client_helper.DEVICE_CONFIG], err = new_service_config_from_service_endpoint(ep)
+	if err != nil {
+		return nil, err
+	}
 
 	srv_opts := client_helper.DefaultDialOption()
 	if opt.TransportCredential.PlainText {
 		srv_opts = append(srv_opts, grpc.WithInsecure())
 	} else if opt.TransportCredential.Insecure {
 		srv_opts = append(srv_opts, grpc.WithTransportCredentials(credentials.NewTLS(&tls.Config{InsecureSkipVerify: true})))
-	} else if opt.TransportCredential.Key != "" && opt.TransportCredential.Cert != "" {
+	} else if opt.TransportCredential.KeyFile != "" && opt.TransportCredential.CertFile != "" {
 		panic("unimplemented")
-	} else if opt.TransportCredential.Key == "" && opt.TransportCredential.Cert == "" {
+	} else if opt.TransportCredential.KeyFile == "" && opt.TransportCredential.CertFile == "" {
 		srv_opts = append(srv_opts, grpc.WithTransportCredentials(credentials.NewTLS(nil)))
 	}
 
-	cli_fty, err = client_helper.NewClientFactory(srv_cfgs, client_helper.DefaultDialOption())
+	cli_fty, err = client_helper.NewClientFactory(srv_cfgs, srv_opts)
 	if err != nil {
 		return nil, err
 	}
 	return cli_fty, nil
 }
 
-func new_client_factory_from_kernel_config(cfg *KernelConfig) (*client_helper.ClientFactory, error) {
-	opt := NewKernelOption{
-		ServiceEndpoints: map[string]string{},
+func new_service_endpoint_from_kernel_config(cfg *KernelConfig, name string) (ServiceEndpoint, error) {
+	var err error
+	var srv_ep ServiceEndpoint
+
+	if err = cfg.Sub("service_endpoint." + name).Unmarshal(&srv_ep); err != nil {
+		return srv_ep, err
 	}
-	opt.ServiceEndpoints["default"] = cfg.GetString("service_endpoint.default.address")
-	opt.ServiceEndpoints["device"] = cfg.GetString("service_endpoint.device.address")
-	opt.TransportCredential.Insecure = cfg.GetBool("transport_credential.insecure")
-	opt.TransportCredential.PlainText = cfg.GetBool("transport_credential.plain_text")
-	opt.TransportCredential.Key = cfg.GetString("transport_credential.key")
-	opt.TransportCredential.Cert = cfg.GetString("transport_credential.cert")
+
+	return srv_ep, nil
+}
+
+func new_client_factory_from_kernel_config(cfg *KernelConfig) (*client_helper.ClientFactory, error) {
+	var err error
+
+	opt := NewKernelOption{
+		ServiceEndpoints: map[string]ServiceEndpoint{},
+	}
+	opt.ServiceEndpoints["default"], err = new_service_endpoint_from_kernel_config(cfg, "default")
+	if err != nil {
+		return nil, err
+	}
+	opt.ServiceEndpoints["device"], err = new_service_endpoint_from_kernel_config(cfg, "device")
+	if err != nil {
+		return nil, err
+	}
+	cfg.Sub("transport_credential").Unmarshal(&opt.TransportCredential)
 	return new_client_factory_from_new_kernel_option(&opt)
 
 }

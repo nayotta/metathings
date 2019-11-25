@@ -111,7 +111,7 @@ func runTagd() error {
 		fx.NopLogger,
 		fx.Provide(
 			GetTagdOptions,
-			cmd_contrib.NewTransportCredentials,
+			cmd_contrib.NewServerTransportCredentials,
 			cmd_contrib.NewLogger("tagd"),
 			cmd_contrib.NewListener,
 			cmd_contrib.NewGrpcServer,

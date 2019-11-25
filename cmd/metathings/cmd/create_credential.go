@@ -70,7 +70,7 @@ func create_credential() error {
 		fx.Provide(
 			GetCreateCredentialOptions,
 			cmd_contrib.NewLogger("create_credential"),
-			cmd_contrib.NewTransportCredentials,
+			cmd_contrib.NewClientTransportCredentials,
 			cmd_contrib.NewClientFactory,
 		),
 		fx.Invoke(

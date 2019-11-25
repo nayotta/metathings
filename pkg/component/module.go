@@ -29,13 +29,8 @@ type ModuleOption struct {
 	Config              string
 	CredentialId        string
 	CredentialSecret    string
-	Addresses           []string
-	TransportCredential struct {
-		Insecure  bool
-		PlainText bool
-		Key       string
-		Cert      string
-	}
+	ServiceEndpoints    map[string]ServiceEndpoint
+	TransportCredential TransportCredential
 }
 
 type Module struct {
@@ -56,9 +51,8 @@ func (m *Module) init_flags() error {
 	m.flags.StringVar(&m.opt.CredentialSecret, "credential-secret", "", "Module Credential Secret")
 	m.flags.BoolVar(&m.opt.TransportCredential.Insecure, "insecure", false, "Transport data in tls with insecure mode")
 	m.flags.BoolVar(&m.opt.TransportCredential.PlainText, "plaintext", false, "Transport data without tls")
-	m.flags.StringVar(&m.opt.TransportCredential.Key, "key", "", "Transport credential key")
-	m.flags.StringVar(&m.opt.TransportCredential.Cert, "cert", "", "Transport credential cert")
-	m.flags.StringArrayVar(&m.opt.Addresses, "addresses", []string{"device:127.0.0.1:5002", "default:metathings.ai:21733"}, "Metathings Service Addresses")
+	m.flags.StringVar(&m.opt.TransportCredential.KeyFile, "key-file", "", "Transport credential key")
+	m.flags.StringVar(&m.opt.TransportCredential.CertFile, "cert-file", "", "Transport credential cert")
 
 	err := m.flags.Parse(os.Args[1:])
 	if err != nil {
@@ -96,11 +90,11 @@ func (m *Module) init_kernel() error {
 	} else {
 		opt.Credential.Id = m.opt.CredentialId
 		opt.Credential.Secret = m.opt.CredentialSecret
-		opt.ServiceEndpoints, err = parse_service_endpoints(m.opt.Addresses)
+		opt.ServiceEndpoints = m.opt.ServiceEndpoints
 		opt.TransportCredential.Insecure = m.opt.TransportCredential.Insecure
 		opt.TransportCredential.PlainText = m.opt.TransportCredential.PlainText
-		opt.TransportCredential.Key = m.opt.TransportCredential.Key
-		opt.TransportCredential.Cert = m.opt.TransportCredential.Cert
+		opt.TransportCredential.KeyFile = m.opt.TransportCredential.KeyFile
+		opt.TransportCredential.CertFile = m.opt.TransportCredential.CertFile
 		if err != nil {
 			return err
 		}

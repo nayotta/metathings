@@ -7,6 +7,18 @@ import (
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 )
 
+type TransportCredential struct {
+	Insecure  bool
+	PlainText bool
+	KeyFile   string
+	CertFile  string
+}
+
+type ServiceEndpoint struct {
+	TransportCredential
+	Address string
+}
+
 func ToModule(v **Module) func(string, interface{}) error {
 	return func(key string, val interface{}) error {
 		var ok bool

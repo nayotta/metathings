@@ -147,7 +147,7 @@ func initIdentityd2() error {
 		fx.NopLogger,
 		fx.Provide(
 			GetIdentityd2Options,
-			cmd_contrib.NewTransportCredentials,
+			cmd_contrib.NewServerTransportCredentials,
 			cmd_contrib.NewLogger("identityd2"),
 			cmd_contrib.NewClientFactory,
 			NewIdentityd2Backend,
@@ -247,7 +247,7 @@ func runIdentityd2() error {
 		fx.NopLogger,
 		fx.Provide(
 			GetIdentityd2Options,
-			cmd_contrib.NewTransportCredentials,
+			cmd_contrib.NewServerTransportCredentials,
 			cmd_contrib.NewLogger("identityd2"),
 			cmd_contrib.NewListener,
 			cmd_contrib.NewGrpcServer,

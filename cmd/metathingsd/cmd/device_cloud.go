@@ -131,7 +131,7 @@ func runDeviceCloud() error {
 		fx.NopLogger,
 		fx.Provide(
 			GetDeviceCloudOptions,
-			cmd_contrib.NewTransportCredentials,
+			cmd_contrib.NewServerTransportCredentials,
 			cmd_contrib.NewLogger("device_cloud"),
 			cmd_contrib.NewListener,
 			cmd_contrib.NewHttpServer,
