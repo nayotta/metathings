@@ -81,6 +81,8 @@ func (f *ClientFactory) NewConnection(cfg_val ClientType, opts ...grpc.DialOptio
 
 	if cfg.TransportCredentials != nil {
 		opts = append(opts, grpc.WithTransportCredentials(cfg.TransportCredentials))
+	} else {
+		opts = append(opts, grpc.WithInsecure())
 	}
 
 	conn, err := grpc.Dial(parseAddress(cfg.Address), opts...)

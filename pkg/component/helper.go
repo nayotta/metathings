@@ -9,14 +9,14 @@ import (
 
 type TransportCredential struct {
 	Insecure  bool
-	PlainText bool
-	KeyFile   string
-	CertFile  string
+	PlainText bool   `mapstructure:"plain_text"`
+	KeyFile   string `mapstructure:"key_file"`
+	CertFile  string `mapstructure:"cert_file"`
 }
 
 type ServiceEndpoint struct {
-	TransportCredential
-	Address string
+	TransportCredential `mapstructure:",squash"`
+	Address             string
 }
 
 func ToModule(v **Module) func(string, interface{}) error {
