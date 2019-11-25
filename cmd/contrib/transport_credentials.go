@@ -30,9 +30,9 @@ type TransportCredentialOptioner interface {
 
 type TransportCredentialOption struct {
 	Insecure  bool
-	PlainText bool
-	CertFile  string
-	KeyFile   string
+	PlainText bool   `mapstructure:"plain_text"`
+	CertFile  string `mapstructure:"cert_file"`
+	KeyFile   string `mapstructure:"key_file"`
 }
 
 func (self *TransportCredentialOption) GetInsecureP() *bool {

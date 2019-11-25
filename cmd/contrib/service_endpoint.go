@@ -12,8 +12,8 @@ type ServiceEndpointOptioner interface {
 }
 
 type ServiceEndpointOption struct {
-	TransportCredentialOption
-	Address string
+	TransportCredentialOption `mapstructure:",squash"`
+	Address                   string
 }
 
 func (self *ServiceEndpointOption) GetAddressP() *string {
