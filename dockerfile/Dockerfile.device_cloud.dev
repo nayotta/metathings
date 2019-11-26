@@ -1,5 +1,0 @@
-FROM nayotta/metathings-development
-
-COPY ./etc/device_cloud.yaml /etc/metathings/device_cloud.yaml
-COPY ./script/device_cloud.dev_start.sh /usr/local/sbin/device_cloud.dev_start.sh
-CMD /usr/local/sbin/device_cloud.dev_start.sh

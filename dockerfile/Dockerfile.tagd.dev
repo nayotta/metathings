@@ -1,5 +1,0 @@
-FROM nayotta/metathings-development
-
-COPY ./etc/tagd.yaml /etc/metathings/tagd.yaml
-COPY ./script/tagd.dev_start.sh /usr/local/sbin/tagd.dev_start.sh
-CMD /usr/local/sbin/tagd.dev_start.sh
