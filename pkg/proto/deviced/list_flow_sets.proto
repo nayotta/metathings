@@ -9,5 +9,5 @@ message ListFlowSetsRequest {
 }
 
 message ListFlowSetsResponse {
-	FlowSet flow_set = 1;
+	repeated FlowSet flow_sets = 1;
 }

@@ -24,9 +24,11 @@ func (this *ListFlowSetsRequest) Validate() error {
 	return nil
 }
 func (this *ListFlowSetsResponse) Validate() error {
-	if this.FlowSet != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.FlowSet); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("FlowSet", err)
+	for _, item := range this.FlowSets {
+		if item != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("FlowSets", err)
+			}
 		}
 	}
 	return nil
