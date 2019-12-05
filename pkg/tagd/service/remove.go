@@ -12,7 +12,7 @@ import (
 )
 
 func (ts *MetathingsTagdService) AuthorizeRemove(ctx context.Context, in interface{}) error {
-	return ts.authorizer.Authorize(ctx, in.(*pb.GetRequest).GetId().GetValue(), TAGD_REMOVE)
+	return ts.authorizer.Authorize(ctx, in.(*pb.RemoveRequest).GetId().GetValue(), TAGD_REMOVE)
 }
 
 func (ts *MetathingsTagdService) Remove(ctx context.Context, req *pb.RemoveRequest) (*empty.Empty, error) {
