@@ -233,6 +233,9 @@ func NewSimpleStorage(opt *DevicedOption, logger log.FieldLogger) (simple_storag
 
 func NewMetathingsDevicedServiceOption(opt *DevicedOption) *service.MetathingsDevicedServiceOption {
 	o := &service.MetathingsDevicedServiceOption{}
+
+	o.Methods.PutObjectStreaming.ChunkSize = 128 * 1024
+
 	return o
 }
 

@@ -23,7 +23,6 @@ import (
 	id_helper "github.com/nayotta/metathings/pkg/common/id"
 	log_helper "github.com/nayotta/metathings/pkg/common/log"
 	identityd2_contrib "github.com/nayotta/metathings/pkg/identityd2/contrib"
-	device_pb "github.com/nayotta/metathings/pkg/proto/device"
 	pb "github.com/nayotta/metathings/pkg/proto/device"
 	deviced_pb "github.com/nayotta/metathings/pkg/proto/deviced"
 	identityd2_pb "github.com/nayotta/metathings/pkg/proto/identityd2"
@@ -120,6 +119,21 @@ func (k *Kernel) PutObject(name string, content io.Reader) error {
 	defer cfn()
 
 	err = _put_object(cli, k.Context(), name, content)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (k *Kernel) PutObjectStreaming(name string, content io.ReadSeeker, sha1 string) error {
+	cli, cfn, err := k.cli_fty.NewDeviceServiceClient()
+	if err != nil {
+		return err
+	}
+	defer cfn()
+
+	err = _put_object_streaming(cli, k.Context(), name, content, sha1)
 	if err != nil {
 		return err
 	}
@@ -238,16 +252,16 @@ func (k *Kernel) Heartbeat() error {
 }
 
 type FrameStream struct {
-	stream   device_pb.DeviceService_PushFrameToFlowClient
+	stream   pb.DeviceService_PushFrameToFlowClient
 	push_ack bool
 	close_cb func() error
 }
 
 func (fs *FrameStream) PushFrame(frm *deviced_pb.OpFrame) error {
 	req_id := id_helper.NewId()
-	req := &device_pb.PushFrameToFlowRequest{
+	req := &pb.PushFrameToFlowRequest{
 		Id: &wrappers.StringValue{Value: req_id},
-		Request: &device_pb.PushFrameToFlowRequest_Frame{
+		Request: &pb.PushFrameToFlowRequest_Frame{
 			Frame: frm,
 		},
 	}
@@ -421,7 +435,7 @@ func new_client_factory_from_kernel_config(cfg *KernelConfig) (*client_helper.Cl
 }
 
 func _get_module_config_text(cli pb.DeviceServiceClient, ctx context.Context, mdl_name string) (string, error) {
-	req := &device_pb.GetObjectContentRequest{
+	req := &pb.GetObjectContentRequest{
 		Object: &deviced_pb.OpObject{
 			Name: &wrappers.StringValue{Value: fmt.Sprintf("%s/sys/config", mdl_name)},
 		},
@@ -449,7 +463,7 @@ func _put_object(cli pb.DeviceServiceClient, ctx context.Context, name string, c
 		return err
 	}
 
-	req := &device_pb.PutObjectRequest{
+	req := &pb.PutObjectRequest{
 		Object: &deviced_pb.OpObject{
 			Name: &wrappers.StringValue{Value: name},
 		},
@@ -464,8 +478,92 @@ func _put_object(cli pb.DeviceServiceClient, ctx context.Context, name string, c
 	return nil
 }
 
+func _put_object_streaming(cli pb.DeviceServiceClient, ctx context.Context, name string, content io.ReadSeeker, sha1 string) error {
+	stm, err := cli.PutObjectStreaming(ctx)
+	if err != nil {
+		return err
+	}
+
+	req := &pb.PutObjectStreamingRequest{
+		Id: &wrappers.StringValue{Value: id_helper.NewId()},
+		Request: &pb.PutObjectStreamingRequest_Metadata_{
+			Metadata: &pb.PutObjectStreamingRequest_Metadata{
+				Object: &deviced_pb.OpObject{
+					Name: &wrappers.StringValue{Value: name},
+				},
+				Sha1: &wrappers.StringValue{Value: sha1},
+			},
+		},
+	}
+
+	if err = stm.Send(req); err != nil {
+		return err
+	}
+
+	errs := make(chan error)
+	defer close(errs)
+
+	go func() {
+		for {
+			res, err := stm.Recv()
+			if err != nil {
+				errs <- err
+				return
+			}
+
+			chunks := res.GetChunks()
+			if chunks == nil {
+				continue
+			}
+
+			req = &pb.PutObjectStreamingRequest{
+				Id: &wrappers.StringValue{Value: res.GetId()},
+			}
+			req_chks := []*deviced_pb.OpObjectChunk{}
+			for _, chk := range chunks.GetChunks() {
+				offset := chk.GetOffset()
+				length := chk.GetLength()
+				// TODO(Peer): allocate buffer before
+				buf := make([]byte, length)
+
+				if _, err = content.Seek(offset, 0); err != nil {
+					errs <- err
+					return
+				}
+
+				n, err := content.Read(buf)
+				if err != nil {
+					errs <- err
+					return
+				}
+				req_chks = append(req_chks, &deviced_pb.OpObjectChunk{
+					Offset: &wrappers.Int64Value{Value: offset},
+					Data:   &wrappers.BytesValue{Value: buf},
+					Length: &wrappers.Int64Value{Value: int64(n)},
+				})
+			}
+			req.Request = &pb.PutObjectStreamingRequest_Chunks{
+				Chunks: &deviced_pb.OpObjectChunks{
+					Chunks: req_chks,
+				},
+			}
+
+			if err = stm.Send(req); err != nil {
+				errs <- err
+				return
+			}
+		}
+	}()
+
+	if err = <-errs; err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func _get_object(cli pb.DeviceServiceClient, ctx context.Context, name string) (*deviced_pb.Object, error) {
-	req := &device_pb.GetObjectRequest{
+	req := &pb.GetObjectRequest{
 		Object: &deviced_pb.OpObject{
 			Name: &wrappers.StringValue{Value: name},
 		},
@@ -480,7 +578,7 @@ func _get_object(cli pb.DeviceServiceClient, ctx context.Context, name string) (
 }
 
 func _get_object_content(cli pb.DeviceServiceClient, ctx context.Context, name string) ([]byte, error) {
-	req := &device_pb.GetObjectContentRequest{
+	req := &pb.GetObjectContentRequest{
 		Object: &deviced_pb.OpObject{
 			Name: &wrappers.StringValue{Value: name},
 		},
@@ -495,7 +593,7 @@ func _get_object_content(cli pb.DeviceServiceClient, ctx context.Context, name s
 }
 
 func _remove_object(cli pb.DeviceServiceClient, ctx context.Context, name string) error {
-	req := &device_pb.RemoveObjectRequest{
+	req := &pb.RemoveObjectRequest{
 		Object: &deviced_pb.OpObject{
 			Name: &wrappers.StringValue{Value: name},
 		},
@@ -510,7 +608,7 @@ func _remove_object(cli pb.DeviceServiceClient, ctx context.Context, name string
 }
 
 func _rename_object(cli pb.DeviceServiceClient, ctx context.Context, src, dst string) error {
-	req := &device_pb.RenameObjectRequest{
+	req := &pb.RenameObjectRequest{
 		Source: &deviced_pb.OpObject{
 			Name: &wrappers.StringValue{Value: src},
 		},
@@ -528,7 +626,7 @@ func _rename_object(cli pb.DeviceServiceClient, ctx context.Context, src, dst st
 }
 
 func _heartbeat(cli pb.DeviceServiceClient, ctx context.Context, name string) error {
-	req := &device_pb.HeartbeatRequest{
+	req := &pb.HeartbeatRequest{
 		Module: &deviced_pb.OpModule{
 			Name: &wrappers.StringValue{Value: name},
 		},
@@ -542,9 +640,9 @@ func _heartbeat(cli pb.DeviceServiceClient, ctx context.Context, name string) er
 	return nil
 }
 
-func new_issue_module_token_request(domain, id, secret string) *device_pb.IssueModuleTokenRequest {
+func new_issue_module_token_request(domain, id, secret string) *pb.IssueModuleTokenRequest {
 	itbc_req := identityd2_contrib.NewIssueTokenByCredentialRequest(domain, id, secret)
-	return &device_pb.IssueModuleTokenRequest{
+	return &pb.IssueModuleTokenRequest{
 		Credential: itbc_req.GetCredential(),
 		Timestamp:  itbc_req.GetTimestamp(),
 		Nonce:      itbc_req.GetNonce(),
@@ -569,10 +667,10 @@ func _build_push_frame_to_flow_stream(cli pb.DeviceServiceClient, ctx context.Co
 	}
 
 	cfg_req_id := id_helper.NewId()
-	cfg_req := &device_pb.PushFrameToFlowRequest{
+	cfg_req := &pb.PushFrameToFlowRequest{
 		Id: &wrappers.StringValue{Value: cfg_req_id},
-		Request: &device_pb.PushFrameToFlowRequest_Config_{
-			Config: &device_pb.PushFrameToFlowRequest_Config{
+		Request: &pb.PushFrameToFlowRequest_Config_{
+			Config: &pb.PushFrameToFlowRequest_Config{
 				Flow: &deviced_pb.OpFlow{
 					Name: &wrappers.StringValue{Value: flow},
 				},

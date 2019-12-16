@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package ai.metathings.service.deviced;
+
+import "google/protobuf/wrappers.proto";
+
+import "model.proto";
+
+message PutObjectStreamingRequest {
+	message Metadata {
+		OpObject object = 1;
+		google.protobuf.StringValue sha1 = 2;
+	}
+
+	google.protobuf.StringValue id = 1;
+	oneof request {
+		Metadata metadata = 2;
+		OpObjectChunks chunks = 3;
+	}
+}
+
+message PutObjectStreamingResponse {
+	string id = 1;
+	oneof response {
+		ObjectChunks chunks = 2;
+	}
+}

@@ -99,6 +99,26 @@ message OpObject {
 	google.protobuf.Timestamp last_modified = 6;
 }
 
+message ObjectChunk {
+	int64 offset = 1;
+	bytes data = 2;
+	int64 length = 3;
+}
+
+message ObjectChunks {
+	repeated ObjectChunk chunks = 1;
+}
+
+message OpObjectChunk {
+	google.protobuf.Int64Value offset = 1;
+	google.protobuf.BytesValue data = 2;
+	google.protobuf.Int64Value length = 3;
+}
+
+message OpObjectChunks {
+	repeated OpObjectChunk chunks = 1;
+}
+
 message ErrorValue {
 	string name = 1;
 	string component = 2;

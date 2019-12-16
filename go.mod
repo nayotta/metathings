@@ -22,6 +22,7 @@ require (
 	github.com/spf13/viper v1.5.0
 	github.com/stianeikeland/go-rpio v4.2.0+incompatible
 	github.com/stretchr/testify v1.3.0
+	github.com/syndtr/goleveldb v1.0.0
 	github.com/tidwall/pretty v1.0.0 // indirect
 	github.com/xdg/scram v0.0.0-20180814205039-7eeb5667e42c // indirect
 	github.com/xdg/stringprep v1.0.0 // indirect

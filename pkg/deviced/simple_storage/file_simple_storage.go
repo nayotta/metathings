@@ -8,10 +8,13 @@ import (
 	"io/ioutil"
 	"os"
 	"path"
+	"strconv"
+	"sync"
 	"time"
 
 	log "github.com/sirupsen/logrus"
 
+	file_helper "github.com/nayotta/metathings/pkg/common/file"
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 	storage "github.com/nayotta/metathings/pkg/deviced/storage"
 )
@@ -29,8 +32,40 @@ type FileSimpleStorage struct {
 	logger log.FieldLogger
 }
 
+// Copy from ioutil.tempfile
+// Random number state.
+// We generate random temporary file names so that there's a good
+// chance the file doesn't exist yet - keeps the number of tries in
+// TempFile to a minimum.
+var rand uint32
+var randmu sync.Mutex
+
+func reseed() uint32 {
+	return uint32(time.Now().UnixNano() + int64(os.Getpid()))
+}
+
+func nextRandom() string {
+	randmu.Lock()
+	r := rand
+	if r == 0 {
+		r = reseed()
+	}
+	r = r*1664525 + 1013904223 // constants from Numerical Recipes
+	rand = r
+	randmu.Unlock()
+	return strconv.Itoa(int(1e9 + r%1e9))[1:]
+}
+
 func (fss *FileSimpleStorage) join_path(obj *Object) string {
 	return path.Join(fss.opt.Home, obj.Device, obj.FullName())
+}
+
+func (fss *FileSimpleStorage) join_temp_path(obj *Object) string {
+	fn := obj.FullName()
+	fn_dir := path.Dir(fn)
+	fn_base := path.Base(fn)
+	fn_ext := path.Ext(fn)
+	return path.Join(fss.opt.Home, obj.Device, "tmp", fn_dir, fn_base+nextRandom()+fn_ext)
 }
 
 func (fss *FileSimpleStorage) is_empty(dev *storage.Device, obj *Object) (bool, error) {
@@ -85,6 +120,33 @@ func (fss *FileSimpleStorage) PutObject(obj *Object, reader io.Reader) error {
 	}
 
 	return nil
+}
+
+func (fss *FileSimpleStorage) PutObjectAsync(obj *Object, opt *PutObjectAsyncOption) (*file_helper.FileSyncer, error) {
+	p := fss.join_path(obj)
+	err := os.MkdirAll(path.Dir(p), os.ModePerm)
+	if err != nil {
+		return nil, err
+	}
+
+	cp := fss.join_temp_path(obj)
+	err = os.MkdirAll(path.Dir(cp), os.ModePerm)
+	if err != nil {
+		return nil, err
+	}
+
+	fs, err := file_helper.NewFileSyncer(
+		file_helper.SetPath(p),
+		file_helper.SetSize(obj.Length),
+		file_helper.SetSha1Hash(opt.SHA1),
+		file_helper.SetChunkSize(opt.ChunkSize),
+		file_helper.SetCachePath(cp),
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return fs, nil
 }
 
 func (fss *FileSimpleStorage) RemoveObject(obj *Object) error {

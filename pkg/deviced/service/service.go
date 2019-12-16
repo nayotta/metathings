@@ -25,7 +25,13 @@ import (
 	identityd_pb "github.com/nayotta/metathings/pkg/proto/identityd2"
 )
 
-type MetathingsDevicedServiceOption struct{}
+type MetathingsDevicedServiceOption struct {
+	Methods struct {
+		PutObjectStreaming struct {
+			ChunkSize int64
+		}
+	}
+}
 
 type MetathingsDevicedService struct {
 	grpc_auth.ServiceAuthFuncOverride

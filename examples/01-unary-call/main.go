@@ -71,6 +71,13 @@ func main() {
 		}
 	case "switch":
 		switch method {
+		case "On":
+			any_req, _ = ptypes.MarshalAny(&empty.Empty{})
+		case "Off":
+			any_req, _ = ptypes.MarshalAny(&empty.Empty{})
+		}
+	case "dvr":
+		switch method {
 		case "Start":
 			any_req, _ = ptypes.MarshalAny(&empty.Empty{})
 		case "Stop":
@@ -139,6 +146,20 @@ func main() {
 			fmt.Println("camera started")
 		case "Stop":
 			fmt.Println("camera stoped")
+		}
+	case "switch":
+		switch method {
+		case "On":
+			fmt.Println("switch on")
+		case "Off":
+			fmt.Println("switch off")
+		}
+	case "dvr":
+		switch method {
+		case "Start":
+			fmt.Println("digit video recorder start")
+		case "Stop":
+			fmt.Println("digit video recorder stop")
 		}
 	}
 }
