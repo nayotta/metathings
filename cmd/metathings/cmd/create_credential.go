@@ -55,12 +55,10 @@ var (
 func GetCreateCredentialOptions() (
 	*CreateCredentialOption,
 	cmd_contrib.ServiceEndpointsOptioner,
-	cmd_contrib.TransportCredentialOptioner,
 	cmd_contrib.LoggerOptioner,
 ) {
 	return create_credential_opt,
-		create_credential_opt,
-		create_credential_opt,
+		cmd_contrib.NewServiceEndpointsOptionWithTransportCredentialOption(create_credential_opt, create_credential_opt),
 		create_credential_opt
 }
 
@@ -70,7 +68,6 @@ func create_credential() error {
 		fx.Provide(
 			GetCreateCredentialOptions,
 			cmd_contrib.NewLogger("create_credential"),
-			cmd_contrib.NewClientTransportCredentials,
 			cmd_contrib.NewClientFactory,
 		),
 		fx.Invoke(
