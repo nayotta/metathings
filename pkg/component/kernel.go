@@ -126,14 +126,19 @@ func (k *Kernel) PutObject(name string, content io.Reader) error {
 	return nil
 }
 
-func (k *Kernel) PutObjectStreaming(name string, content io.ReadSeeker, sha1 string) error {
+type PutObjectStreamingOption struct {
+	Sha1   string
+	Length int64
+}
+
+func (k *Kernel) PutObjectStreaming(name string, content io.ReadSeeker, opt *PutObjectStreamingOption) error {
 	cli, cfn, err := k.cli_fty.NewDeviceServiceClient()
 	if err != nil {
 		return err
 	}
 	defer cfn()
 
-	err = _put_object_streaming(cli, k.Context(), name, content, sha1)
+	err = _put_object_streaming(cli, k.Context(), name, content, opt.Sha1, opt.Length)
 	if err != nil {
 		return err
 	}
@@ -478,7 +483,7 @@ func _put_object(cli pb.DeviceServiceClient, ctx context.Context, name string, c
 	return nil
 }
 
-func _put_object_streaming(cli pb.DeviceServiceClient, ctx context.Context, name string, content io.ReadSeeker, sha1 string) error {
+func _put_object_streaming(cli pb.DeviceServiceClient, ctx context.Context, name string, content io.ReadSeeker, sha1 string, length int64) error {
 	stm, err := cli.PutObjectStreaming(ctx)
 	if err != nil {
 		return err
@@ -489,7 +494,8 @@ func _put_object_streaming(cli pb.DeviceServiceClient, ctx context.Context, name
 		Request: &pb.PutObjectStreamingRequest_Metadata_{
 			Metadata: &pb.PutObjectStreamingRequest_Metadata{
 				Object: &deviced_pb.OpObject{
-					Name: &wrappers.StringValue{Value: name},
+					Name:   &wrappers.StringValue{Value: name},
+					Length: &wrappers.Int64Value{Value: length},
 				},
 				Sha1: &wrappers.StringValue{Value: sha1},
 			},

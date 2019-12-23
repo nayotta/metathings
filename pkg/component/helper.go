@@ -1,7 +1,11 @@
 package metathings_component
 
 import (
+	"crypto/sha1"
+	"fmt"
+	"io"
 	"net/url"
+	"os"
 	"strings"
 
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
@@ -58,4 +62,31 @@ func ParseEndpoint(ep string) (*Endpoint, error) {
 	}
 
 	return &Endpoint{url}, nil
+}
+
+func NewPutObjectStreamingOptionFromPath(path string) (*PutObjectStreamingOption, error) {
+	f, err := os.Open(path)
+	if err != nil {
+		return nil, err
+	}
+	defer f.Close()
+
+	stat, err := f.Stat()
+	if err != nil {
+		return nil, err
+	}
+
+	sha1 := sha1.New()
+	_, err = io.Copy(sha1, f)
+	if err != nil {
+		return nil, err
+	}
+	sha1_str := fmt.Sprintf("%x", sha1.Sum(nil))
+
+	opt := &PutObjectStreamingOption{
+		Length: stat.Size(),
+		Sha1:   sha1_str,
+	}
+
+	return opt, nil
 }
