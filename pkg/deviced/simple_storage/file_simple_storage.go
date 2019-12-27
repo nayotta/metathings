@@ -64,8 +64,7 @@ func (fss *FileSimpleStorage) join_temp_path(obj *Object) string {
 	fn := obj.FullName()
 	fn_dir := path.Dir(fn)
 	fn_base := path.Base(fn)
-	fn_ext := path.Ext(fn)
-	return path.Join(fss.opt.Home, obj.Device, "tmp", fn_dir, fn_base+nextRandom()+fn_ext)
+	return path.Join(fss.opt.Home, obj.Device, "tmp", fn_dir, fn_base+"."+nextRandom())
 }
 
 func (fss *FileSimpleStorage) is_empty(dev *storage.Device, obj *Object) (bool, error) {
@@ -256,12 +255,12 @@ func (fss *FileSimpleStorage) ListObjects(obj *Object) ([]*Object, error) {
 
 func new_file_simple_storage(args ...interface{}) (SimpleStorage, error) {
 	var logger log.FieldLogger
-	opt := &FileSimpleStorageOption{}
+	opt := NewFileSimpleStorageOption()
 
 	err := opt_helper.Setopt(map[string]func(string, interface{}) error{
 		"home":   opt_helper.ToString(&opt.Home),
 		"logger": opt_helper.ToLogger(&logger),
-	})(args...)
+	}, opt_helper.SetSkip(true))(args...)
 	if err != nil {
 		return nil, err
 	}

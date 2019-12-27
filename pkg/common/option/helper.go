@@ -184,12 +184,38 @@ func InvalidArgument(key string) error {
 
 type SetoptConds map[string]func(string, interface{}) error
 
-func Setopt(conds SetoptConds) func(...interface{}) error {
+type SetOptOptions struct {
+	Skip bool
+}
+
+func NewSetOptOptions() *SetOptOptions {
+	o := &SetOptOptions{}
+
+	o.Skip = false
+
+	return o
+}
+
+type SetOptOption func(*SetOptOptions)
+
+func SetSkip(skip bool) SetOptOption {
+	return func(o *SetOptOptions) {
+		o.Skip = skip
+	}
+}
+
+func Setopt(conds SetoptConds, opts ...SetOptOption) func(...interface{}) error {
+	o := NewSetOptOptions()
+	for _, opt := range opts {
+		opt(o)
+	}
+
 	return func(args ...interface{}) error {
 		if len(args)%2 != 0 {
 			return InvalidArgument("arguments")
 		}
 
+	_set_opt_loop:
 		for i := 0; i < len(args); i += 2 {
 			key, ok := args[i].(string)
 			if !ok {
@@ -199,8 +225,12 @@ func Setopt(conds SetoptConds) func(...interface{}) error {
 
 			cond, ok := conds[key]
 			if !ok {
+				if o.Skip {
+					continue _set_opt_loop
+				}
 				return InvalidArgument(key)
 			}
+
 			if err := cond(key, val); err != nil {
 				return err
 			}

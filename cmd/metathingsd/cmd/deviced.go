@@ -234,7 +234,19 @@ func NewSimpleStorage(opt *DevicedOption, logger log.FieldLogger) (simple_storag
 func NewMetathingsDevicedServiceOption(opt *DevicedOption) *service.MetathingsDevicedServiceOption {
 	o := &service.MetathingsDevicedServiceOption{}
 
-	o.Methods.PutObjectStreaming.ChunkSize = 128 * 1024
+	o.Methods.PutObjectStreaming.ChunkSize = 256 * 1024
+	if cs, ok := opt.SimpleStorage["chunk_size"]; ok {
+		if csi, ok := cs.(int); ok {
+			o.Methods.PutObjectStreaming.ChunkSize = int64(csi)
+		}
+	}
+
+	o.Methods.PutObjectStreaming.ChunkPerRequest = 4
+	if cpr, ok := opt.SimpleStorage["chunk_per_request"]; ok {
+		if cpri, ok := cpr.(int); ok {
+			o.Methods.PutObjectStreaming.ChunkPerRequest = cpri
+		}
+	}
 
 	return o
 }

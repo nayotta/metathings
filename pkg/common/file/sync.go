@@ -8,7 +8,7 @@ import (
 	"path"
 	"sync"
 
-	"github.com/syndtr/goleveldb/leveldb/iterator"
+	log_helper "github.com/nayotta/metathings/pkg/common/log"
 )
 
 const (
@@ -64,9 +64,11 @@ func NewFileSyncerOption() *FileSyncerOption {
 type FileSyncer struct {
 	opt *FileSyncerOption
 	db  sync.Map
+	fp  *os.File
 
-	fp   *os.File
-	iter iterator.Iterator
+	stat struct {
+		Chunks int64
+	}
 }
 
 func (fs *FileSyncer) init_db() error {
@@ -74,12 +76,14 @@ func (fs *FileSyncer) init_db() error {
 	for i = 0; i*fs.opt.chunk_size < fs.opt.size; i++ {
 		fs.db.Store(i*fs.opt.chunk_size, "")
 	}
+
+	fs.stat.Chunks = i
+
 	return nil
 }
 
 func (fs *FileSyncer) Close() (err error) {
-	_, err = os.Stat(fs.opt.cache_path)
-	if !os.IsNotExist(err) {
+	if _, err = os.Stat(fs.opt.cache_path); err == nil {
 		return os.Remove(fs.opt.cache_path)
 	}
 
@@ -93,6 +97,17 @@ func (fs *FileSyncer) is_done() bool {
 		return false
 	})
 	return done
+}
+
+func (fs *FileSyncer) debug() {
+	logger := log_helper.NewDebugLogger()
+	var wtchks int64
+	fs.db.Range(func(_, _ interface{}) bool {
+		wtchks++
+		return true
+	})
+
+	logger.WithField("sum", fmt.Sprintf("%v/%v", fs.stat.Chunks-wtchks, fs.stat.Chunks)).Debugf("chunk state")
 }
 
 func (fs *FileSyncer) Next(batch int) (offsets []int64, err error) {
@@ -160,6 +175,10 @@ func (fs *FileSyncer) post_sync() (err error) {
 func (fs *FileSyncer) validate(path string) error {
 	fp, err := os.Open(path)
 	if err != nil {
+		if os.IsNotExist(err) {
+			return ErrHashNotMatch
+		}
+
 		return err
 	}
 	defer fp.Close()

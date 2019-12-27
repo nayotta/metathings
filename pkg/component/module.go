@@ -195,6 +195,10 @@ func (m *Module) PutObjects(objects map[string]io.Reader) error {
 	return m.Kernel().PutObjects(with_namespace_objects)
 }
 
+func (m *Module) PutObjectStreaming(name string, content io.ReadSeeker, opt *PutObjectStreamingOption) error {
+	return m.Kernel().PutObjectStreaming(m.WithNamespace(name), content, opt)
+}
+
 func (m *Module) GetObject(name string) (*deviced_pb.Object, error) {
 	return m.Kernel().GetObject(m.WithNamespace(name))
 }

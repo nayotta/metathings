@@ -1,8 +1,7 @@
 package metathings_device_service
 
 import (
-	"sync"
-
+	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
@@ -29,9 +28,12 @@ func (self *MetathingsDeviceServiceImpl) parse_put_object_streaming_request(x *p
 	switch x.Request.(type) {
 	case *pb.PutObjectStreamingRequest_Metadata_:
 		yreq := x.GetMetadata()
+		obj := yreq.GetObject()
+		obj.Device = self.pb_device()
+
 		y.Request = &deviced_pb.PutObjectStreamingRequest_Metadata_{
 			Metadata: &deviced_pb.PutObjectStreamingRequest_Metadata{
-				Object: yreq.GetObject(),
+				Object: obj,
 				Sha1:   yreq.GetSha1(),
 			},
 		}
@@ -46,34 +48,36 @@ func (self *MetathingsDeviceServiceImpl) parse_put_object_streaming_request(x *p
 }
 
 func (self *MetathingsDeviceServiceImpl) PutObjectStreaming(stm pb.DeviceService_PutObjectStreamingServer) error {
+	logger := self.logger.WithField("#method", "PutObjectStreaming")
+
 	cli, cfn, err := self.cli_fty.NewDevicedServiceClient()
 	if err != nil {
-		self.logger.WithError(err).Errorf("failed to connect deviced service")
+		logger.WithError(err).Errorf("failed to connect deviced service")
 		return status.Errorf(codes.Internal, err.Error())
 	}
 	defer cfn()
 
 	upstm, err := cli.PutObjectStreaming(self.context())
 	if err != nil {
-		self.logger.WithError(err).Errorf("failed to put object streaming from deviced service")
+		logger.WithError(err).Errorf("failed to put object streaming from deviced service")
 		return status.Errorf(codes.Internal, err.Error())
 	}
 
-	wg := sync.WaitGroup{}
-	wg.Add(2)
+	n2s_quit := make(chan struct{})
+	s2n_quit := make(chan struct{})
 
 	go func() {
-		defer wg.Done()
+		defer close(n2s_quit)
 		for {
 			cres, err := upstm.Recv()
 			if err != nil {
-				self.logger.WithError(err).Warningf("failed to receive put object streaming response from deviced service")
+				logger.WithError(err).Warningf("failed to receive put object streaming response from deviced service")
 				return
 			}
 
 			res := self.parse_put_object_streaming_response(cres)
 			if err = stm.Send(res); err != nil {
-				self.logger.WithError(err).Warningf("failed to send put object streaming response to module")
+				logger.WithError(err).Warningf("failed to send put object streaming response to module")
 				return
 			}
 
@@ -81,21 +85,33 @@ func (self *MetathingsDeviceServiceImpl) PutObjectStreaming(stm pb.DeviceService
 	}()
 
 	go func() {
-		defer wg.Done()
+		defer close(s2n_quit)
 		for {
 			req, err := stm.Recv()
 			if err != nil {
-				self.logger.WithError(err).Warningf("failed to receive put object streaming request from module")
+				logger.WithError(err).Warningf("failed to receive put object streaming request from module")
 				return
 			}
 
 			creq := self.parse_put_object_streaming_request(req)
 			if err = upstm.Send(creq); err != nil {
-				self.logger.WithError(err).Warningf("failed to send put object streaming request to deviced service")
+				logger.WithError(err).Warningf("failed to send put object streaming request to deviced service")
 			}
 		}
 	}()
 
-	wg.Wait()
+	select {
+	case <-n2s_quit:
+		logger.WithFields(log.Fields{
+			"from": "north",
+			"to":   "south",
+		}).Debugf("stream closed")
+	case <-s2n_quit:
+		logger.WithFields(log.Fields{
+			"from": "south",
+			"to":   "north",
+		}).Debugf("stream closed")
+	}
+
 	return nil
 }

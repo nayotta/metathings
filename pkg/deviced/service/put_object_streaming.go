@@ -40,31 +40,17 @@ func (self *MetathingsDevicedService) put_object_streaming_send_pull_request_loo
 		logger.Debugf("put object streaming send pull request loop exit")
 	}()
 
-	cnt := 0
-	sc := make(chan struct{})
-	defer close(sc)
-
 _put_object_streaming_send_pull_request_loop:
 	for {
 		select {
-		case <-sc:
-			if cnt > 7 {
-				logger.Warningf("recv push response timeout")
-				break _put_object_streaming_send_pull_request_loop
-			}
 		case _, ok := <-sem:
 			if !ok {
 				logger.Debugf("sem closed")
 				break _put_object_streaming_send_pull_request_loop
 			}
-			cnt = 0
-		case <-time.After(3 * time.Second):
-			cnt += 1
-			sc <- struct{}{}
-			continue _put_object_streaming_send_pull_request_loop
 		}
 
-		offsets, err := fs.Next(3)
+		offsets, err := fs.Next(self.opt.Methods.PutObjectStreaming.ChunkPerRequest)
 		if err != nil {
 			if err == file_helper.DONE {
 				logger.Debugf("file sync done")
@@ -165,14 +151,15 @@ func (self *MetathingsDevicedService) PutObjectStreaming(stm pb.DevicedService_P
 
 	req_quit := make(chan struct{})
 	res_quit := make(chan struct{})
-
 	sem := make(chan struct{})
-	for i := 0; i < 3; i++ {
-		sem <- struct{}{}
-	}
+	defer close(sem)
 
 	go self.put_object_streaming_send_pull_request_loop(req_quit, stm, fs, sem)
 	go self.put_object_streaming_recv_push_response_loop(res_quit, stm, fs, sem)
+
+	for i := 0; i < 1; i++ {
+		sem <- struct{}{}
+	}
 
 	select {
 	case <-req_quit:

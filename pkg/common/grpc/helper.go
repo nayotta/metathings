@@ -11,7 +11,9 @@ import (
 
 	"github.com/grpc-ecosystem/go-grpc-middleware/util/metautils"
 	log "github.com/sirupsen/logrus"
+	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/status"
 )
 
@@ -116,4 +118,16 @@ func GetSessionFromContext(ctx context.Context) int64 {
 	}
 
 	return x
+}
+
+func NewDialOptionWithTransportCredentials(tcs credentials.TransportCredentials) []grpc.DialOption {
+	var opts []grpc.DialOption
+
+	if tcs != nil {
+		opts = append(opts, grpc.WithTransportCredentials(tcs))
+	} else {
+		opts = append(opts, grpc.WithInsecure())
+	}
+
+	return opts
 }
