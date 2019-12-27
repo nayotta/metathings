@@ -76,6 +76,9 @@ func main() {
 				Object: &pb.OpObject{
 					Name:   &wrappers.StringValue{Value: destination},
 					Length: &wrappers.Int64Value{Value: pos_opt.Length},
+					Device: &pb.OpDevice{
+						Id: &wrappers.StringValue{Value: device},
+					},
 				},
 				Sha1: &wrappers.StringValue{Value: pos_opt.Sha1},
 			},

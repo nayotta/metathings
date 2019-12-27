@@ -32,6 +32,7 @@ func (self *MetathingsDevicedService) put_object_streaming_send_pull_request_loo
 	stm pb.DevicedService_PutObjectStreamingServer,
 	fs *file_helper.FileSyncer,
 	sem chan struct{},
+	errs chan error,
 ) {
 	logger := self.logger
 
@@ -40,29 +41,42 @@ func (self *MetathingsDevicedService) put_object_streaming_send_pull_request_loo
 		logger.Debugf("put object streaming send pull request loop exit")
 	}()
 
-_put_object_streaming_send_pull_request_loop:
+	retry := 0
+
 	for {
 		select {
 		case _, ok := <-sem:
+			retry = 0
 			if !ok {
 				logger.Debugf("sem closed")
-				break _put_object_streaming_send_pull_request_loop
+				return
 			}
+		case <-time.After(time.Duration(self.opt.Methods.PutObjectStreaming.PullRequestTimeout) * time.Second):
+			logger.WithField("retry", retry).Debugf("pull request timeout, retry to send pull request")
+			retry++
+		}
+
+		if retry >= self.opt.Methods.PutObjectStreaming.PullRequestRetry {
+			err := ErrPutObjectStreamingTimeout
+			logger.WithError(err).Warningf("pull request loop timeout")
+			errs <- err
+			return
 		}
 
 		offsets, err := fs.Next(self.opt.Methods.PutObjectStreaming.ChunkPerRequest)
 		if err != nil {
 			if err == file_helper.DONE {
-				logger.Debugf("file sync done")
 				return
 			}
 			logger.WithError(err).Warningf("failed to get next offsets")
+			errs <- err
 			return
 		}
 
 		res := self.new_put_object_streaming_chunks_response(offsets)
 		if err = stm.Send(res); err != nil {
 			logger.WithError(err).Errorf("failed to send pull chunks request")
+			errs <- err
 			return
 		}
 	}
@@ -73,6 +87,7 @@ func (self *MetathingsDevicedService) put_object_streaming_recv_push_response_lo
 	stm pb.DevicedService_PutObjectStreamingServer,
 	fs *file_helper.FileSyncer,
 	sem chan struct{},
+	errs chan error,
 ) {
 	logger := self.logger
 
@@ -85,6 +100,7 @@ func (self *MetathingsDevicedService) put_object_streaming_recv_push_response_lo
 		res, err := stm.Recv()
 		if err != nil {
 			logger.WithError(err).Errorf("failed to rcev push chunks response")
+			errs <- err
 			return
 		}
 
@@ -101,10 +117,10 @@ func (self *MetathingsDevicedService) put_object_streaming_recv_push_response_lo
 			offset := chk.GetOffset().GetValue()
 			if err = fs.Sync(offset, data, size); err != nil {
 				if err == file_helper.DONE {
-					logger.Debugf("file sync done")
 					return
 				}
 				logger.WithError(err).Warningf("failed to sync file")
+				errs <- err
 				return
 			}
 		}
@@ -149,25 +165,36 @@ func (self *MetathingsDevicedService) PutObjectStreaming(stm pb.DevicedService_P
 		return status.Errorf(codes.Internal, err.Error())
 	}
 
+	errs := make(chan error, 1)
 	req_quit := make(chan struct{})
 	res_quit := make(chan struct{})
-	sem := make(chan struct{})
-	defer close(sem)
 
-	go self.put_object_streaming_send_pull_request_loop(req_quit, stm, fs, sem)
-	go self.put_object_streaming_recv_push_response_loop(res_quit, stm, fs, sem)
+	sem := make(chan struct{}, 1)
+	defer close(sem)
 
 	for i := 0; i < 1; i++ {
 		sem <- struct{}{}
 	}
 
+	go self.put_object_streaming_send_pull_request_loop(req_quit, stm, fs, sem, errs)
+	go self.put_object_streaming_recv_push_response_loop(res_quit, stm, fs, sem, errs)
+
 	select {
 	case <-req_quit:
+		self.logger.Debugf("sync file")
 	case <-res_quit:
-	case <-time.After(600 * time.Second):
+		self.logger.Debugf("sync file")
+	case err := <-errs:
+		self.logger.WithError(err).Errorf("failed to sync file")
+		if err == ErrPutObjectStreamingTimeout {
+			return status.Errorf(codes.DeadlineExceeded, ErrPutObjectStreamingTimeout.Error())
+		}
+		return err
+	case <-time.After(time.Duration(self.opt.Methods.PutObjectStreaming.Timeout) * time.Second):
+		err = ErrPutObjectStreamingTimeout
+		self.logger.WithError(err).Errorf("failed to sync file")
+		return err
 	}
-
-	self.logger.Debugf("file synced")
 
 	return nil
 }

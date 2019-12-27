@@ -63,8 +63,9 @@ func NewFileSyncerOption() *FileSyncerOption {
 
 type FileSyncer struct {
 	opt *FileSyncerOption
-	db  sync.Map
-	fp  *os.File
+	// TODO(Peer): save db into disk for resume from break point.
+	db sync.Map
+	fp *os.File
 
 	stat struct {
 		Chunks int64

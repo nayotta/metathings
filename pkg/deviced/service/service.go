@@ -28,8 +28,11 @@ import (
 type MetathingsDevicedServiceOption struct {
 	Methods struct {
 		PutObjectStreaming struct {
-			ChunkSize       int64
-			ChunkPerRequest int
+			Timeout            int64
+			ChunkSize          int64
+			ChunkPerRequest    int
+			PullRequestRetry   int
+			PullRequestTimeout int64
 		}
 	}
 }

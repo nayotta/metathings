@@ -234,6 +234,13 @@ func NewSimpleStorage(opt *DevicedOption, logger log.FieldLogger) (simple_storag
 func NewMetathingsDevicedServiceOption(opt *DevicedOption) *service.MetathingsDevicedServiceOption {
 	o := &service.MetathingsDevicedServiceOption{}
 
+	o.Methods.PutObjectStreaming.Timeout = 1200
+	if to, ok := opt.SimpleStorage["timeout"]; ok {
+		if toi, ok := to.(int); ok {
+			o.Methods.PutObjectStreaming.Timeout = int64(toi)
+		}
+	}
+
 	o.Methods.PutObjectStreaming.ChunkSize = 256 * 1024
 	if cs, ok := opt.SimpleStorage["chunk_size"]; ok {
 		if csi, ok := cs.(int); ok {
@@ -245,6 +252,20 @@ func NewMetathingsDevicedServiceOption(opt *DevicedOption) *service.MetathingsDe
 	if cpr, ok := opt.SimpleStorage["chunk_per_request"]; ok {
 		if cpri, ok := cpr.(int); ok {
 			o.Methods.PutObjectStreaming.ChunkPerRequest = cpri
+		}
+	}
+
+	o.Methods.PutObjectStreaming.PullRequestRetry = 10
+	if prr, ok := opt.SimpleStorage["pull_request_retry"]; ok {
+		if prri, ok := prr.(int); ok {
+			o.Methods.PutObjectStreaming.PullRequestRetry = prri
+		}
+	}
+
+	o.Methods.PutObjectStreaming.PullRequestTimeout = 12
+	if prt, ok := opt.SimpleStorage["pull_request_timeout"]; ok {
+		if prti, ok := prt.(int); ok {
+			o.Methods.PutObjectStreaming.PullRequestTimeout = int64(prti)
 		}
 	}
 

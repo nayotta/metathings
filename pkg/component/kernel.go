@@ -7,6 +7,7 @@ import (
 	"io"
 	"io/ioutil"
 	"strings"
+	"sync"
 
 	"github.com/golang/protobuf/jsonpb"
 	"github.com/golang/protobuf/proto"
@@ -144,6 +145,25 @@ func (k *Kernel) PutObjectStreaming(name string, content io.ReadSeeker, opt *Put
 	}
 
 	return nil
+}
+
+func (k *Kernel) PutObjectStreamingWithCancel(name string, content io.ReadSeeker, opt *PutObjectStreamingOption) (cancel context.CancelFunc, errs chan error, err error) {
+	cli, cfn, err := k.cli_fty.NewDeviceServiceClient()
+	if err != nil {
+		return nil, nil, err
+	}
+	defer cfn()
+
+	ctx := k.Context()
+	ctx, cancel = context.WithCancel(ctx)
+
+	errs = make(chan error, 1)
+	go func() {
+		defer close(errs)
+		errs <- _put_object_streaming(cli, ctx, name, content, opt.Sha1, opt.Length)
+	}()
+
+	return cancel, errs, nil
 }
 
 func (k *Kernel) PutObjects(objects map[string]io.Reader) error {
@@ -508,6 +528,8 @@ func _put_object_streaming(cli pb.DeviceServiceClient, ctx context.Context, name
 
 	errs := make(chan error)
 	defer close(errs)
+	var buf []byte
+	var buf_once sync.Once
 
 	go func() {
 		for {
@@ -529,8 +551,9 @@ func _put_object_streaming(cli pb.DeviceServiceClient, ctx context.Context, name
 			for _, chk := range chunks.GetChunks() {
 				offset := chk.GetOffset()
 				length := chk.GetLength()
-				// TODO(Peer): allocate buffer before
-				buf := make([]byte, length)
+				buf_once.Do(func() {
+					buf = make([]byte, length)
+				})
 
 				if _, err = content.Seek(offset, 0); err != nil {
 					errs <- err

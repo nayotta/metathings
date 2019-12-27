@@ -1,10 +1,13 @@
 package metathings_device_service
 
 import (
+	"io"
+
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
+	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
 	pb "github.com/nayotta/metathings/pkg/proto/device"
 	deviced_pb "github.com/nayotta/metathings/pkg/proto/deviced"
 )
@@ -63,6 +66,12 @@ func (self *MetathingsDeviceServiceImpl) PutObjectStreaming(stm pb.DeviceService
 		return status.Errorf(codes.Internal, err.Error())
 	}
 
+	errs := make(chan error, 1)
+	defer func() {
+		close(errs)
+		errs = nil
+	}()
+
 	n2s_quit := make(chan struct{})
 	s2n_quit := make(chan struct{})
 
@@ -71,13 +80,21 @@ func (self *MetathingsDeviceServiceImpl) PutObjectStreaming(stm pb.DeviceService
 		for {
 			cres, err := upstm.Recv()
 			if err != nil {
-				logger.WithError(err).Warningf("failed to receive put object streaming response from deviced service")
+				if err != io.EOF && grpc_helper.ExpectCodes(err, codes.Internal) != nil {
+					logger.WithError(err).Warningf("failed to receive put object streaming response from deviced service")
+					if errs != nil {
+						errs <- err
+					}
+				}
 				return
 			}
 
 			res := self.parse_put_object_streaming_response(cres)
 			if err = stm.Send(res); err != nil {
 				logger.WithError(err).Warningf("failed to send put object streaming response to module")
+				if errs != nil {
+					errs <- err
+				}
 				return
 			}
 
@@ -89,13 +106,22 @@ func (self *MetathingsDeviceServiceImpl) PutObjectStreaming(stm pb.DeviceService
 		for {
 			req, err := stm.Recv()
 			if err != nil {
-				logger.WithError(err).Warningf("failed to receive put object streaming request from module")
+				if grpc_helper.ExpectCodes(err, codes.Canceled) != nil {
+					logger.WithError(err).Warningf("failed to receive put object streaming request from module")
+				}
+				if errs != nil {
+					errs <- err
+				}
 				return
 			}
 
 			creq := self.parse_put_object_streaming_request(req)
 			if err = upstm.Send(creq); err != nil {
 				logger.WithError(err).Warningf("failed to send put object streaming request to deviced service")
+				if errs != nil {
+					errs <- err
+				}
+				return
 			}
 		}
 	}()
@@ -111,6 +137,9 @@ func (self *MetathingsDeviceServiceImpl) PutObjectStreaming(stm pb.DeviceService
 			"from": "south",
 			"to":   "north",
 		}).Debugf("stream closed")
+	case err = <-errs:
+		logger.WithError(err).Errorf("failed to file sync")
+		return err
 	}
 
 	return nil
