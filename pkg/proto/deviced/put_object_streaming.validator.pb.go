@@ -36,6 +36,16 @@ func (this *PutObjectStreamingRequest) Validate() error {
 			}
 		}
 	}
+	if oneOfNester, ok := this.GetRequest().(*PutObjectStreamingRequest_Ack_); ok {
+		if oneOfNester.Ack != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.Ack); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("Ack", err)
+			}
+		}
+	}
+	return nil
+}
+func (this *PutObjectStreamingRequest_Ack) Validate() error {
 	return nil
 }
 func (this *PutObjectStreamingRequest_Metadata) Validate() error {
@@ -59,5 +69,15 @@ func (this *PutObjectStreamingResponse) Validate() error {
 			}
 		}
 	}
+	if oneOfNester, ok := this.GetResponse().(*PutObjectStreamingResponse_Ack_); ok {
+		if oneOfNester.Ack != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(oneOfNester.Ack); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("Ack", err)
+			}
+		}
+	}
+	return nil
+}
+func (this *PutObjectStreamingResponse_Ack) Validate() error {
 	return nil
 }

@@ -48,6 +48,11 @@ type PutObjectAsyncOption struct {
 	ChunkSize int64
 }
 
+type ListObjectsOption struct {
+	Recursive bool
+	Depth     int
+}
+
 type SimpleStorage interface {
 	PutObject(obj *Object, reader io.Reader) error
 	PutObjectAsync(obj *Object, opt *PutObjectAsyncOption) (*file_helper.FileSyncer, error)
@@ -55,7 +60,7 @@ type SimpleStorage interface {
 	RenameObject(src, dst *Object) error
 	GetObject(obj *Object) (*Object, error)
 	GetObjectContent(obj *Object) (chan []byte, error)
-	ListObjects(obj *Object) ([]*Object, error)
+	ListObjects(obj *Object, opt *ListObjectsOption) ([]*Object, error)
 }
 
 type SimpleStorageFactory func(...interface{}) (SimpleStorage, error)

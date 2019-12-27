@@ -230,7 +230,11 @@ func (fss *FileSimpleStorage) GetObjectContent(obj *Object) (chan []byte, error)
 	return ch, nil
 }
 
-func (fss *FileSimpleStorage) ListObjects(obj *Object) ([]*Object, error) {
+func (fss *FileSimpleStorage) list_objects(obj *Object, recursive bool, depth int) ([]*Object, error) {
+	if recursive && depth == 0 {
+		return nil, nil
+	}
+
 	obj.Name = ""
 	p := fss.join_path(obj)
 
@@ -244,13 +248,27 @@ func (fss *FileSimpleStorage) ListObjects(obj *Object) ([]*Object, error) {
 		var new_obj *Object
 		if f.IsDir() {
 			new_obj = fss.new_object(obj.Device, path.Join(obj.Prefix, f.Name()), "", f.Size(), f.ModTime())
+			objs = append(objs, new_obj)
+
+			if recursive {
+				sub_objs, err := fss.list_objects(new_obj, recursive, depth-1)
+				if err != nil {
+					return nil, err
+				}
+				objs = append(objs, sub_objs...)
+			}
 		} else {
 			new_obj = fss.new_object(obj.Device, obj.Prefix, f.Name(), f.Size(), f.ModTime())
+			objs = append(objs, new_obj)
 		}
-		objs = append(objs, new_obj)
+
 	}
 
 	return objs, nil
+}
+
+func (fss *FileSimpleStorage) ListObjects(obj *Object, opt *ListObjectsOption) ([]*Object, error) {
+	return fss.list_objects(obj, opt.Recursive, opt.Depth)
 }
 
 func new_file_simple_storage(args ...interface{}) (SimpleStorage, error) {
