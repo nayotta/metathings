@@ -10,7 +10,8 @@ import "model.proto";
 
 message ListObjectsRequest {
 	OpObject object = 1 [(validator.field) = {msg_exists: true}];
-	google.protobuf.Int32Value depth = 2;
+	google.protobuf.BoolValue recursive = 2;
+	google.protobuf.Int32Value depth = 3;
 }
 
 message ListObjectsResponse {

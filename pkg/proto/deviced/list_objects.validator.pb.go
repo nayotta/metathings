@@ -26,6 +26,11 @@ func (this *ListObjectsRequest) Validate() error {
 			return github_com_mwitkow_go_proto_validators.FieldError("Object", err)
 		}
 	}
+	if this.Recursive != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Recursive); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Recursive", err)
+		}
+	}
 	if this.Depth != nil {
 		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Depth); err != nil {
 			return github_com_mwitkow_go_proto_validators.FieldError("Depth", err)
