@@ -18,7 +18,16 @@ func parse_object(x *pb.OpObject) *simple_storage.Object {
 	device := x.GetDevice().GetId().GetValue()
 	prefix := x.GetPrefix().GetValue()
 	name := x.GetName().GetValue()
-	return simple_storage.NewObject(device, prefix, name)
+	length := x.GetLength().GetValue()
+
+	y := &simple_storage.Object{
+		Device: device,
+		Prefix: prefix,
+		Name:   name,
+		Length: length,
+	}
+
+	return y
 }
 
 func copy_device(x *storage.Device) *pb.Device {

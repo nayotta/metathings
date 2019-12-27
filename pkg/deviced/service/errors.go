@@ -8,4 +8,6 @@ var (
 	ErrUnconnectedDevice = errors.New("unconnected device")
 	ErrFlowNotFound      = errors.New("flow not found")
 	ErrDeviceOffline     = errors.New("device offline")
+
+	ErrPutObjectStreamingTimeout = errors.New("put object streaming timeout")
 )

@@ -1,6 +1,7 @@
 package metathings_component
 
 import (
+	"context"
 	"io"
 	"io/ioutil"
 	"os"
@@ -193,6 +194,14 @@ func (m *Module) PutObjects(objects map[string]io.Reader) error {
 	}
 
 	return m.Kernel().PutObjects(with_namespace_objects)
+}
+
+func (m *Module) PutObjectStreaming(name string, content io.ReadSeeker, opt *PutObjectStreamingOption) error {
+	return m.Kernel().PutObjectStreaming(m.WithNamespace(name), content, opt)
+}
+
+func (m *Module) PutObjectStreamingWithCancel(name string, content io.ReadSeeker, opt *PutObjectStreamingOption) (context.CancelFunc, chan error, error) {
+	return m.Kernel().PutObjectStreamingWithCancel(m.WithNamespace(name), content, opt)
 }
 
 func (m *Module) GetObject(name string) (*deviced_pb.Object, error) {

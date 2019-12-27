@@ -44,6 +44,7 @@ var (
 				cmd_helper.UnmarshalConfig(create_credential_opt)
 				base_opt = &create_credential_opt.BaseOption
 			}
+
 			if create_credential_opt.Token == "" {
 				create_credential_opt.Token = cmd_helper.GetTokenFromEnv()
 			}

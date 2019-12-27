@@ -31,3 +31,11 @@ func (l *GetLoggerer) GetLogger() log.FieldLogger {
 func NewGetLoggerer(logger log.FieldLogger) *GetLoggerer {
 	return &GetLoggerer{logger: logger}
 }
+
+func NewDebugLogger() log.FieldLogger {
+	logger := log.New()
+	logger.SetLevel(log.DebugLevel)
+	return logger.WithFields(log.Fields{
+		"#service": "nil",
+	})
+}

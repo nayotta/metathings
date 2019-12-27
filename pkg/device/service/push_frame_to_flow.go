@@ -32,7 +32,7 @@ func (self *MetathingsDeviceServiceImpl) PushFrameToFlow(stm pb.DeviceService_Pu
 		for {
 			cres, err := upstm.Recv()
 			if err != nil {
-				self.logger.WithError(err).Warningf("failed to receive response from deviced service")
+				self.logger.WithError(err).Warningf("failed to receive push frame to flow response from deviced service")
 				return
 			}
 
@@ -43,7 +43,7 @@ func (self *MetathingsDeviceServiceImpl) PushFrameToFlow(stm pb.DeviceService_Pu
 
 			err = stm.Send(res)
 			if err != nil {
-				self.logger.WithError(err).Warningf("failed to send response to module")
+				self.logger.WithError(err).Warningf("failed to send push frame to flow response to module")
 				return
 			}
 		}
@@ -54,7 +54,7 @@ func (self *MetathingsDeviceServiceImpl) PushFrameToFlow(stm pb.DeviceService_Pu
 		for {
 			req, err := stm.Recv()
 			if err != nil {
-				self.logger.WithError(err).Warningf("failed to receive request from module")
+				self.logger.WithError(err).Warningf("failed to receive push frame to flow request from module")
 				return
 			}
 
@@ -83,7 +83,7 @@ func (self *MetathingsDeviceServiceImpl) PushFrameToFlow(stm pb.DeviceService_Pu
 
 			err = upstm.Send(creq)
 			if err != nil {
-				self.logger.WithError(err).Warningf("failed to send request to deviced service")
+				self.logger.WithError(err).Warningf("failed to send push frame to flow request to deviced service")
 				return
 			}
 		}
