@@ -200,10 +200,11 @@ func (fss *FileSimpleStorage) GetObject(x *Object) (y *Object, err error) {
 		return
 	}
 
+	op := path.Join(x.Prefix, x.Name)
 	if fi.IsDir() {
-		y = fss.new_object(x.Device, p, "", fi.Size(), fi.ModTime())
+		y = fss.new_object(x.Device, op, "", fi.Size(), fi.ModTime())
 	} else {
-		y = fss.new_object(x.Device, path.Dir(p), path.Base(p), fi.Size(), fi.ModTime())
+		y = fss.new_object(x.Device, path.Dir(op), path.Base(op), fi.Size(), fi.ModTime())
 	}
 
 	return
