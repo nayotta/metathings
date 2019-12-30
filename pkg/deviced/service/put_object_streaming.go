@@ -189,11 +189,11 @@ func (self *MetathingsDevicedService) PutObjectStreaming(stm pb.DevicedService_P
 		if err == ErrPutObjectStreamingTimeout {
 			return status.Errorf(codes.DeadlineExceeded, ErrPutObjectStreamingTimeout.Error())
 		}
-		return err
+		return status.Errorf(codes.Internal, err.Error())
 	case <-time.After(time.Duration(self.opt.Methods.PutObjectStreaming.Timeout) * time.Second):
 		err = ErrPutObjectStreamingTimeout
 		self.logger.WithError(err).Errorf("failed to sync file")
-		return err
+		return status.Errorf(codes.Internal, err.Error())
 	}
 
 	return nil
