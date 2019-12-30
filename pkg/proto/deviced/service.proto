@@ -20,6 +20,7 @@ import "push_frame_to_flow.proto";
 import "query_frames_from_flow.proto";
 
 import "put_object.proto";
+import "put_object_streaming.proto";
 import "remove_object.proto";
 import "rename_object.proto";
 import "get_object.proto";
@@ -50,6 +51,7 @@ service DevicedService {
 
 	// Simple Storage
 	rpc PutObject(PutObjectRequest) returns (google.protobuf.Empty) {}
+	rpc PutObjectStreaming(stream PutObjectStreamingRequest) returns (stream PutObjectStreamingResponse) {}
 	rpc RemoveObject(RemoveObjectRequest) returns (google.protobuf.Empty) {}
 	rpc RenameObject(RenameObjectRequest) returns (google.protobuf.Empty) {}
 	rpc GetObject(GetObjectRequest) returns (GetObjectResponse) {}

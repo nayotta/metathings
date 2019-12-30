@@ -25,6 +25,20 @@ dev:
   simple_storage:
     name: <simple-storage-name>
     # ...
+    # PutObjectStreaming options
+    ## put object total time, if greater than timeout,
+    ## PutObjectStreaming raise timeout exception.
+    timeout: <timeout>  # default 20min
+    ## if cannt receive pull response after `pull_request_timeout` seconds,
+    ## pull request loop will retry to send pull request again,
+    ## after `pull_request_retry` times, it will raise timeout exception.
+    pull_request_retry: <pull-request-retry>  # default 10 times
+    pull_request_timeout: <pull-request-timeout>  # 12 seconds
+    ## request body size = chunk_size * chunk_per_request
+    ## if request body size greater than 1g, you should adjust k8s ingress.
+    ## https://github.com/kubernetes/ingress-nginx/blob/master/docs/user-guide/nginx-configuration/annotations.md#custom-max-body-size
+    chunk_size: <chunk-size>  # default is 256k
+    chunk_per_request: <chunk-per-request>  # default is 4
   credential:
     domain: <credential-domain>
     id: <credential-id>

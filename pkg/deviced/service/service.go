@@ -25,7 +25,17 @@ import (
 	identityd_pb "github.com/nayotta/metathings/pkg/proto/identityd2"
 )
 
-type MetathingsDevicedServiceOption struct{}
+type MetathingsDevicedServiceOption struct {
+	Methods struct {
+		PutObjectStreaming struct {
+			Timeout            int64
+			ChunkSize          int64
+			ChunkPerRequest    int
+			PullRequestRetry   int
+			PullRequestTimeout int64
+		}
+	}
+}
 
 type MetathingsDevicedService struct {
 	grpc_auth.ServiceAuthFuncOverride

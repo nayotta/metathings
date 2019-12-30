@@ -4,6 +4,8 @@ import (
 	"io"
 	"path"
 	"time"
+
+	file_helper "github.com/nayotta/metathings/pkg/common/file"
 )
 
 type Object struct {
@@ -41,13 +43,24 @@ func new_object(device, prefix, name string, length int64, etag string, last_mod
 	}
 }
 
+type PutObjectAsyncOption struct {
+	SHA1      string
+	ChunkSize int64
+}
+
+type ListObjectsOption struct {
+	Recursive bool
+	Depth     int
+}
+
 type SimpleStorage interface {
 	PutObject(obj *Object, reader io.Reader) error
+	PutObjectAsync(obj *Object, opt *PutObjectAsyncOption) (*file_helper.FileSyncer, error)
 	RemoveObject(obj *Object) error
 	RenameObject(src, dst *Object) error
 	GetObject(obj *Object) (*Object, error)
 	GetObjectContent(obj *Object) (chan []byte, error)
-	ListObjects(obj *Object) ([]*Object, error)
+	ListObjects(obj *Object, opt *ListObjectsOption) ([]*Object, error)
 }
 
 type SimpleStorageFactory func(...interface{}) (SimpleStorage, error)
