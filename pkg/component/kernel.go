@@ -7,7 +7,6 @@ import (
 	"io"
 	"io/ioutil"
 	"strings"
-	"sync"
 
 	"github.com/golang/protobuf/jsonpb"
 	"github.com/golang/protobuf/proto"
@@ -528,9 +527,6 @@ func _put_object_streaming(cli pb.DeviceServiceClient, ctx context.Context, name
 
 	errs := make(chan error)
 	defer close(errs)
-	var buf []byte
-	var buf_once sync.Once
-
 	go func() {
 		for {
 			res, err := stm.Recv()
@@ -551,9 +547,7 @@ func _put_object_streaming(cli pb.DeviceServiceClient, ctx context.Context, name
 			for _, chk := range chunks.GetChunks() {
 				offset := chk.GetOffset()
 				length := chk.GetLength()
-				buf_once.Do(func() {
-					buf = make([]byte, length)
-				})
+				buf := make([]byte, length)
 
 				if _, err = content.Seek(offset, 0); err != nil {
 					errs <- err
@@ -567,7 +561,7 @@ func _put_object_streaming(cli pb.DeviceServiceClient, ctx context.Context, name
 				}
 				req_chks = append(req_chks, &deviced_pb.OpObjectChunk{
 					Offset: &wrappers.Int64Value{Value: offset},
-					Data:   &wrappers.BytesValue{Value: buf},
+					Data:   &wrappers.BytesValue{Value: buf[:n]},
 					Length: &wrappers.Int64Value{Value: int64(n)},
 				})
 			}

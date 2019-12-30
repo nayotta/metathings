@@ -8,6 +8,8 @@ import (
 	"path"
 	"sync"
 
+	log "github.com/sirupsen/logrus"
+
 	log_helper "github.com/nayotta/metathings/pkg/common/log"
 )
 
@@ -101,14 +103,20 @@ func (fs *FileSyncer) is_done() bool {
 }
 
 func (fs *FileSyncer) debug() {
-	logger := log_helper.NewDebugLogger()
+	logger := log_helper.GetDebugLogger()
 	var wtchks int64
-	fs.db.Range(func(_, _ interface{}) bool {
+	var rests []int64
+
+	fs.db.Range(func(key, _ interface{}) bool {
 		wtchks++
+		rests = append(rests, key.(int64))
 		return true
 	})
 
-	logger.WithField("sum", fmt.Sprintf("%v/%v", fs.stat.Chunks-wtchks, fs.stat.Chunks)).Debugf("chunk state")
+	logger.WithFields(log.Fields{
+		"sum":   fmt.Sprintf("%v/%v", fs.stat.Chunks-wtchks, fs.stat.Chunks),
+		"rests": rests,
+	}).Debugf("chunk state")
 }
 
 func (fs *FileSyncer) Next(batch int) (offsets []int64, err error) {
