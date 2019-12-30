@@ -192,17 +192,21 @@ func (fss *FileSimpleStorage) RenameObject(src, dst *Object) error {
 	return nil
 }
 
-func (fss *FileSimpleStorage) GetObject(obj *Object) (*Object, error) {
-	p := fss.join_path(obj)
+func (fss *FileSimpleStorage) GetObject(x *Object) (y *Object, err error) {
+	p := fss.join_path(x)
 
 	fi, err := os.Stat(p)
 	if err != nil {
-		return nil, err
+		return
 	}
 
-	new_obj := fss.new_object(obj.Device, obj.Prefix, obj.Name, fi.Size(), fi.ModTime())
+	if fi.IsDir() {
+		y = fss.new_object(x.Device, p, "", fi.Size(), fi.ModTime())
+	} else {
+		y = fss.new_object(x.Device, path.Dir(p), path.Base(p), fi.Size(), fi.ModTime())
+	}
 
-	return new_obj, nil
+	return
 }
 
 func (fss *FileSimpleStorage) GetObjectContent(obj *Object) (chan []byte, error) {
