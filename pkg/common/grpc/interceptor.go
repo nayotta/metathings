@@ -3,17 +3,18 @@ package grpc_helper
 import (
 	"context"
 	"reflect"
+	"time"
 
-	"github.com/grpc-ecosystem/go-grpc-middleware"
+	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	grpc_auth "github.com/grpc-ecosystem/go-grpc-middleware/auth"
+	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 )
 
-func UnaryServerInterceptor() grpc.UnaryServerInterceptor {
-	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+func UnaryServerInterceptor(logger log.FieldLogger) grpc.UnaryServerInterceptor {
+	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (res interface{}, err error) {
 		var cast_srv grpc_auth.ServiceAuthFuncOverride
 		var new_ctx context.Context
-		var err error
 		var ok bool
 
 		if cast_srv, ok = info.Server.(grpc_auth.ServiceAuthFuncOverride); !ok {
@@ -41,15 +42,20 @@ func UnaryServerInterceptor() grpc.UnaryServerInterceptor {
 			}
 		}
 
+		defer func(callat time.Time) {
+			logger.WithFields(log.Fields{
+				"#method":  info.FullMethod,
+				"#elapsed": time.Since(callat),
+			}).Debugf("call tracing")
+		}(time.Now())
 		return handler(new_ctx, req)
 	}
 }
 
-func StreamServerInterceptor() grpc.StreamServerInterceptor {
-	return func(srv interface{}, stream grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
+func StreamServerInterceptor(logger log.FieldLogger) grpc.StreamServerInterceptor {
+	return func(srv interface{}, stream grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) (err error) {
 		var cast_srv grpc_auth.ServiceAuthFuncOverride
 		var new_ctx context.Context
-		var err error
 		var ok bool
 
 		if cast_srv, ok = srv.(grpc_auth.ServiceAuthFuncOverride); !ok {
@@ -80,6 +86,12 @@ func StreamServerInterceptor() grpc.StreamServerInterceptor {
 			}
 		}
 
+		defer func(callat time.Time) {
+			logger.WithFields(log.Fields{
+				"#method":  info.FullMethod,
+				"#elapsed": time.Since(callat),
+			}).Debugf("call tracing")
+		}(time.Now())
 		return handler(srv, wrapped)
 	}
 }

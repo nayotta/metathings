@@ -82,7 +82,11 @@ func (self *MetathingsIdentitydService) CreateCredential(ctx context.Context, re
 	if req.GetSecretSize() != nil {
 		siz = req.GetSecretSize().GetValue()
 	}
+
 	srt_str := generate_secret(siz)
+	if cred.GetSecret() != nil {
+		srt_str = cred.GetSecret().GetValue()
+	}
 
 	desc_str := ""
 	if cred.GetDescription() != nil {
