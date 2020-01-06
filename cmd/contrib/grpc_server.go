@@ -22,10 +22,8 @@ type NewGrpcServerParams struct {
 	Lis    net.Listener
 	Creds  credentials.TransportCredentials
 	Logger log.FieldLogger
-	Tracer opentracing.Tracer `name:"opentracing_tracer"`
-	Closer io.Closer          `name:"opentracing_closer"`
-	// Tracer opentracing.Tracer `optional:"true",name:"opentracing_tracer"`
-	// Closer io.Closer          `optional:"true",name:"opentracing_closer"`
+	Tracer opentracing.Tracer `name:"opentracing_tracer" optional:"true"`
+	Closer io.Closer          `name:"opentracing_closer" optional:"true"`
 }
 
 func NewGrpcServer(params NewGrpcServerParams, lc fx.Lifecycle) *grpc.Server {
