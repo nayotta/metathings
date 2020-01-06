@@ -121,14 +121,18 @@ var (
 
 func GetDevicedOptions() (
 	*DevicedOption,
+	cmd_contrib.ServiceOptioner,
 	cmd_contrib.ListenOptioner,
 	cmd_contrib.TransportCredentialOptioner,
 	cmd_contrib.StorageOptioner,
 	cmd_contrib.LoggerOptioner,
 	cmd_contrib.ServiceEndpointsOptioner,
 	cmd_contrib.CredentialOptioner,
+	cmd_contrib.OpentracingOptioner,
 ) {
 	return deviced_opt,
+		deviced_opt,
+		deviced_opt,
 		deviced_opt,
 		deviced_opt,
 		deviced_opt,
@@ -280,6 +284,7 @@ func runDeviced() error {
 			cmd_contrib.NewServerTransportCredentials,
 			cmd_contrib.NewLogger("deviced"),
 			cmd_contrib.NewListener,
+			cmd_contrib.NewOpentracing,
 			cmd_contrib.NewGrpcServer,
 			cmd_contrib.NewClientFactory,
 			cmd_contrib.NewNoExpireTokener,

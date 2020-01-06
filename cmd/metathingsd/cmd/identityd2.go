@@ -75,14 +75,18 @@ var (
 
 func GetIdentityd2Options() (
 	*Identityd2Option,
+	cmd_contrib.ServiceOptioner,
 	cmd_contrib.ListenOptioner,
 	cmd_contrib.TransportCredentialOptioner,
 	cmd_contrib.StorageOptioner,
 	cmd_contrib.LoggerOptioner,
 	cmd_contrib.ServiceEndpointsOptioner,
 	cmd_contrib.WebhookServiceOptioner,
+	cmd_contrib.OpentracingOptioner,
 ) {
 	return identityd2_opt,
+		identityd2_opt,
+		identityd2_opt,
 		identityd2_opt,
 		identityd2_opt,
 		identityd2_opt,
@@ -250,6 +254,7 @@ func runIdentityd2() error {
 			cmd_contrib.NewServerTransportCredentials,
 			cmd_contrib.NewLogger("identityd2"),
 			cmd_contrib.NewListener,
+			cmd_contrib.NewOpentracing,
 			cmd_contrib.NewGrpcServer,
 			cmd_contrib.NewClientFactory,
 			cmd_contrib.NewValidator,
