@@ -72,7 +72,7 @@ func (self *MetathingsIdentitydService) CreateEntity(ctx context.Context, req *p
 		Extra:    &extra_str,
 	}
 
-	if ent_s, err = self.storage.CreateEntity(ent_s); err != nil {
+	if ent_s, err = self.storage.CreateEntity(ctx, ent_s); err != nil {
 		self.logger.WithError(err).Errorf("failed to create entity in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}

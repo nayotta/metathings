@@ -58,12 +58,12 @@ func (self *MetathingsIdentitydService) IssueTokenByPassword(ctx context.Context
 	}
 
 	if ent_id != nil {
-		if ent_s, err = self.storage.GetEntity(ent_id.GetValue()); err != nil {
+		if ent_s, err = self.storage.GetEntity(ctx, ent_id.GetValue()); err != nil {
 			self.logger.WithError(err).Errorf("failed to find entity by id in storage")
 			return nil, status.Errorf(codes.Unauthenticated, policy.ErrUnauthenticated.Error())
 		}
 	} else {
-		if ent_s, err = self.storage.GetEntityByName(ent_name.GetValue()); err != nil {
+		if ent_s, err = self.storage.GetEntityByName(ctx, ent_name.GetValue()); err != nil {
 			self.logger.WithError(err).Errorf("failed to find entity by name in storage")
 			return nil, status.Errorf(codes.Unauthenticated, policy.ErrUnauthenticated.Error())
 		}
@@ -82,7 +82,7 @@ func (self *MetathingsIdentitydService) IssueTokenByPassword(ctx context.Context
 	}
 
 	tkn := new_token(&dom_id_str, ent_s.Id, nil, self.opt.TokenExpire)
-	if tkn, err = self.storage.CreateToken(tkn); err != nil {
+	if tkn, err = self.storage.CreateToken(ctx, tkn); err != nil {
 		self.logger.WithError(err).Errorf("failed to create token in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}

@@ -30,7 +30,7 @@ func (a *authorizer) Authorize(ctx context.Context, object, action string) error
 	}
 	defer cfn()
 
-	new_ctx := context_helper.WithToken(context.Background(), context_helper.ExtractToken(ctx).GetText())
+	new_ctx := context_helper.WithToken(ctx, context_helper.ExtractToken(ctx).GetText())
 	req := &identityd_pb.AuthorizeTokenRequest{
 		Object: &identityd_pb.OpEntity{Id: &wrappers.StringValue{Value: object}},
 		Action: &identityd_pb.OpAction{Name: &wrappers.StringValue{Value: action}},

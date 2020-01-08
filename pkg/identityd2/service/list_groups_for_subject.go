@@ -31,7 +31,7 @@ func (self *MetathingsIdentitydService) ListGroupsForSubject(ctx context.Context
 	var err error
 
 	sub_id := req.GetSubject().GetId().GetValue()
-	grps, err := self.storage.ListGroupsForSubject(sub_id)
+	grps, err := self.storage.ListGroupsForSubject(ctx, sub_id)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}

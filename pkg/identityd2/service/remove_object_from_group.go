@@ -24,8 +24,8 @@ func (self *MetathingsIdentitydService) ValidateRemoveObjectFromGroup(ctx contex
 		identityd_validator.Invokers{
 			ensure_get_object_id,
 			ensure_get_group_id,
-			ensure_group_exists_s(self.storage),
-			ensure_object_exists_in_group_s(self.storage),
+			ensure_group_exists_s(ctx, self.storage),
+			ensure_object_exists_in_group_s(ctx, self.storage),
 		},
 	)
 }
@@ -40,25 +40,25 @@ func (self *MetathingsIdentitydService) RemoveObjectFromGroup(ctx context.Contex
 	grp_id_str := req.GetGroup().GetId().GetValue()
 	obj_id_str := req.GetObject().GetId().GetValue()
 
-	grp_s, err := self.storage.GetGroup(grp_id_str)
+	grp_s, err := self.storage.GetGroup(ctx, grp_id_str)
 	if err != nil {
 		self.logger.WithError(err).Errorf("failed to get group in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
-	obj_s, err := self.storage.GetEntity(obj_id_str)
+	obj_s, err := self.storage.GetEntity(ctx, obj_id_str)
 	if err != nil {
 		self.logger.WithError(err).Errorf("failed to get entity in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
-	err = self.backend.RemoveObjectFromGroup(grp_s, obj_s)
+	err = self.backend.RemoveObjectFromGroup(ctx, grp_s, obj_s)
 	if err != nil {
 		self.logger.WithError(err).Errorf("failed to remove object from group in backend")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
-	if err = self.storage.RemoveObjectFromGroup(grp_id_str, obj_id_str); err != nil {
+	if err = self.storage.RemoveObjectFromGroup(ctx, grp_id_str, obj_id_str); err != nil {
 		self.logger.WithError(err).Errorf("failed to remove object from group in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}

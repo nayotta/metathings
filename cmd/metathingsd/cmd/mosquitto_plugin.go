@@ -3,11 +3,12 @@ package cmd
 import (
 	"context"
 	"encoding/base64"
-	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 
+	"github.com/gorilla/mux"
+	"github.com/opentracing/opentracing-go"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"go.uber.org/fx"
@@ -69,11 +70,15 @@ var (
 
 func GetMosquittoPluginOptions() (
 	*MosquittoPluginOption,
+	cmd_contrib.ServiceOptioner,
 	cmd_contrib.ListenOptioner,
 	cmd_contrib.LoggerOptioner,
 	cmd_contrib.ServiceEndpointsOptioner,
+	cmd_contrib.OpentracingOptioner,
 ) {
 	return mosquitto_plugin_opt,
+		mosquitto_plugin_opt,
+		mosquitto_plugin_opt,
 		mosquitto_plugin_opt,
 		mosquitto_plugin_opt,
 		mosquitto_plugin_opt
@@ -104,24 +109,36 @@ func NewMosquittoPluginServiceOption(opt *MosquittoPluginOption) *service.Mosqui
 	return o
 }
 
+type NewMosquittoPluginRoutingParams struct {
+	fx.In
+
+	Router  *mux.Router
+	Service *service.MosquittoPluginService
+	Tracer  opentracing.Tracer `name:"opentracing_tracer" optional:"true"`
+}
+
+func NewMosquittoPluginRouting(p NewMosquittoPluginRoutingParams) error {
+	p.Router.HandleFunc("/webhook", p.Service.WebhookHandler)
+
+	return nil
+}
+
 func runMosquittoPlugin() error {
 	app := fx.New(
 		fx.NopLogger,
 		fx.Provide(
 			GetMosquittoPluginOptions,
+			mux.NewRouter,
 			cmd_contrib.NewLogger("mosquitto-plugin"),
 			cmd_contrib.NewListener,
-			cmd_contrib.NewHttpServer,
+			cmd_contrib.NewOpentracing,
 			NewMosquittoPluginStorage,
 			NewMosquittoPluginServiceOption,
 			service.NewMosquittoPluginService,
 		),
 		fx.Invoke(
-			func(s *http.Server, srv *service.MosquittoPluginService) {
-				mux := http.NewServeMux()
-				mux.HandleFunc("/webhook", srv.WebhookHandler)
-				s.Handler = mux
-			},
+			NewMosquittoPluginRouting,
+			cmd_contrib.NewHttpServer,
 		),
 	)
 

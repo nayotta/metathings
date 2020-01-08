@@ -12,7 +12,7 @@ import (
 )
 
 type TokenValidator interface {
-	Validate(token string) (*identityd2_pb.Token, error)
+	Validate(ctx context.Context, token string) (*identityd2_pb.Token, error)
 }
 
 type identityd2TokenValidator struct {
@@ -21,8 +21,8 @@ type identityd2TokenValidator struct {
 	logger  log.FieldLogger
 }
 
-func (self *identityd2TokenValidator) Validate(token string) (*identityd2_pb.Token, error) {
-	ctx := context_helper.WithToken(context.Background(), self.tknr.GetToken())
+func (self *identityd2TokenValidator) Validate(ctx context.Context, token string) (*identityd2_pb.Token, error) {
+	new_ctx := context_helper.WithToken(ctx, self.tknr.GetToken())
 
 	cli, cfn, err := self.cli_fty.NewIdentityd2ServiceClient()
 	if err != nil {
@@ -35,7 +35,7 @@ func (self *identityd2TokenValidator) Validate(token string) (*identityd2_pb.Tok
 			Text: &wrappers.StringValue{Value: token},
 		},
 	}
-	res, err := cli.ValidateToken(ctx, req)
+	res, err := cli.ValidateToken(new_ctx, req)
 	if err != nil {
 		return nil, err
 	}

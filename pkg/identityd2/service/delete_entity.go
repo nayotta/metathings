@@ -35,18 +35,18 @@ func (self *MetathingsIdentitydService) DeleteEntity(ctx context.Context, req *p
 	ent := req.GetEntity()
 	ent_id_str := ent.GetId().GetValue()
 
-	ent_s, err := self.storage.GetEntity(ent_id_str)
+	ent_s, err := self.storage.GetEntity(ctx, ent_id_str)
 	if err != nil {
 		self.logger.WithError(err).Errorf("failed to get entity in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
-	grps_s, err := self.storage.ListGroupsForSubject(ent_id_str)
+	grps_s, err := self.storage.ListGroupsForSubject(ctx, ent_id_str)
 	if err != nil {
 		self.logger.WithError(err).Warningf("failed to list groups for subject")
 	} else {
 		for _, grp_s := range grps_s {
-			err = self.backend.RemoveSubjectFromGroup(grp_s, ent_s)
+			err = self.backend.RemoveSubjectFromGroup(ctx, grp_s, ent_s)
 			if err != nil {
 				self.logger.WithError(err).WithFields(log.Fields{
 					"subject": ent_id_str,
@@ -56,12 +56,12 @@ func (self *MetathingsIdentitydService) DeleteEntity(ctx context.Context, req *p
 		}
 	}
 
-	grps_s, err = self.storage.ListGroupsForObject(ent_id_str)
+	grps_s, err = self.storage.ListGroupsForObject(ctx, ent_id_str)
 	if err != nil {
 		self.logger.WithError(err).Warningf("failed to list groups for object")
 	} else {
 		for _, grp_s := range grps_s {
-			err = self.backend.RemoveObjectFromGroup(grp_s, ent_s)
+			err = self.backend.RemoveObjectFromGroup(ctx, grp_s, ent_s)
 			if err != nil {
 				self.logger.WithError(err).WithFields(log.Fields{
 					"object": ent_id_str,
@@ -71,7 +71,7 @@ func (self *MetathingsIdentitydService) DeleteEntity(ctx context.Context, req *p
 		}
 	}
 
-	if err = self.storage.DeleteEntity(ent_id_str); err != nil {
+	if err = self.storage.DeleteEntity(ctx, ent_id_str); err != nil {
 		self.logger.WithError(err).Errorf("failed to delete entity in storage")
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}

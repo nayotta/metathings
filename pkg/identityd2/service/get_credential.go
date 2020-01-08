@@ -34,7 +34,7 @@ func (self *MetathingsIdentitydService) GetCredential(ctx context.Context, req *
 
 	id_str := req.GetCredential().GetId().GetValue()
 
-	if cred_s, err = self.storage.GetCredential(id_str); err != nil {
+	if cred_s, err = self.storage.GetCredential(ctx, id_str); err != nil {
 		self.logger.WithError(err).Errorf("failed to get credential in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}

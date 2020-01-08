@@ -47,7 +47,7 @@ func (self *MetathingsIdentitydService) PatchAction(ctx context.Context, req *pb
 		act.Extra = &extraStr
 	}
 
-	if act, err = self.storage.PatchAction(idStr, act); err != nil {
+	if act, err = self.storage.PatchAction(ctx, idStr, act); err != nil {
 		self.logger.WithError(err).Errorf("failed to patch action in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}

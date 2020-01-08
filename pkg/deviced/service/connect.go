@@ -26,7 +26,7 @@ func (self *MetathingsDevicedService) Connect(stream pb.DevicedService_ConnectSe
 	sess := grpc_helper.GetSessionFromContext(ctx)
 	defer func() {
 		if session_helper.IsMajorSession(sess) {
-			self.offline_device(*dev_s.Id)
+			self.offline_device(ctx, *dev_s.Id)
 		}
 	}()
 
