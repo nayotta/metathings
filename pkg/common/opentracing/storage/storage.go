@@ -19,7 +19,7 @@ type BaseTracedStorage struct {
 func (s *BaseTracedStorage) TraceWrapper(ctx context.Context, name string) (span opentracing.Span, new_ctx context.Context) {
 	span, new_ctx = opentracing.StartSpanFromContext(ctx, name)
 
-	db := otgorm.SetSpanToGorm(ctx, s.dbconn.GetRootDBConn())
+	db := otgorm.SetSpanToGorm(new_ctx, s.dbconn.GetRootDBConn())
 	new_ctx = context.WithValue(new_ctx, "dbconn", db)
 
 	return
