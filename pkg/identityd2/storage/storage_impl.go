@@ -1772,15 +1772,11 @@ func NewStorageImpl(driver, uri string, args ...interface{}) (Storage, error) {
 	if err := opt_helper.Setopt(map[string]func(string, interface{}) error{
 		"logger": opt_helper.ToLogger(&logger),
 		"tracer": func(key string, val interface{}) error {
-			var tracer opentracing.Tracer
-
-			if tracer, ok = val.(opentracing.Tracer); !ok {
-				return opt_helper.InvalidArgument(key)
+			if _, ok = val.(opentracing.Tracer); !ok {
+				return nil
 			}
 
-			if tracer != nil {
-				opt.IsTraced = true
-			}
+			opt.IsTraced = true
 
 			return nil
 		},
