@@ -17,9 +17,12 @@ require (
 	github.com/mongodb/mongo-go-driver v1.2.0
 	github.com/mwitkow/go-proto-validators v0.3.0
 	github.com/nayotta/metathings-component-echo v0.0.0-20191227090401-199eed5cea30
+	github.com/opentracing-contrib/go-gorilla v0.0.0-20190110000444-ced666783644
+	github.com/opentracing-contrib/go-stdlib v0.0.0-20190519235532-cf7a6c988dc9 // indirect
 	github.com/opentracing/opentracing-go v1.1.0
 	github.com/satori/go.uuid v1.2.0
 	github.com/sirupsen/logrus v1.4.2
+	github.com/smacker/opentracing-gorm v0.0.0-20181207094635-cd4974441042
 	github.com/spf13/cobra v0.0.5
 	github.com/spf13/pflag v1.0.5
 	github.com/spf13/viper v1.6.1

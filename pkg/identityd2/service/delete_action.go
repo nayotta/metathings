@@ -34,7 +34,7 @@ func (self *MetathingsIdentitydService) DeleteAction(ctx context.Context, req *p
 	act := req.GetAction()
 	act_id_str := act.GetId().GetValue()
 
-	if err = self.storage.DeleteAction(act_id_str); err != nil {
+	if err = self.storage.DeleteAction(ctx, act_id_str); err != nil {
 		self.logger.WithError(err).Errorf("failed to delete action in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}

@@ -48,7 +48,7 @@ func (self *MetathingsIdentitydService) PatchRole(ctx context.Context, req *pb.P
 		rol.Extra = &extraStr
 	}
 
-	if rol, err = self.storage.PatchRole(idStr, rol); err != nil {
+	if rol, err = self.storage.PatchRole(ctx, idStr, rol); err != nil {
 		self.logger.WithError(err).Errorf("failed to patch role in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}

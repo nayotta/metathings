@@ -21,7 +21,7 @@ func (self *MetathingsDevicedService) StreamCall(stm pb.DevicedService_StreamCal
 
 	cfg := req.GetValue().GetConfig()
 	dev_id_str := req.GetDevice().GetId().GetValue()
-	if dev_s, err = self.storage.GetDevice(dev_id_str); err != nil {
+	if dev_s, err = self.storage.GetDevice(stm.Context(), dev_id_str); err != nil {
 		self.logger.WithError(err).Errorf("failed to get device in storage")
 		return status.Errorf(codes.Internal, err.Error())
 	}

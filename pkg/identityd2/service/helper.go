@@ -1,6 +1,7 @@
 package metathings_identityd2_service
 
 import (
+	"context"
 	"encoding/base64"
 	"encoding/json"
 	"errors"
@@ -467,9 +468,9 @@ func ensure_get_action_name(x action_getter) error {
 	return nil
 }
 
-func ensure_group_exists_s(s storage.Storage) func(group_getter) error {
+func ensure_group_exists_s(ctx context.Context, s storage.Storage) func(group_getter) error {
 	return func(x group_getter) error {
-		if exist, err := s.ExistGroup(x.GetGroup().GetId().GetValue()); err != nil {
+		if exist, err := s.ExistGroup(ctx, x.GetGroup().GetId().GetValue()); err != nil {
 			return err
 		} else if !exist {
 			return errors.New("group not found")
@@ -478,9 +479,9 @@ func ensure_group_exists_s(s storage.Storage) func(group_getter) error {
 	}
 }
 
-func ensure_subject_not_exists_in_group_s(s storage.Storage) func(subject_getter, group_getter) error {
+func ensure_subject_not_exists_in_group_s(ctx context.Context, s storage.Storage) func(subject_getter, group_getter) error {
 	return func(x subject_getter, y group_getter) error {
-		if exist, err := s.SubjectExistsInGroup(x.GetSubject().GetId().GetValue(), y.GetGroup().GetId().GetValue()); err != nil {
+		if exist, err := s.SubjectExistsInGroup(ctx, x.GetSubject().GetId().GetValue(), y.GetGroup().GetId().GetValue()); err != nil {
 			return err
 		} else if exist {
 			return errors.New("subject exists in group")
@@ -490,9 +491,9 @@ func ensure_subject_not_exists_in_group_s(s storage.Storage) func(subject_getter
 	}
 }
 
-func ensure_subject_exists_in_group_s(s storage.Storage) func(subject_getter, group_getter) error {
+func ensure_subject_exists_in_group_s(ctx context.Context, s storage.Storage) func(subject_getter, group_getter) error {
 	return func(x subject_getter, y group_getter) error {
-		if exist, err := s.SubjectExistsInGroup(x.GetSubject().GetId().GetValue(), y.GetGroup().GetId().GetValue()); err != nil {
+		if exist, err := s.SubjectExistsInGroup(ctx, x.GetSubject().GetId().GetValue(), y.GetGroup().GetId().GetValue()); err != nil {
 			return err
 		} else if !exist {
 			return errors.New("subject not exists in group")
@@ -502,9 +503,9 @@ func ensure_subject_exists_in_group_s(s storage.Storage) func(subject_getter, gr
 	}
 }
 
-func ensure_object_not_exists_in_group_s(s storage.Storage) func(object_getter, group_getter) error {
+func ensure_object_not_exists_in_group_s(ctx context.Context, s storage.Storage) func(object_getter, group_getter) error {
 	return func(x object_getter, y group_getter) error {
-		if exist, err := s.ObjectExistsInGroup(x.GetObject().GetId().GetValue(), y.GetGroup().GetId().GetValue()); err != nil {
+		if exist, err := s.ObjectExistsInGroup(ctx, x.GetObject().GetId().GetValue(), y.GetGroup().GetId().GetValue()); err != nil {
 			return err
 		} else if exist {
 			return errors.New("object exists in group")
@@ -514,9 +515,9 @@ func ensure_object_not_exists_in_group_s(s storage.Storage) func(object_getter, 
 	}
 }
 
-func ensure_object_exists_in_group_s(s storage.Storage) func(object_getter, group_getter) error {
+func ensure_object_exists_in_group_s(ctx context.Context, s storage.Storage) func(object_getter, group_getter) error {
 	return func(x object_getter, y group_getter) error {
-		if exist, err := s.ObjectExistsInGroup(x.GetObject().GetId().GetValue(), y.GetGroup().GetId().GetValue()); err != nil {
+		if exist, err := s.ObjectExistsInGroup(ctx, x.GetObject().GetId().GetValue(), y.GetGroup().GetId().GetValue()); err != nil {
 			return err
 		} else if !exist {
 			return errors.New("object not exists in group")

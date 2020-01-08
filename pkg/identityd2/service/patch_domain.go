@@ -44,7 +44,7 @@ func (self *MetathingsIdentitydService) PatchDomain(ctx context.Context, req *pb
 		dom.Extra = &extraStr
 	}
 
-	if dom, err = self.storage.PatchDomain(idStr, dom); err != nil {
+	if dom, err = self.storage.PatchDomain(ctx, idStr, dom); err != nil {
 		self.logger.WithError(err).Errorf("failed to patch domain in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}

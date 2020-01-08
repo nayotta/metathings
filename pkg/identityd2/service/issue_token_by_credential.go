@@ -65,7 +65,7 @@ func (self *MetathingsIdentitydService) IssueTokenByCredential(ctx context.Conte
 	nonce := req.GetNonce().GetValue()
 	hmac := req.GetHmac().GetValue()
 
-	if cred_s, err = self.storage.GetCredential(cred_id_str); err != nil {
+	if cred_s, err = self.storage.GetCredential(ctx, cred_id_str); err != nil {
 		self.logger.WithError(err).Errorf("failed to find credential by id in storage")
 		return nil, status.Errorf(codes.Unauthenticated, policy.ErrUnauthenticated.Error())
 	}
@@ -89,7 +89,7 @@ func (self *MetathingsIdentitydService) IssueTokenByCredential(ctx context.Conte
 	}
 
 	tkn := new_token(&dom_id_str, cred_s.EntityId, cred_s.Id, self.opt.TokenExpire)
-	if tkn, err = self.storage.CreateToken(tkn); err != nil {
+	if tkn, err = self.storage.CreateToken(ctx, tkn); err != nil {
 		self.logger.WithError(err).Errorf("failed to create token in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}

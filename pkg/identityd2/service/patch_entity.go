@@ -51,7 +51,7 @@ func (self *MetathingsIdentitydService) PatchEntity(ctx context.Context, req *pb
 		ent.Extra = &extraStr
 	}
 
-	if ent, err = self.storage.PatchEntity(idStr, ent); err != nil {
+	if ent, err = self.storage.PatchEntity(ctx, idStr, ent); err != nil {
 		self.logger.WithError(err).Errorf("failed to patch entity in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}

@@ -2,6 +2,7 @@ package opentracing_helper
 
 import (
 	"io"
+	"sync"
 
 	"github.com/opentracing/opentracing-go"
 	jaeger_config "github.com/uber/jaeger-client-go/config"
@@ -10,6 +11,8 @@ import (
 )
 
 type JaegerTracerFactory struct{}
+
+var set_jaeger_as_global_tracer_once sync.Once
 
 func (jtf *JaegerTracerFactory) New(args ...interface{}) (opentracing.Tracer, io.Closer, error) {
 	var opt *TracerOption
@@ -65,6 +68,10 @@ func (jtf *JaegerTracerFactory) New(args ...interface{}) (opentracing.Tracer, io
 	if err != nil {
 		return nil, nil, err
 	}
+
+	set_jaeger_as_global_tracer_once.Do(func() {
+		opentracing.SetGlobalTracer(tracer)
+	})
 
 	return tracer, closer, nil
 }

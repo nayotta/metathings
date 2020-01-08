@@ -14,7 +14,7 @@ import (
 func (self *MetathingsIdentitydService) ShowEntity(ctx context.Context, _ *empty.Empty) (*pb.ShowEntityResponse, error) {
 	tkn := ctx.Value("token").(*pb.Token)
 	ent_id := tkn.GetEntity().GetId()
-	ent, err := self.storage.GetEntity(ent_id)
+	ent, err := self.storage.GetEntity(ctx, ent_id)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}

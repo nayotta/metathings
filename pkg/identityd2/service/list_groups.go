@@ -36,7 +36,7 @@ func (self *MetathingsIdentitydService) ListGroups(ctx context.Context, req *pb.
 		grp.Alias = &alias.Value
 	}
 
-	grps, err := self.storage.ListGroups(grp)
+	grps, err := self.storage.ListGroups(ctx, grp)
 	if err != nil {
 		self.logger.WithError(err).Errorf("failed to list groups in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())

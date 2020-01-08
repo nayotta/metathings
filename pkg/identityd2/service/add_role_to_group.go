@@ -41,25 +41,25 @@ func (self *MetathingsIdentitydService) AddRoleToGroup(ctx context.Context, req 
 	grp_id_str := grp.GetId().GetValue()
 	rol_id_str := rol.GetId().GetValue()
 
-	grp_s, err := self.storage.GetGroup(grp_id_str)
+	grp_s, err := self.storage.GetGroup(ctx, grp_id_str)
 	if err != nil {
 		self.logger.WithError(err).Errorf("failed to get group in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
-	rol_s, err := self.storage.GetRoleWithFullActions(rol_id_str)
+	rol_s, err := self.storage.GetRoleWithFullActions(ctx, rol_id_str)
 	if err != nil {
 		self.logger.WithError(err).Errorf("failed to get role in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
-	err = self.backend.AddRoleToGroup(grp_s, rol_s)
+	err = self.backend.AddRoleToGroup(ctx, grp_s, rol_s)
 	if err != nil {
 		self.logger.WithError(err).Errorf("failed to add role to group in backend")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
-	if err = self.storage.AddRoleToGroup(grp_id_str, rol_id_str); err != nil {
+	if err = self.storage.AddRoleToGroup(ctx, grp_id_str, rol_id_str); err != nil {
 		self.logger.WithError(err).Errorf("failed to add role to group in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}

@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/opentracing/opentracing-go"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"go.uber.org/fx"
@@ -95,8 +96,16 @@ func GetIdentityd2Options() (
 		identityd2_opt
 }
 
-func NewIdentityd2Storage(opt cmd_contrib.StorageOptioner, logger log.FieldLogger) (storage.Storage, error) {
-	return storage.NewStorage(opt.GetDriver(), opt.GetUri(), "logger", logger)
+type NewIdentityd2StorageParams struct {
+	fx.In
+
+	Option cmd_contrib.StorageOptioner
+	Logger log.FieldLogger
+	Tracer opentracing.Tracer `name:"opentracing_tracer" optional:"true"`
+}
+
+func NewIdentityd2Storage(p NewIdentityd2StorageParams) (storage.Storage, error) {
+	return storage.NewStorage(p.Option.GetDriver(), p.Option.GetUri(), "logger", p.Logger, "tracer", p.Tracer)
 }
 
 func NewMetathingsIdentitydServiceOption(opt *Identityd2Option) *service.MetathingsIdentitydServiceOption {
@@ -163,8 +172,9 @@ func initIdentityd2() error {
 					OnStart: func(context.Context) error {
 						var ok bool
 						var err error
+						ctx := context.TODO()
 
-						if ok, err = stor.IsInitialized(); err != nil {
+						if ok, err = stor.IsInitialized(ctx); err != nil {
 							return err
 						} else if ok {
 							return nil
@@ -182,7 +192,7 @@ func initIdentityd2() error {
 							ParentId: &dom_parent_id_str,
 						}
 
-						if _, err = stor.CreateDomain(dom); err != nil {
+						if _, err = stor.CreateDomain(ctx, dom); err != nil {
 							return err
 						}
 
@@ -195,7 +205,7 @@ func initIdentityd2() error {
 							Alias: &sysadmin_alias_str,
 						}
 
-						if sysadmin, err = stor.CreateRole(sysadmin); err != nil {
+						if sysadmin, err = stor.CreateRole(ctx, sysadmin); err != nil {
 							return err
 						}
 
@@ -211,23 +221,23 @@ func initIdentityd2() error {
 							Password: &admin_passwd_str,
 						}
 
-						if admin, err = stor.CreateEntity(admin); err != nil {
+						if admin, err = stor.CreateEntity(ctx, admin); err != nil {
 							return err
 						}
 
-						if err = stor.AddEntityToDomain(dom_id_str, *admin.Id); err != nil {
+						if err = stor.AddEntityToDomain(ctx, dom_id_str, *admin.Id); err != nil {
 							return err
 						}
 
-						if err = stor.AddRoleToEntity(*admin.Id, *sysadmin.Id); err != nil {
+						if err = stor.AddRoleToEntity(ctx, *admin.Id, *sysadmin.Id); err != nil {
 							return err
 						}
 
-						if err = bck.AddRoleToEntity(admin, sysadmin); err != nil {
+						if err = bck.AddRoleToEntity(ctx, admin, sysadmin); err != nil {
 							return err
 						}
 
-						if err = stor.Initialize(); err != nil {
+						if err = stor.Initialize(ctx); err != nil {
 							return err
 						}
 

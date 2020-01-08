@@ -1,6 +1,7 @@
 package metathings_deviced_service
 
 import (
+	"context"
 	"errors"
 
 	"github.com/golang/protobuf/ptypes"
@@ -190,10 +191,10 @@ func _ensure_get_object_device_id(x *pb.OpObject) error {
 	return nil
 }
 
-func ensure_device_online(s storage.Storage) func(device_getter) error {
+func ensure_device_online(ctx context.Context, s storage.Storage) func(device_getter) error {
 	return func(x device_getter) error {
 		dev_id := x.GetDevice().GetId().GetValue()
-		dev, err := s.GetDevice(dev_id)
+		dev, err := s.GetDevice(ctx, dev_id)
 		if err != nil {
 			return err
 		}

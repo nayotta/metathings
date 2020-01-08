@@ -21,7 +21,7 @@ func (self *MetathingsDevicedService) ValidateUnaryCall(ctx context.Context, in 
 		},
 		identityd_validator.Invokers{
 			ensure_get_device_id,
-			ensure_device_online(self.storage),
+			ensure_device_online(ctx, self.storage),
 		},
 	)
 }
@@ -36,7 +36,7 @@ func (self *MetathingsDevicedService) UnaryCall(ctx context.Context, req *pb.Una
 	var err error
 
 	dev_id_str := req.GetDevice().GetId().GetValue()
-	if dev_s, err = self.storage.GetDevice(dev_id_str); err != nil {
+	if dev_s, err = self.storage.GetDevice(ctx, dev_id_str); err != nil {
 		self.logger.WithError(err).Debugf("failed to get device in storage")
 		return nil, status.Convert(err).Err()
 	}

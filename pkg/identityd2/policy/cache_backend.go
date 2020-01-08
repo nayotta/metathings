@@ -1,6 +1,8 @@
 package metathings_identityd2_policy
 
 import (
+	"context"
+
 	log "github.com/sirupsen/logrus"
 
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
@@ -26,7 +28,7 @@ func (cb *CacheBackend) get_logger() log.FieldLogger {
 	return cb.logger
 }
 
-func (cb *CacheBackend) Enforce(sub, obj *storage.Entity, act *storage.Action) error {
+func (cb *CacheBackend) Enforce(ctx context.Context, sub, obj *storage.Entity, act *storage.Action) error {
 	// try to get cache result in cache
 	ret, err := cb.cache.Get(sub, obj, act)
 	// failed get cache, do enforce and cache result.
@@ -36,7 +38,7 @@ func (cb *CacheBackend) Enforce(sub, obj *storage.Entity, act *storage.Action) e
 			return err
 		}
 
-		err = cb.backend.Enforce(sub, obj, act)
+		err = cb.backend.Enforce(ctx, sub, obj, act)
 		if err != nil {
 			if err != ErrPermissionDenied {
 				return err
@@ -62,12 +64,12 @@ func (cb *CacheBackend) Enforce(sub, obj *storage.Entity, act *storage.Action) e
 	return err
 }
 
-func (cb *CacheBackend) CreateGroup(grp *storage.Group) error {
-	return cb.backend.CreateGroup(grp)
+func (cb *CacheBackend) CreateGroup(ctx context.Context, grp *storage.Group) error {
+	return cb.backend.CreateGroup(ctx, grp)
 }
 
-func (cb *CacheBackend) DeleteGroup(grp *storage.Group) error {
-	err := cb.backend.DeleteGroup(grp)
+func (cb *CacheBackend) DeleteGroup(ctx context.Context, grp *storage.Group) error {
+	err := cb.backend.DeleteGroup(ctx, grp)
 	if err != nil {
 		return err
 	}
@@ -99,8 +101,8 @@ func (cb *CacheBackend) DeleteGroup(grp *storage.Group) error {
 	return nil
 }
 
-func (cb *CacheBackend) AddSubjectToGroup(grp *storage.Group, sub *storage.Entity) error {
-	err := cb.backend.AddSubjectToGroup(grp, sub)
+func (cb *CacheBackend) AddSubjectToGroup(ctx context.Context, grp *storage.Group, sub *storage.Entity) error {
+	err := cb.backend.AddSubjectToGroup(ctx, grp, sub)
 	if err != nil {
 		return err
 	}
@@ -112,8 +114,8 @@ func (cb *CacheBackend) AddSubjectToGroup(grp *storage.Group, sub *storage.Entit
 	return nil
 }
 
-func (cb *CacheBackend) RemoveSubjectFromGroup(grp *storage.Group, sub *storage.Entity) error {
-	err := cb.backend.RemoveSubjectFromGroup(grp, sub)
+func (cb *CacheBackend) RemoveSubjectFromGroup(ctx context.Context, grp *storage.Group, sub *storage.Entity) error {
+	err := cb.backend.RemoveSubjectFromGroup(ctx, grp, sub)
 	if err != nil {
 		return err
 	}
@@ -125,8 +127,8 @@ func (cb *CacheBackend) RemoveSubjectFromGroup(grp *storage.Group, sub *storage.
 	return nil
 }
 
-func (cb *CacheBackend) AddObjectToGroup(grp *storage.Group, obj *storage.Entity) error {
-	err := cb.backend.AddObjectToGroup(grp, obj)
+func (cb *CacheBackend) AddObjectToGroup(ctx context.Context, grp *storage.Group, obj *storage.Entity) error {
+	err := cb.backend.AddObjectToGroup(ctx, grp, obj)
 	if err != nil {
 		return err
 	}
@@ -138,8 +140,8 @@ func (cb *CacheBackend) AddObjectToGroup(grp *storage.Group, obj *storage.Entity
 	return nil
 }
 
-func (cb *CacheBackend) RemoveObjectFromGroup(grp *storage.Group, obj *storage.Entity) error {
-	err := cb.backend.RemoveObjectFromGroup(grp, obj)
+func (cb *CacheBackend) RemoveObjectFromGroup(ctx context.Context, grp *storage.Group, obj *storage.Entity) error {
+	err := cb.backend.RemoveObjectFromGroup(ctx, grp, obj)
 	if err != nil {
 		return err
 	}
@@ -151,8 +153,8 @@ func (cb *CacheBackend) RemoveObjectFromGroup(grp *storage.Group, obj *storage.E
 	return nil
 }
 
-func (cb *CacheBackend) AddRoleToGroup(grp *storage.Group, rol *storage.Role) error {
-	err := cb.backend.AddRoleToGroup(grp, rol)
+func (cb *CacheBackend) AddRoleToGroup(ctx context.Context, grp *storage.Group, rol *storage.Role) error {
+	err := cb.backend.AddRoleToGroup(ctx, grp, rol)
 	if err != nil {
 		return err
 	}
@@ -166,8 +168,8 @@ func (cb *CacheBackend) AddRoleToGroup(grp *storage.Group, rol *storage.Role) er
 	return nil
 }
 
-func (cb *CacheBackend) RemoveRoleFromGroup(grp *storage.Group, rol *storage.Role) error {
-	err := cb.backend.RemoveRoleFromGroup(grp, rol)
+func (cb *CacheBackend) RemoveRoleFromGroup(ctx context.Context, grp *storage.Group, rol *storage.Role) error {
+	err := cb.backend.RemoveRoleFromGroup(ctx, grp, rol)
 	if err != nil {
 		return err
 	}
@@ -181,12 +183,12 @@ func (cb *CacheBackend) RemoveRoleFromGroup(grp *storage.Group, rol *storage.Rol
 	return nil
 }
 
-func (cb *CacheBackend) AddRoleToEntity(ent *storage.Entity, rol *storage.Role) error {
-	return cb.backend.AddRoleToEntity(ent, rol)
+func (cb *CacheBackend) AddRoleToEntity(ctx context.Context, ent *storage.Entity, rol *storage.Role) error {
+	return cb.backend.AddRoleToEntity(ctx, ent, rol)
 }
 
-func (cb *CacheBackend) RemoveRoleFromEntity(ent *storage.Entity, rol *storage.Role) error {
-	return cb.backend.RemoveRoleFromEntity(ent, rol)
+func (cb *CacheBackend) RemoveRoleFromEntity(ctx context.Context, ent *storage.Entity, rol *storage.Role) error {
+	return cb.backend.RemoveRoleFromEntity(ctx, ent, rol)
 }
 
 func cache_backend_factory(args ...interface{}) (Backend, error) {

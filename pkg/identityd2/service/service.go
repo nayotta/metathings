@@ -48,10 +48,10 @@ func (self *MetathingsIdentitydService) is_ignore_method(md *grpc_helper.MethodD
 	return false
 }
 
-func (self *MetathingsIdentitydService) revoke_token(tkn_id string) error {
+func (self *MetathingsIdentitydService) revoke_token(ctx context.Context, tkn_id string) error {
 	var err error
 
-	if err = self.storage.DeleteToken(tkn_id); err != nil {
+	if err = self.storage.DeleteToken(ctx, tkn_id); err != nil {
 		self.logger.WithError(err).WithField("id", tkn_id).Warningf("failed to delete token in storage")
 		return err
 	}
@@ -77,11 +77,11 @@ func (self *MetathingsIdentitydService) is_refreshable_token(tkn *storage.Token)
 	return tkn.ExpiresAt.Sub(time.Now()) < time.Duration(.25*float64(self.opt.TokenExpire))
 }
 
-func (self *MetathingsIdentitydService) refresh_token(tkn *storage.Token) error {
+func (self *MetathingsIdentitydService) refresh_token(ctx context.Context, tkn *storage.Token) error {
 	tkn_id := *tkn.Id
 	expires_at := time.Now().Add(self.opt.TokenExpire)
 
-	return self.storage.RefreshToken(tkn_id, expires_at)
+	return self.storage.RefreshToken(ctx, tkn_id, expires_at)
 }
 
 func (self *MetathingsIdentitydService) AuthFuncOverride(ctx context.Context, fullMethodName string) (context.Context, error) {
@@ -104,13 +104,13 @@ func (self *MetathingsIdentitydService) AuthFuncOverride(ctx context.Context, fu
 		return ctx, status.Errorf(codes.Unauthenticated, err.Error())
 	}
 
-	if tkn, err = self.storage.GetTokenByText(tkn_txt); err != nil {
+	if tkn, err = self.storage.GetTokenByText(ctx, tkn_txt); err != nil {
 		self.logger.WithError(err).Warningf("failed to get token in storage")
 		return ctx, status.Errorf(codes.Unauthenticated, err.Error())
 	}
 
 	if self.is_invalid_token(tkn) {
-		if err = self.revoke_token(*tkn.Id); err != nil {
+		if err = self.revoke_token(ctx, *tkn.Id); err != nil {
 			self.logger.WithError(err).Warningf("failed to revoke token")
 			return ctx, status.Errorf(codes.Internal, err.Error())
 		}
@@ -118,7 +118,7 @@ func (self *MetathingsIdentitydService) AuthFuncOverride(ctx context.Context, fu
 	}
 
 	if self.is_refreshable_token(tkn) {
-		if err = self.refresh_token(tkn); err != nil {
+		if err = self.refresh_token(ctx, tkn); err != nil {
 			self.logger.WithError(err).Warningf("failed to refresh token")
 		}
 	}

@@ -33,7 +33,7 @@ func (self *MetathingsIdentitydService) GetRole(ctx context.Context, req *pb.Get
 	var err error
 
 	id_str := req.GetRole().GetId().GetValue()
-	if role_s, err = self.storage.GetRole(id_str); err != nil {
+	if role_s, err = self.storage.GetRole(ctx, id_str); err != nil {
 		self.logger.WithError(err).Errorf("failed to get role in storage")
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}

@@ -67,7 +67,7 @@ func (self *MetathingsDevicedService) Heartbeat(ctx context.Context, req *pb.Hea
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
-	if dev_s, err = self.storage.GetDevice(dev_id_str); err != nil {
+	if dev_s, err = self.storage.GetDevice(ctx, dev_id_str); err != nil {
 		self.logger.WithError(err).Errorf("failed to get device in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
@@ -87,7 +87,7 @@ func (self *MetathingsDevicedService) Heartbeat(ctx context.Context, req *pb.Hea
 				if mdl_state_from_dev_str != mdl_state_from_stor_str {
 					patch_mdl_s.State = &mdl_state_from_dev_str
 				}
-				if _, err = self.storage.PatchModule(mdl_id_str, patch_mdl_s); err != nil {
+				if _, err = self.storage.PatchModule(ctx, mdl_id_str, patch_mdl_s); err != nil {
 					self.logger.WithError(err).Errorf("failed to patch module in storage")
 					return nil, status.Errorf(codes.Internal, err.Error())
 				}
@@ -110,7 +110,7 @@ func (self *MetathingsDevicedService) Heartbeat(ctx context.Context, req *pb.Hea
 		state_str := deviced_helper.DEVICE_STATE_ENUMER.ToString(state_pb.DeviceState_DEVICE_STATE_ONLINE)
 		patch_dev_s.State = &state_str
 	}
-	if dev_s, err = self.storage.PatchDevice(dev_id_str, patch_dev_s); err != nil {
+	if dev_s, err = self.storage.PatchDevice(ctx, dev_id_str, patch_dev_s); err != nil {
 		self.logger.WithError(err).Errorf("failed to patch device in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}

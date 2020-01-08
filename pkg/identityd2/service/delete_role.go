@@ -35,7 +35,7 @@ func (self *MetathingsIdentitydService) DeleteRole(ctx context.Context, req *pb.
 	role := req.GetRole()
 	role_id_str := role.GetId().GetValue()
 
-	if err = self.storage.DeleteRole(role_id_str); err != nil {
+	if err = self.storage.DeleteRole(ctx, role_id_str); err != nil {
 		self.logger.WithError(err).Errorf("failed to delete role in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}

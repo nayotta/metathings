@@ -1,6 +1,9 @@
 package metathings_identityd2_storage
 
-import "time"
+import (
+	"context"
+	"time"
+)
 
 type Domain struct {
 	Id        *string
@@ -167,71 +170,71 @@ type SystemConfig struct {
 }
 
 type Storage interface {
-	IsInitialized() (bool, error)
-	Initialize() error
+	IsInitialized(context.Context) (bool, error)
+	Initialize(context.Context) error
 
-	CreateDomain(*Domain) (*Domain, error)
-	DeleteDomain(id string) error
-	PatchDomain(id string, domain *Domain) (*Domain, error)
-	GetDomain(id string) (*Domain, error)
-	ListDomains(*Domain) ([]*Domain, error)
-	AddEntityToDomain(domain_id, entity_id string) error
-	RemoveEntityFromDomain(domain_id, entity_id string) error
+	CreateDomain(context.Context, *Domain) (*Domain, error)
+	DeleteDomain(ctx context.Context, id string) error
+	PatchDomain(ctx context.Context, id string, domain *Domain) (*Domain, error)
+	GetDomain(ctx context.Context, id string) (*Domain, error)
+	ListDomains(context.Context, *Domain) ([]*Domain, error)
+	AddEntityToDomain(ctx context.Context, domain_id, entity_id string) error
+	RemoveEntityFromDomain(ctx context.Context, domain_id, entity_id string) error
 
-	CreateAction(*Action) (*Action, error)
-	DeleteAction(id string) error
-	PatchAction(id string, action *Action) (*Action, error)
-	GetAction(id string) (*Action, error)
-	ListActions(*Action) ([]*Action, error)
+	CreateAction(context.Context, *Action) (*Action, error)
+	DeleteAction(ctx context.Context, id string) error
+	PatchAction(ctx context.Context, id string, action *Action) (*Action, error)
+	GetAction(ctx context.Context, id string) (*Action, error)
+	ListActions(context.Context, *Action) ([]*Action, error)
 
-	CreateRole(*Role) (*Role, error)
-	DeleteRole(id string) error
-	PatchRole(id string, role *Role) (*Role, error)
-	GetRole(id string) (*Role, error)
-	GetRoleWithFullActions(id string) (*Role, error)
-	ListRoles(*Role) ([]*Role, error)
-	AddActionToRole(role_id, action_id string) error
-	RemoveActionFromRole(role_id, action_id string) error
+	CreateRole(context.Context, *Role) (*Role, error)
+	DeleteRole(ctx context.Context, id string) error
+	PatchRole(ctx context.Context, id string, role *Role) (*Role, error)
+	GetRole(ctx context.Context, id string) (*Role, error)
+	GetRoleWithFullActions(ctx context.Context, id string) (*Role, error)
+	ListRoles(context.Context, *Role) ([]*Role, error)
+	AddActionToRole(ctx context.Context, role_id, action_id string) error
+	RemoveActionFromRole(ctx context.Context, role_id, action_id string) error
 
-	CreateEntity(*Entity) (*Entity, error)
-	DeleteEntity(id string) error
-	PatchEntity(id string, entity *Entity) (*Entity, error)
-	GetEntity(id string) (*Entity, error)
-	GetEntityByName(name string) (*Entity, error)
-	ListEntities(*Entity) ([]*Entity, error)
-	ListEntitiesByDomainId(dom_id string) ([]*Entity, error)
-	AddRoleToEntity(entity_id, role_id string) error
-	RemoveRoleFromEntity(entity_id, role_id string) error
+	CreateEntity(context.Context, *Entity) (*Entity, error)
+	DeleteEntity(ctx context.Context, id string) error
+	PatchEntity(ctx context.Context, id string, entity *Entity) (*Entity, error)
+	GetEntity(ctx context.Context, id string) (*Entity, error)
+	GetEntityByName(ctx context.Context, name string) (*Entity, error)
+	ListEntities(context.Context, *Entity) ([]*Entity, error)
+	ListEntitiesByDomainId(ctx context.Context, dom_id string) ([]*Entity, error)
+	AddRoleToEntity(ctx context.Context, entity_id, role_id string) error
+	RemoveRoleFromEntity(ctx context.Context, entity_id, role_id string) error
 
-	CreateGroup(*Group) (*Group, error)
-	DeleteGroup(id string) error
-	PatchGroup(id string, group *Group) (*Group, error)
-	GetGroup(id string) (*Group, error)
-	ExistGroup(id string) (bool, error)
-	ListGroups(*Group) ([]*Group, error)
-	AddRoleToGroup(group_id, role_id string) error
-	RemoveRoleFromGroup(group_id, role_id string) error
-	AddSubjectToGroup(group_id, subject_id string) error
-	RemoveSubjectFromGroup(group_id, subject_id string) error
-	SubjectExistsInGroup(subject_id, group_id string) (bool, error)
-	AddObjectToGroup(group_id, object_id string) error
-	RemoveObjectFromGroup(group_id, object_id string) error
-	ObjectExistsInGroup(object_id, group_id string) (bool, error)
-	ListGroupsForSubject(subject_id string) ([]*Group, error)
-	ListGroupsForObject(subject_id string) ([]*Group, error)
+	CreateGroup(context.Context, *Group) (*Group, error)
+	DeleteGroup(ctx context.Context, id string) error
+	PatchGroup(ctx context.Context, id string, group *Group) (*Group, error)
+	GetGroup(ctx context.Context, id string) (*Group, error)
+	ExistGroup(ctx context.Context, id string) (bool, error)
+	ListGroups(context.Context, *Group) ([]*Group, error)
+	AddRoleToGroup(ctx context.Context, group_id, role_id string) error
+	RemoveRoleFromGroup(ctx context.Context, group_id, role_id string) error
+	AddSubjectToGroup(ctx context.Context, group_id, subject_id string) error
+	RemoveSubjectFromGroup(ctx context.Context, group_id, subject_id string) error
+	SubjectExistsInGroup(ctx context.Context, subject_id, group_id string) (bool, error)
+	AddObjectToGroup(ctx context.Context, group_id, object_id string) error
+	RemoveObjectFromGroup(ctx context.Context, group_id, object_id string) error
+	ObjectExistsInGroup(ctx context.Context, object_id, group_id string) (bool, error)
+	ListGroupsForSubject(ctx context.Context, subject_id string) ([]*Group, error)
+	ListGroupsForObject(ctx context.Context, object_id string) ([]*Group, error)
 
-	CreateCredential(*Credential) (*Credential, error)
-	DeleteCredential(id string) error
-	PatchCredential(id string, credential *Credential) (*Credential, error)
-	GetCredential(id string) (*Credential, error)
-	ListCredentials(*Credential) ([]*Credential, error)
+	CreateCredential(context.Context, *Credential) (*Credential, error)
+	DeleteCredential(ctx context.Context, id string) error
+	PatchCredential(ctx context.Context, id string, credential *Credential) (*Credential, error)
+	GetCredential(ctx context.Context, id string) (*Credential, error)
+	ListCredentials(context.Context, *Credential) ([]*Credential, error)
 
-	CreateToken(*Token) (*Token, error)
-	DeleteToken(id string) error
-	RefreshToken(id string, expires_at time.Time) error
-	GetTokenByText(text string) (*Token, error)
-	GetToken(id string) (*Token, error)
-	ListTokens(*Token) ([]*Token, error)
+	CreateToken(context.Context, *Token) (*Token, error)
+	DeleteToken(ctx context.Context, id string) error
+	RefreshToken(ctx context.Context, id string, expires_at time.Time) error
+	GetTokenByText(ctx context.Context, text string) (*Token, error)
+	GetToken(ctx context.Context, id string) (*Token, error)
+	ListTokens(context.Context, *Token) ([]*Token, error)
 }
 
 func NewStorage(driver, uri string, args ...interface{}) (Storage, error) {

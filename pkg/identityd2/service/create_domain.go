@@ -54,7 +54,7 @@ func (self *MetathingsIdentitydService) CreateDomain(ctx context.Context, req *p
 		Extra:    &extra_str,
 	}
 
-	if dom_s, err = self.storage.CreateDomain(dom_s); err != nil {
+	if dom_s, err = self.storage.CreateDomain(ctx, dom_s); err != nil {
 		self.logger.WithError(err).Errorf("failed to create domain in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}

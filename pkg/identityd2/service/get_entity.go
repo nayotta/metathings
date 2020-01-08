@@ -35,7 +35,7 @@ func (self *MetathingsIdentitydService) GetEntity(ctx context.Context, req *pb.G
 	var err error
 
 	id_str := req.GetEntity().GetId().GetValue()
-	if ent_s, err = self.storage.GetEntity(id_str); err != nil {
+	if ent_s, err = self.storage.GetEntity(ctx, id_str); err != nil {
 		self.logger.WithError(err).Errorf("failed to get entity in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}

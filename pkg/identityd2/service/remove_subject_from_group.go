@@ -24,8 +24,8 @@ func (self *MetathingsIdentitydService) ValidateRemoveSubjectFromGroup(ctx conte
 		identityd_validator.Invokers{
 			ensure_get_subject_id,
 			ensure_get_group_id,
-			ensure_group_exists_s(self.storage),
-			ensure_subject_exists_in_group_s(self.storage),
+			ensure_group_exists_s(ctx, self.storage),
+			ensure_subject_exists_in_group_s(ctx, self.storage),
 		},
 	)
 }
@@ -40,25 +40,25 @@ func (self *MetathingsIdentitydService) RemoveSubjectFromGroup(ctx context.Conte
 	grp_id_str := req.GetGroup().GetId().GetValue()
 	sub_id_str := req.GetSubject().GetId().GetValue()
 
-	grp_s, err := self.storage.GetGroup(grp_id_str)
+	grp_s, err := self.storage.GetGroup(ctx, grp_id_str)
 	if err != nil {
 		self.logger.WithError(err).Errorf("failed to get group in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
-	sub_s, err := self.storage.GetEntity(sub_id_str)
+	sub_s, err := self.storage.GetEntity(ctx, sub_id_str)
 	if err != nil {
 		self.logger.WithError(err).Errorf("failed to get entity in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
-	err = self.backend.RemoveSubjectFromGroup(grp_s, sub_s)
+	err = self.backend.RemoveSubjectFromGroup(ctx, grp_s, sub_s)
 	if err != nil {
 		self.logger.WithError(err).Errorf("failed to remove subject from group in backend")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
-	if err = self.storage.RemoveSubjectFromGroup(grp_id_str, sub_id_str); err != nil {
+	if err = self.storage.RemoveSubjectFromGroup(ctx, grp_id_str, sub_id_str); err != nil {
 		self.logger.WithError(err).Errorf("failed to remove subject from group in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}

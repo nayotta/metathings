@@ -1,7 +1,6 @@
 package metathings_device_cloud_service
 
 import (
-	"context"
 	"net/http"
 
 	"github.com/golang/protobuf/ptypes"
@@ -38,7 +37,7 @@ func (s *MetathingsDeviceCloudService) IssueModuleToken(w http.ResponseWriter, r
 	}
 	defer cfn()
 
-	tkn, err := device_service.IssueModuleTokenWithClient(cli, context.TODO(), cred_id, ts, nonce, hmac)
+	tkn, err := device_service.IssueModuleTokenWithClient(cli, r.Context(), cred_id, ts, nonce, hmac)
 	if err != nil {
 		s.get_logger().WithError(err).Errorf("failed to issue module token")
 		w.WriteHeader(http.StatusInternalServerError)

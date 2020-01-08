@@ -30,7 +30,7 @@ func (self *MetathingsIdentitydService) ListEntities(ctx context.Context, req *p
 		ent.Alias = &ent_req.Alias.Value
 	}
 
-	ents, err := self.storage.ListEntities(ent)
+	ents, err := self.storage.ListEntities(ctx, ent)
 	if err != nil {
 		self.logger.WithError(err).Errorf("failed to list entitys in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())

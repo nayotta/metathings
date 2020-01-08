@@ -41,7 +41,7 @@ func (self *MetathingsIdentitydService) CreateAction(ctx context.Context, req *p
 		Extra:       &extra_str,
 	}
 
-	act_s, err = self.storage.CreateAction(act_s)
+	act_s, err = self.storage.CreateAction(ctx, act_s)
 	if err != nil {
 		self.logger.WithError(err).Errorf("failed to create action in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())

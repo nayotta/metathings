@@ -35,13 +35,13 @@ func (self *MetathingsIdentitydService) DeleteGroup(ctx context.Context, req *pb
 	var err error
 
 	grp_id_str := req.GetGroup().GetId().GetValue()
-	if grp_s, err = self.storage.GetGroup(grp_id_str); err != nil {
+	if grp_s, err = self.storage.GetGroup(ctx, grp_id_str); err != nil {
 		self.logger.WithError(err).Errorf("failed to get group in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 	rols := []*storage.Role{}
 	for _, rol := range grp_s.Roles {
-		r, err := self.storage.GetRoleWithFullActions(*rol.Id)
+		r, err := self.storage.GetRoleWithFullActions(ctx, *rol.Id)
 		if err != nil {
 			return nil, err
 		}
@@ -49,12 +49,12 @@ func (self *MetathingsIdentitydService) DeleteGroup(ctx context.Context, req *pb
 	}
 	grp_s.Roles = rols
 
-	if err = self.backend.DeleteGroup(grp_s); err != nil {
+	if err = self.backend.DeleteGroup(ctx, grp_s); err != nil {
 		self.logger.WithError(err).Errorf("failed to delet group in backend")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
-	if err = self.storage.DeleteGroup(grp_id_str); err != nil {
+	if err = self.storage.DeleteGroup(ctx, grp_id_str); err != nil {
 		self.logger.WithError(err).Errorf("failed to delete group in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}

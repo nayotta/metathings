@@ -1,6 +1,7 @@
 package metathings_deviced_storage
 
 import (
+	"context"
 	"time"
 )
 
@@ -48,24 +49,24 @@ type Module struct {
 }
 
 type Storage interface {
-	CreateDevice(*Device) (*Device, error)
-	DeleteDevice(id string) error
-	PatchDevice(id string, device *Device) (*Device, error)
-	GetDevice(id string) (*Device, error)
-	ListDevices(*Device) ([]*Device, error)
-	GetDeviceByModuleId(id string) (*Device, error)
+	CreateDevice(context.Context, *Device) (*Device, error)
+	DeleteDevice(ctx context.Context, id string) error
+	PatchDevice(ctx context.Context, id string, device *Device) (*Device, error)
+	GetDevice(ctx context.Context, id string) (*Device, error)
+	ListDevices(context.Context, *Device) ([]*Device, error)
+	GetDeviceByModuleId(ctx context.Context, id string) (*Device, error)
 
-	CreateModule(*Module) (*Module, error)
-	DeleteModule(id string) error
-	PatchModule(id string, module *Module) (*Module, error)
-	GetModule(id string) (*Module, error)
-	ListModules(*Module) ([]*Module, error)
+	CreateModule(context.Context, *Module) (*Module, error)
+	DeleteModule(ctx context.Context, id string) error
+	PatchModule(ctx context.Context, id string, module *Module) (*Module, error)
+	GetModule(ctx context.Context, id string) (*Module, error)
+	ListModules(context.Context, *Module) ([]*Module, error)
 
-	CreateFlow(*Flow) (*Flow, error)
-	DeleteFlow(id string) error
-	PatchFlow(id string, flow *Flow) (*Flow, error)
-	GetFlow(id string) (*Flow, error)
-	ListFlows(*Flow) ([]*Flow, error)
+	CreateFlow(context.Context, *Flow) (*Flow, error)
+	DeleteFlow(ctx context.Context, id string) error
+	PatchFlow(ctx context.Context, id string, flow *Flow) (*Flow, error)
+	GetFlow(ctx context.Context, id string) (*Flow, error)
+	ListFlows(context.Context, *Flow) ([]*Flow, error)
 }
 
 func NewStorage(driver, uri string, args ...interface{}) (Storage, error) {

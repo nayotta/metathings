@@ -3,6 +3,7 @@ package cmd
 import (
 	"context"
 
+	"github.com/opentracing/opentracing-go"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"go.uber.org/fx"
@@ -141,8 +142,16 @@ func GetDevicedOptions() (
 		deviced_opt
 }
 
-func NewDevicedStorage(opt cmd_contrib.StorageOptioner, logger log.FieldLogger) (storage.Storage, error) {
-	return storage.NewStorage(opt.GetDriver(), opt.GetUri(), "logger", logger)
+type NewDevicedStorageParams struct {
+	fx.In
+
+	Option cmd_contrib.StorageOptioner
+	Logger log.FieldLogger
+	Tracer opentracing.Tracer `name:"opentracing_tracer" optional:"true"`
+}
+
+func NewDevicedStorage(p NewDevicedStorageParams) (storage.Storage, error) {
+	return storage.NewStorage(p.Option.GetDriver(), p.Option.GetUri(), "logger", p.Logger, "tracer", p.Tracer)
 }
 
 func parse_connection_center_option(x map[string]interface{}) (string, []interface{}, error) {

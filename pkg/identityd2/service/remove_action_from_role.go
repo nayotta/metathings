@@ -24,7 +24,7 @@ func (self *MetathingsIdentitydService) RemoveActionFromRole(ctx context.Context
 	act_id := act.GetId().GetValue()
 	rol_id := rol.GetId().GetValue()
 
-	err = self.storage.RemoveActionFromRole(rol_id, act_id)
+	err = self.storage.RemoveActionFromRole(ctx, rol_id, act_id)
 	if err != nil {
 		self.logger.WithError(err).Errorf("failed to remove action from role")
 		return nil, status.Errorf(codes.Internal, err.Error())

@@ -49,7 +49,7 @@ func (self *MetathingsIdentitydService) PatchGroup(ctx context.Context, req *pb.
 		grp.Extra = &extraStr
 	}
 
-	if grp, err = self.storage.PatchGroup(idStr, grp); err != nil {
+	if grp, err = self.storage.PatchGroup(ctx, idStr, grp); err != nil {
 		self.logger.WithError(err).Errorf("failed to patch group in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
