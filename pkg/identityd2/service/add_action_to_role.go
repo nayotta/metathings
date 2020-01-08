@@ -24,7 +24,7 @@ func (self *MetathingsIdentitydService) AddActionToRole(ctx context.Context, req
 	act_id := act.GetId().GetValue()
 	rol_id := rol.GetId().GetValue()
 
-	err = self.storage.AddActionToRole(rol_id, act_id)
+	err = self.storage.AddActionToRole(ctx, rol_id, act_id)
 	if err != nil {
 		self.logger.WithError(err).Errorf("failed to add action to role")
 		return nil, status.Errorf(codes.Internal, err.Error())

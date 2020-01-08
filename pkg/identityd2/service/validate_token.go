@@ -29,13 +29,13 @@ func (self *MetathingsIdentitydService) ValidateToken(ctx context.Context, req *
 	}
 	tkn_txt_str := tkn_txt.GetValue()
 
-	if t, err = self.storage.GetTokenByText(tkn_txt_str); err != nil {
+	if t, err = self.storage.GetTokenByText(ctx, tkn_txt_str); err != nil {
 		self.logger.WithError(err).Errorf("failed to get token by text in storage")
 		return nil, status.Errorf(codes.Unauthenticated, policy.ErrUnauthenticated.Error())
 	}
 
 	if self.is_invalid_token(t) {
-		if err = self.revoke_token(*t.Id); err != nil {
+		if err = self.revoke_token(ctx, *t.Id); err != nil {
 			self.logger.WithError(err).Warningf("failed to revoke token")
 
 		}
@@ -43,7 +43,7 @@ func (self *MetathingsIdentitydService) ValidateToken(ctx context.Context, req *
 	}
 
 	if self.is_refreshable_token(t) {
-		if err = self.refresh_token(t); err != nil {
+		if err = self.refresh_token(ctx, t); err != nil {
 			self.logger.WithError(err).Warningf("failed to refresh token")
 		}
 	}

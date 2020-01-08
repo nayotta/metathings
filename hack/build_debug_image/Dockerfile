@@ -6,6 +6,7 @@ COPY entrypoint.sh /entrypoint.sh
 
 ARG SERVICE
 ARG CONFIG
+ARG BLOCKING
 
 RUN chmod +x /usr/local/bin/dlv && \
     chmod +x /usr/local/bin/metathingsd && \

@@ -38,7 +38,7 @@ func (self *MetathingsIdentitydService) IssueTokenByToken(ctx context.Context, r
 	}
 	tkn_txt_str := tkn_req.GetText().GetValue()
 
-	if tkn_s, err = self.storage.GetTokenByText(tkn_txt_str); err != nil {
+	if tkn_s, err = self.storage.GetTokenByText(ctx, tkn_txt_str); err != nil {
 		self.logger.WithError(err).Warningf("failed to find token by text in storage")
 		return nil, status.Errorf(codes.Unauthenticated, policy.ErrUnauthenticated.Error())
 	}
@@ -50,7 +50,7 @@ func (self *MetathingsIdentitydService) IssueTokenByToken(ctx context.Context, r
 	}
 
 	tkn := new_token(tkn_s.DomainId, tkn_s.EntityId, tkn_s.CredentialId, NONEXPIRATION)
-	if tkn_s, err = self.storage.CreateToken(tkn); err != nil {
+	if tkn_s, err = self.storage.CreateToken(ctx, tkn); err != nil {
 		self.logger.WithError(err).Errorf("failed to create token in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}

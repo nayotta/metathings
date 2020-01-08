@@ -35,7 +35,7 @@ func (self *MetathingsIdentitydService) GetDomain(ctx context.Context, req *pb.G
 	var err error
 
 	id := req.GetDomain().GetId().GetValue()
-	dom_s, err = self.storage.GetDomain(id)
+	dom_s, err = self.storage.GetDomain(ctx, id)
 	if err != nil {
 		self.logger.WithError(err).Errorf("failed to get domain in storage")
 		return nil, status.Errorf(codes.NotFound, err.Error())

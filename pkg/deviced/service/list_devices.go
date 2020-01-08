@@ -47,7 +47,7 @@ func (self *MetathingsDevicedService) ListDevices(ctx context.Context, req *pb.L
 		dev_s.Alias = &alias.Value
 	}
 
-	if devs_s, err = self.storage.ListDevices(dev_s); err != nil {
+	if devs_s, err = self.storage.ListDevices(ctx, dev_s); err != nil {
 		self.logger.WithError(err).Errorf("failed to list devices in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}

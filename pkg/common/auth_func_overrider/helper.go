@@ -42,7 +42,7 @@ func (afo *authFuncOverrider) AuthFuncOverride(ctx context.Context, fullMethodNa
 		return ctx, err
 	}
 
-	if tkn, err = afo.tkvdr.Validate(tkn_txt); err != nil {
+	if tkn, err = afo.tkvdr.Validate(ctx, tkn_txt); err != nil {
 		afo.logger.WithError(err).Warningf("failed to validate token in identity service")
 		return ctx, err
 	}

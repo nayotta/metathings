@@ -22,7 +22,7 @@ import (
 	pb "github.com/nayotta/metathings/pkg/proto/deviced"
 )
 
-func (s *MetathingsDeviceCloudService) get_device_by_module_id(mdl_id string) (*pb.Device, error) {
+func (s *MetathingsDeviceCloudService) get_device_by_module_id(ctx context.Context, mdl_id string) (*pb.Device, error) {
 	cli, cfn, err := s.cli_fty.NewDevicedServiceClient()
 	if err != nil {
 		return nil, err
@@ -35,7 +35,7 @@ func (s *MetathingsDeviceCloudService) get_device_by_module_id(mdl_id string) (*
 		},
 	}
 
-	res, err := cli.GetDeviceByModule(s.context(), req)
+	res, err := cli.GetDeviceByModule(s.context_with_token(ctx), req)
 	if err != nil {
 		return nil, err
 	}

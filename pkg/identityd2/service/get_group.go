@@ -35,7 +35,7 @@ func (self *MetathingsIdentitydService) GetGroup(ctx context.Context, req *pb.Ge
 	var err error
 
 	id_str := req.GetGroup().GetId().GetValue()
-	if grp_s, err = self.storage.GetGroup(id_str); err != nil {
+	if grp_s, err = self.storage.GetGroup(ctx, id_str); err != nil {
 		self.logger.WithError(err).Errorf("failed to get group in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}

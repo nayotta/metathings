@@ -8,7 +8,7 @@ import (
 
 func (s *MetathingsDeviceCloudService) ShowModule(w http.ResponseWriter, r *http.Request) {
 	tkn_txt := GetTokenFromHeader(r)
-	tkn, err := s.tkvdr.Validate(tkn_txt)
+	tkn, err := s.tkvdr.Validate(r.Context(), tkn_txt)
 	if err != nil {
 		s.get_logger().WithError(err).Errorf("failed to validate token")
 		w.WriteHeader(http.StatusUnauthorized)
@@ -17,7 +17,7 @@ func (s *MetathingsDeviceCloudService) ShowModule(w http.ResponseWriter, r *http
 
 	mdl_id := tkn.Entity.Id
 
-	dev, err := s.get_device_by_module_id(mdl_id)
+	dev, err := s.get_device_by_module_id(r.Context(), mdl_id)
 	if err != nil {
 		s.get_logger().WithError(err).Errorf("failed to get device by module id")
 		w.WriteHeader(http.StatusInternalServerError)

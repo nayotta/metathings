@@ -2,6 +2,7 @@ package option_helper
 
 import (
 	"fmt"
+	"os"
 	"time"
 
 	log "github.com/sirupsen/logrus"
@@ -325,5 +326,11 @@ func ToLogger(v *log.FieldLogger) func(string, interface{}) error {
 			return InvalidArgument(key)
 		}
 		return nil
+	}
+}
+
+func SetenvIfNotExists(key, val string) {
+	if os.Getenv(key) == "" {
+		os.Setenv(key, val)
 	}
 }

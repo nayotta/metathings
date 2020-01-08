@@ -86,7 +86,7 @@ func (self *MetathingsIdentitydService) authorize(ctx context.Context, object, a
 	}
 
 	start := time.Now()
-	err = self.backend.Enforce(sub, obj, act)
+	err = self.backend.Enforce(ctx, sub, obj, act)
 	self.logger.WithFields(log.Fields{
 		"elapse":  time.Since(start),
 		"subject": tkn.Entity.Id,

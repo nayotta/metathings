@@ -1,22 +1,45 @@
 package metathings_deviced_storage
 
 import (
+	"context"
+
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	"github.com/opentracing/opentracing-go"
 	log "github.com/sirupsen/logrus"
+	otgorm "github.com/smacker/opentracing-gorm"
+
+	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 )
 
-type StorageImpl struct {
-	db     *gorm.DB
-	logger log.FieldLogger
+type StorageImplOption struct {
+	IsTraced bool
 }
 
-func (self *StorageImpl) get_flow(id string) (*Flow, error) {
+type StorageImpl struct {
+	opt     *StorageImplOption
+	root_db *gorm.DB
+	logger  log.FieldLogger
+}
+
+func (self *StorageImpl) GetRootDBConn() *gorm.DB {
+	return self.root_db
+}
+
+func (self *StorageImpl) GetDBConn(ctx context.Context) *gorm.DB {
+	if db := ctx.Value("dbconn"); db != nil {
+		return db.(*gorm.DB)
+	}
+
+	return self.GetRootDBConn()
+}
+
+func (self *StorageImpl) get_flow(ctx context.Context, id string) (*Flow, error) {
 	var err error
 	flw := &Flow{}
 
-	if err = self.db.First(flw, "id = ?", id).Error; err != nil {
+	if err = self.GetDBConn(ctx).First(flw, "id = ?", id).Error; err != nil {
 		return nil, err
 	}
 
@@ -25,17 +48,17 @@ func (self *StorageImpl) get_flow(id string) (*Flow, error) {
 	return flw, nil
 }
 
-func (self *StorageImpl) list_flows_by_device_id(id string) ([]*Flow, error) {
+func (self *StorageImpl) list_flows_by_device_id(ctx context.Context, id string) ([]*Flow, error) {
 	var err error
 	var flws_t []*Flow
 
-	if err = self.db.Select("id").Find(&flws_t, "device_id = ?", id).Error; err != nil {
+	if err = self.GetDBConn(ctx).Select("id").Find(&flws_t, "device_id = ?", id).Error; err != nil {
 		return nil, err
 	}
 
 	flws := []*Flow{}
 	for _, f := range flws_t {
-		if f, err = self.get_flow(*f.Id); err != nil {
+		if f, err = self.get_flow(ctx, *f.Id); err != nil {
 			return nil, err
 		}
 
@@ -45,7 +68,7 @@ func (self *StorageImpl) list_flows_by_device_id(id string) ([]*Flow, error) {
 	return flws, nil
 }
 
-func (self *StorageImpl) list_flows(flw *Flow) ([]*Flow, error) {
+func (self *StorageImpl) list_flows(ctx context.Context, flw *Flow) ([]*Flow, error) {
 	var err error
 	var flws_t []*Flow
 
@@ -66,13 +89,13 @@ func (self *StorageImpl) list_flows(flw *Flow) ([]*Flow, error) {
 		f.Alias = flw.Alias
 	}
 
-	if err = self.db.Select("id").Find(&flws_t, f).Error; err != nil {
+	if err = self.GetDBConn(ctx).Select("id").Find(&flws_t, f).Error; err != nil {
 		return nil, err
 	}
 
 	var flws []*Flow
 	for _, f = range flws_t {
-		if f, err = self.get_flow(*f.Id); err != nil {
+		if f, err = self.get_flow(ctx, *f.Id); err != nil {
 			return nil, err
 		}
 
@@ -82,11 +105,11 @@ func (self *StorageImpl) list_flows(flw *Flow) ([]*Flow, error) {
 	return flws, nil
 }
 
-func (self *StorageImpl) get_module(id string) (*Module, error) {
+func (self *StorageImpl) get_module(ctx context.Context, id string) (*Module, error) {
 	var err error
 	mdl := &Module{}
 
-	if err = self.db.First(mdl, "id = ?", id).Error; err != nil {
+	if err = self.GetDBConn(ctx).First(mdl, "id = ?", id).Error; err != nil {
 		return nil, err
 	}
 
@@ -95,17 +118,17 @@ func (self *StorageImpl) get_module(id string) (*Module, error) {
 	return mdl, nil
 }
 
-func (self *StorageImpl) list_modules_by_device_id(id string) ([]*Module, error) {
+func (self *StorageImpl) list_modules_by_device_id(ctx context.Context, id string) ([]*Module, error) {
 	var err error
 	var mdls_t []*Module
 
-	if err = self.db.Select("id").Find(&mdls_t, "device_id = ?", id).Error; err != nil {
+	if err = self.GetDBConn(ctx).Select("id").Find(&mdls_t, "device_id = ?", id).Error; err != nil {
 		return nil, err
 	}
 
 	mdls := []*Module{}
 	for _, m := range mdls_t {
-		if m, err = self.get_module(*m.Id); err != nil {
+		if m, err = self.get_module(ctx, *m.Id); err != nil {
 			return nil, err
 		}
 
@@ -115,7 +138,7 @@ func (self *StorageImpl) list_modules_by_device_id(id string) ([]*Module, error)
 	return mdls, nil
 }
 
-func (self *StorageImpl) list_modules(mdl *Module) ([]*Module, error) {
+func (self *StorageImpl) list_modules(ctx context.Context, mdl *Module) ([]*Module, error) {
 	var err error
 	var mdls_t []*Module
 
@@ -148,13 +171,13 @@ func (self *StorageImpl) list_modules(mdl *Module) ([]*Module, error) {
 		m.Alias = mdl.Alias
 	}
 
-	if err = self.db.Select("id").Find(&mdls_t, m).Error; err != nil {
+	if err = self.GetDBConn(ctx).Select("id").Find(&mdls_t, m).Error; err != nil {
 		return nil, err
 	}
 
 	var mdls []*Module
 	for _, m = range mdls_t {
-		if m, err = self.get_module(*m.Id); err != nil {
+		if m, err = self.get_module(ctx, *m.Id); err != nil {
 			return nil, err
 		}
 
@@ -164,47 +187,47 @@ func (self *StorageImpl) list_modules(mdl *Module) ([]*Module, error) {
 	return mdls, nil
 }
 
-func (self *StorageImpl) internal_get_device(dev *Device) (*Device, error) {
+func (self *StorageImpl) internal_get_device(ctx context.Context, dev *Device) (*Device, error) {
 	var err error
 
-	if dev.Modules, err = self.list_modules_by_device_id(*dev.Id); err != nil {
+	if dev.Modules, err = self.list_modules_by_device_id(ctx, *dev.Id); err != nil {
 		return nil, err
 	}
 
-	if dev.Flows, err = self.list_flows_by_device_id(*dev.Id); err != nil {
+	if dev.Flows, err = self.list_flows_by_device_id(ctx, *dev.Id); err != nil {
 		return nil, err
 	}
 
 	return dev, nil
 }
 
-func (self *StorageImpl) get_device(id string) (*Device, error) {
+func (self *StorageImpl) get_device(ctx context.Context, id string) (*Device, error) {
 	var err error
 	dev := &Device{}
 
-	if err = self.db.First(dev, "id = ?", id).Error; err != nil {
+	if err = self.GetDBConn(ctx).First(dev, "id = ?", id).Error; err != nil {
 		return nil, err
 	}
 
-	if dev, err = self.internal_get_device(dev); err != nil {
+	if dev, err = self.internal_get_device(ctx, dev); err != nil {
 		return nil, err
 	}
 
 	return dev, nil
 }
 
-func (self *StorageImpl) get_device_by_module_id(id string) (*Device, error) {
+func (self *StorageImpl) get_device_by_module_id(ctx context.Context, id string) (*Device, error) {
 	var err error
 	var mdl Module
 
-	if err = self.db.Select("device_id").First(&mdl, "id = ?", id).Error; err != nil {
+	if err = self.GetDBConn(ctx).Select("device_id").First(&mdl, "id = ?", id).Error; err != nil {
 		return nil, err
 	}
 
-	return self.get_device(*mdl.DeviceId)
+	return self.get_device(ctx, *mdl.DeviceId)
 }
 
-func (self *StorageImpl) list_devices(dev *Device) ([]*Device, error) {
+func (self *StorageImpl) list_devices(ctx context.Context, dev *Device) ([]*Device, error) {
 	var err error
 	var devs_t []*Device
 
@@ -229,13 +252,13 @@ func (self *StorageImpl) list_devices(dev *Device) ([]*Device, error) {
 		d.Alias = dev.Alias
 	}
 
-	if err = self.db.Select("id").Find(&devs_t, d).Error; err != nil {
+	if err = self.GetDBConn(ctx).Select("id").Find(&devs_t, d).Error; err != nil {
 		return nil, err
 	}
 
 	var devs []*Device
 	for _, d = range devs_t {
-		if d, err = self.get_device(*d.Id); err != nil {
+		if d, err = self.get_device(ctx, *d.Id); err != nil {
 			return nil, err
 		}
 
@@ -245,15 +268,15 @@ func (self *StorageImpl) list_devices(dev *Device) ([]*Device, error) {
 	return devs, nil
 }
 
-func (self *StorageImpl) CreateDevice(dev *Device) (*Device, error) {
+func (self *StorageImpl) CreateDevice(ctx context.Context, dev *Device) (*Device, error) {
 	var err error
 
-	if err = self.db.Create(dev).Error; err != nil {
+	if err = self.GetDBConn(ctx).Create(dev).Error; err != nil {
 		self.logger.WithError(err).Debugf("failed to create device")
 		return nil, err
 	}
 
-	if dev, err = self.get_device(*dev.Id); err != nil {
+	if dev, err = self.get_device(ctx, *dev.Id); err != nil {
 		self.logger.WithError(err).Debugf("failed to get device")
 		return nil, err
 	}
@@ -263,8 +286,8 @@ func (self *StorageImpl) CreateDevice(dev *Device) (*Device, error) {
 	return dev, nil
 }
 
-func (self *StorageImpl) DeleteDevice(id string) error {
-	if err := self.db.Delete(&Device{}, "id = ?", id).Error; err != nil {
+func (self *StorageImpl) DeleteDevice(ctx context.Context, id string) error {
+	if err := self.GetDBConn(ctx).Delete(&Device{}, "id = ?", id).Error; err != nil {
 		self.logger.WithError(err).Debugf("failed to delete device")
 		return err
 	}
@@ -274,7 +297,7 @@ func (self *StorageImpl) DeleteDevice(id string) error {
 	return nil
 }
 
-func (self *StorageImpl) PatchDevice(id string, device *Device) (*Device, error) {
+func (self *StorageImpl) PatchDevice(ctx context.Context, id string, device *Device) (*Device, error) {
 	var err error
 	var dev Device
 
@@ -290,12 +313,12 @@ func (self *StorageImpl) PatchDevice(id string, device *Device) (*Device, error)
 		dev.HeartbeatAt = device.HeartbeatAt
 	}
 
-	if err = self.db.Model(&Device{Id: &id}).Update(dev).Error; err != nil {
+	if err = self.GetDBConn(ctx).Model(&Device{Id: &id}).Update(dev).Error; err != nil {
 		self.logger.WithError(err).Debugf("failed to patch device")
 		return nil, err
 	}
 
-	if device, err = self.get_device(id); err != nil {
+	if device, err = self.get_device(ctx, id); err != nil {
 		self.logger.WithError(err).Debugf("failed to get device")
 		return nil, err
 	}
@@ -305,11 +328,11 @@ func (self *StorageImpl) PatchDevice(id string, device *Device) (*Device, error)
 	return device, nil
 }
 
-func (self *StorageImpl) GetDevice(id string) (*Device, error) {
+func (self *StorageImpl) GetDevice(ctx context.Context, id string) (*Device, error) {
 	var dev *Device
 	var err error
 
-	if dev, err = self.get_device(id); err != nil {
+	if dev, err = self.get_device(ctx, id); err != nil {
 		self.logger.WithError(err).Debugf("failed to get device")
 		return nil, err
 	}
@@ -319,11 +342,11 @@ func (self *StorageImpl) GetDevice(id string) (*Device, error) {
 	return dev, nil
 }
 
-func (self *StorageImpl) ListDevices(dev *Device) ([]*Device, error) {
+func (self *StorageImpl) ListDevices(ctx context.Context, dev *Device) ([]*Device, error) {
 	var devs []*Device
 	var err error
 
-	if devs, err = self.list_devices(dev); err != nil {
+	if devs, err = self.list_devices(ctx, dev); err != nil {
 		self.logger.WithError(err).Debugf("failed to list devices")
 		return nil, err
 	}
@@ -333,11 +356,11 @@ func (self *StorageImpl) ListDevices(dev *Device) ([]*Device, error) {
 	return devs, nil
 }
 
-func (self *StorageImpl) GetDeviceByModuleId(id string) (*Device, error) {
+func (self *StorageImpl) GetDeviceByModuleId(ctx context.Context, id string) (*Device, error) {
 	var dev *Device
 	var err error
 
-	if dev, err = self.get_device_by_module_id(id); err != nil {
+	if dev, err = self.get_device_by_module_id(ctx, id); err != nil {
 		self.logger.WithError(err).Debugf("failed to get device by module id")
 		return nil, err
 	}
@@ -345,15 +368,15 @@ func (self *StorageImpl) GetDeviceByModuleId(id string) (*Device, error) {
 	return dev, nil
 }
 
-func (self *StorageImpl) CreateModule(mdl *Module) (*Module, error) {
+func (self *StorageImpl) CreateModule(ctx context.Context, mdl *Module) (*Module, error) {
 	var err error
 
-	if err = self.db.Create(mdl).Error; err != nil {
+	if err = self.GetDBConn(ctx).Create(mdl).Error; err != nil {
 		self.logger.WithError(err).Debugf("failed to create module")
 		return nil, err
 	}
 
-	if mdl, err = self.get_module(*mdl.Id); err != nil {
+	if mdl, err = self.get_module(ctx, *mdl.Id); err != nil {
 		self.logger.WithError(err).Debugf("failed to get module")
 		return nil, err
 	}
@@ -363,10 +386,10 @@ func (self *StorageImpl) CreateModule(mdl *Module) (*Module, error) {
 	return mdl, nil
 }
 
-func (self *StorageImpl) DeleteModule(id string) error {
+func (self *StorageImpl) DeleteModule(ctx context.Context, id string) error {
 	var err error
 
-	if err = self.db.Delete(&Module{}, "id = ?", id).Error; err != nil {
+	if err = self.GetDBConn(ctx).Delete(&Module{}, "id = ?", id).Error; err != nil {
 		self.logger.WithError(err).Debugf("failed to delete module")
 		return err
 	}
@@ -376,7 +399,7 @@ func (self *StorageImpl) DeleteModule(id string) error {
 	return nil
 }
 
-func (self *StorageImpl) PatchModule(id string, mdl *Module) (*Module, error) {
+func (self *StorageImpl) PatchModule(ctx context.Context, id string, mdl *Module) (*Module, error) {
 	var err error
 	var m Module
 
@@ -392,12 +415,12 @@ func (self *StorageImpl) PatchModule(id string, mdl *Module) (*Module, error) {
 		m.HeartbeatAt = mdl.HeartbeatAt
 	}
 
-	if err = self.db.Model(&Module{Id: &id}).Update(m).Error; err != nil {
+	if err = self.GetDBConn(ctx).Model(&Module{Id: &id}).Update(m).Error; err != nil {
 		self.logger.WithError(err).Debugf("failed to patch module")
 		return nil, err
 	}
 
-	if mdl, err = self.get_module(id); err != nil {
+	if mdl, err = self.get_module(ctx, id); err != nil {
 		self.logger.WithError(err).Debugf("failed to get module")
 		return nil, err
 	}
@@ -407,11 +430,11 @@ func (self *StorageImpl) PatchModule(id string, mdl *Module) (*Module, error) {
 	return mdl, nil
 }
 
-func (self *StorageImpl) GetModule(id string) (*Module, error) {
+func (self *StorageImpl) GetModule(ctx context.Context, id string) (*Module, error) {
 	var mdl *Module
 	var err error
 
-	if mdl, err = self.get_module(id); err != nil {
+	if mdl, err = self.get_module(ctx, id); err != nil {
 		self.logger.WithError(err).Debugf("failed to get module")
 		return nil, err
 	}
@@ -421,11 +444,11 @@ func (self *StorageImpl) GetModule(id string) (*Module, error) {
 	return mdl, nil
 }
 
-func (self *StorageImpl) ListModules(mdl *Module) ([]*Module, error) {
+func (self *StorageImpl) ListModules(ctx context.Context, mdl *Module) ([]*Module, error) {
 	var mdls []*Module
 	var err error
 
-	if mdls, err = self.list_modules(mdl); err != nil {
+	if mdls, err = self.list_modules(ctx, mdl); err != nil {
 		self.logger.WithError(err).Debugf("failed to list modules")
 		return nil, err
 	}
@@ -435,15 +458,15 @@ func (self *StorageImpl) ListModules(mdl *Module) ([]*Module, error) {
 	return mdls, nil
 }
 
-func (self *StorageImpl) CreateFlow(flw *Flow) (*Flow, error) {
+func (self *StorageImpl) CreateFlow(ctx context.Context, flw *Flow) (*Flow, error) {
 	var err error
 
-	if err = self.db.Create(flw).Error; err != nil {
+	if err = self.GetDBConn(ctx).Create(flw).Error; err != nil {
 		self.logger.WithError(err).Debugf("failed to create flow")
 		return nil, err
 	}
 
-	if flw, err = self.get_flow(*flw.Id); err != nil {
+	if flw, err = self.get_flow(ctx, *flw.Id); err != nil {
 		self.logger.WithError(err).Debugf("failed to get flow")
 		return nil, err
 	}
@@ -453,10 +476,10 @@ func (self *StorageImpl) CreateFlow(flw *Flow) (*Flow, error) {
 	return flw, nil
 }
 
-func (self *StorageImpl) DeleteFlow(id string) error {
+func (self *StorageImpl) DeleteFlow(ctx context.Context, id string) error {
 	var err error
 
-	if err = self.db.Delete(&Flow{}, "id = ?", id).Error; err != nil {
+	if err = self.GetDBConn(ctx).Delete(&Flow{}, "id = ?", id).Error; err != nil {
 		self.logger.WithError(err).Debugf("failed to delete flow")
 		return err
 	}
@@ -466,7 +489,7 @@ func (self *StorageImpl) DeleteFlow(id string) error {
 	return nil
 }
 
-func (self *StorageImpl) PatchFlow(id string, flw *Flow) (*Flow, error) {
+func (self *StorageImpl) PatchFlow(ctx context.Context, id string, flw *Flow) (*Flow, error) {
 	var err error
 	var f Flow
 
@@ -474,12 +497,12 @@ func (self *StorageImpl) PatchFlow(id string, flw *Flow) (*Flow, error) {
 		f.Alias = flw.Alias
 	}
 
-	if err = self.db.Model(&Flow{Id: &id}).Update(f).Error; err != nil {
+	if err = self.GetDBConn(ctx).Model(&Flow{Id: &id}).Update(f).Error; err != nil {
 		self.logger.WithError(err).Debugf("failed to patch flow")
 		return nil, err
 	}
 
-	if flw, err = self.get_flow(id); err != nil {
+	if flw, err = self.get_flow(ctx, id); err != nil {
 		self.logger.WithError(err).Debugf("failed to get flow")
 		return nil, err
 	}
@@ -489,11 +512,11 @@ func (self *StorageImpl) PatchFlow(id string, flw *Flow) (*Flow, error) {
 	return flw, nil
 }
 
-func (self *StorageImpl) GetFlow(id string) (*Flow, error) {
+func (self *StorageImpl) GetFlow(ctx context.Context, id string) (*Flow, error) {
 	var flw *Flow
 	var err error
 
-	if flw, err = self.get_flow(id); err != nil {
+	if flw, err = self.get_flow(ctx, id); err != nil {
 		self.logger.WithError(err).Debugf("failed to get flow")
 		return nil, err
 	}
@@ -503,11 +526,11 @@ func (self *StorageImpl) GetFlow(id string) (*Flow, error) {
 	return flw, nil
 }
 
-func (self *StorageImpl) ListFlows(flw *Flow) ([]*Flow, error) {
+func (self *StorageImpl) ListFlows(ctx context.Context, flw *Flow) ([]*Flow, error) {
 	var flws []*Flow
 	var err error
 
-	if flws, err = self.list_flows(flw); err != nil {
+	if flws, err = self.list_flows(ctx, flw); err != nil {
 		self.logger.WithError(err).Debugf("failed to list flows")
 		return nil, err
 	}
@@ -517,32 +540,6 @@ func (self *StorageImpl) ListFlows(flw *Flow) ([]*Flow, error) {
 	return flws, nil
 }
 
-func init_args(s *StorageImpl, args ...interface{}) error {
-	var key string
-	var ok bool
-
-	if len(args)%2 != 0 {
-		return InvalidArgument
-	}
-
-	for i := 0; i < len(args); i += 2 {
-		key, ok = args[i].(string)
-		if !ok {
-			return InvalidArgument
-		}
-
-		switch key {
-		case "logger":
-			s.logger, ok = args[i+1].(log.FieldLogger)
-			if !ok {
-				return InvalidArgument
-			}
-		}
-	}
-
-	return nil
-}
-
 func new_db(s *StorageImpl, driver, uri string) error {
 	var db *gorm.DB
 	var err error
@@ -550,13 +547,18 @@ func new_db(s *StorageImpl, driver, uri string) error {
 	if db, err = gorm.Open(driver, uri); err != nil {
 		return err
 	}
-	s.db = db
+
+	if s.opt.IsTraced {
+		otgorm.AddGormCallbacks(db)
+	}
+
+	s.root_db = db
 
 	return nil
 }
 
 func init_db(s *StorageImpl) error {
-	s.db.AutoMigrate(
+	s.GetRootDBConn().AutoMigrate(
 		&Device{},
 		&Module{},
 		&Flow{},
@@ -565,12 +567,34 @@ func init_db(s *StorageImpl) error {
 	return nil
 }
 
-func NewStorageImpl(driver, uri string, args ...interface{}) (*StorageImpl, error) {
+func NewStorageImpl(driver, uri string, args ...interface{}) (Storage, error) {
 	var err error
+	var ok bool
+	var opt StorageImplOption
+	var logger log.FieldLogger
 
-	s := &StorageImpl{}
-	if err = init_args(s, args...); err != nil {
+	if err := opt_helper.Setopt(map[string]func(string, interface{}) error{
+		"logger": opt_helper.ToLogger(&logger),
+		"tracer": func(key string, val interface{}) error {
+			var tracer opentracing.Tracer
+
+			if tracer, ok = val.(opentracing.Tracer); !ok {
+				return opt_helper.InvalidArgument(key)
+			}
+
+			if tracer != nil {
+				opt.IsTraced = true
+			}
+
+			return nil
+		},
+	})(args...); err != nil {
 		return nil, err
+	}
+
+	s := &StorageImpl{
+		opt:    &opt,
+		logger: logger,
 	}
 
 	if err = new_db(s, driver, uri); err != nil {
@@ -579,6 +603,10 @@ func NewStorageImpl(driver, uri string, args ...interface{}) (*StorageImpl, erro
 
 	if err = init_db(s); err != nil {
 		return nil, err
+	}
+
+	if s.opt.IsTraced {
+		return NewTracedStorage(s)
 	}
 
 	return s, nil

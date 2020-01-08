@@ -1,22 +1,24 @@
 package metathings_identityd2_policy
 
 import (
+	"context"
+
 	storage "github.com/nayotta/metathings/pkg/identityd2/storage"
 )
 
 type Backend interface {
-	Enforce(sub, obj *storage.Entity, act *storage.Action) error
-	CreateGroup(*storage.Group) error
-	DeleteGroup(*storage.Group) error
-	AddSubjectToGroup(*storage.Group, *storage.Entity) error
-	RemoveSubjectFromGroup(*storage.Group, *storage.Entity) error
-	AddObjectToGroup(*storage.Group, *storage.Entity) error
-	RemoveObjectFromGroup(*storage.Group, *storage.Entity) error
-	AddRoleToGroup(*storage.Group, *storage.Role) error
-	RemoveRoleFromGroup(*storage.Group, *storage.Role) error
+	Enforce(ctx context.Context, sub, obj *storage.Entity, act *storage.Action) error
+	CreateGroup(context.Context, *storage.Group) error
+	DeleteGroup(context.Context, *storage.Group) error
+	AddSubjectToGroup(context.Context, *storage.Group, *storage.Entity) error
+	RemoveSubjectFromGroup(context.Context, *storage.Group, *storage.Entity) error
+	AddObjectToGroup(context.Context, *storage.Group, *storage.Entity) error
+	RemoveObjectFromGroup(context.Context, *storage.Group, *storage.Entity) error
+	AddRoleToGroup(context.Context, *storage.Group, *storage.Role) error
+	RemoveRoleFromGroup(context.Context, *storage.Group, *storage.Role) error
 
-	AddRoleToEntity(ent *storage.Entity, rol *storage.Role) error
-	RemoveRoleFromEntity(ent *storage.Entity, rol *storage.Role) error
+	AddRoleToEntity(ctx context.Context, ent *storage.Entity, rol *storage.Role) error
+	RemoveRoleFromEntity(ctx context.Context, ent *storage.Entity, rol *storage.Role) error
 }
 
 type BackendFactory func(...interface{}) (Backend, error)

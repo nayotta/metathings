@@ -40,7 +40,7 @@ func (self *MetathingsDevicedService) PatchDevice(ctx context.Context, req *pb.P
 		dev_s.Alias = &alias.Value
 	}
 
-	if dev_s, err = self.storage.PatchDevice(dev_id_str, dev_s); err != nil {
+	if dev_s, err = self.storage.PatchDevice(ctx, dev_id_str, dev_s); err != nil {
 		self.logger.WithError(err).Errorf("failed to patch device in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}

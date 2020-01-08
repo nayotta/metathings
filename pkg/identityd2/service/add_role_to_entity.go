@@ -41,26 +41,26 @@ func (self *MetathingsIdentitydService) AddRoleToEntity(ctx context.Context, req
 	role := req.GetRole()
 	role_id_str := role.GetId().GetValue()
 
-	ent_s, err := self.storage.GetEntity(ent_id_str)
+	ent_s, err := self.storage.GetEntity(ctx, ent_id_str)
 	if err != nil {
 		self.logger.WithError(err).Errorf("failed to get entity in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
-	rol_s, err := self.storage.GetRole(role_id_str)
+	rol_s, err := self.storage.GetRole(ctx, role_id_str)
 	if err != nil {
 		self.logger.WithError(err).Errorf("failed to get role in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
-	err = self.backend.AddRoleToEntity(ent_s, rol_s)
+	err = self.backend.AddRoleToEntity(ctx, ent_s, rol_s)
 	if err != nil {
 		self.logger.WithError(err).Errorf("failed to add role to entity in backend")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
 	// TODO(Peer): we should make entity role work fine. but not now.
-	if err = self.storage.AddRoleToEntity(ent_id_str, role_id_str); err != nil {
+	if err = self.storage.AddRoleToEntity(ctx, ent_id_str, role_id_str); err != nil {
 		self.logger.WithError(err).Errorf("failed to add role to entity in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}

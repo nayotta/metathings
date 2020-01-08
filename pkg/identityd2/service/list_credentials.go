@@ -41,7 +41,7 @@ func (self *MetathingsIdentitydService) ListCredentials(ctx context.Context, req
 		cred.Alias = &alias.Value
 	}
 
-	creds, err := self.storage.ListCredentials(cred)
+	creds, err := self.storage.ListCredentials(ctx, cred)
 	if err != nil {
 		self.logger.WithError(err).Errorf("failed to list credentials in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
