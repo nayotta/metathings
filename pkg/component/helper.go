@@ -1,11 +1,27 @@
 package metathings_component
 
 import (
+	"crypto/sha1"
+	"fmt"
+	"io"
 	"net/url"
+	"os"
 	"strings"
 
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 )
+
+type TransportCredential struct {
+	Insecure  bool
+	PlainText bool   `mapstructure:"plain_text"`
+	KeyFile   string `mapstructure:"key_file"`
+	CertFile  string `mapstructure:"cert_file"`
+}
+
+type ServiceEndpoint struct {
+	TransportCredential `mapstructure:",squash"`
+	Address             string
+}
 
 func ToModule(v **Module) func(string, interface{}) error {
 	return func(key string, val interface{}) error {
@@ -46,4 +62,31 @@ func ParseEndpoint(ep string) (*Endpoint, error) {
 	}
 
 	return &Endpoint{url}, nil
+}
+
+func NewPutObjectStreamingOptionFromPath(path string) (*PutObjectStreamingOption, error) {
+	f, err := os.Open(path)
+	if err != nil {
+		return nil, err
+	}
+	defer f.Close()
+
+	stat, err := f.Stat()
+	if err != nil {
+		return nil, err
+	}
+
+	sha1 := sha1.New()
+	_, err = io.Copy(sha1, f)
+	if err != nil {
+		return nil, err
+	}
+	sha1_str := fmt.Sprintf("%x", sha1.Sum(nil))
+
+	opt := &PutObjectStreamingOption{
+		Length: stat.Size(),
+		Sha1:   sha1_str,
+	}
+
+	return opt, nil
 }

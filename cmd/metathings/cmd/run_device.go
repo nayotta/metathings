@@ -86,7 +86,7 @@ func run_device() error {
 			fx_helper.NewFxAppGetter(&app),
 			GetRunDeviceOptions,
 			cmd_contrib.NewLogger("device"),
-			cmd_contrib.NewTransportCredentials,
+			cmd_contrib.NewServerTransportCredentials,
 			cmd_contrib.NewClientFactory,
 			cmd_contrib.NewTokener,
 			token_helper.NewTokenValidator,
@@ -95,7 +95,6 @@ func run_device() error {
 			func(x service.MetathingsDeviceService) pb.DeviceServiceServer {
 				return x
 			},
-			cmd_contrib.NewTransportCredentials,
 			cmd_contrib.NewListener,
 			cmd_contrib.NewGrpcServer,
 		),

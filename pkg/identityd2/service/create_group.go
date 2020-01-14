@@ -69,12 +69,12 @@ func (self *MetathingsIdentitydService) CreateGroup(ctx context.Context, req *pb
 		Extra:       &extra_str,
 	}
 
-	if err = self.backend.CreateGroup(grp_s); err != nil {
+	if err = self.backend.CreateGroup(ctx, grp_s); err != nil {
 		self.logger.WithError(err).Errorf("failed to create group in backend")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
-	if grp_s, err = self.storage.CreateGroup(grp_s); err != nil {
+	if grp_s, err = self.storage.CreateGroup(ctx, grp_s); err != nil {
 		self.logger.WithError(err).Errorf("failed to create group in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}

@@ -107,7 +107,7 @@ func (s *fileSimpleStorageTestSuite) TestRenameObject() {
 
 func (s *fileSimpleStorageTestSuite) TestListObjects() {
 	fltr := NewObject(test_device_id, test_object_prefix, "")
-	objs, err := s.fss.ListObjects(fltr)
+	objs, err := s.fss.ListObjects(fltr, nil)
 	s.Nil(err)
 	s.Len(objs, 1)
 }

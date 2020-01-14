@@ -41,25 +41,25 @@ func (self *MetathingsIdentitydService) RemoveRoleFromGroup(ctx context.Context,
 	grp_id_str := grp.GetId().GetValue()
 	rol_id_str := rol.GetId().GetValue()
 
-	grp_s, err := self.storage.GetGroup(grp_id_str)
+	grp_s, err := self.storage.GetGroup(ctx, grp_id_str)
 	if err != nil {
 		self.logger.WithError(err).Errorf("failed to get group in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
-	rol_s, err := self.storage.GetRoleWithFullActions(rol_id_str)
+	rol_s, err := self.storage.GetRoleWithFullActions(ctx, rol_id_str)
 	if err != nil {
 		self.logger.WithError(err).Errorf("failed to get role in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
-	err = self.backend.RemoveRoleFromGroup(grp_s, rol_s)
+	err = self.backend.RemoveRoleFromGroup(ctx, grp_s, rol_s)
 	if err != nil {
 		self.logger.WithError(err).Errorf("failed to remove role from group")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
-	if err = self.storage.RemoveRoleFromGroup(grp_id_str, rol_id_str); err != nil {
+	if err = self.storage.RemoveRoleFromGroup(ctx, grp_id_str, rol_id_str); err != nil {
 		self.logger.WithError(err).Errorf("failed to remove role from group in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}

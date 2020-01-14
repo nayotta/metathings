@@ -39,8 +39,8 @@ func (s *MetathingsDeviceCloudService) get_logger() log.FieldLogger {
 	return s.logger
 }
 
-func (s *MetathingsDeviceCloudService) context() context.Context {
-	return context_helper.WithToken(context.TODO(), s.tknr.GetToken())
+func (s *MetathingsDeviceCloudService) context_with_token(ctx context.Context) context.Context {
+	return context_helper.WithToken(ctx, s.tknr.GetToken())
 }
 
 func (s *MetathingsDeviceCloudService) context_with_device(dev_id string) context.Context {

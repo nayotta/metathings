@@ -2,6 +2,7 @@ package log_helper
 
 import (
 	"runtime"
+	"sync"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -30,4 +31,20 @@ func (l *GetLoggerer) GetLogger() log.FieldLogger {
 
 func NewGetLoggerer(logger log.FieldLogger) *GetLoggerer {
 	return &GetLoggerer{logger: logger}
+}
+
+var debug_logger_once sync.Once
+var debug_logger *log.Logger
+
+func GetDebugLogger() log.FieldLogger {
+	debug_logger_once.Do(func() {
+		logger := log.New()
+		logger.SetLevel(log.DebugLevel)
+		logger.WithFields(log.Fields{
+			"#service": "nil",
+		})
+		debug_logger = logger
+	})
+
+	return debug_logger
 }

@@ -1,6 +1,7 @@
 package metathings_deviced_service
 
 import (
+	"context"
 	"errors"
 
 	"github.com/golang/protobuf/ptypes"
@@ -18,7 +19,16 @@ func parse_object(x *pb.OpObject) *simple_storage.Object {
 	device := x.GetDevice().GetId().GetValue()
 	prefix := x.GetPrefix().GetValue()
 	name := x.GetName().GetValue()
-	return simple_storage.NewObject(device, prefix, name)
+	length := x.GetLength().GetValue()
+
+	y := &simple_storage.Object{
+		Device: device,
+		Prefix: prefix,
+		Name:   name,
+		Length: length,
+	}
+
+	return y
 }
 
 func copy_device(x *storage.Device) *pb.Device {
@@ -214,6 +224,7 @@ func _ensure_get_object_device_id(x *pb.OpObject) error {
 	return nil
 }
 
+func ensure_device_online(ctx context.Context, s storage.Storage) func(device_getter) error {
 func ensure_get_flow_set_id(x flow_set_getter) error {
 	fs := x.GetFlowSet()
 	if fs == nil {
@@ -229,7 +240,7 @@ func ensure_get_flow_set_id(x flow_set_getter) error {
 func ensure_device_online(s storage.Storage) func(device_getter) error {
 	return func(x device_getter) error {
 		dev_id := x.GetDevice().GetId().GetValue()
-		dev, err := s.GetDevice(dev_id)
+		dev, err := s.GetDevice(ctx, dev_id)
 		if err != nil {
 			return err
 		}

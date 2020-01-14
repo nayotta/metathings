@@ -260,6 +260,47 @@ func (this *OpObject) Validate() error {
 	}
 	return nil
 }
+func (this *ObjectChunk) Validate() error {
+	return nil
+}
+func (this *ObjectChunks) Validate() error {
+	for _, item := range this.Chunks {
+		if item != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("Chunks", err)
+			}
+		}
+	}
+	return nil
+}
+func (this *OpObjectChunk) Validate() error {
+	if this.Offset != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Offset); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Offset", err)
+		}
+	}
+	if this.Data != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Data); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Data", err)
+		}
+	}
+	if this.Length != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Length); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Length", err)
+		}
+	}
+	return nil
+}
+func (this *OpObjectChunks) Validate() error {
+	for _, item := range this.Chunks {
+		if item != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("Chunks", err)
+			}
+		}
+	}
+	return nil
+}
 func (this *ErrorValue) Validate() error {
 	return nil
 }

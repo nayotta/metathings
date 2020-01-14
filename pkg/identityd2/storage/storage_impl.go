@@ -1,39 +1,61 @@
 package metathings_identityd2_storage
 
 import (
+	"context"
 	"time"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	"github.com/opentracing/opentracing-go"
 	log "github.com/sirupsen/logrus"
+	otgorm "github.com/smacker/opentracing-gorm"
+
+	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 )
 
 var (
 	SYSTEM_CONFIG_INITIALIZE = "init"
 )
 
-type StorageImpl struct {
-	db     *gorm.DB
-	logger log.FieldLogger
+type StorageImplOption struct {
+	IsTraced bool
 }
 
-func (self *StorageImpl) list_view_children_domains_by_domain_id(id string) ([]*Domain, error) {
+type StorageImpl struct {
+	opt     *StorageImplOption
+	root_db *gorm.DB
+	logger  log.FieldLogger
+}
+
+func (self *StorageImpl) GetRootDBConn() *gorm.DB {
+	return self.root_db
+}
+
+func (self *StorageImpl) GetDBConn(ctx context.Context) *gorm.DB {
+	if db := ctx.Value("dbconn"); db != nil {
+		return db.(*gorm.DB)
+	}
+
+	return self.GetRootDBConn()
+}
+
+func (self *StorageImpl) list_view_children_domains_by_domain_id(ctx context.Context, id string) ([]*Domain, error) {
 	var doms []*Domain
 	var err error
 
-	if err = self.db.Select("id").Where("parent_id = ?", id).Take(&doms).Error; err != nil {
+	if err = self.GetDBConn(ctx).Select("id").Where("parent_id = ?", id).Take(&doms).Error; err != nil {
 		return nil, err
 	}
 
 	return doms, nil
 }
 
-func (self *StorageImpl) get_domain(id string) (*Domain, error) {
+func (self *StorageImpl) get_domain(ctx context.Context, id string) (*Domain, error) {
 	var err error
 	var dom Domain
 
-	if err = self.db.First(&dom, "id = ?", id).Error; err != nil {
+	if err = self.GetDBConn(ctx).First(&dom, "id = ?", id).Error; err != nil {
 		return nil, err
 	}
 
@@ -43,14 +65,14 @@ func (self *StorageImpl) get_domain(id string) (*Domain, error) {
 		}
 	}
 
-	if dom.Children, err = self.list_view_children_domains_by_domain_id(id); err != nil {
+	if dom.Children, err = self.list_view_children_domains_by_domain_id(ctx, id); err != nil {
 		return nil, err
 	}
 
 	return &dom, nil
 }
 
-func (self *StorageImpl) list_domains(dom *Domain) ([]*Domain, error) {
+func (self *StorageImpl) list_domains(ctx context.Context, dom *Domain) ([]*Domain, error) {
 	var err error
 	var doms_t []*Domain
 
@@ -71,13 +93,13 @@ func (self *StorageImpl) list_domains(dom *Domain) ([]*Domain, error) {
 		d.ParentId = dom.Parent.Id
 	}
 
-	if err = self.db.Select("id").Find(&doms_t, d).Error; err != nil {
+	if err = self.GetDBConn(ctx).Select("id").Find(&doms_t, d).Error; err != nil {
 		return nil, err
 	}
 
 	doms := []*Domain{}
 	for _, d = range doms_t {
-		if d, err = self.get_domain(*d.Id); err != nil {
+		if d, err = self.get_domain(ctx, *d.Id); err != nil {
 			return nil, err
 		}
 		doms = append(doms, d)
@@ -86,15 +108,15 @@ func (self *StorageImpl) list_domains(dom *Domain) ([]*Domain, error) {
 	return doms, nil
 }
 
-func (self *StorageImpl) CreateDomain(dom *Domain) (*Domain, error) {
+func (self *StorageImpl) CreateDomain(ctx context.Context, dom *Domain) (*Domain, error) {
 	var err error
 
-	if err = self.db.Create(dom).Error; err != nil {
+	if err = self.GetDBConn(ctx).Create(dom).Error; err != nil {
 		self.logger.WithError(err).Debugf("failed to create domain")
 		return nil, err
 	}
 
-	if dom, err = self.get_domain(*dom.Id); err != nil {
+	if dom, err = self.get_domain(ctx, *dom.Id); err != nil {
 		self.logger.WithError(err).Debugf("failed to get domain")
 		return nil, err
 	}
@@ -104,8 +126,8 @@ func (self *StorageImpl) CreateDomain(dom *Domain) (*Domain, error) {
 	return dom, nil
 }
 
-func (self *StorageImpl) DeleteDomain(id string) error {
-	if err := self.db.Delete(&Domain{}, "id = ?", id).Error; err != nil {
+func (self *StorageImpl) DeleteDomain(ctx context.Context, id string) error {
+	if err := self.GetDBConn(ctx).Delete(&Domain{}, "id = ?", id).Error; err != nil {
 		self.logger.WithError(err).Debugf("failed to delete domain")
 		return err
 	}
@@ -115,7 +137,7 @@ func (self *StorageImpl) DeleteDomain(id string) error {
 	return nil
 }
 
-func (self *StorageImpl) PatchDomain(id string, domain *Domain) (*Domain, error) {
+func (self *StorageImpl) PatchDomain(ctx context.Context, id string, domain *Domain) (*Domain, error) {
 	var err error
 	var dom *Domain
 	var domNew Domain
@@ -127,12 +149,12 @@ func (self *StorageImpl) PatchDomain(id string, domain *Domain) (*Domain, error)
 		domNew.Extra = domain.Extra
 	}
 
-	if err = self.db.Model(&Domain{Id: &id}).Update(domNew).Error; err != nil {
+	if err = self.GetDBConn(ctx).Model(&Domain{Id: &id}).Update(domNew).Error; err != nil {
 		self.logger.WithError(err).Debugf("failed to patch domain")
 		return nil, err
 	}
 
-	if dom, err = self.get_domain(id); err != nil {
+	if dom, err = self.get_domain(ctx, id); err != nil {
 		self.logger.WithError(err).Debugf("failed to get domain view")
 		return nil, err
 	}
@@ -142,11 +164,11 @@ func (self *StorageImpl) PatchDomain(id string, domain *Domain) (*Domain, error)
 	return dom, nil
 }
 
-func (self *StorageImpl) GetDomain(id string) (*Domain, error) {
+func (self *StorageImpl) GetDomain(ctx context.Context, id string) (*Domain, error) {
 	var err error
 	var dom *Domain
 
-	if dom, err = self.get_domain(id); err != nil {
+	if dom, err = self.get_domain(ctx, id); err != nil {
 		self.logger.WithError(err).Debugf("failed to get domain")
 		return nil, err
 	}
@@ -156,11 +178,11 @@ func (self *StorageImpl) GetDomain(id string) (*Domain, error) {
 	return dom, nil
 }
 
-func (self *StorageImpl) ListDomains(dom *Domain) ([]*Domain, error) {
+func (self *StorageImpl) ListDomains(ctx context.Context, dom *Domain) ([]*Domain, error) {
 	var doms []*Domain
 	var err error
 
-	if doms, err = self.list_domains(dom); err != nil {
+	if doms, err = self.list_domains(ctx, dom); err != nil {
 		self.logger.WithError(err).Debugf("failed to list domains")
 		return nil, err
 	}
@@ -170,13 +192,13 @@ func (self *StorageImpl) ListDomains(dom *Domain) ([]*Domain, error) {
 	return doms, nil
 }
 
-func (self *StorageImpl) AddEntityToDomain(domain_id, entity_id string) error {
+func (self *StorageImpl) AddEntityToDomain(ctx context.Context, domain_id, entity_id string) error {
 	m := &EntityDomainMapping{
 		DomainId: &domain_id,
 		EntityId: &entity_id,
 	}
 
-	if err := self.db.Create(m).Error; err != nil {
+	if err := self.GetDBConn(ctx).Create(m).Error; err != nil {
 		self.logger.WithError(err).Debugf("failed to add entity to domain")
 		return err
 	}
@@ -189,8 +211,8 @@ func (self *StorageImpl) AddEntityToDomain(domain_id, entity_id string) error {
 	return nil
 }
 
-func (self *StorageImpl) RemoveEntityFromDomain(domain_id, entity_id string) error {
-	if err := self.db.Delete(&EntityDomainMapping{}, "domain_id = ? and entity_id = ?", domain_id, entity_id).Error; err != nil {
+func (self *StorageImpl) RemoveEntityFromDomain(ctx context.Context, domain_id, entity_id string) error {
+	if err := self.GetDBConn(ctx).Delete(&EntityDomainMapping{}, "domain_id = ? and entity_id = ?", domain_id, entity_id).Error; err != nil {
 		self.logger.WithError(err).Debugf("failed to remove entity from domain")
 		return err
 	}
@@ -203,18 +225,18 @@ func (self *StorageImpl) RemoveEntityFromDomain(domain_id, entity_id string) err
 	return nil
 }
 
-func (self *StorageImpl) get_action(id string) (*Action, error) {
+func (self *StorageImpl) get_action(ctx context.Context, id string) (*Action, error) {
 	var err error
 	var act Action
 
-	if err = self.db.First(&act, "id = ?", id).Error; err != nil {
+	if err = self.GetDBConn(ctx).First(&act, "id = ?", id).Error; err != nil {
 		return nil, err
 	}
 
 	return &act, nil
 }
 
-func (self *StorageImpl) list_actions(act *Action) ([]*Action, error) {
+func (self *StorageImpl) list_actions(ctx context.Context, act *Action) ([]*Action, error) {
 	var err error
 	var acts_t []*Action
 
@@ -229,13 +251,13 @@ func (self *StorageImpl) list_actions(act *Action) ([]*Action, error) {
 		a.Alias = act.Alias
 	}
 
-	if err = self.db.Select("id").Find(&acts_t, a).Error; err != nil {
+	if err = self.GetDBConn(ctx).Select("id").Find(&acts_t, a).Error; err != nil {
 		return nil, err
 	}
 
 	acts := []*Action{}
 	for _, a = range acts_t {
-		if a, err = self.get_action(*a.Id); err != nil {
+		if a, err = self.get_action(ctx, *a.Id); err != nil {
 			return nil, err
 		}
 
@@ -245,13 +267,13 @@ func (self *StorageImpl) list_actions(act *Action) ([]*Action, error) {
 	return acts, nil
 }
 
-func (self *StorageImpl) list_actions_by_view_actions(xs []*Action) ([]*Action, error) {
+func (self *StorageImpl) list_actions_by_view_actions(ctx context.Context, xs []*Action) ([]*Action, error) {
 	var err error
 	var y *Action
 	var ys []*Action
 
 	for _, x := range xs {
-		if y, err = self.get_action(*x.Id); err != nil {
+		if y, err = self.get_action(ctx, *x.Id); err != nil {
 			return nil, err
 		}
 		ys = append(ys, y)
@@ -260,15 +282,15 @@ func (self *StorageImpl) list_actions_by_view_actions(xs []*Action) ([]*Action, 
 	return ys, nil
 }
 
-func (self *StorageImpl) CreateAction(act *Action) (*Action, error) {
+func (self *StorageImpl) CreateAction(ctx context.Context, act *Action) (*Action, error) {
 	var err error
 
-	if err = self.db.Create(act).Error; err != nil {
+	if err = self.GetDBConn(ctx).Create(act).Error; err != nil {
 		self.logger.WithError(err).Debugf("failed to create action")
 		return nil, err
 	}
 
-	if act, err = self.get_action(*act.Id); err != nil {
+	if act, err = self.get_action(ctx, *act.Id); err != nil {
 		self.logger.WithError(err).Debugf("failed to get action")
 		return nil, err
 	}
@@ -276,10 +298,10 @@ func (self *StorageImpl) CreateAction(act *Action) (*Action, error) {
 	return act, nil
 }
 
-func (self *StorageImpl) DeleteAction(id string) error {
+func (self *StorageImpl) DeleteAction(ctx context.Context, id string) error {
 	var err error
 
-	if err = self.db.Delete(&Action{}, "id = ?", id).Error; err != nil {
+	if err = self.GetDBConn(ctx).Delete(&Action{}, "id = ?", id).Error; err != nil {
 		self.logger.WithError(err).Debugf("failed to delete action")
 		return err
 	}
@@ -289,7 +311,7 @@ func (self *StorageImpl) DeleteAction(id string) error {
 	return nil
 }
 
-func (self *StorageImpl) PatchAction(id string, action *Action) (*Action, error) {
+func (self *StorageImpl) PatchAction(ctx context.Context, id string, action *Action) (*Action, error) {
 	var err error
 	var act *Action
 	var actNew Action
@@ -306,12 +328,12 @@ func (self *StorageImpl) PatchAction(id string, action *Action) (*Action, error)
 		actNew.Extra = action.Extra
 	}
 
-	if err = self.db.Model(&Action{Id: &id}).Update(actNew).Error; err != nil {
+	if err = self.GetDBConn(ctx).Model(&Action{Id: &id}).Update(actNew).Error; err != nil {
 		self.logger.WithError(err).Debugf("failed to patch action")
 		return nil, err
 	}
 
-	if act, err = self.get_action(id); err != nil {
+	if act, err = self.get_action(ctx, id); err != nil {
 		self.logger.WithError(err).Debugf("failed to get action view")
 		return nil, err
 	}
@@ -321,11 +343,11 @@ func (self *StorageImpl) PatchAction(id string, action *Action) (*Action, error)
 	return act, nil
 }
 
-func (self *StorageImpl) GetAction(id string) (*Action, error) {
+func (self *StorageImpl) GetAction(ctx context.Context, id string) (*Action, error) {
 	var err error
 	var act *Action
 
-	if act, err = self.get_action(id); err != nil {
+	if act, err = self.get_action(ctx, id); err != nil {
 		self.logger.WithError(err).Debugf("failed to get action")
 		return nil, err
 	}
@@ -335,11 +357,11 @@ func (self *StorageImpl) GetAction(id string) (*Action, error) {
 	return act, nil
 }
 
-func (self *StorageImpl) ListActions(act *Action) ([]*Action, error) {
+func (self *StorageImpl) ListActions(ctx context.Context, act *Action) ([]*Action, error) {
 	var err error
 	var acts []*Action
 
-	if acts, err = self.list_actions(act); err != nil {
+	if acts, err = self.list_actions(ctx, act); err != nil {
 		self.logger.WithError(err).Debugf("failed to list actions")
 		return nil, err
 	}
@@ -349,16 +371,16 @@ func (self *StorageImpl) ListActions(act *Action) ([]*Action, error) {
 	return acts, nil
 }
 
-func (self *StorageImpl) get_role(id string) (*Role, error) {
+func (self *StorageImpl) get_role(ctx context.Context, id string) (*Role, error) {
 	var role Role
 	var act_role_maps []*ActionRoleMapping
 	var err error
 
-	if err = self.db.First(&role, "id = ?", id).Error; err != nil {
+	if err = self.GetDBConn(ctx).First(&role, "id = ?", id).Error; err != nil {
 		return nil, err
 	}
 
-	if err = self.db.Select("action_id").Find(&act_role_maps, "role_id = ?", id).Error; err != nil {
+	if err = self.GetDBConn(ctx).Select("action_id").Find(&act_role_maps, "role_id = ?", id).Error; err != nil {
 		return nil, err
 	}
 	for _, m := range act_role_maps {
@@ -368,7 +390,7 @@ func (self *StorageImpl) get_role(id string) (*Role, error) {
 	return &role, nil
 }
 
-func (self *StorageImpl) list_roles(role *Role) ([]*Role, error) {
+func (self *StorageImpl) list_roles(ctx context.Context, role *Role) ([]*Role, error) {
 	var err error
 	var roles_t []*Role
 
@@ -383,13 +405,13 @@ func (self *StorageImpl) list_roles(role *Role) ([]*Role, error) {
 		r.Alias = role.Alias
 	}
 
-	if err = self.db.Select("id").Find(&roles_t, r).Error; err != nil {
+	if err = self.GetDBConn(ctx).Select("id").Find(&roles_t, r).Error; err != nil {
 		return nil, err
 	}
 
 	var roles []*Role
 	for _, r = range roles_t {
-		if r, err = self.get_role(*r.Id); err != nil {
+		if r, err = self.get_role(ctx, *r.Id); err != nil {
 			return nil, err
 		}
 		roles = append(roles, r)
@@ -398,15 +420,15 @@ func (self *StorageImpl) list_roles(role *Role) ([]*Role, error) {
 	return roles, nil
 }
 
-func (self *StorageImpl) CreateRole(role *Role) (*Role, error) {
+func (self *StorageImpl) CreateRole(ctx context.Context, role *Role) (*Role, error) {
 	var err error
 
-	if err = self.db.Create(role).Error; err != nil {
+	if err = self.GetDBConn(ctx).Create(role).Error; err != nil {
 		self.logger.WithError(err).Debugf("failed to create role")
 		return nil, err
 	}
 
-	if role, err = self.get_role(*role.Id); err != nil {
+	if role, err = self.get_role(ctx, *role.Id); err != nil {
 		self.logger.WithError(err).Debugf("failed to get role")
 		return nil, err
 	}
@@ -416,10 +438,10 @@ func (self *StorageImpl) CreateRole(role *Role) (*Role, error) {
 	return role, nil
 }
 
-func (self *StorageImpl) DeleteRole(id string) error {
+func (self *StorageImpl) DeleteRole(ctx context.Context, id string) error {
 	var err error
 
-	if err = self.db.Delete(&Role{}, "id = ?", id).Error; err != nil {
+	if err = self.GetDBConn(ctx).Delete(&Role{}, "id = ?", id).Error; err != nil {
 		self.logger.WithError(err).Debugf("failed to delete role")
 		return err
 	}
@@ -429,7 +451,7 @@ func (self *StorageImpl) DeleteRole(id string) error {
 	return nil
 }
 
-func (self *StorageImpl) PatchRole(id string, role *Role) (*Role, error) {
+func (self *StorageImpl) PatchRole(ctx context.Context, id string, role *Role) (*Role, error) {
 	var err error
 	var rol *Role
 	var rolNew Role
@@ -444,12 +466,12 @@ func (self *StorageImpl) PatchRole(id string, role *Role) (*Role, error) {
 		rolNew.Extra = role.Extra
 	}
 
-	if err = self.db.Model(&Role{Id: &id}).Update(rolNew).Error; err != nil {
+	if err = self.GetDBConn(ctx).Model(&Role{Id: &id}).Update(rolNew).Error; err != nil {
 		self.logger.WithError(err).Debugf("failed to patch role")
 		return nil, err
 	}
 
-	if rol, err = self.get_role(id); err != nil {
+	if rol, err = self.get_role(ctx, id); err != nil {
 		self.logger.WithError(err).Debugf("failed to get role view")
 		return nil, err
 	}
@@ -459,11 +481,11 @@ func (self *StorageImpl) PatchRole(id string, role *Role) (*Role, error) {
 	return rol, nil
 }
 
-func (self *StorageImpl) GetRole(id string) (*Role, error) {
+func (self *StorageImpl) GetRole(ctx context.Context, id string) (*Role, error) {
 	var role *Role
 	var err error
 
-	if role, err = self.get_role(id); err != nil {
+	if role, err = self.get_role(ctx, id); err != nil {
 		self.logger.WithError(err).Debugf("failed to get role")
 		return nil, err
 	}
@@ -471,16 +493,16 @@ func (self *StorageImpl) GetRole(id string) (*Role, error) {
 	return role, nil
 }
 
-func (self *StorageImpl) GetRoleWithFullActions(id string) (*Role, error) {
+func (self *StorageImpl) GetRoleWithFullActions(ctx context.Context, id string) (*Role, error) {
 	var role *Role
 	var err error
 
-	if role, err = self.get_role(id); err != nil {
+	if role, err = self.get_role(ctx, id); err != nil {
 		self.logger.WithError(err).Debugf("failed to get role")
 		return nil, err
 	}
 
-	if role.Actions, err = self.list_actions_by_view_actions(role.Actions); err != nil {
+	if role.Actions, err = self.list_actions_by_view_actions(ctx, role.Actions); err != nil {
 		self.logger.WithError(err).Debugf("failed to list actions by view actions")
 		return nil, err
 	}
@@ -488,11 +510,11 @@ func (self *StorageImpl) GetRoleWithFullActions(id string) (*Role, error) {
 	return role, nil
 }
 
-func (self *StorageImpl) ListRoles(role *Role) ([]*Role, error) {
+func (self *StorageImpl) ListRoles(ctx context.Context, role *Role) ([]*Role, error) {
 	var roles []*Role
 	var err error
 
-	if roles, err = self.list_roles(role); err != nil {
+	if roles, err = self.list_roles(ctx, role); err != nil {
 		self.logger.WithError(err).Debugf("failed to list roles")
 		return nil, err
 	}
@@ -502,7 +524,7 @@ func (self *StorageImpl) ListRoles(role *Role) ([]*Role, error) {
 	return roles, nil
 }
 
-func (self *StorageImpl) AddActionToRole(role_id, action_id string) error {
+func (self *StorageImpl) AddActionToRole(ctx context.Context, role_id, action_id string) error {
 	var err error
 
 	m := &ActionRoleMapping{
@@ -510,7 +532,7 @@ func (self *StorageImpl) AddActionToRole(role_id, action_id string) error {
 		RoleId:   &role_id,
 	}
 
-	if err = self.db.Create(m).Error; err != nil {
+	if err = self.GetDBConn(ctx).Create(m).Error; err != nil {
 		self.logger.WithError(err).Debugf("failed to add action to role")
 		return err
 	}
@@ -523,10 +545,10 @@ func (self *StorageImpl) AddActionToRole(role_id, action_id string) error {
 	return nil
 }
 
-func (self *StorageImpl) RemoveActionFromRole(role_id, action_id string) error {
+func (self *StorageImpl) RemoveActionFromRole(ctx context.Context, role_id, action_id string) error {
 	var err error
 
-	if err = self.db.Delete(&ActionRoleMapping{}, "role_id = ? and action_id = ?", role_id, action_id).Error; err != nil {
+	if err = self.GetDBConn(ctx).Delete(&ActionRoleMapping{}, "role_id = ? and action_id = ?", role_id, action_id).Error; err != nil {
 		self.logger.WithError(err).Debugf("failed to remove action from role")
 		return err
 	}
@@ -539,11 +561,11 @@ func (self *StorageImpl) RemoveActionFromRole(role_id, action_id string) error {
 	return nil
 }
 
-func (self *StorageImpl) list_view_domains_by_entity_id(id string) ([]*Domain, error) {
+func (self *StorageImpl) list_view_domains_by_entity_id(ctx context.Context, id string) ([]*Domain, error) {
 	var err error
 
 	var ent_dom_maps []*EntityDomainMapping
-	if err = self.db.Find(&ent_dom_maps, "entity_id = ?", id).Error; err != nil {
+	if err = self.GetDBConn(ctx).Find(&ent_dom_maps, "entity_id = ?", id).Error; err != nil {
 		return nil, err
 	}
 
@@ -557,13 +579,13 @@ func (self *StorageImpl) list_view_domains_by_entity_id(id string) ([]*Domain, e
 	return doms, nil
 }
 
-func (self *StorageImpl) list_view_groups_by_entity_id(id string) ([]*Group, error) {
+func (self *StorageImpl) list_view_groups_by_entity_id(ctx context.Context, id string) ([]*Group, error) {
 	var err error
 
 	grps_m := map[string]bool{}
 
 	var sub_grp_maps []*SubjectGroupMapping
-	if err = self.db.Find(&sub_grp_maps, "subject_id = ?", id).Error; err != nil {
+	if err = self.GetDBConn(ctx).Find(&sub_grp_maps, "subject_id = ?", id).Error; err != nil {
 		return nil, err
 	}
 	for _, m := range sub_grp_maps {
@@ -571,7 +593,7 @@ func (self *StorageImpl) list_view_groups_by_entity_id(id string) ([]*Group, err
 	}
 
 	var obj_grp_maps []*ObjectGroupMapping
-	if err = self.db.Find(&obj_grp_maps, "object_id = ?", id).Error; err != nil {
+	if err = self.GetDBConn(ctx).Find(&obj_grp_maps, "object_id = ?", id).Error; err != nil {
 		return nil, err
 	}
 	for _, m := range obj_grp_maps {
@@ -587,11 +609,11 @@ func (self *StorageImpl) list_view_groups_by_entity_id(id string) ([]*Group, err
 	return grps, nil
 }
 
-func (self *StorageImpl) list_view_roles_by_entity_id(id string) ([]*Role, error) {
+func (self *StorageImpl) list_view_roles_by_entity_id(ctx context.Context, id string) ([]*Role, error) {
 	var err error
 
 	var ent_role_maps []*EntityRoleMapping
-	if err = self.db.Find(&ent_role_maps, "entity_id = ?", id).Error; err != nil {
+	if err = self.GetDBConn(ctx).Find(&ent_role_maps, "entity_id = ?", id).Error; err != nil {
 		return nil, err
 	}
 
@@ -603,53 +625,53 @@ func (self *StorageImpl) list_view_roles_by_entity_id(id string) ([]*Role, error
 	return roles, nil
 }
 
-func (self *StorageImpl) get_entity(id string) (*Entity, error) {
+func (self *StorageImpl) get_entity(ctx context.Context, id string) (*Entity, error) {
 	var ent Entity
 	var err error
 
-	if err = self.db.First(&ent, "id = ?", id).Error; err != nil {
+	if err = self.GetDBConn(ctx).First(&ent, "id = ?", id).Error; err != nil {
 		return nil, err
 	}
 
-	if ent.Domains, err = self.list_view_domains_by_entity_id(id); err != nil {
+	if ent.Domains, err = self.list_view_domains_by_entity_id(ctx, id); err != nil {
 		return nil, err
 	}
 
-	if ent.Groups, err = self.list_view_groups_by_entity_id(id); err != nil {
+	if ent.Groups, err = self.list_view_groups_by_entity_id(ctx, id); err != nil {
 		return nil, err
 	}
 
-	if ent.Roles, err = self.list_view_roles_by_entity_id(id); err != nil {
+	if ent.Roles, err = self.list_view_roles_by_entity_id(ctx, id); err != nil {
 		return nil, err
 	}
 
 	return &ent, nil
 }
 
-func (self *StorageImpl) get_entity_by_name(name string) (*Entity, error) {
+func (self *StorageImpl) get_entity_by_name(ctx context.Context, name string) (*Entity, error) {
 	var ent Entity
 	var err error
 
-	if err = self.db.First(&ent, "name = ?", name).Error; err != nil {
+	if err = self.GetDBConn(ctx).First(&ent, "name = ?", name).Error; err != nil {
 		return nil, err
 	}
 
-	if ent.Domains, err = self.list_view_domains_by_entity_id(*ent.Id); err != nil {
+	if ent.Domains, err = self.list_view_domains_by_entity_id(ctx, *ent.Id); err != nil {
 		return nil, err
 	}
 
-	if ent.Groups, err = self.list_view_groups_by_entity_id(*ent.Id); err != nil {
+	if ent.Groups, err = self.list_view_groups_by_entity_id(ctx, *ent.Id); err != nil {
 		return nil, err
 	}
 
-	if ent.Roles, err = self.list_view_roles_by_entity_id(*ent.Id); err != nil {
+	if ent.Roles, err = self.list_view_roles_by_entity_id(ctx, *ent.Id); err != nil {
 		return nil, err
 	}
 
 	return &ent, nil
 }
 
-func (self *StorageImpl) list_entities(ent *Entity) ([]*Entity, error) {
+func (self *StorageImpl) list_entities(ctx context.Context, ent *Entity) ([]*Entity, error) {
 	var ents_t []*Entity
 	var err error
 
@@ -664,13 +686,13 @@ func (self *StorageImpl) list_entities(ent *Entity) ([]*Entity, error) {
 		e.Alias = ent.Alias
 	}
 
-	if err = self.db.Select("id").Find(&ents_t, e).Error; err != nil {
+	if err = self.GetDBConn(ctx).Select("id").Find(&ents_t, e).Error; err != nil {
 		return nil, err
 	}
 
 	var ents []*Entity
 	for _, e := range ents_t {
-		if ent, err = self.get_entity(*e.Id); err != nil {
+		if ent, err = self.get_entity(ctx, *e.Id); err != nil {
 			return nil, err
 		}
 		ents = append(ents, ent)
@@ -679,15 +701,15 @@ func (self *StorageImpl) list_entities(ent *Entity) ([]*Entity, error) {
 	return ents, nil
 }
 
-func (self *StorageImpl) CreateEntity(ent *Entity) (*Entity, error) {
+func (self *StorageImpl) CreateEntity(ctx context.Context, ent *Entity) (*Entity, error) {
 	var err error
 
-	if err = self.db.Create(ent).Error; err != nil {
+	if err = self.GetDBConn(ctx).Create(ent).Error; err != nil {
 		self.logger.WithError(err).Debugf("failed to create entity")
 		return nil, err
 	}
 
-	if ent, err = self.get_entity(*ent.Id); err != nil {
+	if ent, err = self.get_entity(ctx, *ent.Id); err != nil {
 		self.logger.WithError(err).Debugf("failed to get entity")
 		return nil, err
 	}
@@ -699,10 +721,10 @@ func (self *StorageImpl) CreateEntity(ent *Entity) (*Entity, error) {
 	return ent, nil
 }
 
-func (self *StorageImpl) DeleteEntity(id string) error {
+func (self *StorageImpl) DeleteEntity(ctx context.Context, id string) error {
 	var err error
 
-	if err = self.db.Delete(&Entity{}, "id = ?", id).Error; err != nil {
+	if err = self.GetDBConn(ctx).Delete(&Entity{}, "id = ?", id).Error; err != nil {
 		self.logger.WithField("id", id).Debugf("failed to delete entity")
 		return err
 	}
@@ -712,7 +734,7 @@ func (self *StorageImpl) DeleteEntity(id string) error {
 	return nil
 }
 
-func (self *StorageImpl) PatchEntity(id string, entity *Entity) (*Entity, error) {
+func (self *StorageImpl) PatchEntity(ctx context.Context, id string, entity *Entity) (*Entity, error) {
 	var err error
 	var ent *Entity
 	var entNew Entity
@@ -727,12 +749,12 @@ func (self *StorageImpl) PatchEntity(id string, entity *Entity) (*Entity, error)
 		entNew.Extra = entity.Extra
 	}
 
-	if err = self.db.Model(&Entity{Id: &id}).Update(entNew).Error; err != nil {
+	if err = self.GetDBConn(ctx).Model(&Entity{Id: &id}).Update(entNew).Error; err != nil {
 		self.logger.WithError(err).Debugf("failed to patch entity")
 		return nil, err
 	}
 
-	if ent, err = self.get_entity(id); err != nil {
+	if ent, err = self.get_entity(ctx, id); err != nil {
 		self.logger.WithError(err).Debugf("failed to get entity view")
 		return nil, err
 	}
@@ -743,11 +765,11 @@ func (self *StorageImpl) PatchEntity(id string, entity *Entity) (*Entity, error)
 }
 
 //todo remove password from return. zh
-func (self *StorageImpl) GetEntity(id string) (*Entity, error) {
+func (self *StorageImpl) GetEntity(ctx context.Context, id string) (*Entity, error) {
 	var ent *Entity
 	var err error
 
-	if ent, err = self.get_entity(id); err != nil {
+	if ent, err = self.get_entity(ctx, id); err != nil {
 		self.logger.WithError(err).Debugf("failed to get entity")
 		return nil, err
 	}
@@ -757,11 +779,11 @@ func (self *StorageImpl) GetEntity(id string) (*Entity, error) {
 	return ent, nil
 }
 
-func (self *StorageImpl) GetEntityByName(name string) (*Entity, error) {
+func (self *StorageImpl) GetEntityByName(ctx context.Context, name string) (*Entity, error) {
 	var ent *Entity
 	var err error
 
-	if ent, err = self.get_entity_by_name(name); err != nil {
+	if ent, err = self.get_entity_by_name(ctx, name); err != nil {
 		self.logger.WithError(err).Debugf("failed to get entity")
 		return nil, err
 	}
@@ -771,11 +793,11 @@ func (self *StorageImpl) GetEntityByName(name string) (*Entity, error) {
 	return ent, nil
 }
 
-func (self *StorageImpl) ListEntities(ent *Entity) ([]*Entity, error) {
+func (self *StorageImpl) ListEntities(ctx context.Context, ent *Entity) ([]*Entity, error) {
 	var ents []*Entity
 	var err error
 
-	if ents, err = self.list_entities(ent); err != nil {
+	if ents, err = self.list_entities(ctx, ent); err != nil {
 		self.logger.WithError(err).Debugf("failed to list entities")
 		return nil, err
 	}
@@ -785,11 +807,11 @@ func (self *StorageImpl) ListEntities(ent *Entity) ([]*Entity, error) {
 	return ents, nil
 }
 
-func (self *StorageImpl) ListEntitiesByDomainId(id string) ([]*Entity, error) {
+func (self *StorageImpl) ListEntitiesByDomainId(ctx context.Context, id string) ([]*Entity, error) {
 	var ent_dom_maps []*EntityDomainMapping
 	var err error
 
-	if err = self.db.Find(&ent_dom_maps, "domain_id = ?", id).Error; err != nil {
+	if err = self.GetDBConn(ctx).Find(&ent_dom_maps, "domain_id = ?", id).Error; err != nil {
 		self.logger.WithField("domain_id", id).WithError(err).Debugf("failed to list entity and domain mapping")
 		return nil, err
 	}
@@ -797,7 +819,7 @@ func (self *StorageImpl) ListEntitiesByDomainId(id string) ([]*Entity, error) {
 	var ent *Entity
 	var ents []*Entity
 	for _, m := range ent_dom_maps {
-		if ent, err = self.get_entity(*m.EntityId); err != nil {
+		if ent, err = self.get_entity(ctx, *m.EntityId); err != nil {
 			self.logger.WithField("entity_id", *m.EntityId).WithError(err).Debugf("failed to get entity")
 			return nil, err
 		}
@@ -809,7 +831,7 @@ func (self *StorageImpl) ListEntitiesByDomainId(id string) ([]*Entity, error) {
 	return ents, nil
 }
 
-func (self *StorageImpl) AddRoleToEntity(entity_id, role_id string) error {
+func (self *StorageImpl) AddRoleToEntity(ctx context.Context, entity_id, role_id string) error {
 	var err error
 
 	m := &EntityRoleMapping{
@@ -817,7 +839,7 @@ func (self *StorageImpl) AddRoleToEntity(entity_id, role_id string) error {
 		RoleId:   &role_id,
 	}
 
-	if err = self.db.Create(m).Error; err != nil {
+	if err = self.GetDBConn(ctx).Create(m).Error; err != nil {
 		self.logger.WithError(err).Debugf("failed to add role to entity")
 		return err
 	}
@@ -830,10 +852,10 @@ func (self *StorageImpl) AddRoleToEntity(entity_id, role_id string) error {
 	return nil
 }
 
-func (self *StorageImpl) RemoveRoleFromEntity(entity_id, role_id string) error {
+func (self *StorageImpl) RemoveRoleFromEntity(ctx context.Context, entity_id, role_id string) error {
 	var err error
 
-	if err = self.db.Delete(&EntityRoleMapping{}, "entity_id = ? and role_id = ?", entity_id, role_id).Error; err != nil {
+	if err = self.GetDBConn(ctx).Delete(&EntityRoleMapping{}, "entity_id = ? and role_id = ?", entity_id, role_id).Error; err != nil {
 		self.logger.WithError(err).Debugf("failed to remove role from entity")
 		return err
 	}
@@ -846,17 +868,17 @@ func (self *StorageImpl) RemoveRoleFromEntity(entity_id, role_id string) error {
 	return nil
 }
 
-func (self *StorageImpl) list_view_all_roles_by_entity_id(id string) ([]*Role, error) {
+func (self *StorageImpl) list_view_all_roles_by_entity_id(ctx context.Context, id string) ([]*Role, error) {
 	var roles []*Role
 	var grps []*Group
 	var err error
 	role_ids_set := map[string]bool{}
 
-	if roles, err = self.list_view_roles_by_entity_id(id); err != nil {
+	if roles, err = self.list_view_roles_by_entity_id(ctx, id); err != nil {
 		return nil, err
 	}
 
-	if grps, err = self.list_view_groups_by_entity_id(id); err != nil {
+	if grps, err = self.list_view_groups_by_entity_id(ctx, id); err != nil {
 		return nil, err
 	}
 
@@ -865,7 +887,7 @@ func (self *StorageImpl) list_view_all_roles_by_entity_id(id string) ([]*Role, e
 	for _, g := range grps {
 		grps_str = append(grps_str, *g.Id)
 	}
-	if err = self.db.Find(&grp_role_maps, "group_id in (?)", grps_str).Error; err != nil {
+	if err = self.GetDBConn(ctx).Find(&grp_role_maps, "group_id in (?)", grps_str).Error; err != nil {
 		return nil, err
 	}
 
@@ -884,18 +906,18 @@ func (self *StorageImpl) list_view_all_roles_by_entity_id(id string) ([]*Role, e
 	return roles, nil
 }
 
-func (self *StorageImpl) get_group(id string) (*Group, error) {
+func (self *StorageImpl) get_group(ctx context.Context, id string) (*Group, error) {
 	var grp Group
 	var err error
 
-	if err = self.db.First(&grp, "id = ?", id).Error; err != nil {
+	if err = self.GetDBConn(ctx).First(&grp, "id = ?", id).Error; err != nil {
 		return nil, err
 	}
 
 	grp.Domain = &Domain{Id: grp.DomainId}
 
 	var sub_grp_maps []*SubjectGroupMapping
-	if err = self.db.Find(&sub_grp_maps, "group_id = ?", id).Error; err != nil {
+	if err = self.GetDBConn(ctx).Find(&sub_grp_maps, "group_id = ?", id).Error; err != nil {
 		return nil, err
 	}
 	for _, m := range sub_grp_maps {
@@ -903,7 +925,7 @@ func (self *StorageImpl) get_group(id string) (*Group, error) {
 	}
 
 	var obj_grp_maps []*ObjectGroupMapping
-	if err = self.db.Find(&obj_grp_maps, "group_id = ?", id).Error; err != nil {
+	if err = self.GetDBConn(ctx).Find(&obj_grp_maps, "group_id = ?", id).Error; err != nil {
 		return nil, err
 	}
 	for _, m := range obj_grp_maps {
@@ -911,13 +933,13 @@ func (self *StorageImpl) get_group(id string) (*Group, error) {
 	}
 
 	var grp_role_maps []*GroupRoleMapping
-	if err = self.db.Find(&grp_role_maps, "group_id = ?", id).Error; err != nil {
+	if err = self.GetDBConn(ctx).Find(&grp_role_maps, "group_id = ?", id).Error; err != nil {
 		return nil, err
 	}
 
 	// TODO(Peer): bad performance
 	for _, m := range grp_role_maps {
-		rol, err := self.get_role(*m.RoleId)
+		rol, err := self.get_role(ctx, *m.RoleId)
 		if err != nil {
 			return nil, err
 		}
@@ -927,7 +949,7 @@ func (self *StorageImpl) get_group(id string) (*Group, error) {
 	return &grp, nil
 }
 
-func (self *StorageImpl) list_groups(grp *Group) ([]*Group, error) {
+func (self *StorageImpl) list_groups(ctx context.Context, grp *Group) ([]*Group, error) {
 	var grps_t []*Group
 	var err error
 
@@ -945,13 +967,13 @@ func (self *StorageImpl) list_groups(grp *Group) ([]*Group, error) {
 		g.Alias = grp.Alias
 	}
 
-	if err = self.db.Select("id").Find(&grps_t, g).Error; err != nil {
+	if err = self.GetDBConn(ctx).Select("id").Find(&grps_t, g).Error; err != nil {
 		return nil, err
 	}
 
 	var grps []*Group
 	for _, g = range grps_t {
-		if g, err = self.get_group(*g.Id); err != nil {
+		if g, err = self.get_group(ctx, *g.Id); err != nil {
 			return nil, err
 		}
 		grps = append(grps, g)
@@ -960,15 +982,15 @@ func (self *StorageImpl) list_groups(grp *Group) ([]*Group, error) {
 	return grps, nil
 }
 
-func (self *StorageImpl) CreateGroup(grp *Group) (*Group, error) {
+func (self *StorageImpl) CreateGroup(ctx context.Context, grp *Group) (*Group, error) {
 	var err error
 
-	if err = self.db.Create(grp).Error; err != nil {
+	if err = self.GetDBConn(ctx).Create(grp).Error; err != nil {
 		self.logger.WithError(err).Debugf("failed to create group")
 		return nil, err
 	}
 
-	if grp, err = self.get_group(*grp.Id); err != nil {
+	if grp, err = self.get_group(ctx, *grp.Id); err != nil {
 		self.logger.WithError(err).Debugf("failed to get group")
 		return nil, err
 	}
@@ -978,10 +1000,10 @@ func (self *StorageImpl) CreateGroup(grp *Group) (*Group, error) {
 	return grp, nil
 }
 
-func (self *StorageImpl) DeleteGroup(id string) error {
+func (self *StorageImpl) DeleteGroup(ctx context.Context, id string) error {
 	var err error
 
-	if err = self.db.Delete(&Group{}, "id = ?", id).Error; err != nil {
+	if err = self.GetDBConn(ctx).Delete(&Group{}, "id = ?", id).Error; err != nil {
 		self.logger.WithError(err).Debugf("failed to delete group")
 		return err
 	}
@@ -991,7 +1013,7 @@ func (self *StorageImpl) DeleteGroup(id string) error {
 	return nil
 }
 
-func (self *StorageImpl) PatchGroup(id string, group *Group) (*Group, error) {
+func (self *StorageImpl) PatchGroup(ctx context.Context, id string, group *Group) (*Group, error) {
 	var err error
 	var grp *Group
 	var grpNew Group
@@ -1006,12 +1028,12 @@ func (self *StorageImpl) PatchGroup(id string, group *Group) (*Group, error) {
 		grpNew.Extra = group.Extra
 	}
 
-	if err = self.db.Model(&Group{Id: &id}).Update(grpNew).Error; err != nil {
+	if err = self.GetDBConn(ctx).Model(&Group{Id: &id}).Update(grpNew).Error; err != nil {
 		self.logger.WithError(err).Debugf("failed to patch group")
 		return nil, err
 	}
 
-	if grp, err = self.get_group(id); err != nil {
+	if grp, err = self.get_group(ctx, id); err != nil {
 		self.logger.WithError(err).Debugf("failed to get group view")
 		return nil, err
 	}
@@ -1021,11 +1043,11 @@ func (self *StorageImpl) PatchGroup(id string, group *Group) (*Group, error) {
 	return grp, nil
 }
 
-func (self *StorageImpl) GetGroup(id string) (*Group, error) {
+func (self *StorageImpl) GetGroup(ctx context.Context, id string) (*Group, error) {
 	var grp *Group
 	var err error
 
-	if grp, err = self.get_group(id); err != nil {
+	if grp, err = self.get_group(ctx, id); err != nil {
 		self.logger.WithError(err).Debugf("failed to get group")
 		return nil, err
 	}
@@ -1035,22 +1057,22 @@ func (self *StorageImpl) GetGroup(id string) (*Group, error) {
 	return grp, nil
 }
 
-func (self *StorageImpl) ExistGroup(id string) (bool, error) {
+func (self *StorageImpl) ExistGroup(ctx context.Context, id string) (bool, error) {
 	var cnt int
 	var err error
 
-	if err = self.db.Model(&Group{}).Where("id = ?", id).Count(&cnt).Error; err != nil {
+	if err = self.GetDBConn(ctx).Model(&Group{}).Where("id = ?", id).Count(&cnt).Error; err != nil {
 		return false, err
 	}
 
 	return cnt > 0, nil
 }
 
-func (self *StorageImpl) ListGroups(grp *Group) ([]*Group, error) {
+func (self *StorageImpl) ListGroups(ctx context.Context, grp *Group) ([]*Group, error) {
 	var grps []*Group
 	var err error
 
-	if grps, err = self.list_groups(grp); err != nil {
+	if grps, err = self.list_groups(ctx, grp); err != nil {
 		self.logger.WithError(err).Debugf("failed to list groups")
 		return nil, err
 	}
@@ -1060,7 +1082,7 @@ func (self *StorageImpl) ListGroups(grp *Group) ([]*Group, error) {
 	return grps, nil
 }
 
-func (self *StorageImpl) AddRoleToGroup(group_id, role_id string) error {
+func (self *StorageImpl) AddRoleToGroup(ctx context.Context, group_id, role_id string) error {
 	var err error
 
 	m := &GroupRoleMapping{
@@ -1068,7 +1090,7 @@ func (self *StorageImpl) AddRoleToGroup(group_id, role_id string) error {
 		RoleId:  &role_id,
 	}
 
-	if err = self.db.Create(m).Error; err != nil {
+	if err = self.GetDBConn(ctx).Create(m).Error; err != nil {
 		self.logger.WithFields(log.Fields{
 			"group_id": group_id,
 			"role_id":  role_id,
@@ -1084,10 +1106,10 @@ func (self *StorageImpl) AddRoleToGroup(group_id, role_id string) error {
 	return nil
 }
 
-func (self *StorageImpl) RemoveRoleFromGroup(group_id, role_id string) error {
+func (self *StorageImpl) RemoveRoleFromGroup(ctx context.Context, group_id, role_id string) error {
 	var err error
 
-	if err = self.db.Delete(&GroupRoleMapping{}, "group_id = ? and role_id = ?", group_id, role_id).Error; err != nil {
+	if err = self.GetDBConn(ctx).Delete(&GroupRoleMapping{}, "group_id = ? and role_id = ?", group_id, role_id).Error; err != nil {
 		self.logger.WithFields(log.Fields{
 			"group_id": group_id,
 			"role_id":  role_id,
@@ -1103,7 +1125,7 @@ func (self *StorageImpl) RemoveRoleFromGroup(group_id, role_id string) error {
 	return nil
 }
 
-func (self *StorageImpl) AddSubjectToGroup(group_id, subject_id string) error {
+func (self *StorageImpl) AddSubjectToGroup(ctx context.Context, group_id, subject_id string) error {
 	var err error
 
 	m := &SubjectGroupMapping{
@@ -1111,7 +1133,7 @@ func (self *StorageImpl) AddSubjectToGroup(group_id, subject_id string) error {
 		GroupId:   &group_id,
 	}
 
-	if err = self.db.Create(m).Error; err != nil {
+	if err = self.GetDBConn(ctx).Create(m).Error; err != nil {
 		self.logger.WithFields(log.Fields{
 			"subject_id": subject_id,
 			"group_id":   group_id,
@@ -1126,10 +1148,10 @@ func (self *StorageImpl) AddSubjectToGroup(group_id, subject_id string) error {
 	return nil
 }
 
-func (self *StorageImpl) RemoveSubjectFromGroup(group_id, subject_id string) error {
+func (self *StorageImpl) RemoveSubjectFromGroup(ctx context.Context, group_id, subject_id string) error {
 	var err error
 
-	if err = self.db.Delete(&SubjectGroupMapping{}, "subject_id = ? and group_id = ?", subject_id, group_id).Error; err != nil {
+	if err = self.GetDBConn(ctx).Delete(&SubjectGroupMapping{}, "subject_id = ? and group_id = ?", subject_id, group_id).Error; err != nil {
 		self.logger.WithFields(log.Fields{
 			"subject_id": subject_id,
 			"group_id":   group_id,
@@ -1144,18 +1166,18 @@ func (self *StorageImpl) RemoveSubjectFromGroup(group_id, subject_id string) err
 	return nil
 }
 
-func (self *StorageImpl) SubjectExistsInGroup(subject_id, group_id string) (bool, error) {
+func (self *StorageImpl) SubjectExistsInGroup(ctx context.Context, subject_id, group_id string) (bool, error) {
 	var cnt int
 	var err error
 
-	if err = self.db.Model(&SubjectGroupMapping{}).Where("subject_id = ? and group_id = ?", subject_id, group_id).Count(&cnt).Error; err != nil {
+	if err = self.GetDBConn(ctx).Model(&SubjectGroupMapping{}).Where("subject_id = ? and group_id = ?", subject_id, group_id).Count(&cnt).Error; err != nil {
 		return false, err
 	}
 
 	return cnt > 0, nil
 }
 
-func (self *StorageImpl) AddObjectToGroup(group_id, object_id string) error {
+func (self *StorageImpl) AddObjectToGroup(ctx context.Context, group_id, object_id string) error {
 	var err error
 
 	m := &ObjectGroupMapping{
@@ -1163,7 +1185,7 @@ func (self *StorageImpl) AddObjectToGroup(group_id, object_id string) error {
 		GroupId:  &group_id,
 	}
 
-	if err = self.db.Create(m).Error; err != nil {
+	if err = self.GetDBConn(ctx).Create(m).Error; err != nil {
 		self.logger.WithFields(log.Fields{
 			"object_id": object_id,
 			"group_id":  group_id,
@@ -1178,10 +1200,10 @@ func (self *StorageImpl) AddObjectToGroup(group_id, object_id string) error {
 	return nil
 }
 
-func (self *StorageImpl) RemoveObjectFromGroup(group_id, object_id string) error {
+func (self *StorageImpl) RemoveObjectFromGroup(ctx context.Context, group_id, object_id string) error {
 	var err error
 
-	if err = self.db.Delete(&ObjectGroupMapping{}, "object_id = ? and group_id = ?", object_id, group_id).Error; err != nil {
+	if err = self.GetDBConn(ctx).Delete(&ObjectGroupMapping{}, "object_id = ? and group_id = ?", object_id, group_id).Error; err != nil {
 		self.logger.WithFields(log.Fields{
 			"object_id": object_id,
 			"group_id":  group_id,
@@ -1196,24 +1218,24 @@ func (self *StorageImpl) RemoveObjectFromGroup(group_id, object_id string) error
 	return nil
 }
 
-func (self *StorageImpl) ObjectExistsInGroup(object_id, group_id string) (bool, error) {
+func (self *StorageImpl) ObjectExistsInGroup(ctx context.Context, object_id, group_id string) (bool, error) {
 	var cnt int
 	var err error
 
-	if err = self.db.Model(&ObjectGroupMapping{}).Where("object_id = ? and group_id = ?", object_id, group_id).Count(&cnt).Error; err != nil {
+	if err = self.GetDBConn(ctx).Model(&ObjectGroupMapping{}).Where("object_id = ? and group_id = ?", object_id, group_id).Count(&cnt).Error; err != nil {
 		return false, err
 	}
 
 	return cnt > 0, nil
 }
 
-func (self *StorageImpl) list_groups_by_group_ids(grp_ids []string) ([]*Group, error) {
+func (self *StorageImpl) list_groups_by_group_ids(ctx context.Context, grp_ids []string) ([]*Group, error) {
 	var err error
 	var grps []*Group
 	var grp *Group
 
 	for _, grp_id := range grp_ids {
-		if grp, err = self.get_group(grp_id); err != nil {
+		if grp, err = self.get_group(ctx, grp_id); err != nil {
 			return nil, err
 		}
 		grps = append(grps, grp)
@@ -1222,13 +1244,13 @@ func (self *StorageImpl) list_groups_by_group_ids(grp_ids []string) ([]*Group, e
 	return grps, nil
 }
 
-func (self *StorageImpl) list_groups_for_subject(subject_id string) ([]*Group, error) {
+func (self *StorageImpl) list_groups_for_subject(ctx context.Context, subject_id string) ([]*Group, error) {
 	var err error
 	var group_ids []string
 	var grps []*Group
 	var sub_grp_maps []*SubjectGroupMapping
 
-	if err = self.db.Find(&sub_grp_maps, "subject_id = ?", subject_id).Error; err != nil {
+	if err = self.GetDBConn(ctx).Find(&sub_grp_maps, "subject_id = ?", subject_id).Error; err != nil {
 		return nil, err
 	}
 
@@ -1236,20 +1258,20 @@ func (self *StorageImpl) list_groups_for_subject(subject_id string) ([]*Group, e
 		group_ids = append(group_ids, *m.GroupId)
 	}
 
-	if grps, err = self.list_groups_by_group_ids(group_ids); err != nil {
+	if grps, err = self.list_groups_by_group_ids(ctx, group_ids); err != nil {
 		return nil, err
 	}
 
 	return grps, nil
 }
 
-func (self *StorageImpl) list_groups_for_object(object_id string) ([]*Group, error) {
+func (self *StorageImpl) list_groups_for_object(ctx context.Context, object_id string) ([]*Group, error) {
 	var err error
 	var group_ids []string
 	var grps []*Group
 	var obj_grp_maps []*ObjectGroupMapping
 
-	if err = self.db.Find(&obj_grp_maps, "object_id = ?", object_id).Error; err != nil {
+	if err = self.GetDBConn(ctx).Find(&obj_grp_maps, "object_id = ?", object_id).Error; err != nil {
 		return nil, err
 	}
 
@@ -1257,18 +1279,18 @@ func (self *StorageImpl) list_groups_for_object(object_id string) ([]*Group, err
 		group_ids = append(group_ids, *m.GroupId)
 	}
 
-	if grps, err = self.list_groups_by_group_ids(group_ids); err != nil {
+	if grps, err = self.list_groups_by_group_ids(ctx, group_ids); err != nil {
 		return nil, err
 	}
 
 	return grps, nil
 }
 
-func (self *StorageImpl) ListGroupsForSubject(subject_id string) ([]*Group, error) {
+func (self *StorageImpl) ListGroupsForSubject(ctx context.Context, subject_id string) ([]*Group, error) {
 	var err error
 	var grps []*Group
 
-	if grps, err = self.list_groups_for_subject(subject_id); err != nil {
+	if grps, err = self.list_groups_for_subject(ctx, subject_id); err != nil {
 		return nil, err
 	}
 
@@ -1277,11 +1299,11 @@ func (self *StorageImpl) ListGroupsForSubject(subject_id string) ([]*Group, erro
 	return grps, nil
 }
 
-func (self *StorageImpl) ListGroupsForObject(object_id string) ([]*Group, error) {
+func (self *StorageImpl) ListGroupsForObject(ctx context.Context, object_id string) ([]*Group, error) {
 	var err error
 	var grps []*Group
 
-	if grps, err = self.list_groups_for_object(object_id); err != nil {
+	if grps, err = self.list_groups_for_object(ctx, object_id); err != nil {
 		return nil, err
 	}
 
@@ -1290,46 +1312,46 @@ func (self *StorageImpl) ListGroupsForObject(object_id string) ([]*Group, error)
 	return grps, nil
 }
 
-func (self *StorageImpl) get_credential(id string) (*Credential, error) {
+func (self *StorageImpl) get_credential(ctx context.Context, id string) (*Credential, error) {
 	var cred Credential
 	var err error
 
-	if err = self.db.First(&cred, "id = ?", id).Error; err != nil {
+	if err = self.GetDBConn(ctx).First(&cred, "id = ?", id).Error; err != nil {
 		return nil, err
 	}
 
 	cred.Domain = &Domain{Id: cred.DomainId}
 	cred.Entity = &Entity{Id: cred.EntityId}
 
-	if cred.Roles, err = self.internal_list_view_credential_roles(&cred); err != nil {
+	if cred.Roles, err = self.internal_list_view_credential_roles(ctx, &cred); err != nil {
 		return nil, err
 	}
 
 	return &cred, nil
 }
 
-func (self *StorageImpl) list_view_credential_roles(id string) ([]*Role, error) {
+func (self *StorageImpl) list_view_credential_roles(ctx context.Context, id string) ([]*Role, error) {
 	var cred Credential
 	var err error
 
-	if err = self.db.Select("id, entity_id").First(&cred, "id = ?", id).Error; err != nil {
+	if err = self.GetDBConn(ctx).Select("id, entity_id").First(&cred, "id = ?", id).Error; err != nil {
 		return nil, err
 	}
 
-	return self.internal_list_view_credential_roles(&cred)
+	return self.internal_list_view_credential_roles(ctx, &cred)
 }
 
-func (self *StorageImpl) internal_list_view_credential_roles(cred *Credential) ([]*Role, error) {
+func (self *StorageImpl) internal_list_view_credential_roles(ctx context.Context, cred *Credential) ([]*Role, error) {
 	var ent_roles []*Role
 	var roles []*Role
 	var cred_role_maps []*CredentialRoleMapping
 	var err error
 
-	if err = self.db.Find(&cred_role_maps, "credential_id = ?", *cred.Id).Error; err != nil {
+	if err = self.GetDBConn(ctx).Find(&cred_role_maps, "credential_id = ?", *cred.Id).Error; err != nil {
 		return nil, err
 	}
 
-	if ent_roles, err = self.list_view_all_roles_by_entity_id(*cred.EntityId); err != nil {
+	if ent_roles, err = self.list_view_all_roles_by_entity_id(ctx, *cred.EntityId); err != nil {
 		return nil, err
 	}
 
@@ -1350,7 +1372,7 @@ func (self *StorageImpl) internal_list_view_credential_roles(cred *Credential) (
 	return roles, nil
 }
 
-func (self *StorageImpl) list_credentials(cred *Credential) ([]*Credential, error) {
+func (self *StorageImpl) list_credentials(ctx context.Context, cred *Credential) ([]*Credential, error) {
 	var creds_t []*Credential
 	var creds []*Credential
 	var err error
@@ -1372,12 +1394,12 @@ func (self *StorageImpl) list_credentials(cred *Credential) ([]*Credential, erro
 		c.Alias = cred.Alias
 	}
 
-	if err = self.db.Find(&creds_t, c).Error; err != nil {
+	if err = self.GetDBConn(ctx).Find(&creds_t, c).Error; err != nil {
 		return nil, err
 	}
 
 	for _, c = range creds_t {
-		if cred, err = self.get_credential(*c.Id); err != nil {
+		if cred, err = self.get_credential(ctx, *c.Id); err != nil {
 			return nil, err
 		}
 
@@ -1387,10 +1409,10 @@ func (self *StorageImpl) list_credentials(cred *Credential) ([]*Credential, erro
 	return creds, nil
 }
 
-func (self *StorageImpl) CreateCredential(cred *Credential) (*Credential, error) {
+func (self *StorageImpl) CreateCredential(ctx context.Context, cred *Credential) (*Credential, error) {
 	var err error
 
-	tx := self.db.Begin()
+	tx := self.GetDBConn(ctx).Begin()
 	tx.Create(cred)
 	if len(cred.Roles) > 0 {
 		var ms []*CredentialRoleMapping
@@ -1409,7 +1431,7 @@ func (self *StorageImpl) CreateCredential(cred *Credential) (*Credential, error)
 		return nil, err
 	}
 
-	if cred, err = self.get_credential(*cred.Id); err != nil {
+	if cred, err = self.get_credential(ctx, *cred.Id); err != nil {
 		self.logger.WithError(err).Debugf("failed to get credential")
 		return nil, err
 	}
@@ -1419,10 +1441,10 @@ func (self *StorageImpl) CreateCredential(cred *Credential) (*Credential, error)
 	return cred, nil
 }
 
-func (self *StorageImpl) DeleteCredential(id string) error {
+func (self *StorageImpl) DeleteCredential(ctx context.Context, id string) error {
 	var err error
 
-	tx := self.db.Begin()
+	tx := self.GetDBConn(ctx).Begin()
 	tx.Delete(&Credential{}, "id = ?", id)
 	tx.Delete(&CredentialRoleMapping{}, "credential_id = ?", id)
 	if err = tx.Commit().Error; err != nil {
@@ -1436,7 +1458,7 @@ func (self *StorageImpl) DeleteCredential(id string) error {
 	return nil
 }
 
-func (self *StorageImpl) PatchCredential(id string, credential *Credential) (*Credential, error) {
+func (self *StorageImpl) PatchCredential(ctx context.Context, id string, credential *Credential) (*Credential, error) {
 	var err error
 	var cred *Credential
 	var credNew Credential
@@ -1448,12 +1470,12 @@ func (self *StorageImpl) PatchCredential(id string, credential *Credential) (*Cr
 		credNew.Description = credential.Description
 	}
 
-	if err = self.db.Model(&Credential{Id: &id}).Update(credNew).Error; err != nil {
+	if err = self.GetDBConn(ctx).Model(&Credential{Id: &id}).Update(credNew).Error; err != nil {
 		self.logger.WithError(err).Debugf("failed to patch credential")
 		return nil, err
 	}
 
-	if cred, err = self.get_credential(id); err != nil {
+	if cred, err = self.get_credential(ctx, id); err != nil {
 		self.logger.WithError(err).Debugf("failed to get credential view")
 		return nil, err
 	}
@@ -1463,11 +1485,11 @@ func (self *StorageImpl) PatchCredential(id string, credential *Credential) (*Cr
 	return cred, nil
 }
 
-func (self *StorageImpl) GetCredential(id string) (*Credential, error) {
+func (self *StorageImpl) GetCredential(ctx context.Context, id string) (*Credential, error) {
 	var cred *Credential
 	var err error
 
-	if cred, err = self.get_credential(id); err != nil {
+	if cred, err = self.get_credential(ctx, id); err != nil {
 		self.logger.WithError(err).Debugf("failed to get credential")
 		return nil, err
 	}
@@ -1477,11 +1499,11 @@ func (self *StorageImpl) GetCredential(id string) (*Credential, error) {
 	return cred, nil
 }
 
-func (self *StorageImpl) ListCredentials(cred *Credential) ([]*Credential, error) {
+func (self *StorageImpl) ListCredentials(ctx context.Context, cred *Credential) ([]*Credential, error) {
 	var creds []*Credential
 	var err error
 
-	if creds, err = self.list_credentials(cred); err != nil {
+	if creds, err = self.list_credentials(ctx, cred); err != nil {
 		self.logger.WithError(err).Debugf("failed to list credentials")
 		return nil, err
 	}
@@ -1491,39 +1513,39 @@ func (self *StorageImpl) ListCredentials(cred *Credential) ([]*Credential, error
 	return creds, nil
 }
 
-func (self *StorageImpl) get_token(id string) (*Token, error) {
+func (self *StorageImpl) get_token(ctx context.Context, id string) (*Token, error) {
 	var tkn Token
 	var tknp *Token
 	var err error
 
-	if err = self.db.First(&tkn, "id = ?", id).Error; err != nil {
+	if err = self.GetDBConn(ctx).First(&tkn, "id = ?", id).Error; err != nil {
 		return nil, err
 	}
 
-	if tknp, err = self.internal_get_token(&tkn); err != nil {
+	if tknp, err = self.internal_get_token(ctx, &tkn); err != nil {
 		return nil, err
 	}
 
 	return tknp, nil
 }
 
-func (self *StorageImpl) get_token_by_text(text string) (*Token, error) {
+func (self *StorageImpl) get_token_by_text(ctx context.Context, text string) (*Token, error) {
 	var tkn Token
 	var tknp *Token
 	var err error
 
-	if err = self.db.First(&tkn, "text = ?", text).Error; err != nil {
+	if err = self.GetDBConn(ctx).First(&tkn, "text = ?", text).Error; err != nil {
 		return nil, err
 	}
 
-	if tknp, err = self.internal_get_token(&tkn); err != nil {
+	if tknp, err = self.internal_get_token(ctx, &tkn); err != nil {
 		return nil, err
 	}
 
 	return tknp, nil
 }
 
-func (self *StorageImpl) list_tokens(tkn *Token) ([]*Token, error) {
+func (self *StorageImpl) list_tokens(ctx context.Context, tkn *Token) ([]*Token, error) {
 	var tkns_t []*Token
 	var tkns []*Token
 	var err error
@@ -1545,12 +1567,12 @@ func (self *StorageImpl) list_tokens(tkn *Token) ([]*Token, error) {
 		t.Text = tkn.Text
 	}
 
-	if err = self.db.Find(&tkns_t, t).Error; err != nil {
+	if err = self.GetDBConn(ctx).Find(&tkns_t, t).Error; err != nil {
 		return nil, err
 	}
 
 	for _, t = range tkns_t {
-		if tkn, err = self.get_token(*t.Id); err != nil {
+		if tkn, err = self.get_token(ctx, *t.Id); err != nil {
 			return nil, err
 		}
 		tkns = append(tkns, tkn)
@@ -1559,7 +1581,7 @@ func (self *StorageImpl) list_tokens(tkn *Token) ([]*Token, error) {
 	return tkns, nil
 }
 
-func (self *StorageImpl) internal_get_token(tkn *Token) (*Token, error) {
+func (self *StorageImpl) internal_get_token(ctx context.Context, tkn *Token) (*Token, error) {
 	var err error
 
 	tkn.Domain = &Domain{Id: tkn.DomainId}
@@ -1567,31 +1589,31 @@ func (self *StorageImpl) internal_get_token(tkn *Token) (*Token, error) {
 
 	if tkn.CredentialId != nil {
 		tkn.Credential = &Credential{Id: tkn.CredentialId}
-		if tkn.Roles, err = self.list_view_credential_roles(*tkn.CredentialId); err != nil {
+		if tkn.Roles, err = self.list_view_credential_roles(ctx, *tkn.CredentialId); err != nil {
 			return nil, err
 		}
 	} else {
-		if tkn.Roles, err = self.list_view_roles_by_entity_id(*tkn.EntityId); err != nil {
+		if tkn.Roles, err = self.list_view_roles_by_entity_id(ctx, *tkn.EntityId); err != nil {
 			return nil, err
 		}
 	}
 
-	if tkn.Groups, err = self.list_view_groups_by_entity_id(*tkn.EntityId); err != nil {
+	if tkn.Groups, err = self.list_view_groups_by_entity_id(ctx, *tkn.EntityId); err != nil {
 		return nil, err
 	}
 
 	return tkn, nil
 }
 
-func (self *StorageImpl) CreateToken(tkn *Token) (*Token, error) {
+func (self *StorageImpl) CreateToken(ctx context.Context, tkn *Token) (*Token, error) {
 	var err error
 
-	if err = self.db.Create(tkn).Error; err != nil {
+	if err = self.GetDBConn(ctx).Create(tkn).Error; err != nil {
 		self.logger.WithError(err).Debugf("failed to create token")
 		return nil, err
 	}
 
-	if tkn, err = self.get_token(*tkn.Id); err != nil {
+	if tkn, err = self.get_token(ctx, *tkn.Id); err != nil {
 		self.logger.WithError(err).Debugf("failed to get token by id")
 		return nil, err
 	}
@@ -1601,10 +1623,10 @@ func (self *StorageImpl) CreateToken(tkn *Token) (*Token, error) {
 	return tkn, nil
 }
 
-func (self *StorageImpl) DeleteToken(id string) error {
+func (self *StorageImpl) DeleteToken(ctx context.Context, id string) error {
 	var err error
 
-	if err = self.db.Delete(&Token{}, "id = ?", id).Error; err != nil {
+	if err = self.GetDBConn(ctx).Delete(&Token{}, "id = ?", id).Error; err != nil {
 		self.logger.WithError(err).Debugf("failed to delete token")
 		return err
 	}
@@ -1614,10 +1636,10 @@ func (self *StorageImpl) DeleteToken(id string) error {
 	return nil
 }
 
-func (self *StorageImpl) RefreshToken(id string, expires_at time.Time) error {
+func (self *StorageImpl) RefreshToken(ctx context.Context, id string, expires_at time.Time) error {
 	var err error
 
-	if err = self.db.Model(&Token{Id: &id}).Update(&Token{ExpiresAt: &expires_at}).Error; err != nil {
+	if err = self.GetDBConn(ctx).Model(&Token{Id: &id}).Update(&Token{ExpiresAt: &expires_at}).Error; err != nil {
 		return err
 	}
 
@@ -1626,11 +1648,11 @@ func (self *StorageImpl) RefreshToken(id string, expires_at time.Time) error {
 	return nil
 }
 
-func (self *StorageImpl) GetTokenByText(text string) (*Token, error) {
+func (self *StorageImpl) GetTokenByText(ctx context.Context, text string) (*Token, error) {
 	var tkn *Token
 	var err error
 
-	if tkn, err = self.get_token_by_text(text); err != nil {
+	if tkn, err = self.get_token_by_text(ctx, text); err != nil {
 		self.logger.WithError(err).Debugf("failed to get token by text")
 		return nil, err
 	}
@@ -1640,11 +1662,11 @@ func (self *StorageImpl) GetTokenByText(text string) (*Token, error) {
 	return tkn, nil
 }
 
-func (self *StorageImpl) GetToken(id string) (*Token, error) {
+func (self *StorageImpl) GetToken(ctx context.Context, id string) (*Token, error) {
 	var tkn *Token
 	var err error
 
-	if tkn, err = self.get_token(id); err != nil {
+	if tkn, err = self.get_token(ctx, id); err != nil {
 		self.logger.WithError(err).Debugf("failed to get token by id")
 		return nil, err
 	}
@@ -1654,11 +1676,11 @@ func (self *StorageImpl) GetToken(id string) (*Token, error) {
 	return tkn, nil
 }
 
-func (self *StorageImpl) ListTokens(tkn *Token) ([]*Token, error) {
+func (self *StorageImpl) ListTokens(ctx context.Context, tkn *Token) ([]*Token, error) {
 	var tkns []*Token
 	var err error
 
-	if tkns, err = self.list_tokens(tkn); err != nil {
+	if tkns, err = self.list_tokens(ctx, tkn); err != nil {
 		self.logger.WithError(err).Debugf("failed to list tokens")
 		return nil, err
 	}
@@ -1668,11 +1690,11 @@ func (self *StorageImpl) ListTokens(tkn *Token) ([]*Token, error) {
 	return tkns, nil
 }
 
-func (self *StorageImpl) Initialize() error {
+func (self *StorageImpl) Initialize(ctx context.Context) error {
 	var err error
 	var ok bool
 
-	if ok, err = self.IsInitialized(); err != nil {
+	if ok, err = self.IsInitialized(ctx); err != nil {
 		return err
 	} else if ok {
 		return ErrInitialized
@@ -1683,48 +1705,22 @@ func (self *StorageImpl) Initialize() error {
 		Key:   &SYSTEM_CONFIG_INITIALIZE,
 		Value: &val,
 	}
-	if err = self.db.Create(cfg).Error; err != nil {
+	if err = self.GetDBConn(ctx).Create(cfg).Error; err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (self *StorageImpl) IsInitialized() (bool, error) {
+func (self *StorageImpl) IsInitialized(ctx context.Context) (bool, error) {
 	var err error
 	var cnt int
 
-	if err = self.db.Model(&SystemConfig{}).Where("key = ?", SYSTEM_CONFIG_INITIALIZE).Count(&cnt).Error; err != nil {
+	if err = self.GetDBConn(ctx).Model(&SystemConfig{}).Where("key = ?", SYSTEM_CONFIG_INITIALIZE).Count(&cnt).Error; err != nil {
 		return false, err
 	}
 
 	return cnt > 0, nil
-}
-
-func init_args(s *StorageImpl, args ...interface{}) error {
-	var key string
-	var ok bool
-
-	if len(args)%2 != 0 {
-		return InvalidArgument
-	}
-
-	for i := 0; i < len(args); i += 2 {
-		key, ok = args[i].(string)
-		if !ok {
-			return InvalidArgument
-		}
-
-		switch key {
-		case "logger":
-			s.logger, ok = args[i+1].(log.FieldLogger)
-			if !ok {
-				return InvalidArgument
-			}
-		}
-	}
-
-	return nil
 }
 
 func new_db(s *StorageImpl, driver, uri string) error {
@@ -1734,13 +1730,18 @@ func new_db(s *StorageImpl, driver, uri string) error {
 	if db, err = gorm.Open(driver, uri); err != nil {
 		return err
 	}
-	s.db = db
+
+	if s.opt.IsTraced {
+		otgorm.AddGormCallbacks(db)
+	}
+
+	s.root_db = db
 
 	return nil
 }
 
 func init_db(s *StorageImpl) error {
-	if err := s.db.AutoMigrate(
+	if err := s.GetRootDBConn().AutoMigrate(
 		&Domain{},
 		&Action{},
 		&Role{},
@@ -1763,19 +1764,43 @@ func init_db(s *StorageImpl) error {
 	return nil
 }
 
-func NewStorageImpl(driver, uri string, args ...interface{}) (*StorageImpl, error) {
+func NewStorageImpl(driver, uri string, args ...interface{}) (Storage, error) {
 	var err error
+	var ok bool
+	var opt StorageImplOption
+	var logger log.FieldLogger
 
-	s := &StorageImpl{}
-	if err = init_args(s, args...); err != nil {
+	if err := opt_helper.Setopt(map[string]func(string, interface{}) error{
+		"logger": opt_helper.ToLogger(&logger),
+		"tracer": func(key string, val interface{}) error {
+			if _, ok = val.(opentracing.Tracer); !ok {
+				return nil
+			}
+
+			opt.IsTraced = true
+
+			return nil
+		},
+	})(args...); err != nil {
 		return nil, err
 	}
+
+	s := &StorageImpl{
+		opt:    &opt,
+		logger: logger,
+	}
+
 	if err = new_db(s, driver, uri); err != nil {
 		return nil, err
 	}
+
 	if err = init_db(s); err != nil {
 		return nil, err
 	}
 
-	return s, nil
+	if s.opt.IsTraced {
+		return NewTracedStorage(s)
+	} else {
+		return s, nil
+	}
 }

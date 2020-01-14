@@ -25,7 +25,17 @@ import (
 	identityd_pb "github.com/nayotta/metathings/pkg/proto/identityd2"
 )
 
-type MetathingsDevicedServiceOption struct{}
+type MetathingsDevicedServiceOption struct {
+	Methods struct {
+		PutObjectStreaming struct {
+			Timeout            int64
+			ChunkSize          int64
+			ChunkPerRequest    int
+			PullRequestRetry   int
+			PullRequestTimeout int64
+		}
+	}
+}
 
 type MetathingsDevicedService struct {
 	grpc_auth.ServiceAuthFuncOverride
@@ -55,7 +65,7 @@ func (self *MetathingsDevicedService) get_device_by_context(ctx context.Context)
 		dev_id = tkn.Entity.Id
 	}
 
-	if dev_s, err = self.storage.GetDevice(dev_id); err != nil {
+	if dev_s, err = self.storage.GetDevice(ctx, dev_id); err != nil {
 		return nil, err
 	}
 
@@ -69,7 +79,7 @@ func (self *MetathingsDevicedService) new_flow(dev_id, flw_id string) (flow.Flow
 	})
 }
 
-func (self *MetathingsDevicedService) offline_device(dev_id string) (err error) {
+func (self *MetathingsDevicedService) offline_device(ctx context.Context, dev_id string) (err error) {
 	var dev_s *storage.Device
 	defer func() {
 		if err != nil {
@@ -80,13 +90,13 @@ func (self *MetathingsDevicedService) offline_device(dev_id string) (err error) 
 
 	}()
 
-	dev_s, err = self.storage.GetDevice(dev_id)
+	dev_s, err = self.storage.GetDevice(ctx, dev_id)
 	if err != nil {
 		return err
 	}
 
 	state_str := deviced_helper.DEVICE_STATE_ENUMER.ToString(state_pb.DeviceState_DEVICE_STATE_OFFLINE)
-	_, err = self.storage.PatchDevice(dev_id, &storage.Device{
+	_, err = self.storage.PatchDevice(ctx, dev_id, &storage.Device{
 		State: &state_str,
 	})
 	if err != nil {
@@ -95,7 +105,7 @@ func (self *MetathingsDevicedService) offline_device(dev_id string) (err error) 
 
 	state_str = deviced_helper.MODULE_STATE_ENUMER.ToString(state_pb.ModuleState_MODULE_STATE_OFFLINE)
 	for _, mdl_s := range dev_s.Modules {
-		_, err = self.storage.PatchModule(*mdl_s.Id, &storage.Module{
+		_, err = self.storage.PatchModule(ctx, *mdl_s.Id, &storage.Module{
 			State: &state_str,
 		})
 		if err != nil {

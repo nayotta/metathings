@@ -37,11 +37,7 @@ type CasbinBackend struct {
 	logger  log.FieldLogger
 }
 
-func (cb *CasbinBackend) context() context.Context {
-	return context.TODO()
-}
-
-func (cb *CasbinBackend) _add_grouping_policy(cli pb.PolicydServiceClient, g, ent, grp, rol string) error {
+func (cb *CasbinBackend) _add_grouping_policy(ctx context.Context, cli pb.PolicydServiceClient, g, ent, grp, rol string) error {
 	var err error
 
 	req := &casbin_pb.PolicyRequest{
@@ -49,14 +45,14 @@ func (cb *CasbinBackend) _add_grouping_policy(cli pb.PolicydServiceClient, g, en
 		PType:           g,
 		Params:          []string{ent, grp, rol},
 	}
-	if _, err = cli.AddNamedGroupingPolicy(cb.context(), req); err != nil {
+	if _, err = cli.AddNamedGroupingPolicy(ctx, req); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (cb *CasbinBackend) _remove_grouping_policy(cli pb.PolicydServiceClient, g, ent, grp, rol string) error {
+func (cb *CasbinBackend) _remove_grouping_policy(ctx context.Context, cli pb.PolicydServiceClient, g, ent, grp, rol string) error {
 	var err error
 
 	req := &casbin_pb.PolicyRequest{
@@ -64,14 +60,14 @@ func (cb *CasbinBackend) _remove_grouping_policy(cli pb.PolicydServiceClient, g,
 		PType:           g,
 		Params:          []string{ent, grp, rol},
 	}
-	if _, err = cli.RemoveNamedGroupingPolicy(cb.context(), req); err != nil {
+	if _, err = cli.RemoveNamedGroupingPolicy(ctx, req); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (cb *CasbinBackend) _list_grouping_policies(cli pb.PolicydServiceClient, g, ent, grp string) ([][]string, error) {
+func (cb *CasbinBackend) _list_grouping_policies(ctx context.Context, cli pb.PolicydServiceClient, g, ent, grp string) ([][]string, error) {
 	var err error
 	var res *casbin_pb.Array2DReply
 	var ys [][]string
@@ -83,7 +79,7 @@ func (cb *CasbinBackend) _list_grouping_policies(cli pb.PolicydServiceClient, g,
 		FieldValues:     []string{ent, grp},
 	}
 
-	if res, err = cli.GetFilteredNamedGroupingPolicy(cb.context(), req); err != nil {
+	if res, err = cli.GetFilteredNamedGroupingPolicy(ctx, req); err != nil {
 		return nil, err
 	}
 
@@ -94,7 +90,7 @@ func (cb *CasbinBackend) _list_grouping_policies(cli pb.PolicydServiceClient, g,
 	return ys, nil
 }
 
-func (cb *CasbinBackend) _list_policies(cli pb.PolicydServiceClient, p, rol, grp string) ([][]string, error) {
+func (cb *CasbinBackend) _list_policies(ctx context.Context, cli pb.PolicydServiceClient, p, rol, grp string) ([][]string, error) {
 	var err error
 	var res *casbin_pb.Array2DReply
 	var ys [][]string
@@ -105,7 +101,7 @@ func (cb *CasbinBackend) _list_policies(cli pb.PolicydServiceClient, p, rol, grp
 		FieldIndex:      0,
 		FieldValues:     []string{rol, grp},
 	}
-	if res, err = cli.GetFilteredNamedPolicy(cb.context(), req); err != nil {
+	if res, err = cli.GetFilteredNamedPolicy(ctx, req); err != nil {
 		return nil, err
 	}
 
@@ -116,7 +112,7 @@ func (cb *CasbinBackend) _list_policies(cli pb.PolicydServiceClient, p, rol, grp
 	return ys, nil
 }
 
-func (cb *CasbinBackend) _remove_subject_from_group(cli pb.PolicydServiceClient, grp *storage.Group, sub *storage.Entity) error {
+func (cb *CasbinBackend) _remove_subject_from_group(ctx context.Context, cli pb.PolicydServiceClient, grp *storage.Group, sub *storage.Entity) error {
 	var err error
 
 	req := &casbin_pb.FilteredPolicyRequest{
@@ -126,14 +122,14 @@ func (cb *CasbinBackend) _remove_subject_from_group(cli pb.PolicydServiceClient,
 		FieldValues:     []string{ConvertSubject(sub), ConvertGroup(grp)},
 	}
 
-	if _, err = cli.RemoveFilteredNamedGroupingPolicy(cb.context(), req); err != nil {
+	if _, err = cli.RemoveFilteredNamedGroupingPolicy(ctx, req); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (cb *CasbinBackend) _add_role_to_group(cli pb.PolicydServiceClient, grp *storage.Group, rol *storage.Role) error {
+func (cb *CasbinBackend) _add_role_to_group(ctx context.Context, cli pb.PolicydServiceClient, grp *storage.Group, rol *storage.Role) error {
 	var err error
 
 	sub_rol_s := ConvertRole(grp, rol)
@@ -146,14 +142,14 @@ func (cb *CasbinBackend) _add_role_to_group(cli pb.PolicydServiceClient, grp *st
 			PType:           CASBIN_BACKEND_POLICY_PTYPE,
 			Params:          []string{sub_rol_s, grp_s, obj_rol_s, *act.Name},
 		}
-		if _, err = cli.AddNamedPolicy(cb.context(), req); err != nil {
-			cb._remove_role_from_group(cli, grp, rol)
+		if _, err = cli.AddNamedPolicy(ctx, req); err != nil {
+			cb._remove_role_from_group(ctx, cli, grp, rol)
 			return err
 		}
 	}
 
 	for _, sub := range grp.Subjects {
-		if err = cb._add_grouping_policy(cli, CASBIN_BACKEND_SUBJECT_PTYPE, ConvertSubject(sub), ConvertGroup(grp), sub_rol_s); err != nil {
+		if err = cb._add_grouping_policy(ctx, cli, CASBIN_BACKEND_SUBJECT_PTYPE, ConvertSubject(sub), ConvertGroup(grp), sub_rol_s); err != nil {
 			return err
 		}
 	}
@@ -161,7 +157,7 @@ func (cb *CasbinBackend) _add_role_to_group(cli pb.PolicydServiceClient, grp *st
 	return nil
 }
 
-func (cb *CasbinBackend) _remove_role_from_group(cli pb.PolicydServiceClient, grp *storage.Group, rol *storage.Role) error {
+func (cb *CasbinBackend) _remove_role_from_group(ctx context.Context, cli pb.PolicydServiceClient, grp *storage.Group, rol *storage.Role) error {
 	var err error
 
 	req := &casbin_pb.FilteredPolicyRequest{
@@ -171,14 +167,14 @@ func (cb *CasbinBackend) _remove_role_from_group(cli pb.PolicydServiceClient, gr
 		FieldValues:     []string{ConvertRole(grp, rol), ConvertGroup(grp)},
 	}
 
-	if _, err = cli.RemoveFilteredNamedPolicy(cb.context(), req); err != nil {
+	if _, err = cli.RemoveFilteredNamedPolicy(ctx, req); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (cb *CasbinBackend) _remove_group_about_subject(cli pb.PolicydServiceClient, grp *storage.Group) error {
+func (cb *CasbinBackend) _remove_group_about_subject(ctx context.Context, cli pb.PolicydServiceClient, grp *storage.Group) error {
 	var err error
 
 	req := &casbin_pb.FilteredPolicyRequest{
@@ -188,14 +184,14 @@ func (cb *CasbinBackend) _remove_group_about_subject(cli pb.PolicydServiceClient
 		FieldValues:     []string{ConvertGroup(grp)},
 	}
 
-	if _, err = cli.RemoveFilteredNamedGroupingPolicy(cb.context(), req); err != nil {
+	if _, err = cli.RemoveFilteredNamedGroupingPolicy(ctx, req); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (cb *CasbinBackend) _remove_group_about_object(cli pb.PolicydServiceClient, grp *storage.Group) error {
+func (cb *CasbinBackend) _remove_group_about_object(ctx context.Context, cli pb.PolicydServiceClient, grp *storage.Group) error {
 	var err error
 
 	req := &casbin_pb.FilteredPolicyRequest{
@@ -205,14 +201,14 @@ func (cb *CasbinBackend) _remove_group_about_object(cli pb.PolicydServiceClient,
 		FieldValues:     []string{ConvertGroup(grp)},
 	}
 
-	if _, err = cli.RemoveFilteredNamedGroupingPolicy(cb.context(), req); err != nil {
+	if _, err = cli.RemoveFilteredNamedGroupingPolicy(ctx, req); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (cb *CasbinBackend) _remove_group_about_policy(cli pb.PolicydServiceClient, grp *storage.Group) error {
+func (cb *CasbinBackend) _remove_group_about_policy(ctx context.Context, cli pb.PolicydServiceClient, grp *storage.Group) error {
 	var err error
 
 	req := &casbin_pb.FilteredPolicyRequest{
@@ -222,14 +218,14 @@ func (cb *CasbinBackend) _remove_group_about_policy(cli pb.PolicydServiceClient,
 		FieldValues:     []string{ConvertGroup(grp)},
 	}
 
-	if _, err = cli.RemoveFilteredNamedPolicy(cb.context(), req); err != nil {
+	if _, err = cli.RemoveFilteredNamedPolicy(ctx, req); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (cb *CasbinBackend) _add_role_to_entity(cli pb.PolicydServiceClient, ent *storage.Entity, rol *storage.Role) error {
+func (cb *CasbinBackend) _add_role_to_entity(ctx context.Context, cli pb.PolicydServiceClient, ent *storage.Entity, rol *storage.Role) error {
 	var err error
 
 	req := &casbin_pb.PolicyRequest{
@@ -237,14 +233,14 @@ func (cb *CasbinBackend) _add_role_to_entity(cli pb.PolicydServiceClient, ent *s
 		PType:           CASBIN_BACKEND_UNGROUPING_PTYPE,
 		Params:          []string{ConvertEntity(ent), CASBIN_BACKEND_UNGROUPING, ConvertUngroupingRole(rol)},
 	}
-	if _, err = cli.AddNamedGroupingPolicy(cb.context(), req); err != nil {
+	if _, err = cli.AddNamedGroupingPolicy(ctx, req); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (cb *CasbinBackend) _remove_role_from_entity(cli pb.PolicydServiceClient, ent *storage.Entity, rol *storage.Role) error {
+func (cb *CasbinBackend) _remove_role_from_entity(ctx context.Context, cli pb.PolicydServiceClient, ent *storage.Entity, rol *storage.Role) error {
 	var err error
 
 	req := &casbin_pb.FilteredPolicyRequest{
@@ -253,14 +249,14 @@ func (cb *CasbinBackend) _remove_role_from_entity(cli pb.PolicydServiceClient, e
 		FieldIndex:      0,
 		FieldValues:     []string{ConvertEntity(ent), CASBIN_BACKEND_UNGROUPING, ConvertUngroupingRole(rol)},
 	}
-	if _, err = cli.RemoveFilteredNamedGroupingPolicy(cb.context(), req); err != nil {
+	if _, err = cli.RemoveFilteredNamedGroupingPolicy(ctx, req); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (cb *CasbinBackend) _enforce(cli pb.PolicydServiceClient, sub, obj *storage.Entity, act *storage.Action) error {
+func (cb *CasbinBackend) _enforce(ctx context.Context, cli pb.PolicydServiceClient, sub, obj *storage.Entity, act *storage.Action) error {
 	var err error
 
 	sub_s := ConvertSubject(sub)
@@ -282,7 +278,7 @@ func (cb *CasbinBackend) _enforce(cli pb.PolicydServiceClient, sub, obj *storage
 	}
 
 	req := &pb.EnforceBucketRequest{Requests: reqs}
-	res, err := cli.EnforceBucket(cb.context(), req)
+	res, err := cli.EnforceBucket(ctx, req)
 	if err != nil {
 		return err
 	}
@@ -294,14 +290,14 @@ func (cb *CasbinBackend) _enforce(cli pb.PolicydServiceClient, sub, obj *storage
 	return nil
 }
 
-func (cb *CasbinBackend) Enforce(sub, obj *storage.Entity, act *storage.Action) error {
+func (cb *CasbinBackend) Enforce(ctx context.Context, sub, obj *storage.Entity, act *storage.Action) error {
 	cli, cfn, err := cb.cli_fty.NewPolicydServiceClient()
 	if err != nil {
 		return err
 	}
 	defer cfn()
 
-	err = cb._enforce(cli, sub, obj, act)
+	err = cb._enforce(ctx, cli, sub, obj, act)
 	if err != nil {
 		return err
 	}
@@ -309,28 +305,28 @@ func (cb *CasbinBackend) Enforce(sub, obj *storage.Entity, act *storage.Action) 
 	return nil
 }
 
-func (cb *CasbinBackend) CreateGroup(grp *storage.Group) error {
+func (cb *CasbinBackend) CreateGroup(ctx context.Context, grp *storage.Group) error {
 	cb.logger.WithField("group", *grp.Id).Debugf("create group")
 
 	return nil
 }
 
-func (cb *CasbinBackend) DeleteGroup(grp *storage.Group) error {
+func (cb *CasbinBackend) DeleteGroup(ctx context.Context, grp *storage.Group) error {
 	cli, cfn, err := cb.cli_fty.NewPolicydServiceClient()
 	if err != nil {
 		return err
 	}
 	defer cfn()
 
-	if err = cb._remove_group_about_subject(cli, grp); err != nil {
+	if err = cb._remove_group_about_subject(ctx, cli, grp); err != nil {
 		return err
 	}
 
-	if err = cb._remove_group_about_object(cli, grp); err != nil {
+	if err = cb._remove_group_about_object(ctx, cli, grp); err != nil {
 		return err
 	}
 
-	if err = cb._remove_group_about_policy(cli, grp); err != nil {
+	if err = cb._remove_group_about_policy(ctx, cli, grp); err != nil {
 		return err
 	}
 
@@ -339,19 +335,19 @@ func (cb *CasbinBackend) DeleteGroup(grp *storage.Group) error {
 	return nil
 }
 
-func (cb *CasbinBackend) AddSubjectToGroup(grp *storage.Group, sub *storage.Entity) error {
+func (cb *CasbinBackend) AddSubjectToGroup(ctx context.Context, grp *storage.Group, sub *storage.Entity) error {
 	cli, cfn, err := cb.cli_fty.NewPolicydServiceClient()
 	if err != nil {
 		return err
 	}
 	defer cfn()
 
-	if err = cb._remove_subject_from_group(cli, grp, sub); err != nil {
+	if err = cb._remove_subject_from_group(ctx, cli, grp, sub); err != nil {
 		return err
 	}
 
 	for _, r := range ConvertRolesForSubject(grp) {
-		if err = cb._add_grouping_policy(cli, CASBIN_BACKEND_SUBJECT_PTYPE, ConvertSubject(sub), ConvertGroup(grp), r); err != nil {
+		if err = cb._add_grouping_policy(ctx, cli, CASBIN_BACKEND_SUBJECT_PTYPE, ConvertSubject(sub), ConvertGroup(grp), r); err != nil {
 			return err
 		}
 	}
@@ -364,14 +360,14 @@ func (cb *CasbinBackend) AddSubjectToGroup(grp *storage.Group, sub *storage.Enti
 	return nil
 }
 
-func (cb *CasbinBackend) RemoveSubjectFromGroup(grp *storage.Group, sub *storage.Entity) error {
+func (cb *CasbinBackend) RemoveSubjectFromGroup(ctx context.Context, grp *storage.Group, sub *storage.Entity) error {
 	cli, cfn, err := cb.cli_fty.NewPolicydServiceClient()
 	if err != nil {
 		return err
 	}
 	defer cfn()
 
-	err = cb._remove_subject_from_group(cli, grp, sub)
+	err = cb._remove_subject_from_group(ctx, cli, grp, sub)
 	if err != nil {
 		return err
 	}
@@ -384,14 +380,14 @@ func (cb *CasbinBackend) RemoveSubjectFromGroup(grp *storage.Group, sub *storage
 	return nil
 }
 
-func (cb *CasbinBackend) AddObjectToGroup(grp *storage.Group, obj *storage.Entity) error {
+func (cb *CasbinBackend) AddObjectToGroup(ctx context.Context, grp *storage.Group, obj *storage.Entity) error {
 	cli, cfn, err := cb.cli_fty.NewPolicydServiceClient()
 	if err != nil {
 		return err
 	}
 	defer cfn()
 
-	err = cb._add_grouping_policy(cli, CASBIN_BACKEND_OBJECT_PTYPE, ConvertObject(obj), ConvertGroup(grp), ConvertRoleForObject(grp))
+	err = cb._add_grouping_policy(ctx, cli, CASBIN_BACKEND_OBJECT_PTYPE, ConvertObject(obj), ConvertGroup(grp), ConvertRoleForObject(grp))
 	if err != nil {
 		return err
 	}
@@ -404,14 +400,14 @@ func (cb *CasbinBackend) AddObjectToGroup(grp *storage.Group, obj *storage.Entit
 	return nil
 }
 
-func (cb *CasbinBackend) RemoveObjectFromGroup(grp *storage.Group, obj *storage.Entity) error {
+func (cb *CasbinBackend) RemoveObjectFromGroup(ctx context.Context, grp *storage.Group, obj *storage.Entity) error {
 	cli, cfn, err := cb.cli_fty.NewPolicydServiceClient()
 	if err != nil {
 		return err
 	}
 	defer cfn()
 
-	err = cb._remove_grouping_policy(cli, CASBIN_BACKEND_OBJECT_PTYPE, ConvertObject(obj), ConvertGroup(grp), ConvertRoleForObject(grp))
+	err = cb._remove_grouping_policy(ctx, cli, CASBIN_BACKEND_OBJECT_PTYPE, ConvertObject(obj), ConvertGroup(grp), ConvertRoleForObject(grp))
 	if err != nil {
 		return err
 	}
@@ -424,14 +420,14 @@ func (cb *CasbinBackend) RemoveObjectFromGroup(grp *storage.Group, obj *storage.
 	return nil
 }
 
-func (cb *CasbinBackend) AddRoleToGroup(grp *storage.Group, rol *storage.Role) error {
+func (cb *CasbinBackend) AddRoleToGroup(ctx context.Context, grp *storage.Group, rol *storage.Role) error {
 	cli, cfn, err := cb.cli_fty.NewPolicydServiceClient()
 	if err != nil {
 		return err
 	}
 	defer cfn()
 
-	err = cb._add_role_to_group(cli, grp, rol)
+	err = cb._add_role_to_group(ctx, cli, grp, rol)
 	if err != nil {
 		return err
 	}
@@ -444,14 +440,14 @@ func (cb *CasbinBackend) AddRoleToGroup(grp *storage.Group, rol *storage.Role) e
 	return nil
 }
 
-func (cb *CasbinBackend) RemoveRoleFromGroup(grp *storage.Group, rol *storage.Role) error {
+func (cb *CasbinBackend) RemoveRoleFromGroup(ctx context.Context, grp *storage.Group, rol *storage.Role) error {
 	cli, cfn, err := cb.cli_fty.NewPolicydServiceClient()
 	if err != nil {
 		return err
 	}
 	defer cfn()
 
-	err = cb._remove_role_from_group(cli, grp, rol)
+	err = cb._remove_role_from_group(ctx, cli, grp, rol)
 	if err != nil {
 		return err
 	}
@@ -464,14 +460,14 @@ func (cb *CasbinBackend) RemoveRoleFromGroup(grp *storage.Group, rol *storage.Ro
 	return nil
 }
 
-func (cb *CasbinBackend) AddRoleToEntity(ent *storage.Entity, rol *storage.Role) error {
+func (cb *CasbinBackend) AddRoleToEntity(ctx context.Context, ent *storage.Entity, rol *storage.Role) error {
 	cli, cfn, err := cb.cli_fty.NewPolicydServiceClient()
 	if err != nil {
 		return err
 	}
 	defer cfn()
 
-	err = cb._add_role_to_entity(cli, ent, rol)
+	err = cb._add_role_to_entity(ctx, cli, ent, rol)
 	if err != nil {
 		return err
 	}
@@ -484,14 +480,14 @@ func (cb *CasbinBackend) AddRoleToEntity(ent *storage.Entity, rol *storage.Role)
 	return nil
 }
 
-func (cb *CasbinBackend) RemoveRoleFromEntity(ent *storage.Entity, rol *storage.Role) error {
+func (cb *CasbinBackend) RemoveRoleFromEntity(ctx context.Context, ent *storage.Entity, rol *storage.Role) error {
 	cli, cfn, err := cb.cli_fty.NewPolicydServiceClient()
 	if err != nil {
 		return err
 	}
 	defer cfn()
 
-	err = cb._remove_role_from_entity(cli, ent, rol)
+	err = cb._remove_role_from_entity(ctx, cli, ent, rol)
 	if err != nil {
 		return err
 	}
@@ -537,7 +533,7 @@ func casbin_backend_factory(args ...interface{}) (Backend, error) {
 		logger:  logger,
 	}
 
-	if _, err = cli.Initialize(b.context(), &casbin_pb.EmptyRequest{Handler: opt.EnforcerHandler}); err != nil {
+	if _, err = cli.Initialize(context.TODO(), &casbin_pb.EmptyRequest{Handler: opt.EnforcerHandler}); err != nil {
 		return nil, err
 	}
 

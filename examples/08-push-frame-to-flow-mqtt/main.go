@@ -8,8 +8,10 @@ import (
 	"io/ioutil"
 	"math/rand"
 	"net/http"
+	"net/url"
 	"os"
 	"os/signal"
+	"path"
 	"strconv"
 	"strings"
 	"syscall"
@@ -23,6 +25,7 @@ import (
 	"github.com/golang/protobuf/ptypes/wrappers"
 	"github.com/spf13/pflag"
 
+	cmd_contrib "github.com/nayotta/metathings/cmd/contrib"
 	id_helper "github.com/nayotta/metathings/pkg/common/id"
 	passwd_helper "github.com/nayotta/metathings/pkg/common/passwd"
 	mosquitto_service "github.com/nayotta/metathings/pkg/plugin/mosquitto/service"
@@ -31,38 +34,76 @@ import (
 )
 
 var (
-	token             string
-	device_cloud_addr string
-	mqtt_addr         string
-	cred_id           string
-	cred_srt          string
-	mqtt_qos          int
-	flow_name         string
-	times             int
+	mqtt_addr    string
+	dc_ep_opt    cmd_contrib.ServiceEndpointOption
+	base_opt     cmd_contrib.BaseOption
+	cred_id      string
+	cred_srt     string
+	mqtt_qos     int
+	flow_name    string
+	times        int
+	request_file string
 )
 
+func get_full_url(ep cmd_contrib.ServiceEndpointOption, p string) string {
+	u, err := url.Parse("http://" + path.Join(ep.Address, "/v1/device_cloud", p))
+	if err != nil {
+		panic(err)
+	}
+
+	if ep.PlainText {
+		u.Scheme = "http"
+	} else {
+		u.Scheme = "https"
+	}
+
+	return u.String()
+}
+
+func get_http_client(ep cmd_contrib.ServiceEndpointOption) *http.Client {
+	if ep.PlainText {
+		return http.DefaultClient
+	}
+
+	if ep.Insecure {
+		return &http.Client{
+			Transport: &http.Transport{
+				TLSClientConfig: nil,
+			},
+		}
+	}
+
+	panic("unsupport now")
+}
+
 func main() {
-	pflag.StringVar(&device_cloud_addr, "device-cloud-addr", "", "Device Cloud Service Address")
+	pflag.StringVar(&dc_ep_opt.Address, "addr", "", "Device Cloud Service Address")
+	pflag.BoolVar(&dc_ep_opt.Insecure, "insecure", false, "Insecure Connection")
+	pflag.BoolVar(&dc_ep_opt.PlainText, "plaintext", false, "Plain Text Connection")
+	pflag.StringVar(&dc_ep_opt.CertFile, "certfile", "", "Cert File for connect to Deviced")
+	pflag.StringVar(&dc_ep_opt.KeyFile, "keyfile", "", "Key File for connect to Deviced")
 	pflag.StringVar(&mqtt_addr, "mqtt-addr", "", "MQTT Server Address")
 	pflag.IntVar(&mqtt_qos, "mqtt-qos", 0, "MQTT QoS")
 	pflag.StringVar(&cred_id, "credential-id", "", "Credential ID")
 	pflag.StringVar(&cred_srt, "credential-secret", "", "Credential Secret")
 	pflag.StringVar(&flow_name, "flow", "", "Flow Name")
 	pflag.IntVar(&times, "times", 3, "Repeat to send data times")
+	pflag.StringVar(&request_file, "request-file", "", "Request File(json)")
 	pflag.Parse()
 
-	token = issue_module_token(http.DefaultClient)
-
+	httpcli := get_http_client(dc_ep_opt)
 	dec := jsonpb.Unmarshaler{}
 
-	req, err := http.NewRequest("POST", device_cloud_addr+"/actions/show_module", strings.NewReader("{}"))
+	base_opt.Token = issue_module_token(httpcli)
+
+	req, err := http.NewRequest("POST", get_full_url(dc_ep_opt, "/actions/show_module"), strings.NewReader("{}"))
 	if err != nil {
 		panic(err)
 	}
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", "Bearer "+token)
+	req.Header.Set("Authorization", "Bearer "+base_opt.Token)
 
-	res, err := http.DefaultClient.Do(req)
+	res, err := httpcli.Do(req)
 	if err != nil {
 		panic(err)
 	}
@@ -96,7 +137,7 @@ mqtt_cli=%v
 device=%v
 flow=%v
 times=%v
-`, token, device_cloud_addr, mqtt_addr, mqtt_qos, cred_id, cred_srt, mqtt_username, mqtt_password, mqtt_clientid, device_id, flow_name, times)
+`, base_opt.Token, dc_ep_opt.Address, mqtt_addr, mqtt_qos, cred_id, cred_srt, mqtt_username, mqtt_password, mqtt_clientid, device_id, flow_name, times)
 
 	pftf_cfg_req := &device_pb.PushFrameToFlowRequest{
 		Id: &wrappers.StringValue{Value: id_helper.NewId()},
@@ -117,16 +158,16 @@ times=%v
 	}
 	fmt.Println("config request: ", buf)
 
-	req, err = http.NewRequest("POST", device_cloud_addr+"/actions/push_frame_to_flow", strings.NewReader(buf))
+	req, err = http.NewRequest("POST", get_full_url(dc_ep_opt, "/actions/push_frame_to_flow"), strings.NewReader(buf))
 	if err != nil {
 		panic(err)
 	}
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", "Bearer "+token)
+	req.Header.Set("Authorization", "Bearer "+base_opt.Token)
 
 	var pftf_cfg_res device_pb.PushFrameToFlowResponse
 
-	res, err = http.DefaultClient.Do(req)
+	res, err = httpcli.Do(req)
 	if err != nil {
 		panic(err)
 	}
@@ -217,11 +258,17 @@ func send_data_loop(c mqtt.Client, pub_tpc string) {
 }
 
 func send_data_once(c mqtt.Client, pub_tpc string) {
-	dat := random_data()
-	dat_js, err := json.Marshal(dat)
+	dat_js, err := ioutil.ReadFile(request_file)
 	if err != nil {
 		panic(err)
 	}
+
+	var dat map[string]interface{}
+	err = json.Unmarshal(dat_js, &dat)
+	if err != nil {
+		panic(err)
+	}
+
 	var dat_st stpb.Struct
 	err = jsonpb.UnmarshalString(string(dat_js), &dat_st)
 	if err != nil {
@@ -294,7 +341,8 @@ func issue_module_token(cli *http.Client) string {
 		panic(err)
 	}
 
-	imt_url := fmt.Sprintf("%v/actions/issue_module_token", device_cloud_addr)
+	imt_url := get_full_url(dc_ep_opt, "/actions/issue_module_token")
+
 	req, err := http.NewRequest("POST", imt_url, bytes.NewReader(buf))
 	if err != nil {
 		panic(err)

@@ -41,7 +41,7 @@ func (self *MetathingsIdentitydService) RemoveEntityFromDomain(ctx context.Conte
 	dom_id_str := req.GetDomain().GetId().GetValue()
 	ent_id_str := req.GetEntity().GetId().GetValue()
 
-	if e, err = self.storage.GetEntity(ent_id_str); err != nil {
+	if e, err = self.storage.GetEntity(ctx, ent_id_str); err != nil {
 		self.logger.WithError(err).Error("failed to get entity in storage")
 		return nil, status.Errorf(codes.FailedPrecondition, err.Error())
 	}
@@ -52,7 +52,7 @@ func (self *MetathingsIdentitydService) RemoveEntityFromDomain(ctx context.Conte
 		return nil, status.Errorf(codes.FailedPrecondition, err.Error())
 	}
 
-	if err = self.storage.RemoveEntityFromDomain(dom_id_str, ent_id_str); err != nil {
+	if err = self.storage.RemoveEntityFromDomain(ctx, dom_id_str, ent_id_str); err != nil {
 		self.logger.WithError(err).Errorf("failed to remove entity from domain in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}

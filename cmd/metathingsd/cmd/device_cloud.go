@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"context"
-	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
@@ -81,13 +80,17 @@ var (
 
 func GetDeviceCloudOptions() (
 	*DeviceCloudOption,
+	cmd_contrib.ServiceOptioner,
 	cmd_contrib.ListenOptioner,
 	cmd_contrib.LoggerOptioner,
 	cmd_contrib.ServiceEndpointsOptioner,
 	cmd_contrib.CredentialOptioner,
 	cmd_contrib.TransportCredentialOptioner,
+	cmd_contrib.OpentracingOptioner,
 ) {
 	return device_cloud_opt,
+		device_cloud_opt,
+		device_cloud_opt,
 		device_cloud_opt,
 		device_cloud_opt,
 		device_cloud_opt,
@@ -126,15 +129,33 @@ func NewMetathingsDeviceCloudServiceOption(opt *DeviceCloudOption) *service.Meta
 	return dc_opt
 }
 
+type NewDeviceCloudRoutingParams struct {
+	fx.In
+
+	Router  *mux.Router
+	Service *service.MetathingsDeviceCloudService
+}
+
+func NewDeviceCloudRouting(p NewDeviceCloudRoutingParams) error {
+	sr := p.Router.PathPrefix("/v1/device_cloud").Subrouter()
+	sr.HandleFunc("/actions/heartbeat", p.Service.Heartbeat).Methods("POST")
+	sr.HandleFunc("/actions/issue_module_token", p.Service.IssueModuleToken).Methods("POST")
+	sr.HandleFunc("/actions/show_module", p.Service.ShowModule).Methods("POST")
+	sr.HandleFunc("/actions/push_frame_to_flow", p.Service.PushFrameToFlow).Methods("POST")
+
+	return nil
+}
+
 func runDeviceCloud() error {
 	app := fx.New(
 		fx.NopLogger,
 		fx.Provide(
 			GetDeviceCloudOptions,
-			cmd_contrib.NewTransportCredentials,
+			mux.NewRouter,
+			cmd_contrib.NewServerTransportCredentials,
 			cmd_contrib.NewLogger("device_cloud"),
 			cmd_contrib.NewListener,
-			cmd_contrib.NewHttpServer,
+			cmd_contrib.NewOpentracing,
 			cmd_contrib.NewClientFactory,
 			cmd_contrib.NewNoExpireTokener,
 			token_helper.NewTokenValidator,
@@ -143,15 +164,8 @@ func runDeviceCloud() error {
 			service.NewMetathingsDeviceCloudService,
 		),
 		fx.Invoke(
-			func(s *http.Server, srv *service.MetathingsDeviceCloudService) {
-				r := mux.NewRouter()
-				sr := r.PathPrefix("/v1/device_cloud").Subrouter()
-				sr.HandleFunc("/actions/heartbeat", srv.Heartbeat).Methods("POST")
-				sr.HandleFunc("/actions/issue_module_token", srv.IssueModuleToken).Methods("POST")
-				sr.HandleFunc("/actions/show_module", srv.ShowModule).Methods("POST")
-				sr.HandleFunc("/actions/push_frame_to_flow", srv.PushFrameToFlow).Methods("POST")
-				s.Handler = r
-			},
+			NewDeviceCloudRouting,
+			cmd_contrib.NewHttpServer,
 		),
 	)
 

@@ -82,7 +82,11 @@ func (self *MetathingsIdentitydService) CreateCredential(ctx context.Context, re
 	if req.GetSecretSize() != nil {
 		siz = req.GetSecretSize().GetValue()
 	}
+
 	srt_str := generate_secret(siz)
+	if cred.GetSecret() != nil {
+		srt_str = cred.GetSecret().GetValue()
+	}
 
 	desc_str := ""
 	if cred.GetDescription() != nil {
@@ -109,7 +113,7 @@ func (self *MetathingsIdentitydService) CreateCredential(ctx context.Context, re
 		Roles:       roles,
 	}
 
-	if cred_s, err = self.storage.CreateCredential(cred_s); err != nil {
+	if cred_s, err = self.storage.CreateCredential(ctx, cred_s); err != nil {
 		self.logger.WithError(err).Errorf("failed to create credential in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}

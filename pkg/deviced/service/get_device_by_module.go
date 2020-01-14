@@ -34,7 +34,7 @@ func (self *MetathingsDevicedService) GetDeviceByModule(ctx context.Context, req
 	var err error
 
 	mdl_id_str := req.GetModule().GetId().GetValue()
-	if dev_s, err = self.storage.GetDeviceByModuleId(mdl_id_str); err != nil {
+	if dev_s, err = self.storage.GetDeviceByModuleId(ctx, mdl_id_str); err != nil {
 		self.logger.WithError(err).Errorf("failed to get device by module id in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}

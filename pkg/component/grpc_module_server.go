@@ -26,8 +26,8 @@ func (s *GrpcModuleServer) Serve() error {
 	}
 
 	s.srv = grpc.NewServer(
-		grpc.UnaryInterceptor(grpc_helper.UnaryServerInterceptor()),
-		grpc.StreamInterceptor(grpc_helper.StreamServerInterceptor()),
+		grpc.UnaryInterceptor(grpc_helper.UnaryServerInterceptor(s.m.Logger())),
+		grpc.StreamInterceptor(grpc_helper.StreamServerInterceptor(s.m.Logger())),
 	)
 
 	component_pb.RegisterModuleServiceServer(s.srv, NewGrpcModuleWrapper(s.m.Target(), s.m.Logger()))

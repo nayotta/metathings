@@ -66,7 +66,7 @@ func (self *MetathingsIdentitydService) CreateRole(ctx context.Context, req *pb.
 		Extra:       &extra_str,
 	}
 
-	role_s, err = self.storage.CreateRole(role_s)
+	role_s, err = self.storage.CreateRole(ctx, role_s)
 	if err != nil {
 		self.logger.WithError(err).Errorf("failed to create role in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())

@@ -31,7 +31,7 @@ func (self *MetathingsIdentitydService) ListDomains(ctx context.Context, req *pb
 		dom.Alias = &dom_req.Alias.Value
 	}
 
-	doms, err := self.storage.ListDomains(dom)
+	doms, err := self.storage.ListDomains(ctx, dom)
 	if err != nil {
 		self.logger.WithError(err).Errorf("failed to list domains in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())

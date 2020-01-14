@@ -33,7 +33,7 @@ func (self *MetathingsIdentitydService) AuthorizeRevokeToken(ctx context.Context
 	var err error
 
 	tkn_txt_str := in.(*pb.RevokeTokenRequest).GetToken().GetText().GetValue()
-	if tkn_s, err = self.storage.GetTokenByText(tkn_txt_str); err != nil {
+	if tkn_s, err = self.storage.GetTokenByText(ctx, tkn_txt_str); err != nil {
 		self.logger.WithError(err).Warningf("faield to find token by text in storage")
 		return err
 	}
@@ -46,12 +46,12 @@ func (self *MetathingsIdentitydService) RevokeToken(ctx context.Context, req *pb
 	var err error
 
 	tkn_txt_str := req.GetToken().GetText().GetValue()
-	if tkn_s, err = self.storage.GetTokenByText(tkn_txt_str); err != nil {
+	if tkn_s, err = self.storage.GetTokenByText(ctx, tkn_txt_str); err != nil {
 		self.logger.WithError(err).Warningf("faield to find token by text in storage")
 		return nil, status.Errorf(codes.FailedPrecondition, err.Error())
 	}
 
-	if err = self.revoke_token(*tkn_s.Id); err != nil {
+	if err = self.revoke_token(ctx, *tkn_s.Id); err != nil {
 		self.logger.WithError(err).Errorf("failed to revoke token")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}

@@ -8,6 +8,8 @@ type BaseOption struct {
 	CredentialOption          `mapstructure:",squash"`
 	ServiceEndpointsOption    `mapstructure:",squash"`
 	TransportCredentialOption `mapstructure:",squash"`
+	TokenOption               `mapstructure:",squash"`
+	OpentracingOption         `mapstructure:",squash"`
 }
 
 func (self *BaseOption) GetTransportCredential() TransportCredentialOptioner {

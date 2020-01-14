@@ -37,7 +37,7 @@ func (self *MetathingsIdentitydService) ListCredentialsForEntity(ctx context.Con
 	ent_id := req.GetEntity().GetId().GetValue()
 	cred.EntityId = &ent_id
 
-	creds, err := self.storage.ListCredentials(cred)
+	creds, err := self.storage.ListCredentials(ctx, cred)
 	if err != nil {
 		self.logger.WithError(err).Errorf("failed to list credentials for entity in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())

@@ -30,7 +30,7 @@ func (self *MetathingsIdentitydService) ListGroupsForObject(ctx context.Context,
 	var err error
 
 	obj_id := req.GetObject().GetId().GetValue()
-	grps, err := self.storage.ListGroupsForObject(obj_id)
+	grps, err := self.storage.ListGroupsForObject(ctx, obj_id)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}

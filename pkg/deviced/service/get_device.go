@@ -33,7 +33,7 @@ func (self *MetathingsDevicedService) GetDevice(ctx context.Context, req *pb.Get
 	var err error
 
 	dev_id_str := req.GetDevice().GetId().GetValue()
-	if dev_s, err = self.storage.GetDevice(dev_id_str); err != nil {
+	if dev_s, err = self.storage.GetDevice(ctx, dev_id_str); err != nil {
 		self.logger.WithError(err).Errorf("failed to get device in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}

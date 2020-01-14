@@ -3,6 +3,7 @@ package cmd
 import (
 	"context"
 
+	"github.com/opentracing/opentracing-go"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"go.uber.org/fx"
@@ -121,14 +122,18 @@ var (
 
 func GetDevicedOptions() (
 	*DevicedOption,
+	cmd_contrib.ServiceOptioner,
 	cmd_contrib.ListenOptioner,
 	cmd_contrib.TransportCredentialOptioner,
 	cmd_contrib.StorageOptioner,
 	cmd_contrib.LoggerOptioner,
 	cmd_contrib.ServiceEndpointsOptioner,
 	cmd_contrib.CredentialOptioner,
+	cmd_contrib.OpentracingOptioner,
 ) {
 	return deviced_opt,
+		deviced_opt,
+		deviced_opt,
 		deviced_opt,
 		deviced_opt,
 		deviced_opt,
@@ -137,8 +142,16 @@ func GetDevicedOptions() (
 		deviced_opt
 }
 
-func NewDevicedStorage(opt cmd_contrib.StorageOptioner, logger log.FieldLogger) (storage.Storage, error) {
-	return storage.NewStorage(opt.GetDriver(), opt.GetUri(), "logger", logger)
+type NewDevicedStorageParams struct {
+	fx.In
+
+	Option cmd_contrib.StorageOptioner
+	Logger log.FieldLogger
+	Tracer opentracing.Tracer `name:"opentracing_tracer" optional:"true"`
+}
+
+func NewDevicedStorage(p NewDevicedStorageParams) (storage.Storage, error) {
+	return storage.NewStorage(p.Option.GetDriver(), p.Option.GetUri(), "logger", p.Logger, "tracer", p.Tracer)
 }
 
 func parse_connection_center_option(x map[string]interface{}) (string, []interface{}, error) {
@@ -233,6 +246,42 @@ func NewSimpleStorage(opt *DevicedOption, logger log.FieldLogger) (simple_storag
 
 func NewMetathingsDevicedServiceOption(opt *DevicedOption) *service.MetathingsDevicedServiceOption {
 	o := &service.MetathingsDevicedServiceOption{}
+
+	o.Methods.PutObjectStreaming.Timeout = 1200
+	if to, ok := opt.SimpleStorage["timeout"]; ok {
+		if toi, ok := to.(int); ok {
+			o.Methods.PutObjectStreaming.Timeout = int64(toi)
+		}
+	}
+
+	o.Methods.PutObjectStreaming.ChunkSize = 256 * 1024
+	if cs, ok := opt.SimpleStorage["chunk_size"]; ok {
+		if csi, ok := cs.(int); ok {
+			o.Methods.PutObjectStreaming.ChunkSize = int64(csi)
+		}
+	}
+
+	o.Methods.PutObjectStreaming.ChunkPerRequest = 4
+	if cpr, ok := opt.SimpleStorage["chunk_per_request"]; ok {
+		if cpri, ok := cpr.(int); ok {
+			o.Methods.PutObjectStreaming.ChunkPerRequest = cpri
+		}
+	}
+
+	o.Methods.PutObjectStreaming.PullRequestRetry = 10
+	if prr, ok := opt.SimpleStorage["pull_request_retry"]; ok {
+		if prri, ok := prr.(int); ok {
+			o.Methods.PutObjectStreaming.PullRequestRetry = prri
+		}
+	}
+
+	o.Methods.PutObjectStreaming.PullRequestTimeout = 12
+	if prt, ok := opt.SimpleStorage["pull_request_timeout"]; ok {
+		if prti, ok := prt.(int); ok {
+			o.Methods.PutObjectStreaming.PullRequestTimeout = int64(prti)
+		}
+	}
+
 	return o
 }
 
@@ -241,9 +290,10 @@ func runDeviced() error {
 		fx.NopLogger,
 		fx.Provide(
 			GetDevicedOptions,
-			cmd_contrib.NewTransportCredentials,
+			cmd_contrib.NewServerTransportCredentials,
 			cmd_contrib.NewLogger("deviced"),
 			cmd_contrib.NewListener,
+			cmd_contrib.NewOpentracing,
 			cmd_contrib.NewGrpcServer,
 			cmd_contrib.NewClientFactory,
 			cmd_contrib.NewNoExpireTokener,

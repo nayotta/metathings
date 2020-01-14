@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"strings"
+	"sync"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -9,7 +10,6 @@ import (
 
 	cmd_contrib "github.com/nayotta/metathings/cmd/contrib"
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
-	cmd_helper "github.com/nayotta/metathings/pkg/common/cmd"
 	constant_helper "github.com/nayotta/metathings/pkg/common/constant"
 )
 
@@ -17,27 +17,9 @@ const (
 	METATHINGS_PREFIX = "mt"
 )
 
-type _metathingsServiceOptions struct {
-	Address string
-}
-
-type _serviceConfigOptions struct {
-	Metathings _metathingsServiceOptions
-}
-
-// DEPRECATED(Peer): rename to _rootOption
-type _rootOptions struct {
-	cmd_helper.RootOptions `mapstructure:",squash"`
-	ServiceConfig          _serviceConfigOptions `mapstructure:"service_config"`
-}
-
 var (
-	root_opts *_rootOptions
-	base_opt  *cmd_contrib.BaseOption
-)
-
-var (
-	_cli_fty *client_helper.ClientFactory
+	base_opt         *cmd_contrib.BaseOption
+	init_config_once sync.Once
 )
 
 var (
@@ -47,22 +29,16 @@ var (
 	}
 )
 
-var _GLOBAL_INITIALED = false
-
 func initConfig() {
-	if _GLOBAL_INITIALED {
-		return
-	}
-
-	cfg := base_opt.GetConfig()
-	if cfg != "" {
-		viper.SetConfigFile(cfg)
-		if err := viper.ReadInConfig(); err != nil {
-			log.WithError(err).Fatalf("failed to read config")
+	init_config_once.Do(func() {
+		cfg := base_opt.GetConfig()
+		if cfg != "" {
+			viper.SetConfigFile(cfg)
+			if err := viper.ReadInConfig(); err != nil {
+				log.WithError(err).Fatalf("failed to read config")
+			}
 		}
-	}
-
-	_GLOBAL_INITIALED = true
+	})
 }
 
 func init() {

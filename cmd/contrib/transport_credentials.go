@@ -1,9 +1,9 @@
 package cmd_contrib
 
 import (
-	"crypto/tls"
-
 	"google.golang.org/grpc/credentials"
+
+	client_helper "github.com/nayotta/metathings/pkg/common/client"
 )
 
 type GetTransportCredentialOptioner interface {
@@ -30,9 +30,9 @@ type TransportCredentialOptioner interface {
 
 type TransportCredentialOption struct {
 	Insecure  bool
-	PlainText bool
-	CertFile  string
-	KeyFile   string
+	PlainText bool   `mapstructure:"plain_text"`
+	CertFile  string `mapstructure:"cert_file"`
+	KeyFile   string `mapstructure:"key_file"`
 }
 
 func (self *TransportCredentialOption) GetInsecureP() *bool {
@@ -83,17 +83,12 @@ func (self *TransportCredentialOption) SetKeyFile(key_file string) {
 	self.KeyFile = key_file
 }
 
-func NewTransportCredentials(opt TransportCredentialOptioner) (credentials.TransportCredentials, error) {
-	cert_file := opt.GetCertFile()
-	key_file := opt.GetKeyFile()
-	if cert_file != "" && key_file != "" {
-		return credentials.NewServerTLSFromFile(cert_file, key_file)
-	} else if opt.GetInsecure() {
-		return credentials.NewTLS(&tls.Config{
-			InsecureSkipVerify: true,
-		}), nil
-	} else if opt.GetPlainText() {
-		return nil, nil
-	}
-	return nil, nil
+func NewClientTransportCredentials(opt TransportCredentialOptioner) (credentials.TransportCredentials, error) {
+	return client_helper.NewClientTransportCredentials(
+		opt.GetCertFile(), opt.GetKeyFile(),
+		opt.GetPlainText(), opt.GetInsecure())
+}
+
+func NewServerTransportCredentials(opt TransportCredentialOptioner) (credentials.TransportCredentials, error) {
+	return client_helper.NewServerTransportCredentials(opt.GetCertFile(), opt.GetKeyFile())
 }

@@ -14,7 +14,7 @@ func (self *MetathingsDevicedService) PullFrameFromFlow(req *pb.PullFrameFromFlo
 	dev_id := dev_r.GetId().GetValue()
 	cfg_ack := cfg.GetConfigAck().GetValue()
 
-	dev_s, err := self.storage.GetDevice(dev_id)
+	dev_s, err := self.storage.GetDevice(stm.Context(), dev_id)
 	if err != nil {
 		self.logger.WithError(err).Errorf("failed to get device")
 		return status.Errorf(codes.Internal, err.Error())

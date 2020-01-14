@@ -8,10 +8,13 @@ import (
 	"io/ioutil"
 	"os"
 	"path"
+	"strconv"
+	"sync"
 	"time"
 
 	log "github.com/sirupsen/logrus"
 
+	file_helper "github.com/nayotta/metathings/pkg/common/file"
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 	storage "github.com/nayotta/metathings/pkg/deviced/storage"
 )
@@ -29,8 +32,39 @@ type FileSimpleStorage struct {
 	logger log.FieldLogger
 }
 
+// Copy from ioutil.tempfile
+// Random number state.
+// We generate random temporary file names so that there's a good
+// chance the file doesn't exist yet - keeps the number of tries in
+// TempFile to a minimum.
+var rand uint32
+var randmu sync.Mutex
+
+func reseed() uint32 {
+	return uint32(time.Now().UnixNano() + int64(os.Getpid()))
+}
+
+func nextRandom() string {
+	randmu.Lock()
+	r := rand
+	if r == 0 {
+		r = reseed()
+	}
+	r = r*1664525 + 1013904223 // constants from Numerical Recipes
+	rand = r
+	randmu.Unlock()
+	return strconv.Itoa(int(1e9 + r%1e9))[1:]
+}
+
 func (fss *FileSimpleStorage) join_path(obj *Object) string {
 	return path.Join(fss.opt.Home, obj.Device, obj.FullName())
+}
+
+func (fss *FileSimpleStorage) join_temp_path(obj *Object) string {
+	fn := obj.FullName()
+	fn_dir := path.Dir(fn)
+	fn_base := path.Base(fn)
+	return path.Join(fss.opt.Home, obj.Device, "tmp", fn_dir, fn_base+"."+nextRandom())
 }
 
 func (fss *FileSimpleStorage) is_empty(dev *storage.Device, obj *Object) (bool, error) {
@@ -87,6 +121,33 @@ func (fss *FileSimpleStorage) PutObject(obj *Object, reader io.Reader) error {
 	return nil
 }
 
+func (fss *FileSimpleStorage) PutObjectAsync(obj *Object, opt *PutObjectAsyncOption) (*file_helper.FileSyncer, error) {
+	p := fss.join_path(obj)
+	err := os.MkdirAll(path.Dir(p), os.ModePerm)
+	if err != nil {
+		return nil, err
+	}
+
+	cp := fss.join_temp_path(obj)
+	err = os.MkdirAll(path.Dir(cp), os.ModePerm)
+	if err != nil {
+		return nil, err
+	}
+
+	fs, err := file_helper.NewFileSyncer(
+		file_helper.SetPath(p),
+		file_helper.SetSize(obj.Length),
+		file_helper.SetSha1Hash(opt.SHA1),
+		file_helper.SetChunkSize(opt.ChunkSize),
+		file_helper.SetCachePath(cp),
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return fs, nil
+}
+
 func (fss *FileSimpleStorage) RemoveObject(obj *Object) error {
 	p := fss.join_path(obj)
 	pre := path.Dir(p)
@@ -131,17 +192,22 @@ func (fss *FileSimpleStorage) RenameObject(src, dst *Object) error {
 	return nil
 }
 
-func (fss *FileSimpleStorage) GetObject(obj *Object) (*Object, error) {
-	p := fss.join_path(obj)
+func (fss *FileSimpleStorage) GetObject(x *Object) (y *Object, err error) {
+	p := fss.join_path(x)
 
 	fi, err := os.Stat(p)
 	if err != nil {
-		return nil, err
+		return
 	}
 
-	new_obj := fss.new_object(obj.Device, obj.Prefix, obj.Name, fi.Size(), fi.ModTime())
+	op := path.Join(x.Prefix, x.Name)
+	if fi.IsDir() {
+		y = fss.new_object(x.Device, op, "", fi.Size(), fi.ModTime())
+	} else {
+		y = fss.new_object(x.Device, path.Dir(op), path.Base(op), fi.Size(), fi.ModTime())
+	}
 
-	return new_obj, nil
+	return
 }
 
 func (fss *FileSimpleStorage) GetObjectContent(obj *Object) (chan []byte, error) {
@@ -169,7 +235,11 @@ func (fss *FileSimpleStorage) GetObjectContent(obj *Object) (chan []byte, error)
 	return ch, nil
 }
 
-func (fss *FileSimpleStorage) ListObjects(obj *Object) ([]*Object, error) {
+func (fss *FileSimpleStorage) list_objects(obj *Object, recursive bool, depth int) ([]*Object, error) {
+	if recursive && depth == 0 {
+		return nil, nil
+	}
+
 	obj.Name = ""
 	p := fss.join_path(obj)
 
@@ -183,23 +253,37 @@ func (fss *FileSimpleStorage) ListObjects(obj *Object) ([]*Object, error) {
 		var new_obj *Object
 		if f.IsDir() {
 			new_obj = fss.new_object(obj.Device, path.Join(obj.Prefix, f.Name()), "", f.Size(), f.ModTime())
+			objs = append(objs, new_obj)
+
+			if recursive {
+				sub_objs, err := fss.list_objects(new_obj, recursive, depth-1)
+				if err != nil {
+					return nil, err
+				}
+				objs = append(objs, sub_objs...)
+			}
 		} else {
 			new_obj = fss.new_object(obj.Device, obj.Prefix, f.Name(), f.Size(), f.ModTime())
+			objs = append(objs, new_obj)
 		}
-		objs = append(objs, new_obj)
+
 	}
 
 	return objs, nil
 }
 
+func (fss *FileSimpleStorage) ListObjects(obj *Object, opt *ListObjectsOption) ([]*Object, error) {
+	return fss.list_objects(obj, opt.Recursive, opt.Depth)
+}
+
 func new_file_simple_storage(args ...interface{}) (SimpleStorage, error) {
 	var logger log.FieldLogger
-	opt := &FileSimpleStorageOption{}
+	opt := NewFileSimpleStorageOption()
 
 	err := opt_helper.Setopt(map[string]func(string, interface{}) error{
 		"home":   opt_helper.ToString(&opt.Home),
 		"logger": opt_helper.ToLogger(&logger),
-	})(args...)
+	}, opt_helper.SetSkip(true))(args...)
 	if err != nil {
 		return nil, err
 	}

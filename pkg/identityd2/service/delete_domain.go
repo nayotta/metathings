@@ -40,7 +40,7 @@ func (self *MetathingsIdentitydService) DeleteDomain(ctx context.Context, req *p
 
 	dom_id_str := req.GetDomain().GetId().GetValue()
 
-	if dom_s, err = self.storage.GetDomain(dom_id_str); err != nil {
+	if dom_s, err = self.storage.GetDomain(ctx, dom_id_str); err != nil {
 		self.logger.WithError(err).Errorf("failed to get domain in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
@@ -50,7 +50,7 @@ func (self *MetathingsIdentitydService) DeleteDomain(ctx context.Context, req *p
 		return nil, status.Errorf(codes.FailedPrecondition, err.Error())
 	}
 
-	if ents_s, err = self.storage.ListEntitiesByDomainId(dom_id_str); err != nil {
+	if ents_s, err = self.storage.ListEntitiesByDomainId(ctx, dom_id_str); err != nil {
 		self.logger.WithError(err).Errorf("failed to list entities by domain_id in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
@@ -63,7 +63,7 @@ func (self *MetathingsIdentitydService) DeleteDomain(ctx context.Context, req *p
 	grp_s = &storage.Group{
 		DomainId: &dom_id_str,
 	}
-	if grps_s, err = self.storage.ListGroups(grp_s); err != nil {
+	if grps_s, err = self.storage.ListGroups(ctx, grp_s); err != nil {
 		self.logger.WithError(err).Errorf("failed to list groups by domain_id in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
@@ -73,7 +73,7 @@ func (self *MetathingsIdentitydService) DeleteDomain(ctx context.Context, req *p
 		return nil, status.Errorf(codes.FailedPrecondition, err.Error())
 	}
 
-	if err = self.storage.DeleteDomain(dom_id_str); err != nil {
+	if err = self.storage.DeleteDomain(ctx, dom_id_str); err != nil {
 		self.logger.WithError(err).Errorf("failed to delete domain in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}

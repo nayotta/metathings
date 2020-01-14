@@ -31,7 +31,7 @@ func (self *MetathingsIdentitydService) ListRoles(ctx context.Context, req *pb.L
 		rol.Alias = &alias.Value
 	}
 
-	rols, err := self.storage.ListRoles(rol)
+	rols, err := self.storage.ListRoles(ctx, rol)
 	if err != nil {
 		self.logger.WithError(err).Errorf("failed to list roles in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())

@@ -43,14 +43,14 @@ func (self *MetathingsIdentitydService) DeleteCredential(ctx context.Context, re
 	tkn_s = &storage.Token{
 		CredentialId: &cred_id_str,
 	}
-	if tkns_s, err = self.storage.ListTokens(tkn_s); err != nil {
+	if tkns_s, err = self.storage.ListTokens(ctx, tkn_s); err != nil {
 		self.logger.WithError(err).Errorf("failed to list tokens in storage")
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 
 	if len(tkns_s) > 0 {
 		for _, tkn_s := range tkns_s {
-			if err = self.storage.DeleteToken(*tkn_s.Id); err != nil {
+			if err = self.storage.DeleteToken(ctx, *tkn_s.Id); err != nil {
 				self.logger.WithError(err).Errorf("failed to delete token in storage")
 				return nil, status.Errorf(codes.Internal, err.Error())
 			}
@@ -58,7 +58,7 @@ func (self *MetathingsIdentitydService) DeleteCredential(ctx context.Context, re
 		self.logger.WithField("credential_id", cred_id_str).Debugf("delete tokens by credential id")
 	}
 
-	if err = self.storage.DeleteCredential(cred_id_str); err != nil {
+	if err = self.storage.DeleteCredential(ctx, cred_id_str); err != nil {
 		self.logger.WithError(err).Errorf("failed to delete token in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}

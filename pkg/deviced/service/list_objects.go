@@ -8,6 +8,7 @@ import (
 	"google.golang.org/grpc/status"
 
 	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
+	simple_storage "github.com/nayotta/metathings/pkg/deviced/simple_storage"
 	identityd_validator "github.com/nayotta/metathings/pkg/identityd2/validator"
 	pb "github.com/nayotta/metathings/pkg/proto/deviced"
 )
@@ -33,8 +34,21 @@ func (self *MetathingsDevicedService) AuthorizeListObjects(ctx context.Context, 
 func (self *MetathingsDevicedService) ListObjects(ctx context.Context, req *pb.ListObjectsRequest) (*pb.ListObjectsResponse, error) {
 	obj := req.GetObject()
 	obj_s := parse_object(obj)
+	opt := &simple_storage.ListObjectsOption{}
 
-	objs_s, err := self.simple_storage.ListObjects(obj_s)
+	if recur := req.GetRecursive(); recur != nil {
+		opt.Recursive = recur.GetValue()
+	}
+
+	if depth := req.GetDepth(); depth != nil {
+		opt.Depth = int(depth.GetValue())
+	}
+
+	if opt.Recursive && opt.Depth == 0 {
+		opt.Depth = 16
+	}
+
+	objs_s, err := self.simple_storage.ListObjects(obj_s, opt)
 	if err != nil {
 		self.logger.WithError(err).Errorf("failed to list objects in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
@@ -45,8 +59,10 @@ func (self *MetathingsDevicedService) ListObjects(ctx context.Context, req *pb.L
 	}
 
 	self.logger.WithFields(log.Fields{
-		"device": obj_s.Device,
-		"object": obj_s.FullName(),
+		"device":    obj_s.Device,
+		"object":    obj_s.FullName(),
+		"recursive": opt.Recursive,
+		"depth":     opt.Depth,
 	}).Debugf("list objects")
 
 	return res, nil

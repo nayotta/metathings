@@ -5,13 +5,15 @@ import (
 )
 
 type ServiceEndpointOptioner interface {
+	TransportCredentialOptioner
 	GetAddressP() *string
 	GetAddress() string
 	SetAddress(string)
 }
 
 type ServiceEndpointOption struct {
-	Address string
+	TransportCredentialOption `mapstructure:",squash"`
+	Address                   string
 }
 
 func (self *ServiceEndpointOption) GetAddressP() *string {
@@ -54,4 +56,26 @@ func CreateServiceEndpointsOption() ServiceEndpointsOption {
 	return ServiceEndpointsOption{
 		ServiceEndpoint: eps,
 	}
+}
+
+func NewServiceEndpointsOptionWithTransportCredentialOption(x ServiceEndpointsOptioner, y TransportCredentialOptioner) ServiceEndpointsOptioner {
+	epsz := make(map[string]*ServiceEndpointOption)
+
+	for i := int32(client_helper.DEFAULT_CONFIG); i < int32(client_helper.OVERFLOW_CONFIG); i++ {
+		typ := client_helper.ClientType(i)
+		epx := x.GetServiceEndpoint(typ)
+		epz := &ServiceEndpointOption{
+			Address: epx.GetAddress(),
+			TransportCredentialOption: TransportCredentialOption{
+				Insecure:  y.GetInsecure(),
+				PlainText: y.GetPlainText(),
+				CertFile:  y.GetCertFile(),
+				KeyFile:   y.GetKeyFile(),
+			},
+		}
+		epsz[typ.String()] = epz
+	}
+
+	z := &ServiceEndpointsOption{ServiceEndpoint: epsz}
+	return z
 }

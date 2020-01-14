@@ -7,6 +7,7 @@ import (
 	fmt "fmt"
 	math "math"
 	proto "github.com/golang/protobuf/proto"
+	_ "github.com/golang/protobuf/ptypes/wrappers"
 	_ "github.com/mwitkow/go-proto-validators"
 	github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
 )
@@ -23,6 +24,16 @@ func (this *ListObjectsRequest) Validate() error {
 	if this.Object != nil {
 		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Object); err != nil {
 			return github_com_mwitkow_go_proto_validators.FieldError("Object", err)
+		}
+	}
+	if this.Recursive != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Recursive); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Recursive", err)
+		}
+	}
+	if this.Depth != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Depth); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Depth", err)
 		}
 	}
 	return nil

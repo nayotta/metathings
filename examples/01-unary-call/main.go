@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"crypto/tls"
 	"fmt"
 	"os"
 
@@ -11,6 +12,7 @@ import (
 	"github.com/golang/protobuf/ptypes/wrappers"
 	"github.com/spf13/pflag"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 
 	echo_pb "github.com/nayotta/metathings-component-echo/proto"
 	context_helper "github.com/nayotta/metathings/pkg/common/context"
@@ -25,6 +27,10 @@ var (
 	component    string
 	method       string
 	request      string
+	insecure     bool
+	plaintext    bool
+	certfile     string
+	keyfile      string
 )
 
 func main() {
@@ -34,6 +40,10 @@ func main() {
 	pflag.StringVar(&component, "component", "echo", "Component Name")
 	pflag.StringVar(&method, "method", "Echo", "Method Name")
 	pflag.StringVar(&request, "request", "", "JSON Request File")
+	pflag.BoolVar(&insecure, "insecure", false, "Insecure")
+	pflag.BoolVar(&plaintext, "plaintext", false, "Plaintext")
+	pflag.StringVar(&certfile, "certfile", "", "CertFile")
+	pflag.StringVar(&keyfile, "keyfile", "", "KeyFile")
 
 	pflag.Parse()
 
@@ -61,6 +71,13 @@ func main() {
 		}
 	case "switch":
 		switch method {
+		case "On":
+			any_req, _ = ptypes.MarshalAny(&empty.Empty{})
+		case "Off":
+			any_req, _ = ptypes.MarshalAny(&empty.Empty{})
+		}
+	case "dvr":
+		switch method {
 		case "Start":
 			any_req, _ = ptypes.MarshalAny(&empty.Empty{})
 		case "Stop":
@@ -82,7 +99,24 @@ func main() {
 
 	ctx := context_helper.WithToken(context.Background(), "Bearer "+token)
 
-	conn, err := grpc.Dial(deviced_addr, grpc.WithInsecure())
+	var opts []grpc.DialOption
+	if plaintext {
+		opts = append(opts, grpc.WithInsecure())
+	} else if insecure {
+		opts = append(opts, grpc.WithTransportCredentials(credentials.NewTLS(&tls.Config{
+			InsecureSkipVerify: true,
+		})))
+	} else if certfile != "" && keyfile != "" {
+		cred, err := credentials.NewServerTLSFromFile(certfile, keyfile)
+		if err != nil {
+			panic(err)
+		}
+		opts = append(opts, grpc.WithTransportCredentials(cred))
+	} else {
+		opts = append(opts, grpc.WithTransportCredentials(credentials.NewTLS(nil)))
+	}
+
+	conn, err := grpc.Dial(deviced_addr, opts...)
 	if err != nil {
 		panic(err)
 	}
@@ -112,6 +146,20 @@ func main() {
 			fmt.Println("camera started")
 		case "Stop":
 			fmt.Println("camera stoped")
+		}
+	case "switch":
+		switch method {
+		case "On":
+			fmt.Println("switch on")
+		case "Off":
+			fmt.Println("switch off")
+		}
+	case "dvr":
+		switch method {
+		case "Start":
+			fmt.Println("digit video recorder start")
+		case "Stop":
+			fmt.Println("digit video recorder stop")
 		}
 	}
 }

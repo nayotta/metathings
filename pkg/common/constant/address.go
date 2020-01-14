@@ -3,10 +3,10 @@ package constant_helper
 import "fmt"
 
 const (
-	CONSTANT_METATHINGSD_DEFAULT_HOST = "mt-api.nayotta.com"
+	CONSTANT_METATHINGSD_DEFAULT_HOST = "api.metathings.nayotta.com"
 	CONSTANT_METATHINGSD_DEFAULT_PORT = 21733
 
-	CONSTANT_CORE_AGENT_DEFAULT_HOST = "agent.metathings.local"
+	CONSTANT_CORE_AGENT_DEFAULT_HOST = "localhost"
 	CONSTANT_CORE_AGENT_DEFAULT_PORT = 5002
 )
 

@@ -1,11 +1,13 @@
 package client_helper
 
 import (
+	"crypto/tls"
 	"fmt"
 	"strings"
 	"time"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/keepalive"
 
 	constant_helper "github.com/nayotta/metathings/pkg/common/constant"
@@ -60,7 +62,8 @@ func (self ServiceConfigs) SetServiceConfig(typ ClientType, cfg ServiceConfig) {
 }
 
 type ServiceConfig struct {
-	Address string
+	Address              string
+	TransportCredentials credentials.TransportCredentials
 }
 
 type ClientFactory struct {
@@ -74,6 +77,12 @@ func (f *ClientFactory) NewConnection(cfg_val ClientType, opts ...grpc.DialOptio
 	cfg, ok := f.configs[cfg_val]
 	if !ok {
 		cfg = f.configs[DEFAULT_CONFIG]
+	}
+
+	if cfg.TransportCredentials != nil {
+		opts = append(opts, grpc.WithTransportCredentials(cfg.TransportCredentials))
+	} else {
+		opts = append(opts, grpc.WithInsecure())
 	}
 
 	conn, err := grpc.Dial(parseAddress(cfg.Address), opts...)
@@ -140,9 +149,12 @@ func NewClientFactory(configs ServiceConfigs, opts []grpc.DialOption) (*ClientFa
 	}, nil
 }
 
-func NewDefaultServiceConfigs(addr string) ServiceConfigs {
+func NewDefaultServiceConfigs(addr string, cred credentials.TransportCredentials) ServiceConfigs {
 	return ServiceConfigs{
-		DEFAULT_CONFIG: ServiceConfig{addr},
+		DEFAULT_CONFIG: ServiceConfig{
+			Address:              addr,
+			TransportCredentials: cred,
+		},
 	}
 }
 
@@ -152,5 +164,26 @@ func DefaultDialOption() []grpc.DialOption {
 			Timeout:             3600 * time.Second,
 			PermitWithoutStream: true,
 		}),
+	}
+}
+
+func NewClientTransportCredentials(cert_file, key_file string, plain_text, insecure bool) (credentials.TransportCredentials, error) {
+	if cert_file != "" && key_file != "" {
+		return credentials.NewServerTLSFromFile(cert_file, key_file)
+	} else if insecure {
+		return credentials.NewTLS(&tls.Config{
+			InsecureSkipVerify: true,
+		}), nil
+	} else if plain_text {
+		return nil, nil
+	}
+	return credentials.NewTLS(nil), nil
+}
+
+func NewServerTransportCredentials(cert_file, key_file string) (credentials.TransportCredentials, error) {
+	if cert_file != "" && key_file != "" {
+		return credentials.NewServerTLSFromFile(cert_file, key_file)
+	} else {
+		return nil, nil
 	}
 }

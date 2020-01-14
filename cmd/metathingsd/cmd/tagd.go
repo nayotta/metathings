@@ -69,14 +69,18 @@ var (
 
 func GetTagdOptions() (
 	*TagdOption,
+	cmd_contrib.ServiceOptioner,
 	cmd_contrib.ListenOptioner,
 	cmd_contrib.TransportCredentialOptioner,
 	cmd_contrib.LoggerOptioner,
 	cmd_contrib.ServiceEndpointsOptioner,
 	cmd_contrib.CredentialOptioner,
+	cmd_contrib.OpentracingOptioner,
 ) {
 
 	return tagd_opt,
+		tagd_opt,
+		tagd_opt,
 		tagd_opt,
 		tagd_opt,
 		tagd_opt,
@@ -111,9 +115,10 @@ func runTagd() error {
 		fx.NopLogger,
 		fx.Provide(
 			GetTagdOptions,
-			cmd_contrib.NewTransportCredentials,
+			cmd_contrib.NewServerTransportCredentials,
 			cmd_contrib.NewLogger("tagd"),
 			cmd_contrib.NewListener,
+			cmd_contrib.NewOpentracing,
 			cmd_contrib.NewGrpcServer,
 			cmd_contrib.NewClientFactory,
 			cmd_contrib.NewNoExpireTokener,

@@ -2,7 +2,6 @@ package metathings_component
 
 import (
 	"context"
-	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -17,8 +16,6 @@ import (
 	"github.com/golang/protobuf/ptypes/wrappers"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials"
 
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
 	const_helper "github.com/nayotta/metathings/pkg/common/constant"
@@ -26,7 +23,6 @@ import (
 	id_helper "github.com/nayotta/metathings/pkg/common/id"
 	log_helper "github.com/nayotta/metathings/pkg/common/log"
 	identityd2_contrib "github.com/nayotta/metathings/pkg/identityd2/contrib"
-	device_pb "github.com/nayotta/metathings/pkg/proto/device"
 	pb "github.com/nayotta/metathings/pkg/proto/device"
 	deviced_pb "github.com/nayotta/metathings/pkg/proto/deviced"
 	identityd2_pb "github.com/nayotta/metathings/pkg/proto/identityd2"
@@ -128,6 +124,45 @@ func (k *Kernel) PutObject(name string, content io.Reader) error {
 	}
 
 	return nil
+}
+
+type PutObjectStreamingOption struct {
+	Sha1   string
+	Length int64
+}
+
+func (k *Kernel) PutObjectStreaming(name string, content io.ReadSeeker, opt *PutObjectStreamingOption) error {
+	cli, cfn, err := k.cli_fty.NewDeviceServiceClient()
+	if err != nil {
+		return err
+	}
+	defer cfn()
+
+	err = _put_object_streaming(cli, k.Context(), name, content, opt.Sha1, opt.Length)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (k *Kernel) PutObjectStreamingWithCancel(name string, content io.ReadSeeker, opt *PutObjectStreamingOption) (cancel context.CancelFunc, errs chan error, err error) {
+	cli, cfn, err := k.cli_fty.NewDeviceServiceClient()
+	if err != nil {
+		return nil, nil, err
+	}
+	defer cfn()
+
+	ctx := k.Context()
+	ctx, cancel = context.WithCancel(ctx)
+
+	errs = make(chan error, 1)
+	go func() {
+		defer close(errs)
+		errs <- _put_object_streaming(cli, ctx, name, content, opt.Sha1, opt.Length)
+	}()
+
+	return cancel, errs, nil
 }
 
 func (k *Kernel) PutObjects(objects map[string]io.Reader) error {
@@ -241,16 +276,16 @@ func (k *Kernel) Heartbeat() error {
 }
 
 type FrameStream struct {
-	stream   device_pb.DeviceService_PushFrameToFlowClient
+	stream   pb.DeviceService_PushFrameToFlowClient
 	push_ack bool
 	close_cb func() error
 }
 
 func (fs *FrameStream) PushFrame(frm *deviced_pb.OpFrame) error {
 	req_id := id_helper.NewId()
-	req := &device_pb.PushFrameToFlowRequest{
+	req := &pb.PushFrameToFlowRequest{
 		Id: &wrappers.StringValue{Value: req_id},
-		Request: &device_pb.PushFrameToFlowRequest_Frame{
+		Request: &pb.PushFrameToFlowRequest_Frame{
 			Frame: frm,
 		},
 	}
@@ -347,38 +382,44 @@ type NewKernelOption struct {
 		Id     string
 		Secret string
 	}
-	TransportCredential struct {
-		Insecure  bool
-		PlainText bool
-		Key       string
-		Cert      string
+	TransportCredential TransportCredential
+	ServiceEndpoints    map[string]ServiceEndpoint
+	ConfigText          string
+}
+
+func new_service_config_from_service_endpoint(ep ServiceEndpoint) (client_helper.ServiceConfig, error) {
+	cred, err := client_helper.NewClientTransportCredentials(ep.CertFile, ep.KeyFile, ep.PlainText, ep.Insecure)
+	if err != nil {
+		return client_helper.ServiceConfig{}, err
 	}
-	ServiceEndpoints map[string]string
-	ConfigText       string
+
+	return client_helper.ServiceConfig{
+		Address:              ep.Address,
+		TransportCredentials: cred,
+	}, nil
 }
 
 func new_client_factory_from_new_kernel_option(opt *NewKernelOption) (*client_helper.ClientFactory, error) {
 	var err error
 	var cli_fty *client_helper.ClientFactory
 
-	addr, ok := opt.ServiceEndpoints["default"]
+	ep, ok := opt.ServiceEndpoints["default"]
 	if !ok {
 		return nil, ErrDefaultAddressRequired
 	}
-	srv_cfgs := client_helper.NewDefaultServiceConfigs(addr)
-	addr, ok = opt.ServiceEndpoints["device"]
+	srv_cfgs := client_helper.ServiceConfigs{}
+	srv_cfgs[client_helper.DEFAULT_CONFIG], err = new_service_config_from_service_endpoint(ep)
+	if err != nil {
+		return nil, err
+	}
+
+	ep, ok = opt.ServiceEndpoints["device"]
 	if !ok {
 		return nil, ErrDeviceAddressRequired
 	}
-	srv_cfgs[client_helper.DEVICED_CONFIG] = client_helper.ServiceConfig{addr}
-
-	srv_opts := client_helper.DefaultDialOption()
-	if opt.TransportCredential.PlainText {
-		srv_opts = append(srv_opts, grpc.WithInsecure())
-	} else if opt.TransportCredential.Insecure {
-		srv_opts = append(srv_opts, grpc.WithTransportCredentials(credentials.NewTLS(&tls.Config{InsecureSkipVerify: true})))
-	} else if opt.TransportCredential.Key != "" && opt.TransportCredential.Cert != "" {
-		panic("unimplemented")
+	srv_cfgs[client_helper.DEVICE_CONFIG], err = new_service_config_from_service_endpoint(ep)
+	if err != nil {
+		return nil, err
 	}
 
 	cli_fty, err = client_helper.NewClientFactory(srv_cfgs, client_helper.DefaultDialOption())
@@ -388,22 +429,37 @@ func new_client_factory_from_new_kernel_option(opt *NewKernelOption) (*client_he
 	return cli_fty, nil
 }
 
-func new_client_factory_from_kernel_config(cfg *KernelConfig) (*client_helper.ClientFactory, error) {
-	opt := NewKernelOption{
-		ServiceEndpoints: map[string]string{},
-	}
-	opt.ServiceEndpoints["default"] = cfg.GetString("service_endpoint.default.address")
-	opt.ServiceEndpoints["device"] = cfg.GetString("service_endpoint.device.address")
-	opt.TransportCredential.Insecure = cfg.GetBool("transport_credential.insecure")
-	opt.TransportCredential.PlainText = cfg.GetBool("transport_credential.plain_text")
-	opt.TransportCredential.Key = cfg.GetString("transport_credential.key")
-	opt.TransportCredential.Cert = cfg.GetString("transport_credential.cert")
-	return new_client_factory_from_new_kernel_option(&opt)
+func new_service_endpoint_from_kernel_config(cfg *KernelConfig, name string) (ServiceEndpoint, error) {
+	var err error
+	var srv_ep ServiceEndpoint
 
+	if err = cfg.Sub("service_endpoint." + name).Unmarshal(&srv_ep); err != nil {
+		return srv_ep, err
+	}
+
+	return srv_ep, nil
+}
+
+func new_client_factory_from_kernel_config(cfg *KernelConfig) (*client_helper.ClientFactory, error) {
+	var err error
+
+	opt := NewKernelOption{
+		ServiceEndpoints: map[string]ServiceEndpoint{},
+	}
+	opt.ServiceEndpoints["default"], err = new_service_endpoint_from_kernel_config(cfg, "default")
+	if err != nil {
+		return nil, err
+	}
+	opt.ServiceEndpoints["device"], err = new_service_endpoint_from_kernel_config(cfg, "device")
+	if err != nil {
+		return nil, err
+	}
+
+	return new_client_factory_from_new_kernel_option(&opt)
 }
 
 func _get_module_config_text(cli pb.DeviceServiceClient, ctx context.Context, mdl_name string) (string, error) {
-	req := &device_pb.GetObjectContentRequest{
+	req := &pb.GetObjectContentRequest{
 		Object: &deviced_pb.OpObject{
 			Name: &wrappers.StringValue{Value: fmt.Sprintf("%s/sys/config", mdl_name)},
 		},
@@ -431,7 +487,7 @@ func _put_object(cli pb.DeviceServiceClient, ctx context.Context, name string, c
 		return err
 	}
 
-	req := &device_pb.PutObjectRequest{
+	req := &pb.PutObjectRequest{
 		Object: &deviced_pb.OpObject{
 			Name: &wrappers.StringValue{Value: name},
 		},
@@ -446,8 +502,91 @@ func _put_object(cli pb.DeviceServiceClient, ctx context.Context, name string, c
 	return nil
 }
 
+func _put_object_streaming(cli pb.DeviceServiceClient, ctx context.Context, name string, content io.ReadSeeker, sha1 string, length int64) error {
+	stm, err := cli.PutObjectStreaming(ctx)
+	if err != nil {
+		return err
+	}
+
+	req := &pb.PutObjectStreamingRequest{
+		Id: &wrappers.StringValue{Value: id_helper.NewId()},
+		Request: &pb.PutObjectStreamingRequest_Metadata_{
+			Metadata: &pb.PutObjectStreamingRequest_Metadata{
+				Object: &deviced_pb.OpObject{
+					Name:   &wrappers.StringValue{Value: name},
+					Length: &wrappers.Int64Value{Value: length},
+				},
+				Sha1: &wrappers.StringValue{Value: sha1},
+			},
+		},
+	}
+
+	if err = stm.Send(req); err != nil {
+		return err
+	}
+
+	errs := make(chan error)
+	defer close(errs)
+	go func() {
+		for {
+			res, err := stm.Recv()
+			if err != nil {
+				errs <- err
+				return
+			}
+
+			chunks := res.GetChunks()
+			if chunks == nil {
+				continue
+			}
+
+			req = &pb.PutObjectStreamingRequest{
+				Id: &wrappers.StringValue{Value: res.GetId()},
+			}
+			req_chks := []*deviced_pb.OpObjectChunk{}
+			for _, chk := range chunks.GetChunks() {
+				offset := chk.GetOffset()
+				length := chk.GetLength()
+				buf := make([]byte, length)
+
+				if _, err = content.Seek(offset, 0); err != nil {
+					errs <- err
+					return
+				}
+
+				n, err := content.Read(buf)
+				if err != nil {
+					errs <- err
+					return
+				}
+				req_chks = append(req_chks, &deviced_pb.OpObjectChunk{
+					Offset: &wrappers.Int64Value{Value: offset},
+					Data:   &wrappers.BytesValue{Value: buf[:n]},
+					Length: &wrappers.Int64Value{Value: int64(n)},
+				})
+			}
+			req.Request = &pb.PutObjectStreamingRequest_Chunks{
+				Chunks: &deviced_pb.OpObjectChunks{
+					Chunks: req_chks,
+				},
+			}
+
+			if err = stm.Send(req); err != nil {
+				errs <- err
+				return
+			}
+		}
+	}()
+
+	if err = <-errs; err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func _get_object(cli pb.DeviceServiceClient, ctx context.Context, name string) (*deviced_pb.Object, error) {
-	req := &device_pb.GetObjectRequest{
+	req := &pb.GetObjectRequest{
 		Object: &deviced_pb.OpObject{
 			Name: &wrappers.StringValue{Value: name},
 		},
@@ -462,7 +601,7 @@ func _get_object(cli pb.DeviceServiceClient, ctx context.Context, name string) (
 }
 
 func _get_object_content(cli pb.DeviceServiceClient, ctx context.Context, name string) ([]byte, error) {
-	req := &device_pb.GetObjectContentRequest{
+	req := &pb.GetObjectContentRequest{
 		Object: &deviced_pb.OpObject{
 			Name: &wrappers.StringValue{Value: name},
 		},
@@ -477,7 +616,7 @@ func _get_object_content(cli pb.DeviceServiceClient, ctx context.Context, name s
 }
 
 func _remove_object(cli pb.DeviceServiceClient, ctx context.Context, name string) error {
-	req := &device_pb.RemoveObjectRequest{
+	req := &pb.RemoveObjectRequest{
 		Object: &deviced_pb.OpObject{
 			Name: &wrappers.StringValue{Value: name},
 		},
@@ -492,7 +631,7 @@ func _remove_object(cli pb.DeviceServiceClient, ctx context.Context, name string
 }
 
 func _rename_object(cli pb.DeviceServiceClient, ctx context.Context, src, dst string) error {
-	req := &device_pb.RenameObjectRequest{
+	req := &pb.RenameObjectRequest{
 		Source: &deviced_pb.OpObject{
 			Name: &wrappers.StringValue{Value: src},
 		},
@@ -510,7 +649,7 @@ func _rename_object(cli pb.DeviceServiceClient, ctx context.Context, src, dst st
 }
 
 func _heartbeat(cli pb.DeviceServiceClient, ctx context.Context, name string) error {
-	req := &device_pb.HeartbeatRequest{
+	req := &pb.HeartbeatRequest{
 		Module: &deviced_pb.OpModule{
 			Name: &wrappers.StringValue{Value: name},
 		},
@@ -524,9 +663,9 @@ func _heartbeat(cli pb.DeviceServiceClient, ctx context.Context, name string) er
 	return nil
 }
 
-func new_issue_module_token_request(domain, id, secret string) *device_pb.IssueModuleTokenRequest {
+func new_issue_module_token_request(domain, id, secret string) *pb.IssueModuleTokenRequest {
 	itbc_req := identityd2_contrib.NewIssueTokenByCredentialRequest(domain, id, secret)
-	return &device_pb.IssueModuleTokenRequest{
+	return &pb.IssueModuleTokenRequest{
 		Credential: itbc_req.GetCredential(),
 		Timestamp:  itbc_req.GetTimestamp(),
 		Nonce:      itbc_req.GetNonce(),
@@ -551,10 +690,10 @@ func _build_push_frame_to_flow_stream(cli pb.DeviceServiceClient, ctx context.Co
 	}
 
 	cfg_req_id := id_helper.NewId()
-	cfg_req := &device_pb.PushFrameToFlowRequest{
+	cfg_req := &pb.PushFrameToFlowRequest{
 		Id: &wrappers.StringValue{Value: cfg_req_id},
-		Request: &device_pb.PushFrameToFlowRequest_Config_{
-			Config: &device_pb.PushFrameToFlowRequest_Config{
+		Request: &pb.PushFrameToFlowRequest_Config_{
+			Config: &pb.PushFrameToFlowRequest_Config{
 				Flow: &deviced_pb.OpFlow{
 					Name: &wrappers.StringValue{Value: flow},
 				},

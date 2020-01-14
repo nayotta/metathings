@@ -69,12 +69,16 @@ var (
 
 func GetPolicydOptions() (
 	*PolicydOption,
+	cmd_contrib.ServiceOptioner,
 	cmd_contrib.ListenOptioner,
 	cmd_contrib.TransportCredentialOptioner,
 	cmd_contrib.StorageOptioner,
 	cmd_contrib.LoggerOptioner,
+	cmd_contrib.OpentracingOptioner,
 ) {
 	return policyd_opt,
+		policyd_opt,
+		policyd_opt,
 		policyd_opt,
 		policyd_opt,
 		policyd_opt,
@@ -130,9 +134,10 @@ func runPolicyd() error {
 		fx.NopLogger,
 		fx.Provide(
 			GetPolicydOptions,
-			cmd_contrib.NewTransportCredentials,
+			cmd_contrib.NewServerTransportCredentials,
 			cmd_contrib.NewLogger("policyd"),
 			cmd_contrib.NewListener,
+			cmd_contrib.NewOpentracing,
 			cmd_contrib.NewGrpcServer,
 			NewMetathingsPolicydServiceOption,
 			service.NewMetathingsPolicydService,

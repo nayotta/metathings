@@ -38,7 +38,7 @@ func (self *MetathingsIdentitydService) AddEntityToDomain(ctx context.Context, r
 	ent_id_str := req.GetEntity().GetId().GetValue()
 	dom_id_str := req.GetDomain().GetId().GetValue()
 
-	if err = self.storage.AddEntityToDomain(dom_id_str, ent_id_str); err != nil {
+	if err = self.storage.AddEntityToDomain(ctx, dom_id_str, ent_id_str); err != nil {
 		self.logger.WithError(err).Errorf("failed to add entity to domain in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
