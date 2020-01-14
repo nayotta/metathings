@@ -33,16 +33,16 @@ func (self *MetathingsDevicedService) ValidateCreateDevice(ctx context.Context, 
 				dev := x.GetDevice()
 
 				if dev.GetKind() == pb_kind.DeviceKind_DEVICE_KIND_UNKNOWN {
-					return errors.New("domain.kind is invalid value")
+					return errors.New("device.kind is invalid value")
 				}
 
 				if dev.GetName() == nil {
-					return errors.New("domain.name is empty")
+					return errors.New("device.name is empty")
 				}
 
 				mdls := dev.GetModules()
 				if len(mdls) == 0 {
-					return errors.New("domain.modules too short")
+					return errors.New("device.modules too short")
 				}
 
 				for _, mdl := range mdls {
