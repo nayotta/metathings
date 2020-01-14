@@ -36,6 +36,8 @@ var (
 		"IssueTokenByToken",
 		"IssueTokenByPassword",
 		"IssueTokenByCredential",
+		"ValidateToken",
+		"CheckToken",
 	}
 )
 
