@@ -37,6 +37,6 @@ require (
 	go.uber.org/fx v1.9.0
 	go.uber.org/goleak v0.10.0 // indirect
 	golang.org/x/crypto v0.0.0-20190820162420-60c769a6c586
-	google.golang.org/grpc v1.26.0
+	google.golang.org/grpc v1.23.0
 	gopkg.in/yaml.v2 v2.2.4
 )
