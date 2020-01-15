@@ -18,6 +18,7 @@ type Storage interface {
 	Heartbeat(mdl_id string) error
 	GetHeartbeatAt(mdl_id string) (time.Time, error)
 	SetModuleSession(mdl_id string, sess int64) error
+	UnsetModuleSession(mdl_id string) error
 	GetModuleSession(mdl_id string) (int64, error)
 	SetDeviceConnectSession(dev_id string, sess string) error
 	UnsetDeviceConnectSession(dev_id string, sess string) error

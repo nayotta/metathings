@@ -10,6 +10,7 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
+	config_helper "github.com/nayotta/metathings/pkg/common/config"
 	context_helper "github.com/nayotta/metathings/pkg/common/context"
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 	protobuf_helper "github.com/nayotta/metathings/pkg/common/protobuf"
@@ -76,36 +77,45 @@ func (s *MetathingsDeviceCloudService) try_to_build_device_connection(dev *pb.De
 			return
 		}
 
-		s.get_logger().WithFields(log.Fields{
-			"device": dev_id,
-		}).Infof("build device connection")
+		s.get_logger().Infof("build device connection")
 	} else {
 		s.get_logger().WithError(err).Debugf("failed to get device connection status")
 	}
 }
 
 func (s *MetathingsDeviceCloudService) build_device_connection(dev *pb.Device) error {
-	dc, err := NewDeviceConnection(
-		"device", dev,
-		"storage", s.storage,
-		"client_factory", s.cli_fty,
-		"logger", s.logger,
-		"tokener", s.tknr,
-		"mqtt_address", s.opt.Connection.Mqtt.Address,
-		"mqtt_username", s.opt.Credential.Id,
-		"mqtt_password", mosquitto_service.ParseMosquittoPluginPassword(s.opt.Credential.Id, s.opt.Credential.Secret),
-		"device_cloud_session", s.opt.Session.Id,
-	)
+	drv, args, err := config_helper.ParseConfigOption("driver", s.opt.Connection)
 	if err != nil {
 		return err
 	}
 
-	err = dc.Start()
-	if err != nil {
-		return err
-	}
+	switch drv {
+	case "mqtt":
+		args = append(args,
+			"device", dev,
+			"storage", s.storage,
+			"client_factory", s.cli_fty,
+			"logger", s.logger,
+			"tokener", s.tknr,
+			"mqtt_username", s.opt.Credential.Id,
+			"mqtt_password", mosquitto_service.ParseMosquittoPluginPassword(s.opt.Credential.Id, s.opt.Credential.Secret),
+			"device_cloud_session", s.opt.Session.Id,
+		)
 
-	return nil
+		dc, err := NewDeviceConnection(args...)
+		if err != nil {
+			return err
+		}
+
+		err = dc.Start()
+		if err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return ErrUnsupportedDeviceConnectionDriver
+	}
 }
 
 type DeviceConnectionOption struct {
@@ -136,9 +146,9 @@ type DeviceConnectionOption struct {
 		HeartbeatInterval time.Duration
 		HeartbeatTimeout  time.Duration
 
-		MaxReconnect         int
-		MinReconnectInterval time.Duration
-		MaxReconnectInterval time.Duration
+		Retry            int
+		RetryInterval    time.Duration
+		MaxRetryInterval time.Duration
 
 		PingInterval time.Duration
 
@@ -164,6 +174,7 @@ type DeviceConnection struct {
 	stm_wg_once    sync.Once
 	stm_rwmtx      sync.RWMutex
 	mdl_info_cache map[string]*pb.Module
+	stop_once      sync.Once
 }
 
 func (dc *DeviceConnection) context_with_session_and_device() context.Context {
@@ -208,15 +219,16 @@ func (dc *DeviceConnection) Start() error {
 	go dc.heartbeat_loop()
 	go dc.ping_loop()
 
-	dc.logger.WithField("device", dc.opt.Device.Id).Debugf("device connected")
+	dc.logger.Debugf("device connected")
 
 	return nil
 }
 
 func (dc *DeviceConnection) Stop() error {
-	dc.clear()
-	dc.closed = true
-
+	dc.stop_once.Do(func() {
+		dc.clear()
+		dc.closed = true
+	})
 	return nil
 }
 
@@ -234,6 +246,12 @@ func (dc *DeviceConnection) clear() {
 	if err != nil {
 		dc.logger.WithError(err).Warningf("failed to unconnect device in storage")
 	}
+
+	for _, mdl := range dc.info.Modules {
+		if err = dc.storage.UnsetModuleSession(mdl.Id); err != nil {
+			dc.logger.WithError(err).Warningf("faild to unset module session in storage")
+		}
+	}
 }
 
 func (dc *DeviceConnection) is_closed() bool {
@@ -242,13 +260,10 @@ func (dc *DeviceConnection) is_closed() bool {
 
 func (dc *DeviceConnection) main_loop() {
 	rc := 0
-	rc_tvl := dc.opt.Config.MinReconnectInterval
+	rc_tvl := dc.opt.Config.RetryInterval
 	defer func() {
 		dc.Stop()
-		dc.logger.WithFields(log.Fields{
-			"device":  dc.opt.Device.Id,
-			"session": dc.opt.Session.Connection,
-		}).Debugf("device connection main loop exited")
+		dc.logger.Debugf("device connection main loop exited")
 	}()
 
 	for {
@@ -265,18 +280,18 @@ func (dc *DeviceConnection) main_loop() {
 			return
 		}
 
-		if rc > dc.opt.Config.MaxReconnect {
+		if rc > dc.opt.Config.Retry {
 			dc.logger.Warningf("max reconnect to connect deviced")
 			return
 		}
 
 		err = dc.internal_main_loop()
 		if err != nil {
-			rc_tvl = time.Duration(math.Min(float64(rc_tvl*2), float64(dc.opt.Config.MaxReconnectInterval)))
+			rc_tvl = time.Duration(math.Min(float64(rc_tvl*2), float64(dc.opt.Config.MaxRetryInterval)))
 			rc++
 			dc.logger.WithError(err).Debugf("internal main loop break")
 		} else {
-			rc_tvl = dc.opt.Config.MinReconnectInterval
+			rc_tvl = dc.opt.Config.RetryInterval
 			rc = 0
 		}
 		dc.logger.WithFields(log.Fields{
@@ -333,10 +348,7 @@ func (dc *DeviceConnection) internal_main_loop() error {
 
 func (dc *DeviceConnection) heartbeat_loop() {
 	dc.stm_wg.Wait()
-	defer dc.logger.WithFields(log.Fields{
-		"device":  dc.opt.Device.Id,
-		"session": dc.opt.Session.Connection,
-	}).Debugf("device connection heartbeat loop exited")
+	defer dc.logger.Debugf("device connection heartbeat loop exited")
 
 	for {
 		if dc.is_closed() {
@@ -411,7 +423,6 @@ func (dc *DeviceConnection) heartbeat_loop_once() {
 	}
 
 	dc.logger.WithFields(log.Fields{
-		"device":       dc.opt.Device.Id,
 		"heartbeat_at": now,
 	}).Debugf("heartbeat")
 
@@ -419,10 +430,7 @@ func (dc *DeviceConnection) heartbeat_loop_once() {
 
 func (dc *DeviceConnection) ping_loop() {
 	dc.stm_wg.Wait()
-	defer dc.logger.WithFields(log.Fields{
-		"device":  dc.opt.Device.Id,
-		"session": dc.opt.Session.Connection,
-	}).Debugf("device connection ping loop exited")
+	defer dc.logger.Debugf("device connection ping loop exited")
 
 	for {
 		if dc.is_closed() {
@@ -529,11 +537,11 @@ func NewDeviceConnection(args ...interface{}) (*DeviceConnection, error) {
 	opt.Session.Startup = session_helper.GenerateStartupSession()
 	opt.Session.Major = session_helper.GenerateMajorSession()
 	opt.Session.Connection = session_helper.NewSession(opt.Session.Startup, opt.Session.Major)
-	opt.Config.HeartbeatInterval = 13 * time.Second
-	opt.Config.HeartbeatTimeout = 57 * time.Second
-	opt.Config.MaxReconnect = 7
-	opt.Config.MinReconnectInterval = 3 * time.Second
-	opt.Config.MaxReconnectInterval = 17 * time.Second
+	opt.Config.HeartbeatInterval = 19 * time.Second
+	opt.Config.HeartbeatTimeout = 131 * time.Second
+	opt.Config.Retry = 7
+	opt.Config.RetryInterval = 3 * time.Second
+	opt.Config.MaxRetryInterval = 17 * time.Second
 	opt.Config.PingInterval = 27 * time.Second
 	opt.Config.SendConfigResponseIntervalA = float64(300)
 	opt.Config.SendConfigResponseIntervalB = float64(300)
@@ -576,7 +584,13 @@ func NewDeviceConnection(args ...interface{}) (*DeviceConnection, error) {
 		"mqtt_username":        opt_helper.ToString(&dc.opt.DeviceCloud.Connection.MQTT.Username),
 		"mqtt_password":        opt_helper.ToString(&dc.opt.DeviceCloud.Connection.MQTT.Password),
 		"device_cloud_session": opt_helper.ToString(&dc.opt.DeviceCloud.Session.Id),
-	})(args...); err != nil {
+		"heartbeat_interval":   opt_helper.ToDuration(&dc.opt.Config.HeartbeatInterval),
+		"heartbeat_timeout":    opt_helper.ToDuration(&dc.opt.Config.HeartbeatTimeout),
+		"retry":                opt_helper.ToInt(&dc.opt.Config.Retry),
+		"retry_interval":       opt_helper.ToDuration(&dc.opt.Config.RetryInterval),
+		"max_retry_interval":   opt_helper.ToDuration(&dc.opt.Config.MaxRetryInterval),
+		"ping_interval":        opt_helper.ToDuration(&dc.opt.Config.PingInterval),
+	}, opt_helper.SetSkip(true))(args...); err != nil {
 		return nil, err
 	}
 
@@ -584,6 +598,11 @@ func NewDeviceConnection(args ...interface{}) (*DeviceConnection, error) {
 	for _, mdl := range dc.info.Modules {
 		dc.opt.Device.Modules = append(dc.opt.Device.Modules, struct{ Id string }{Id: mdl.Id})
 	}
+
+	dc.logger = dc.logger.WithFields(log.Fields{
+		"device":  dc.opt.Device.Id,
+		"session": dc.opt.Session.Connection,
+	})
 
 	return dc, nil
 }
