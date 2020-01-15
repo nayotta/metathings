@@ -130,14 +130,14 @@ func (s *RedisStorage) SetDeviceConnectSession(dev_id string, sess string) error
 
 	err = s.set_device_connect_session(cli, dev_id, sess)
 	if err != nil {
-		s.get_logger().WithError(err).Debugf("failed to connect device in redis")
+		s.get_logger().WithError(err).Debugf("failed to set device connection session in redis")
 		return err
 	}
 
 	s.get_logger().WithFields(log.Fields{
 		"device":  dev_id,
 		"session": sess,
-	}).Debugf("connect device")
+	}).Debugf("set device connection session")
 
 	return nil
 }
@@ -159,14 +159,14 @@ func (s *RedisStorage) UnsetDeviceConnectSession(dev_id string, sess string) err
 
 	err = s.unset_device_connect_session(cli, dev_id, sess)
 	if err != nil {
-		s.get_logger().WithError(err).Debugf("failed to unconnect device in redis")
+		s.get_logger().WithError(err).Debugf("failed to unset device connect session in redis")
 		return err
 	}
 
 	s.get_logger().WithFields(log.Fields{
 		"device":  dev_id,
 		"session": sess,
-	}).Debugf("unconnect device")
+	}).Debugf("unset device connect session")
 
 	return nil
 }
@@ -278,6 +278,34 @@ func (s *RedisStorage) set_module_session(cli *redis.Client, mdl_id string, sess
 	return nil
 }
 
+func (s *RedisStorage) UnsetModuleSession(mdl_id string) error {
+	cli, cfn, err := s.get_redis_client()
+	if err != nil {
+		return err
+	}
+	defer cfn()
+
+	err = s.unset_module_session(cli, mdl_id)
+	if err != nil {
+		s.get_logger().WithError(err).Debugf("failed to unset module session in redis")
+		return err
+	}
+
+	s.get_logger().WithFields(log.Fields{
+		"module": mdl_id,
+	}).Debugf("unset module session")
+
+	return nil
+}
+
+func (s *RedisStorage) unset_module_session(cli *redis.Client, mdl_id string) error {
+	if err := cli.Del(s.module_session_key(mdl_id)).Err(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (s *RedisStorage) GetModuleSession(mdl_id string) (int64, error) {
 	cli, cfn, err := s.get_redis_client()
 	if err != nil {
@@ -324,16 +352,20 @@ func (f *RedisStorageFactory) New(args ...interface{}) (Storage, error) {
 	var err error
 
 	opt := &RedisStorageOption{}
-	opt.Module.Session.Timeout = 127 * time.Second
-	opt.Device.Session.Timeout = 131 * time.Second
+	opt.Module.Session.Timeout = 601 * time.Second
+	opt.Device.Session.Timeout = 607 * time.Second
 	opt.Redis.Pool.Init = 1
 	opt.Redis.Pool.Max = 5
 
 	if err = opt_helper.Setopt(map[string]func(string, interface{}) error{
-		"logger": opt_helper.ToLogger(&logger),
-		"addr":   opt_helper.ToString(&opt.Redis.Address),
-		"passwd": opt_helper.ToString(&opt.Redis.Password),
-		"db":     opt_helper.ToInt(&opt.Redis.Db),
+		"logger":                 opt_helper.ToLogger(&logger),
+		"addr":                   opt_helper.ToString(&opt.Redis.Address),
+		"passwd":                 opt_helper.ToString(&opt.Redis.Password),
+		"db":                     opt_helper.ToInt(&opt.Redis.Db),
+		"module_session_timeout": opt_helper.ToDuration(&opt.Module.Session.Timeout),
+		"device_session_timeout": opt_helper.ToDuration(&opt.Device.Session.Timeout),
+		"pool_initial":           opt_helper.ToInt(&opt.Redis.Pool.Init),
+		"pool_max":               opt_helper.ToInt(&opt.Redis.Pool.Max),
 	})(args...); err != nil {
 		return nil, err
 	}
