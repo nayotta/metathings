@@ -307,13 +307,22 @@ func ToInt64(v *int64) func(string, interface{}) error {
 	}
 }
 
-func ToDuration(v *time.Duration) func(string, interface{}) error {
+func ToDuration(v *time.Duration, unit ...time.Duration) func(string, interface{}) error {
+	u := time.Second
+	if len(unit) != 0 {
+		u = unit[0]
+	}
+
 	return func(key string, val interface{}) error {
 		var ok bool
-		*v, ok = val.(time.Duration)
+		var vi int
+		vi, ok = val.(int)
 		if !ok {
 			return InvalidArgument(key)
 		}
+
+		*v = time.Duration(vi) * u
+
 		return nil
 	}
 }

@@ -5,6 +5,7 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
+	config_helper "github.com/nayotta/metathings/pkg/common/config"
 	id_helper "github.com/nayotta/metathings/pkg/common/id"
 	mosquitto_service "github.com/nayotta/metathings/pkg/plugin/mosquitto/service"
 	device_pb "github.com/nayotta/metathings/pkg/proto/device"
@@ -83,12 +84,17 @@ func (s *MetathingsDeviceCloudService) start_push_frame_loop(dev_id string, req 
 
 	var pffch PushFrameToFlowChannel
 
-	// TODO(Peer): get flow channel driver from request
-	flw_ch_drv := "mqtt"
-	switch flw_ch_drv {
+	drv, args, err := config_helper.ParseConfigOption("driver", s.opt.Connection)
+	if err != nil {
+		defer cfn()
+		logger.WithError(err).Warningf("failed to parse config option")
+		return err
+	}
+
+	switch drv {
 	case "mqtt":
-		pffch, err = NewPushFrameToFlowChannel("mqtt",
-			"mqtt_address", s.opt.Connection.Mqtt.Address,
+		args = append(
+			args,
 			"mqtt_username", s.opt.Credential.Id,
 			"mqtt_password", mosquitto_service.ParseMosquittoPluginPassword(s.opt.Credential.Id, s.opt.Credential.Secret),
 			"device_id", dev_id,
@@ -96,6 +102,8 @@ func (s *MetathingsDeviceCloudService) start_push_frame_loop(dev_id string, req 
 			"push_ack", psh_ack,
 			"logger", s.logger,
 		)
+
+		pffch, err = NewPushFrameToFlowChannel("mqtt", args...)
 	default:
 		defer cfn()
 		logger.Warningf("unspported flow channel driver")

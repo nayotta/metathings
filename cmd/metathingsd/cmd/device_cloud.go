@@ -22,11 +22,7 @@ import (
 type DeviceCloudOption struct {
 	cmd_contrib.ServiceBaseOption `mapstructure:",squash"`
 	Storage                       map[string]interface{}
-	Connection                    struct {
-		Mqtt struct {
-			Address string
-		}
-	}
+	Connection                    map[string]interface{}
 }
 
 func NewDeviceCloudOption() *DeviceCloudOption {
@@ -123,7 +119,7 @@ func NewDeviceCloudStorage(opt *DeviceCloudOption, logger log.FieldLogger) (stor
 func NewMetathingsDeviceCloudServiceOption(opt *DeviceCloudOption) *service.MetathingsDeviceCloudServiceOption {
 	dc_opt := &service.MetathingsDeviceCloudServiceOption{}
 	dc_opt.Session.Id = id_helper.NewId()
-	dc_opt.Connection.Mqtt.Address = opt.Connection.Mqtt.Address
+	dc_opt.Connection = opt.Connection
 	dc_opt.Credential.Id = opt.GetCredentialId()
 	dc_opt.Credential.Secret = opt.GetCredentialSecret()
 	return dc_opt

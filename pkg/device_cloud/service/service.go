@@ -15,11 +15,7 @@ type MetathingsDeviceCloudServiceOption struct {
 	Session struct {
 		Id string
 	}
-	Connection struct {
-		Mqtt struct {
-			Address string
-		}
-	}
+	Connection map[string]interface{}
 	Credential struct {
 		Id     string
 		Secret string

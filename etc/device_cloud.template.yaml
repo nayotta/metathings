@@ -16,5 +16,8 @@ dev:
     id: <credential-id>
     secret: <credential-secret>
   connection:
-    mqtt:
-      address: <mqtt-address>
+    driver: <connection-drvier>
+    # other else
+    # like:
+    #   driver: mqtt
+    #   mqtt_address: <mqtt_address>

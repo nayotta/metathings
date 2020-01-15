@@ -209,7 +209,7 @@ func (f *MQTTPushFrameToFlowChannelFactory) New(args ...interface{}) (PushFrameT
 		"channel_session": opt_helper.ToString(&opt.Channel.Session),
 		"push_ack":        opt_helper.ToBool(&opt.Channel.PushAck),
 		"logger":          opt_helper.ToLogger(&logger),
-	})(args...); err != nil {
+	}, opt_helper.SetSkip(true))(args...); err != nil {
 		return nil, err
 	}
 
