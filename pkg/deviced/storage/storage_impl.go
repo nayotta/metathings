@@ -48,6 +48,90 @@ func (self *StorageImpl) get_flow(ctx context.Context, id string) (*Flow, error)
 	return flw, nil
 }
 
+func (self *StorageImpl) list_flow_sets(ctx context.Context, flwst *FlowSet) ([]*FlowSet, error) {
+	var err error
+	var flwsts_t []*FlowSet
+	var flwsts []*FlowSet
+
+	fs := &FlowSet{}
+	if flwst.Id != nil {
+		fs.Id = flwst.Id
+	}
+
+	if flwst.Alias != nil {
+		fs.Alias = flwst.Alias
+	}
+
+	if flwst.Name != nil {
+		fs.Name = flwst.Name
+	}
+
+	if err = self.GetDBConn(ctx).Find(&flwsts_t, fs).Error; err != nil {
+		return nil, err
+	}
+
+	for _, fs = range flwsts_t {
+		if flwst, err = self.get_flow_set(ctx, *fs.Id); err != nil {
+			return nil, err
+		}
+		flwsts = append(flwsts, flwst)
+	}
+
+	return flwsts, nil
+}
+
+func (self *StorageImpl) list_view_flow_sets_by_flow_id(ctx context.Context, id string) ([]*FlowSet, error) {
+	var err error
+	var flw_flwst_maps []*FlowFlowSetMapping
+	var flwsts []*FlowSet
+
+	if err = self.GetDBConn(ctx).Find(&flw_flwst_maps, "flow_id = ?", id).Error; err != nil {
+		return nil, err
+	}
+
+	for _, m := range flw_flwst_maps {
+		flwst := &FlowSet{
+			Id: m.FlowSetId,
+		}
+		flwsts = append(flwsts, flwst)
+	}
+
+	return flwsts, nil
+}
+
+func (self *StorageImpl) internal_list_view_flows(ctx context.Context, flwst *FlowSet) ([]*Flow, error) {
+	var err error
+	var flws []*Flow
+	var flw_flwst_maps []*FlowFlowSetMapping
+
+	if err = self.GetDBConn(ctx).Find(&flw_flwst_maps, "flow_set_id = ?", *flwst.Id).Error; err != nil {
+		return nil, err
+	}
+
+	for _, ffm := range flw_flwst_maps {
+		flws = append(flws, &Flow{
+			Id: ffm.FlowId,
+		})
+	}
+
+	return flws, nil
+}
+
+func (self *StorageImpl) get_flow_set(ctx context.Context, id string) (*FlowSet, error) {
+	var err error
+	flwst := &FlowSet{}
+
+	if err = self.GetDBConn(ctx).First(flwst, "id = ?", id).Error; err != nil {
+		return nil, err
+	}
+
+	if flwst.Flows, err = self.internal_list_view_flows(ctx, flwst); err != nil {
+		return nil, err
+	}
+
+	return flwst, nil
+}
+
 func (self *StorageImpl) list_flows_by_device_id(ctx context.Context, id string) ([]*Flow, error) {
 	var err error
 	var flws_t []*Flow
@@ -540,6 +624,159 @@ func (self *StorageImpl) ListFlows(ctx context.Context, flw *Flow) ([]*Flow, err
 	return flws, nil
 }
 
+func (self *StorageImpl) CreateFlowSet(ctx context.Context, flwst *FlowSet) (*FlowSet, error) {
+	var err error
+
+	if err = self.GetDBConn(ctx).Create(flwst).Error; err != nil {
+		self.logger.WithError(err).Debugf("failed to create flow set")
+		return nil, err
+	}
+
+	if flwst, err = self.get_flow_set(ctx, *flwst.Id); err != nil {
+		self.logger.WithError(err).Debugf("failed to get flow set")
+		return nil, err
+	}
+
+	self.logger.WithField("id", *flwst.Id).Debugf("create flow set")
+
+	return flwst, nil
+}
+
+func (self *StorageImpl) DeleteFlowSet(ctx context.Context, id string) error {
+	if err := self.GetDBConn(ctx).Delete(&FlowSet{}, "id = ?", id).Error; err != nil {
+		self.logger.WithError(err).Debugf("failed to delete flow set")
+		return err
+	}
+
+	self.logger.WithField("id", id).Debugf("delete flow set")
+
+	return nil
+}
+
+func (self *StorageImpl) PatchFlowSet(ctx context.Context, id string, flwst *FlowSet) (*FlowSet, error) {
+	var err error
+	var fs FlowSet
+
+	if flwst.Alias != nil {
+		fs.Alias = flwst.Alias
+	}
+
+	if err = self.GetDBConn(ctx).Model(&FlowSet{Id: &id}).Update(fs).Error; err != nil {
+		self.logger.WithError(err).Debugf("failed to patch flow set")
+		return nil, err
+	}
+
+	if flwst, err = self.get_flow_set(ctx, id); err != nil {
+		self.logger.WithError(err).Debugf("failed to get flow set")
+		return nil, err
+	}
+
+	self.logger.WithField("id", id).Debugf("patch flow set")
+
+	return flwst, nil
+}
+
+func (self *StorageImpl) GetFlowSet(ctx context.Context, id string) (*FlowSet, error) {
+	var flwst *FlowSet
+	var err error
+
+	if flwst, err = self.get_flow_set(ctx, id); err != nil {
+		self.logger.WithError(err).Debugf("failed to get flow set")
+		return nil, err
+	}
+
+	self.logger.WithField("id", id).Debugf("get flow set")
+
+	return flwst, nil
+}
+
+func (self *StorageImpl) ListFlowSets(ctx context.Context, flwst *FlowSet) ([]*FlowSet, error) {
+	var flwsts []*FlowSet
+	var err error
+
+	if flwsts, err = self.list_flow_sets(ctx, flwst); err != nil {
+		self.logger.WithError(err).Debugf("failed to list flow sets")
+		return nil, err
+	}
+
+	self.logger.Debugf("list flow sets")
+
+	return flwsts, nil
+}
+
+func (self *StorageImpl) ListViewFlowSetsByFlowId(ctx context.Context, id string) ([]*FlowSet, error) {
+	var flwsts []*FlowSet
+	var err error
+
+	if flwsts, err = self.list_view_flow_sets_by_flow_id(ctx, id); err != nil {
+		self.logger.WithError(err).Debugf("failed to list flow sets by flow id")
+		return nil, err
+	}
+
+	self.logger.Debugf("list flow sets by flow id")
+
+	return flwsts, nil
+}
+
+func (self *StorageImpl) AddFlowToFlowSet(ctx context.Context, flwst_id, flw_id string) error {
+	m := &FlowFlowSetMapping{
+		FlowSetId: &flwst_id,
+		FlowId:    &flw_id,
+	}
+
+	if err := self.GetDBConn(ctx).Create(m).Error; err != nil {
+		self.logger.WithError(err).Debugf("failed to add flow to flow set")
+		return err
+	}
+
+	self.logger.WithFields(log.Fields{
+		"flow_id":     flw_id,
+		"flow_set_id": flwst_id,
+	})
+
+	return nil
+}
+
+func (self *StorageImpl) RemoveFlowFromFlowSet(ctx context.Context, flwst_id, flw_id string) error {
+	if err := self.GetDBConn(ctx).Delete(&FlowFlowSetMapping{}, "flow_set_id = ? and flow_id = ?", flwst_id, flw_id).Error; err != nil {
+		self.logger.WithError(err).Debugf("failed to remove flow from flow set")
+		return err
+	}
+
+	self.logger.WithFields(log.Fields{
+		"flow_set_id": flwst_id,
+		"flow_id":     flw_id,
+	})
+
+	return nil
+}
+
+func init_args(s *StorageImpl, args ...interface{}) error {
+	var key string
+	var ok bool
+
+	if len(args)%2 != 0 {
+		return InvalidArgument
+	}
+
+	for i := 0; i < len(args); i += 2 {
+		key, ok = args[i].(string)
+		if !ok {
+			return InvalidArgument
+		}
+
+		switch key {
+		case "logger":
+			s.logger, ok = args[i+1].(log.FieldLogger)
+			if !ok {
+				return InvalidArgument
+			}
+		}
+	}
+
+	return nil
+}
+
 func new_db(s *StorageImpl, driver, uri string) error {
 	var db *gorm.DB
 	var err error
@@ -562,6 +799,8 @@ func init_db(s *StorageImpl) error {
 		&Device{},
 		&Module{},
 		&Flow{},
+		&FlowSet{},
+		&FlowFlowSetMapping{},
 	)
 
 	return nil

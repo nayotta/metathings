@@ -30,17 +30,8 @@ type DevicedOption struct {
 		Storage map[string]interface{}
 		Bridge  map[string]interface{}
 	}
-	Flow struct {
-		Mongo struct {
-			Uri      string
-			Database string
-		}
-		Redis struct {
-			Addr     string
-			DB       int
-			Password string
-		}
-	}
+	Flow    map[string]interface{}
+	FlowSet map[string]interface{}
 }
 
 func NewDevicedOption() *DevicedOption {
@@ -94,6 +85,24 @@ func init_simple_storage(opt *DevicedOption) {
 	opt.SimpleStorage = mss
 }
 
+func init_flow(opt *DevicedOption) {
+	mf := map[string]interface{}{}
+	vf := cmd_helper.GetFromStage().Sub("flow")
+	for _, key := range vf.AllKeys() {
+		mf[key] = vf.Get(key)
+	}
+	opt.Flow = mf
+}
+
+func init_flow_set(opt *DevicedOption) {
+	mfs := map[string]interface{}{}
+	vfs := cmd_helper.GetFromStage().Sub("flow_set")
+	for _, key := range vfs.AllKeys() {
+		mfs[key] = vfs.Get(key)
+	}
+	opt.FlowSet = mfs
+}
+
 var (
 	devicedCmd = &cobra.Command{
 		Use:   "deviced",
@@ -111,6 +120,8 @@ var (
 			init_session_storage(opt_t)
 			init_simple_storage(opt_t)
 			init_connection_center(opt_t)
+			init_flow(opt_t)
+			init_flow_set(opt_t)
 
 			deviced_opt = opt_t
 			deviced_opt.SetServiceName("deviced")
@@ -215,33 +226,39 @@ func NewConnectionCenter(opt *DevicedOption, sess_stor session_storage.SessionSt
 }
 
 func NewSessionStorage(opt *DevicedOption, logger log.FieldLogger) (session_storage.SessionStorage, error) {
-	drv, args, err := cfg_helper.ParseConfigOption("driver", opt.SessionStorage)
-	if err != nil {
-		return nil, err
-	}
-	args = append(args, "logger", logger)
-
-	sess_stor, err := session_storage.NewSessionStorage(drv, args...)
+	drv, args, err := cfg_helper.ParseConfigOption("driver", opt.SessionStorage, "logger", logger)
 	if err != nil {
 		return nil, err
 	}
 
-	return sess_stor, nil
+	return session_storage.NewSessionStorage(drv, args...)
 }
 
 func NewSimpleStorage(opt *DevicedOption, logger log.FieldLogger) (simple_storage.SimpleStorage, error) {
-	name, args, err := cfg_helper.ParseConfigOption("name", opt.SimpleStorage)
-	if err != nil {
-		return nil, err
-	}
-	args = append(args, "logger", logger)
-
-	simp_stor, err := simple_storage.NewSimpleStorage(name, args...)
+	name, args, err := cfg_helper.ParseConfigOption("name", opt.SimpleStorage, "logger", logger)
 	if err != nil {
 		return nil, err
 	}
 
-	return simp_stor, nil
+	return simple_storage.NewSimpleStorage(name, args...)
+}
+
+func NewFlowFactory(opt *DevicedOption, logger log.FieldLogger) (flow.FlowFactory, error) {
+	name, args, err := cfg_helper.ParseConfigOption("driver", opt.Flow, "logger", logger)
+	if err != nil {
+		return nil, err
+	}
+
+	return flow.NewFlowFactory(name, args...)
+}
+
+func NewFlowSetFactory(opt *DevicedOption, logger log.FieldLogger) (flow.FlowSetFactory, error) {
+	name, args, err := cfg_helper.ParseConfigOption("driver", opt.FlowSet, "logger", logger)
+	if err != nil {
+		return nil, err
+	}
+
+	return flow.NewFlowSetFactory(name, args...)
 }
 
 func NewMetathingsDevicedServiceOption(opt *DevicedOption) *service.MetathingsDevicedServiceOption {
@@ -305,17 +322,8 @@ func runDeviced() error {
 			NewMetathingsDevicedServiceOption,
 			authorizer.NewAuthorizer,
 			cmd_contrib.NewValidator,
-			func(opt *DevicedOption, logger log.FieldLogger) (flow.FlowFactory, error) {
-				return flow.NewFlowFactory(
-					"default",
-					"redis_stream_addr", opt.Flow.Redis.Addr,
-					"redis_stream_db", opt.Flow.Redis.DB,
-					"redis_stream_password", opt.Flow.Redis.Password,
-					"mongo_uri", opt.Flow.Mongo.Uri,
-					"mongo_database", opt.Flow.Mongo.Database,
-					"logger", logger,
-				)
-			},
+			NewFlowFactory,
+			NewFlowSetFactory,
 			service.NewMetathingsDevicedService,
 		),
 		fx.Invoke(

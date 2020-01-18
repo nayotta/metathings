@@ -61,7 +61,7 @@ func (f *flow) Close() error {
 
 	for _, cb := range f.close_cbs {
 		if err = cb(); err != nil {
-			f.logger.WithError(err).Debugf("failed to close callback")
+			f.logger.WithError(err).Debugf("failed to call close callback")
 		}
 	}
 
@@ -99,7 +99,7 @@ func (f *flow) push_frame_to_redis_stream(frm *pb.Frame) error {
 	if err := f.rs_cli.XAdd(&redis.XAddArgs{
 		Stream: f.redis_stream_key(),
 		Values: map[string]interface{}{
-			"value": frm_txt,
+			"frame": frm_txt,
 		},
 	}).Err(); err != nil {
 		return err
@@ -131,7 +131,7 @@ func (f *flow) push_frame_to_mgo(frm *pb.Frame) error {
 	return nil
 }
 
-func (f *flow) pull_frame_from_redis_stream() (<-chan *pb.Frame, <-chan struct{}) {
+func (f *flow) pull_frame_from_redis_stream() (<-chan *pb.Frame, chan struct{}) {
 	frm_ch := make(chan *pb.Frame)
 	quit_ch := make(chan struct{})
 
@@ -188,7 +188,7 @@ func (f *flow) pull_frame_from_redis_stream_loop(frm_ch chan<- *pb.Frame, quit_c
 
 		for _, val := range vals {
 			for _, msg := range val.Messages {
-				if buf, ok := msg.Values["value"]; ok {
+				if buf, ok := msg.Values["frame"]; ok {
 					var frm pb.Frame
 					if err = json_decoder.Unmarshal(strings.NewReader(buf.(string)), &frm); err != nil {
 						f.logger.WithError(err).Warningf("failed to unmarshal message to frame")
@@ -203,7 +203,7 @@ func (f *flow) pull_frame_from_redis_stream_loop(frm_ch chan<- *pb.Frame, quit_c
 	}
 }
 
-func (f *flow) PullFrame() (<-chan *pb.Frame, <-chan struct{}) {
+func (f *flow) PullFrame() (<-chan *pb.Frame, chan struct{}) {
 	return f.pull_frame_from_redis_stream()
 }
 
@@ -347,17 +347,19 @@ func new_default_flow_factory(args ...interface{}) (FlowFactory, error) {
 	opt.RedisStreamPoolMax = 23
 
 	if err := opt_helper.Setopt(map[string]func(string, interface{}) error{
-		"redis_stream_addr":     opt_helper.ToString(&opt.RedisStreamAddr),
-		"redis_stream_db":       opt_helper.ToInt(&opt.RedisStreamDB),
-		"redis_stream_password": opt_helper.ToString(&opt.RedisStreamPassword),
-		"mongo_uri":             opt_helper.ToString(&opt.MongoUri),
-		"mongo_database":        opt_helper.ToString(&opt.MongoDatabase),
-		"logger":                opt_helper.ToLogger(&logger),
+		"redis_stream_addr":         opt_helper.ToString(&opt.RedisStreamAddr),
+		"redis_stream_db":           opt_helper.ToInt(&opt.RedisStreamDB),
+		"redis_stream_password":     opt_helper.ToString(&opt.RedisStreamPassword),
+		"redis_stream_pool_initial": opt_helper.ToInt(&opt.RedisStreamPoolInitial),
+		"redis_stream_pool_max":     opt_helper.ToInt(&opt.RedisStreamPoolMax),
+		"mongo_uri":                 opt_helper.ToString(&opt.MongoUri),
+		"mongo_database":            opt_helper.ToString(&opt.MongoDatabase),
+		"logger":                    opt_helper.ToLogger(&logger),
 	})(args...); err != nil {
 		return nil, err
 	}
 
-	rspool, err := pool_helper.NewPool(opt.RedisStreamPoolInitial, opt.MongoPoolMax, func() (pool_helper.Client, error) {
+	rspool, err := pool_helper.NewPool(opt.RedisStreamPoolInitial, opt.RedisStreamPoolMax, func() (pool_helper.Client, error) {
 		rdopt := &redis.Options{
 			Addr:     opt.RedisStreamAddr,
 			DB:       opt.RedisStreamDB,

@@ -4,8 +4,6 @@ package ai.metathings.service.deviced;
 
 import "google/protobuf/timestamp.proto";
 
-import "github.com/mwitkow/go-proto-validators/validator.proto";
-
 import "model.proto";
 
 message QueryFramesFromFlowRequest {

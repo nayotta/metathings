@@ -111,6 +111,49 @@ func (s *TracedStorage) ListFlows(ctx context.Context, flw *Flow) ([]*Flow, erro
 	return s.StorageImpl.ListFlows(ctx, flw)
 }
 
+func (s *TracedStorage) CreateFlowSet(ctx context.Context, flwst *FlowSet) (*FlowSet, error) {
+	span, ctx := s.TraceWrapper(ctx, "CreateFlowSet")
+	defer span.Finish()
+
+	return s.StorageImpl.CreateFlowSet(ctx, flwst)
+}
+func (s *TracedStorage) DeleteFlowSet(ctx context.Context, id string) error {
+	span, ctx := s.TraceWrapper(ctx, "DeleteFlowSet")
+	defer span.Finish()
+
+	return s.StorageImpl.DeleteFlowSet(ctx, id)
+}
+func (s *TracedStorage) PatchFlowSet(ctx context.Context, id string, flwst *FlowSet) (*FlowSet, error) {
+	span, ctx := s.TraceWrapper(ctx, "PatchFlowSet")
+	defer span.Finish()
+
+	return s.StorageImpl.PatchFlowSet(ctx, id, flwst)
+}
+func (s *TracedStorage) GetFlowSet(ctx context.Context, id string) (*FlowSet, error) {
+	span, ctx := s.TraceWrapper(ctx, "GetFlowSet")
+	defer span.Finish()
+
+	return s.StorageImpl.GetFlowSet(ctx, id)
+}
+func (s *TracedStorage) ListFlowSets(ctx context.Context, flwsts *FlowSet) ([]*FlowSet, error) {
+	span, ctx := s.TraceWrapper(ctx, "ListFlows")
+	defer span.Finish()
+
+	return s.StorageImpl.ListFlowSets(ctx, flwsts)
+}
+func (s *TracedStorage) AddFlowToFlowSet(ctx context.Context, flwst_id, flw_id string) error {
+	span, ctx := s.TraceWrapper(ctx, "AddFlowToFlowSet")
+	defer span.Finish()
+
+	return s.StorageImpl.AddFlowToFlowSet(ctx, flwst_id, flw_id)
+}
+func (s *TracedStorage) RemoveFlowFromFlowSet(ctx context.Context, flwst_id, flw_id string) error {
+	span, ctx := s.TraceWrapper(ctx, "RemoveFlowFromFlowSet")
+	defer span.Finish()
+
+	return s.StorageImpl.RemoveFlowFromFlowSet(ctx, flwst_id, flw_id)
+}
+
 func NewTracedStorage(s *StorageImpl) (Storage, error) {
 	return &TracedStorage{
 		BaseTracedStorage: opentracing_storage_helper.NewBaseTracedStorage(s),

@@ -81,6 +81,20 @@ message OpFrame {
 	google.protobuf.Struct data = 2;
 }
 
+message FlowSet {
+	string id = 1;
+	string name = 2;
+	string alias = 3;
+	repeated Flow flows = 4;
+}
+
+message OpFlowSet {
+	google.protobuf.StringValue id = 1;
+	google.protobuf.StringValue name = 2;
+	google.protobuf.StringValue alias = 3;
+	repeated OpFlow flows = 4;
+}
+
 message Object {
 	Device device = 1;
 	string prefix = 2;
