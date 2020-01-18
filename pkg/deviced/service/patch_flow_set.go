@@ -39,7 +39,7 @@ func (self *MetathingsDevicedService) PatchFlowSet(ctx context.Context, req *pb.
 		flwst_s.Alias = &alias.Value
 	}
 
-	if flwst_s, err = self.storage.PatchFlowSet(flwst_id_str, flwst_s); err != nil {
+	if flwst_s, err = self.storage.PatchFlowSet(ctx, flwst_id_str, flwst_s); err != nil {
 		self.logger.WithError(err).Errorf("failed to patch flow set in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}

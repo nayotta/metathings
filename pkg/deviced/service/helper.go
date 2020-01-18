@@ -132,7 +132,13 @@ func copy_flow_set(x *storage.FlowSet) *pb.FlowSet {
 }
 
 func copy_flow_sets(xs []*storage.FlowSet) []*pb.FlowSet {
-	panic("unimplemented")
+	var ys []*pb.FlowSet
+
+	for _, x := range xs {
+		ys = append(ys, copy_flow_set(x))
+	}
+
+	return ys
 }
 
 func copy_object(x *simple_storage.Object) *pb.Object {
@@ -225,19 +231,6 @@ func _ensure_get_object_device_id(x *pb.OpObject) error {
 }
 
 func ensure_device_online(ctx context.Context, s storage.Storage) func(device_getter) error {
-func ensure_get_flow_set_id(x flow_set_getter) error {
-	fs := x.GetFlowSet()
-	if fs == nil {
-		return errors.New("flow_set.id is empty")
-	}
-	if fs.GetId() == nil {
-		return errors.New("flow_set.id is empty")
-	}
-
-	return nil
-}
-
-func ensure_device_online(s storage.Storage) func(device_getter) error {
 	return func(x device_getter) error {
 		dev_id := x.GetDevice().GetId().GetValue()
 		dev, err := s.GetDevice(ctx, dev_id)
@@ -250,4 +243,16 @@ func ensure_device_online(s storage.Storage) func(device_getter) error {
 
 		return nil
 	}
+}
+
+func ensure_get_flow_set_id(x flow_set_getter) error {
+	fs := x.GetFlowSet()
+	if fs == nil {
+		return errors.New("flow_set.id is empty")
+	}
+	if fs.GetId() == nil {
+		return errors.New("flow_set.id is empty")
+	}
+
+	return nil
 }

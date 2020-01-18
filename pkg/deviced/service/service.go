@@ -51,6 +51,7 @@ type MetathingsDevicedService struct {
 	tkvdr           token_helper.TokenValidator
 	cc              connection.ConnectionCenter
 	flw_fty         flow.FlowFactory
+	flwst_fty       flow.FlowSetFactory
 }
 
 func (self *MetathingsDevicedService) get_device_by_context(ctx context.Context) (*storage.Device, error) {
@@ -77,6 +78,54 @@ func (self *MetathingsDevicedService) new_flow(dev_id, flw_id string) (flow.Flow
 		FlowId:   flw_id,
 		DeviceId: dev_id,
 	})
+}
+
+func (self *MetathingsDevicedService) new_flow_sets(flwsts_s []*storage.FlowSet) ([]flow.FlowSet, error) {
+	var flwsts []flow.FlowSet
+
+	for _, flwst_s := range flwsts_s {
+		if flwst, err := self.flwst_fty.New(&flow.FlowSetOption{
+			FlowSetId: *flwst_s.Id,
+		}); err != nil {
+			for _, flwst := range flwsts {
+				flwst.Close()
+			}
+
+			return nil, err
+		} else {
+			flwsts = append(flwsts, flwst)
+		}
+	}
+
+	return flwsts, nil
+}
+
+func (self *MetathingsDevicedService) get_flow_ids_by_devices(ctx context.Context, devs []*pb.OpDevice) ([]string, error) {
+	flw_ids := []string{}
+
+	for _, dev_r := range devs {
+		dev_id := dev_r.GetId().GetValue()
+		dev_s, err := self.storage.GetDevice(ctx, dev_id)
+		if err != nil {
+			return nil, err
+		}
+
+		for _, flw_r := range dev_r.Flows {
+			ok := false
+			for _, flw_s := range dev_s.Flows {
+				if flw_r.GetName().GetValue() == *flw_s.Name {
+					flw_ids = append(flw_ids, *flw_s.Id)
+					ok = true
+					break
+				}
+			}
+			if !ok {
+				return nil, ErrFlowNotFound
+			}
+		}
+	}
+
+	return flw_ids, nil
 }
 
 func (self *MetathingsDevicedService) offline_device(ctx context.Context, dev_id string) (err error) {
@@ -120,14 +169,6 @@ func (self *MetathingsDevicedService) IsIgnoreMethod(md *grpc_helper.MethodDescr
 	return false
 }
 
-func (self *MetathingsDevicedService) PullFrameFromFlowSet(*pb.PullFrameFromFlowSetRequest, pb.DevicedService_PullFrameFromFlowSetServer) error {
-	panic("unimplemented")
-}
-
-func (self *MetathingsDevicedService) QueryFramesFromFlowSet(context.Context, *pb.QueryFramesFromFlowSetRequest) (*pb.QueryFramesFromFlowSetResponse, error) {
-	panic("unimplemented")
-}
-
 func NewMetathingsDevicedService(
 	opt *MetathingsDevicedServiceOption,
 	logger log.FieldLogger,
@@ -141,6 +182,7 @@ func NewMetathingsDevicedService(
 	tknr token_helper.Tokener,
 	cli_fty *client_helper.ClientFactory,
 	flw_fty flow.FlowFactory,
+	flwst_fty flow.FlowSetFactory,
 ) (pb.DevicedServiceServer, error) {
 	srv := &MetathingsDevicedService{
 		opt:             opt,
@@ -155,6 +197,7 @@ func NewMetathingsDevicedService(
 		tknr:            tknr,
 		cli_fty:         cli_fty,
 		flw_fty:         flw_fty,
+		flwst_fty:       flwst_fty,
 	}
 	srv.ServiceAuthFuncOverride = afo_helper.NewAuthFuncOverrider(tkvdr, srv, logger)
 

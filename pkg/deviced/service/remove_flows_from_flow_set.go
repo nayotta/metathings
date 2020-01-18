@@ -18,16 +18,18 @@ func (self *MetathingsDevicedService) AuthorizeRemoveFlowsFromFlowSet(ctx contex
 func (self *MetathingsDevicedService) RemoveFlowsFromFlowSet(ctx context.Context, req *pb.RemoveFlowsFromFlowSetRequest) (*empty.Empty, error) {
 	var err error
 
-	flws := req.GetFlows()
 	flwst := req.GetFlowSet()
-
 	flwst_id := flwst.GetId().GetValue()
-	flw_ids := []string{}
 
-	for _, flw := range flws {
-		flw_id := flw.GetId().GetValue()
-		flw_ids = append(flw_ids, flw_id)
-		if err = self.storage.RemoveFlowFromFlowSet(flwst_id, flw_id); err != nil {
+	devs := req.GetDevices()
+	flw_ids, err := self.get_flow_ids_by_devices(ctx, devs)
+	if err != nil {
+		self.logger.WithError(err).Errorf("failed to get flow ids by devices")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
+	for _, flw_id := range flw_ids {
+		if err = self.storage.RemoveFlowFromFlowSet(ctx, flwst_id, flw_id); err != nil {
 			self.logger.WithError(err).Errorf("failed to remove flow from flow set")
 			return nil, status.Errorf(codes.Internal, err.Error())
 		}

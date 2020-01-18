@@ -88,18 +88,12 @@ func NewMosquittoPluginStorage(
 	opt *MosquittoPluginOption,
 	logger log.FieldLogger,
 ) (storage.Storage, error) {
-	drv, args, err := cfg_helper.ParseConfigOption("driver", opt.MosquittoStorage)
-	if err != nil {
-		return nil, err
-	}
-	args = append(args, "logger", logger)
-
-	stor, err := storage.NewStorage(drv, args...)
+	drv, args, err := cfg_helper.ParseConfigOption("driver", opt.MosquittoStorage, "logger", logger)
 	if err != nil {
 		return nil, err
 	}
 
-	return stor, nil
+	return storage.NewStorage(drv, args...)
 }
 
 func NewMosquittoPluginServiceOption(opt *MosquittoPluginOption) *service.MosquittoPluginServiceOption {

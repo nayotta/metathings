@@ -8,5 +8,5 @@ import "model.proto";
 
 message AddFlowsToFlowSetRequest {
 	OpFlowSet flow_set = 1 [(validator.field) = {msg_exists: true}];
-	repeated OpFlow flows = 2 [(validator.field) = {msg_exists: true}];
+	repeated OpDevice devices = 2 [(validator.field) = {msg_exists: true}];
 }

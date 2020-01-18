@@ -45,13 +45,13 @@ type OpentracingResult struct {
 }
 
 func NewOpentracing(srv_opt ServiceOptioner, opt OpentracingOptioner) (OpentracingResult, error) {
-	name, args, err := cfg_helper.ParseConfigOption("tracer", opt.GetData())
+	name, args, err := cfg_helper.ParseConfigOption(
+		"tracer", opt.GetData(),
+		"service_name", srv_opt.GetServiceName(),
+	)
 	if err != nil {
 		return OpentracingResult{}, err
 	}
-
-	// get service name from other config
-	args = append(args, "service_name", srv_opt.GetServiceName())
 
 	tracer, closer, err := opentracing_helper.NewTracer(name, args...)
 	if err != nil {

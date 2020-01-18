@@ -25,10 +25,10 @@ func (this *AddFlowsToFlowSetRequest) Validate() error {
 			return github_com_mwitkow_go_proto_validators.FieldError("FlowSet", err)
 		}
 	}
-	for _, item := range this.Flows {
+	for _, item := range this.Devices {
 		if item != nil {
 			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {
-				return github_com_mwitkow_go_proto_validators.FieldError("Flows", err)
+				return github_com_mwitkow_go_proto_validators.FieldError("Devices", err)
 			}
 		}
 	}

@@ -91,6 +91,7 @@ type Storage interface {
 	PatchFlowSet(ctx context.Context, id string, flow_set *FlowSet) (*FlowSet, error)
 	GetFlowSet(ctx context.Context, id string) (*FlowSet, error)
 	ListFlowSets(context.Context, *FlowSet) ([]*FlowSet, error)
+	ListViewFlowSetsByFlowId(ctx context.Context, id string) ([]*FlowSet, error)
 	AddFlowToFlowSet(ctx context.Context, flow_set_id, flow_id string) error
 	RemoveFlowFromFlowSet(ctx context.Context, flow_set_id, flow_id string) error
 }

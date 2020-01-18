@@ -63,9 +63,13 @@ func get_full_url(ep cmd_contrib.ServiceEndpointOption, p string) string {
 func get_http_client(ep cmd_contrib.ServiceEndpointOption) *http.Client {
 	if ep.PlainText {
 		return http.DefaultClient
-	}
-
-	if ep.Insecure {
+	} else if ep.Insecure {
+		return &http.Client{
+			Transport: &http.Transport{
+				TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+			},
+		}
+	} else {
 		return &http.Client{
 			Transport: &http.Transport{
 				TLSClientConfig: nil,

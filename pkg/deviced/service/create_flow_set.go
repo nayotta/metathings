@@ -56,7 +56,7 @@ func (self *MetathingsDevicedService) CreateFlowSet(ctx context.Context, req *pb
 		Alias: &flwst_alias_str,
 	}
 
-	if flwst_s, err = self.storage.CreateFlowSet(flwst_s); err != nil {
+	if flwst_s, err = self.storage.CreateFlowSet(ctx, flwst_s); err != nil {
 		self.logger.WithError(err).Errorf("failed to create flow set in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}

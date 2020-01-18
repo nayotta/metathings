@@ -80,6 +80,25 @@ func (self *StorageImpl) list_flow_sets(ctx context.Context, flwst *FlowSet) ([]
 	return flwsts, nil
 }
 
+func (self *StorageImpl) list_view_flow_sets_by_flow_id(ctx context.Context, id string) ([]*FlowSet, error) {
+	var err error
+	var flw_flwst_maps []*FlowFlowSetMapping
+	var flwsts []*FlowSet
+
+	if err = self.GetDBConn(ctx).Find(&flw_flwst_maps, "flow_id = ?", id).Error; err != nil {
+		return nil, err
+	}
+
+	for _, m := range flw_flwst_maps {
+		flwst := &FlowSet{
+			Id: m.FlowSetId,
+		}
+		flwsts = append(flwsts, flwst)
+	}
+
+	return flwsts, nil
+}
+
 func (self *StorageImpl) internal_list_view_flows(ctx context.Context, flwst *FlowSet) ([]*Flow, error) {
 	var err error
 	var flws []*Flow
@@ -685,6 +704,20 @@ func (self *StorageImpl) ListFlowSets(ctx context.Context, flwst *FlowSet) ([]*F
 	return flwsts, nil
 }
 
+func (self *StorageImpl) ListViewFlowSetsByFlowId(ctx context.Context, id string) ([]*FlowSet, error) {
+	var flwsts []*FlowSet
+	var err error
+
+	if flwsts, err = self.list_view_flow_sets_by_flow_id(ctx, id); err != nil {
+		self.logger.WithError(err).Debugf("failed to list flow sets by flow id")
+		return nil, err
+	}
+
+	self.logger.Debugf("list flow sets by flow id")
+
+	return flwsts, nil
+}
+
 func (self *StorageImpl) AddFlowToFlowSet(ctx context.Context, flwst_id, flw_id string) error {
 	m := &FlowFlowSetMapping{
 		FlowSetId: &flwst_id,
@@ -767,6 +800,7 @@ func init_db(s *StorageImpl) error {
 		&Module{},
 		&Flow{},
 		&FlowSet{},
+		&FlowFlowSetMapping{},
 	)
 
 	return nil

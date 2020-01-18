@@ -32,7 +32,7 @@ func (self *MetathingsDevicedService) GetFlowSet(ctx context.Context, req *pb.Ge
 	var err error
 
 	flwst_id_str := req.GetFlowSet().GetId().GetValue()
-	if flwst_s, err = self.storage.GetFlowSet(flwst_id_str); err != nil {
+	if flwst_s, err = self.storage.GetFlowSet(ctx, flwst_id_str); err != nil {
 		self.logger.WithError(err).Errorf("failed to get flow set in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
