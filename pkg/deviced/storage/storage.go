@@ -15,6 +15,7 @@ type Device struct {
 	State       *string `gorm:"column:state"`
 	Name        *string `gorm:"column:name"`
 	Alias       *string `gorm:"column:alias"`
+	Extra       *string `gorm:"column:extra"`
 
 	Modules []*Module `gorm:"-"`
 	Flows   []*Flow   `gorm:"-"`

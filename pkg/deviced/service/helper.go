@@ -44,6 +44,7 @@ func copy_device(x *storage.Device) *pb.Device {
 		HeartbeatAt: hbt,
 		Name:        *x.Name,
 		Alias:       *x.Alias,
+		Extra:       pb_helper.CopyExtra(x.Extra),
 		Modules:     copy_modules(x.Modules),
 		Flows:       copy_flows(x.Flows),
 	}

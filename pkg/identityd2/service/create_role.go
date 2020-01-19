@@ -9,6 +9,7 @@ import (
 
 	id_helper "github.com/nayotta/metathings/pkg/common/id"
 	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
+	pb_helper "github.com/nayotta/metathings/pkg/common/protobuf"
 	storage "github.com/nayotta/metathings/pkg/identityd2/storage"
 	identityd_validator "github.com/nayotta/metathings/pkg/identityd2/validator"
 	pb "github.com/nayotta/metathings/pkg/proto/identityd2"
@@ -51,7 +52,7 @@ func (self *MetathingsIdentitydService) CreateRole(ctx context.Context, req *pb.
 	if role.GetDescription() != nil {
 		desc_str = role.GetDescription().GetValue()
 	}
-	extra_str := must_parse_extra(role.GetExtra())
+	extra_str := pb_helper.MustParseExtra(role.GetExtra())
 	name_str := role.GetName().GetValue()
 	alias_str := name_str
 	if role.GetAlias() != nil {

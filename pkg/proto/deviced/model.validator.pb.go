@@ -23,6 +23,7 @@ var _ = fmt.Errorf
 var _ = math.Inf
 
 func (this *Device) Validate() error {
+	// Validation of proto3 map<> fields is unsupported.
 	for _, item := range this.Modules {
 		if item != nil {
 			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {
@@ -60,6 +61,7 @@ func (this *OpDevice) Validate() error {
 			return github_com_mwitkow_go_proto_validators.FieldError("Alias", err)
 		}
 	}
+	// Validation of proto3 map<> fields is unsupported.
 	for _, item := range this.Modules {
 		if item != nil {
 			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {

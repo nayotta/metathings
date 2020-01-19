@@ -9,6 +9,7 @@ import (
 
 	passwd_helper "github.com/nayotta/metathings/pkg/common/passwd"
 	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
+	pb_helper "github.com/nayotta/metathings/pkg/common/protobuf"
 	storage "github.com/nayotta/metathings/pkg/identityd2/storage"
 	identityd_validator "github.com/nayotta/metathings/pkg/identityd2/validator"
 	pb "github.com/nayotta/metathings/pkg/proto/identityd2"
@@ -53,7 +54,7 @@ func (self *MetathingsIdentitydService) CreateEntity(ctx context.Context, req *p
 	ent := req.GetEntity()
 
 	ent_id_str := ent.GetId().GetValue()
-	extra_str := must_parse_extra(ent.Extra)
+	extra_str := pb_helper.MustParseExtra(ent.GetExtra())
 	pwd_str := passwd_helper.MustParsePassword("")
 	if ent.GetPassword() != nil {
 		pwd_str = passwd_helper.MustParsePassword(ent.GetPassword().GetValue())

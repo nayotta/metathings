@@ -8,6 +8,7 @@ import (
 
 	id_helper "github.com/nayotta/metathings/pkg/common/id"
 	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
+	pb_helper "github.com/nayotta/metathings/pkg/common/protobuf"
 	storage "github.com/nayotta/metathings/pkg/identityd2/storage"
 	identityd_validator "github.com/nayotta/metathings/pkg/identityd2/validator"
 	pb "github.com/nayotta/metathings/pkg/proto/identityd2"
@@ -39,7 +40,7 @@ func (self *MetathingsIdentitydService) CreateDomain(ctx context.Context, req *p
 		id_str = id_helper.NewId()
 	}
 	parent_id_str := dom.GetParent().GetId().GetValue()
-	extra_str := must_parse_extra(dom.GetExtra())
+	extra_str := pb_helper.MustParseExtra(dom.GetExtra())
 	name_str := dom.GetName().GetValue()
 	alias_str := name_str
 	if dom.GetAlias() != nil {

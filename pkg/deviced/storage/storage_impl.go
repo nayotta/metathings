@@ -397,6 +397,10 @@ func (self *StorageImpl) PatchDevice(ctx context.Context, id string, device *Dev
 		dev.HeartbeatAt = device.HeartbeatAt
 	}
 
+	if device.Extra != nil {
+		dev.Extra = device.Extra
+	}
+
 	if err = self.GetDBConn(ctx).Model(&Device{Id: &id}).Update(dev).Error; err != nil {
 		self.logger.WithError(err).Debugf("failed to patch device")
 		return nil, err

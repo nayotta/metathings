@@ -7,6 +7,7 @@ import (
 	"google.golang.org/grpc/status"
 
 	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
+	pb_helper "github.com/nayotta/metathings/pkg/common/protobuf"
 	storage "github.com/nayotta/metathings/pkg/deviced/storage"
 	identityd_validator "github.com/nayotta/metathings/pkg/identityd2/validator"
 	pb "github.com/nayotta/metathings/pkg/proto/deviced"
@@ -35,9 +36,13 @@ func (self *MetathingsDevicedService) PatchDevice(ctx context.Context, req *pb.P
 	dev := req.GetDevice()
 	dev_id_str := dev.GetId().GetValue()
 
-	alias := dev.GetAlias()
-	if alias != nil {
+	if alias := dev.GetAlias(); alias != nil {
 		dev_s.Alias = &alias.Value
+	}
+
+	if extra := dev.GetExtra(); extra != nil {
+		extra_str := pb_helper.MustParseExtra(extra)
+		dev_s.Extra = &extra_str
 	}
 
 	if dev_s, err = self.storage.PatchDevice(ctx, dev_id_str, dev_s); err != nil {
