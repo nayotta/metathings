@@ -8,6 +8,7 @@ import (
 
 	passwd_helper "github.com/nayotta/metathings/pkg/common/passwd"
 	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
+	pb_helper "github.com/nayotta/metathings/pkg/common/protobuf"
 	storage "github.com/nayotta/metathings/pkg/identityd2/storage"
 	identityd_validator "github.com/nayotta/metathings/pkg/identityd2/validator"
 	pb "github.com/nayotta/metathings/pkg/proto/identityd2"
@@ -39,16 +40,17 @@ func (self *MetathingsIdentitydService) PatchEntity(ctx context.Context, req *pb
 
 	idStr := ent_req.GetId().GetValue()
 
-	if ent_req.GetAlias() != nil {
-		ent.Alias = &ent_req.Alias.Value
+	if alias := ent_req.GetAlias(); alias != nil {
+		alias_str := alias.GetValue()
+		ent.Alias = &alias_str
 	}
-	if ent_req.GetPassword() != nil {
-		passwordStr := passwd_helper.MustParsePassword(ent_req.GetPassword().GetValue())
-		ent.Password = &passwordStr
+	if passwd := ent_req.GetPassword(); passwd != nil {
+		passwd_str := passwd_helper.MustParsePassword(passwd.GetValue())
+		ent.Password = &passwd_str
 	}
-	if ent_req.GetExtra() != nil {
-		extraStr := must_parse_extra(ent_req.GetExtra())
-		ent.Extra = &extraStr
+	if extra := ent_req.GetExtra(); extra != nil {
+		extra_str := pb_helper.MustParseExtra(extra)
+		ent.Extra = &extra_str
 	}
 
 	if ent, err = self.storage.PatchEntity(ctx, idStr, ent); err != nil {

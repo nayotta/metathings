@@ -11,6 +11,7 @@ import (
 	context_helper "github.com/nayotta/metathings/pkg/common/context"
 	id_helper "github.com/nayotta/metathings/pkg/common/id"
 	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
+	pb_helper "github.com/nayotta/metathings/pkg/common/protobuf"
 	deviced_helper "github.com/nayotta/metathings/pkg/deviced/helper"
 	storage "github.com/nayotta/metathings/pkg/deviced/storage"
 	identityd_validator "github.com/nayotta/metathings/pkg/identityd2/validator"
@@ -114,6 +115,7 @@ func (self *MetathingsDevicedService) CreateDevice(ctx context.Context, req *pb.
 	if dev.GetAlias() != nil {
 		dev_alias_str = dev.GetAlias().GetValue()
 	}
+	dev_extra_str := pb_helper.MustParseExtra(dev.GetExtra())
 
 	dev_s := &storage.Device{
 		Id:    &dev_id_str,
@@ -121,6 +123,7 @@ func (self *MetathingsDevicedService) CreateDevice(ctx context.Context, req *pb.
 		State: &dev_state_str,
 		Name:  &dev_name_str,
 		Alias: &dev_alias_str,
+		Extra: &dev_extra_str,
 	}
 
 	if err = self.create_device_entity(ctx, dev_s); err != nil {

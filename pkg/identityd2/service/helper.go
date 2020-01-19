@@ -3,12 +3,9 @@ package metathings_identityd2_service
 import (
 	"context"
 	"encoding/base64"
-	"encoding/json"
 	"errors"
 	"math/rand"
 	"time"
-
-	"github.com/golang/protobuf/ptypes/wrappers"
 
 	id_helper "github.com/nayotta/metathings/pkg/common/id"
 	pb_helper "github.com/nayotta/metathings/pkg/common/protobuf"
@@ -46,35 +43,6 @@ func generate_secret(siz int32) string {
 	return base64.StdEncoding.EncodeToString(buf)
 }
 
-func must_parse_extra(x map[string]*wrappers.StringValue) string {
-	var buf []byte
-	var err error
-
-	if x == nil {
-		return `{}`
-	}
-
-	extra_map := pb_helper.ExtractStringMap(x)
-	if buf, err = json.Marshal(extra_map); err != nil {
-		return `{}`
-	}
-
-	return string(buf)
-}
-
-func copy_extra(x *string) map[string]string {
-	if x == nil {
-		return map[string]string{}
-	}
-
-	y := map[string]string{}
-	if err := json.Unmarshal([]byte(*x), &y); err != nil {
-		y = map[string]string{}
-	}
-
-	return y
-}
-
 func copy_string(x *string) string {
 	if x == nil {
 		return ""
@@ -109,7 +77,7 @@ func copy_domain(x *storage.Domain) *pb.Domain {
 		Alias:    *x.Alias,
 		Parent:   parent,
 		Children: copy_domain_children(x.Children),
-		Extra:    copy_extra(x.Extra),
+		Extra:    pb_helper.CopyExtra(x.Extra),
 	}
 
 	return y
@@ -121,7 +89,7 @@ func copy_action(x *storage.Action) *pb.Action {
 		Name:        *x.Name,
 		Alias:       *x.Alias,
 		Description: *x.Description,
-		Extra:       copy_extra(x.Extra),
+		Extra:       pb_helper.CopyExtra(x.Extra),
 	}
 
 	return y
@@ -147,7 +115,7 @@ func copy_role(x *storage.Role) *pb.Role {
 		Alias:       *x.Alias,
 		Actions:     copy_actions_view(x.Actions),
 		Description: copy_string(x.Description),
-		Extra:       copy_extra(x.Extra),
+		Extra:       pb_helper.CopyExtra(x.Extra),
 	}
 
 	return y
@@ -182,7 +150,7 @@ func copy_entity(x *storage.Entity) *pb.Entity {
 		Roles:   roles,
 		Name:    *x.Name,
 		Alias:   *x.Alias,
-		Extra:   copy_extra(x.Extra),
+		Extra:   pb_helper.CopyExtra(x.Extra),
 	}
 
 	return y
@@ -218,7 +186,7 @@ func copy_group(x *storage.Group) *pb.Group {
 		Name:        *x.Name,
 		Alias:       *x.Alias,
 		Description: *x.Description,
-		Extra:       copy_extra(x.Extra),
+		Extra:       pb_helper.CopyExtra(x.Extra),
 	}
 
 	return y
