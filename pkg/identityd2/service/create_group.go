@@ -9,6 +9,7 @@ import (
 
 	id_helper "github.com/nayotta/metathings/pkg/common/id"
 	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
+	pb_helper "github.com/nayotta/metathings/pkg/common/protobuf"
 	storage "github.com/nayotta/metathings/pkg/identityd2/storage"
 	identityd_validator "github.com/nayotta/metathings/pkg/identityd2/validator"
 	pb "github.com/nayotta/metathings/pkg/proto/identityd2"
@@ -53,7 +54,6 @@ func (self *MetathingsIdentitydService) CreateGroup(ctx context.Context, req *pb
 	if grp.GetDescription() != nil {
 		desc_str = grp.GetDescription().GetValue()
 	}
-	extra_str := must_parse_extra(grp.GetExtra())
 	name_str := grp.GetName().GetValue()
 	alias_str := name_str
 	if grp.GetAlias() != nil {
@@ -66,7 +66,10 @@ func (self *MetathingsIdentitydService) CreateGroup(ctx context.Context, req *pb
 		Name:        &name_str,
 		Alias:       &alias_str,
 		Description: &desc_str,
-		Extra:       &extra_str,
+	}
+
+	if extra := grp.GetExtra(); extra != nil {
+		grp_s.ExtraHelper = pb_helper.ExtractStringMapToString(extra)
 	}
 
 	if err = self.backend.CreateGroup(ctx, grp_s); err != nil {

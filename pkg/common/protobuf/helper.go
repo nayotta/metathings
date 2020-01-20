@@ -1,6 +1,7 @@
 package protobuf_helper
 
 import (
+	"encoding/json"
 	"strings"
 	"time"
 
@@ -49,6 +50,22 @@ func ExtractStringMapToString(xs map[string]*wrappers.StringValue) map[string]st
 	}
 
 	return ys
+}
+
+func MustParseExtra(x map[string]*wrappers.StringValue) string {
+	var buf []byte
+	var err error
+
+	if x == nil {
+		return `{}`
+	}
+
+	extra_map := ExtractStringMap(x)
+	if buf, err = json.Marshal(extra_map); err != nil {
+		return `{}`
+	}
+
+	return string(buf)
 }
 
 type Enumer struct {

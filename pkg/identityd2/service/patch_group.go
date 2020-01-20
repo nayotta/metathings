@@ -7,6 +7,7 @@ import (
 	"google.golang.org/grpc/status"
 
 	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
+	pb_helper "github.com/nayotta/metathings/pkg/common/protobuf"
 	storage "github.com/nayotta/metathings/pkg/identityd2/storage"
 	identityd_validator "github.com/nayotta/metathings/pkg/identityd2/validator"
 	pb "github.com/nayotta/metathings/pkg/proto/identityd2"
@@ -44,9 +45,8 @@ func (self *MetathingsIdentitydService) PatchGroup(ctx context.Context, req *pb.
 	if grp_req.GetDescription() != nil {
 		grp.Description = &grp_req.Description.Value
 	}
-	if grp_req.GetExtra() != nil {
-		extraStr := must_parse_extra(grp_req.GetExtra())
-		grp.Extra = &extraStr
+	if extra := grp_req.GetExtra(); extra != nil {
+		grp.ExtraHelper = pb_helper.ExtractStringMapToString(extra)
 	}
 
 	if grp, err = self.storage.PatchGroup(ctx, idStr, grp); err != nil {

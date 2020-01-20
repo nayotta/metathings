@@ -15,9 +15,11 @@ type Device struct {
 	State       *string `gorm:"column:state"`
 	Name        *string `gorm:"column:name"`
 	Alias       *string `gorm:"column:alias"`
+	Extra       *string `gorm:"column:extra"`
 
-	Modules []*Module `gorm:"-"`
-	Flows   []*Flow   `gorm:"-"`
+	Modules     []*Module         `gorm:"-"`
+	Flows       []*Flow           `gorm:"-"`
+	ExtraHelper map[string]string `gorm:"-"`
 }
 
 type Flow struct {
@@ -48,6 +50,24 @@ type Module struct {
 	Device *Device `gorm:"-"`
 }
 
+type FlowSet struct {
+	Id        *string
+	CreatedAt time.Time
+	UpdatedAt time.Time
+
+	Name  *string `gorm:"column:name"`
+	Alias *string `gorm:"column:alias"`
+
+	Flows []*Flow `gorm:"-"`
+}
+
+type FlowFlowSetMapping struct {
+	CreatedAt time.Time
+
+	FlowId    *string `gorm:"flow_id"`
+	FlowSetId *string `gorm:"flow_set_id"`
+}
+
 type Storage interface {
 	CreateDevice(context.Context, *Device) (*Device, error)
 	DeleteDevice(ctx context.Context, id string) error
@@ -67,6 +87,15 @@ type Storage interface {
 	PatchFlow(ctx context.Context, id string, flow *Flow) (*Flow, error)
 	GetFlow(ctx context.Context, id string) (*Flow, error)
 	ListFlows(context.Context, *Flow) ([]*Flow, error)
+
+	CreateFlowSet(context.Context, *FlowSet) (*FlowSet, error)
+	DeleteFlowSet(ctx context.Context, id string) error
+	PatchFlowSet(ctx context.Context, id string, flow_set *FlowSet) (*FlowSet, error)
+	GetFlowSet(ctx context.Context, id string) (*FlowSet, error)
+	ListFlowSets(context.Context, *FlowSet) ([]*FlowSet, error)
+	ListViewFlowSetsByFlowId(ctx context.Context, id string) ([]*FlowSet, error)
+	AddFlowToFlowSet(ctx context.Context, flow_set_id, flow_id string) error
+	RemoveFlowFromFlowSet(ctx context.Context, flow_set_id, flow_id string) error
 }
 
 func NewStorage(driver, uri string, args ...interface{}) (Storage, error) {

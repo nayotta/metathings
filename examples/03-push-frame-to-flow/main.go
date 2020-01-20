@@ -2,7 +2,9 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"sync"
 
@@ -12,38 +14,50 @@ import (
 	"github.com/spf13/pflag"
 	"google.golang.org/grpc"
 
+	cmd_contrib "github.com/nayotta/metathings/cmd/contrib"
 	context_helper "github.com/nayotta/metathings/pkg/common/context"
+	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
 	id_helper "github.com/nayotta/metathings/pkg/common/id"
 	pb_helper "github.com/nayotta/metathings/pkg/common/protobuf"
 	pb "github.com/nayotta/metathings/pkg/proto/deviced"
 )
 
 var (
-	token        string
-	deviced_addr string
+	srv_ep_opt   cmd_contrib.ServiceEndpointOption
+	base_opt     cmd_contrib.BaseOption
 	device_id    string
 	flow_name    string
-	input        string
+	request_file string
 )
 
 func main() {
-	pflag.StringVar(&deviced_addr, "addr", "", "Deviced Service Address")
+	pflag.StringVar(&srv_ep_opt.Address, "addr", "", "Device Cloud Service Address")
+	pflag.BoolVar(&srv_ep_opt.Insecure, "insecure", false, "Insecure Connection")
+	pflag.BoolVar(&srv_ep_opt.PlainText, "plaintext", false, "Plain Text Connection")
+	pflag.StringVar(&srv_ep_opt.CertFile, "certfile", "", "Cert File for connect to Deviced")
+	pflag.StringVar(&srv_ep_opt.KeyFile, "keyfile", "", "Key File for connect to Deviced")
 	pflag.StringVar(&device_id, "device", "", "Device ID")
 	pflag.StringVar(&flow_name, "flow", "", "Flow Name")
-	// TODO(Peer): make it work.
-	pflag.StringVar(&input, "input", "-", "Input File")
+	pflag.StringVar(&request_file, "request-file", "", "Request Files(json)")
 
 	pflag.Parse()
 
-	token = os.Getenv("MT_TOKEN")
+	base_opt.Token = os.Getenv("MT_TOKEN")
 
 	fmt.Printf(`addr=%v
 device=%v
 flow=%v
-`, deviced_addr, device_id, flow_name)
+`, srv_ep_opt.Address, device_id, flow_name)
 
-	ctx := context_helper.WithToken(context.Background(), "Bearer "+token)
-	conn, err := grpc.Dial(deviced_addr, grpc.WithInsecure())
+	ctx := context_helper.WithToken(context.Background(), base_opt.Token)
+	ts, err := cmd_contrib.NewClientTransportCredentials(&srv_ep_opt)
+	if err != nil {
+		panic(err)
+	}
+
+	opts := grpc_helper.NewDialOptionWithTransportCredentials(ts)
+
+	conn, err := grpc.Dial(srv_ep_opt.Address, opts...)
 	if err != nil {
 		panic(err)
 	}
@@ -98,11 +112,19 @@ flow=%v
 	fmt.Println("send config")
 	wg_cfg.Wait()
 
-	// {"getSwitchDataRes":{"switchAddr":1,"votage":2,"leakCurrent":3,"power":0,"temp":0,"current":0}}
-	src_js := `{"getSwitchDataRes":{"switchAddr":1,"votage":2,"leakCurrent":3,"power":0,"temp":0,"current":0}}`
+	src_js, err := ioutil.ReadFile(request_file)
+	if err != nil {
+		panic(err)
+	}
+
+	var src map[string]interface{}
+	err = json.Unmarshal(src_js, &src)
+	if err != nil {
+		panic(err)
+	}
 
 	var src_st stpb.Struct
-	err = jsonpb.UnmarshalString(src_js, &src_st)
+	err = jsonpb.UnmarshalString(string(src_js), &src_st)
 	if err != nil {
 		panic(err)
 	}

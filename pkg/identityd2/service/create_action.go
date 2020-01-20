@@ -7,6 +7,7 @@ import (
 	"google.golang.org/grpc/status"
 
 	id_helper "github.com/nayotta/metathings/pkg/common/id"
+	pb_helper "github.com/nayotta/metathings/pkg/common/protobuf"
 	storage "github.com/nayotta/metathings/pkg/identityd2/storage"
 	pb "github.com/nayotta/metathings/pkg/proto/identityd2"
 )
@@ -26,7 +27,6 @@ func (self *MetathingsIdentitydService) CreateAction(ctx context.Context, req *p
 	if act.GetDescription() != nil {
 		desc_str = act.GetDescription().GetValue()
 	}
-	extra_str := must_parse_extra(act.GetExtra())
 	name_str := act.GetName().GetValue()
 	alias_str := name_str
 	if act.GetAlias() != nil {
@@ -38,7 +38,10 @@ func (self *MetathingsIdentitydService) CreateAction(ctx context.Context, req *p
 		Name:        &name_str,
 		Alias:       &alias_str,
 		Description: &desc_str,
-		Extra:       &extra_str,
+	}
+
+	if extra := act.GetExtra(); extra != nil {
+		act_s.ExtraHelper = pb_helper.ExtractStringMapToString(extra)
 	}
 
 	act_s, err = self.storage.CreateAction(ctx, act_s)

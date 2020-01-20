@@ -12,6 +12,7 @@ import (
 	otgorm "github.com/smacker/opentracing-gorm"
 
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
+	storage_helper "github.com/nayotta/metathings/pkg/common/storage"
 )
 
 var (
@@ -116,6 +117,12 @@ func (self *StorageImpl) CreateDomain(ctx context.Context, dom *Domain) (*Domain
 		return nil, err
 	}
 
+	if dom.ExtraHelper != nil {
+		if err = storage_helper.UpdateExtra(self.GetDBConn(ctx), &Domain{Id: dom.Id}, dom.ExtraHelper); err != nil {
+			self.logger.WithError(err).Debugf("failed to update extra filed")
+		}
+	}
+
 	if dom, err = self.get_domain(ctx, *dom.Id); err != nil {
 		self.logger.WithError(err).Debugf("failed to get domain")
 		return nil, err
@@ -145,13 +152,16 @@ func (self *StorageImpl) PatchDomain(ctx context.Context, id string, domain *Dom
 	if domain.Alias != nil {
 		domNew.Alias = domain.Alias
 	}
-	if domain.Extra != nil {
-		domNew.Extra = domain.Extra
-	}
 
 	if err = self.GetDBConn(ctx).Model(&Domain{Id: &id}).Update(domNew).Error; err != nil {
 		self.logger.WithError(err).Debugf("failed to patch domain")
 		return nil, err
+	}
+
+	if domain.ExtraHelper != nil {
+		if err = storage_helper.UpdateExtra(self.GetDBConn(ctx), &Domain{Id: &id}, domain.ExtraHelper); err != nil {
+			self.logger.WithError(err).Debugf("failed to update extra filed")
+		}
 	}
 
 	if dom, err = self.get_domain(ctx, id); err != nil {
@@ -214,6 +224,7 @@ func (self *StorageImpl) AddEntityToDomain(ctx context.Context, domain_id, entit
 func (self *StorageImpl) RemoveEntityFromDomain(ctx context.Context, domain_id, entity_id string) error {
 	if err := self.GetDBConn(ctx).Delete(&EntityDomainMapping{}, "domain_id = ? and entity_id = ?", domain_id, entity_id).Error; err != nil {
 		self.logger.WithError(err).Debugf("failed to remove entity from domain")
+		return err
 	}
 
 	self.logger.WithFields(log.Fields{
@@ -289,6 +300,12 @@ func (self *StorageImpl) CreateAction(ctx context.Context, act *Action) (*Action
 		return nil, err
 	}
 
+	if act.ExtraHelper != nil {
+		if err = storage_helper.UpdateExtra(self.GetDBConn(ctx), &Action{Id: act.Id}, act.ExtraHelper); err != nil {
+			self.logger.WithError(err).Debugf("failed to update extra filed")
+		}
+	}
+
 	if act, err = self.get_action(ctx, *act.Id); err != nil {
 		self.logger.WithError(err).Debugf("failed to get action")
 		return nil, err
@@ -323,13 +340,15 @@ func (self *StorageImpl) PatchAction(ctx context.Context, id string, action *Act
 		actNew.Description = action.Description
 	}
 
-	if action.Extra != nil {
-		actNew.Extra = action.Extra
-	}
-
 	if err = self.GetDBConn(ctx).Model(&Action{Id: &id}).Update(actNew).Error; err != nil {
 		self.logger.WithError(err).Debugf("failed to patch action")
 		return nil, err
+	}
+
+	if action.ExtraHelper != nil {
+		if err = storage_helper.UpdateExtra(self.GetDBConn(ctx), &Action{Id: &id}, action.ExtraHelper); err != nil {
+			self.logger.WithError(err).Debugf("failed to update extra filed")
+		}
 	}
 
 	if act, err = self.get_action(ctx, id); err != nil {
@@ -432,6 +451,12 @@ func (self *StorageImpl) CreateRole(ctx context.Context, role *Role) (*Role, err
 		return nil, err
 	}
 
+	if role.ExtraHelper != nil {
+		if err = storage_helper.UpdateExtra(self.GetDBConn(ctx), &Role{Id: role.Id}, role.ExtraHelper); err != nil {
+			self.logger.WithError(err).Debugf("failed to update extra filed")
+		}
+	}
+
 	self.logger.WithFields(log.Fields{}).Debugf("create role")
 
 	return role, nil
@@ -461,13 +486,16 @@ func (self *StorageImpl) PatchRole(ctx context.Context, id string, role *Role) (
 	if role.Description != nil {
 		rolNew.Description = role.Description
 	}
-	if role.Extra != nil {
-		rolNew.Extra = role.Extra
-	}
 
 	if err = self.GetDBConn(ctx).Model(&Role{Id: &id}).Update(rolNew).Error; err != nil {
 		self.logger.WithError(err).Debugf("failed to patch role")
 		return nil, err
+	}
+
+	if role.ExtraHelper != nil {
+		if err = storage_helper.UpdateExtra(self.GetDBConn(ctx), &Role{Id: &id}, role.ExtraHelper); err != nil {
+			self.logger.WithError(err).Debugf("failed to update extra filed")
+		}
 	}
 
 	if rol, err = self.get_role(ctx, id); err != nil {
@@ -708,6 +736,12 @@ func (self *StorageImpl) CreateEntity(ctx context.Context, ent *Entity) (*Entity
 		return nil, err
 	}
 
+	if ent.ExtraHelper != nil {
+		if err = storage_helper.UpdateExtra(self.GetDBConn(ctx), &Entity{Id: ent.Id}, ent.ExtraHelper); err != nil {
+			self.logger.WithError(err).Debugf("failed to update extra filed")
+		}
+	}
+
 	if ent, err = self.get_entity(ctx, *ent.Id); err != nil {
 		self.logger.WithError(err).Debugf("failed to get entity")
 		return nil, err
@@ -744,13 +778,16 @@ func (self *StorageImpl) PatchEntity(ctx context.Context, id string, entity *Ent
 	if entity.Password != nil {
 		entNew.Password = entity.Password
 	}
-	if entity.Extra != nil {
-		entNew.Extra = entity.Extra
-	}
 
 	if err = self.GetDBConn(ctx).Model(&Entity{Id: &id}).Update(entNew).Error; err != nil {
 		self.logger.WithError(err).Debugf("failed to patch entity")
 		return nil, err
+	}
+
+	if entity.ExtraHelper != nil {
+		if err = storage_helper.UpdateExtra(self.GetDBConn(ctx), &Entity{Id: &id}, entity.ExtraHelper); err != nil {
+			self.logger.WithError(err).Debugf("failed to update extra filed")
+		}
 	}
 
 	if ent, err = self.get_entity(ctx, id); err != nil {
@@ -989,6 +1026,12 @@ func (self *StorageImpl) CreateGroup(ctx context.Context, grp *Group) (*Group, e
 		return nil, err
 	}
 
+	if grp.ExtraHelper != nil {
+		if err = storage_helper.UpdateExtra(self.GetDBConn(ctx), &Group{Id: grp.Id}, grp.ExtraHelper); err != nil {
+			self.logger.WithError(err).Debugf("failed to update extra filed")
+		}
+	}
+
 	if grp, err = self.get_group(ctx, *grp.Id); err != nil {
 		self.logger.WithError(err).Debugf("failed to get group")
 		return nil, err
@@ -1023,13 +1066,16 @@ func (self *StorageImpl) PatchGroup(ctx context.Context, id string, group *Group
 	if group.Description != nil {
 		grpNew.Description = group.Description
 	}
-	if group.Extra != nil {
-		grpNew.Extra = group.Extra
-	}
 
 	if err = self.GetDBConn(ctx).Model(&Group{Id: &id}).Update(grpNew).Error; err != nil {
 		self.logger.WithError(err).Debugf("failed to patch group")
 		return nil, err
+	}
+
+	if group.ExtraHelper != nil {
+		if err = storage_helper.UpdateExtra(self.GetDBConn(ctx), &Group{Id: &id}, group.ExtraHelper); err != nil {
+			self.logger.WithError(err).Debugf("failed to update extra filed")
+		}
 	}
 
 	if grp, err = self.get_group(ctx, id); err != nil {

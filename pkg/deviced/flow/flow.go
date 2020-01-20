@@ -21,7 +21,7 @@ type Flow interface {
 	Id() string
 	Device() string
 	PushFrame(*pb.Frame) error
-	PullFrame() (<-chan *pb.Frame, <-chan struct{})
+	PullFrame() (<-chan *pb.Frame, chan struct{})
 	QueryFrame(...*FlowFilter) ([]*pb.Frame, error)
 	Close() error
 }

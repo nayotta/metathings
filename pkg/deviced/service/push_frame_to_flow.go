@@ -20,6 +20,9 @@ func (self *MetathingsDevicedService) PushFrameToFlow(stm pb.DevicedService_Push
 	var dev_r *pb.OpDevice
 	var dev_id string
 	var cfg_ack, push_ack bool
+	var flw_id_r string
+	var flw_name_r string
+	var fss []flow.FlowSet
 
 	req_id := req.GetId().GetValue()
 	cfg := req.GetConfig()
@@ -28,46 +31,69 @@ func (self *MetathingsDevicedService) PushFrameToFlow(stm pb.DevicedService_Push
 	cfg_ack = cfg.GetConfigAck().GetValue()
 	push_ack = cfg.GetPushAck().GetValue()
 
+	logger = self.logger.WithFields(log.Fields{
+		"config": req_id,
+		"device": dev_id,
+	})
+
 	dev_s, err := self.storage.GetDevice(stm.Context(), dev_id)
 	if err != nil {
-		self.logger.WithError(err).Errorf("failed to get device")
+		logger.WithError(err).Errorf("failed to get device")
 		return status.Errorf(codes.Internal, err.Error())
 	}
 
 	var f flow.Flow
 match_flow_loop:
 	for _, flw_r := range dev_r.GetFlows() {
-		flw_n_r := flw_r.GetName().GetValue()
+		flw_name_r = flw_r.GetName().GetValue()
 		for _, flw_s := range dev_s.Flows {
-			if *flw_s.Name != flw_n_r {
+			if *flw_s.Name != flw_name_r {
 				continue
 			}
 
-			f, err = self.new_flow(dev_id, *flw_s.Id)
-			if err != nil {
-				self.logger.WithError(err).Errorf("failed to new flow")
-				return status.Errorf(codes.Internal, err.Error())
-			}
-			defer f.Close()
-
-			logger = self.logger.WithFields(log.Fields{
-				"device": dev_id,
-				"flow":   flw_n_r,
-			})
-
-			logger.WithFields(log.Fields{
-				"cfg_ack":  cfg_ack,
-				"push_ack": push_ack,
-				"request":  req_id,
-			}).Debugf("recv flow config request")
-
+			flw_id_r = *flw_s.Id
 			break match_flow_loop
 		}
 	}
 
+	logger = logger.WithField("flow", flw_name_r)
+
+	if flw_id_r == "" {
+		err = ErrFlowNotFound
+		logger.WithError(err).Errorf("failed to find flow by name")
+		return status.Errorf(codes.InvalidArgument, ErrFlowNotFound.Error())
+	}
+
+	f, err = self.new_flow(dev_id, flw_id_r)
+	if err != nil {
+		logger.WithError(err).Errorf("failed to new flow")
+		return status.Errorf(codes.Internal, err.Error())
+	}
+	defer f.Close()
+
+	flwsts_s, err := self.storage.ListViewFlowSetsByFlowId(stm.Context(), flw_id_r)
+	if err != nil {
+		logger.WithError(err).Errorf("failed to list view flow set by flow id in storage")
+		return status.Errorf(codes.Internal, err.Error())
+	}
+
+	fss, err = self.new_flow_sets(flwsts_s)
+	if err != nil {
+		logger.WithError(err).Errorf("failed to new flow sets")
+		return status.Errorf(codes.Internal, err.Error())
+	}
+	for _, fs := range fss {
+		defer fs.Close()
+	}
+
+	logger.WithFields(log.Fields{
+		"cfg_ack":  cfg_ack,
+		"push_ack": push_ack,
+	}).Debugf("recv flow config request")
+
 	if f == nil {
 		err = ErrFlowNotFound
-		self.logger.WithError(err).Errorf("failed to get flow")
+		logger.WithError(err).Errorf("failed to get flow")
 		return status.Errorf(codes.NotFound, err.Error())
 	}
 
@@ -77,10 +103,17 @@ match_flow_loop:
 			Response: &pb.PushFrameToFlowResponse_Ack_{Ack: &pb.PushFrameToFlowResponse_Ack{}},
 		})
 		if err != nil {
-			self.logger.WithError(err).Errorf("failed to send config ack message")
+			logger.WithError(err).Errorf("failed to send config ack message")
 			return status.Errorf(codes.Internal, err.Error())
 		}
-		logger.WithField("request", req_id).Debugf("send flow config ack response")
+		logger.Debugf("send flow config ack response")
+	}
+
+	flwst_frm_dev := &pb.Device{
+		Id: dev_id,
+		Flows: []*pb.Flow{
+			&pb.Flow{Name: flw_name_r},
+		},
 	}
 
 	for {
@@ -92,13 +125,26 @@ match_flow_loop:
 		}
 		logger.WithField("request", req_id).Debugf("recv data request")
 
+		// TODO(Peer): async recv and send frame
 		opfrm := req.GetFrame()
-		err = f.PushFrame(&pb.Frame{Data: opfrm.GetData()})
+		frm := &pb.Frame{Data: opfrm.GetData()}
+
+		err = f.PushFrame(frm)
 		if err != nil {
 			self.logger.WithError(err).Errorf("failed to push frame to flow")
 			return status.Errorf(codes.Internal, err.Error())
 		}
 		logger.WithField("request", req_id).Debugf("push frame to flow")
+
+		for _, fs := range fss {
+			if err = fs.PushFrame(&flow.FlowSetFrame{
+				Device: flwst_frm_dev,
+				Frame:  frm,
+			}); err != nil {
+				self.logger.WithError(err).WithField("flow_set_id", fs.Id()).Errorf("failed to push frame to flow set")
+				return status.Errorf(codes.Internal, err.Error())
+			}
+		}
 
 		if push_ack {
 			err = stm.Send(&pb.PushFrameToFlowResponse{

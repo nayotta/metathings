@@ -24,24 +24,18 @@ func (self *MetathingsIdentitydService) CheckToken(ctx context.Context, req *pb.
 	}
 
 	tkn := req.GetToken()
-	if tkn.GetText() == nil {
-		err = errors.New("token.text is empty")
-		self.logger.WithError(err).Warningf("failed to validate request data")
-		return nil, status.Errorf(codes.InvalidArgument, err.Error())
-	}
-	tkn_txt_str := tkn.GetText().GetValue()
 
 	if tkn.GetDomain() == nil || tkn.GetDomain().GetId() == nil {
 		err = errors.New("token.domain.id is empty")
 		self.logger.WithError(err).Warningf("failed to validate request data")
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
-	dom_id_str := tkn.GetDomain().GetId().GetValue()
 
-	if tkn_s, err = self.storage.GetTokenByText(ctx, tkn_txt_str); err != nil {
-		self.logger.WithError(err).Errorf("failed to find token by text in storage")
-		return nil, status.Errorf(codes.Unauthenticated, policy.ErrUnauthenticated.Error())
+	if tkn_s, err = self.validate_token(ctx, tkn); err != nil {
+		return nil, err
 	}
+
+	dom_id_str := tkn.GetDomain().GetId().GetValue()
 
 	if *tkn_s.Domain.Id != dom_id_str {
 		err = policy.ErrUnauthenticated
@@ -50,9 +44,9 @@ func (self *MetathingsIdentitydService) CheckToken(ctx context.Context, req *pb.
 	}
 
 	self.logger.WithFields(log.Fields{
-		"token_id":  *tkn_s.Id,
-		"domain_id": dom_id_str,
-		"entity_id": *tkn_s.EntityId,
+		"token":  tkn.GetText().GetValue()[:8],
+		"entity": *tkn_s.EntityId,
+		"domain": *tkn_s.DomainId,
 	}).Debugf("check token")
 
 	return &empty.Empty{}, nil

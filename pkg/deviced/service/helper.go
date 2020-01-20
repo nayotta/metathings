@@ -44,6 +44,7 @@ func copy_device(x *storage.Device) *pb.Device {
 		HeartbeatAt: hbt,
 		Name:        *x.Name,
 		Alias:       *x.Alias,
+		Extra:       pb_helper.CopyExtra(x.Extra),
 		Modules:     copy_modules(x.Modules),
 		Flows:       copy_flows(x.Flows),
 	}
@@ -96,11 +97,46 @@ func copy_flow(x *storage.Flow) *pb.Flow {
 	return y
 }
 
+func copy_flow_view(x *storage.Flow) *pb.Flow {
+	return &pb.Flow{Id: *x.Id}
+}
+
 func copy_flows(xs []*storage.Flow) []*pb.Flow {
 	var ys []*pb.Flow
 
 	for _, x := range xs {
 		ys = append(ys, copy_flow(x))
+	}
+
+	return ys
+}
+
+func copy_flows_view(xs []*storage.Flow) []*pb.Flow {
+	var ys []*pb.Flow
+
+	for _, x := range xs {
+		ys = append(ys, copy_flow_view(x))
+	}
+
+	return ys
+}
+
+func copy_flow_set(x *storage.FlowSet) *pb.FlowSet {
+	y := &pb.FlowSet{
+		Id:    *x.Id,
+		Name:  *x.Name,
+		Alias: *x.Alias,
+		Flows: copy_flows_view(x.Flows),
+	}
+
+	return y
+}
+
+func copy_flow_sets(xs []*storage.FlowSet) []*pb.FlowSet {
+	var ys []*pb.FlowSet
+
+	for _, x := range xs {
+		ys = append(ys, copy_flow_set(x))
 	}
 
 	return ys
@@ -149,6 +185,10 @@ type source_getter interface {
 
 type destination_getter interface {
 	GetDestination() *pb.OpObject
+}
+
+type flow_set_getter interface {
+	GetFlowSet() *pb.OpFlowSet
 }
 
 func ensure_get_device_id(x device_getter) error {
@@ -204,4 +244,16 @@ func ensure_device_online(ctx context.Context, s storage.Storage) func(device_ge
 
 		return nil
 	}
+}
+
+func ensure_get_flow_set_id(x flow_set_getter) error {
+	fs := x.GetFlowSet()
+	if fs == nil {
+		return errors.New("flow_set.id is empty")
+	}
+	if fs.GetId() == nil {
+		return errors.New("flow_set.id is empty")
+	}
+
+	return nil
 }

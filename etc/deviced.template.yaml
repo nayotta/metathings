@@ -17,11 +17,17 @@ dev:
       name: <bridge-driver>
       # ...
   flow:
-    mongo:
-      uri: <mongo-uri>
-      database: <mongo-database>
-    kafka:
-      brokers: <kafka-brokers>
+    driver: <flow-driver-name>
+    # default driver options:
+    ## mongo_uri: <mongo-uri>
+    ## mongo_database: <mongo-database>
+    ## redis_stream_addr: <redis-addr>
+    ## redis_stream_db: <redis-db>
+  flow_set:
+    driver: <flow-set-driver-name>
+    # redis driver options:
+    ## redis_stream_addr: <redis-addr>
+    ## redis_stream_db: <redis-db>
   simple_storage:
     name: <simple-storage-name>
     # ...

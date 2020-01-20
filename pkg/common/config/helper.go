@@ -6,7 +6,7 @@ var (
 	ErrInvalidArgument = errors.New("invalid argument")
 )
 
-func ParseConfigOption(k string, m map[string]interface{}) (string, []interface{}, error) {
+func ParseConfigOption(k string, m map[string]interface{}, a ...interface{}) (string, []interface{}, error) {
 	var key string
 	var val interface{}
 	var name string
@@ -29,6 +29,8 @@ func ParseConfigOption(k string, m map[string]interface{}) (string, []interface{
 
 		y = append(y, key, val)
 	}
+
+	y = append(y, a...)
 
 	return name, y, nil
 }

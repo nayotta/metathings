@@ -19,6 +19,7 @@ message Device {
 	ai.metathings.constant.state.DeviceState state = 3;
 	string name = 4;
 	string alias = 5;
+	map<string, string> extra = 21;
 	repeated Module modules = 6;
 	google.protobuf.Timestamp heartbeat_at = 7;
 	repeated Flow flows = 8;
@@ -30,6 +31,7 @@ message OpDevice {
 	ai.metathings.constant.state.DeviceState state = 3;
 	google.protobuf.StringValue name = 4;
 	google.protobuf.StringValue alias = 5;
+	map<string, google.protobuf.StringValue> extra = 21;
 	repeated OpModule modules = 6;
 	google.protobuf.Timestamp heartbeat_at = 7;
 	repeated OpFlow flows = 8;
@@ -79,6 +81,20 @@ message Frame {
 message OpFrame {
 	google.protobuf.Timestamp ts = 1;
 	google.protobuf.Struct data = 2;
+}
+
+message FlowSet {
+	string id = 1;
+	string name = 2;
+	string alias = 3;
+	repeated Flow flows = 4;
+}
+
+message OpFlowSet {
+	google.protobuf.StringValue id = 1;
+	google.protobuf.StringValue name = 2;
+	google.protobuf.StringValue alias = 3;
+	repeated OpFlow flows = 4;
 }
 
 message Object {

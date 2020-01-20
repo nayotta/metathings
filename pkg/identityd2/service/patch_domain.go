@@ -4,6 +4,7 @@ import (
 	"context"
 
 	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
+	pb_helper "github.com/nayotta/metathings/pkg/common/protobuf"
 	storage "github.com/nayotta/metathings/pkg/identityd2/storage"
 	identityd_validator "github.com/nayotta/metathings/pkg/identityd2/validator"
 	pb "github.com/nayotta/metathings/pkg/proto/identityd2"
@@ -39,9 +40,8 @@ func (self *MetathingsIdentitydService) PatchDomain(ctx context.Context, req *pb
 	if dom_req.GetAlias() != nil {
 		dom.Alias = &dom_req.Alias.Value
 	}
-	if dom_req.GetExtra() != nil {
-		extraStr := must_parse_extra(dom_req.GetExtra())
-		dom.Extra = &extraStr
+	if extra := dom_req.GetExtra(); extra != nil {
+		dom.ExtraHelper = pb_helper.ExtractStringMapToString(extra)
 	}
 
 	if dom, err = self.storage.PatchDomain(ctx, idStr, dom); err != nil {
