@@ -45,9 +45,8 @@ func (self *MetathingsIdentitydService) PatchGroup(ctx context.Context, req *pb.
 	if grp_req.GetDescription() != nil {
 		grp.Description = &grp_req.Description.Value
 	}
-	if grp_req.GetExtra() != nil {
-		extraStr := pb_helper.MustParseExtra(grp_req.GetExtra())
-		grp.Extra = &extraStr
+	if extra := grp_req.GetExtra(); extra != nil {
+		grp.ExtraHelper = pb_helper.ExtractStringMapToString(extra)
 	}
 
 	if grp, err = self.storage.PatchGroup(ctx, idStr, grp); err != nil {

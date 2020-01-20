@@ -54,7 +54,6 @@ func (self *MetathingsIdentitydService) CreateGroup(ctx context.Context, req *pb
 	if grp.GetDescription() != nil {
 		desc_str = grp.GetDescription().GetValue()
 	}
-	extra_str := pb_helper.MustParseExtra(grp.GetExtra())
 	name_str := grp.GetName().GetValue()
 	alias_str := name_str
 	if grp.GetAlias() != nil {
@@ -67,7 +66,10 @@ func (self *MetathingsIdentitydService) CreateGroup(ctx context.Context, req *pb
 		Name:        &name_str,
 		Alias:       &alias_str,
 		Description: &desc_str,
-		Extra:       &extra_str,
+	}
+
+	if extra := grp.GetExtra(); extra != nil {
+		grp_s.ExtraHelper = pb_helper.ExtractStringMapToString(extra)
 	}
 
 	if err = self.backend.CreateGroup(ctx, grp_s); err != nil {

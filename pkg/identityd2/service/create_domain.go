@@ -40,7 +40,6 @@ func (self *MetathingsIdentitydService) CreateDomain(ctx context.Context, req *p
 		id_str = id_helper.NewId()
 	}
 	parent_id_str := dom.GetParent().GetId().GetValue()
-	extra_str := pb_helper.MustParseExtra(dom.GetExtra())
 	name_str := dom.GetName().GetValue()
 	alias_str := name_str
 	if dom.GetAlias() != nil {
@@ -52,7 +51,10 @@ func (self *MetathingsIdentitydService) CreateDomain(ctx context.Context, req *p
 		Name:     &name_str,
 		Alias:    &alias_str,
 		ParentId: &parent_id_str,
-		Extra:    &extra_str,
+	}
+
+	if extra := dom.GetExtra(); extra != nil {
+		dom_s.ExtraHelper = pb_helper.ExtractStringMapToString(extra)
 	}
 
 	if dom_s, err = self.storage.CreateDomain(ctx, dom_s); err != nil {

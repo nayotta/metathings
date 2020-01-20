@@ -15,8 +15,9 @@ type Domain struct {
 	ParentId *string `gorm:"column:parent_id"`
 	Extra    *string `gorm:"extra"`
 
-	Parent   *Domain   `gorm:"-"`
-	Children []*Domain `gorm:"-"`
+	Parent      *Domain           `gorm:"-"`
+	Children    []*Domain         `gorm:"-"`
+	ExtraHelper map[string]string `gorm:"-"`
 }
 
 type Action struct {
@@ -28,6 +29,8 @@ type Action struct {
 	Alias       *string `gorm:"column:alias"`
 	Description *string `gorm:"column:description"`
 	Extra       *string `gorm:"column:extra"`
+
+	ExtraHelper map[string]string `gorm:"-"`
 }
 
 type Role struct {
@@ -40,7 +43,8 @@ type Role struct {
 	Description *string `gorm:"column:description"`
 	Extra       *string `gorm:"column:extra"`
 
-	Actions []*Action `gorm:"-"`
+	Actions     []*Action         `gorm:"-"`
+	ExtraHelper map[string]string `gorm:"-"`
 }
 
 type ActionRoleMapping struct {
@@ -60,9 +64,10 @@ type Entity struct {
 	Password *string `gorm:"column:password"`
 	Extra    *string `gorm:"column:extra"`
 
-	Domains []*Domain `gorm:"-"`
-	Groups  []*Group  `gorm:"-"`
-	Roles   []*Role   `gorm:"-"`
+	Domains     []*Domain         `gorm:"-"`
+	Groups      []*Group          `gorm:"-"`
+	Roles       []*Role           `gorm:"-"`
+	ExtraHelper map[string]string `gorm:"-"`
 }
 
 type EntityRoleMapping struct {
@@ -90,10 +95,11 @@ type Group struct {
 	Description *string `gorm:"column:description"`
 	Extra       *string `gorm:"column:extra"`
 
-	Domain   *Domain   `gorm:"-"`
-	Subjects []*Entity `gorm:"-"`
-	Objects  []*Entity `gorm:"-"`
-	Roles    []*Role   `gorm:"-"`
+	Domain      *Domain           `gorm:"-"`
+	Subjects    []*Entity         `gorm:"-"`
+	Objects     []*Entity         `gorm:"-"`
+	Roles       []*Role           `gorm:"-"`
+	ExtraHelper map[string]string `gorm:"-"`
 }
 
 type SubjectGroupMapping struct {

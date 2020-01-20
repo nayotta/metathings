@@ -26,23 +26,9 @@ func (self *MetathingsIdentitydService) validate_token(ctx context.Context, tkn 
 
 	tkn_txt_str := tkn_txt.GetValue()
 
-	if tkn.GetDomain() == nil || tkn.GetDomain().GetId() == nil {
-		err = errors.New("token.domain.id is empty")
-		self.logger.WithError(err).Warningf("failed to validate request data")
-		return nil, status.Errorf(codes.InvalidArgument, err.Error())
-	}
-
-	dom_id_str := tkn.GetDomain().GetId().GetValue()
-
 	if tkn_s, err = self.storage.GetTokenByText(ctx, tkn_txt_str); err != nil {
 		self.logger.WithError(err).Errorf("failed to get token by text in storage")
 		return nil, status.Errorf(codes.Unauthenticated, policy.ErrUnauthenticated.Error())
-	}
-
-	if *tkn_s.Domain.Id != dom_id_str {
-		err = policy.ErrUnauthenticated
-		self.logger.WithError(err).Warningf("failed to match request domain id and token domain id")
-		return nil, status.Errorf(codes.Unauthenticated, err.Error())
 	}
 
 	if self.is_invalid_token(tkn_s) {

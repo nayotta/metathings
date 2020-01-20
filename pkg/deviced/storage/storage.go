@@ -17,8 +17,9 @@ type Device struct {
 	Alias       *string `gorm:"column:alias"`
 	Extra       *string `gorm:"column:extra"`
 
-	Modules []*Module `gorm:"-"`
-	Flows   []*Flow   `gorm:"-"`
+	Modules     []*Module         `gorm:"-"`
+	Flows       []*Flow           `gorm:"-"`
+	ExtraHelper map[string]string `gorm:"-"`
 }
 
 type Flow struct {
