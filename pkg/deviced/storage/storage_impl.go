@@ -11,6 +11,7 @@ import (
 	otgorm "github.com/smacker/opentracing-gorm"
 
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
+	storage_helper "github.com/nayotta/metathings/pkg/common/storage"
 )
 
 type StorageImplOption struct {
@@ -360,6 +361,12 @@ func (self *StorageImpl) CreateDevice(ctx context.Context, dev *Device) (*Device
 		return nil, err
 	}
 
+	if dev.ExtraHelper != nil {
+		if err = storage_helper.UpdateExtra(self.GetDBConn(ctx), &Device{Id: dev.Id}, dev.ExtraHelper); err != nil {
+			self.logger.WithError(err).Debugf("failed to update extra field")
+		}
+	}
+
 	if dev, err = self.get_device(ctx, *dev.Id); err != nil {
 		self.logger.WithError(err).Debugf("failed to get device")
 		return nil, err
@@ -397,13 +404,15 @@ func (self *StorageImpl) PatchDevice(ctx context.Context, id string, device *Dev
 		dev.HeartbeatAt = device.HeartbeatAt
 	}
 
-	if device.Extra != nil {
-		dev.Extra = device.Extra
-	}
-
 	if err = self.GetDBConn(ctx).Model(&Device{Id: &id}).Update(dev).Error; err != nil {
 		self.logger.WithError(err).Debugf("failed to patch device")
 		return nil, err
+	}
+
+	if device.ExtraHelper != nil {
+		if err = storage_helper.UpdateExtra(self.GetDBConn(ctx), &Device{Id: &id}, device.ExtraHelper); err != nil {
+			self.logger.WithError(err).Debugf("failed to update extra field")
+		}
 	}
 
 	if device, err = self.get_device(ctx, id); err != nil {

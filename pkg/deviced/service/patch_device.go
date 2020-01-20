@@ -41,8 +41,7 @@ func (self *MetathingsDevicedService) PatchDevice(ctx context.Context, req *pb.P
 	}
 
 	if extra := dev.GetExtra(); extra != nil {
-		extra_str := pb_helper.MustParseExtra(extra)
-		dev_s.Extra = &extra_str
+		dev_s.ExtraHelper = pb_helper.ExtractStringMapToString(extra)
 	}
 
 	if dev_s, err = self.storage.PatchDevice(ctx, dev_id_str, dev_s); err != nil {

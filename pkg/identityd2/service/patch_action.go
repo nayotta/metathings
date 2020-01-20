@@ -43,9 +43,9 @@ func (self *MetathingsIdentitydService) PatchAction(ctx context.Context, req *pb
 	if act_req.GetDescription() != nil {
 		act.Description = &act_req.Description.Value
 	}
-	if act_req.GetExtra() != nil {
-		extraStr := pb_helper.MustParseExtra(act_req.GetExtra())
-		act.Extra = &extraStr
+
+	if extra := act_req.GetExtra(); extra != nil {
+		act.ExtraHelper = pb_helper.ExtractStringMapToString(extra)
 	}
 
 	if act, err = self.storage.PatchAction(ctx, idStr, act); err != nil {

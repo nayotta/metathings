@@ -52,7 +52,6 @@ func (self *MetathingsIdentitydService) CreateRole(ctx context.Context, req *pb.
 	if role.GetDescription() != nil {
 		desc_str = role.GetDescription().GetValue()
 	}
-	extra_str := pb_helper.MustParseExtra(role.GetExtra())
 	name_str := role.GetName().GetValue()
 	alias_str := name_str
 	if role.GetAlias() != nil {
@@ -64,7 +63,10 @@ func (self *MetathingsIdentitydService) CreateRole(ctx context.Context, req *pb.
 		Name:        &name_str,
 		Alias:       &alias_str,
 		Description: &desc_str,
-		Extra:       &extra_str,
+	}
+
+	if extra := role.GetExtra(); extra != nil {
+		role_s.ExtraHelper = pb_helper.ExtractStringMapToString(extra)
 	}
 
 	role_s, err = self.storage.CreateRole(ctx, role_s)

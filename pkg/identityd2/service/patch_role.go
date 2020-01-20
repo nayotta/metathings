@@ -45,9 +45,9 @@ func (self *MetathingsIdentitydService) PatchRole(ctx context.Context, req *pb.P
 	if rol_req.GetDescription() != nil {
 		rol.Description = &rol_req.Description.Value
 	}
-	if rol_req.GetExtra() != nil {
-		extraStr := pb_helper.MustParseExtra(rol_req.GetExtra())
-		rol.Extra = &extraStr
+
+	if extra := rol_req.GetExtra(); extra != nil {
+		rol.ExtraHelper = pb_helper.ExtractStringMapToString(extra)
 	}
 
 	if rol, err = self.storage.PatchRole(ctx, idStr, rol); err != nil {

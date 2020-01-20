@@ -44,13 +44,14 @@ func (self *MetathingsIdentitydService) PatchEntity(ctx context.Context, req *pb
 		alias_str := alias.GetValue()
 		ent.Alias = &alias_str
 	}
+
 	if passwd := ent_req.GetPassword(); passwd != nil {
 		passwd_str := passwd_helper.MustParsePassword(passwd.GetValue())
 		ent.Password = &passwd_str
 	}
+
 	if extra := ent_req.GetExtra(); extra != nil {
-		extra_str := pb_helper.MustParseExtra(extra)
-		ent.Extra = &extra_str
+		ent.ExtraHelper = pb_helper.ExtractStringMapToString(extra)
 	}
 
 	if ent, err = self.storage.PatchEntity(ctx, idStr, ent); err != nil {

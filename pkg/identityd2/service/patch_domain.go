@@ -40,9 +40,8 @@ func (self *MetathingsIdentitydService) PatchDomain(ctx context.Context, req *pb
 	if dom_req.GetAlias() != nil {
 		dom.Alias = &dom_req.Alias.Value
 	}
-	if dom_req.GetExtra() != nil {
-		extraStr := pb_helper.MustParseExtra(dom_req.GetExtra())
-		dom.Extra = &extraStr
+	if extra := dom_req.GetExtra(); extra != nil {
+		dom.ExtraHelper = pb_helper.ExtractStringMapToString(extra)
 	}
 
 	if dom, err = self.storage.PatchDomain(ctx, idStr, dom); err != nil {
