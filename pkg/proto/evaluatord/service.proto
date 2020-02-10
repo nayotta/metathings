@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package ai.metathings.service.evaluatord;
+option go_package = "evaluatord";
+
+import "google/protobuf/empty.proto";
+
+import "create_evaluator.proto";
+import "delete_evaluator.proto";
+import "patch_evaluator.proto";
+import "get_evaluator.proto";
+import "list_evaluators.proto";
+import "add_sources_to_evaluator.proto";
+import "remove_sources_from_evaluator.proto";
+import "list_evaluators_by_source.proto";
+
+service EvaluatordService {
+	rpc CreateEvaluator(CreateEvaluatorRequest) returns (CreateEvaluatorResponse) {}
+	rpc DeleteEvaluator(DeleteEvaluatorRequest) returns (google.protobuf.Empty) {}
+	rpc PatchEvaluator(PatchEvaluatorRequest) returns (PatchEvaluatorResponse) {}
+	rpc GetEvaluator(GetEvaluatorRequest) returns (GetEvaluatorResponse) {}
+	rpc ListEvaluators(ListEvaluatorsRequest) returns (ListEvaluatorsResponse) {}
+	rpc AddSourcesToEvaluator(AddSourcesToEvaluatorRequest) returns (google.protobuf.Empty) {}
+	rpc RemoveSourcesFromEvaluator(RemoveSourcesFromEvaluatorRequest) returns (google.protobuf.Empty) {}
+	rpc ListEvaluatorsBySource(ListEvaluatorsBySourceRequest) returns (ListEvaluatorsBySourceResponse) {}
+}

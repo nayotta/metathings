@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package ai.metathings.service.evaluatord;
+option go_package = "evaluatord";
+
+import "github.com/mwitkow/go-proto-validators/validator.proto";
+
+import "model.proto";
+
+message RemoveSourcesFromEvaluatorRequest {
+	repeated OpResource sources = 1;
+	OpEvaluator evaluator = 2 [(validator.field) = {msg_exists: true}];
+}

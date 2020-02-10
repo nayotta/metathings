@@ -8,3 +8,4 @@ all:
 	$(MAKE) -C component all
 	$(MAKE) -C device all
 	$(MAKE) -C tagd all
+	$(MAKE) -C evaluatord all
