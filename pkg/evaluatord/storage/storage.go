@@ -61,6 +61,9 @@ type Storage interface {
 	ListEvaluators(context.Context, *Evaluator) ([]*Evaluator, error)
 	AddSourcesToEvaluator(ctx context.Context, evaluator_id string, sources []*Resource) error
 	RemoveSourcesFromEvaluator(ctx context.Context, evaluator_id string, sources []*Resource) error
+
+	ExistEvaluator(context.Context, *Evaluator) (bool, error)
+	ExistOperator(context.Context, *Operator) (bool, error)
 }
 
 func NewStorage(driver, uri string, args ...interface{}) (Storage, error) {

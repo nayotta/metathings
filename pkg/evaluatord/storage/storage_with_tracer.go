@@ -60,6 +60,20 @@ func (s *TracedStorage) RemoveSourcesFromEvaluator(ctx context.Context, evaluato
 	return s.StorageImpl.RemoveSourcesFromEvaluator(ctx, evaluator_id, sources)
 }
 
+func (s *TracedStorage) ExistEvaluator(ctx context.Context, e *Evaluator) (bool, error) {
+	span, ctx := s.TraceWrapper(ctx, "ExistEvaluator")
+	defer span.Finish()
+
+	return s.StorageImpl.ExistEvaluator(ctx, e)
+}
+
+func (s *TracedStorage) ExistOperator(ctx context.Context, o *Operator) (bool, error) {
+	span, ctx := s.TraceWrapper(ctx, "ExistOperator")
+	defer span.Finish()
+
+	return s.StorageImpl.ExistOperator(ctx, o)
+}
+
 func NewTracedStorage(s *StorageImpl) (Storage, error) {
 	return &TracedStorage{
 		BaseTracedStorage: opentracing_storage_helper.NewBaseTracedStorage(s),

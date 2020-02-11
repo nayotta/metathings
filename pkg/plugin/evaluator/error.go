@@ -1,4 +1,4 @@
-package main
+package metathings_plugin_evaluator
 
 import "errors"
 

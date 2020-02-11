@@ -1,4 +1,4 @@
-package main
+package metathings_plugin_evaluator
 
 import "sync"
 
@@ -18,4 +18,13 @@ func registry_operator_factory(name string, fty OperatorFactory) {
 	})
 
 	operator_factories[name] = fty
+}
+
+func IsValidOperatorName(name string) bool {
+	for key, _ := range operator_factories {
+		if key == name {
+			return true
+		}
+	}
+	return false
 }

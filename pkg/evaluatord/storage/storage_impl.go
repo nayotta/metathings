@@ -410,6 +410,32 @@ func (stor *StorageImpl) RemoveSourcesFromEvaluator(ctx context.Context, evaluat
 	return nil
 }
 
+func (stor *StorageImpl) ExistEvaluator(ctx context.Context, e *Evaluator) (bool, error) {
+	var cnt int
+	db := stor.GetDBConn(ctx)
+	logger := stor.get_logger()
+
+	if err := db.Find(&e).Count(&cnt).Error; err != nil {
+		logger.WithError(err).Debugf("failed to exist evaluator")
+		return false, err
+	}
+
+	return cnt > 0, nil
+}
+
+func (stor *StorageImpl) ExistOperator(ctx context.Context, o *Operator) (bool, error) {
+	var cnt int
+	db := stor.GetDBConn(ctx)
+	logger := stor.get_logger()
+
+	if err := db.Find(&o).Count(&cnt).Error; err != nil {
+		logger.WithError(err).Debugf("failed to exist operator")
+		return false, err
+	}
+
+	return cnt > 0, nil
+}
+
 func new_db(s *StorageImpl, driver, uri string) error {
 	var db *gorm.DB
 	var err error

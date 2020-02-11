@@ -13,6 +13,14 @@ func GetenvWithDefault(k, d string) string {
 	return v
 }
 
+func GetTestGormDriver() string {
+	return GetenvWithDefault("MTT_GORM_DRIVER", "sqlite3")
+}
+
+func GetTestGormUri() string {
+	return GetenvWithDefault("MTT_GORM_URI", ":memory:")
+}
+
 func GetTestMongoUri() string {
 	return GetenvWithDefault("MTT_MONGO_URI", "mongodb://127.0.0.1:27017")
 }
