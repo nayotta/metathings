@@ -3,6 +3,8 @@ package cmd
 import (
 	"context"
 
+	"github.com/opentracing/opentracing-go"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"go.uber.org/fx"
 
@@ -10,6 +12,7 @@ import (
 	cmd_helper "github.com/nayotta/metathings/pkg/common/cmd"
 	token_helper "github.com/nayotta/metathings/pkg/common/token"
 	service "github.com/nayotta/metathings/pkg/evaluatord/service"
+	storage "github.com/nayotta/metathings/pkg/evaluatord/storage"
 	authorizer "github.com/nayotta/metathings/pkg/identityd2/authorizer"
 	pb "github.com/nayotta/metathings/pkg/proto/evaluatord"
 )
@@ -54,12 +57,14 @@ func GetEvaluatordOptions() (
 	cmd_contrib.ServiceOptioner,
 	cmd_contrib.ListenOptioner,
 	cmd_contrib.TransportCredentialOptioner,
+	cmd_contrib.StorageOptioner,
 	cmd_contrib.LoggerOptioner,
 	cmd_contrib.ServiceEndpointsOptioner,
 	cmd_contrib.CredentialOptioner,
 	cmd_contrib.OpentracingOptioner,
 ) {
 	return evaluatord_opt,
+		evaluatord_opt,
 		evaluatord_opt,
 		evaluatord_opt,
 		evaluatord_opt,
@@ -73,6 +78,18 @@ func NewMetathingsEvaulatordServiceOption(opt *EvaluatordOption) *service.Metath
 	o := &service.MetathingsEvaluatordServiceOption{}
 
 	return o
+}
+
+type NewEvaluatordStorageParams struct {
+	fx.In
+
+	Option cmd_contrib.StorageOptioner
+	Logger log.FieldLogger
+	Tracer opentracing.Tracer `name:"opentracing_tracer" optional:"true"`
+}
+
+func NewEvaluatordStorage(p NewEvaluatordStorageParams) (storage.Storage, error) {
+	return storage.NewStorage(p.Option.GetDriver(), p.Option.GetUri(), "logger", p.Logger, "tracer", p.Tracer)
 }
 
 func runEvaluatord() error {
@@ -89,6 +106,7 @@ func runEvaluatord() error {
 			cmd_contrib.NewNoExpireTokener,
 			token_helper.NewTokenValidator,
 			NewMetathingsEvaulatordServiceOption,
+			NewEvaluatordStorage,
 			authorizer.NewAuthorizer,
 			service.NewMetathingsEvaludatorService,
 		),
