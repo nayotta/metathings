@@ -93,14 +93,27 @@ func (s *StorageImplTestSuite) TestDeleteEvaluator() {
 func (s *StorageImplTestSuite) TestPatchEvaluator() {
 	new_evaluator_alias := "new_evaluator_alias"
 	new_evaluator_description := "new evaluator description"
+	new_operator_alias := "new_operator_alias"
+	new_operator_description := "new operator description"
+	new_lua_descriptor_code := `return "yes, my lord"`
 	evltr, err := s.stor.PatchEvaluator(s.ctx, test_evaluator_id, &Evaluator{
 		Alias:       &new_evaluator_alias,
 		Description: &new_evaluator_description,
+		Operator: &Operator{
+			Alias:       &new_operator_alias,
+			Description: &new_operator_description,
+			LuaDescriptor: &LuaDescriptor{
+				Code: &new_lua_descriptor_code,
+			},
+		},
 	})
 	s.Nil(err)
 
 	s.Equal(new_evaluator_alias, *evltr.Alias)
 	s.Equal(new_evaluator_description, *evltr.Description)
+	s.Equal(new_operator_alias, *evltr.Operator.Alias)
+	s.Equal(new_operator_description, *evltr.Operator.Description)
+	s.Equal(new_lua_descriptor_code, *evltr.Operator.LuaDescriptor.Code)
 }
 
 func (s *StorageImplTestSuite) TestAddSourcesToEvaluator() {

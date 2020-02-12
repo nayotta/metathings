@@ -59,6 +59,7 @@ type Storage interface {
 	PatchEvaluator(ctx context.Context, id string, evaluator *Evaluator) (*Evaluator, error)
 	GetEvaluator(ctx context.Context, id string) (*Evaluator, error)
 	ListEvaluators(context.Context, *Evaluator) ([]*Evaluator, error)
+	ListEvaluatorsBySource(context.Context, *Resource) ([]*Evaluator, error)
 	AddSourcesToEvaluator(ctx context.Context, evaluator_id string, sources []*Resource) error
 	RemoveSourcesFromEvaluator(ctx context.Context, evaluator_id string, sources []*Resource) error
 

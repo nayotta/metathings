@@ -125,12 +125,38 @@ func (stor *StorageImpl) list_evaluators(db *gorm.DB, evltr *Evaluator) ([]*Eval
 		return nil, err
 	}
 
-	var evltrs []*Evaluator
+	evltr_ids := []string{}
 	for _, e := range evltrs_t {
-		if evltr, err = stor.get_evaluator(db, *e.Id); err != nil {
+		evltr_ids = append(evltr_ids, *e.Id)
+	}
+
+	return stor.list_evaluators_by_ids(db, evltr_ids)
+}
+
+func (stor *StorageImpl) list_evaluators_by_source(db *gorm.DB, src *Resource) ([]*Evaluator, error) {
+	var esms_t []*EvaluatorSourceMapping
+	var err error
+
+	if err = db.Select("evaluator_id").Find(&esms_t, src).Error; err != nil {
+		return nil, err
+	}
+
+	evltr_ids := []string{}
+	for _, esm := range esms_t {
+		evltr_ids = append(evltr_ids, *esm.EvaluatorId)
+	}
+
+	return stor.list_evaluators_by_ids(db, evltr_ids)
+}
+
+func (stor *StorageImpl) list_evaluators_by_ids(db *gorm.DB, ids []string) ([]*Evaluator, error) {
+	var evltrs []*Evaluator
+	for _, id := range ids {
+		if evltr, err := stor.get_evaluator(db, id); err != nil {
 			return nil, err
+		} else {
+			evltrs = append(evltrs, evltr)
 		}
-		evltrs = append(evltrs, evltr)
 	}
 
 	return evltrs, nil
@@ -285,6 +311,12 @@ func (stor *StorageImpl) PatchEvaluator(ctx context.Context, id string, e *Evalu
 
 	logger := stor.get_logger().WithField("evaluator", id)
 
+	se, err := stor.get_evaluator(db, id)
+	if err != nil {
+		logger.WithError(err).Debugf("failed to get evaluator")
+		return nil, err
+	}
+
 	if e.Alias != nil {
 		pe.Alias = e.Alias
 	}
@@ -303,6 +335,19 @@ func (stor *StorageImpl) PatchEvaluator(ctx context.Context, id string, e *Evalu
 		if o.Description != nil {
 			po.Description = o.Description
 		}
+
+		switch *se.Operator.Driver {
+		case "lua":
+			fallthrough
+		case "default":
+			desc := o.LuaDescriptor
+			if desc != nil {
+				po.LuaDescriptor = &LuaDescriptor{}
+				if desc.Code != nil {
+					po.LuaDescriptor.Code = desc.Code
+				}
+			}
+		}
 	}
 
 	err = db.Transaction(func(tx *gorm.DB) error {
@@ -316,9 +361,21 @@ func (stor *StorageImpl) PatchEvaluator(ctx context.Context, id string, e *Evalu
 			return err
 		}
 
-		if err = tx.Model(&Operator{Id: e.Operator.Id}).Update(po).Error; err != nil {
+		if err = tx.Model(&Operator{Id: se.Operator.Id}).Update(po).Error; err != nil {
 			logger.WithError(err).Debugf("failed to patch operator")
 			return err
+		}
+
+		switch *se.Operator.Driver {
+		case "lua":
+			fallthrough
+		case "default":
+			if po.LuaDescriptor != nil {
+				if err = tx.Model(&LuaDescriptor{OperatorId: se.Operator.Id}).Update(po.LuaDescriptor).Error; err != nil {
+					logger.WithError(err).Debugf("failed to patch lua descriptor")
+					return err
+				}
+			}
 		}
 
 		return nil
@@ -365,6 +422,26 @@ func (stor *StorageImpl) ListEvaluators(ctx context.Context, e *Evaluator) ([]*E
 	}
 
 	logger.Debugf("list evaluators")
+
+	return es, nil
+}
+
+func (stor *StorageImpl) ListEvaluatorsBySource(ctx context.Context, src *Resource) ([]*Evaluator, error) {
+	var es []*Evaluator
+	var err error
+
+	db := stor.GetDBConn(ctx)
+	logger := stor.get_logger().WithFields(log.Fields{
+		"source_id":   *src.Id,
+		"source_type": *src.Type,
+	})
+
+	if es, err = stor.list_evaluators_by_source(db, src); err != nil {
+		logger.WithError(err).Debugf("failed to list evaluators by source")
+		return nil, err
+	}
+
+	logger.Debugf("list evaluators by source")
 
 	return es, nil
 }

@@ -1,8 +1,6 @@
 package metathings_evaluatord_service
 
 import (
-	"context"
-
 	grpc_auth "github.com/grpc-ecosystem/go-grpc-middleware/auth"
 	log "github.com/sirupsen/logrus"
 
@@ -32,18 +30,6 @@ type MetathingsEvaluatordService struct {
 
 func (srv *MetathingsEvaluatordService) get_logger() log.FieldLogger {
 	return srv.logger
-}
-
-func (srv *MetathingsEvaluatordService) PatchEvaluator(context.Context, *pb.PatchEvaluatorRequest) (*pb.PatchEvaluatorResponse, error) {
-	panic("unimplemented")
-}
-
-func (srv *MetathingsEvaluatordService) ListEvaluators(context.Context, *pb.ListEvaluatorsRequest) (*pb.ListEvaluatorsResponse, error) {
-	panic("unimplemented")
-}
-
-func (srv *MetathingsEvaluatordService) ListEvaluatorsBySource(context.Context, *pb.ListEvaluatorsBySourceRequest) (*pb.ListEvaluatorsBySourceResponse, error) {
-	panic("unimplemented")
 }
 
 func (srv *MetathingsEvaluatordService) IsIgnoreMethod(md *grpc_helper.MethodDescription) bool {

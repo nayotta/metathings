@@ -13,8 +13,40 @@ type evaluator_getter interface {
 	GetEvaluator() *pb.OpEvaluator
 }
 
+type source_getter interface {
+	GetSource() *pb.OpResource
+}
+
 func copy_evaluator(x *storage.Evaluator) *pb.Evaluator {
 	panic("unimplemented")
+}
+
+func copy_evaluators(xs []*storage.Evaluator) []*pb.Evaluator {
+	panic("unimplemented")
+}
+
+func ensure_get_source(x source_getter) error {
+	if x.GetSource() == nil {
+		return errors.New("source is empty")
+	}
+
+	return nil
+}
+
+func ensure_get_source_id(x source_getter) error {
+	if x.GetSource().GetId() == nil {
+		return errors.New("source.id is empty")
+	}
+
+	return nil
+}
+
+func ensure_get_source_type(x source_getter) error {
+	if x.GetSource().GetType() == nil {
+		return errors.New("source.type is empty")
+	}
+
+	return nil
 }
 
 func ensure_get_evaluator(x evaluator_getter) error {
