@@ -68,5 +68,5 @@ type Storage interface {
 }
 
 func NewStorage(driver, uri string, args ...interface{}) (Storage, error) {
-	return NewStorageImpl(driver, uri, args)
+	return NewStorageImpl(driver, uri, args...)
 }

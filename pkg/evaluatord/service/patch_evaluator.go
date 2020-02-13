@@ -6,6 +6,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
+	"github.com/gogo/protobuf/jsonpb"
 	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
 	storage "github.com/nayotta/metathings/pkg/evaluatord/storage"
 	identityd_validator "github.com/nayotta/metathings/pkg/identityd2/validator"
@@ -46,6 +47,15 @@ func (srv *MetathingsEvaluatordService) PatchEvaluator(ctx context.Context, req 
 	if evltr_description := evltr.GetDescription(); evltr_description != nil {
 		evltr_description_str := evltr_description.GetValue()
 		evltr_s.Description = &evltr_description_str
+	}
+
+	if evltr_config := evltr.GetConfig(); evltr_config != nil {
+		evltr_config_str, err := new(jsonpb.Marshaler).MarshalToString(evltr_config)
+		if err != nil {
+			logger.WithError(err).Errorf("failed to marshal config to string")
+			return nil, status.Errorf(codes.InvalidArgument, err.Error())
+		}
+		evltr_s.Config = &evltr_config_str
 	}
 
 	if op := evltr.GetOperator(); op != nil {

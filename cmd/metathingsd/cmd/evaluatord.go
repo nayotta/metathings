@@ -108,6 +108,7 @@ func runEvaluatord() error {
 			NewMetathingsEvaulatordServiceOption,
 			NewEvaluatordStorage,
 			authorizer.NewAuthorizer,
+			cmd_contrib.NewValidator,
 			service.NewMetathingsEvaludatorService,
 		),
 		fx.Invoke(
