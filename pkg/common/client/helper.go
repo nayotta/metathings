@@ -14,6 +14,7 @@ import (
 	component_pb "github.com/nayotta/metathings/pkg/proto/component"
 	device_pb "github.com/nayotta/metathings/pkg/proto/device"
 	deviced_pb "github.com/nayotta/metathings/pkg/proto/deviced"
+	evaluatord_pb "github.com/nayotta/metathings/pkg/proto/evaluatord"
 	identityd2_pb "github.com/nayotta/metathings/pkg/proto/identityd2"
 	policyd_pb "github.com/nayotta/metathings/pkg/proto/policyd"
 )
@@ -25,6 +26,7 @@ const (
 	POLICYD_CONFIG
 	IDENTITYD2_CONFIG
 	DEVICED_CONFIG
+	EVALUATORD_CONFIG
 	DEVICE_CONFIG
 	MODULE_CONFIG
 	OVERFLOW_CONFIG
@@ -36,6 +38,7 @@ var (
 		"policyd",
 		"identityd2",
 		"deviced",
+		"evaluatord",
 		"device",
 		"module",
 		"overflow",
@@ -118,6 +121,15 @@ func (f *ClientFactory) NewDevicedServiceClient(opts ...grpc.DialOption) (device
 	}
 
 	return deviced_pb.NewDevicedServiceClient(conn), conn.Close, nil
+}
+
+func (f *ClientFactory) NewEvaluatordServiceClient(opts ...grpc.DialOption) (evaluatord_pb.EvaluatordServiceClient, CloseFn, error) {
+	conn, err := f.NewConnection(EVALUATORD_CONFIG, opts...)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return evaluatord_pb.NewEvaluatordServiceClient(conn), conn.Close, nil
 }
 
 func (f *ClientFactory) NewDeviceServiceClient(opts ...grpc.DialOption) (device_pb.DeviceServiceClient, CloseFn, error) {

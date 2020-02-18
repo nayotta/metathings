@@ -4,8 +4,10 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
+	"github.com/gogo/protobuf/jsonpb"
 	flow "github.com/nayotta/metathings/pkg/deviced/flow"
 	pb "github.com/nayotta/metathings/pkg/proto/deviced"
+	evaluatord_sdk "github.com/nayotta/metathings/sdk/evaluatord"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -30,13 +32,14 @@ func (self *MetathingsDevicedService) PushFrameToFlow(stm pb.DevicedService_Push
 	dev_id = dev_r.GetId().GetValue()
 	cfg_ack = cfg.GetConfigAck().GetValue()
 	push_ack = cfg.GetPushAck().GetValue()
+	ctx := stm.Context()
 
 	logger = self.logger.WithFields(log.Fields{
 		"config": req_id,
 		"device": dev_id,
 	})
 
-	dev_s, err := self.storage.GetDevice(stm.Context(), dev_id)
+	dev_s, err := self.storage.GetDevice(ctx, dev_id)
 	if err != nil {
 		logger.WithError(err).Errorf("failed to get device")
 		return status.Errorf(codes.Internal, err.Error())
@@ -91,12 +94,6 @@ match_flow_loop:
 		"push_ack": push_ack,
 	}).Debugf("recv flow config request")
 
-	if f == nil {
-		err = ErrFlowNotFound
-		logger.WithError(err).Errorf("failed to get flow")
-		return status.Errorf(codes.NotFound, err.Error())
-	}
-
 	if cfg_ack {
 		err = stm.Send(&pb.PushFrameToFlowResponse{
 			Id:       req_id,
@@ -127,7 +124,18 @@ match_flow_loop:
 
 		// TODO(Peer): async recv and send frame
 		opfrm := req.GetFrame()
-		frm := &pb.Frame{Data: opfrm.GetData()}
+		opdat := opfrm.GetData()
+		frm := &pb.Frame{Data: opdat}
+		opdat_str, err := new(jsonpb.Marshaler).MarshalToString(opdat)
+		if err != nil {
+			self.logger.WithError(err).Errorf("failed to marshal data to json string")
+			return status.Errorf(codes.InvalidArgument, err.Error())
+		}
+		evltrsdk_dat, err := evaluatord_sdk.DataFromBytes([]byte(opdat_str))
+		if err != nil {
+			self.logger.WithError(err).Errorf("failed to transfer json string to evaluatord sdk data")
+			return status.Errorf(codes.Internal, err.Error())
+		}
 
 		err = f.PushFrame(frm)
 		if err != nil {
@@ -135,6 +143,13 @@ match_flow_loop:
 			return status.Errorf(codes.Internal, err.Error())
 		}
 		logger.WithField("request", req_id).Debugf("push frame to flow")
+
+		go func() {
+			err = self.data_launcher.Launch(ctx, evaluatord_sdk.NewResource(f.Id(), RESOURCE_TYPE_FLOW), evltrsdk_dat)
+			if err != nil {
+				self.logger.WithError(err).Warningf("failed to launch data")
+			}
+		}()
 
 		for _, fs := range fss {
 			if err = fs.PushFrame(&flow.FlowSetFrame{
@@ -144,6 +159,12 @@ match_flow_loop:
 				self.logger.WithError(err).WithField("flow_set_id", fs.Id()).Errorf("failed to push frame to flow set")
 				return status.Errorf(codes.Internal, err.Error())
 			}
+
+			go func() {
+				if err = self.data_launcher.Launch(ctx, evaluatord_sdk.NewResource(fs.Id(), RESOURCE_TYPE_FLOWSET), evltrsdk_dat); err != nil {
+					self.logger.WithError(err).Warningf("failed to launch data")
+				}
+			}()
 		}
 
 		if push_ack {
