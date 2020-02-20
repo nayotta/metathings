@@ -1,10 +1,11 @@
 package metathings_deviced_service
 
 import (
+	"github.com/golang/protobuf/jsonpb"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"github.com/gogo/protobuf/jsonpb"
+	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
 	flow "github.com/nayotta/metathings/pkg/deviced/flow"
 	pb "github.com/nayotta/metathings/pkg/proto/deviced"
 	evaluatord_sdk "github.com/nayotta/metathings/sdk/evaluatord"
@@ -38,6 +39,12 @@ func (self *MetathingsDevicedService) PushFrameToFlow(stm pb.DevicedService_Push
 		"config": req_id,
 		"device": dev_id,
 	})
+
+	tkn_txt, err := grpc_helper.GetTokenFromContext(ctx)
+	if err != nil {
+		logger.WithError(err).Errorf("failed to get token from context")
+		return status.Errorf(codes.InvalidArgument, err.Error())
+	}
 
 	dev_s, err := self.storage.GetDevice(ctx, dev_id)
 	if err != nil {
@@ -117,7 +124,7 @@ match_flow_loop:
 		req, err = stm.Recv()
 		req_id = req.GetId().GetValue()
 		if err != nil {
-			self.logger.WithError(err).Errorf("failed to receive frame request")
+			logger.WithError(err).Errorf("failed to receive frame request")
 			return status.Errorf(codes.Internal, err.Error())
 		}
 		logger.WithField("request", req_id).Debugf("recv data request")
@@ -128,26 +135,29 @@ match_flow_loop:
 		frm := &pb.Frame{Data: opdat}
 		opdat_str, err := new(jsonpb.Marshaler).MarshalToString(opdat)
 		if err != nil {
-			self.logger.WithError(err).Errorf("failed to marshal data to json string")
+			logger.WithError(err).Errorf("failed to marshal data to json string")
 			return status.Errorf(codes.InvalidArgument, err.Error())
 		}
 		evltrsdk_dat, err := evaluatord_sdk.DataFromBytes([]byte(opdat_str))
 		if err != nil {
-			self.logger.WithError(err).Errorf("failed to transfer json string to evaluatord sdk data")
+			logger.WithError(err).Errorf("failed to transfer json string to evaluatord sdk data")
 			return status.Errorf(codes.Internal, err.Error())
 		}
 
 		err = f.PushFrame(frm)
 		if err != nil {
-			self.logger.WithError(err).Errorf("failed to push frame to flow")
+			logger.WithError(err).Errorf("failed to push frame to flow")
 			return status.Errorf(codes.Internal, err.Error())
 		}
 		logger.WithField("request", req_id).Debugf("push frame to flow")
 
 		go func() {
-			err = self.data_launcher.Launch(ctx, evaluatord_sdk.NewResource(f.Id(), RESOURCE_TYPE_FLOW), evltrsdk_dat)
+			err = self.data_launcher.Launch(
+				evaluatord_sdk.WithToken(ctx, tkn_txt),
+				evaluatord_sdk.NewResource(f.Id(), RESOURCE_TYPE_FLOW),
+				evltrsdk_dat)
 			if err != nil {
-				self.logger.WithError(err).Warningf("failed to launch data")
+				logger.WithError(err).Warningf("failed to launch data")
 			}
 		}()
 
@@ -156,13 +166,16 @@ match_flow_loop:
 				Device: flwst_frm_dev,
 				Frame:  frm,
 			}); err != nil {
-				self.logger.WithError(err).WithField("flow_set_id", fs.Id()).Errorf("failed to push frame to flow set")
+				logger.WithError(err).WithField("flow_set_id", fs.Id()).Errorf("failed to push frame to flow set")
 				return status.Errorf(codes.Internal, err.Error())
 			}
 
 			go func() {
-				if err = self.data_launcher.Launch(ctx, evaluatord_sdk.NewResource(fs.Id(), RESOURCE_TYPE_FLOWSET), evltrsdk_dat); err != nil {
-					self.logger.WithError(err).Warningf("failed to launch data")
+				if err = self.data_launcher.Launch(
+					evaluatord_sdk.WithToken(ctx, tkn_txt),
+					evaluatord_sdk.NewResource(fs.Id(), RESOURCE_TYPE_FLOWSET),
+					evltrsdk_dat); err != nil {
+					logger.WithError(err).Warningf("failed to launch data")
 				}
 			}()
 		}
@@ -173,7 +186,7 @@ match_flow_loop:
 				Response: &pb.PushFrameToFlowResponse_Ack_{Ack: &pb.PushFrameToFlowResponse_Ack{}},
 			})
 			if err != nil {
-				self.logger.WithError(err).Errorf("failed to send push ack message")
+				logger.WithError(err).Errorf("failed to send push ack message")
 				return status.Errorf(codes.Internal, err.Error())
 			}
 			logger.WithField("request", req_id).Debugf("send flow data ack response")

@@ -47,6 +47,7 @@ func (hdl *HttpDataLauncher) Launch(ctx context.Context, src Resource, dat Data)
 
 	req, err := http.NewRequest("POST", hdl.opt.Endpoint, bytes.NewReader(body))
 	req.Header.Set("Content-Type", hdl.http_content_type())
+	req.Header.Set("Authorization", "Bearer "+ExtractToken(ctx))
 	req.Header.Set(HTTP_HEADER_SOURCE_ID, src.GetId())
 	req.Header.Set(HTTP_HEADER_SOURCE_TYPE, src.GetType())
 	req.Header.Set(HTTP_HEADER_DATA_ENCODER, hdl.opt.DataEncoder)

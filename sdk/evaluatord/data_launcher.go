@@ -30,3 +30,11 @@ func NewDataLauncher(name string, args ...interface{}) (dl DataLauncher, err err
 
 	return fty(args...)
 }
+
+func WithToken(ctx context.Context, tkn string) context.Context {
+	return context.WithValue(ctx, "data-launcher-token", tkn)
+}
+
+func ExtractToken(ctx context.Context) string {
+	return ctx.Value("data-launcher-token").(string)
+}
