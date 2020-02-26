@@ -1,7 +1,16 @@
 package metathings_plugin_evaluator
 
-import "context"
+import (
+	"context"
+
+	esdk "github.com/nayotta/metathings/sdk/evaluatord"
+)
 
 type Evaluator interface {
-	Eval(context.Context, Data) error
+	Id() string
+	Eval(context.Context, esdk.Data) error
+}
+
+func NewEvaluator(args ...interface{}) (Evaluator, error) {
+	return NewEvaluatorImpl(args...)
 }

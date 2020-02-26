@@ -39,6 +39,7 @@ func copy_operator(x *storage.Operator) *pb.Operator {
 		Driver:      *x.Driver,
 	}
 
+	// SYM:REFACTOR:lua_operator
 	switch *x.Driver {
 	case "lua":
 		fallthrough

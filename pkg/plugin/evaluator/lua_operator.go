@@ -7,6 +7,7 @@ import (
 	lua "github.com/yuin/gopher-lua"
 
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
+	esdk "github.com/nayotta/metathings/sdk/evaluatord"
 )
 
 type LuaOperatorOption struct {
@@ -18,14 +19,14 @@ type LuaOperator struct {
 	env *lua.LState
 }
 
-func (lo *LuaOperator) Run(dat Data, cfg Config) (Data, error) {
+func (lo *LuaOperator) Run(cfg, dat esdk.Data) (esdk.Data, error) {
 	mt_tb := lo.env.NewTable()
-
-	dat_tb := lo.parse_string_map_to_ltable(dat.Iter())
-	mt_tb.RawSetString("data", dat_tb)
 
 	cfg_tb := lo.parse_string_map_to_ltable(cfg.Iter())
 	mt_tb.RawSetString("config", cfg_tb)
+
+	dat_tb := lo.parse_string_map_to_ltable(dat.Iter())
+	mt_tb.RawSetString("data", dat_tb)
 
 	lo.env.SetGlobal("metathings", mt_tb)
 
@@ -41,7 +42,7 @@ func (lo *LuaOperator) Run(dat Data, cfg Config) (Data, error) {
 
 	dat_m := lo.parse_ltable_to_string_map(ret_lv.(*lua.LTable))
 
-	ret, err := DataFromMap(dat_m)
+	ret, err := esdk.DataFromMap(dat_m)
 	if err != nil {
 		return nil, err
 	}
@@ -160,7 +161,7 @@ func NewLuaOperator(args ...interface{}) (Operator, error) {
 
 	if err := opt_helper.Setopt(map[string]func(string, interface{}) error{
 		"code": opt_helper.ToString(&opt.Code),
-	})(args...); err != nil {
+	}, opt_helper.SetSkip(true))(args...); err != nil {
 		return nil, err
 	}
 

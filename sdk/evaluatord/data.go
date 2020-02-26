@@ -8,6 +8,7 @@ import (
 type Data interface {
 	Iter() map[string]interface{}
 	Get(string) interface{}
+	With(string, interface{}) Data
 }
 
 type data struct {
@@ -24,36 +25,29 @@ func (d *data) ensure_raw() {
 			return
 		}
 
-		d.raw = make(map[string]interface{})
-
-		if d.buf == nil {
-			d.buf = []byte(`{}`)
-			return
+		if err := json.Unmarshal(d.buf, &d.raw); err != nil {
+			panic(err)
 		}
-
-		json.Unmarshal(d.buf, &d.raw)
 	})
 }
 
 func (d *data) ensure_buf() {
 	d.ensure_buf_once.Do(func() {
+		var err error
+
 		if d.buf != nil {
 			return
 		}
 
-		if d.raw == nil {
-			d.buf = []byte(`{}`)
-			d.raw = make(map[string]interface{})
-			return
+		if d.buf, err = json.Marshal(d.raw); err != nil {
+			panic(err)
 		}
-
-		d.buf, _ = json.Marshal(d.raw)
 	})
 }
 
 func (d *data) Iter() map[string]interface{} {
+	var out map[string]interface{}
 	d.ensure_buf()
-	out := make(map[string]interface{})
 	json.Unmarshal(d.buf, &out)
 	return out
 }
@@ -67,11 +61,28 @@ func (d *data) Get(key string) interface{} {
 	return val
 }
 
+func (d *data) With(key string, val interface{}) Data {
+	var raw map[string]interface{}
+	d.ensure_buf()
+	json.Unmarshal(d.buf, &raw)
+	raw[key] = val
+	out, _ := DataFromMap(raw)
+	return out
+}
+
 func DataFromMap(raw map[string]interface{}) (Data, error) {
+	if raw == nil {
+		raw = make(map[string]interface{})
+	}
+
 	return &data{raw: raw}, nil
 }
 
 func DataFromBytes(buf []byte) (Data, error) {
+	if buf == nil || len(buf) == 0 {
+		buf = []byte(`{}`)
+	}
+
 	return &data{buf: buf}, nil
 }
 

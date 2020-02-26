@@ -58,6 +58,7 @@ func (stor *StorageImpl) get_operator_by_evaluator_id(db *gorm.DB, evaluator_id 
 		return nil, err
 	}
 
+	// SYM:REFACTOR:lua_operator
 	switch *op.Driver {
 	case "lua":
 		fallthrough
@@ -215,6 +216,7 @@ func (stor *StorageImpl) CreateEvaluator(ctx context.Context, e *Evaluator) (*Ev
 	db := stor.GetDBConn(ctx)
 
 	err := db.Transaction(func(tx *gorm.DB) error {
+		// SYM:REFACTOR:lua_operator
 		switch *e.Operator.Driver {
 		case "lua":
 			fallthrough
@@ -336,6 +338,7 @@ func (stor *StorageImpl) PatchEvaluator(ctx context.Context, id string, e *Evalu
 			po.Description = o.Description
 		}
 
+		// SYM:REFACTOR:lua_operator
 		switch *se.Operator.Driver {
 		case "lua":
 			fallthrough
@@ -366,6 +369,7 @@ func (stor *StorageImpl) PatchEvaluator(ctx context.Context, id string, e *Evalu
 			return err
 		}
 
+		// SYM:REFACTOR:lua_operator
 		switch *se.Operator.Driver {
 		case "lua":
 			fallthrough

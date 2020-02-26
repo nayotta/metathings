@@ -93,6 +93,7 @@ func (srv *MetathingsEvaluatordService) CreateEvaluator(ctx context.Context, req
 	}
 	op_s.Driver = &op_driver_str
 
+	// SYM:REFACTOR:lua_operator
 	switch op_driver_str {
 	case "lua":
 		fallthrough

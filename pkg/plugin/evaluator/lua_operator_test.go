@@ -43,6 +43,7 @@ func (s *LuaOperatorTestSuite) TearDownTest() {
 }
 
 func (s *LuaOperatorTestSuite) TestRun() {
+	cfg, _ := DataFromMap(nil)
 	dat, _ := DataFromMap(map[string]interface{}{
 		"a": 1,
 		"b": 2,
@@ -51,7 +52,6 @@ func (s *LuaOperatorTestSuite) TestRun() {
 		},
 		"e": []interface{}{4},
 	})
-	cfg, _ := ConfigFromMap(nil)
 
 	dat, err := s.op.Run(dat, cfg)
 	s.Nil(err)

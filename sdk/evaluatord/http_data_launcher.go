@@ -14,14 +14,14 @@ import (
 )
 
 const (
-	HTTP_HEADER_SOURCE_ID    = "X-Evaluator-Source-ID"
-	HTTP_HEADER_SOURCE_TYPE  = "X-Evaluator-Source-Type"
-	HTTP_HEADER_DATA_ENCODER = "X-Evaluator-DATA_ENCODER"
+	HTTP_HEADER_SOURCE_ID   = "X-Evaluator-Source-ID"
+	HTTP_HEADER_SOURCE_TYPE = "X-Evaluator-Source-Type"
+	HTTP_HEADER_DATA_CODEC  = "X-Evaluator-Data-Codec"
 )
 
 type HttpDataLauncherOption struct {
-	Endpoint    string
-	DataEncoder string
+	Endpoint  string
+	DataCodec string
 }
 
 type HttpDataLauncher struct {
@@ -31,7 +31,7 @@ type HttpDataLauncher struct {
 }
 
 func (hdl *HttpDataLauncher) http_content_type() string {
-	switch hdl.opt.DataEncoder {
+	switch hdl.opt.DataCodec {
 	case "json":
 		return "application/json"
 	default:
@@ -50,7 +50,7 @@ func (hdl *HttpDataLauncher) Launch(ctx context.Context, src Resource, dat Data)
 	req.Header.Set("Authorization", "Bearer "+ExtractToken(ctx))
 	req.Header.Set(HTTP_HEADER_SOURCE_ID, src.GetId())
 	req.Header.Set(HTTP_HEADER_SOURCE_TYPE, src.GetType())
-	req.Header.Set(HTTP_HEADER_DATA_ENCODER, hdl.opt.DataEncoder)
+	req.Header.Set(HTTP_HEADER_DATA_CODEC, hdl.opt.DataCodec)
 	req = req.WithContext(ctx)
 
 	res, err := http.DefaultClient.Do(req)
@@ -80,7 +80,7 @@ func (hdl *HttpDataLauncher) Launch(ctx context.Context, src Resource, dat Data)
 
 func DefaultHttpDataLauncherOption() *HttpDataLauncherOption {
 	return &HttpDataLauncherOption{
-		DataEncoder: "json",
+		DataCodec: "json",
 	}
 }
 
@@ -90,14 +90,14 @@ func NewHttpDataLauncher(args ...interface{}) (DataLauncher, error) {
 	opt := DefaultHttpDataLauncherOption()
 
 	if err := opt_helper.Setopt(map[string]func(string, interface{}) error{
-		"endpoint":     opt_helper.ToString(&opt.Endpoint),
-		"data_encoder": opt_helper.ToString(&opt.DataEncoder),
-		"logger":       opt_helper.ToLogger(&logger),
+		"endpoint":   opt_helper.ToString(&opt.Endpoint),
+		"data_codec": opt_helper.ToString(&opt.DataCodec),
+		"logger":     opt_helper.ToLogger(&logger),
 	})(args...); err != nil {
 		return nil, err
 	}
 
-	enc, err := GetDataEncoder(opt.DataEncoder)
+	enc, err := GetDataEncoder(opt.DataCodec)
 	if err != nil {
 		return nil, err
 	}

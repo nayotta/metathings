@@ -73,6 +73,8 @@ func (srv *MetathingsEvaluatordService) PatchEvaluator(ctx context.Context, req 
 
 		if op_driver := op.GetDriver(); op_driver != nil {
 			op_driver_str := op_driver.GetValue()
+
+			// SYM:REFACTOR:lua_operator
 			switch op_driver_str {
 			case "lua":
 				fallthrough
