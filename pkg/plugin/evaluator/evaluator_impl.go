@@ -15,6 +15,7 @@ type EvaluatorImplOption struct {
 
 type EvaluatorImpl struct {
 	opt    *EvaluatorImplOption
+	info   esdk.Data
 	cfg    esdk.Data
 	logger log.FieldLogger
 }
@@ -28,7 +29,7 @@ func (e *EvaluatorImpl) get_logger() log.FieldLogger {
 }
 
 func (e *EvaluatorImpl) Id() string {
-	return e.cfg.Get("id").(string)
+	return e.info.Get("id").(string)
 }
 
 func (e *EvaluatorImpl) Eval(ctx context.Context, dat esdk.Data) error {
@@ -54,18 +55,18 @@ func (e *EvaluatorImpl) Eval(ctx context.Context, dat esdk.Data) error {
 		return err
 	}
 
-	logger.Debugf("eval")
-
 	return nil
 }
 
 func NewEvaluatorImpl(args ...interface{}) (*EvaluatorImpl, error) {
 	var logger log.FieldLogger
 	var config map[string]interface{}
+	var info map[string]interface{}
 	opt := &EvaluatorImplOption{}
 
 	if err := opt_helper.Setopt(map[string]func(string, interface{}) error{
 		"logger":   opt_helper.ToLogger(&logger),
+		"info":     opt_helper.ToStringMap(&info),
 		"operator": opt_helper.ToStringMap(&opt.Operator),
 		"config":   opt_helper.ToStringMap(&config),
 	})(args...); err != nil {
@@ -77,8 +78,14 @@ func NewEvaluatorImpl(args ...interface{}) (*EvaluatorImpl, error) {
 		return nil, err
 	}
 
+	inf, err := esdk.DataFromMap(info)
+	if err != nil {
+		return nil, err
+	}
+
 	evltr := &EvaluatorImpl{
 		opt:    opt,
+		info:   inf,
 		cfg:    cfg,
 		logger: logger,
 	}

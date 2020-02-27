@@ -34,7 +34,7 @@ require (
 	github.com/xdg/stringprep v1.0.0 // indirect
 	github.com/yuin/gopher-lua v0.0.0-20191220021717-ab39c6098bdb
 	go.mongodb.org/mongo-driver v1.1.0
-	go.uber.org/dig v1.7.0 // indirect
+	go.uber.org/dig v1.7.0
 	go.uber.org/fx v1.9.0
 	go.uber.org/goleak v0.10.0 // indirect
 	golang.org/x/crypto v0.0.0-20191205180655-e7c4368fe9dd

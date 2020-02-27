@@ -3,6 +3,8 @@ package metathings_evaluatord_sdk
 import (
 	"encoding/json"
 	"sync"
+
+	map_helper "github.com/nayotta/metathings/pkg/common/map"
 )
 
 type Data interface {
@@ -54,11 +56,8 @@ func (d *data) Iter() map[string]interface{} {
 
 func (d *data) Get(key string) interface{} {
 	d.ensure_raw()
-	val, ok := d.raw[key]
-	if !ok {
-		return nil
-	}
-	return val
+
+	return map_helper.Seeker(d.raw).Find(key)
 }
 
 func (d *data) With(key string, val interface{}) Data {

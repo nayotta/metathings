@@ -19,6 +19,7 @@ import (
 
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
 	const_helper "github.com/nayotta/metathings/pkg/common/constant"
+	constant_helper "github.com/nayotta/metathings/pkg/common/constant"
 	context_helper "github.com/nayotta/metathings/pkg/common/context"
 	id_helper "github.com/nayotta/metathings/pkg/common/id"
 	log_helper "github.com/nayotta/metathings/pkg/common/log"
@@ -44,7 +45,7 @@ func new_kernel_config_viper_form_text(text string) (*viper.Viper, error) {
 	v := viper.New()
 
 	v.AutomaticEnv()
-	v.SetEnvPrefix(METATHINGS_COMPONENT_PREFIX)
+	v.SetEnvPrefix(constant_helper.PREFIX_METATHINGS_COMPONENT)
 	v.SetEnvKeyReplacer(strings.NewReplacer("-", "_"))
 	v.BindEnv("stage")
 

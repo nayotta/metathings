@@ -1,4 +1,4 @@
-package main
+package http_status
 
 import (
 	"encoding/json"
