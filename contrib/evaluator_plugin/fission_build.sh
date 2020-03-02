@@ -22,28 +22,14 @@ fi
 
 cd ${srcDir}
 
-if [ ! -z ${GOLANG_VERSION} ] && version_ge ${GOLANG_VERSION} "1.12"; then
-    if [ -f "go.mod" ]; then
-        go mod download
-    else
-        # still need to do this; otherwise, go will complain "cannot find main module".
-        go mod init
-    fi
-else # go version lower than go 1.12
-    if [ -f "go.mod" ]; then
-        echo "Please update fission/go-builder and fission/go-env image to the latest version to support go module"
-        exit 1
-    fi
-fi
-
 source config.rc
 
-LDFLAGS="-ldflags=\"-X main.Config=/configs/${PLUGIN_NAMESPACE}/evaluator-plugin-config/evaluator-plugin.yaml\""
+LDFLAGS="-X main.Config=/configs/${PLUGIN_NAMESPACE}/evaluator-plugin-config/evaluator-plugin.yaml"
 
 # use vendor mode if the vendor dir exists when go version is greater
 # than 1.12 (the version that fission started to support go module).
 if  [ -d "vendor" ] && [ ! -z ${GOLANG_VERSION} ] && version_ge ${GOLANG_VERSION} "1.12"; then
-  go build -mod=vendor -buildmode=plugin ${LDFLAGS} -i -o ${DEPLOY_PKG} .
+  go build -mod=vendor -buildmode=plugin -ldflags="${LDFLAGS}" -o ${DEPLOY_PKG} .
 else
-  go build -buildmode=plugin ${LDFLAGS} -i -o ${DEPLOY_PKG} .
+  go build -buildmode=plugin -ldflags="${LDFLAGS}" -o ${DEPLOY_PKG} .
 fi
