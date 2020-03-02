@@ -1,4 +1,4 @@
-name: CompileBinaryAndUploadAsset
+name: build
 on:
   release:
     types: [created]
