@@ -1,4 +1,4 @@
-name: Compile Binary and Upload Asset
+name: CompileBinaryAndUploadAsset
 on:
   release:
     types: [created]
@@ -11,26 +11,26 @@ jobs:
         goos: ["linux", "darwin"]
         goarch: ["amd64"]
     steps:
-      - uses: actions/checkout@master
-      - uses: actions/setup-go@v1
-        with:
-          go-version: "1.12"
-      - name: Compile Metathingsd Binary
-        env:
-          GOOS: ${{ matrix.goos }}
-          GOARCH: ${{ matrix.goarch }}
-          CGO_ENABLED: 0
-        run: |
-          go build -o metathingsd cmd/metathingsd/main.go
-          tar zcvf metathingsd.tar.gz metathingsd
-      - name: Upload Metathingsd Asset
-        uses: PeerXu/upload-asset@v1
-        with:
-          file: metathingsd.tar.gz
-          os: ${{ matrix.goos }}
-          arch: ${{ matrix.goarch }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - uses: actions/checkout@master
+    - uses: actions/setup-go@v1
+      with:
+        go-version: "1.12"
+    - name: Compile Metathingsd Binary
+      env:
+        GOOS: ${{ matrix.goos }}
+        GOARCH: ${{ matrix.goarch }}
+        CGO_ENABLED: 0
+      run: |
+        go build -o metathingsd cmd/metathingsd/main.go
+        tar zcvf metathingsd.tar.gz metathingsd
+    - name: Upload Metathingsd Asset
+      uses: PeerXu/upload-asset@v1
+      with:
+        file: metathingsd.tar.gz
+        os: ${{ matrix.goos }}
+        arch: ${{ matrix.goarch }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   compile-metathings-and-upload-asset:
     runs-on: ubuntu-latest
     strategy:
@@ -43,23 +43,44 @@ jobs:
         - goos: darwin
           goarch: arm64
     steps:
-      - uses: actions/checkout@master
-      - uses: actions/setup-go@v1
-        with:
-          go-version: "1.12"
-      - name: Compile Metathings Binary
-        env:
-          GOOS: ${{ matrix.goos }}
-          GOARCH: ${{ matrix.goarch }}
-          CGO_ENABLED: 0
-        run: |
-          go build -o metathings cmd/metathings/main.go
-          tar zcvf metathings.tar.gz metathings
-      - name: Upload Metathings Asset
-        uses: PeerXu/upload-asset@v1
-        with:
-          file: metathings.tar.gz
-          os: ${{ matrix.goos }}
-          arch: ${{ matrix.goarch }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - uses: actions/checkout@master
+    - uses: actions/setup-go@v1
+      with:
+        go-version: "1.12"
+    - name: Compile Metathings Binary
+      env:
+        GOOS: ${{ matrix.goos }}
+        GOARCH: ${{ matrix.goarch }}
+        CGO_ENABLED: 0
+      run: |
+        go build -o metathings cmd/metathings/main.go
+        tar zcvf metathings.tar.gz metathings
+    - name: Upload Metathings Asset
+      uses: PeerXu/upload-asset@v1
+      with:
+        file: metathings.tar.gz
+        os: ${{ matrix.goos }}
+        arch: ${{ matrix.goarch }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  pack-evaluator-plugin-and-upload-asset:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - uses: actions/setup-go@v1
+      with:
+        go-version: "1.12"
+    - name: Install Zip
+      run: |
+        sudo apt install -y zip
+    - name: Pack Evaluator Plugin Package
+      env:
+        GO111MODULE: "on"
+      run: |
+        contrib/evaluator_plugin/pack_fission_package.sh
+    - name: Upload Evaluator Plugin Package Asset
+      uses: PeerXu/upload-asset@v1
+      with:
+        file: contrib/evaluator_plugin/evaluator_plugin.zip
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

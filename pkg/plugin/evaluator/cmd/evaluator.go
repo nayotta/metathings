@@ -1,7 +1,6 @@
 package metathings_plugin_evaluator_cmd
 
 import (
-	"os"
 	"strings"
 
 	"github.com/spf13/viper"
@@ -23,22 +22,23 @@ func NewEvaluatorPluginOption() *EvaluatorPluginOption {
 	}
 }
 
-func LoadEvaluatorPluginOptionFromEnv() (*EvaluatorPluginOption, error) {
-	viper.AutomaticEnv()
-	viper.SetEnvPrefix(constant_helper.PREFIX_METATHINGS_PLUGIN)
-	viper.SetEnvKeyReplacer(strings.NewReplacer("-", "_"))
-	viper.BindEnv("stage")
+func LoadEvaluatorPluginOption(path string) func() (*EvaluatorPluginOption, error) {
+	return func() (*EvaluatorPluginOption, error) {
+		viper.AutomaticEnv()
+		viper.SetEnvPrefix(constant_helper.PREFIX_METATHINGS_PLUGIN)
+		viper.SetEnvKeyReplacer(strings.NewReplacer("-", "_"))
+		viper.BindEnv("stage")
 
-	cfg := os.Getenv("MTP_CONFIG")
-	viper.SetConfigFile(cfg)
-	if err := viper.ReadInConfig(); err != nil {
-		return nil, err
+		viper.SetConfigFile(path)
+		if err := viper.ReadInConfig(); err != nil {
+			return nil, err
+		}
+
+		opt := NewEvaluatorPluginOption()
+		cmd_helper.UnmarshalConfig(&opt)
+
+		return opt, nil
 	}
-
-	opt := NewEvaluatorPluginOption()
-	cmd_helper.UnmarshalConfig(&opt)
-
-	return opt, nil
 }
 
 func GetEvaluatorPluginOptions(opt *EvaluatorPluginOption) (
@@ -57,11 +57,11 @@ func NewEvaluatorPluginServiceOption(o *EvaluatorPluginOption) (*service.Evaluat
 	return &service.EvaluatorPluginServiceOption{}, nil
 }
 
-func NewEvaluatorPluginServiceFromEnv() (*service.EvaluatorPluginService, error) {
+func NewEvaluatorPluginService(cfg string) (*service.EvaluatorPluginService, error) {
 	var srv *service.EvaluatorPluginService
 
 	c := dig.New()
-	c.Provide(LoadEvaluatorPluginOptionFromEnv)
+	c.Provide(LoadEvaluatorPluginOption(cfg))
 	c.Provide(GetEvaluatorPluginOptions)
 	c.Provide(cmd_contrib.NewLogger("evaluator-plugin"))
 	c.Provide(cmd_contrib.NewTokener)

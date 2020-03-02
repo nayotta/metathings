@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
 
 	"github.com/spf13/pflag"
 
@@ -24,9 +23,7 @@ func main() {
 
 	pflag.Parse()
 
-	os.Setenv("MTP_CONFIG", config)
-
-	srv, err := evltr_plg_cmd.NewEvaluatorPluginServiceFromEnv()
+	srv, err := evltr_plg_cmd.NewEvaluatorPluginService(config)
 	if err != nil {
 		panic(err)
 	}
