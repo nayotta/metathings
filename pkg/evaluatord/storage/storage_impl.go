@@ -138,7 +138,7 @@ func (stor *StorageImpl) list_evaluators_by_source(db *gorm.DB, src *Resource) (
 	var esms_t []*EvaluatorSourceMapping
 	var err error
 
-	if err = db.Select("evaluator_id").Find(&esms_t, src).Error; err != nil {
+	if err = db.Select("evaluator_id").Find(&esms_t, "source_id = ? and source_type = ?", src.Id, src.Type).Error; err != nil {
 		return nil, err
 	}
 

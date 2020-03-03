@@ -158,6 +158,32 @@ func (s *StorageImplTestSuite) TestRemoveSourcesFromEvaluator() {
 	s.Len(evltr.Sources, 0)
 }
 
+func (s *StorageImplTestSuite) TestListEvaluatorsBySource() {
+	evltrs, err := s.stor.ListEvaluatorsBySource(s.ctx, &Resource{
+		Id:   &test_source_id,
+		Type: &test_source_type,
+	})
+
+	s.Nil(err)
+	s.Len(evltrs, 1)
+
+	err = s.stor.RemoveSourcesFromEvaluator(s.ctx, test_evaluator_id, []*Resource{
+		&Resource{
+			Id:   &test_source_id,
+			Type: &test_source_type,
+		},
+	})
+	s.Nil(err)
+
+	evltrs, err = s.stor.ListEvaluatorsBySource(s.ctx, &Resource{
+		Id:   &test_source_id,
+		Type: &test_source_type,
+	})
+
+	s.Nil(err)
+	s.Len(evltrs, 0)
+}
+
 func TestStorageImplTestSuite(t *testing.T) {
 	suite.Run(t, new(StorageImplTestSuite))
 }
