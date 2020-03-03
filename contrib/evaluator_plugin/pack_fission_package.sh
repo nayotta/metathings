@@ -1,7 +1,9 @@
 #! /bin/bash
 
-GO111MODULE=on go mod vendor
+set -eux
+
 cp -r contrib/evaluator_plugin build
-mv vendor build
 cd build
+go mod tidy
+go mod vendor
 zip -r evaluator_plugin.zip .
