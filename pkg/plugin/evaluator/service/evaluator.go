@@ -112,6 +112,11 @@ func (srv *EvaluatorPluginService) HandleResponse(w http.ResponseWriter, r *http
 func (srv *EvaluatorPluginService) decode_eval_request(r *http.Request) (esdk.Data, error) {
 	dat_codec := r.Header.Get(esdk.HTTP_HEADER_DATA_CODEC)
 
+	// TODO(Peer): initial default codec
+	if dat_codec == "" {
+		dat_codec = "json"
+	}
+
 	dec, err := esdk.GetDataDecoder(dat_codec)
 	if err != nil {
 		return nil, err
