@@ -1,6 +1,7 @@
 package metathings_plugin_evaluator_service
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"io/ioutil"
@@ -20,6 +21,9 @@ import (
 )
 
 type EvaluatorPluginServiceOption struct {
+	Evaluator struct {
+		Endpoint string
+	}
 }
 
 type EvaluatorPluginService struct {
@@ -223,7 +227,106 @@ func (srv *EvaluatorPluginService) Eval(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
+	srv.HandleResponse(w, r, hst.NewHttpStatus(http.StatusNoContent, nil))
 	logger.Debugf("eval")
+}
+
+func (srv *EvaluatorPluginService) list_evaluators_by_source(ctx context.Context, cli evltr_pb.EvaluatordServiceClient, src_id, src_typ string) ([]*evltr_pb.Evaluator, error) {
+	new_ctx := context_helper.WithToken(ctx, srv.tknr.GetToken())
+	lebs_req := &evltr_pb.ListEvaluatorsBySourceRequest{
+		Source: &evltr_pb.OpResource{
+			Id:   &wrappers.StringValue{Value: src_id},
+			Type: &wrappers.StringValue{Value: src_typ},
+		},
+	}
+
+	lebs_res, err := cli.ListEvaluatorsBySource(new_ctx, lebs_req)
+	if err != nil {
+		return nil, err
+	}
+
+	return lebs_res.GetEvaluators(), nil
+}
+
+func (srv *EvaluatorPluginService) ReceiveData(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	src_id := r.Header.Get(esdk.HTTP_HEADER_SOURCE_ID)
+	src_typ := r.Header.Get(esdk.HTTP_HEADER_SOURCE_TYPE)
+
+	logger := srv.get_logger().WithFields(log.Fields{
+		"#method":     "receive_data",
+		"source":      src_id,
+		"source_type": src_typ,
+	})
+
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		logger.WithError(err).Errorf("failed to read request body")
+		srv.HandleResponse(w, r, hst.WrapErrorHttpStatus(http.StatusBadRequest, err))
+		return
+	}
+
+	// TODO(Peer): client pool
+	// TODO(Peer): cache evaluator info
+	evltr_cli, cfn, err := srv.cli_fty.NewEvaluatordServiceClient()
+	if err != nil {
+		logger.WithError(err).Errorf("failed to new evaluatord service client")
+		srv.HandleResponse(w, r, hst.WrapErrorHttpStatus(http.StatusInternalServerError, err))
+		return
+	}
+	defer cfn()
+
+	evltrs, err := srv.list_evaluators_by_source(ctx, evltr_cli, src_id, src_typ)
+	if err != nil {
+		logger.WithError(err).Errorf("failed to list evaluators by source from evaluatord")
+		srv.HandleResponse(w, r, hst.WrapErrorHttpStatus(http.StatusInternalServerError, err))
+		return
+	}
+
+	for _, evltr := range evltrs {
+		// TODO(Peer): tls support
+		req, err := http.NewRequest("POST", srv.opt.Evaluator.Endpoint, bytes.NewReader(body))
+		if err != nil {
+			logger.WithError(err).Errorf("failed to new http request")
+			srv.HandleResponse(w, r, hst.WrapErrorHttpStatus(http.StatusInternalServerError, err))
+			return
+		}
+
+		req.Header.Set("Content-Type", r.Header.Get("Content-Type"))
+		req.Header.Set("Authorization", r.Header.Get("Authorization"))
+		req.Header.Set("X-Evaluator-ID", evltr.GetId())
+		req.Header.Set(esdk.HTTP_HEADER_SOURCE_ID, r.Header.Get(esdk.HTTP_HEADER_SOURCE_ID))
+		req.Header.Set(esdk.HTTP_HEADER_SOURCE_TYPE, r.Header.Get(esdk.HTTP_HEADER_SOURCE_TYPE))
+		req = req.WithContext(ctx)
+
+		res, err := http.DefaultClient.Do(req)
+		if err != nil {
+			logger.WithError(err).Errorf("failed to send http request")
+			srv.HandleResponse(w, r, hst.WrapErrorHttpStatus(http.StatusInternalServerError, err))
+			return
+		}
+
+		if res.StatusCode >= 400 {
+			buf, err := ioutil.ReadAll(res.Body)
+			if err != nil {
+				logger.WithError(err).Errorf("failed to read response body")
+				srv.HandleResponse(w, r, hst.WrapErrorHttpStatus(http.StatusInternalServerError, err))
+				return
+			}
+
+			var res_body struct {
+				Message string
+			}
+			json.Unmarshal(buf, &res_body)
+			logger.WithField("error", res_body.Message).Errorf("failed to eval in evaluator plugin")
+			srv.HandleResponse(w, r, hst.NewErrorHttpStatus(res.StatusCode, res_body.Message))
+			return
+		}
+	}
+
+	srv.HandleResponse(w, r, hst.NewHttpStatus(http.StatusNoContent, nil))
+	logger.Debugf("receive data")
 }
 
 func NewEvaluatorPluginService(

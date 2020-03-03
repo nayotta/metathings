@@ -14,6 +14,9 @@ import (
 
 type EvaluatorPluginOption struct {
 	cmd_contrib.ServiceBaseOption `mapstructure:",squash"`
+	Evaluator                     struct {
+		Endpoint string
+	}
 }
 
 func NewEvaluatorPluginOption() *EvaluatorPluginOption {
@@ -54,7 +57,11 @@ func GetEvaluatorPluginOptions(opt *EvaluatorPluginOption) (
 }
 
 func NewEvaluatorPluginServiceOption(o *EvaluatorPluginOption) (*service.EvaluatorPluginServiceOption, error) {
-	return &service.EvaluatorPluginServiceOption{}, nil
+	opt := &service.EvaluatorPluginServiceOption{}
+
+	opt.Evaluator.Endpoint = o.Evaluator.Endpoint
+
+	return opt, nil
 }
 
 func NewEvaluatorPluginService(cfg string) (*service.EvaluatorPluginService, error) {

@@ -45,7 +45,12 @@ func (hdl *HttpDataLauncher) Launch(ctx context.Context, src Resource, dat Data)
 		return err
 	}
 
+	// TODO(Peer): tls support
 	req, err := http.NewRequest("POST", hdl.opt.Endpoint, bytes.NewReader(body))
+	if err != nil {
+		return err
+	}
+
 	req.Header.Set("Content-Type", hdl.http_content_type())
 	req.Header.Set("Authorization", "Bearer "+ExtractToken(ctx))
 	req.Header.Set(HTTP_HEADER_SOURCE_ID, src.GetId())

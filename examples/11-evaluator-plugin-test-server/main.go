@@ -28,6 +28,7 @@ func main() {
 		panic(err)
 	}
 
-	http.HandleFunc("/", srv.Eval)
+	http.HandleFunc("/eval", srv.Eval)
+	http.HandleFunc("/receive_data", srv.ReceiveData)
 	log.Fatal(http.ListenAndServe(fmt.Sprintf("%v:%v", host, port), nil))
 }
