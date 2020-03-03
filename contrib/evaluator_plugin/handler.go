@@ -17,6 +17,10 @@ func EvalHandler(w http.ResponseWriter, r *http.Request) {
 	srv.Eval(w, r)
 }
 
+func ReceiveDataHandler(w http.ResponseWriter, r *http.Request) {
+	srv.ReceiveData(w, r)
+}
+
 func init() {
 	var err error
 	srv, err = evltr_plg_cmd.NewEvaluatorPluginService(Config)
