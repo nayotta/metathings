@@ -8,10 +8,7 @@ import (
 	"github.com/spf13/viper"
 
 	cmd_contrib "github.com/nayotta/metathings/cmd/contrib"
-)
-
-const (
-	METATHINGSD_PREFIX = "mtd"
+	const_helper "github.com/nayotta/metathings/pkg/common/constant"
 )
 
 var (
@@ -40,7 +37,7 @@ func init() {
 
 	cobra.OnInitialize(initConfig)
 	viper.AutomaticEnv()
-	viper.SetEnvPrefix(METATHINGSD_PREFIX)
+	viper.SetEnvPrefix(const_helper.PREFIX_METATHINGSD)
 	viper.SetEnvKeyReplacer(strings.NewReplacer("-", "_"))
 	viper.BindEnv("stage")
 

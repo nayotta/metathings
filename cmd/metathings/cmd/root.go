@@ -13,10 +13,6 @@ import (
 	constant_helper "github.com/nayotta/metathings/pkg/common/constant"
 )
 
-const (
-	METATHINGS_PREFIX = "mt"
-)
-
 var (
 	base_opt         *cmd_contrib.BaseOption
 	init_config_once sync.Once
@@ -47,7 +43,7 @@ func init() {
 
 	cobra.OnInitialize(initConfig)
 	viper.AutomaticEnv()
-	viper.SetEnvPrefix(METATHINGS_PREFIX)
+	viper.SetEnvPrefix(constant_helper.PREFIX_METATHINGS)
 	viper.SetEnvKeyReplacer(strings.NewReplacer("-", "_"))
 	viper.BindEnv("stage")
 

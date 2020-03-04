@@ -20,6 +20,7 @@ import (
 	storage "github.com/nayotta/metathings/pkg/deviced/storage"
 	authorizer "github.com/nayotta/metathings/pkg/identityd2/authorizer"
 	pb "github.com/nayotta/metathings/pkg/proto/deviced"
+	evaluatord_sdk "github.com/nayotta/metathings/sdk/evaluatord"
 )
 
 type DevicedOption struct {
@@ -30,8 +31,9 @@ type DevicedOption struct {
 		Storage map[string]interface{}
 		Bridge  map[string]interface{}
 	}
-	Flow    map[string]interface{}
-	FlowSet map[string]interface{}
+	Flow         map[string]interface{}
+	FlowSet      map[string]interface{}
+	DataLauncher map[string]interface{}
 }
 
 func NewDevicedOption() *DevicedOption {
@@ -103,6 +105,15 @@ func init_flow_set(opt *DevicedOption) {
 	opt.FlowSet = mfs
 }
 
+func init_data_launcher(opt *DevicedOption) {
+	mdl := map[string]interface{}{}
+	vdl := cmd_helper.GetFromStage().Sub("data_launcher")
+	for _, key := range vdl.AllKeys() {
+		mdl[key] = vdl.Get(key)
+	}
+	opt.DataLauncher = mdl
+}
+
 var (
 	devicedCmd = &cobra.Command{
 		Use:   "deviced",
@@ -122,6 +133,7 @@ var (
 			init_connection_center(opt_t)
 			init_flow(opt_t)
 			init_flow_set(opt_t)
+			init_data_launcher(opt_t)
 
 			deviced_opt = opt_t
 			deviced_opt.SetServiceName("deviced")
@@ -153,6 +165,26 @@ func GetDevicedOptions() (
 		deviced_opt
 }
 
+type NewDevicedDataLauncherParams struct {
+	fx.In
+
+	Option *DevicedOption
+	Logger log.FieldLogger
+	Tracer opentracing.Tracer `name:"opentracing_tracer" optional:"true"`
+}
+
+func NewDevicedDataLauncher(p NewDevicedDataLauncherParams) (evaluatord_sdk.DataLauncher, error) {
+	var name string
+	var args []interface{}
+	var err error
+
+	if name, args, err = cfg_helper.ParseConfigOption("name", p.Option.DataLauncher, "logger", p.Logger); err != nil {
+		return nil, err
+	}
+
+	return evaluatord_sdk.NewDataLauncher(name, args...)
+}
+
 type NewDevicedStorageParams struct {
 	fx.In
 
@@ -165,33 +197,6 @@ func NewDevicedStorage(p NewDevicedStorageParams) (storage.Storage, error) {
 	return storage.NewStorage(p.Option.GetDriver(), p.Option.GetUri(), "logger", p.Logger, "tracer", p.Tracer)
 }
 
-func parse_connection_center_option(x map[string]interface{}) (string, []interface{}, error) {
-	var key string
-	var val interface{}
-	var name string
-	var ok bool
-
-	y := []interface{}{}
-
-	if val, ok = x["name"]; !ok {
-		return "", nil, ErrInvalidArgument
-	}
-
-	if name, ok = val.(string); !ok {
-		return "", nil, ErrInvalidArgument
-	}
-
-	for key, val = range x {
-		if key == "name" {
-			continue
-		}
-
-		y = append(y, key, val)
-	}
-
-	return name, y, nil
-}
-
 func NewConnectionCenter(opt *DevicedOption, sess_stor session_storage.SessionStorage, logger log.FieldLogger) (connection.ConnectionCenter, error) {
 	var name string
 	var args []interface{}
@@ -200,19 +205,17 @@ func NewConnectionCenter(opt *DevicedOption, sess_stor session_storage.SessionSt
 	var conn_brfty connection.BridgeFactory
 	var cc connection.ConnectionCenter
 
-	if name, args, err = parse_connection_center_option(opt.ConnectionCenter.Storage); err != nil {
+	if name, args, err = cfg_helper.ParseConfigOption("name", opt.ConnectionCenter.Storage, "logger", logger); err != nil {
 		return nil, err
 	}
-	args = append(args, "logger", logger)
 
 	if conn_stor, err = connection.NewStorage(name, args...); err != nil {
 		return nil, err
 	}
 
-	if name, args, err = parse_connection_center_option(opt.ConnectionCenter.Bridge); err != nil {
+	if name, args, err = cfg_helper.ParseConfigOption("name", opt.ConnectionCenter.Bridge, "logger", logger); err != nil {
 		return nil, err
 	}
-	args = append(args, "logger", logger)
 
 	if conn_brfty, err = connection.NewBridgeFactory(name, args...); err != nil {
 		return nil, err
@@ -314,6 +317,7 @@ func runDeviced() error {
 			cmd_contrib.NewGrpcServer,
 			cmd_contrib.NewClientFactory,
 			cmd_contrib.NewNoExpireTokener,
+			NewDevicedDataLauncher,
 			token_helper.NewTokenValidator,
 			NewSessionStorage,
 			NewSimpleStorage,

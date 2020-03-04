@@ -23,6 +23,7 @@ import (
 	state_pb "github.com/nayotta/metathings/pkg/proto/constant/state"
 	pb "github.com/nayotta/metathings/pkg/proto/deviced"
 	identityd_pb "github.com/nayotta/metathings/pkg/proto/identityd2"
+	evaluatord_sdk "github.com/nayotta/metathings/sdk/evaluatord"
 )
 
 type MetathingsDevicedServiceOption struct {
@@ -52,6 +53,7 @@ type MetathingsDevicedService struct {
 	cc              connection.ConnectionCenter
 	flw_fty         flow.FlowFactory
 	flwst_fty       flow.FlowSetFactory
+	data_launcher   evaluatord_sdk.DataLauncher
 }
 
 func (self *MetathingsDevicedService) get_device_by_context(ctx context.Context) (*storage.Device, error) {
@@ -183,6 +185,7 @@ func NewMetathingsDevicedService(
 	cli_fty *client_helper.ClientFactory,
 	flw_fty flow.FlowFactory,
 	flwst_fty flow.FlowSetFactory,
+	data_launcher evaluatord_sdk.DataLauncher,
 ) (pb.DevicedServiceServer, error) {
 	srv := &MetathingsDevicedService{
 		opt:             opt,
@@ -198,6 +201,7 @@ func NewMetathingsDevicedService(
 		cli_fty:         cli_fty,
 		flw_fty:         flw_fty,
 		flwst_fty:       flwst_fty,
+		data_launcher:   data_launcher,
 	}
 	srv.ServiceAuthFuncOverride = afo_helper.NewAuthFuncOverrider(tkvdr, srv, logger)
 
