@@ -4,6 +4,8 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/suite"
+
+	esdk "github.com/nayotta/metathings/sdk/evaluatord"
 )
 
 type LuaOperatorTestSuite struct {
@@ -16,10 +18,10 @@ func (s *LuaOperatorTestSuite) SetupTest() {
 	code := `
 local a, b, c, d, e, ret
 
-a = metathings.data.a
-b = metathings.data.b
-c = metathings.data["c"]["d"]
-e = metathings.data["e"][1]
+a = metathings:data("a")
+b = metathings:data("b")
+c = metathings:data("c.d")
+e = metathings:data("e.[0]")
 ret = a + b + c + e
 
 return {
@@ -43,8 +45,8 @@ func (s *LuaOperatorTestSuite) TearDownTest() {
 }
 
 func (s *LuaOperatorTestSuite) TestRun() {
-	cfg, _ := DataFromMap(nil)
-	dat, _ := DataFromMap(map[string]interface{}{
+	cfg, _ := esdk.DataFromMap(nil)
+	dat, _ := esdk.DataFromMap(map[string]interface{}{
 		"a": 1,
 		"b": 2,
 		"c": map[string]interface{}{
@@ -53,7 +55,7 @@ func (s *LuaOperatorTestSuite) TestRun() {
 		"e": []interface{}{4},
 	})
 
-	dat, err := s.op.Run(dat, cfg)
+	dat, err := s.op.Run(cfg, dat)
 	s.Nil(err)
 	result_i := dat.Get("result")
 	s.NotNil(result_i)
