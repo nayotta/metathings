@@ -1,9 +1,11 @@
 package metathings_plugin_evaluator
 
 import (
+	log "github.com/sirupsen/logrus"
 	lua "github.com/yuin/gopher-lua"
 
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
+	dssdk "github.com/nayotta/metathings/sdk/data_storage"
 	esdk "github.com/nayotta/metathings/sdk/evaluatord"
 )
 
@@ -12,17 +14,23 @@ type LuaOperatorOption struct {
 }
 
 type LuaOperator struct {
-	opt *LuaOperatorOption
-	env *lua.LState
+	dat_stor dssdk.DataStorage
+	opt      *LuaOperatorOption
+	env      *lua.LState
 }
 
-func (lo *LuaOperator) Run(cfg, dat esdk.Data) (esdk.Data, error) {
-	registerLuaMetathingsCore(lo.env)
+func (lo *LuaOperator) Run(ctx, dat esdk.Data) (esdk.Data, error) {
+	core, err := newLuaMetathingsCore(
+		"context", ctx,
+		"data", dat,
+		"data_storage", lo.dat_stor,
+	)
+	if err != nil {
+		return nil, err
+	}
+	luaInitOnceObject(lo.env, "metathings", core)
 
-	mt_ud := newLuaMetathingsCore(lo.env, cfg, dat)
-	lo.env.SetGlobal("metathings", mt_ud)
-
-	err := lo.env.DoString(lo.opt.Code)
+	err = lo.env.DoString(lo.opt.Code)
 	if err != nil {
 		return nil, err
 	}
@@ -49,17 +57,23 @@ func (lo *LuaOperator) Close() error {
 }
 
 func NewLuaOperator(args ...interface{}) (Operator, error) {
+	var logger log.FieldLogger
+	var ds dssdk.DataStorage
+
 	opt := &LuaOperatorOption{}
 
 	if err := opt_helper.Setopt(map[string]func(string, interface{}) error{
-		"code": opt_helper.ToString(&opt.Code),
+		"code":         opt_helper.ToString(&opt.Code),
+		"logger":       opt_helper.ToLogger(&logger),
+		"data_storage": dssdk.ToDataStorage(&ds),
 	}, opt_helper.SetSkip(true))(args...); err != nil {
 		return nil, err
 	}
 
 	op := &LuaOperator{
-		opt: opt,
-		env: lua.NewState(),
+		dat_stor: ds,
+		opt:      opt,
+		env:      lua.NewState(),
 	}
 
 	return op, nil

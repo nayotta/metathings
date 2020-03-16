@@ -7,7 +7,7 @@ import (
 )
 
 type Operator interface {
-	Run(config, dat esdk.Data) (esdk.Data, error)
+	Run(ctx, dat esdk.Data) (esdk.Data, error)
 	Close() error
 }
 

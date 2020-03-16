@@ -17,6 +17,7 @@ import (
 	token_helper "github.com/nayotta/metathings/pkg/common/token"
 	evltr_plg "github.com/nayotta/metathings/pkg/plugin/evaluator"
 	evltr_pb "github.com/nayotta/metathings/pkg/proto/evaluatord"
+	dssdk "github.com/nayotta/metathings/sdk/data_storage"
 	esdk "github.com/nayotta/metathings/sdk/evaluatord"
 )
 
@@ -27,10 +28,11 @@ type EvaluatorPluginServiceOption struct {
 }
 
 type EvaluatorPluginService struct {
-	opt     *EvaluatorPluginServiceOption
-	logger  log.FieldLogger
-	tknr    token_helper.Tokener
-	cli_fty *client_helper.ClientFactory
+	opt      *EvaluatorPluginServiceOption
+	logger   log.FieldLogger
+	tknr     token_helper.Tokener
+	dat_stor dssdk.DataStorage
+	cli_fty  *client_helper.ClientFactory
 }
 
 func (srv *EvaluatorPluginService) get_logger() log.FieldLogger {
@@ -338,12 +340,14 @@ func NewEvaluatorPluginService(
 	opt *EvaluatorPluginServiceOption,
 	logger log.FieldLogger,
 	tknr token_helper.Tokener,
+	dat_stor dssdk.DataStorage,
 	cli_fty *client_helper.ClientFactory,
 ) (*EvaluatorPluginService, error) {
 	return &EvaluatorPluginService{
-		opt:     opt,
-		logger:  logger,
-		tknr:    tknr,
-		cli_fty: cli_fty,
+		opt:      opt,
+		logger:   logger,
+		tknr:     tknr,
+		dat_stor: dat_stor,
+		cli_fty:  cli_fty,
 	}, nil
 }

@@ -349,6 +349,17 @@ func ToStringMap(v *map[string]interface{}) func(string, interface{}) error {
 	}
 }
 
+func ToStringMapString(v *map[string]string) func(string, interface{}) error {
+	return func(key string, val interface{}) error {
+		var ok bool
+		*v, ok = val.(map[string]string)
+		if !ok {
+			return InvalidArgument(key)
+		}
+		return nil
+	}
+}
+
 func SetenvIfNotExists(key, val string) {
 	if os.Getenv(key) == "" {
 		os.Setenv(key, val)

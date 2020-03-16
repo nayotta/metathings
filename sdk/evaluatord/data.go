@@ -5,6 +5,7 @@ import (
 	"sync"
 
 	map_helper "github.com/nayotta/metathings/pkg/common/map"
+	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 )
 
 type Data interface {
@@ -67,6 +68,16 @@ func (d *data) With(key string, val interface{}) Data {
 	raw[key] = val
 	out, _ := DataFromMap(raw)
 	return out
+}
+
+func (d *data) Sub(key string) Data {
+	var dat Data
+	if raw, ok := d.Get(key).(map[string]interface{}); !ok {
+		dat, _ = DataFromMap(nil)
+	} else {
+		dat, _ = DataFromMap(raw)
+	}
+	return dat
 }
 
 func DataFromMap(raw map[string]interface{}) (Data, error) {
@@ -149,6 +160,16 @@ func GetDataDecoder(name string) (DataDecoder, error) {
 	}
 
 	return dec, nil
+}
+
+func ToData(d *Data) func(string, interface{}) error {
+	return func(key string, val interface{}) error {
+		var ok bool
+		if *d, ok = val.(Data); !ok {
+			return opt_helper.InvalidArgument(key)
+		}
+		return nil
+	}
 }
 
 func init() {
