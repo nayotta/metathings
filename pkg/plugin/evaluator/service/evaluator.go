@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"time"
 
 	"github.com/golang/protobuf/jsonpb"
 	"github.com/golang/protobuf/ptypes/wrappers"
@@ -152,9 +153,27 @@ func (srv *EvaluatorPluginService) get_evaluator(ctx context.Context, cli evltr_
 	return get_evltr_res.GetEvaluator(), nil
 }
 
+func (srv *EvaluatorPluginService) extract_data_timestamp(ctx context.Context, r *http.Request) context.Context {
+	var ts time.Time
+	var err error
+
+	ts_s := r.Header.Get(esdk.HTTP_HEADER_DATA_TIMESTAMP)
+	if ts_s != "" {
+		ts, err = time.Parse(time.RFC3339, ts_s)
+		if err != nil {
+			ts = time.Now()
+		}
+	} else {
+		ts = time.Now()
+	}
+
+	return context.WithValue(ctx, "evltr-plg-data-timestamp", ts)
+}
+
 func (srv *EvaluatorPluginService) Eval(w http.ResponseWriter, r *http.Request) {
 	// TODO(Peer): wrap opentracing tags
 	ctx := r.Context()
+	ctx = srv.extract_data_timestamp(ctx, r)
 	evltr_id := r.Header.Get("X-Evaluator-ID")
 	src_id := r.Header.Get(esdk.HTTP_HEADER_SOURCE_ID)
 	src_typ := r.Header.Get(esdk.HTTP_HEADER_SOURCE_TYPE)
@@ -220,6 +239,7 @@ func (srv *EvaluatorPluginService) Eval(w http.ResponseWriter, r *http.Request) 
 		"config", evltr_cfg,
 		"operator", op_opt,
 		"logger", srv.get_logger(),
+		"data_storage", srv.dat_stor,
 	)
 	if err != nil {
 		logger.WithError(err).Errorf("failed to new evaluator instance")
@@ -227,6 +247,7 @@ func (srv *EvaluatorPluginService) Eval(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
+	// TODO(Peer): get timestamp from header
 	err = evltr.Eval(ctx, dat)
 	if err != nil {
 		logger.WithError(err).Errorf("failed to eval")
@@ -305,6 +326,7 @@ func (srv *EvaluatorPluginService) ReceiveData(w http.ResponseWriter, r *http.Re
 		req.Header.Set("X-Evaluator-ID", evltr.GetId())
 		req.Header.Set(esdk.HTTP_HEADER_SOURCE_ID, r.Header.Get(esdk.HTTP_HEADER_SOURCE_ID))
 		req.Header.Set(esdk.HTTP_HEADER_SOURCE_TYPE, r.Header.Get(esdk.HTTP_HEADER_SOURCE_TYPE))
+		req.Header.Set(esdk.HTTP_HEADER_DATA_TIMESTAMP, r.Header.Get(esdk.HTTP_HEADER_DATA_TIMESTAMP))
 		req = req.WithContext(ctx)
 
 		res, err := http.DefaultClient.Do(req)

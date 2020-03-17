@@ -14,9 +14,10 @@ import (
 )
 
 const (
-	HTTP_HEADER_SOURCE_ID   = "X-Evaluator-Source-ID"
-	HTTP_HEADER_SOURCE_TYPE = "X-Evaluator-Source-Type"
-	HTTP_HEADER_DATA_CODEC  = "X-Evaluator-Data-Codec"
+	HTTP_HEADER_SOURCE_ID      = "X-Evaluator-Source-ID"
+	HTTP_HEADER_SOURCE_TYPE    = "X-Evaluator-Source-Type"
+	HTTP_HEADER_DATA_CODEC     = "X-Evaluator-Data-Codec"
+	HTTP_HEADER_DATA_TIMESTAMP = "X-Evaluator-Data-Timestamp"
 )
 
 type HttpDataLauncherOption struct {
@@ -51,8 +52,11 @@ func (hdl *HttpDataLauncher) Launch(ctx context.Context, src Resource, dat Data)
 		return err
 	}
 
+	ts, _ := ExtraTimestamp(ctx).MarshalText()
+	// TODO(Peer): add timestamp to header
 	req.Header.Set("Content-Type", hdl.http_content_type())
 	req.Header.Set("Authorization", "Bearer "+ExtractToken(ctx))
+	req.Header.Set(HTTP_HEADER_DATA_TIMESTAMP, string(ts))
 	req.Header.Set(HTTP_HEADER_SOURCE_ID, src.GetId())
 	req.Header.Set(HTTP_HEADER_SOURCE_TYPE, src.GetType())
 	req.Header.Set(HTTP_HEADER_DATA_CODEC, hdl.opt.DataCodec)

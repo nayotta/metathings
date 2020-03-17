@@ -6,6 +6,7 @@ import (
 	"encoding/gob"
 	"strconv"
 	"sync"
+	"time"
 
 	"github.com/spf13/cast"
 	lua "github.com/yuin/gopher-lua"
@@ -104,6 +105,7 @@ func (c *luaMetathingsCore) getData(L *lua.LState) int {
 }
 
 // LUA_FUNCTION: core:context(key#string)
+//   context body lookup github.com/nayotta/metathings/pkg/plugin/evaluator/evaluator_impl.go#L31
 func (c *luaMetathingsCore) getContext(L *lua.LState) int {
 	core := c.check(L)
 	key := L.CheckString(2)
@@ -208,12 +210,30 @@ func (s *luaMetathingsCoreStorage) With(L *lua.LState) int {
 	return 1
 }
 
-// LUA_FUNCTION: storage:write(data#table)
+// LUA_FUNCTION: storage:write(data#table, [option#table])
+//   option:
+//     timestamp: data timestamp
 func (s *luaMetathingsCoreStorage) Write(L *lua.LState) int {
+	ctx := context.TODO()
+
 	dat_tb := L.CheckTable(2)
 	dat := parse_ltable_to_string_map(dat_tb)
 
-	err := s.dat_stor.Write(context.TODO(), s.msr, s.tags, dat)
+	var opt_tb *lua.LTable
+	if L.GetTop() > 2 {
+		opt_tb = L.CheckTable(3)
+	}
+	opt := parse_ltable_to_string_map(opt_tb)
+
+	var ts time.Time
+	if tsi, ok := opt["timestamp"]; ok {
+		ts = time.Unix(cast.ToInt64(tsi), 0)
+	} else {
+		ts = time.Now()
+	}
+	ctx = context.WithValue(ctx, "timestamp", ts)
+
+	err := s.dat_stor.Write(ctx, s.msr, s.tags, dat)
 	if err != nil {
 		L.RaiseError("failed to write data to data storage")
 		return 0
@@ -240,6 +260,8 @@ func parse_interface_to_lvalue(L *lua.LState, x interface{}) lua.LValue {
 		return lua.LBool(x.(bool))
 	case int:
 		return lua.LNumber(x.(int))
+	case int64:
+		return lua.LNumber(x.(int64))
 	case float64:
 		return lua.LNumber(x.(float64))
 	case string:
@@ -269,6 +291,10 @@ func parse_ltable_to_string_map(x *lua.LTable) (y map[string]interface{}) {
 }
 
 func parse_ltable_to_interface(x *lua.LTable) interface{} {
+	if x == nil {
+		return nil
+	}
+
 	var ys []interface{}
 	mys := make(map[string]interface{})
 	var copy_array_to_map_once sync.Once

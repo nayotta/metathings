@@ -2,6 +2,7 @@ package metathings_plugin_evaluator
 
 import (
 	"context"
+	"time"
 
 	log "github.com/sirupsen/logrus"
 
@@ -27,9 +28,23 @@ func (e *EvaluatorImpl) get_config() esdk.Data {
 	return e.cfg
 }
 
-func (e *EvaluatorImpl) get_eval_context() esdk.Data {
+func (e *EvaluatorImpl) extract_data_timestamp(ctx context.Context) int64 {
+	var ts time.Time
+
+	tsi := ctx.Value("evltr-plg-data-timestamp")
+	if tsi == nil {
+		ts = time.Now()
+	} else {
+		ts = tsi.(time.Time)
+	}
+
+	return ts.Unix()
+}
+
+func (e *EvaluatorImpl) get_eval_context(cctx context.Context) esdk.Data {
 	ctx, _ := esdk.DataFromMap(map[string]interface{}{
-		"config": e.cfg.Iter(),
+		"config":    e.cfg.Iter(),
+		"timestamp": e.extract_data_timestamp(cctx),
 	})
 	return ctx
 }
@@ -63,7 +78,7 @@ func (e *EvaluatorImpl) Eval(ctx context.Context, dat esdk.Data) error {
 	defer op.Close()
 
 	// TODO(Peer): handle operator result
-	_, err = op.Run(e.get_eval_context(), dat)
+	_, err = op.Run(e.get_eval_context(ctx), dat)
 	if err != nil {
 		logger.WithError(err).Debugf("failed to run operator")
 		return err
@@ -100,10 +115,11 @@ func NewEvaluatorImpl(args ...interface{}) (*EvaluatorImpl, error) {
 	}
 
 	evltr := &EvaluatorImpl{
-		opt:    opt,
-		info:   inf,
-		cfg:    cfg,
-		logger: logger,
+		opt:      opt,
+		info:     inf,
+		cfg:      cfg,
+		dat_stor: ds,
+		logger:   logger,
 	}
 
 	return evltr, nil

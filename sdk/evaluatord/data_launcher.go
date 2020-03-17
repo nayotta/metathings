@@ -3,6 +3,7 @@ package metathings_evaluatord_sdk
 import (
 	"context"
 	"sync"
+	"time"
 )
 
 type DataLauncher interface {
@@ -37,4 +38,21 @@ func WithToken(ctx context.Context, tkn string) context.Context {
 
 func ExtractToken(ctx context.Context) string {
 	return ctx.Value("data-launcher-token").(string)
+}
+
+func WithTimestamp(ctx context.Context, ts time.Time) context.Context {
+	return context.WithValue(ctx, "data-launcher-timestamp", ts)
+}
+
+func ExtraTimestamp(ctx context.Context) time.Time {
+	var ts time.Time
+
+	tsi := ctx.Value("data-launcher-timestamp")
+	if tsi == nil {
+		ts = time.Now()
+	} else {
+		ts = tsi.(time.Time)
+	}
+
+	return ts
 }

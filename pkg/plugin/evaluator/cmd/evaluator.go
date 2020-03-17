@@ -81,7 +81,7 @@ func NewEvaluatorPluginServiceOption(o *EvaluatorPluginOption) (*service.Evaluat
 
 func NewDataStorage(o *EvaluatorPluginOption, logger log.FieldLogger) (dssdk.DataStorage, error) {
 
-	name, args, err := cfg_helper.ParseConfigOption("name", o.DataStorage)
+	name, args, err := cfg_helper.ParseConfigOption("name", o.DataStorage, "logger", logger)
 	if err != nil {
 		return nil, err
 	}
@@ -104,6 +104,7 @@ func NewEvaluatorPluginService(cfg string) (*service.EvaluatorPluginService, err
 	c.Provide(cmd_contrib.NewTokener)
 	c.Provide(cmd_contrib.NewOpentracing)
 	c.Provide(cmd_contrib.NewClientFactory)
+	c.Provide(NewDataStorage)
 	c.Provide(NewEvaluatorPluginServiceOption)
 	c.Provide(service.NewEvaluatorPluginService)
 	if err := c.Invoke(func(evltr_plg_srv *service.EvaluatorPluginService) {
