@@ -72,7 +72,7 @@ func GetEvaluatorPluginOptions(opt *EvaluatorPluginOption) (
 }
 
 func NewEvaluatorPluginServiceOption(o *EvaluatorPluginOption) (*service.EvaluatorPluginServiceOption, error) {
-	opt := &service.EvaluatorPluginServiceOption{}
+	opt := service.NewEvaluatorPluginServiceOption()
 
 	opt.Evaluator.Endpoint = o.Evaluator.Endpoint
 

@@ -3,14 +3,15 @@ package metathings_plugin_evaluator_service
 import (
 	"bytes"
 	"context"
+	"encoding/base64"
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
-	"time"
 
 	"github.com/golang/protobuf/jsonpb"
 	"github.com/golang/protobuf/ptypes/wrappers"
 	log "github.com/sirupsen/logrus"
+	"github.com/spf13/cast"
 
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
 	context_helper "github.com/nayotta/metathings/pkg/common/context"
@@ -25,6 +26,13 @@ import (
 type EvaluatorPluginServiceOption struct {
 	Evaluator struct {
 		Endpoint string
+	}
+	Codec string
+}
+
+func NewEvaluatorPluginServiceOption() *EvaluatorPluginServiceOption {
+	return &EvaluatorPluginServiceOption{
+		Codec: "json",
 	}
 }
 
@@ -113,17 +121,7 @@ func (srv *EvaluatorPluginService) HandleResponse(w http.ResponseWriter, r *http
 }
 
 func (srv *EvaluatorPluginService) decode_eval_request(r *http.Request) (esdk.Data, error) {
-	dat_codec := r.Header.Get(esdk.HTTP_HEADER_DATA_CODEC)
-
-	// TODO(Peer): initial default codec
-	if dat_codec == "" {
-		dat_codec = "json"
-	}
-
-	dec, err := esdk.GetDataDecoder(dat_codec)
-	if err != nil {
-		return nil, err
-	}
+	dec := srv.get_codec_from_request(r)
 
 	buf, err := ioutil.ReadAll(r.Body)
 	if err != nil {
@@ -153,27 +151,70 @@ func (srv *EvaluatorPluginService) get_evaluator(ctx context.Context, cli evltr_
 	return get_evltr_res.GetEvaluator(), nil
 }
 
-func (srv *EvaluatorPluginService) extract_data_timestamp(ctx context.Context, r *http.Request) context.Context {
-	var ts time.Time
-	var err error
+func (srv *EvaluatorPluginService) extract_data_tags(r *http.Request) map[string]interface{} {
+	dec := srv.get_codec_from_request(r)
 
-	ts_s := r.Header.Get(esdk.HTTP_HEADER_DATA_TIMESTAMP)
-	if ts_s != "" {
-		ts, err = time.Parse(time.RFC3339, ts_s)
-		if err != nil {
-			ts = time.Now()
-		}
-	} else {
-		ts = time.Now()
+	tags_b64 := r.Header.Get(esdk.HTTP_HEADER_DATA_TAGS)
+	if tags_b64 == "" {
+		return map[string]interface{}{}
 	}
 
-	return context.WithValue(ctx, "evltr-plg-data-timestamp", ts)
+	tags_buf, err := base64.StdEncoding.DecodeString(tags_b64)
+	if err != nil {
+		return map[string]interface{}{}
+	}
+
+	tags_dat, err := dec.Decode(tags_buf)
+	if err != nil {
+		return map[string]interface{}{}
+	}
+
+	return cast.ToStringMap(tags_dat.Iter())
+}
+
+func (srv *EvaluatorPluginService) get_codec_from_request(r *http.Request) esdk.DataDecoder {
+	dat_codec := r.Header.Get(esdk.HTTP_HEADER_DATA_CODEC)
+	if dat_codec == "" {
+		dat_codec = srv.opt.Codec
+	}
+
+	codec, _ := esdk.GetDataDecoder(dat_codec)
+
+	return codec
+}
+
+func (srv *EvaluatorPluginService) extract_data_timestamp(r *http.Request) int64 {
+	return cast.ToTime(r.Header.Get(esdk.HTTP_HEADER_DATA_TIMESTAMP)).Unix()
+}
+
+func (srv *EvaluatorPluginService) build_evaluator_context(r *http.Request, info *evltr_pb.Evaluator) (map[string]interface{}, error) {
+	cfg, err := srv.evaluator_config_string_map_from_evaluator(info)
+	if err != nil {
+		return nil, err
+	}
+
+	ctx := map[string]interface{}{
+		"config": cfg,
+		"source": map[string]interface{}{
+			"id":   r.Header.Get(esdk.HTTP_HEADER_SOURCE_ID),
+			"type": r.Header.Get(esdk.HTTP_HEADER_SOURCE_TYPE),
+		},
+		"timestamp": srv.extract_data_timestamp(r),
+		"tags":      srv.extract_data_tags(r),
+	}
+
+	if dev_id := r.Header.Get(esdk.HTTP_HEADER_DEVICE_ID); dev_id != "" {
+		ctx["device"] = map[string]interface{}{
+			"id": dev_id,
+		}
+	}
+
+	return ctx, nil
 }
 
 func (srv *EvaluatorPluginService) Eval(w http.ResponseWriter, r *http.Request) {
 	// TODO(Peer): wrap opentracing tags
 	ctx := r.Context()
-	ctx = srv.extract_data_timestamp(ctx, r)
 	evltr_id := r.Header.Get("X-Evaluator-ID")
 	src_id := r.Header.Get(esdk.HTTP_HEADER_SOURCE_ID)
 	src_typ := r.Header.Get(esdk.HTTP_HEADER_SOURCE_TYPE)
@@ -216,15 +257,11 @@ func (srv *EvaluatorPluginService) Eval(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	evltr_cfg, err := srv.evaluator_config_string_map_from_evaluator(evltr_info)
+	evltr_ctx, err := srv.build_evaluator_context(r, evltr_info)
 	if err != nil {
-		logger.WithError(err).Errorf("failed to parse evaluator config")
+		logger.WithError(err).Errorf("failed to build evaluator context")
 		srv.HandleResponse(w, r, hst.WrapErrorHttpStatus(http.StatusInternalServerError, err))
 		return
-	}
-	evltr_cfg["source"] = map[string]interface{}{
-		"id":   src_id,
-		"type": src_typ,
 	}
 
 	op_opt, err := srv.operator_string_map_form_evaluator(evltr_info)
@@ -236,7 +273,7 @@ func (srv *EvaluatorPluginService) Eval(w http.ResponseWriter, r *http.Request) 
 
 	evltr, err := evltr_plg.NewEvaluator(
 		"info", evltr_inf,
-		"config", evltr_cfg,
+		"context", evltr_ctx,
 		"operator", op_opt,
 		"logger", srv.get_logger(),
 		"data_storage", srv.dat_stor,
@@ -247,7 +284,6 @@ func (srv *EvaluatorPluginService) Eval(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	// TODO(Peer): get timestamp from header
 	err = evltr.Eval(ctx, dat)
 	if err != nil {
 		logger.WithError(err).Errorf("failed to eval")
@@ -326,7 +362,13 @@ func (srv *EvaluatorPluginService) ReceiveData(w http.ResponseWriter, r *http.Re
 		req.Header.Set("X-Evaluator-ID", evltr.GetId())
 		req.Header.Set(esdk.HTTP_HEADER_SOURCE_ID, r.Header.Get(esdk.HTTP_HEADER_SOURCE_ID))
 		req.Header.Set(esdk.HTTP_HEADER_SOURCE_TYPE, r.Header.Get(esdk.HTTP_HEADER_SOURCE_TYPE))
+		if buf := r.Header.Get(esdk.HTTP_HEADER_DEVICE_ID); buf != "" {
+			req.Header.Set(esdk.HTTP_HEADER_DEVICE_ID, buf)
+		}
 		req.Header.Set(esdk.HTTP_HEADER_DATA_TIMESTAMP, r.Header.Get(esdk.HTTP_HEADER_DATA_TIMESTAMP))
+		if buf := r.Header.Get(esdk.HTTP_HEADER_DATA_TAGS); buf != "" {
+			req.Header.Set(esdk.HTTP_HEADER_DATA_TAGS, buf)
+		}
 		req = req.WithContext(ctx)
 
 		res, err := http.DefaultClient.Do(req)

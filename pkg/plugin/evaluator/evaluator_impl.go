@@ -2,7 +2,6 @@ package metathings_plugin_evaluator
 
 import (
 	"context"
-	"time"
 
 	log "github.com/sirupsen/logrus"
 
@@ -20,33 +19,12 @@ type EvaluatorImpl struct {
 	opt      *EvaluatorImplOption
 	dat_stor dssdk.DataStorage
 	info     esdk.Data
-	cfg      esdk.Data
+	ctx      esdk.Data
 	logger   log.FieldLogger
 }
 
-func (e *EvaluatorImpl) get_config() esdk.Data {
-	return e.cfg
-}
-
-func (e *EvaluatorImpl) extract_data_timestamp(ctx context.Context) int64 {
-	var ts time.Time
-
-	tsi := ctx.Value("evltr-plg-data-timestamp")
-	if tsi == nil {
-		ts = time.Now()
-	} else {
-		ts = tsi.(time.Time)
-	}
-
-	return ts.Unix()
-}
-
-func (e *EvaluatorImpl) get_eval_context(cctx context.Context) esdk.Data {
-	ctx, _ := esdk.DataFromMap(map[string]interface{}{
-		"config":    e.cfg.Iter(),
-		"timestamp": e.extract_data_timestamp(cctx),
-	})
-	return ctx
+func (e *EvaluatorImpl) get_eval_context() esdk.Data {
+	return e.ctx
 }
 
 func (e *EvaluatorImpl) get_logger() log.FieldLogger {
@@ -78,7 +56,7 @@ func (e *EvaluatorImpl) Eval(ctx context.Context, dat esdk.Data) error {
 	defer op.Close()
 
 	// TODO(Peer): handle operator result
-	_, err = op.Run(e.get_eval_context(ctx), dat)
+	_, err = op.Run(e.get_eval_context(), dat)
 	if err != nil {
 		logger.WithError(err).Debugf("failed to run operator")
 		return err
@@ -89,7 +67,7 @@ func (e *EvaluatorImpl) Eval(ctx context.Context, dat esdk.Data) error {
 
 func NewEvaluatorImpl(args ...interface{}) (*EvaluatorImpl, error) {
 	var logger log.FieldLogger
-	var config map[string]interface{}
+	var context map[string]interface{}
 	var info map[string]interface{}
 	var ds dssdk.DataStorage
 	opt := &EvaluatorImplOption{}
@@ -98,13 +76,13 @@ func NewEvaluatorImpl(args ...interface{}) (*EvaluatorImpl, error) {
 		"logger":       opt_helper.ToLogger(&logger),
 		"info":         opt_helper.ToStringMap(&info),
 		"operator":     opt_helper.ToStringMap(&opt.Operator),
-		"config":       opt_helper.ToStringMap(&config),
+		"context":      opt_helper.ToStringMap(&context),
 		"data_storage": dssdk.ToDataStorage(&ds),
 	}, opt_helper.SetSkip(true))(args...); err != nil {
 		return nil, err
 	}
 
-	cfg, err := esdk.DataFromMap(config)
+	ctx, err := esdk.DataFromMap(context)
 	if err != nil {
 		return nil, err
 	}
@@ -117,7 +95,7 @@ func NewEvaluatorImpl(args ...interface{}) (*EvaluatorImpl, error) {
 	evltr := &EvaluatorImpl{
 		opt:      opt,
 		info:     inf,
-		cfg:      cfg,
+		ctx:      ctx,
 		dat_stor: ds,
 		logger:   logger,
 	}

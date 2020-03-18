@@ -112,7 +112,7 @@ return {}
 `
 
 	s.dat_stor = new(DataStorageMock)
-	s.dat_stor.On("Write", context.TODO(), "msr",
+	s.dat_stor.On("Write", mock.Anything, "msr",
 		map[string]string{
 			"a": "b",
 			"c": "d",
