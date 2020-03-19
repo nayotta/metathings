@@ -27,12 +27,12 @@ type LuaOperatorTestSuite struct {
 }
 
 func (s *LuaOperatorTestSuite) BeforeTest(suiteName, testName string) {
-	switch testName {
-	case "TestRun":
-		s.setupTestRun()
-	case "TestRunWithDataStorage":
-		s.setupTestRunWithDataStorage()
-	}
+	map[string]func(){
+		"TestRun":                           s.setupTestRun,
+		"TestRunWithDataStorage":            s.setupTestRunWithDataStorage,
+		"TestRunWithDeviceDataStorage":      s.setupTestRunWithDeviceDataStorage,
+		"TestRunWithAliasDeviceDataStorage": s.setupTestRunWithAliasDeviceDataStorage,
+	}[testName]()
 }
 
 func (s *LuaOperatorTestSuite) setupTestRun() {
@@ -106,7 +106,7 @@ func (s *LuaOperatorTestSuite) setupTestRunWithDataStorage() {
 	code := `
 local s = metathings:storage("msr", {["a"] = "b"})
 s = s:with({ ["c"] = "d" })
-s:write({ ["e"] = "f" })
+s:write({ ["e"] = "f", ["g"] = 42 })
 
 return {}
 `
@@ -118,6 +118,7 @@ return {}
 			"c": "d",
 		}, map[string]interface{}{
 			"e": "f",
+			"g": float64(42),
 		}).Return(nil)
 	op, err := NewLuaOperator("code", code, "data_storage", s.dat_stor)
 	s.Require().Nil(err)
@@ -126,6 +127,93 @@ return {}
 
 func (s *LuaOperatorTestSuite) TestRunWithDataStorage() {
 	ctx, _ := esdk.DataFromMap(nil)
+	dat, _ := esdk.DataFromMap(nil)
+
+	_, err := s.op.Run(ctx, dat)
+	s.Require().Nil(err)
+}
+
+func (s *LuaOperatorTestSuite) setupTestRunWithDeviceDataStorage() {
+	code := `
+local dev = metathings:device("self")
+local s = dev:storage("msr", {["a"] = "b"})
+s:write({["c"] = "d"})
+
+return {}
+`
+
+	s.dat_stor = new(DataStorageMock)
+	s.dat_stor.On("Write", mock.Anything, "msr",
+		map[string]string{
+			"a":            "b",
+			"$device_id":   "test",
+			"$source_id":   "xxx",
+			"$source_type": "yyy",
+		}, map[string]interface{}{
+			"c": "d",
+		}).Return(nil)
+	op, err := NewLuaOperator("code", code, "data_storage", s.dat_stor)
+	s.Require().Nil(err)
+	s.op = op.(*LuaOperator)
+}
+
+func (s *LuaOperatorTestSuite) TestRunWithDeviceDataStorage() {
+	ctx, _ := esdk.DataFromMap(map[string]interface{}{
+		"device": map[string]interface{}{
+			"id": "test",
+		},
+		"source": map[string]interface{}{
+			"id":   "xxx",
+			"type": "yyy",
+		},
+	})
+	dat, _ := esdk.DataFromMap(nil)
+
+	_, err := s.op.Run(ctx, dat)
+	s.Require().Nil(err)
+}
+
+func (s *LuaOperatorTestSuite) setupTestRunWithAliasDeviceDataStorage() {
+	code := `
+local dev = metathings:device("light")
+local s = dev:storage("msr", {["a"] = "b"})
+s:write({["c"] = "d"})
+
+return {}
+`
+
+	s.dat_stor = new(DataStorageMock)
+	s.dat_stor.On("Write", mock.Anything, "msr",
+		map[string]string{
+			"a":            "b",
+			"$device_id":   "light-id",
+			"$source_id":   "xxx",
+			"$source_type": "yyy",
+		}, map[string]interface{}{
+			"c": "d",
+		}).Return(nil)
+	op, err := NewLuaOperator("code", code, "data_storage", s.dat_stor)
+	s.Require().Nil(err)
+	s.op = op.(*LuaOperator)
+}
+
+func (s *LuaOperatorTestSuite) TestRunWithAliasDeviceDataStorage() {
+	ctx, _ := esdk.DataFromMap(map[string]interface{}{
+		"device": map[string]interface{}{
+			"id": "light-id",
+		},
+		"source": map[string]interface{}{
+			"id":   "xxx",
+			"type": "yyy",
+		},
+		"config": map[string]interface{}{
+			"alias": map[string]interface{}{
+				"device": map[string]interface{}{
+					"light": "light-id",
+				},
+			},
+		},
+	})
 	dat, _ := esdk.DataFromMap(nil)
 
 	_, err := s.op.Run(ctx, dat)

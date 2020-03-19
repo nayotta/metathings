@@ -1,12 +1,8 @@
 package metathings_plugin_evaluator
 
 import (
-	"bytes"
-	"context"
-	"encoding/gob"
 	"strconv"
 	"sync"
-	"time"
 
 	"github.com/spf13/cast"
 	lua "github.com/yuin/gopher-lua"
@@ -37,13 +33,19 @@ func luaInitOnceObject(L *lua.LState, name string, obj luaBaseObject) {
 /*
  * context:
  *   config:
- *     storage:
- *       buckets:
- *       - bucket-id
- *       ...
- *       alias:
- *         bucket-alias: bucket-id
- *         ...
+ *     alias:
+ *       <type>:
+ *         <name>: <id>
+ *     # examples:
+ *     # device:
+ *     #   light: light-id
+ *     ...
+ *   source:
+ *     id: <id>  # type: string
+ *     type: <type>  # type: string
+ *   timestamp: <ts>  # type: int64
+ *   tags:  # type: map[string]string
+ *     ...
  */
 
 type luaMetathingsCore struct {
@@ -73,11 +75,24 @@ func newLuaMetathingsCore(args ...interface{}) (*luaMetathingsCore, error) {
 	}, nil
 }
 
+func (c *luaMetathingsCore) GetContext() esdk.Data {
+	return c.context
+}
+
+func (c *luaMetathingsCore) GetData() esdk.Data {
+	return c.data
+}
+
+func (c *luaMetathingsCore) GetDataStorage() dssdk.DataStorage {
+	return c.dat_stor
+}
+
 func (c *luaMetathingsCore) MetatableIndex() map[string]lua.LGFunction {
 	return map[string]lua.LGFunction{
-		"data":    c.getData,
-		"context": c.getContext,
-		"storage": c.newStorage,
+		"data":    c.luaGetData,
+		"context": c.luaGetContext,
+		"storage": c.luaNewStorage,
+		"device":  c.luaGetDevice,
 	}
 }
 
@@ -93,11 +108,11 @@ func (c *luaMetathingsCore) check(L *lua.LState) *luaMetathingsCore {
 }
 
 // LUA_FUNCTION: core:data(key#string)
-func (c *luaMetathingsCore) getData(L *lua.LState) int {
+func (c *luaMetathingsCore) luaGetData(L *lua.LState) int {
 	core := c.check(L)
 	key := L.CheckString(2)
 
-	ival := core.data.Get(key)
+	ival := core.GetData().Get(key)
 	val := parse_interface_to_lvalue(L, ival)
 	L.Push(val)
 
@@ -106,7 +121,7 @@ func (c *luaMetathingsCore) getData(L *lua.LState) int {
 
 // LUA_FUNCTION: core:context(key#string)
 //   context body lookup github.com/nayotta/metathings/pkg/plugin/evaluator/evaluator_impl.go#L31
-func (c *luaMetathingsCore) getContext(L *lua.LState) int {
+func (c *luaMetathingsCore) luaGetContext(L *lua.LState) int {
 	core := c.check(L)
 	key := L.CheckString(2)
 
@@ -118,7 +133,7 @@ func (c *luaMetathingsCore) getContext(L *lua.LState) int {
 }
 
 // LUA_FUNCTION: core:storage(msr#string, tags#table) storage
-func (c *luaMetathingsCore) newStorage(L *lua.LState) int {
+func (c *luaMetathingsCore) luaNewStorage(L *lua.LState) int {
 	msr := L.CheckString(2)
 	tags_tb := L.CheckTable(3)
 	tags := cast.ToStringMapString(parse_ltable_to_string_map(tags_tb))
@@ -134,112 +149,32 @@ func (c *luaMetathingsCore) newStorage(L *lua.LState) int {
 	return 1
 }
 
-type luaMetathingsCoreStorage struct {
-	dat_stor dssdk.DataStorage
+// LUA_FUNCTION: core:device(name_or_alias#string) device
+func (c *luaMetathingsCore) luaGetDevice(L *lua.LState) int {
+	var dev_id string
 
-	msr  string
-	tags map[string]string
-}
-
-func newLuaMetathingsCoreStorage(args ...interface{}) (*luaMetathingsCoreStorage, error) {
-	var ds dssdk.DataStorage
-	var msr string
-	var tags map[string]string
-
-	if err := opt_helper.Setopt(map[string]func(string, interface{}) error{
-		"data_storage": dssdk.ToDataStorage(&ds),
-		"measurement":  opt_helper.ToString(&msr),
-		"tags":         opt_helper.ToStringMapString(&tags),
-	})(args...); err != nil {
-		return nil, err
+	noa := L.CheckString(2)
+	if noa == "self" {
+		dev_id = cast.ToString(c.GetContext().Get("device.id"))
+	} else {
+		dev_id = cast.ToString(c.GetContext().Get("config.alias.device." + noa))
 	}
 
-	return &luaMetathingsCoreStorage{
-		dat_stor: ds,
-		msr:      msr,
-		tags:     tags,
-	}, nil
-}
-
-func (s *luaMetathingsCoreStorage) MetatableIndex() map[string]lua.LGFunction {
-	return map[string]lua.LGFunction{
-		"with":  s.With,
-		"write": s.Write,
-	}
-}
-
-func (s *luaMetathingsCoreStorage) check(L *lua.LState) *luaMetathingsCoreStorage {
-	ud := L.CheckUserData(1)
-	v, ok := ud.Value.(*luaMetathingsCoreStorage)
-	if !ok {
-		L.ArgError(1, "core_storage expected")
-		return nil
-	}
-
-	return v
-}
-
-// LUA_FUNCTION: storage:with(tags#table) storage
-func (s *luaMetathingsCoreStorage) With(L *lua.LState) int {
-	var pipe bytes.Buffer
-	var tags map[string]string
-
-	stor := s.check(L)
-
-	enc := gob.NewEncoder(&pipe)
-	enc.Encode(stor.tags)
-	dec := gob.NewDecoder(&pipe)
-	dec.Decode(&tags)
-
-	tags_tb := L.CheckTable(2)
-	exts := parse_ltable_to_string_map(tags_tb)
-
-	for k, v := range exts {
-		tags[k] = v.(string)
-	}
-
-	ns, err := newLuaMetathingsCoreStorage("data_storage", s.dat_stor, "measurement", stor.msr, "tags", tags)
-	if err != nil {
-		L.RaiseError("failed to new storage")
+	if dev_id == "" {
+		L.ArgError(2, "unsupported device name or alias")
 		return 0
 	}
 
-	_, ud := luaBindingObjectMethods(L, ns)
+	dev, err := newLuaMetathingsCoreDevice("id", dev_id, "core", c)
+	if err != nil {
+		L.RaiseError("failed to get device")
+		return 0
+	}
+
+	_, ud := luaBindingObjectMethods(L, dev)
 	L.Push(ud)
 
 	return 1
-}
-
-// LUA_FUNCTION: storage:write(data#table, [option#table])
-//   option:
-//     timestamp: data timestamp
-func (s *luaMetathingsCoreStorage) Write(L *lua.LState) int {
-	ctx := context.TODO()
-
-	dat_tb := L.CheckTable(2)
-	dat := parse_ltable_to_string_map(dat_tb)
-
-	var opt_tb *lua.LTable
-	if L.GetTop() > 2 {
-		opt_tb = L.CheckTable(3)
-	}
-	opt := parse_ltable_to_string_map(opt_tb)
-
-	var ts time.Time
-	if tsi, ok := opt["timestamp"]; ok {
-		ts = time.Unix(cast.ToInt64(tsi), 0)
-	} else {
-		ts = time.Now()
-	}
-	ctx = context.WithValue(ctx, "timestamp", ts)
-
-	err := s.dat_stor.Write(ctx, s.msr, s.tags, dat)
-	if err != nil {
-		L.RaiseError("failed to write data to data storage")
-		return 0
-	}
-
-	return 0
 }
 
 func parse_string_map_to_ltable(L *lua.LState, xs map[string]interface{}) *lua.LTable {
@@ -345,5 +280,16 @@ func parse_lvalue_to_interface(x lua.LValue) interface{} {
 		return parse_ltable_to_interface(x.(*lua.LTable))
 	default:
 		panic("unimplemented")
+	}
+}
+
+func toLuaMetathingsCore(c **luaMetathingsCore) func(string, interface{}) error {
+	return func(key string, val interface{}) error {
+		var ok bool
+		*c, ok = val.(*luaMetathingsCore)
+		if !ok {
+			return opt_helper.InvalidArgument(key)
+		}
+		return nil
 	}
 }
