@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"time"
 
 	"github.com/golang/protobuf/jsonpb"
 	"github.com/golang/protobuf/ptypes/wrappers"
@@ -184,7 +185,11 @@ func (srv *EvaluatorPluginService) get_codec_from_request(r *http.Request) esdk.
 }
 
 func (srv *EvaluatorPluginService) extract_data_timestamp(r *http.Request) int64 {
-	return cast.ToTime(r.Header.Get(esdk.HTTP_HEADER_DATA_TIMESTAMP)).Unix()
+	if s := r.Header.Get(esdk.HTTP_HEADER_DATA_TIMESTAMP); s == "" {
+		return time.Now().Unix()
+	} else {
+		return cast.ToTime(s).Unix()
+	}
 }
 
 func (srv *EvaluatorPluginService) build_evaluator_context(r *http.Request, info *evltr_pb.Evaluator) (map[string]interface{}, error) {
