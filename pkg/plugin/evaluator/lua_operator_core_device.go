@@ -16,6 +16,10 @@ type luaMetathingsCoreDevice struct {
 	core *luaMetathingsCore
 }
 
+func (d *luaMetathingsCoreDevice) Id() string {
+	return d.opt.Id
+}
+
 // LUA_FUNCTION: device:id() string
 func (d *luaMetathingsCoreDevice) luaGetId(L *lua.LState) int {
 	L.Push(lua.LString(d.opt.Id))
@@ -28,11 +32,14 @@ func (d *luaMetathingsCoreDevice) luaNewStorage(L *lua.LState) int {
 	msr := L.CheckString(2)
 	tags_tb := L.CheckTable(3)
 	tags := cast.ToStringMapString(parse_ltable_to_string_map(tags_tb))
-	tags["$source_id"] = cast.ToString(d.core.GetContext().Get("source.id"))
-	tags["$source_type"] = cast.ToString(d.core.GetContext().Get("source.type"))
-	tags["$device_id"] = d.opt.Id
 
-	stor, err := newLuaMetathingsCoreStorage("data_storage", d.core.GetDataStorage(), "measurement", msr, "tags", tags)
+	immutable_tags := map[string]string{
+		"$source_id":   cast.ToString(d.core.GetContext().Get("source.id")),
+		"$source_type": cast.ToString(d.core.GetContext().Get("source.type")),
+		"$device_id":   d.opt.Id,
+	}
+
+	stor, err := newLuaMetathingsCoreStorage("data_storage", d.core.GetDataStorage(), "measurement", msr, "tags", tags, "immutable_tags", immutable_tags)
 	if err != nil {
 		L.RaiseError("failed to new device storage")
 		return 0
@@ -42,6 +49,11 @@ func (d *luaMetathingsCoreDevice) luaNewStorage(L *lua.LState) int {
 	L.Push(ud)
 
 	return 1
+}
+
+// LUA_FUNCTION: device:simple_storage() simple_storage
+func (d *luaMetathingsCoreDevice) luaNewSimpleStorage(L *lua.LState) int {
+	panic("unimplemented")
 }
 
 func (d *luaMetathingsCoreDevice) MetatableIndex() map[string]lua.LGFunction {

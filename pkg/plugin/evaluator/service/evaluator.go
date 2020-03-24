@@ -21,6 +21,7 @@ import (
 	evltr_plg "github.com/nayotta/metathings/pkg/plugin/evaluator"
 	evltr_pb "github.com/nayotta/metathings/pkg/proto/evaluatord"
 	dssdk "github.com/nayotta/metathings/sdk/data_storage"
+	dsdk "github.com/nayotta/metathings/sdk/deviced"
 	esdk "github.com/nayotta/metathings/sdk/evaluatord"
 )
 
@@ -38,11 +39,12 @@ func NewEvaluatorPluginServiceOption() *EvaluatorPluginServiceOption {
 }
 
 type EvaluatorPluginService struct {
-	opt      *EvaluatorPluginServiceOption
-	logger   log.FieldLogger
-	tknr     token_helper.Tokener
-	dat_stor dssdk.DataStorage
-	cli_fty  *client_helper.ClientFactory
+	opt       *EvaluatorPluginServiceOption
+	logger    log.FieldLogger
+	tknr      token_helper.Tokener
+	dat_stor  dssdk.DataStorage
+	smpl_stor dsdk.SimpleStorage
+	cli_fty   *client_helper.ClientFactory
 }
 
 func (srv *EvaluatorPluginService) get_logger() log.FieldLogger {
@@ -282,6 +284,7 @@ func (srv *EvaluatorPluginService) Eval(w http.ResponseWriter, r *http.Request) 
 		"operator", op_opt,
 		"logger", srv.get_logger(),
 		"data_storage", srv.dat_stor,
+		"simple_storage", srv.smpl_stor,
 	)
 	if err != nil {
 		logger.WithError(err).Errorf("failed to new evaluator instance")
@@ -410,13 +413,15 @@ func NewEvaluatorPluginService(
 	logger log.FieldLogger,
 	tknr token_helper.Tokener,
 	dat_stor dssdk.DataStorage,
+	smpl_stor dsdk.SimpleStorage,
 	cli_fty *client_helper.ClientFactory,
 ) (*EvaluatorPluginService, error) {
 	return &EvaluatorPluginService{
-		opt:      opt,
-		logger:   logger,
-		tknr:     tknr,
-		dat_stor: dat_stor,
-		cli_fty:  cli_fty,
+		opt:       opt,
+		logger:    logger,
+		tknr:      tknr,
+		dat_stor:  dat_stor,
+		smpl_stor: smpl_stor,
+		cli_fty:   cli_fty,
 	}, nil
 }

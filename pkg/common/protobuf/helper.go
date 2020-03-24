@@ -5,6 +5,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/gogo/protobuf/jsonpb"
+	"github.com/gogo/protobuf/proto"
 	"github.com/golang/protobuf/ptypes/timestamp"
 	"github.com/golang/protobuf/ptypes/wrappers"
 )
@@ -96,4 +98,11 @@ func NewEnumer(prefix string, names map[int32]string, values map[string]int32) E
 		names:  names,
 		values: values,
 	}
+}
+
+func ToStringMap(msg proto.Message) map[string]interface{} {
+	buf, _ := new(jsonpb.Marshaler).MarshalToString(msg)
+	y := make(map[string]interface{})
+	json.Unmarshal([]byte(buf), &y)
+	return y
 }

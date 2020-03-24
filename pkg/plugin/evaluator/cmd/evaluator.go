@@ -13,6 +13,7 @@ import (
 	constant_helper "github.com/nayotta/metathings/pkg/common/constant"
 	service "github.com/nayotta/metathings/pkg/plugin/evaluator/service"
 	dssdk "github.com/nayotta/metathings/sdk/data_storage"
+	dsdk "github.com/nayotta/metathings/sdk/deviced"
 )
 
 type EvaluatorPluginOption struct {
@@ -20,7 +21,8 @@ type EvaluatorPluginOption struct {
 	Evaluator                     struct {
 		Endpoint string
 	}
-	DataStorage map[string]interface{}
+	DataStorage   map[string]interface{}
+	SimpleStorage map[string]interface{}
 }
 
 func NewEvaluatorPluginOption() *EvaluatorPluginOption {
@@ -29,13 +31,13 @@ func NewEvaluatorPluginOption() *EvaluatorPluginOption {
 	}
 }
 
-func init_data_storage(opt *EvaluatorPluginOption) {
-	mds := map[string]interface{}{}
-	vds := cmd_helper.GetFromStage().Sub("data_storage")
-	for _, key := range vds.AllKeys() {
-		mds[key] = vds.Get(key)
+func init_string_map_from_config_with_stage(dst *map[string]interface{}, key string) {
+	sm := make(map[string]interface{})
+	vm := cmd_helper.GetFromStage().Sub(key)
+	for _, k := range vm.AllKeys() {
+		sm[k] = vm.Get(k)
 	}
-	opt.DataStorage = mds
+	*dst = sm
 }
 
 func LoadEvaluatorPluginOption(path string) func() (*EvaluatorPluginOption, error) {
@@ -53,7 +55,8 @@ func LoadEvaluatorPluginOption(path string) func() (*EvaluatorPluginOption, erro
 		opt := NewEvaluatorPluginOption()
 		cmd_helper.UnmarshalConfig(&opt)
 
-		init_data_storage(opt)
+		init_string_map_from_config_with_stage(&opt.DataStorage, "data_storage")
+		init_string_map_from_config_with_stage(&opt.SimpleStorage, "simple_storage")
 
 		return opt, nil
 	}
@@ -80,7 +83,6 @@ func NewEvaluatorPluginServiceOption(o *EvaluatorPluginOption) (*service.Evaluat
 }
 
 func NewDataStorage(o *EvaluatorPluginOption, logger log.FieldLogger) (dssdk.DataStorage, error) {
-
 	name, args, err := cfg_helper.ParseConfigOption("name", o.DataStorage, "logger", logger)
 	if err != nil {
 		return nil, err
@@ -92,6 +94,20 @@ func NewDataStorage(o *EvaluatorPluginOption, logger log.FieldLogger) (dssdk.Dat
 	}
 
 	return ds, nil
+}
+
+func NewSimpleStorage(o *EvaluatorPluginOption, logger log.FieldLogger) (dsdk.SimpleStorage, error) {
+	name, args, err := cfg_helper.ParseConfigOption("name", o.SimpleStorage, "logger", logger)
+	if err != nil {
+		return nil, err
+	}
+
+	ss, err := dsdk.NewSimpleStorage(name, args...)
+	if err != nil {
+		return nil, err
+	}
+
+	return ss, nil
 }
 
 func NewEvaluatorPluginService(cfg string) (*service.EvaluatorPluginService, error) {
