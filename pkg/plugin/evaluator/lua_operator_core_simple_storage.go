@@ -22,6 +22,18 @@ type luaMetathingsCoreSimpleStorage struct {
 	immutables objx.Map
 }
 
+func (ss *luaMetathingsCoreSimpleStorage) check(L *lua.LState) *luaMetathingsCoreSimpleStorage {
+	ud := L.CheckUserData(1)
+
+	v, ok := ud.Value.(*luaMetathingsCoreSimpleStorage)
+	if !ok {
+		L.ArgError(1, "simple_storage expected")
+		return nil
+	}
+
+	return v
+}
+
 func (ss *luaMetathingsCoreSimpleStorage) MetatableIndex() map[string]lua.LGFunction {
 	return map[string]lua.LGFunction{
 		"put":         ss.luaPut,
@@ -44,23 +56,14 @@ func (ss *luaMetathingsCoreSimpleStorage) get_context() context.Context {
 	return context.TODO()
 }
 
-func (ss *luaMetathingsCoreSimpleStorage) check(L *lua.LState) *luaMetathingsCoreSimpleStorage {
-	ud := L.CheckUserData(1)
-	v, ok := ud.Value.(*luaMetathingsCoreSimpleStorage)
-	if !ok {
-		L.ArgError(1, "core_simple_storage expected")
-		return nil
-	}
-
-	return v
-}
-
 // LUA_FUNCTION: simple_storage:put(option#table, content#string)
 //   option:
 //     device: ...  # type: string
 //     prefix: ...  # type: string
 //     name: ...  # type: string
 func (ss *luaMetathingsCoreSimpleStorage) luaPut(L *lua.LState) int {
+	ss.check(L)
+
 	opt_tb := L.CheckTable(2)
 	cnt := L.CheckString(3)
 	obj := parse_ltable_to_pb_object(ss, opt_tb)
@@ -79,6 +82,8 @@ func (ss *luaMetathingsCoreSimpleStorage) luaPut(L *lua.LState) int {
 //     prefix: ...  # type: string
 //     name: ...  # type: string
 func (ss *luaMetathingsCoreSimpleStorage) luaRemove(L *lua.LState) int {
+	ss.check(L)
+
 	opt_tb := L.CheckTable(2)
 	obj := parse_ltable_to_pb_object(ss, opt_tb)
 
@@ -100,6 +105,8 @@ func (ss *luaMetathingsCoreSimpleStorage) luaRemove(L *lua.LState) int {
 //     prefix: ...  # type: string
 //     name: ...  # type: string
 func (ss *luaMetathingsCoreSimpleStorage) luaRename(L *lua.LState) int {
+	ss.check(L)
+
 	src_tb := L.CheckTable(2)
 	dst_tb := L.CheckTable(3)
 	src := parse_ltable_to_pb_object(ss, src_tb)
@@ -127,6 +134,8 @@ func (ss *luaMetathingsCoreSimpleStorage) luaRename(L *lua.LState) int {
 //       etag: ...  # type: string
 //       last_modified: ...  # type: number
 func (ss *luaMetathingsCoreSimpleStorage) luaGet(L *lua.LState) int {
+	ss.check(L)
+
 	opt_tb := L.CheckTable(2)
 	obj := parse_ltable_to_pb_object(ss, opt_tb)
 
@@ -148,6 +157,8 @@ func (ss *luaMetathingsCoreSimpleStorage) luaGet(L *lua.LState) int {
 //     prefix: ...  # type: string
 //     name: ...  # type: string
 func (ss *luaMetathingsCoreSimpleStorage) luaGetContent(L *lua.LState) int {
+	ss.check(L)
+
 	opt_tb := L.CheckTable(2)
 	obj := parse_ltable_to_pb_object(ss, opt_tb)
 
@@ -178,6 +189,8 @@ func (ss *luaMetathingsCoreSimpleStorage) luaGetContent(L *lua.LState) int {
 //         etag: ...  # type: string
 //         last_modified: ...  # type: number
 func (ss *luaMetathingsCoreSimpleStorage) luaList(L *lua.LState) int {
+	ss.check(L)
+
 	opt_tb := L.CheckTable(2)
 	obj := parse_ltable_to_pb_object(ss, opt_tb)
 	opt := objx.New(parse_ltable_to_string_map(opt_tb))

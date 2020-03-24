@@ -32,7 +32,22 @@ func (s *LuaOperatorTestSuite) BeforeTest(suiteName, testName string) {
 		"TestRunWithDeviceDataStorage":      s.setupTestRunWithDeviceDataStorage,
 		"TestRunWithAliasDeviceDataStorage": s.setupTestRunWithAliasDeviceDataStorage,
 		"TestRunWithSimpleStorage":          s.setupTestRunWithSimpleStorage,
+		"TestRunWithDeviceSimpleStorage":    s.setupTestRunWithDeviceSimpleStorage,
 	}[testName]()
+}
+
+func (s *LuaOperatorTestSuite) setupOperator(code string) {
+	op, err := NewLuaOperator("code", code, "data_storage", s.dat_stor, "simple_storage", s.smpl_stor)
+	s.Require().Nil(err)
+	s.op = op.(*LuaOperator)
+}
+
+func (s *LuaOperatorTestSuite) runCommonTest() {
+	ctx, _ := esdk.DataFromMap(nil)
+	dat, _ := esdk.DataFromMap(nil)
+
+	_, err := s.op.Run(ctx, dat)
+	s.Require().Nil(err)
 }
 
 func (s *LuaOperatorTestSuite) setupTestRun() {
@@ -58,8 +73,7 @@ return {
 }
 `
 
-	op, _ := NewLuaOperator("code", code, "data_storage", s.dat_stor, "simple_storage", s.smpl_stor)
-	s.op = op.(*LuaOperator)
+	s.setupOperator(code)
 }
 
 func (s *LuaOperatorTestSuite) TearDownTest() {
@@ -119,17 +133,12 @@ return {}
 			"e": "f",
 			"g": float64(42),
 		}).Return(nil)
-	op, err := NewLuaOperator("code", code, "data_storage", s.dat_stor, "simple_storage", s.smpl_stor)
-	s.Require().Nil(err)
-	s.op = op.(*LuaOperator)
+
+	s.setupOperator(code)
 }
 
 func (s *LuaOperatorTestSuite) TestRunWithDataStorage() {
-	ctx, _ := esdk.DataFromMap(nil)
-	dat, _ := esdk.DataFromMap(nil)
-
-	_, err := s.op.Run(ctx, dat)
-	s.Require().Nil(err)
+	s.runCommonTest()
 }
 
 func (s *LuaOperatorTestSuite) setupTestRunWithDeviceDataStorage() {
@@ -150,9 +159,8 @@ return {}
 		}, map[string]interface{}{
 			"c": "d",
 		}).Return(nil)
-	op, err := NewLuaOperator("code", code, "data_storage", s.dat_stor, "simple_storage", s.smpl_stor)
-	s.Require().Nil(err)
-	s.op = op.(*LuaOperator)
+
+	s.setupOperator(code)
 }
 
 func (s *LuaOperatorTestSuite) TestRunWithDeviceDataStorage() {
@@ -189,9 +197,8 @@ return {}
 		}, map[string]interface{}{
 			"c": "d",
 		}).Return(nil)
-	op, err := NewLuaOperator("code", code, "data_storage", s.dat_stor, "simple_storage", s.smpl_stor)
-	s.Require().Nil(err)
-	s.op = op.(*LuaOperator)
+
+	s.setupOperator(code)
 }
 
 func (s *LuaOperatorTestSuite) TestRunWithAliasDeviceDataStorage() {
@@ -304,14 +311,42 @@ return {}
 		"depth":     42,
 	}).Return(list_ret, nil)
 
-	op, err := NewLuaOperator("code", code, "data_storage", s.dat_stor, "simple_storage", s.smpl_stor)
-	s.Require().Nil(err)
-	s.op = op.(*LuaOperator)
-
+	s.setupOperator(code)
 }
 
 func (s *LuaOperatorTestSuite) TestRunWithSimpleStorage() {
-	ctx, _ := esdk.DataFromMap(nil)
+	s.runCommonTest()
+}
+
+func (s *LuaOperatorTestSuite) setupTestRunWithDeviceSimpleStorage() {
+	code := `
+local dev = metathings:device("self")
+local s = dev:simple_storage()
+s:put({
+  ["prefix"] = "/prefix",
+  ["name"] = "name"
+}, "hello, world")
+
+return {}
+`
+
+	s.smpl_stor.On("Put", mock.Anything, map[string]interface{}{
+		"device": map[string]interface{}{
+			"id": "light",
+		},
+		"prefix": "/prefix",
+		"name":   "name",
+	}, "hello, world").Return(nil)
+
+	s.setupOperator(code)
+}
+
+func (s *LuaOperatorTestSuite) TestRunWithDeviceSimpleStorage() {
+	ctx, _ := esdk.DataFromMap(map[string]interface{}{
+		"device": map[string]interface{}{
+			"id": "light",
+		},
+	})
 	dat, _ := esdk.DataFromMap(nil)
 
 	_, err := s.op.Run(ctx, dat)

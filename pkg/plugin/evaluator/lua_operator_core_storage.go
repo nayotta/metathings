@@ -41,6 +41,18 @@ func newLuaMetathingsCoreStorage(args ...interface{}) (*luaMetathingsCoreStorage
 	}, nil
 }
 
+func (s *luaMetathingsCoreStorage) check(L *lua.LState) *luaMetathingsCoreStorage {
+	ud := L.CheckUserData(1)
+
+	v, ok := ud.Value.(*luaMetathingsCoreStorage)
+	if !ok {
+		L.ArgError(1, "storage expected")
+		return nil
+	}
+
+	return v
+}
+
 func (s *luaMetathingsCoreStorage) get_context() context.Context {
 	return context.TODO()
 }
@@ -66,20 +78,10 @@ func (s *luaMetathingsCoreStorage) MetatableIndex() map[string]lua.LGFunction {
 	}
 }
 
-func (s *luaMetathingsCoreStorage) check(L *lua.LState) *luaMetathingsCoreStorage {
-	ud := L.CheckUserData(1)
-	v, ok := ud.Value.(*luaMetathingsCoreStorage)
-	if !ok {
-		L.ArgError(1, "core_storage expected")
-		return nil
-	}
-
-	return v
-}
-
 // LUA_FUNCTION: storage:with(tags#table) storage
 func (s *luaMetathingsCoreStorage) luaWith(L *lua.LState) int {
-	// var tags map[string]string
+	s.check(L)
+
 	tags := map[string]string{}
 	stor := s.check(L)
 	exts_tb := L.CheckTable(2)
@@ -109,6 +111,8 @@ func (s *luaMetathingsCoreStorage) luaWith(L *lua.LState) int {
 //   option:
 //     timestamp: data timestamp
 func (s *luaMetathingsCoreStorage) luaWrite(L *lua.LState) int {
+	s.check(L)
+
 	ctx := s.get_context()
 
 	dat_tb := L.CheckTable(2)

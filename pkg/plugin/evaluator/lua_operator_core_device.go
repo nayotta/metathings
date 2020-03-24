@@ -16,12 +16,26 @@ type luaMetathingsCoreDevice struct {
 	core *luaMetathingsCore
 }
 
+func (d *luaMetathingsCoreDevice) check(L *lua.LState) *luaMetathingsCoreDevice {
+	ud := L.CheckUserData(1)
+
+	v, ok := ud.Value.(*luaMetathingsCoreDevice)
+	if !ok {
+		L.ArgError(1, "device expected")
+		return nil
+	}
+
+	return v
+}
+
 func (d *luaMetathingsCoreDevice) Id() string {
 	return d.opt.Id
 }
 
 // LUA_FUNCTION: device:id() string
 func (d *luaMetathingsCoreDevice) luaGetId(L *lua.LState) int {
+	d.check(L)
+
 	L.Push(lua.LString(d.opt.Id))
 
 	return 1
@@ -29,6 +43,8 @@ func (d *luaMetathingsCoreDevice) luaGetId(L *lua.LState) int {
 
 // LUA_FUNCTION: device:storage(msr#string, tags#table) storage
 func (d *luaMetathingsCoreDevice) luaNewStorage(L *lua.LState) int {
+	d.check(L)
+
 	msr := L.CheckString(2)
 	tags_tb := L.CheckTable(3)
 	tags := cast.ToStringMapString(parse_ltable_to_string_map(tags_tb))
@@ -51,15 +67,37 @@ func (d *luaMetathingsCoreDevice) luaNewStorage(L *lua.LState) int {
 	return 1
 }
 
-// LUA_FUNCTION: device:simple_storage() simple_storage
+// LUA_FUNCTION: device:simple_storage(option#table) simple_storage
 func (d *luaMetathingsCoreDevice) luaNewSimpleStorage(L *lua.LState) int {
-	panic("unimplemented")
+	var opt map[string]interface{}
+
+	d.check(L)
+
+	if L.GetTop() > 1 {
+		opt_tb := L.CheckTable(2)
+		opt = parse_ltable_to_string_map(opt_tb)
+	} else {
+		opt = make(map[string]interface{})
+	}
+	opt["device"] = d.opt.Id
+
+	s, err := newLuaMetathingsCoreSimpleStorage("simple_storage", d.core.GetSimpleStorage(), "immutable_option", opt)
+	if err != nil {
+		L.RaiseError("failed to new device simple storage")
+		return 0
+	}
+
+	_, ud := luaBindingObjectMethods(L, s)
+	L.Push(ud)
+
+	return 1
 }
 
 func (d *luaMetathingsCoreDevice) MetatableIndex() map[string]lua.LGFunction {
 	return map[string]lua.LGFunction{
-		"id":      d.luaGetId,
-		"storage": d.luaNewStorage,
+		"id":             d.luaGetId,
+		"storage":        d.luaNewStorage,
+		"simple_storage": d.luaNewSimpleStorage,
 	}
 }
 

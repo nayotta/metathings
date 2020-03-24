@@ -85,6 +85,18 @@ func newLuaMetathingsCore(args ...interface{}) (*luaMetathingsCore, error) {
 	}, nil
 }
 
+func (c *luaMetathingsCore) check(L *lua.LState) *luaMetathingsCore {
+	ud := L.CheckUserData(1)
+
+	v, ok := ud.Value.(*luaMetathingsCore)
+	if !ok {
+		L.ArgError(1, "core expected")
+		return nil
+	}
+
+	return v
+}
+
 func (c *luaMetathingsCore) GetContext() esdk.Data {
 	return c.context
 }
@@ -111,23 +123,13 @@ func (c *luaMetathingsCore) MetatableIndex() map[string]lua.LGFunction {
 	}
 }
 
-func (c *luaMetathingsCore) check(L *lua.LState) *luaMetathingsCore {
-	ud := L.CheckUserData(1)
-	v, ok := ud.Value.(*luaMetathingsCore)
-	if !ok {
-		L.ArgError(1, "core expected")
-		return nil
-	}
-
-	return v
-}
-
 // LUA_FUNCTION: core:data(key#string)
 func (c *luaMetathingsCore) luaGetData(L *lua.LState) int {
-	core := c.check(L)
+	c.check(L)
+
 	key := L.CheckString(2)
 
-	ival := core.GetData().Get(key)
+	ival := c.GetData().Get(key)
 	val := parse_interface_to_lvalue(L, ival)
 	L.Push(val)
 
@@ -137,10 +139,11 @@ func (c *luaMetathingsCore) luaGetData(L *lua.LState) int {
 // LUA_FUNCTION: core:context(key#string)
 //   context body lookup github.com/nayotta/metathings/pkg/plugin/evaluator/evaluator_impl.go#L31
 func (c *luaMetathingsCore) luaGetContext(L *lua.LState) int {
-	core := c.check(L)
+	c.check(L)
+
 	key := L.CheckString(2)
 
-	ival := core.context.Get(key)
+	ival := c.context.Get(key)
 	val := parse_interface_to_lvalue(L, ival)
 	L.Push(val)
 
@@ -149,6 +152,8 @@ func (c *luaMetathingsCore) luaGetContext(L *lua.LState) int {
 
 // LUA_FUNCTION: core:storage(msr#string, tags#table) storage
 func (c *luaMetathingsCore) luaNewStorage(L *lua.LState) int {
+	c.check(L)
+
 	msr := L.CheckString(2)
 	tags_tb := L.CheckTable(3)
 	tags := cast.ToStringMapString(parse_ltable_to_string_map(tags_tb))
@@ -167,6 +172,9 @@ func (c *luaMetathingsCore) luaNewStorage(L *lua.LState) int {
 // LUA_FUNCTION: core:simple_storage(option#table) simple_storage
 func (c *luaMetathingsCore) luaNewSimpleStorage(L *lua.LState) int {
 	var opt map[string]interface{}
+
+	c.check(L)
+
 	if L.GetTop() > 1 {
 		opt_tb := L.CheckTable(2)
 		opt = parse_ltable_to_string_map(opt_tb)
@@ -188,6 +196,8 @@ func (c *luaMetathingsCore) luaNewSimpleStorage(L *lua.LState) int {
 // LUA_FUNCTION: core:device(name_or_alias#string) device
 func (c *luaMetathingsCore) luaGetDevice(L *lua.LState) int {
 	var dev_id string
+
+	c.check(L)
 
 	noa := L.CheckString(2)
 	if noa == "self" {
