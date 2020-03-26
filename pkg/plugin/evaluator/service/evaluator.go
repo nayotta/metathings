@@ -206,6 +206,7 @@ func (srv *EvaluatorPluginService) build_evaluator_context(r *http.Request, info
 			"id":   r.Header.Get(esdk.HTTP_HEADER_SOURCE_ID),
 			"type": r.Header.Get(esdk.HTTP_HEADER_SOURCE_TYPE),
 		},
+		"token":     context_helper.AuthorizationToToken(r.Header.Get("Authorization")),
 		"timestamp": srv.extract_data_timestamp(r),
 		"tags":      srv.extract_data_tags(r),
 	}

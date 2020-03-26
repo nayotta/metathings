@@ -50,6 +50,7 @@ func luaInitOnceObject(L *lua.LState, name string, obj luaBaseObject) {
  *   source:
  *     id: <id>  # type: string
  *     type: <type>  # type: string
+ *   token: <token>  # type: string
  *   timestamp: <ts>  # type: int64
  *   tags:  # type: map[string]string
  *     ...
@@ -181,7 +182,7 @@ func (c *luaMetathingsCore) luaNewSimpleStorage(L *lua.LState) int {
 	} else {
 		opt = make(map[string]interface{})
 	}
-	s, err := newLuaMetathingsCoreSimpleStorage("simple_storage", c.smpl_stor, "immutable_option", opt)
+	s, err := newLuaMetathingsCoreSimpleStorage("immutable_option", opt, "core", c)
 	if err != nil {
 		L.RaiseError("failed to new simple storage")
 		return 0

@@ -81,7 +81,7 @@ func (d *luaMetathingsCoreDevice) luaNewSimpleStorage(L *lua.LState) int {
 	}
 	opt["device"] = d.opt.Id
 
-	s, err := newLuaMetathingsCoreSimpleStorage("simple_storage", d.core.GetSimpleStorage(), "immutable_option", opt)
+	s, err := newLuaMetathingsCoreSimpleStorage("immutable_option", opt, "core", d.core)
 	if err != nil {
 		L.RaiseError("failed to new device simple storage")
 		return 0

@@ -16,11 +16,7 @@ func WithToken(ctx context.Context, token string) context.Context {
 
 func WithTokenOp(token string) func(metadata.MD) metadata.MD {
 	return func(md metadata.MD) metadata.MD {
-		if !strings.HasPrefix(token, "Bearer") {
-			token = "Bearer " + strings.Trim(token, " ")
-		}
-
-		md.Append("Authorization", token)
+		md.Append("Authorization", TokenToAuthorization(token))
 		return md
 	}
 }
@@ -50,4 +46,16 @@ func NewOutgoingContext(ctx context.Context, fns ...func(metadata.MD) metadata.M
 
 func ExtractToken(ctx context.Context) *identityd2_pb.Token {
 	return ctx.Value("token").(*identityd2_pb.Token)
+}
+
+func TokenToAuthorization(token string) string {
+	if strings.HasPrefix(token, "Bearer") {
+		return token
+
+	}
+	return "Bearer " + strings.Trim(token, " ")
+}
+
+func AuthorizationToToken(authorization string) string {
+	return strings.Trim(strings.Trim(authorization, "Bearer"), " ")
 }

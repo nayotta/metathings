@@ -8,6 +8,7 @@ import (
 	"go.uber.org/dig"
 
 	cmd_contrib "github.com/nayotta/metathings/cmd/contrib"
+	client_helper "github.com/nayotta/metathings/pkg/common/client"
 	cmd_helper "github.com/nayotta/metathings/pkg/common/cmd"
 	cfg_helper "github.com/nayotta/metathings/pkg/common/config"
 	constant_helper "github.com/nayotta/metathings/pkg/common/constant"
@@ -96,10 +97,15 @@ func NewDataStorage(o *EvaluatorPluginOption, logger log.FieldLogger) (dssdk.Dat
 	return ds, nil
 }
 
-func NewSimpleStorage(o *EvaluatorPluginOption, logger log.FieldLogger) (dsdk.SimpleStorage, error) {
+func NewSimpleStorage(o *EvaluatorPluginOption, cli_fty *client_helper.ClientFactory, logger log.FieldLogger) (dsdk.SimpleStorage, error) {
 	name, args, err := cfg_helper.ParseConfigOption("name", o.SimpleStorage, "logger", logger)
 	if err != nil {
 		return nil, err
+	}
+
+	switch name {
+	case "default":
+		args = append(args, "client_factory", cli_fty)
 	}
 
 	ss, err := dsdk.NewSimpleStorage(name, args...)
@@ -121,6 +127,7 @@ func NewEvaluatorPluginService(cfg string) (*service.EvaluatorPluginService, err
 	c.Provide(cmd_contrib.NewOpentracing)
 	c.Provide(cmd_contrib.NewClientFactory)
 	c.Provide(NewDataStorage)
+	c.Provide(NewSimpleStorage)
 	c.Provide(NewEvaluatorPluginServiceOption)
 	c.Provide(service.NewEvaluatorPluginService)
 	if err := c.Invoke(func(evltr_plg_srv *service.EvaluatorPluginService) {

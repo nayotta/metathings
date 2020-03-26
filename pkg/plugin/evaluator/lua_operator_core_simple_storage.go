@@ -5,9 +5,11 @@ import (
 	"strings"
 
 	"github.com/golang/protobuf/proto"
+	"github.com/spf13/cast"
 	"github.com/stretchr/objx"
 	lua "github.com/yuin/gopher-lua"
 
+	context_helper "github.com/nayotta/metathings/pkg/common/context"
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 	dsdk "github.com/nayotta/metathings/sdk/deviced"
 )
@@ -18,8 +20,8 @@ type luaMetathingsCoreSimpleStorageOption struct {
 
 type luaMetathingsCoreSimpleStorage struct {
 	opt        *luaMetathingsCoreSimpleStorageOption
-	smpl_stor  dsdk.SimpleStorage
 	immutables objx.Map
+	core       *luaMetathingsCore
 }
 
 func (ss *luaMetathingsCoreSimpleStorage) check(L *lua.LState) *luaMetathingsCoreSimpleStorage {
@@ -53,7 +55,7 @@ func (ss *luaMetathingsCoreSimpleStorage) GetImmutableOption() objx.Map {
 }
 
 func (ss *luaMetathingsCoreSimpleStorage) get_context() context.Context {
-	return context.TODO()
+	return context_helper.WithToken(context.TODO(), cast.ToString(ss.core.GetContext().Get("token")))
 }
 
 // LUA_FUNCTION: simple_storage:put(option#table, content#string)
@@ -68,7 +70,7 @@ func (ss *luaMetathingsCoreSimpleStorage) luaPut(L *lua.LState) int {
 	cnt := L.CheckString(3)
 	obj := parse_ltable_to_pb_object(ss, opt_tb)
 
-	if err := ss.smpl_stor.Put(ss.get_context(), obj, strings.NewReader(cnt)); err != nil {
+	if err := ss.core.GetSimpleStorage().Put(ss.get_context(), obj, strings.NewReader(cnt)); err != nil {
 		L.RaiseError("failed to put object to simple storage")
 		return 0
 	}
@@ -87,7 +89,7 @@ func (ss *luaMetathingsCoreSimpleStorage) luaRemove(L *lua.LState) int {
 	opt_tb := L.CheckTable(2)
 	obj := parse_ltable_to_pb_object(ss, opt_tb)
 
-	if err := ss.smpl_stor.Remove(ss.get_context(), obj); err != nil {
+	if err := ss.core.GetSimpleStorage().Remove(ss.get_context(), obj); err != nil {
 		L.RaiseError("failed to remove object from simple storage")
 		return 0
 	}
@@ -112,7 +114,7 @@ func (ss *luaMetathingsCoreSimpleStorage) luaRename(L *lua.LState) int {
 	src := parse_ltable_to_pb_object(ss, src_tb)
 	dst := parse_ltable_to_pb_object(ss, dst_tb)
 
-	if err := ss.smpl_stor.Rename(ss.get_context(), src, dst); err != nil {
+	if err := ss.core.GetSimpleStorage().Rename(ss.get_context(), src, dst); err != nil {
 		L.RaiseError("failed to rename object in simple storage")
 		return 0
 	}
@@ -139,7 +141,7 @@ func (ss *luaMetathingsCoreSimpleStorage) luaGet(L *lua.LState) int {
 	opt_tb := L.CheckTable(2)
 	obj := parse_ltable_to_pb_object(ss, opt_tb)
 
-	obj, err := ss.smpl_stor.Get(ss.get_context(), obj)
+	obj, err := ss.core.GetSimpleStorage().Get(ss.get_context(), obj)
 	if err != nil {
 		L.RaiseError("failed to get object from simple storage")
 		return 0
@@ -162,7 +164,7 @@ func (ss *luaMetathingsCoreSimpleStorage) luaGetContent(L *lua.LState) int {
 	opt_tb := L.CheckTable(2)
 	obj := parse_ltable_to_pb_object(ss, opt_tb)
 
-	buf, err := ss.smpl_stor.GetContent(ss.get_context(), obj)
+	buf, err := ss.core.GetSimpleStorage().GetContent(ss.get_context(), obj)
 	if err != nil {
 		L.RaiseError("failed to get object content from simple storage")
 		return 0
@@ -199,7 +201,7 @@ func (ss *luaMetathingsCoreSimpleStorage) luaList(L *lua.LState) int {
 		dsdk.SimpleStorageListOption_SetDepth(int(opt.Get("depth").Float64())),
 	}
 
-	objs, err := ss.smpl_stor.List(ss.get_context(), obj, opts...)
+	objs, err := ss.core.GetSimpleStorage().List(ss.get_context(), obj, opts...)
 	if err != nil {
 		L.RaiseError("failed to list objects from simple storage")
 		return 0
@@ -223,18 +225,18 @@ func newLuaMetathingsCoreSimpleStorageOption() *luaMetathingsCoreSimpleStorageOp
 }
 
 func newLuaMetathingsCoreSimpleStorage(args ...interface{}) (*luaMetathingsCoreSimpleStorage, error) {
-	var smpl_stor dsdk.SimpleStorage
+	var core *luaMetathingsCore
 	opt := newLuaMetathingsCoreSimpleStorageOption()
 
 	if err := opt_helper.Setopt(map[string]func(string, interface{}) error{
 		"immutable_option": opt_helper.ToStringMap(&opt.ImmutableOption),
-		"simple_storage":   dsdk.ToSimpleStorage(&smpl_stor),
+		"core":             toLuaMetathingsCore(&core),
 	})(args...); err != nil {
 		return nil, err
 	}
 
 	return &luaMetathingsCoreSimpleStorage{
-		opt:       opt,
-		smpl_stor: smpl_stor,
+		opt:  opt,
+		core: core,
 	}, nil
 }
