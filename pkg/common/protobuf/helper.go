@@ -5,8 +5,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/gogo/protobuf/jsonpb"
-	"github.com/gogo/protobuf/proto"
+	"github.com/golang/protobuf/jsonpb"
+	"github.com/golang/protobuf/proto"
 	"github.com/golang/protobuf/ptypes/timestamp"
 	"github.com/golang/protobuf/ptypes/wrappers"
 )
