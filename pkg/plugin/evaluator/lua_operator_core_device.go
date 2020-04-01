@@ -41,13 +41,19 @@ func (d *luaMetathingsCoreDevice) luaGetId(L *lua.LState) int {
 	return 1
 }
 
-// LUA_FUNCTION: device:storage(msr#string, tags#table) storage
+// LUA_FUNCTION: device:storage(msr#string, tags#table<optional>) storage
 func (d *luaMetathingsCoreDevice) luaNewStorage(L *lua.LState) int {
+	var tags map[string]string
+
 	d.check(L)
 
 	msr := L.CheckString(2)
-	tags_tb := L.CheckTable(3)
-	tags := cast.ToStringMapString(parse_ltable_to_string_map(tags_tb))
+	if L.GetTop() > 2 {
+		tags_tb := L.CheckTable(3)
+		tags = cast.ToStringMapString(parse_ltable_to_string_map(tags_tb))
+	} else {
+		tags = make(map[string]string)
+	}
 
 	immutable_tags := map[string]string{
 		"$source_id":   cast.ToString(d.core.GetContext().Get("source.id")),

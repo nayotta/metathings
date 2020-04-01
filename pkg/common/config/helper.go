@@ -3,7 +3,8 @@ package config_helper
 import "errors"
 
 var (
-	ErrInvalidArgument = errors.New("invalid argument")
+	ErrInvalidArgument     = errors.New("invalid argument")
+	ErrExpectedKeyNotFound = errors.New("expected key not found")
 )
 
 func ParseConfigOption(k string, m map[string]interface{}, a ...interface{}) (string, []interface{}, error) {
@@ -15,7 +16,7 @@ func ParseConfigOption(k string, m map[string]interface{}, a ...interface{}) (st
 	var y []interface{}
 
 	if val, ok = m[k]; !ok {
-		return "", nil, ErrInvalidArgument
+		return "", nil, ErrExpectedKeyNotFound
 	}
 
 	if name, ok = val.(string); !ok {

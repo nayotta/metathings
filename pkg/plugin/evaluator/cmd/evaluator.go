@@ -32,15 +32,6 @@ func NewEvaluatorPluginOption() *EvaluatorPluginOption {
 	}
 }
 
-func init_string_map_from_config_with_stage(dst *map[string]interface{}, key string) {
-	sm := make(map[string]interface{})
-	vm := cmd_helper.GetFromStage().Sub(key)
-	for _, k := range vm.AllKeys() {
-		sm[k] = vm.Get(k)
-	}
-	*dst = sm
-}
-
 func LoadEvaluatorPluginOption(path string) func() (*EvaluatorPluginOption, error) {
 	return func() (*EvaluatorPluginOption, error) {
 		viper.AutomaticEnv()
@@ -56,8 +47,8 @@ func LoadEvaluatorPluginOption(path string) func() (*EvaluatorPluginOption, erro
 		opt := NewEvaluatorPluginOption()
 		cmd_helper.UnmarshalConfig(&opt)
 
-		init_string_map_from_config_with_stage(&opt.DataStorage, "data_storage")
-		init_string_map_from_config_with_stage(&opt.SimpleStorage, "simple_storage")
+		cmd_helper.InitStringMapFromConfigWithStage(&opt.DataStorage, "data_storage")
+		cmd_helper.InitStringMapFromConfigWithStage(&opt.SimpleStorage, "simple_storage")
 
 		return opt, nil
 	}

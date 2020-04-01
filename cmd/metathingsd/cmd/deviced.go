@@ -46,74 +46,6 @@ var (
 	deviced_opt *DevicedOption
 )
 
-func init_connection_center(opt *DevicedOption) {
-	init_connection_center_storage(opt)
-	init_connection_center_bridge(opt)
-}
-
-func init_connection_center_storage(opt *DevicedOption) {
-	mccs := map[string]interface{}{}
-	vccs := cmd_helper.GetFromStage().Sub("connection_center").Sub("storage")
-	for _, key := range vccs.AllKeys() {
-		mccs[key] = vccs.Get(key)
-	}
-	opt.ConnectionCenter.Storage = mccs
-}
-
-func init_connection_center_bridge(opt *DevicedOption) {
-	mccb := map[string]interface{}{}
-	vccb := cmd_helper.GetFromStage().Sub("connection_center").Sub("bridge")
-	for _, key := range vccb.AllKeys() {
-		mccb[key] = vccb.Get(key)
-	}
-	opt.ConnectionCenter.Bridge = mccb
-}
-
-func init_session_storage(opt *DevicedOption) {
-	mss := map[string]interface{}{}
-	vss := cmd_helper.GetFromStage().Sub("session_storage")
-	for _, key := range vss.AllKeys() {
-		mss[key] = vss.Get(key)
-	}
-	opt.SessionStorage = mss
-}
-
-func init_simple_storage(opt *DevicedOption) {
-	mss := map[string]interface{}{}
-	vss := cmd_helper.GetFromStage().Sub("simple_storage")
-	for _, key := range vss.AllKeys() {
-		mss[key] = vss.Get(key)
-	}
-	opt.SimpleStorage = mss
-}
-
-func init_flow(opt *DevicedOption) {
-	mf := map[string]interface{}{}
-	vf := cmd_helper.GetFromStage().Sub("flow")
-	for _, key := range vf.AllKeys() {
-		mf[key] = vf.Get(key)
-	}
-	opt.Flow = mf
-}
-
-func init_flow_set(opt *DevicedOption) {
-	mfs := map[string]interface{}{}
-	vfs := cmd_helper.GetFromStage().Sub("flow_set")
-	for _, key := range vfs.AllKeys() {
-		mfs[key] = vfs.Get(key)
-	}
-	opt.FlowSet = mfs
-}
-
-func init_data_launcher(opt *DevicedOption) {
-	mdl := map[string]interface{}{}
-	vdl := cmd_helper.GetFromStage().Sub("data_launcher")
-	for _, key := range vdl.AllKeys() {
-		mdl[key] = vdl.Get(key)
-	}
-	opt.DataLauncher = mdl
-}
-
 var (
 	devicedCmd = &cobra.Command{
 		Use:   "deviced",
@@ -128,12 +60,16 @@ var (
 			base_opt = &opt_t.BaseOption
 
 			init_service_cmd_option(opt_t, deviced_opt)
-			init_session_storage(opt_t)
-			init_simple_storage(opt_t)
-			init_connection_center(opt_t)
-			init_flow(opt_t)
-			init_flow_set(opt_t)
-			init_data_launcher(opt_t)
+
+			cmd_helper.InitManyStringMapFromConfigWithStage([]cmd_helper.InitManyOption{
+				{&opt_t.SessionStorage, "session_storage"},
+				{&opt_t.SimpleStorage, "simple_storage"},
+				{&opt_t.ConnectionCenter.Storage, "connection_center.storage"},
+				{&opt_t.ConnectionCenter.Bridge, "connection_center.bridge"},
+				{&opt_t.Flow, "flow"},
+				{&opt_t.FlowSet, "flow_set"},
+				{&opt_t.DataLauncher, "data_launcher"},
+			})
 
 			deviced_opt = opt_t
 			deviced_opt.SetServiceName("deviced")
@@ -179,7 +115,11 @@ func NewDevicedDataLauncher(p NewDevicedDataLauncherParams) (evaluatord_sdk.Data
 	var err error
 
 	if name, args, err = cfg_helper.ParseConfigOption("name", p.Option.DataLauncher, "logger", p.Logger); err != nil {
-		return nil, err
+		if err != cfg_helper.ErrExpectedKeyNotFound {
+			return nil, err
+		}
+
+		name = "dummy"
 	}
 
 	return evaluatord_sdk.NewDataLauncher(name, args...)
