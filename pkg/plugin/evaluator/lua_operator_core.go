@@ -151,13 +151,19 @@ func (c *luaMetathingsCore) luaGetContext(L *lua.LState) int {
 	return 1
 }
 
-// LUA_FUNCTION: core:storage(msr#string, tags#table) storage
+// LUA_FUNCTION: core:storage(msr#string, tags#table<optional>) storage
 func (c *luaMetathingsCore) luaNewStorage(L *lua.LState) int {
+	var tags map[string]string
+
 	c.check(L)
 
 	msr := L.CheckString(2)
-	tags_tb := L.CheckTable(3)
-	tags := cast.ToStringMapString(parse_ltable_to_string_map(tags_tb))
+	if L.GetTop() > 2 {
+		tags_tb := L.CheckTable(3)
+		tags = cast.ToStringMapString(parse_ltable_to_string_map(tags_tb))
+	} else {
+		tags = make(map[string]string)
+	}
 	s, err := newLuaMetathingsCoreStorage("data_storage", c.dat_stor, "measurement", msr, "tags", tags)
 	if err != nil {
 		L.RaiseError("failed to new storage")
