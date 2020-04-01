@@ -179,6 +179,10 @@ func NewDevicedDataLauncher(p NewDevicedDataLauncherParams) (evaluatord_sdk.Data
 	var err error
 
 	if name, args, err = cfg_helper.ParseConfigOption("name", p.Option.DataLauncher, "logger", p.Logger); err != nil {
+		if err == cfg_helper.ErrExpectedKeyNotFound {
+			p.Logger.Debugf("ignore data launcher")
+			return nil, nil
+		}
 		return nil, err
 	}
 

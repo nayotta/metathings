@@ -22,9 +22,7 @@ fi
 
 cd ${srcDir}
 
-source config.rc
-
-LDFLAGS="-X main.Config=/configs/${PLUGIN_NAMESPACE}/evaluator-plugin-config/evaluator-plugin.yaml"
+LDFLAGS="-X main.Config=/configs/$(ls /configs)/evaluator-plugin-config/evaluator-plugin.yaml"
 
 # use vendor mode if the vendor dir exists when go version is greater
 # than 1.12 (the version that fission started to support go module).
