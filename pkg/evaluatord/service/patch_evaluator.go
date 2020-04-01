@@ -3,10 +3,10 @@ package metathings_evaluatord_service
 import (
 	"context"
 
+	"github.com/golang/protobuf/jsonpb"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"github.com/gogo/protobuf/jsonpb"
 	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
 	storage "github.com/nayotta/metathings/pkg/evaluatord/storage"
 	identityd_validator "github.com/nayotta/metathings/pkg/identityd2/validator"

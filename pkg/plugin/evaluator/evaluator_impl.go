@@ -8,6 +8,7 @@ import (
 	cfg_helper "github.com/nayotta/metathings/pkg/common/config"
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 	dssdk "github.com/nayotta/metathings/sdk/data_storage"
+	dsdk "github.com/nayotta/metathings/sdk/deviced"
 	esdk "github.com/nayotta/metathings/sdk/evaluatord"
 )
 
@@ -16,11 +17,12 @@ type EvaluatorImplOption struct {
 }
 
 type EvaluatorImpl struct {
-	opt      *EvaluatorImplOption
-	dat_stor dssdk.DataStorage
-	info     esdk.Data
-	ctx      esdk.Data
-	logger   log.FieldLogger
+	opt       *EvaluatorImplOption
+	dat_stor  dssdk.DataStorage
+	smpl_stor dsdk.SimpleStorage
+	info      esdk.Data
+	ctx       esdk.Data
+	logger    log.FieldLogger
 }
 
 func (e *EvaluatorImpl) get_eval_context() esdk.Data {
@@ -42,6 +44,7 @@ func (e *EvaluatorImpl) Eval(ctx context.Context, dat esdk.Data) error {
 		"driver", e.opt.Operator,
 		"logger", e.get_logger(),
 		"data_storage", e.dat_stor,
+		"simple_storage", e.smpl_stor,
 	)
 	if err != nil {
 		logger.WithError(err).Debugf("failed to parse operator config option")
@@ -70,14 +73,16 @@ func NewEvaluatorImpl(args ...interface{}) (*EvaluatorImpl, error) {
 	var context map[string]interface{}
 	var info map[string]interface{}
 	var ds dssdk.DataStorage
+	var ss dsdk.SimpleStorage
 	opt := &EvaluatorImplOption{}
 
 	if err := opt_helper.Setopt(map[string]func(string, interface{}) error{
-		"logger":       opt_helper.ToLogger(&logger),
-		"info":         opt_helper.ToStringMap(&info),
-		"operator":     opt_helper.ToStringMap(&opt.Operator),
-		"context":      opt_helper.ToStringMap(&context),
-		"data_storage": dssdk.ToDataStorage(&ds),
+		"logger":         opt_helper.ToLogger(&logger),
+		"info":           opt_helper.ToStringMap(&info),
+		"operator":       opt_helper.ToStringMap(&opt.Operator),
+		"context":        opt_helper.ToStringMap(&context),
+		"data_storage":   dssdk.ToDataStorage(&ds),
+		"simple_storage": dsdk.ToSimpleStorage(&ss),
 	}, opt_helper.SetSkip(true))(args...); err != nil {
 		return nil, err
 	}
@@ -93,11 +98,12 @@ func NewEvaluatorImpl(args ...interface{}) (*EvaluatorImpl, error) {
 	}
 
 	evltr := &EvaluatorImpl{
-		opt:      opt,
-		info:     inf,
-		ctx:      ctx,
-		dat_stor: ds,
-		logger:   logger,
+		opt:       opt,
+		info:      inf,
+		ctx:       ctx,
+		dat_stor:  ds,
+		smpl_stor: ss,
+		logger:    logger,
 	}
 
 	return evltr, nil

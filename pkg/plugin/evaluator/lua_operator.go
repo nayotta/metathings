@@ -6,6 +6,7 @@ import (
 
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 	dssdk "github.com/nayotta/metathings/sdk/data_storage"
+	dsdk "github.com/nayotta/metathings/sdk/deviced"
 	esdk "github.com/nayotta/metathings/sdk/evaluatord"
 )
 
@@ -14,9 +15,10 @@ type LuaOperatorOption struct {
 }
 
 type LuaOperator struct {
-	dat_stor dssdk.DataStorage
-	opt      *LuaOperatorOption
-	env      *lua.LState
+	dat_stor  dssdk.DataStorage
+	smpl_stor dsdk.SimpleStorage
+	opt       *LuaOperatorOption
+	env       *lua.LState
 }
 
 func (lo *LuaOperator) Run(ctx, dat esdk.Data) (esdk.Data, error) {
@@ -24,6 +26,7 @@ func (lo *LuaOperator) Run(ctx, dat esdk.Data) (esdk.Data, error) {
 		"context", ctx,
 		"data", dat,
 		"data_storage", lo.dat_stor,
+		"simple_storage", lo.smpl_stor,
 	)
 	if err != nil {
 		return nil, err
@@ -59,21 +62,24 @@ func (lo *LuaOperator) Close() error {
 func NewLuaOperator(args ...interface{}) (Operator, error) {
 	var logger log.FieldLogger
 	var ds dssdk.DataStorage
+	var ss dsdk.SimpleStorage
 
 	opt := &LuaOperatorOption{}
 
 	if err := opt_helper.Setopt(map[string]func(string, interface{}) error{
-		"code":         opt_helper.ToString(&opt.Code),
-		"logger":       opt_helper.ToLogger(&logger),
-		"data_storage": dssdk.ToDataStorage(&ds),
+		"code":           opt_helper.ToString(&opt.Code),
+		"logger":         opt_helper.ToLogger(&logger),
+		"data_storage":   dssdk.ToDataStorage(&ds),
+		"simple_storage": dsdk.ToSimpleStorage(&ss),
 	}, opt_helper.SetSkip(true))(args...); err != nil {
 		return nil, err
 	}
 
 	op := &LuaOperator{
-		dat_stor: ds,
-		opt:      opt,
-		env:      lua.NewState(),
+		dat_stor:  ds,
+		smpl_stor: ss,
+		opt:       opt,
+		env:       lua.NewState(),
 	}
 
 	return op, nil

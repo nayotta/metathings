@@ -1,9 +1,7 @@
 package metathings_plugin_evaluator
 
 import (
-	"bytes"
 	"context"
-	"encoding/gob"
 	"time"
 
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
@@ -15,28 +13,62 @@ import (
 type luaMetathingsCoreStorage struct {
 	dat_stor dssdk.DataStorage
 
-	msr  string
-	tags map[string]string
+	msr            string
+	immutable_tags map[string]string
+	tags           map[string]string
 }
 
 func newLuaMetathingsCoreStorage(args ...interface{}) (*luaMetathingsCoreStorage, error) {
 	var ds dssdk.DataStorage
 	var msr string
+	var immutable_tags map[string]string
 	var tags map[string]string
 
 	if err := opt_helper.Setopt(map[string]func(string, interface{}) error{
-		"data_storage": dssdk.ToDataStorage(&ds),
-		"measurement":  opt_helper.ToString(&msr),
-		"tags":         opt_helper.ToStringMapString(&tags),
+		"data_storage":   dssdk.ToDataStorage(&ds),
+		"measurement":    opt_helper.ToString(&msr),
+		"immutable_tags": opt_helper.ToStringMapString(&immutable_tags),
+		"tags":           opt_helper.ToStringMapString(&tags),
 	})(args...); err != nil {
 		return nil, err
 	}
 
 	return &luaMetathingsCoreStorage{
-		dat_stor: ds,
-		msr:      msr,
-		tags:     tags,
+		dat_stor:       ds,
+		msr:            msr,
+		immutable_tags: immutable_tags,
+		tags:           tags,
 	}, nil
+}
+
+func (s *luaMetathingsCoreStorage) check(L *lua.LState) *luaMetathingsCoreStorage {
+	ud := L.CheckUserData(1)
+
+	v, ok := ud.Value.(*luaMetathingsCoreStorage)
+	if !ok {
+		L.ArgError(1, "storage expected")
+		return nil
+	}
+
+	return v
+}
+
+func (s *luaMetathingsCoreStorage) get_context() context.Context {
+	return context.TODO()
+}
+
+func (s *luaMetathingsCoreStorage) get_tags() map[string]string {
+	tags := map[string]string{}
+
+	for k, v := range s.tags {
+		tags[k] = v
+	}
+
+	for k, v := range s.immutable_tags {
+		tags[k] = v
+	}
+
+	return tags
 }
 
 func (s *luaMetathingsCoreStorage) MetatableIndex() map[string]lua.LGFunction {
@@ -46,37 +78,24 @@ func (s *luaMetathingsCoreStorage) MetatableIndex() map[string]lua.LGFunction {
 	}
 }
 
-func (s *luaMetathingsCoreStorage) check(L *lua.LState) *luaMetathingsCoreStorage {
-	ud := L.CheckUserData(1)
-	v, ok := ud.Value.(*luaMetathingsCoreStorage)
-	if !ok {
-		L.ArgError(1, "core_storage expected")
-		return nil
-	}
-
-	return v
-}
-
 // LUA_FUNCTION: storage:with(tags#table) storage
 func (s *luaMetathingsCoreStorage) luaWith(L *lua.LState) int {
-	var pipe bytes.Buffer
-	var tags map[string]string
+	s.check(L)
 
+	tags := map[string]string{}
 	stor := s.check(L)
+	exts_tb := L.CheckTable(2)
+	exts := parse_ltable_to_string_map(exts_tb)
 
-	enc := gob.NewEncoder(&pipe)
-	enc.Encode(stor.tags)
-	dec := gob.NewDecoder(&pipe)
-	dec.Decode(&tags)
-
-	tags_tb := L.CheckTable(2)
-	exts := parse_ltable_to_string_map(tags_tb)
+	for k, v := range stor.tags {
+		tags[k] = v
+	}
 
 	for k, v := range exts {
 		tags[k] = v.(string)
 	}
 
-	ns, err := newLuaMetathingsCoreStorage("data_storage", s.dat_stor, "measurement", stor.msr, "tags", tags)
+	ns, err := newLuaMetathingsCoreStorage("data_storage", stor.dat_stor, "measurement", stor.msr, "immutable_tags", stor.immutable_tags, "tags", tags)
 	if err != nil {
 		L.RaiseError("failed to new storage")
 		return 0
@@ -92,7 +111,9 @@ func (s *luaMetathingsCoreStorage) luaWith(L *lua.LState) int {
 //   option:
 //     timestamp: data timestamp
 func (s *luaMetathingsCoreStorage) luaWrite(L *lua.LState) int {
-	ctx := context.TODO()
+	s.check(L)
+
+	ctx := s.get_context()
 
 	dat_tb := L.CheckTable(2)
 	dat := parse_ltable_to_string_map(dat_tb)
@@ -111,7 +132,7 @@ func (s *luaMetathingsCoreStorage) luaWrite(L *lua.LState) int {
 	}
 	ctx = context.WithValue(ctx, "timestamp", ts)
 
-	err := s.dat_stor.Write(ctx, s.msr, s.tags, dat)
+	err := s.dat_stor.Write(ctx, s.msr, s.get_tags(), dat)
 	if err != nil {
 		L.RaiseError("failed to write data to data storage")
 		return 0

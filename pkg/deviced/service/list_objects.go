@@ -44,7 +44,7 @@ func (self *MetathingsDevicedService) ListObjects(ctx context.Context, req *pb.L
 		opt.Depth = int(depth.GetValue())
 	}
 
-	if opt.Recursive && opt.Depth == 0 {
+	if opt.Recursive && opt.Depth <= 0 {
 		opt.Depth = 16
 	}
 

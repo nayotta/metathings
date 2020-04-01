@@ -1,14 +1,21 @@
 package metathings_plugin_evaluator
 
 import (
+	"encoding/json"
 	"strconv"
 	"sync"
 
+	"github.com/golang/protobuf/jsonpb"
+	"github.com/golang/protobuf/proto"
 	"github.com/spf13/cast"
+	"github.com/stretchr/objx"
 	lua "github.com/yuin/gopher-lua"
 
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
+	deviced_pb "github.com/nayotta/metathings/pkg/proto/deviced"
+	pb "github.com/nayotta/metathings/pkg/proto/deviced"
 	dssdk "github.com/nayotta/metathings/sdk/data_storage"
+	dsdk "github.com/nayotta/metathings/sdk/deviced"
 	esdk "github.com/nayotta/metathings/sdk/evaluatord"
 )
 
@@ -43,13 +50,15 @@ func luaInitOnceObject(L *lua.LState, name string, obj luaBaseObject) {
  *   source:
  *     id: <id>  # type: string
  *     type: <type>  # type: string
+ *   token: <token>  # type: string
  *   timestamp: <ts>  # type: int64
  *   tags:  # type: map[string]string
  *     ...
  */
 
 type luaMetathingsCore struct {
-	dat_stor dssdk.DataStorage
+	dat_stor  dssdk.DataStorage
+	smpl_stor dsdk.SimpleStorage
 
 	context esdk.Data
 	data    esdk.Data
@@ -58,21 +67,35 @@ type luaMetathingsCore struct {
 func newLuaMetathingsCore(args ...interface{}) (*luaMetathingsCore, error) {
 	var ctx, dat esdk.Data
 	var ds dssdk.DataStorage
+	var ss dsdk.SimpleStorage
 
-	if err := opt_helper.Setopt(map[string]func(string, interface {
-	}) error{
-		"context":      esdk.ToData(&ctx),
-		"data":         esdk.ToData(&dat),
-		"data_storage": dssdk.ToDataStorage(&ds),
+	if err := opt_helper.Setopt(map[string]func(string, interface{}) error{
+		"context":        esdk.ToData(&ctx),
+		"data":           esdk.ToData(&dat),
+		"data_storage":   dssdk.ToDataStorage(&ds),
+		"simple_storage": dsdk.ToSimpleStorage(&ss),
 	})(args...); err != nil {
 		return nil, err
 	}
 
 	return &luaMetathingsCore{
-		context:  ctx,
-		data:     dat,
-		dat_stor: ds,
+		context:   ctx,
+		data:      dat,
+		dat_stor:  ds,
+		smpl_stor: ss,
 	}, nil
+}
+
+func (c *luaMetathingsCore) check(L *lua.LState) *luaMetathingsCore {
+	ud := L.CheckUserData(1)
+
+	v, ok := ud.Value.(*luaMetathingsCore)
+	if !ok {
+		L.ArgError(1, "core expected")
+		return nil
+	}
+
+	return v
 }
 
 func (c *luaMetathingsCore) GetContext() esdk.Data {
@@ -87,32 +110,27 @@ func (c *luaMetathingsCore) GetDataStorage() dssdk.DataStorage {
 	return c.dat_stor
 }
 
-func (c *luaMetathingsCore) MetatableIndex() map[string]lua.LGFunction {
-	return map[string]lua.LGFunction{
-		"data":    c.luaGetData,
-		"context": c.luaGetContext,
-		"storage": c.luaNewStorage,
-		"device":  c.luaGetDevice,
-	}
+func (c *luaMetathingsCore) GetSimpleStorage() dsdk.SimpleStorage {
+	return c.smpl_stor
 }
 
-func (c *luaMetathingsCore) check(L *lua.LState) *luaMetathingsCore {
-	ud := L.CheckUserData(1)
-	v, ok := ud.Value.(*luaMetathingsCore)
-	if !ok {
-		L.ArgError(1, "core expected")
-		return nil
+func (c *luaMetathingsCore) MetatableIndex() map[string]lua.LGFunction {
+	return map[string]lua.LGFunction{
+		"data":           c.luaGetData,
+		"context":        c.luaGetContext,
+		"storage":        c.luaNewStorage,
+		"simple_storage": c.luaNewSimpleStorage,
+		"device":         c.luaGetDevice,
 	}
-
-	return v
 }
 
 // LUA_FUNCTION: core:data(key#string)
 func (c *luaMetathingsCore) luaGetData(L *lua.LState) int {
-	core := c.check(L)
+	c.check(L)
+
 	key := L.CheckString(2)
 
-	ival := core.GetData().Get(key)
+	ival := c.GetData().Get(key)
 	val := parse_interface_to_lvalue(L, ival)
 	L.Push(val)
 
@@ -122,10 +140,11 @@ func (c *luaMetathingsCore) luaGetData(L *lua.LState) int {
 // LUA_FUNCTION: core:context(key#string)
 //   context body lookup github.com/nayotta/metathings/pkg/plugin/evaluator/evaluator_impl.go#L31
 func (c *luaMetathingsCore) luaGetContext(L *lua.LState) int {
-	core := c.check(L)
+	c.check(L)
+
 	key := L.CheckString(2)
 
-	ival := core.context.Get(key)
+	ival := c.context.Get(key)
 	val := parse_interface_to_lvalue(L, ival)
 	L.Push(val)
 
@@ -134,6 +153,8 @@ func (c *luaMetathingsCore) luaGetContext(L *lua.LState) int {
 
 // LUA_FUNCTION: core:storage(msr#string, tags#table) storage
 func (c *luaMetathingsCore) luaNewStorage(L *lua.LState) int {
+	c.check(L)
+
 	msr := L.CheckString(2)
 	tags_tb := L.CheckTable(3)
 	tags := cast.ToStringMapString(parse_ltable_to_string_map(tags_tb))
@@ -149,9 +170,35 @@ func (c *luaMetathingsCore) luaNewStorage(L *lua.LState) int {
 	return 1
 }
 
+// LUA_FUNCTION: core:simple_storage(option#table) simple_storage
+func (c *luaMetathingsCore) luaNewSimpleStorage(L *lua.LState) int {
+	var opt map[string]interface{}
+
+	c.check(L)
+
+	if L.GetTop() > 1 {
+		opt_tb := L.CheckTable(2)
+		opt = parse_ltable_to_string_map(opt_tb)
+	} else {
+		opt = make(map[string]interface{})
+	}
+	s, err := newLuaMetathingsCoreSimpleStorage("immutable_option", opt, "core", c)
+	if err != nil {
+		L.RaiseError("failed to new simple storage")
+		return 0
+	}
+
+	_, ud := luaBindingObjectMethods(L, s)
+	L.Push(ud)
+
+	return 1
+}
+
 // LUA_FUNCTION: core:device(name_or_alias#string) device
 func (c *luaMetathingsCore) luaGetDevice(L *lua.LState) int {
 	var dev_id string
+
+	c.check(L)
 
 	noa := L.CheckString(2)
 	if noa == "self" {
@@ -281,6 +328,53 @@ func parse_lvalue_to_interface(x lua.LValue) interface{} {
 	default:
 		panic("unimplemented")
 	}
+}
+
+func parse_ltable_to_pb_object(getter opt_helper.GetImmutableOptioner, x *lua.LTable) (y *deviced_pb.Object) {
+	opt := objx.New(parse_ltable_to_string_map(x))
+	y = &pb.Object{}
+
+	if dev_id := opt_helper.GetValueWithImmutableOption(getter, opt, "device").Str(); dev_id != "" {
+		y.Device = &pb.Device{Id: dev_id}
+	}
+
+	if pre := opt_helper.GetValueWithImmutableOption(getter, opt, "prefix").Str(); pre != "" {
+		y.Prefix = pre
+	}
+
+	if name := opt_helper.GetValueWithImmutableOption(getter, opt, "name").Str(); name != "" {
+		y.Name = name
+	}
+
+	return y
+}
+
+func parse_pb_message_to_ltable(L *lua.LState, x proto.Message) (y *lua.LTable) {
+	s, _ := new(jsonpb.Marshaler).MarshalToString(x)
+	m := map[string]interface{}{}
+
+	json.Unmarshal([]byte(s), &m)
+
+	y = parse_string_map_to_ltable(L, m)
+
+	return
+}
+
+func parse_pb_messages_to_ltable(L *lua.LState, xs []proto.Message) (ys *lua.LTable) {
+	marshaler := new(jsonpb.Marshaler)
+
+	var is []interface{}
+
+	for _, x := range xs {
+		s, _ := marshaler.MarshalToString(x)
+		m := map[string]interface{}{}
+		json.Unmarshal([]byte(s), &m)
+		is = append(is, m)
+	}
+
+	ys = parse_interface_slice_to_ltable(L, is)
+
+	return
 }
 
 func toLuaMetathingsCore(c **luaMetathingsCore) func(string, interface{}) error {

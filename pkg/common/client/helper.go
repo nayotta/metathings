@@ -11,6 +11,7 @@ import (
 	"google.golang.org/grpc/keepalive"
 
 	constant_helper "github.com/nayotta/metathings/pkg/common/constant"
+	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 	component_pb "github.com/nayotta/metathings/pkg/proto/component"
 	device_pb "github.com/nayotta/metathings/pkg/proto/device"
 	deviced_pb "github.com/nayotta/metathings/pkg/proto/deviced"
@@ -197,5 +198,16 @@ func NewServerTransportCredentials(cert_file, key_file string) (credentials.Tran
 		return credentials.NewServerTLSFromFile(cert_file, key_file)
 	} else {
 		return nil, nil
+	}
+}
+
+func ToClientFactory(v **ClientFactory) func(string, interface{}) error {
+	return func(key string, val interface{}) error {
+		var ok bool
+		if *v, ok = val.(*ClientFactory); !ok {
+			return opt_helper.InvalidArgument(key)
+		}
+
+		return nil
 	}
 }
