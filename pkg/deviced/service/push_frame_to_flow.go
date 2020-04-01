@@ -152,8 +152,10 @@ match_flow_loop:
 		logger.WithField("request", req_id).Debugf("push frame to flow")
 
 		go func() {
+			nctx := evaluatord_sdk.WithToken(ctx, tkn_txt)
+			nctx = evaluatord_sdk.WithDevice(ctx, dev_id)
 			err = self.data_launcher.Launch(
-				evaluatord_sdk.WithToken(ctx, tkn_txt),
+				nctx,
 				evaluatord_sdk.NewResource(f.Id(), RESOURCE_TYPE_FLOW),
 				evltrsdk_dat)
 			if err != nil {
@@ -171,8 +173,10 @@ match_flow_loop:
 			}
 
 			go func() {
+				nctx := evaluatord_sdk.WithToken(ctx, tkn_txt)
+				nctx = evaluatord_sdk.WithDevice(ctx, dev_id)
 				if err = self.data_launcher.Launch(
-					evaluatord_sdk.WithToken(ctx, tkn_txt),
+					nctx,
 					evaluatord_sdk.NewResource(fs.Id(), RESOURCE_TYPE_FLOWSET),
 					evltrsdk_dat); err != nil {
 					logger.WithError(err).Warningf("failed to launch data")

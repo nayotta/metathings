@@ -11,6 +11,7 @@ require (
 	github.com/golang/protobuf v1.3.2
 	github.com/gorilla/mux v1.7.3
 	github.com/grpc-ecosystem/go-grpc-middleware v1.0.0
+	github.com/influxdata/influxdb-client-go v0.1.5
 	github.com/jeremywohl/flatten v1.0.1
 	github.com/jinzhu/gorm v1.9.12
 	github.com/mongodb/mongo-go-driver v1.1.0
