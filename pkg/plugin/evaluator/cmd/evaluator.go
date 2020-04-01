@@ -3,13 +3,18 @@ package metathings_plugin_evaluator_cmd
 import (
 	"strings"
 
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"go.uber.org/dig"
 
 	cmd_contrib "github.com/nayotta/metathings/cmd/contrib"
+	client_helper "github.com/nayotta/metathings/pkg/common/client"
 	cmd_helper "github.com/nayotta/metathings/pkg/common/cmd"
+	cfg_helper "github.com/nayotta/metathings/pkg/common/config"
 	constant_helper "github.com/nayotta/metathings/pkg/common/constant"
 	service "github.com/nayotta/metathings/pkg/plugin/evaluator/service"
+	dssdk "github.com/nayotta/metathings/sdk/data_storage"
+	dsdk "github.com/nayotta/metathings/sdk/deviced"
 )
 
 type EvaluatorPluginOption struct {
@@ -17,6 +22,8 @@ type EvaluatorPluginOption struct {
 	Evaluator                     struct {
 		Endpoint string
 	}
+	DataStorage   map[string]interface{}
+	SimpleStorage map[string]interface{}
 }
 
 func NewEvaluatorPluginOption() *EvaluatorPluginOption {
@@ -40,6 +47,9 @@ func LoadEvaluatorPluginOption(path string) func() (*EvaluatorPluginOption, erro
 		opt := NewEvaluatorPluginOption()
 		cmd_helper.UnmarshalConfig(&opt)
 
+		cmd_helper.InitStringMapFromConfigWithStage(&opt.DataStorage, "data_storage")
+		cmd_helper.InitStringMapFromConfigWithStage(&opt.SimpleStorage, "simple_storage")
+
 		return opt, nil
 	}
 }
@@ -57,11 +67,44 @@ func GetEvaluatorPluginOptions(opt *EvaluatorPluginOption) (
 }
 
 func NewEvaluatorPluginServiceOption(o *EvaluatorPluginOption) (*service.EvaluatorPluginServiceOption, error) {
-	opt := &service.EvaluatorPluginServiceOption{}
+	opt := service.NewEvaluatorPluginServiceOption()
 
 	opt.Evaluator.Endpoint = o.Evaluator.Endpoint
 
 	return opt, nil
+}
+
+func NewDataStorage(o *EvaluatorPluginOption, logger log.FieldLogger) (dssdk.DataStorage, error) {
+	name, args, err := cfg_helper.ParseConfigOption("name", o.DataStorage, "logger", logger)
+	if err != nil {
+		return nil, err
+	}
+
+	ds, err := dssdk.NewDataStorage(name, args...)
+	if err != nil {
+		return nil, err
+	}
+
+	return ds, nil
+}
+
+func NewSimpleStorage(o *EvaluatorPluginOption, cli_fty *client_helper.ClientFactory, logger log.FieldLogger) (dsdk.SimpleStorage, error) {
+	name, args, err := cfg_helper.ParseConfigOption("name", o.SimpleStorage, "logger", logger)
+	if err != nil {
+		return nil, err
+	}
+
+	switch name {
+	case "default":
+		args = append(args, "client_factory", cli_fty)
+	}
+
+	ss, err := dsdk.NewSimpleStorage(name, args...)
+	if err != nil {
+		return nil, err
+	}
+
+	return ss, nil
 }
 
 func NewEvaluatorPluginService(cfg string) (*service.EvaluatorPluginService, error) {
@@ -74,6 +117,8 @@ func NewEvaluatorPluginService(cfg string) (*service.EvaluatorPluginService, err
 	c.Provide(cmd_contrib.NewTokener)
 	c.Provide(cmd_contrib.NewOpentracing)
 	c.Provide(cmd_contrib.NewClientFactory)
+	c.Provide(NewDataStorage)
+	c.Provide(NewSimpleStorage)
 	c.Provide(NewEvaluatorPluginServiceOption)
 	c.Provide(service.NewEvaluatorPluginService)
 	if err := c.Invoke(func(evltr_plg_srv *service.EvaluatorPluginService) {

@@ -3,6 +3,9 @@ package metathings_evaluatord_sdk
 import (
 	"context"
 	"sync"
+	"time"
+
+	"github.com/spf13/cast"
 )
 
 type DataLauncher interface {
@@ -36,5 +39,34 @@ func WithToken(ctx context.Context, tkn string) context.Context {
 }
 
 func ExtractToken(ctx context.Context) string {
-	return ctx.Value("data-launcher-token").(string)
+	return cast.ToString(ctx.Value("data-launcher-token"))
+}
+
+func WithDevice(ctx context.Context, dev string) context.Context {
+	return context.WithValue(ctx, "data-launcher-device", dev)
+}
+
+func ExtractDevice(ctx context.Context) string {
+	return cast.ToString(ctx.Value("data-launcher-device"))
+}
+
+func WithTags(ctx context.Context, tags map[string]string) context.Context {
+	return context.WithValue(ctx, "data-launcher-tags", tags)
+}
+
+func ExtractTags(ctx context.Context) map[string]string {
+	return cast.ToStringMapString(ctx.Value("data-launcher-tags"))
+}
+
+func WithTimestamp(ctx context.Context, ts time.Time) context.Context {
+	return context.WithValue(ctx, "data-launcher-timestamp", ts)
+}
+
+func ExtractTimestamp(ctx context.Context) time.Time {
+	ts, err := cast.ToTimeE(ctx.Value("data-launcher-timestamp"))
+	if err != nil {
+		ts = time.Now()
+	}
+
+	return ts
 }

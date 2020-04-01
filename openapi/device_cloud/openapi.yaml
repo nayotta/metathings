@@ -33,7 +33,8 @@ paths:
                 hmac:
                   type: string
             example:
-              $ref: "#/components/examples/IssueModuleTokenRequest"
+              demo:
+                $ref: "#/components/examples/IssueModuleTokenRequest"
       responses:
         "201":
           description: Created
@@ -44,7 +45,8 @@ paths:
                   token:
                     $ref: "#/components/schemas/Token"
               example:
-                $ref: "#/components/examples/Token"
+                demo:
+                  $ref: "#/components/examples/Token"
   "/actions/show_module":
     post:
       tags:
@@ -61,7 +63,8 @@ paths:
                   module:
                     $ref: "#/components/schemas/Module"
               example:
-                $ref: "#/components/examples/Module"
+                demo:
+                  $ref: "#/components/examples/Module"
   "/actions/heartbeat":
     post:
       tags:
@@ -82,7 +85,8 @@ paths:
                 module:
                   $ref: "#/components/schemas/Module"
             example:
-              $ref: "#/components/examples/HeartbeatRequest"
+              demo:
+                $ref: "#/components/examples/HeartbeatRequest"
       responses:
         "204":
           description: No Content
@@ -102,7 +106,8 @@ paths:
                 content:
                   type: string
             example:
-              $ref: "#/components/examples/PutObjectRequest"
+              demo:
+                $ref: "#/components/examples/PutObjectRequest"
       responses:
         "204":
           description: No Content
@@ -120,7 +125,8 @@ paths:
                 object:
                   $ref: "#/components/schemas/Object"
             example:
-              $ref: "#/components/examples/RemoveObjectRequest"
+              demo:
+                $ref: "#/components/examples/RemoveObjectRequest"
       responses:
         "204":
           description: No Content
@@ -140,7 +146,8 @@ paths:
                 destination:
                   $ref: "#/components/schemas/Object"
             example:
-              $ref: "#/components/examples/RenameObjectRequest"
+              demo:
+                $ref: "#/components/examples/RenameObjectRequest"
       responses:
         "204":
           description: No Content
@@ -158,7 +165,8 @@ paths:
                 object:
                   $ref: "#/components/schemas/Object"
             example:
-              $ref: "#/components/examples/GetObjectRequest"
+              demo:
+                $ref: "#/components/examples/GetObjectRequest"
       responses:
         "200":
           description: OK
@@ -169,7 +177,8 @@ paths:
                   object:
                     $ref: "#/components/schemas/Object"
               example:
-                $ref: "#/components/examples/Object"
+                demo:
+                  $ref: "#/components/examples/Object"
   "/actions/get_object_content":
     post:
       tags:
@@ -184,7 +193,8 @@ paths:
                 object:
                   $ref: "#/components/schemas/Object"
             example:
-              $ref: "#/components/examples/GetObjectContentRequest"
+              demo:
+                $ref: "#/components/examples/GetObjectContentRequest"
       responses:
         "200":
           description: OK
@@ -195,7 +205,8 @@ paths:
                   content:
                     type: string
               example:
-                $ref: "#/components/examples/GetObjectContentResponse"
+                demo:
+                  $ref: "#/components/examples/GetObjectContentResponse"
   "/actions/list_objects":
     post:
       tags:
@@ -223,7 +234,8 @@ paths:
                     items:
                       $ref: "#/components/schemas/Object"
               example:
-                $ref: "#/components/examples/ListObjectsResponse"
+                demo:
+                  $ref: "#/components/examples/ListObjectsResponse"
   "/actions/push_frame_to_flow":
     post:
       tags:
@@ -244,7 +256,8 @@ paths:
                 push_ack:
                   type: bool
             example:
-              $ref: "#/components/examples/PushFrameToFlowRequest"
+              demo:
+                $ref: "#/components/examples/PushFrameToFlowRequest"
       responses:
         "200":
           description: OK
@@ -257,6 +270,7 @@ paths:
                   session:
                     type: string
               example:
+                demo:
                   $ref: "#/components/examples/PushFrameToFlowResponse"
 
 security:

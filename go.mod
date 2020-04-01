@@ -11,6 +11,7 @@ require (
 	github.com/golang/protobuf v1.3.2
 	github.com/gorilla/mux v1.7.3
 	github.com/grpc-ecosystem/go-grpc-middleware v1.0.0
+	github.com/influxdata/influxdb-client-go v0.1.5
 	github.com/jeremywohl/flatten v1.0.1
 	github.com/jinzhu/gorm v1.9.12
 	github.com/mongodb/mongo-go-driver v1.1.0
@@ -27,6 +28,7 @@ require (
 	github.com/spf13/pflag v1.0.3
 	github.com/spf13/viper v1.5.0
 	github.com/stianeikeland/go-rpio v4.2.0+incompatible
+	github.com/stretchr/objx v0.1.1
 	github.com/stretchr/testify v1.3.0
 	github.com/tidwall/pretty v1.0.0 // indirect
 	github.com/uber/jaeger-client-go v2.21.1+incompatible

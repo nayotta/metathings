@@ -66,3 +66,25 @@ func LoadConfigFile(opt cmd_contrib.ConfigOptioner, v *viper.Viper) func() {
 		}
 	}
 }
+
+func InitStringMapFromConfigWithStage(dst *map[string]interface{}, key string) {
+	sm := make(map[string]interface{})
+	vm := GetFromStage().Sub(key)
+	if vm != nil {
+		for _, k := range vm.AllKeys() {
+			sm[k] = vm.Get(k)
+		}
+	}
+	*dst = sm
+}
+
+type InitManyOption struct {
+	Dst *map[string]interface{}
+	Key string
+}
+
+func InitManyStringMapFromConfigWithStage(opts []InitManyOption) {
+	for _, opt := range opts {
+		InitStringMapFromConfigWithStage(opt.Dst, opt.Key)
+	}
+}

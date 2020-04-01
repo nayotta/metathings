@@ -6,6 +6,7 @@ import (
 	"time"
 
 	log "github.com/sirupsen/logrus"
+	"github.com/stretchr/objx"
 )
 
 type Option interface {
@@ -349,8 +350,33 @@ func ToStringMap(v *map[string]interface{}) func(string, interface{}) error {
 	}
 }
 
+func ToStringMapString(v *map[string]string) func(string, interface{}) error {
+	return func(key string, val interface{}) error {
+		var ok bool
+		*v, ok = val.(map[string]string)
+		if !ok {
+			return InvalidArgument(key)
+		}
+		return nil
+	}
+}
+
 func SetenvIfNotExists(key, val string) {
 	if os.Getenv(key) == "" {
 		os.Setenv(key, val)
 	}
+}
+
+type GetImmutableOptioner interface {
+	GetImmutableOption() objx.Map
+}
+
+func GetValueWithImmutableOption(getter GetImmutableOptioner, opt objx.Map, key string) *objx.Value {
+	im_opt := getter.GetImmutableOption()
+	val := im_opt.Get(key)
+	if val.Data() != nil {
+		return val
+	}
+
+	return opt.Get(key)
 }
