@@ -17,6 +17,7 @@ type LuaOperatorOption struct {
 type LuaOperator struct {
 	dat_stor  dssdk.DataStorage
 	smpl_stor dsdk.SimpleStorage
+	caller    dsdk.Caller
 	opt       *LuaOperatorOption
 	env       *lua.LState
 }
@@ -27,6 +28,7 @@ func (lo *LuaOperator) Run(ctx, dat esdk.Data) (esdk.Data, error) {
 		"data", dat,
 		"data_storage", lo.dat_stor,
 		"simple_storage", lo.smpl_stor,
+		"caller", lo.caller,
 	)
 	if err != nil {
 		return nil, err
@@ -63,6 +65,7 @@ func NewLuaOperator(args ...interface{}) (Operator, error) {
 	var logger log.FieldLogger
 	var ds dssdk.DataStorage
 	var ss dsdk.SimpleStorage
+	var caller dsdk.Caller
 
 	opt := &LuaOperatorOption{}
 
@@ -71,6 +74,7 @@ func NewLuaOperator(args ...interface{}) (Operator, error) {
 		"logger":         opt_helper.ToLogger(&logger),
 		"data_storage":   dssdk.ToDataStorage(&ds),
 		"simple_storage": dsdk.ToSimpleStorage(&ss),
+		"caller":         dsdk.ToCaller(&caller),
 	}, opt_helper.SetSkip(true))(args...); err != nil {
 		return nil, err
 	}
@@ -78,6 +82,7 @@ func NewLuaOperator(args ...interface{}) (Operator, error) {
 	op := &LuaOperator{
 		dat_stor:  ds,
 		smpl_stor: ss,
+		caller:    caller,
 		opt:       opt,
 		env:       lua.NewState(),
 	}

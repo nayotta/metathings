@@ -29,7 +29,8 @@ type EvaluatorPluginServiceOption struct {
 	Evaluator struct {
 		Endpoint string
 	}
-	Codec string
+	Codec  string
+	Caller map[string]interface{}
 }
 
 func NewEvaluatorPluginServiceOption() *EvaluatorPluginServiceOption {
@@ -283,9 +284,11 @@ func (srv *EvaluatorPluginService) Eval(w http.ResponseWriter, r *http.Request) 
 		"info", evltr_inf,
 		"context", evltr_ctx,
 		"operator", op_opt,
+		"caller", srv.opt.Caller,
 		"logger", srv.get_logger(),
 		"data_storage", srv.dat_stor,
 		"simple_storage", srv.smpl_stor,
+		"client_factory", srv.cli_fty,
 	)
 	if err != nil {
 		logger.WithError(err).Errorf("failed to new evaluator instance")

@@ -24,6 +24,7 @@ type EvaluatorPluginOption struct {
 	}
 	DataStorage   map[string]interface{}
 	SimpleStorage map[string]interface{}
+	Caller        map[string]interface{}
 }
 
 func NewEvaluatorPluginOption() *EvaluatorPluginOption {
@@ -47,8 +48,11 @@ func LoadEvaluatorPluginOption(path string) func() (*EvaluatorPluginOption, erro
 		opt := NewEvaluatorPluginOption()
 		cmd_helper.UnmarshalConfig(&opt)
 
-		cmd_helper.InitStringMapFromConfigWithStage(&opt.DataStorage, "data_storage")
-		cmd_helper.InitStringMapFromConfigWithStage(&opt.SimpleStorage, "simple_storage")
+		cmd_helper.InitManyStringMapFromConfigWithStage([]cmd_helper.InitManyOption{
+			{&opt.DataStorage, "data_storage"},
+			{&opt.SimpleStorage, "simple_storage"},
+			{&opt.Caller, "caller"},
+		})
 
 		return opt, nil
 	}
@@ -70,6 +74,7 @@ func NewEvaluatorPluginServiceOption(o *EvaluatorPluginOption) (*service.Evaluat
 	opt := service.NewEvaluatorPluginServiceOption()
 
 	opt.Evaluator.Endpoint = o.Evaluator.Endpoint
+	opt.Caller = o.Caller
 
 	return opt, nil
 }

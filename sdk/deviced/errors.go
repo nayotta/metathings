@@ -4,4 +4,5 @@ import "errors"
 
 var (
 	ErrUnsupportedSimpleStorageFactory = errors.New("unsupported simple storage driver")
+	ErrUnsupportedCallerFactory        = errors.New("unsupported caller driver")
 )
