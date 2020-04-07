@@ -1,13 +1,21 @@
 package metathings_deviced_connection
 
-import "errors"
+import (
+	"encoding/base64"
+	"errors"
+	"fmt"
+)
 
 var (
-	ErrInvalidArgument          = errors.New("invalid argument")
-	ErrChannelClosed            = errors.New("channel closed")
-	ErrUnexpectedResponse       = errors.New("unexpected response")
+	ErrInvalidArgument = errors.New("invalid argument")
+	ErrChannelClosed   = errors.New("channel closed")
+	// ErrUnexpectedResponse       = errors.New("unexpected response")
 	ErrBridgeClosed             = errors.New("bridge closed")
 	ErrTimeout                  = errors.New("timeout")
 	ErrDuplicatedDeviceInstance = errors.New("duplicated device instance")
 	ErrDeviceOffline            = errors.New("device offline")
 )
+
+func ErrUnexpectedResponse(res []byte) error {
+	return errors.New(fmt.Sprintf("unexpected response: %v", base64.StdEncoding.EncodeToString(res)))
+}
