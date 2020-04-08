@@ -4,17 +4,21 @@ import (
 	"context"
 	"crypto/tls"
 	"fmt"
+	"io/ioutil"
 	"os"
 
+	"github.com/gogo/protobuf/jsonpb"
+	"github.com/golang/protobuf/proto"
+	dpb "github.com/golang/protobuf/protoc-gen-go/descriptor"
 	"github.com/golang/protobuf/ptypes"
 	"github.com/golang/protobuf/ptypes/any"
-	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/golang/protobuf/ptypes/wrappers"
+	"github.com/jhump/protoreflect/desc"
+	"github.com/jhump/protoreflect/dynamic"
 	"github.com/spf13/pflag"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 
-	echo_pb "github.com/nayotta/metathings-component-echo/proto"
 	context_helper "github.com/nayotta/metathings/pkg/common/context"
 	pb "github.com/nayotta/metathings/pkg/proto/deviced"
 )
@@ -24,9 +28,9 @@ var (
 	deviced_addr string
 	device_id    string
 	module       string
-	component    string
 	method       string
 	request      string
+	protobufset  string
 	insecure     bool
 	plaintext    bool
 	certfile     string
@@ -37,9 +41,9 @@ func main() {
 	pflag.StringVar(&deviced_addr, "addr", "", "Deviced Service Address")
 	pflag.StringVar(&device_id, "device", "", "Device ID")
 	pflag.StringVar(&module, "module", "", "Module Name")
-	pflag.StringVar(&component, "component", "echo", "Component Name")
-	pflag.StringVar(&method, "method", "Echo", "Method Name")
+	pflag.StringVar(&method, "method", "", "Method Name")
 	pflag.StringVar(&request, "request", "", "JSON Request File")
+	pflag.StringVar(&protobufset, "protobufset", "", "ProtobufSet File")
 	pflag.BoolVar(&insecure, "insecure", false, "Insecure")
 	pflag.BoolVar(&plaintext, "plaintext", false, "Plaintext")
 	pflag.StringVar(&certfile, "certfile", "", "CertFile")
@@ -49,40 +53,54 @@ func main() {
 
 	token = os.Getenv("MT_TOKEN")
 
-	fmt.Printf("addr=%v\ndevice=%v\nmodule=%v\ncomponent=%v\nmethod=%v\nrequest=%v\n", deviced_addr, device_id, module, component, method, request)
+	fmt.Printf("token=%v\naddr=%v\ndevice=%v\nmodule=%v\nprotobufset=%v\nmethod=%v\nrequest=%v\n", token, deviced_addr, device_id, module, protobufset, method, request)
 
 	var any_req *any.Any
 
-	switch component {
-	case "echo":
-		switch method {
-		case "Echo":
-			echo_req := &echo_pb.EchoRequest{
-				Text: &wrappers.StringValue{Value: request},
-			}
-			any_req, _ = ptypes.MarshalAny(echo_req)
+	var fds dpb.FileDescriptorSet
+
+	buf, err := ioutil.ReadFile(protobufset)
+	if err != nil {
+		panic(err)
+	}
+
+	if err = proto.Unmarshal(buf, &fds); err != nil {
+		panic(err)
+	}
+
+	fd, err := desc.CreateFileDescriptorFromSet(&fds)
+	if err != nil {
+		panic(err)
+	}
+
+	srvs := fd.GetServices()
+	if len(srvs) == 0 {
+		panic("unexpected protobufset")
+	}
+
+	md := srvs[0].FindMethodByName(method)
+	msg_req := dynamic.NewMessage(md.GetInputType())
+
+	if request != "-" {
+		buf, err = ioutil.ReadFile(request)
+		if err != nil {
+			panic(err)
 		}
-	case "camera":
-		switch method {
-		case "Start":
-			any_req, _ = ptypes.MarshalAny(&empty.Empty{})
-		case "Stop":
-			any_req, _ = ptypes.MarshalAny(&empty.Empty{})
+	} else {
+		buf, err = ioutil.ReadAll(os.Stdin)
+		if err != nil {
+			panic(err)
 		}
-	case "switch":
-		switch method {
-		case "On":
-			any_req, _ = ptypes.MarshalAny(&empty.Empty{})
-		case "Off":
-			any_req, _ = ptypes.MarshalAny(&empty.Empty{})
-		}
-	case "dvr":
-		switch method {
-		case "Start":
-			any_req, _ = ptypes.MarshalAny(&empty.Empty{})
-		case "Stop":
-			any_req, _ = ptypes.MarshalAny(&empty.Empty{})
-		}
+	}
+
+	err = msg_req.UnmarshalJSON(buf)
+	if err != nil {
+		panic(err)
+	}
+
+	any_req, err = ptypes.MarshalAny(msg_req)
+	if err != nil {
+		panic(err)
 	}
 
 	req := &pb.UnaryCallRequest{
@@ -90,10 +108,9 @@ func main() {
 			Id: &wrappers.StringValue{Value: device_id},
 		},
 		Value: &pb.OpUnaryCallValue{
-			Name:      &wrappers.StringValue{Value: module},
-			Component: &wrappers.StringValue{Value: component},
-			Method:    &wrappers.StringValue{Value: method},
-			Value:     any_req,
+			Name:   &wrappers.StringValue{Value: module},
+			Method: &wrappers.StringValue{Value: method},
+			Value:  any_req,
 		},
 	}
 
@@ -128,38 +145,16 @@ func main() {
 		panic(err)
 	}
 
-	switch component {
-	case "echo":
-		switch method {
-		case "Echo":
-			var echo_res echo_pb.EchoResponse
-			err = ptypes.UnmarshalAny(res.Value.Value, &echo_res)
-			if err != nil {
-				panic(err)
-			}
-
-			fmt.Println(echo_res.Text)
-		}
-	case "camera":
-		switch method {
-		case "Start":
-			fmt.Println("camera started")
-		case "Stop":
-			fmt.Println("camera stoped")
-		}
-	case "switch":
-		switch method {
-		case "On":
-			fmt.Println("switch on")
-		case "Off":
-			fmt.Println("switch off")
-		}
-	case "dvr":
-		switch method {
-		case "Start":
-			fmt.Println("digit video recorder start")
-		case "Stop":
-			fmt.Println("digit video recorder stop")
-		}
+	msg_res := dynamic.NewMessage(md.GetOutputType())
+	err = ptypes.UnmarshalAny(res.Value.Value, msg_res)
+	if err != nil {
+		panic(err)
 	}
+
+	out, err := new(jsonpb.Marshaler).MarshalToString(msg_res)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println(out)
 }
