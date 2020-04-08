@@ -432,3 +432,19 @@ func (this *OpStreamCallExit) Validate() error {
 func (this *StreamCallExit) Validate() error {
 	return nil
 }
+func (this *OpDescriptor) Validate() error {
+	if this.Sha1 != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Sha1); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Sha1", err)
+		}
+	}
+	if this.Body != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Body); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Body", err)
+		}
+	}
+	return nil
+}
+func (this *Descriptor) Validate() error {
+	return nil
+}

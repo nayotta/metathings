@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package ai.metathings.service.deviced;
+
+import "github.com/mwitkow/go-proto-validators/validator.proto";
+
+import "model.proto";
+
+message GetDescriptorRequest {
+	OpDescriptor descriptor = 1 [(validator.field) = {msg_exists: true}];
+}
+
+message GetDescriptorResponse {
+	Descriptor descriptor = 1;
+}

@@ -12,6 +12,9 @@ import "get_device.proto";
 import "list_devices.proto";
 import "get_device_by_module.proto";
 
+import "upload_descriptor.proto";
+import "get_descriptor.proto";
+
 import "unary_call.proto";
 import "stream_call.proto";
 
@@ -48,6 +51,10 @@ service DevicedService {
 	rpc GetDevice(GetDeviceRequest) returns (GetDeviceResponse) {}
 	rpc ListDevices(ListDevicesRequest) returns (ListDevicesResponse) {}
 	rpc GetDeviceByModule(GetDeviceByModuleRequest) returns (GetDeviceByModuleResponse) {}
+
+	// Descriptor
+	rpc UploadDescriptor(UploadDescriptorRequest) returns (UploadDescriptorResponse) {}
+	rpc GetDescriptor(GetDescriptorRequest) returns (GetDescriptorResponse) {}
 
 	// Calling
 	rpc UnaryCall(UnaryCallRequest) returns (UnaryCallResponse) {}

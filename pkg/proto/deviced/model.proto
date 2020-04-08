@@ -192,3 +192,13 @@ message StreamCallConfigAck {}
 
 message OpStreamCallExit {}
 message StreamCallExit {}
+
+message OpDescriptor {
+	google.protobuf.StringValue sha1 = 1;
+	google.protobuf.BytesValue body = 2;
+}
+
+message Descriptor {
+	string sha1 = 1;
+	bytes body = 2;
+}
