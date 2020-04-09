@@ -13,6 +13,7 @@ import (
 	cfg_helper "github.com/nayotta/metathings/pkg/common/config"
 	token_helper "github.com/nayotta/metathings/pkg/common/token"
 	connection "github.com/nayotta/metathings/pkg/deviced/connection"
+	descriptor_storage "github.com/nayotta/metathings/pkg/deviced/descriptor_storage"
 	flow "github.com/nayotta/metathings/pkg/deviced/flow"
 	service "github.com/nayotta/metathings/pkg/deviced/service"
 	session_storage "github.com/nayotta/metathings/pkg/deviced/session_storage"
@@ -27,6 +28,7 @@ type DevicedOption struct {
 	cmd_contrib.ServiceBaseOption `mapstructure:",squash"`
 	SessionStorage                map[string]interface{}
 	SimpleStorage                 map[string]interface{}
+	DescriptorStorage             map[string]interface{}
 	ConnectionCenter              struct {
 		Storage map[string]interface{}
 		Bridge  map[string]interface{}
@@ -64,6 +66,7 @@ var (
 			cmd_helper.InitManyStringMapFromConfigWithStage([]cmd_helper.InitManyOption{
 				{&opt_t.SessionStorage, "session_storage"},
 				{&opt_t.SimpleStorage, "simple_storage"},
+				{&opt_t.DescriptorStorage, "descriptor_storage"},
 				{&opt_t.ConnectionCenter.Storage, "connection_center.storage"},
 				{&opt_t.ConnectionCenter.Bridge, "connection_center.bridge"},
 				{&opt_t.Flow, "flow"},
@@ -186,6 +189,16 @@ func NewSimpleStorage(opt *DevicedOption, logger log.FieldLogger) (simple_storag
 	return simple_storage.NewSimpleStorage(name, args...)
 }
 
+func NewDescriptorStorage(opt *DevicedOption, logger log.FieldLogger) (descriptor_storage.DescriptorStorage, error) {
+	drv, args, err := cfg_helper.ParseConfigOption("driver", opt.DescriptorStorage, "logger", logger)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return descriptor_storage.NewDescriptorStorage(drv, args...)
+}
+
 func NewFlowFactory(opt *DevicedOption, logger log.FieldLogger) (flow.FlowFactory, error) {
 	name, args, err := cfg_helper.ParseConfigOption("driver", opt.Flow, "logger", logger)
 	if err != nil {
@@ -261,6 +274,7 @@ func runDeviced() error {
 			token_helper.NewTokenValidator,
 			NewSessionStorage,
 			NewSimpleStorage,
+			NewDescriptorStorage,
 			NewConnectionCenter,
 			NewDevicedStorage,
 			NewMetathingsDevicedServiceOption,

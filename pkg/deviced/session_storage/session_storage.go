@@ -22,7 +22,6 @@ func register_session_storage_factory(drv string, fty SessionStorageFactory) {
 }
 
 func NewSessionStorage(driver string, args ...interface{}) (SessionStorage, error) {
-
 	fty, ok := session_storage_factories[driver]
 	if !ok {
 		return nil, ErrUnknownSessionStorageDriver

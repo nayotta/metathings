@@ -167,6 +167,10 @@ func copy_objects(xs []*simple_storage.Object) []*pb.Object {
 	return ys
 }
 
+type descriptor_getter interface {
+	GetDescriptor_() *pb.OpDescriptor
+}
+
 type device_getter interface {
 	GetDevice() *pb.OpDevice
 }
@@ -189,6 +193,22 @@ type destination_getter interface {
 
 type flow_set_getter interface {
 	GetFlowSet() *pb.OpFlowSet
+}
+
+func ensure_get_descriptor_body(x descriptor_getter) error {
+	if x.GetDescriptor_().GetBody() == nil {
+		return errors.New("descriptor.body is empty")
+	}
+
+	return nil
+}
+
+func ensure_get_descriptor_sha1(x descriptor_getter) error {
+	if x.GetDescriptor_().GetSha1() == nil {
+		return errors.New("descriptor.sha1 is empty")
+	}
+
+	return nil
 }
 
 func ensure_get_device_id(x device_getter) error {
