@@ -353,6 +353,21 @@ func (self *StorageImpl) list_devices(ctx context.Context, dev *Device) ([]*Devi
 	return devs, nil
 }
 
+func (self *StorageImpl) get_config(ctx context.Context, id string) (*Config, error) {
+	var err error
+	var cfg Config
+
+	if err = self.GetDBConn(ctx).First(&cfg, "id = ?", id).Error; err != nil {
+		return nil, err
+	}
+
+	return &cfg, nil
+}
+
+func (self *StorageImpl) list_configs(ctx context.Context, cfg *Config) ([]*Config, error) {
+	panic("unimplemented")
+}
+
 func (self *StorageImpl) CreateDevice(ctx context.Context, dev *Device) (*Device, error) {
 	var err error
 
@@ -762,6 +777,102 @@ func (self *StorageImpl) RemoveFlowFromFlowSet(ctx context.Context, flwst_id, fl
 	})
 
 	return nil
+}
+
+func (self *StorageImpl) CreateConfig(ctx context.Context, cfg *Config) (*Config, error) {
+	var err error
+
+	if err = self.GetDBConn(ctx).Create(cfg).Error; err != nil {
+		self.logger.WithError(err).Debugf("failed to create config")
+		return nil, err
+	}
+
+	if cfg, err = self.get_config(ctx, *cfg.Id); err != nil {
+		self.logger.WithError(err).Debugf("failed to get config")
+		return nil, err
+	}
+
+	self.logger.WithField("id", *cfg.Id).Debugf("create config")
+
+	return cfg, nil
+}
+
+func (self *StorageImpl) DeleteConfig(ctx context.Context, id string) error {
+	if err := self.GetDBConn(ctx).Delete(&Config{}, "id = ?", id).Error; err != nil {
+		self.logger.WithError(err).Debugf("failed to delete config")
+		return err
+	}
+
+	self.logger.WithField("id", id).Debugf("delete device")
+
+	return nil
+}
+
+func (self *StorageImpl) PatchConfig(ctx context.Context, id string, config *Config) (*Config, error) {
+	var err error
+	var cfg Config
+
+	if config.Alias != nil {
+		cfg.Alias = config.Alias
+	}
+
+	if config.Body != nil {
+		cfg.Body = config.Body
+	}
+
+	if err = self.GetDBConn(ctx).Model(&Config{Id: &id}).Update(cfg).Error; err != nil {
+		self.logger.WithError(err).Debugf("failed to patch config")
+		return nil, err
+	}
+
+	if config, err = self.get_config(ctx, id); err != nil {
+		self.logger.WithError(err).Debugf("failed to get config")
+		return nil, err
+	}
+
+	self.logger.WithField("id", id).Debugf("patch config")
+
+	return config, nil
+}
+
+func (self *StorageImpl) GetConfig(ctx context.Context, id string) (*Config, error) {
+	var cfg *Config
+	var err error
+
+	if cfg, err = self.get_config(ctx, id); err != nil {
+		self.logger.WithError(err).Debugf("failed to get config")
+		return nil, err
+	}
+
+	self.logger.WithField("id", id).Debugf("get config")
+
+	return cfg, nil
+}
+
+func (self *StorageImpl) ListConfigs(ctx context.Context, cfg *Config) ([]*Config, error) {
+	var cfgs []*Config
+	var err error
+
+	if cfgs, err = self.list_configs(ctx, cfg); err != nil {
+		self.logger.WithError(err).Debugf("failed to list configs")
+		return nil, err
+	}
+
+	self.logger.Debugf("list configs")
+
+	return cfgs, nil
+}
+
+func (self *StorageImpl) AddConfigToDevice(ctx context.Context, dev_id, cfg_id string) error {
+	panic("unimplemented")
+}
+
+func (self *StorageImpl) RemoveConfigFromDevice(ctx context.Context, dev_id, cfg_id string) error {
+	panic("unimplemented")
+}
+
+func (self *StorageImpl) ListConfigsByDeviceId(ctx context.Context, dev_id string) ([]*Config, error) {
+	panic("unimplemented")
 }
 
 func init_args(s *StorageImpl, args ...interface{}) error {

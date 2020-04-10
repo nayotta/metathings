@@ -12,6 +12,15 @@ import "get_device.proto";
 import "list_devices.proto";
 import "get_device_by_module.proto";
 
+import "create_config.proto";
+import "delete_config.proto";
+import "patch_config.proto";
+import "get_config.proto";
+import "list_configs.proto";
+import "add_configs_to_device.proto";
+import "remove_configs_from_device.proto";
+import "list_configs_by_device.proto";
+
 import "upload_descriptor.proto";
 import "get_descriptor.proto";
 
@@ -51,6 +60,16 @@ service DevicedService {
 	rpc GetDevice(GetDeviceRequest) returns (GetDeviceResponse) {}
 	rpc ListDevices(ListDevicesRequest) returns (ListDevicesResponse) {}
 	rpc GetDeviceByModule(GetDeviceByModuleRequest) returns (GetDeviceByModuleResponse) {}
+
+	// Config
+	rpc CreateConfig(CreateConfigRequest) returns (CreateConfigResponse) {}
+	rpc DeleteConfig(DeleteConfigRequest) returns (google.protobuf.Empty) {}
+	rpc PatchConfig(PatchConfigRequest) returns (PatchConfigResponse) {}
+	rpc GetConfig(GetConfigRequest) returns (GetConfigResponse) {}
+	rpc ListConfigs(ListConfigsRequest) returns (ListConfigsResponse) {}
+	rpc AddConfigsToDevice(AddConfigsToDeviceRequest) returns (google.protobuf.Empty) {}
+	rpc RemoveConfigsFromDevice(RemoveConfigsFromDeviceRequest) returns (google.protobuf.Empty) {}
+	rpc ListConfigsByDevice(ListConfigsByDeviceRequest) returns (ListConfigsByDeviceResponse) {}
 
 	// Descriptor
 	rpc UploadDescriptor(UploadDescriptorRequest) returns (UploadDescriptorResponse) {}

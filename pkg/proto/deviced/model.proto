@@ -202,3 +202,15 @@ message Descriptor {
 	string sha1 = 1;
 	bytes body = 2;
 }
+
+message OpConfig {
+	google.protobuf.StringValue id = 1;
+	google.protobuf.StringValue alias = 2;
+	google.protobuf.Struct body = 3;
+}
+
+message Config {
+	string id = 1;
+	string alias = 2;
+	google.protobuf.Struct body = 3;
+}
