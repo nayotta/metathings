@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/go-redis/redis"
@@ -28,12 +29,16 @@ var (
 )
 
 type flow struct {
-	opt       *FlowOption
-	close_cbs []func() error
-	logger    log.FieldLogger
+	opt        *FlowOption
+	close_cbs  []func() error
+	close_once sync.Once
+	logger     log.FieldLogger
 
 	mgo_db *mongo.Database
 	rs_cli *redis.Client
+
+	err    error
+	closed bool
 }
 
 func (f *flow) mongo_collection() *mongo.Collection {
@@ -59,13 +64,26 @@ func (f *flow) Device() string {
 func (f *flow) Close() error {
 	var err error
 
+<<<<<<< HEAD
 	for _, cb := range f.close_cbs {
 		if err = cb(); err != nil {
 			f.logger.WithError(err).Debugf("failed to call close callback")
+=======
+	f.close_once.Do(func() {
+		for _, cb := range f.close_cbs {
+			if err = cb(); err != nil {
+				f.logger.WithError(err).Debugf("failed to close callback")
+			}
+>>>>>>> v1.1.21.1
 		}
-	}
+		f.closed = true
+	})
 
 	return err
+}
+
+func (f *flow) Err() error {
+	return f.err
 }
 
 func (f *flow) PushFrame(frm *pb.Frame) error {
@@ -131,16 +149,19 @@ func (f *flow) push_frame_to_mgo(frm *pb.Frame) error {
 	return nil
 }
 
+<<<<<<< HEAD
 func (f *flow) pull_frame_from_redis_stream() (<-chan *pb.Frame, chan struct{}) {
+=======
+func (f *flow) pull_frame_from_redis_stream() <-chan *pb.Frame {
+>>>>>>> v1.1.21.1
 	frm_ch := make(chan *pb.Frame)
-	quit_ch := make(chan struct{})
 
-	go f.pull_frame_from_redis_stream_loop(frm_ch, quit_ch)
+	go f.pull_frame_from_redis_stream_loop(frm_ch)
 
-	return frm_ch, quit_ch
+	return frm_ch
 }
 
-func (f *flow) pull_frame_from_redis_stream_loop(frm_ch chan<- *pb.Frame, quit_ch chan struct{}) {
+func (f *flow) pull_frame_from_redis_stream_loop(frm_ch chan<- *pb.Frame) {
 	defer close(frm_ch)
 
 	var err error
@@ -160,14 +181,7 @@ func (f *flow) pull_frame_from_redis_stream_loop(frm_ch chan<- *pb.Frame, quit_c
 
 	}()
 
-	for {
-		select {
-		case <-quit_ch:
-			f.logger.Debugf("catch quit signal from outside")
-			return
-		default:
-		}
-
+	for !f.closed {
 		vals, err := cli.XReadGroup(&redis.XReadGroupArgs{
 			Group:    nonce,
 			Consumer: nonce,
@@ -183,6 +197,7 @@ func (f *flow) pull_frame_from_redis_stream_loop(frm_ch chan<- *pb.Frame, quit_c
 		case nil:
 		default:
 			f.logger.WithError(err).Debugf("failed to read redis stream")
+			f.err = err
 			return
 		}
 
@@ -203,7 +218,11 @@ func (f *flow) pull_frame_from_redis_stream_loop(frm_ch chan<- *pb.Frame, quit_c
 	}
 }
 
+<<<<<<< HEAD
 func (f *flow) PullFrame() (<-chan *pb.Frame, chan struct{}) {
+=======
+func (f *flow) PullFrame() <-chan *pb.Frame {
+>>>>>>> v1.1.21.1
 	return f.pull_frame_from_redis_stream()
 }
 
@@ -303,6 +322,27 @@ type flowFactory struct {
 	mongo_pool        pool_helper.Pool
 }
 
+func (ff *flowFactory) get_alive_redis_stream_client() (*redis.Client, error) {
+	// TODO(Peer): max retry should greater than redis stream pool max size, magic number here.
+	for i := 0; i < 6; i++ {
+		cli, err := ff.redis_stream_pool.Get()
+		if err != nil {
+			ff.logger.WithError(err).Debugf("failed to get redis stream client in pool")
+			return nil, err
+		}
+
+		rs_cli := cli.(*redis.Client)
+		if err = rs_cli.Ping().Err(); err != nil {
+			defer rs_cli.Close()
+			continue
+		}
+
+		return rs_cli, nil
+	}
+
+	return nil, ErrGetAliveRedisClientMaxRetry
+}
+
 func (ff *flowFactory) New(opt *FlowOption) (Flow, error) {
 	cli, err := ff.mongo_pool.Get()
 	if err != nil {
@@ -313,13 +353,11 @@ func (ff *flowFactory) New(opt *FlowOption) (Flow, error) {
 	mgo_cli := cli.(*mongo_helper.MongoClientWrapper)
 	mgo_db := mgo_cli.Database(ff.opt.MongoDatabase)
 
-	cli, err = ff.redis_stream_pool.Get()
+	rs_cli, err := ff.get_alive_redis_stream_client()
 	if err != nil {
-		ff.logger.WithError(err).Debugf("failed to get redis stream client in pool")
+		ff.logger.WithError(err).Debugf("failed to get alive redis client")
 		return nil, err
 	}
-
-	rs_cli := cli.(*redis.Client)
 
 	return &flow{
 		opt:    opt,
@@ -334,6 +372,7 @@ func (ff *flowFactory) New(opt *FlowOption) (Flow, error) {
 				return ff.redis_stream_pool.Put(rs_cli)
 			},
 		},
+		closed: false,
 	}, nil
 }
 

@@ -27,6 +27,8 @@ message PullFrameFromFlowResponse {
 		repeated Frame frames = 2;
 	}
 
+	// stream alive check when id is ffffffffffffffffffffffffffffffff,
+	// drop it in receive side.
 	string id = 1;
 	oneof response {
 		Ack ack = 2;

@@ -95,7 +95,7 @@ flow=%v
 
 		pack := res.GetPack()
 		if pack == nil {
-			panic("unexpected response")
+			continue
 		}
 
 		frms := pack.GetFrames()

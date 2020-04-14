@@ -88,7 +88,7 @@ func (s *FlowImplTestSuite) TestPushFrame() {
 
 	wg.Add(1)
 	go func() {
-		frm_ch, _ := s.flow.PullFrame()
+		frm_ch := s.flow.PullFrame()
 		frm := <-frm_ch
 		s.NotNil(frm)
 		wg.Done()

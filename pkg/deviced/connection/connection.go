@@ -495,7 +495,7 @@ func (self *connectionCenter) UnaryCall(dev *storage.Device, req *pb.OpUnaryCall
 	}
 
 	if ucv = conn_res.GetUnaryCall(); ucv == nil {
-		return nil, ErrUnexpectedResponse
+		return nil, ErrUnexpectedResponse(buf)
 	}
 
 	return ucv, nil
