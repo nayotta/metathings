@@ -3,5 +3,6 @@ package metathings_deviced_flow
 import "errors"
 
 var (
-	ErrUnknownFlowFactory = errors.New("unknown flow factory")
+	ErrUnknownFlowFactory          = errors.New("unknown flow factory")
+	ErrGetAliveRedisClientMaxRetry = errors.New("get alive redis client max retry")
 )

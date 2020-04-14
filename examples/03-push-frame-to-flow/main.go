@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"crypto/tls"
 	"fmt"
 	"os"
 	"sync"
@@ -11,6 +12,7 @@ import (
 	"github.com/golang/protobuf/ptypes/wrappers"
 	"github.com/spf13/pflag"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 
 	context_helper "github.com/nayotta/metathings/pkg/common/context"
 	id_helper "github.com/nayotta/metathings/pkg/common/id"
@@ -43,7 +45,8 @@ flow=%v
 `, deviced_addr, device_id, flow_name)
 
 	ctx := context_helper.WithToken(context.Background(), "Bearer "+token)
-	conn, err := grpc.Dial(deviced_addr, grpc.WithInsecure())
+
+	conn, err := grpc.Dial(deviced_addr, grpc.WithTransportCredentials(credentials.NewTLS(&tls.Config{InsecureSkipVerify: true})))
 	if err != nil {
 		panic(err)
 	}
