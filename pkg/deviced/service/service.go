@@ -37,6 +37,12 @@ type MetathingsDevicedServiceOption struct {
 			PullRequestRetry   int
 			PullRequestTimeout int64
 		}
+		PullFrameFromFlow struct {
+			AliveInterval int64
+		}
+		PullFrameFromFlowSet struct {
+			AliveInterval int64
+		}
 	}
 }
 

@@ -255,6 +255,9 @@ func NewMetathingsDevicedServiceOption(opt *DevicedOption) *service.MetathingsDe
 		}
 	}
 
+	o.Methods.PullFrameFromFlow.AliveInterval = 23
+	o.Methods.PullFrameFromFlowSet.AliveInterval = 23
+
 	return o
 }
 
