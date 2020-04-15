@@ -365,7 +365,53 @@ func (self *StorageImpl) get_config(ctx context.Context, id string) (*Config, er
 }
 
 func (self *StorageImpl) list_configs(ctx context.Context, cfg *Config) ([]*Config, error) {
-	panic("unimplemented")
+	var err error
+	var cfgs_t []*Config
+
+	c := &Config{}
+	if cfg.Id != nil {
+		c.Id = cfg.Id
+	}
+
+	if cfg.Alias != nil {
+		c.Alias = cfg.Alias
+	}
+
+	if err = self.GetDBConn(ctx).Select("id").Find(&cfgs_t, c).Error; err != nil {
+		return nil, err
+	}
+
+	var cfgs []*Config
+	for _, c = range cfgs_t {
+		if c, err = self.get_config(ctx, *c.Id); err != nil {
+			return nil, err
+		}
+
+		cfgs = append(cfgs, c)
+	}
+
+	return cfgs, nil
+}
+
+func (self *StorageImpl) list_configs_by_device_id(ctx context.Context, id string) ([]*Config, error) {
+	var err error
+	var dcms []*DeviceConfigMapping
+	var cfgs []*Config
+
+	if err = self.GetDBConn(ctx).Find(&dcms, "device_id = ?", id).Error; err != nil {
+		return nil, err
+	}
+
+	for _, m := range dcms {
+		cfg, err := self.get_config(ctx, *m.ConfigId)
+		if err != nil {
+			return nil, err
+		}
+
+		cfgs = append(cfgs, cfg)
+	}
+
+	return cfgs, nil
 }
 
 func (self *StorageImpl) CreateDevice(ctx context.Context, dev *Device) (*Device, error) {
@@ -741,7 +787,7 @@ func (self *StorageImpl) ListViewFlowSetsByFlowId(ctx context.Context, id string
 		return nil, err
 	}
 
-	self.logger.Debugf("list flow sets by flow id")
+	self.logger.WithField("flow", id).Debugf("list flow sets by flow id")
 
 	return flwsts, nil
 }
@@ -760,7 +806,7 @@ func (self *StorageImpl) AddFlowToFlowSet(ctx context.Context, flwst_id, flw_id 
 	self.logger.WithFields(log.Fields{
 		"flow_id":     flw_id,
 		"flow_set_id": flwst_id,
-	})
+	}).Debugf("add flow to flow set")
 
 	return nil
 }
@@ -774,7 +820,7 @@ func (self *StorageImpl) RemoveFlowFromFlowSet(ctx context.Context, flwst_id, fl
 	self.logger.WithFields(log.Fields{
 		"flow_set_id": flwst_id,
 		"flow_id":     flw_id,
-	})
+	}).Debugf("remove flow from flow set")
 
 	return nil
 }
@@ -864,15 +910,50 @@ func (self *StorageImpl) ListConfigs(ctx context.Context, cfg *Config) ([]*Confi
 }
 
 func (self *StorageImpl) AddConfigToDevice(ctx context.Context, dev_id, cfg_id string) error {
-	panic("unimplemented")
+	m := &DeviceConfigMapping{
+		DeviceId: &dev_id,
+		ConfigId: &cfg_id,
+	}
+
+	if err := self.GetDBConn(ctx).Create(m).Error; err != nil {
+		self.logger.WithError(err).Debugf("failed to add config to device")
+		return err
+	}
+
+	self.logger.WithFields(log.Fields{
+		"config_id": cfg_id,
+		"device_id": dev_id,
+	}).Debugf("add config to device")
+
+	return nil
 }
 
 func (self *StorageImpl) RemoveConfigFromDevice(ctx context.Context, dev_id, cfg_id string) error {
-	panic("unimplemented")
+	if err := self.GetDBConn(ctx).Delete(&DeviceConfigMapping{}, "device_id = ? and config_id = ?", dev_id, cfg_id).Error; err != nil {
+		self.logger.WithError(err).Debugf("failed to remove config from device")
+		return err
+	}
+
+	self.logger.WithFields(log.Fields{
+		"config_id": cfg_id,
+		"device_id": dev_id,
+	}).Debugf("remove config from device")
+
+	return nil
 }
 
-func (self *StorageImpl) ListConfigsByDeviceId(ctx context.Context, dev_id string) ([]*Config, error) {
-	panic("unimplemented")
+func (self *StorageImpl) ListConfigsByDeviceId(ctx context.Context, id string) ([]*Config, error) {
+	var cfgs []*Config
+	var err error
+
+	if cfgs, err = self.list_configs_by_device_id(ctx, id); err != nil {
+		self.logger.WithError(err).Debugf("failed to list configs by device id")
+		return nil, err
+	}
+
+	self.logger.WithField("device", id).Debugf("list configs by device id")
+
+	return cfgs, nil
 }
 
 func init_args(s *StorageImpl, args ...interface{}) error {
@@ -925,6 +1006,8 @@ func init_db(s *StorageImpl) error {
 		&Flow{},
 		&FlowSet{},
 		&FlowFlowSetMapping{},
+		&Config{},
+		&DeviceConfigMapping{},
 	)
 
 	return nil
