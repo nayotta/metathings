@@ -29,16 +29,17 @@ var (
 )
 
 type flow struct {
-	opt        *FlowOption
-	close_cbs  []func() error
-	close_once sync.Once
-	logger     log.FieldLogger
+	opt    *FlowOption
+	logger log.FieldLogger
 
 	mgo_db *mongo.Database
 	rs_cli *redis.Client
 
-	err    error
-	closed bool
+	close_cbs  []func() error
+	close_once sync.Once
+	closed     bool
+
+	err error
 }
 
 func (f *flow) mongo_collection() *mongo.Collection {
@@ -64,17 +65,14 @@ func (f *flow) Device() string {
 func (f *flow) Close() error {
 	var err error
 
-<<<<<<< HEAD
-	for _, cb := range f.close_cbs {
-		if err = cb(); err != nil {
-			f.logger.WithError(err).Debugf("failed to call close callback")
-=======
 	f.close_once.Do(func() {
 		for _, cb := range f.close_cbs {
-			if err = cb(); err != nil {
+			if cerr := cb(); err != nil {
 				f.logger.WithError(err).Debugf("failed to close callback")
+				if err == nil {
+					err = cerr
+				}
 			}
->>>>>>> v1.1.21.1
 		}
 		f.closed = true
 	})
@@ -149,11 +147,7 @@ func (f *flow) push_frame_to_mgo(frm *pb.Frame) error {
 	return nil
 }
 
-<<<<<<< HEAD
-func (f *flow) pull_frame_from_redis_stream() (<-chan *pb.Frame, chan struct{}) {
-=======
 func (f *flow) pull_frame_from_redis_stream() <-chan *pb.Frame {
->>>>>>> v1.1.21.1
 	frm_ch := make(chan *pb.Frame)
 
 	go f.pull_frame_from_redis_stream_loop(frm_ch)
@@ -169,7 +163,6 @@ func (f *flow) pull_frame_from_redis_stream_loop(frm_ch chan<- *pb.Frame) {
 	key := f.redis_stream_key()
 
 	nonce := nonce_helper.GenerateNonce()
-
 	if err = cli.XGroupCreateMkStream(key, nonce, "$").Err(); err != nil {
 		f.logger.WithError(err).Debugf("failed to create redis stream group")
 		return
@@ -218,11 +211,7 @@ func (f *flow) pull_frame_from_redis_stream_loop(frm_ch chan<- *pb.Frame) {
 	}
 }
 
-<<<<<<< HEAD
-func (f *flow) PullFrame() (<-chan *pb.Frame, chan struct{}) {
-=======
 func (f *flow) PullFrame() <-chan *pb.Frame {
->>>>>>> v1.1.21.1
 	return f.pull_frame_from_redis_stream()
 }
 
