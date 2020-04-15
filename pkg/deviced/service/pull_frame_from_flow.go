@@ -91,11 +91,7 @@ match_flow_loop:
 				Ack: &pb.PullFrameFromFlowResponse_Ack{},
 			}})
 		if err != nil {
-<<<<<<< HEAD
-			self.logger.WithError(err).Errorf("failed to send config ack to stream")
-=======
 			logger.WithError(err).Errorf("failed to send config ack message")
->>>>>>> v1.1.21.1
 			return status.Errorf(codes.Internal, err.Error())
 		}
 	}
@@ -127,11 +123,7 @@ match_flow_loop:
 				Response: pack,
 			})
 			if err != nil {
-<<<<<<< HEAD
-				self.logger.WithError(err).Errorf("failed to send pack to stream")
-=======
 				logger.WithError(err).Errorf("failed to send pack response")
->>>>>>> v1.1.21.1
 				return status.Errorf(codes.Internal, err.Error())
 			}
 		case err := <-err_ch:

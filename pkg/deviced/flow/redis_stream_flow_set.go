@@ -2,6 +2,7 @@ package metathings_deviced_flow
 
 import (
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/go-redis/redis"
@@ -20,10 +21,15 @@ type RedisStreamFlowSetOption struct {
 
 type RedisStreamFlowSet struct {
 	opt    *RedisStreamFlowSetOption
-	rs_cli *redis.Client
 	logger log.FieldLogger
 
-	close_cbs []func() error
+	rs_cli *redis.Client
+
+	close_cbs  []func() error
+	close_once sync.Once
+	closed     bool
+
+	err error
 }
 
 func (rsfs *RedisStreamFlowSet) get_logger() log.FieldLogger {
@@ -38,12 +44,22 @@ func (rsfs *RedisStreamFlowSet) Id() string {
 	return rsfs.opt.Id
 }
 
+func (rsfs *RedisStreamFlowSet) Err() error {
+	return rsfs.err
+}
+
 func (rsfs *RedisStreamFlowSet) Close() (err error) {
-	for _, cb := range rsfs.close_cbs {
-		if err = cb(); err != nil {
-			rsfs.get_logger().WithError(err).Debugf("failed to call close callback")
+	rsfs.close_once.Do(func() {
+		for _, cb := range rsfs.close_cbs {
+			if cerr := cb(); err != nil {
+				rsfs.get_logger().WithError(err).Debugf("failed to call close callback")
+				if err == nil {
+					err = cerr
+				}
+			}
+			rsfs.closed = true
 		}
-	}
+	})
 
 	return err
 }
@@ -75,16 +91,15 @@ func (rsfs *RedisStreamFlowSet) PushFrame(flwst_frm *FlowSetFrame) error {
 	return nil
 }
 
-func (rsfs *RedisStreamFlowSet) PullFrame() (<-chan *FlowSetFrame, chan struct{}) {
+func (rsfs *RedisStreamFlowSet) PullFrame() <-chan *FlowSetFrame {
 	frm_ch := make(chan *FlowSetFrame)
-	quit_ch := make(chan struct{})
 
-	go rsfs.pull_frame_from_redis_stream_loop(frm_ch, quit_ch)
+	go rsfs.pull_frame_from_redis_stream_loop(frm_ch)
 
-	return frm_ch, quit_ch
+	return frm_ch
 }
 
-func (rsfs *RedisStreamFlowSet) pull_frame_from_redis_stream_loop(frm_ch chan<- *FlowSetFrame, quit_ch chan struct{}) {
+func (rsfs *RedisStreamFlowSet) pull_frame_from_redis_stream_loop(frm_ch chan<- *FlowSetFrame) {
 	defer close(frm_ch)
 
 	var err error
@@ -103,14 +118,7 @@ func (rsfs *RedisStreamFlowSet) pull_frame_from_redis_stream_loop(frm_ch chan<- 
 		}
 	}()
 
-	for {
-		select {
-		case <-quit_ch:
-			logger.Debugf("catch quit signal from outside")
-			return
-		default:
-		}
-
+	for !rsfs.closed {
 		vals, err := cli.XReadGroup(&redis.XReadGroupArgs{
 			Group:    nonce,
 			Consumer: nonce,
@@ -126,6 +134,8 @@ func (rsfs *RedisStreamFlowSet) pull_frame_from_redis_stream_loop(frm_ch chan<- 
 		case nil:
 		default:
 			logger.WithError(err).Debugf("failed to read redis stream")
+			rsfs.err = err
+			return
 		}
 
 		for _, val := range vals {
@@ -188,6 +198,7 @@ func (fty *RedisStreamFlowSetFactory) New(opt *FlowSetOption) (FlowSet, error) {
 		close_cbs: []func() error{
 			func() error { return fty.redis_stream_pool.Put(cli) },
 		},
+		closed: false,
 	}, nil
 }
 

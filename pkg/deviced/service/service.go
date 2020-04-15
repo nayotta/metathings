@@ -38,6 +38,9 @@ type MetathingsDevicedServiceOption struct {
 		PullFrameFromFlow struct {
 			AliveInterval int64
 		}
+		PullFrameFromFlowSet struct {
+			AliveInterval int64
+		}
 	}
 }
 

@@ -18,7 +18,8 @@ type FlowSetFrame struct {
 type FlowSet interface {
 	Id() string
 	PushFrame(*FlowSetFrame) error
-	PullFrame() (<-chan *FlowSetFrame, chan struct{})
+	PullFrame() <-chan *FlowSetFrame
+	Err() error
 	Close() error
 }
 

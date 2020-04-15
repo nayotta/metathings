@@ -1,6 +1,8 @@
 package metathings_deviced_service
 
 import (
+	"time"
+
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -31,25 +33,35 @@ func (self *MetathingsDevicedService) PullFrameFromFlowSet(req *pb.PullFrameFrom
 		logger.WithError(err).Errorf("failed to new flow set")
 		return status.Errorf(codes.Internal, err.Error())
 	}
+	defer flwst.Close()
 
+	running := true
 	packch := make(chan *pb.PullFrameFromFlowSetResponse_Pack_)
-	pfch, quit := flwst.PullFrame()
-	defer close(quit)
+	defer close(packch)
+
+	errch := make(chan error, 1)
+	defer close(errch)
 
 	go func() {
-		defer flwst.Close()
-		defer close(packch)
+		pfch := flwst.PullFrame()
 
-		for {
+		for running {
 			select {
-			case frm := <-pfch:
-				packch <- &pb.PullFrameFromFlowSetResponse_Pack_{
-					Pack: &pb.PullFrameFromFlowSetResponse_Pack{
-						Device: frm.Device,
-						Frames: []*pb.Frame{
-							frm.Frame,
+			case frm, ok := <-pfch:
+				if running {
+					if !ok && flwst.Err() != nil {
+						errch <- flwst.Err()
+						return
+					}
+
+					packch <- &pb.PullFrameFromFlowSetResponse_Pack_{
+						Pack: &pb.PullFrameFromFlowSetResponse_Pack{
+							Device: frm.Device,
+							Frames: []*pb.Frame{
+								frm.Frame,
+							},
 						},
-					},
+					}
 				}
 			}
 		}
@@ -66,6 +78,26 @@ func (self *MetathingsDevicedService) PullFrameFromFlowSet(req *pb.PullFrameFrom
 		}
 	}
 
+	dead := make(chan struct{})
+	go func() {
+		defer close(dead)
+		for running {
+			if err = stm.Send(&pb.PullFrameFromFlowSetResponse{
+				Id: "ffffffffffffffffffffffffffffffff",
+				Response: &pb.PullFrameFromFlowSetResponse_Ack_{
+					&pb.PullFrameFromFlowSetResponse_Ack{},
+				},
+			}); err != nil {
+				logger.WithError(err).Errorf("failed to send alive response")
+				return
+			}
+
+			time.Sleep(time.Duration(self.opt.Methods.PullFrameFromFlowSet.AliveInterval) * time.Second)
+		}
+		logger.Debugf("alive loop closed")
+	}()
+
+	defer func() { running = false }()
 	for {
 		select {
 		case pack := <-packch:
@@ -75,6 +107,11 @@ func (self *MetathingsDevicedService) PullFrameFromFlowSet(req *pb.PullFrameFrom
 				logger.WithError(err).Errorf("failed to send pack to stream")
 				return status.Errorf(codes.Internal, err.Error())
 			}
+		case err := <-errch:
+			logger.WithError(err).Errorf("failed to recv pack response from flowset")
+			return status.Errorf(codes.Internal, err.Error())
+		case <-dead:
+			return status.Errorf(codes.Aborted, "stream closed")
 		}
 	}
 }
