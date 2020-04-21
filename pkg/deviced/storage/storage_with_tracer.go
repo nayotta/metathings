@@ -209,6 +209,13 @@ func (s *TracedStorage) RemoveConfigFromDevice(ctx context.Context, dev_id, cfg_
 	return s.StorageImpl.RemoveConfigFromDevice(ctx, dev_id, cfg_id)
 }
 
+func (s *TracedStorage) RemoveConfigFromDeviceByConfigId(ctx context.Context, cfg_id string) error {
+	span, ctx := s.TraceWrapper(ctx, "RemoveConfigFromDeviceByConfigId")
+	defer span.Finish()
+
+	return s.StorageImpl.RemoveConfigFromDeviceByConfigId(ctx, cfg_id)
+}
+
 func (s *TracedStorage) ListConfigsByDeviceId(ctx context.Context, dev_id string) ([]*Config, error) {
 	span, ctx := s.TraceWrapper(ctx, "ListConfigsByDeviceId")
 	defer span.Finish()

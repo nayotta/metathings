@@ -100,6 +100,7 @@ type Storage interface {
 	ListConfigs(context.Context, *Config) ([]*Config, error)
 	AddConfigToDevice(ctx context.Context, dev_id, cfg_id string) error
 	RemoveConfigFromDevice(ctx context.Context, dev_id, cfg_id string) error
+	RemoveConfigFromDeviceByConfigId(ctx context.Context, cfg_id string) error
 	ListConfigsByDeviceId(ctx context.Context, dev_id string) ([]*Config, error)
 
 	CreateModule(context.Context, *Module) (*Module, error)

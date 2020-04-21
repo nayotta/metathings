@@ -3,7 +3,6 @@ package metathings_deviced_service
 import (
 	"context"
 
-	"github.com/golang/protobuf/ptypes/empty"
 	grpc_auth "github.com/grpc-ecosystem/go-grpc-middleware/auth"
 	"github.com/grpc-ecosystem/go-grpc-middleware/util/metautils"
 	log "github.com/sirupsen/logrus"
@@ -178,38 +177,6 @@ func (self *MetathingsDevicedService) offline_device(ctx context.Context, dev_id
 
 func (self *MetathingsDevicedService) IsIgnoreMethod(md *grpc_helper.MethodDescription) bool {
 	return false
-}
-
-func (self *MetathingsDevicedService) CreateConfig(context.Context, *pb.CreateConfigRequest) (*pb.CreateConfigResponse, error) {
-	panic("unimplemented")
-}
-
-func (self *MetathingsDevicedService) DeleteConfig(context.Context, *pb.DeleteConfigRequest) (*empty.Empty, error) {
-	panic("unimplemented")
-}
-
-func (self *MetathingsDevicedService) PatchConfig(context.Context, *pb.PatchConfigRequest) (*pb.PatchConfigResponse, error) {
-	panic("unimplemented")
-}
-
-func (self *MetathingsDevicedService) GetConfig(context.Context, *pb.GetConfigRequest) (*pb.GetConfigResponse, error) {
-	panic("unimplemented")
-}
-
-func (self *MetathingsDevicedService) ListConfigs(context.Context, *pb.ListConfigsRequest) (*pb.ListConfigsResponse, error) {
-	panic("unimplemented")
-}
-
-func (self *MetathingsDevicedService) AddConfigsToDevice(context.Context, *pb.AddConfigsToDeviceRequest) (*empty.Empty, error) {
-	panic("unimplemented")
-}
-
-func (self *MetathingsDevicedService) RemoveConfigsFromDevice(context.Context, *pb.RemoveConfigsFromDeviceRequest) (*empty.Empty, error) {
-	panic("unimplemented")
-}
-
-func (self *MetathingsDevicedService) ListConfigsByDevice(context.Context, *pb.ListConfigsByDeviceRequest) (*pb.ListConfigsByDeviceResponse, error) {
-	panic("unimplemented")
 }
 
 func NewMetathingsDevicedService(

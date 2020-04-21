@@ -4,7 +4,9 @@ import (
 	"context"
 	"errors"
 
+	"github.com/golang/protobuf/jsonpb"
 	"github.com/golang/protobuf/ptypes"
+	stpb "github.com/golang/protobuf/ptypes/struct"
 	tspb "github.com/golang/protobuf/ptypes/timestamp"
 
 	pb_helper "github.com/nayotta/metathings/pkg/common/protobuf"
@@ -142,6 +144,37 @@ func copy_flow_sets(xs []*storage.FlowSet) []*pb.FlowSet {
 	return ys
 }
 
+func copy_config(x *storage.Config) *pb.Config {
+	y, _ := copy_config_error(x)
+	return y
+}
+
+func copy_config_error(x *storage.Config) (*pb.Config, error) {
+	var body stpb.Struct
+
+	if err := jsonpb.UnmarshalString(*x.Body, &body); err != nil {
+		return nil, err
+	}
+
+	y := &pb.Config{
+		Id:    *x.Id,
+		Alias: *x.Alias,
+		Body:  &body,
+	}
+
+	return y, nil
+}
+
+func copy_configs(xs []*storage.Config) []*pb.Config {
+	var ys []*pb.Config
+
+	for _, x := range xs {
+		ys = append(ys, copy_config(x))
+	}
+
+	return ys
+}
+
 func copy_object(x *simple_storage.Object) *pb.Object {
 	mod := pb_helper.FromTime(x.LastModified)
 
@@ -193,6 +226,10 @@ type destination_getter interface {
 
 type flow_set_getter interface {
 	GetFlowSet() *pb.OpFlowSet
+}
+
+type config_getter interface {
+	GetConfig() *pb.OpConfig
 }
 
 func ensure_get_descriptor_body(x descriptor_getter) error {
@@ -273,6 +310,15 @@ func ensure_get_flow_set_id(x flow_set_getter) error {
 	}
 	if fs.GetId() == nil {
 		return errors.New("flow_set.id is empty")
+	}
+
+	return nil
+}
+
+func ensure_get_config_id(x config_getter) error {
+	cfg := x.GetConfig()
+	if cfg.GetId() == nil {
+		return errors.New("config.id is empty")
 	}
 
 	return nil

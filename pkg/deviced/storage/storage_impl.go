@@ -942,6 +942,17 @@ func (self *StorageImpl) RemoveConfigFromDevice(ctx context.Context, dev_id, cfg
 	return nil
 }
 
+func (self *StorageImpl) RemoveConfigFromDeviceByConfigId(ctx context.Context, cfg_id string) error {
+	if err := self.GetDBConn(ctx).Delete(&DeviceConfigMapping{}, "config_id = ?", cfg_id).Error; err != nil {
+		self.logger.WithError(err).Debugf("failed to remove config from device by config id")
+		return err
+	}
+
+	self.logger.WithField("config_id", cfg_id).Debugf("remove config from device by config id")
+
+	return nil
+}
+
 func (self *StorageImpl) ListConfigsByDeviceId(ctx context.Context, id string) ([]*Config, error) {
 	var cfgs []*Config
 	var err error
