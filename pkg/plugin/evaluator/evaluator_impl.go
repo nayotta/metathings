@@ -15,7 +15,6 @@ import (
 
 type EvaluatorImplOption struct {
 	Operator map[string]interface{}
-	Caller   map[string]interface{}
 }
 
 type EvaluatorImpl struct {
@@ -48,6 +47,7 @@ func (e *EvaluatorImpl) Eval(ctx context.Context, dat esdk.Data) error {
 		"logger", e.get_logger(),
 		"data_storage", e.dat_stor,
 		"simple_storage", e.smpl_stor,
+		"caller", e.caller,
 	)
 	if err != nil {
 		logger.WithError(err).Debugf("failed to parse operator config option")
@@ -77,6 +77,7 @@ func NewEvaluatorImpl(args ...interface{}) (*EvaluatorImpl, error) {
 	var info map[string]interface{}
 	var ds dssdk.DataStorage
 	var ss dsdk.SimpleStorage
+	var caller dsdk.Caller
 	var cli_fty *client_helper.ClientFactory
 	opt := &EvaluatorImplOption{}
 
@@ -84,7 +85,7 @@ func NewEvaluatorImpl(args ...interface{}) (*EvaluatorImpl, error) {
 		"logger":         opt_helper.ToLogger(&logger),
 		"info":           opt_helper.ToStringMap(&info),
 		"operator":       opt_helper.ToStringMap(&opt.Operator),
-		"caller":         opt_helper.ToStringMap(&opt.Caller),
+		"caller":         dsdk.ToCaller(&caller),
 		"context":        opt_helper.ToStringMap(&context),
 		"data_storage":   dssdk.ToDataStorage(&ds),
 		"simple_storage": dsdk.ToSimpleStorage(&ss),
@@ -99,16 +100,6 @@ func NewEvaluatorImpl(args ...interface{}) (*EvaluatorImpl, error) {
 	}
 
 	inf, err := esdk.DataFromMap(info)
-	if err != nil {
-		return nil, err
-	}
-
-	name, args, err := cfg_helper.ParseConfigOption("driver", opt.Caller, "logger", logger)
-	if err != nil {
-		return nil, err
-	}
-
-	caller, err := dsdk.NewCaller(name, args...)
 	if err != nil {
 		return nil, err
 	}

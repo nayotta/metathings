@@ -143,6 +143,8 @@ func (m *PullFrameFromFlowRequest_Config) GetConfigAck() *wrappers.BoolValue {
 }
 
 type PullFrameFromFlowResponse struct {
+	// stream alive check when id is ffffffffffffffffffffffffffffffff,
+	// drop it in receive side.
 	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	// Types that are valid to be assigned to Response:
 	//	*PullFrameFromFlowResponse_Ack_

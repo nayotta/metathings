@@ -74,7 +74,6 @@ func NewEvaluatorPluginServiceOption(o *EvaluatorPluginOption) (*service.Evaluat
 	opt := service.NewEvaluatorPluginServiceOption()
 
 	opt.Evaluator.Endpoint = o.Evaluator.Endpoint
-	opt.Caller = o.Caller
 
 	return opt, nil
 }
@@ -112,6 +111,25 @@ func NewSimpleStorage(o *EvaluatorPluginOption, cli_fty *client_helper.ClientFac
 	return ss, nil
 }
 
+func NewCaller(o *EvaluatorPluginOption, cli_fty *client_helper.ClientFactory, logger log.FieldLogger) (dsdk.Caller, error) {
+	name, args, err := cfg_helper.ParseConfigOption("name", o.Caller, "logger", logger)
+	if err != nil {
+		return nil, err
+	}
+
+	switch name {
+	case "default":
+		args = append(args, "client_factory", cli_fty)
+	}
+
+	c, err := dsdk.NewCaller(name, args...)
+	if err != nil {
+		return nil, err
+	}
+
+	return c, nil
+}
+
 func NewEvaluatorPluginService(cfg string) (*service.EvaluatorPluginService, error) {
 	var srv *service.EvaluatorPluginService
 
@@ -124,6 +142,7 @@ func NewEvaluatorPluginService(cfg string) (*service.EvaluatorPluginService, err
 	c.Provide(cmd_contrib.NewClientFactory)
 	c.Provide(NewDataStorage)
 	c.Provide(NewSimpleStorage)
+	c.Provide(NewCaller)
 	c.Provide(NewEvaluatorPluginServiceOption)
 	c.Provide(service.NewEvaluatorPluginService)
 	if err := c.Invoke(func(evltr_plg_srv *service.EvaluatorPluginService) {
