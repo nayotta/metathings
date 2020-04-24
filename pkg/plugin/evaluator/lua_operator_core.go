@@ -146,7 +146,7 @@ func (c *luaMetathingsCore) luaGetData(L *lua.LState) int {
 }
 
 // LUA_FUNCTION: core:context(key#string)
-//   context body lookup github.com/nayotta/metathings/pkg/plugin/evaluator/evaluator_impl.go#L31
+//   context body: github.com/nayotta/metathings/pkg/plugin/evaluator/lua_operator_core.go#L40
 func (c *luaMetathingsCore) luaGetContext(L *lua.LState) int {
 	c.check(L)
 
