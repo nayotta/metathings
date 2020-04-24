@@ -117,41 +117,110 @@ func (s *TracedStorage) CreateFlowSet(ctx context.Context, flwst *FlowSet) (*Flo
 
 	return s.StorageImpl.CreateFlowSet(ctx, flwst)
 }
+
 func (s *TracedStorage) DeleteFlowSet(ctx context.Context, id string) error {
 	span, ctx := s.TraceWrapper(ctx, "DeleteFlowSet")
 	defer span.Finish()
 
 	return s.StorageImpl.DeleteFlowSet(ctx, id)
 }
+
 func (s *TracedStorage) PatchFlowSet(ctx context.Context, id string, flwst *FlowSet) (*FlowSet, error) {
 	span, ctx := s.TraceWrapper(ctx, "PatchFlowSet")
 	defer span.Finish()
 
 	return s.StorageImpl.PatchFlowSet(ctx, id, flwst)
 }
+
 func (s *TracedStorage) GetFlowSet(ctx context.Context, id string) (*FlowSet, error) {
 	span, ctx := s.TraceWrapper(ctx, "GetFlowSet")
 	defer span.Finish()
 
 	return s.StorageImpl.GetFlowSet(ctx, id)
 }
+
 func (s *TracedStorage) ListFlowSets(ctx context.Context, flwsts *FlowSet) ([]*FlowSet, error) {
 	span, ctx := s.TraceWrapper(ctx, "ListFlows")
 	defer span.Finish()
 
 	return s.StorageImpl.ListFlowSets(ctx, flwsts)
 }
+
 func (s *TracedStorage) AddFlowToFlowSet(ctx context.Context, flwst_id, flw_id string) error {
 	span, ctx := s.TraceWrapper(ctx, "AddFlowToFlowSet")
 	defer span.Finish()
 
 	return s.StorageImpl.AddFlowToFlowSet(ctx, flwst_id, flw_id)
 }
+
 func (s *TracedStorage) RemoveFlowFromFlowSet(ctx context.Context, flwst_id, flw_id string) error {
 	span, ctx := s.TraceWrapper(ctx, "RemoveFlowFromFlowSet")
 	defer span.Finish()
 
 	return s.StorageImpl.RemoveFlowFromFlowSet(ctx, flwst_id, flw_id)
+}
+
+func (s *TracedStorage) CreateConfig(ctx context.Context, cfg *Config) (*Config, error) {
+	span, ctx := s.TraceWrapper(ctx, "CreateConfig")
+	defer span.Finish()
+
+	return s.StorageImpl.CreateConfig(ctx, cfg)
+}
+
+func (s *TracedStorage) DeleteConfig(ctx context.Context, id string) error {
+	span, ctx := s.TraceWrapper(ctx, "DeleteConfig")
+	defer span.Finish()
+
+	return s.StorageImpl.DeleteConfig(ctx, id)
+}
+
+func (s *TracedStorage) PatchConfig(ctx context.Context, id string, cfg *Config) (*Config, error) {
+	span, ctx := s.TraceWrapper(ctx, "PatchConfig")
+	defer span.Finish()
+
+	return s.StorageImpl.PatchConfig(ctx, id, cfg)
+}
+
+func (s *TracedStorage) GetConfig(ctx context.Context, id string) (*Config, error) {
+	span, ctx := s.TraceWrapper(ctx, "GetConfig")
+	defer span.Finish()
+
+	return s.StorageImpl.GetConfig(ctx, id)
+}
+
+func (s *TracedStorage) ListConfigs(ctx context.Context, cfg *Config) ([]*Config, error) {
+	span, ctx := s.TraceWrapper(ctx, "ListConfig")
+	defer span.Finish()
+
+	return s.StorageImpl.ListConfigs(ctx, cfg)
+}
+
+func (s *TracedStorage) AddConfigToDevice(ctx context.Context, dev_id, cfg_id string) error {
+	span, ctx := s.TraceWrapper(ctx, "AddConfigToDevice")
+	defer span.Finish()
+
+	return s.StorageImpl.AddConfigToDevice(ctx, dev_id, cfg_id)
+}
+
+func (s *TracedStorage) RemoveConfigFromDevice(ctx context.Context, dev_id, cfg_id string) error {
+	span, ctx := s.TraceWrapper(ctx, "RemoveConfigFromDevice")
+	defer span.Finish()
+
+	return s.StorageImpl.RemoveConfigFromDevice(ctx, dev_id, cfg_id)
+}
+
+func (s *TracedStorage) RemoveConfigFromDeviceByConfigId(ctx context.Context, cfg_id string) error {
+	span, ctx := s.TraceWrapper(ctx, "RemoveConfigFromDeviceByConfigId")
+	defer span.Finish()
+
+	return s.StorageImpl.RemoveConfigFromDeviceByConfigId(ctx, cfg_id)
+}
+
+func (s *TracedStorage) ListConfigsByDeviceId(ctx context.Context, dev_id string) ([]*Config, error) {
+	span, ctx := s.TraceWrapper(ctx, "ListConfigsByDeviceId")
+	defer span.Finish()
+
+	return s.StorageImpl.ListConfigsByDeviceId(ctx, dev_id)
 }
 
 func NewTracedStorage(s *StorageImpl) (Storage, error) {

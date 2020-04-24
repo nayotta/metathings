@@ -1,9 +1,12 @@
 package metathings_plugin_evaluator
 
 import (
+	"context"
+
 	"github.com/spf13/cast"
 	lua "github.com/yuin/gopher-lua"
 
+	context_helper "github.com/nayotta/metathings/pkg/common/context"
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 )
 
@@ -26,6 +29,10 @@ func (d *luaMetathingsCoreDevice) check(L *lua.LState) *luaMetathingsCoreDevice 
 	}
 
 	return v
+}
+
+func (d *luaMetathingsCoreDevice) get_context() context.Context {
+	return context_helper.WithToken(context.TODO(), cast.ToString(d.core.GetContext().Get("token")))
 }
 
 func (d *luaMetathingsCoreDevice) Id() string {
@@ -99,11 +106,33 @@ func (d *luaMetathingsCoreDevice) luaNewSimpleStorage(L *lua.LState) int {
 	return 1
 }
 
+// LUA_FUNCTION: device:unary_call(module#string, method#string, argument#table) table
+func (d *luaMetathingsCoreDevice) luaUnaryCall(L *lua.LState) int {
+	d.check(L)
+
+	mdl := L.CheckString(2)
+	meth := L.CheckString(3)
+	args_tb := L.CheckTable(4)
+	args := parse_ltable_to_string_map(args_tb)
+
+	ret, err := d.core.GetCaller().UnaryCall(d.get_context(), d.Id(), mdl, meth, args)
+	if err != nil {
+		L.RaiseError("failed to unary call")
+		return 0
+	}
+
+	ret_tb := parse_string_map_to_ltable(L, ret)
+	L.Push(ret_tb)
+
+	return 1
+}
+
 func (d *luaMetathingsCoreDevice) MetatableIndex() map[string]lua.LGFunction {
 	return map[string]lua.LGFunction{
 		"id":             d.luaGetId,
 		"storage":        d.luaNewStorage,
 		"simple_storage": d.luaNewSimpleStorage,
+		"unary_call":     d.luaUnaryCall,
 	}
 }
 

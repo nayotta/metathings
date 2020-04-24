@@ -2,11 +2,7 @@ package main
 
 import (
 	"context"
-<<<<<<< HEAD
 	"encoding/json"
-=======
-	"crypto/tls"
->>>>>>> v1.1.21.1
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -17,7 +13,6 @@ import (
 	"github.com/golang/protobuf/ptypes/wrappers"
 	"github.com/spf13/pflag"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials"
 
 	cmd_contrib "github.com/nayotta/metathings/cmd/contrib"
 	context_helper "github.com/nayotta/metathings/pkg/common/context"
@@ -54,7 +49,6 @@ device=%v
 flow=%v
 `, srv_ep_opt.Address, device_id, flow_name)
 
-<<<<<<< HEAD
 	ctx := context_helper.WithToken(context.Background(), base_opt.Token)
 	ts, err := cmd_contrib.NewClientTransportCredentials(&srv_ep_opt)
 	if err != nil {
@@ -64,11 +58,6 @@ flow=%v
 	opts := grpc_helper.NewDialOptionWithTransportCredentials(ts)
 
 	conn, err := grpc.Dial(srv_ep_opt.Address, opts...)
-=======
-	ctx := context_helper.WithToken(context.Background(), "Bearer "+token)
-
-	conn, err := grpc.Dial(deviced_addr, grpc.WithTransportCredentials(credentials.NewTLS(&tls.Config{InsecureSkipVerify: true})))
->>>>>>> v1.1.21.1
 	if err != nil {
 		panic(err)
 	}

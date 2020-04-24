@@ -59,6 +59,7 @@ func luaInitOnceObject(L *lua.LState, name string, obj luaBaseObject) {
 type luaMetathingsCore struct {
 	dat_stor  dssdk.DataStorage
 	smpl_stor dsdk.SimpleStorage
+	caller    dsdk.Caller
 
 	context esdk.Data
 	data    esdk.Data
@@ -68,12 +69,14 @@ func newLuaMetathingsCore(args ...interface{}) (*luaMetathingsCore, error) {
 	var ctx, dat esdk.Data
 	var ds dssdk.DataStorage
 	var ss dsdk.SimpleStorage
+	var caller dsdk.Caller
 
 	if err := opt_helper.Setopt(map[string]func(string, interface{}) error{
 		"context":        esdk.ToData(&ctx),
 		"data":           esdk.ToData(&dat),
 		"data_storage":   dssdk.ToDataStorage(&ds),
 		"simple_storage": dsdk.ToSimpleStorage(&ss),
+		"caller":         dsdk.ToCaller(&caller),
 	})(args...); err != nil {
 		return nil, err
 	}
@@ -83,6 +86,7 @@ func newLuaMetathingsCore(args ...interface{}) (*luaMetathingsCore, error) {
 		data:      dat,
 		dat_stor:  ds,
 		smpl_stor: ss,
+		caller:    caller,
 	}, nil
 }
 
@@ -114,6 +118,10 @@ func (c *luaMetathingsCore) GetSimpleStorage() dsdk.SimpleStorage {
 	return c.smpl_stor
 }
 
+func (c *luaMetathingsCore) GetCaller() dsdk.Caller {
+	return c.caller
+}
+
 func (c *luaMetathingsCore) MetatableIndex() map[string]lua.LGFunction {
 	return map[string]lua.LGFunction{
 		"data":           c.luaGetData,
@@ -138,7 +146,7 @@ func (c *luaMetathingsCore) luaGetData(L *lua.LState) int {
 }
 
 // LUA_FUNCTION: core:context(key#string)
-//   context body lookup github.com/nayotta/metathings/pkg/plugin/evaluator/evaluator_impl.go#L31
+//   context body: github.com/nayotta/metathings/pkg/plugin/evaluator/lua_operator_core.go#L40
 func (c *luaMetathingsCore) luaGetContext(L *lua.LState) int {
 	c.check(L)
 

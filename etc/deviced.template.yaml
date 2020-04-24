@@ -9,6 +9,12 @@ dev:
   service_endpoint:
     default:
       address: <metathings-address>
+  session_storage:
+    driver: <storage-driver>
+    # ...
+  descriptor_storage:
+    name: <storage-driver>
+    # ...
   connection_center:
     storage:
       name: <storage-driver>

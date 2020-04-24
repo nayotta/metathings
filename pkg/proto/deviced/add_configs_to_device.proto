@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package ai.metathings.service.deviced;
+
+import "github.com/mwitkow/go-proto-validators/validator.proto";
+
+import "model.proto";
+
+message AddConfigsToDeviceRequest {
+	OpDevice device = 1 [(validator.field) = {msg_exists: true}];
+	repeated OpConfig configs = 2;
+}

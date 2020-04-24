@@ -7,13 +7,13 @@ import (
 	fmt "fmt"
 	math "math"
 	proto "github.com/golang/protobuf/proto"
-	_ "github.com/golang/protobuf/ptypes/struct"
-	_ "github.com/nayotta/metathings/pkg/proto/identityd2"
 	_ "github.com/nayotta/metathings/pkg/proto/constant/state"
 	_ "github.com/nayotta/metathings/pkg/proto/constant/kind"
 	_ "github.com/golang/protobuf/ptypes/wrappers"
 	_ "github.com/golang/protobuf/ptypes/any"
 	_ "github.com/golang/protobuf/ptypes/timestamp"
+	_ "github.com/golang/protobuf/ptypes/struct"
+	_ "github.com/nayotta/metathings/pkg/proto/identityd2"
 	github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
 )
 
@@ -430,5 +430,47 @@ func (this *OpStreamCallExit) Validate() error {
 	return nil
 }
 func (this *StreamCallExit) Validate() error {
+	return nil
+}
+func (this *OpDescriptor) Validate() error {
+	if this.Sha1 != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Sha1); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Sha1", err)
+		}
+	}
+	if this.Body != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Body); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Body", err)
+		}
+	}
+	return nil
+}
+func (this *Descriptor) Validate() error {
+	return nil
+}
+func (this *OpConfig) Validate() error {
+	if this.Id != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Id); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Id", err)
+		}
+	}
+	if this.Alias != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Alias); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Alias", err)
+		}
+	}
+	if this.Body != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Body); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Body", err)
+		}
+	}
+	return nil
+}
+func (this *Config) Validate() error {
+	if this.Body != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Body); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Body", err)
+		}
+	}
 	return nil
 }

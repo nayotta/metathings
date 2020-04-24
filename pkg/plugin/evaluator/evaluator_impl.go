@@ -5,6 +5,7 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
+	client_helper "github.com/nayotta/metathings/pkg/common/client"
 	cfg_helper "github.com/nayotta/metathings/pkg/common/config"
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 	dssdk "github.com/nayotta/metathings/sdk/data_storage"
@@ -23,6 +24,7 @@ type EvaluatorImpl struct {
 	info      esdk.Data
 	ctx       esdk.Data
 	logger    log.FieldLogger
+	caller    dsdk.Caller
 }
 
 func (e *EvaluatorImpl) get_eval_context() esdk.Data {
@@ -45,6 +47,7 @@ func (e *EvaluatorImpl) Eval(ctx context.Context, dat esdk.Data) error {
 		"logger", e.get_logger(),
 		"data_storage", e.dat_stor,
 		"simple_storage", e.smpl_stor,
+		"caller", e.caller,
 	)
 	if err != nil {
 		logger.WithError(err).Debugf("failed to parse operator config option")
@@ -74,15 +77,19 @@ func NewEvaluatorImpl(args ...interface{}) (*EvaluatorImpl, error) {
 	var info map[string]interface{}
 	var ds dssdk.DataStorage
 	var ss dsdk.SimpleStorage
+	var caller dsdk.Caller
+	var cli_fty *client_helper.ClientFactory
 	opt := &EvaluatorImplOption{}
 
 	if err := opt_helper.Setopt(map[string]func(string, interface{}) error{
 		"logger":         opt_helper.ToLogger(&logger),
 		"info":           opt_helper.ToStringMap(&info),
 		"operator":       opt_helper.ToStringMap(&opt.Operator),
+		"caller":         dsdk.ToCaller(&caller),
 		"context":        opt_helper.ToStringMap(&context),
 		"data_storage":   dssdk.ToDataStorage(&ds),
 		"simple_storage": dsdk.ToSimpleStorage(&ss),
+		"client_factory": client_helper.ToClientFactory(&cli_fty),
 	}, opt_helper.SetSkip(true))(args...); err != nil {
 		return nil, err
 	}
@@ -104,6 +111,7 @@ func NewEvaluatorImpl(args ...interface{}) (*EvaluatorImpl, error) {
 		dat_stor:  ds,
 		smpl_stor: ss,
 		logger:    logger,
+		caller:    caller,
 	}
 
 	return evltr, nil
