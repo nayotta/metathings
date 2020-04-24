@@ -59,3 +59,7 @@ var (
 		enumer: pb_helper.NewEnumer("module_state", pb_state.ModuleState_name, pb_state.ModuleState_value),
 	}
 )
+
+const (
+	DEVICE_CONFIG_DESCRIPTOR string = "_sys_descriptor"
+)

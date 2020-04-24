@@ -13,6 +13,7 @@ import (
 	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
 	token_helper "github.com/nayotta/metathings/pkg/common/token"
 	connection "github.com/nayotta/metathings/pkg/deviced/connection"
+	descriptor_storage "github.com/nayotta/metathings/pkg/deviced/descriptor_storage"
 	flow "github.com/nayotta/metathings/pkg/deviced/flow"
 	deviced_helper "github.com/nayotta/metathings/pkg/deviced/helper"
 	session_storage "github.com/nayotta/metathings/pkg/deviced/session_storage"
@@ -35,6 +36,12 @@ type MetathingsDevicedServiceOption struct {
 			PullRequestRetry   int
 			PullRequestTimeout int64
 		}
+		PullFrameFromFlow struct {
+			AliveInterval int64
+		}
+		PullFrameFromFlowSet struct {
+			AliveInterval int64
+		}
 	}
 }
 
@@ -47,6 +54,7 @@ type MetathingsDevicedService struct {
 	storage         storage.Storage
 	session_storage session_storage.SessionStorage
 	simple_storage  simple_storage.SimpleStorage
+	desc_storage    descriptor_storage.DescriptorStorage
 	authorizer      identityd_authorizer.Authorizer
 	validator       identityd_validator.Validator
 	tkvdr           token_helper.TokenValidator
@@ -177,6 +185,7 @@ func NewMetathingsDevicedService(
 	storage storage.Storage,
 	session_storage session_storage.SessionStorage,
 	simple_storage simple_storage.SimpleStorage,
+	desc_storage descriptor_storage.DescriptorStorage,
 	authorizer identityd_authorizer.Authorizer,
 	validator identityd_validator.Validator,
 	tkvdr token_helper.TokenValidator,
@@ -193,6 +202,7 @@ func NewMetathingsDevicedService(
 		storage:         storage,
 		session_storage: session_storage,
 		simple_storage:  simple_storage,
+		desc_storage:    desc_storage,
 		authorizer:      authorizer,
 		validator:       validator,
 		tkvdr:           tkvdr,

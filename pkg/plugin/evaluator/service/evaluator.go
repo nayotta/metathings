@@ -44,6 +44,7 @@ type EvaluatorPluginService struct {
 	tknr      token_helper.Tokener
 	dat_stor  dssdk.DataStorage
 	smpl_stor dsdk.SimpleStorage
+	caller    dsdk.Caller
 	cli_fty   *client_helper.ClientFactory
 }
 
@@ -283,9 +284,12 @@ func (srv *EvaluatorPluginService) Eval(w http.ResponseWriter, r *http.Request) 
 		"info", evltr_inf,
 		"context", evltr_ctx,
 		"operator", op_opt,
+		"caller", srv.caller,
 		"logger", srv.get_logger(),
 		"data_storage", srv.dat_stor,
 		"simple_storage", srv.smpl_stor,
+		"caller", srv.caller,
+		"client_factory", srv.cli_fty,
 	)
 	if err != nil {
 		logger.WithError(err).Errorf("failed to new evaluator instance")
@@ -415,6 +419,7 @@ func NewEvaluatorPluginService(
 	tknr token_helper.Tokener,
 	dat_stor dssdk.DataStorage,
 	smpl_stor dsdk.SimpleStorage,
+	caller dsdk.Caller,
 	cli_fty *client_helper.ClientFactory,
 ) (*EvaluatorPluginService, error) {
 	return &EvaluatorPluginService{
@@ -423,6 +428,7 @@ func NewEvaluatorPluginService(
 		tknr:      tknr,
 		dat_stor:  dat_stor,
 		smpl_stor: smpl_stor,
+		caller:    caller,
 		cli_fty:   cli_fty,
 	}, nil
 }

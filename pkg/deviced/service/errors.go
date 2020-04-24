@@ -10,4 +10,5 @@ var (
 	ErrDeviceOffline     = errors.New("device offline")
 
 	ErrPutObjectStreamingTimeout = errors.New("put object streaming timeout")
+	ErrInvalidProtoset           = errors.New("invaild protoset")
 )

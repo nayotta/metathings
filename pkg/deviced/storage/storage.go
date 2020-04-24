@@ -19,6 +19,7 @@ type Device struct {
 
 	Modules     []*Module         `gorm:"-"`
 	Flows       []*Flow           `gorm:"-"`
+	Configs     []*Config         `gorm:"-"`
 	ExtraHelper map[string]string `gorm:"-"`
 }
 
@@ -68,6 +69,22 @@ type FlowFlowSetMapping struct {
 	FlowSetId *string `gorm:"flow_set_id"`
 }
 
+type Config struct {
+	Id        *string
+	CreatedAt time.Time
+	UpdatedAt time.Time
+
+	Alias *string `gorm:"column:alias"`
+	Body  *string `gorm:"column:body"`
+}
+
+type DeviceConfigMapping struct {
+	CreatedAt time.Time
+
+	DeviceId *string `gorm:"column:device_id"`
+	ConfigId *string `gorm:"column:config_id"`
+}
+
 type Storage interface {
 	CreateDevice(context.Context, *Device) (*Device, error)
 	DeleteDevice(ctx context.Context, id string) error
@@ -75,6 +92,16 @@ type Storage interface {
 	GetDevice(ctx context.Context, id string) (*Device, error)
 	ListDevices(context.Context, *Device) ([]*Device, error)
 	GetDeviceByModuleId(ctx context.Context, id string) (*Device, error)
+
+	CreateConfig(context.Context, *Config) (*Config, error)
+	DeleteConfig(ctx context.Context, id string) error
+	PatchConfig(ctx context.Context, id string, cfg *Config) (*Config, error)
+	GetConfig(ctx context.Context, id string) (*Config, error)
+	ListConfigs(context.Context, *Config) ([]*Config, error)
+	AddConfigToDevice(ctx context.Context, dev_id, cfg_id string) error
+	RemoveConfigFromDevice(ctx context.Context, dev_id, cfg_id string) error
+	RemoveConfigFromDeviceByConfigId(ctx context.Context, cfg_id string) error
+	ListConfigsByDeviceId(ctx context.Context, dev_id string) ([]*Config, error)
 
 	CreateModule(context.Context, *Module) (*Module, error)
 	DeleteModule(ctx context.Context, id string) error
