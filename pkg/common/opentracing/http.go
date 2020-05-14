@@ -62,7 +62,7 @@ func Middleware(srv interface{}, name string, options ...nethttp.MWOption) http.
 	}
 	options = append(options,
 		nethttp.OperationNameFunc(func(r *http.Request) string {
-			return r.Method + " " + r.URL.Path
+			return name + " " + r.Method + " " + r.URL.Path
 		}),
 		nethttp.MWSpanFilter(isTraced),
 		nethttp.MWComponentName(componentName),
