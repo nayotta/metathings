@@ -28,32 +28,42 @@ const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 func init() { proto.RegisterFile("service.proto", fileDescriptor_a0b84a42fa06f626) }
 
 var fileDescriptor_a0b84a42fa06f626 = []byte{
-	// 387 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x93, 0x4f, 0x4f, 0xf2, 0x40,
-	0x10, 0xc6, 0xe1, 0xf2, 0xe6, 0xcd, 0x06, 0x25, 0xd6, 0xc0, 0xa1, 0x26, 0x6a, 0xf0, 0xbe, 0x24,
-	0x1a, 0x15, 0x2f, 0xfe, 0x01, 0xd1, 0x8b, 0x07, 0x03, 0x9e, 0xbc, 0x34, 0x4b, 0x3b, 0x94, 0x26,
-	0x2d, 0x5b, 0x76, 0xb7, 0x24, 0xc4, 0x83, 0x27, 0x13, 0xbf, 0x84, 0x57, 0x3f, 0xa7, 0xa1, 0x65,
-	0xb7, 0xb4, 0xc5, 0xac, 0xe5, 0x3a, 0xf3, 0xfc, 0x66, 0x9e, 0x3e, 0xb3, 0x45, 0x3b, 0x1c, 0xd8,
-	0xdc, 0xb3, 0x01, 0x87, 0x8c, 0x0a, 0x6a, 0x1c, 0x13, 0x0f, 0x07, 0x20, 0x88, 0x98, 0x78, 0x53,
-	0x97, 0x63, 0xd9, 0x84, 0x39, 0xf1, 0x23, 0x22, 0x28, 0x73, 0xcc, 0x03, 0x97, 0x52, 0xd7, 0x87,
-	0x76, 0xac, 0x1f, 0x45, 0xe3, 0x36, 0x04, 0xa1, 0x58, 0x24, 0xb8, 0xd9, 0xb4, 0x19, 0x10, 0x01,
-	0x96, 0xd2, 0xcb, 0xba, 0x03, 0x3e, 0x6c, 0xa8, 0x37, 0x42, 0x22, 0xec, 0x49, 0xa1, 0xbc, 0xef,
-	0x82, 0x28, 0x6a, 0x7d, 0x8f, 0xaf, 0x55, 0xf9, 0xaa, 0x7c, 0x48, 0x1c, 0xc7, 0xe2, 0x34, 0x62,
-	0x36, 0x70, 0x4b, 0xd0, 0x02, 0x76, 0xc2, 0x20, 0xa0, 0x73, 0x50, 0x92, 0x31, 0xa3, 0x41, 0x41,
-	0x74, 0x94, 0x9b, 0x6d, 0x8d, 0x16, 0x2b, 0x20, 0x11, 0x9c, 0x7e, 0xff, 0x47, 0x7b, 0x7d, 0x15,
-	0xc2, 0x30, 0x89, 0xc5, 0xf8, 0xac, 0xa2, 0x7a, 0x2f, 0xfe, 0x62, 0xd5, 0x33, 0x3a, 0x58, 0x17,
-	0x21, 0xce, 0x21, 0x03, 0x98, 0x45, 0xc0, 0x85, 0x79, 0xb5, 0x05, 0xc9, 0x43, 0x3a, 0xe5, 0xd0,
-	0xaa, 0x18, 0x80, 0xea, 0xf7, 0x71, 0xc6, 0xa5, 0x9c, 0xe4, 0x10, 0xe9, 0xa4, 0x89, 0x93, 0x23,
-	0x63, 0x79, 0x64, 0xdc, 0x5f, 0x1e, 0xb9, 0x55, 0x31, 0x3e, 0xaa, 0x68, 0xf7, 0x79, 0x79, 0xb3,
-	0x74, 0xcd, 0xa5, 0x7e, 0x4d, 0x96, 0x90, 0x5b, 0x3a, 0xe5, 0x41, 0xf5, 0xb9, 0xef, 0xa8, 0xf6,
-	0x08, 0x22, 0x35, 0x71, 0xae, 0x9f, 0xb5, 0xae, 0x97, 0x16, 0x2e, 0xca, 0x62, 0xca, 0xc0, 0x32,
-	0x88, 0x27, 0x8f, 0xa7, 0x3d, 0xfe, 0x97, 0x20, 0xb2, 0x44, 0x89, 0x20, 0xf2, 0xa0, 0xf2, 0x31,
-	0x43, 0x8d, 0x3b, 0xc7, 0x19, 0x26, 0x8f, 0xfb, 0x85, 0xa6, 0x89, 0x5c, 0xeb, 0x87, 0x6e, 0x04,
-	0xf5, 0x6f, 0xe0, 0x0d, 0x99, 0x83, 0xf8, 0x9f, 0x5a, 0xc1, 0x0f, 0x8c, 0x06, 0xe9, 0xde, 0x9e,
-	0x7e, 0xef, 0xef, 0xb4, 0x7e, 0xf9, 0x57, 0x15, 0x35, 0xb3, 0x61, 0x74, 0x17, 0xc9, 0x24, 0xe3,
-	0xa6, 0x6c, 0x8c, 0x92, 0x94, 0x5b, 0x6f, 0xb7, 0x1f, 0x20, 0xef, 0xd1, 0xad, 0xbd, 0xa2, 0x54,
-	0x3e, 0xfa, 0x17, 0xfb, 0x3f, 0xfb, 0x09, 0x00, 0x00, 0xff, 0xff, 0x2b, 0x39, 0x51, 0x99, 0x66,
-	0x05, 0x00, 0x00,
+	// 557 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x55, 0x4d, 0x6f, 0xd3, 0x40,
+	0x10, 0x6d, 0x2e, 0x80, 0xa6, 0x25, 0x51, 0x16, 0x35, 0x07, 0x23, 0x01, 0x2a, 0x77, 0x17, 0xfa,
+	0x01, 0x05, 0x24, 0x3e, 0x5a, 0x4a, 0x2f, 0x1c, 0x50, 0x9b, 0x13, 0x12, 0x8a, 0x9c, 0x78, 0x9a,
+	0x5a, 0xc4, 0x5d, 0xd7, 0xbb, 0x89, 0x64, 0x81, 0xc4, 0x09, 0x89, 0x13, 0xff, 0x80, 0x1f, 0xc9,
+	0x3f, 0x40, 0xbb, 0xeb, 0x5d, 0xdb, 0x71, 0xd0, 0xee, 0xe6, 0x98, 0xd9, 0xf7, 0xe6, 0xcd, 0xbc,
+	0x19, 0x4f, 0xe0, 0x2e, 0xc3, 0x7c, 0x91, 0x4c, 0x30, 0xcc, 0x72, 0xca, 0x29, 0x79, 0x14, 0x25,
+	0x61, 0x8a, 0x3c, 0xe2, 0x57, 0xc9, 0xf5, 0x94, 0x85, 0xfa, 0x11, 0x17, 0xd1, 0x6c, 0x1e, 0x71,
+	0x9a, 0xc7, 0xc1, 0xfd, 0x29, 0xa5, 0xd3, 0x19, 0xee, 0x4a, 0xfc, 0x78, 0x7e, 0xb9, 0x8b, 0x69,
+	0xc6, 0x0b, 0x45, 0x0f, 0x06, 0x93, 0x1c, 0x23, 0x8e, 0x23, 0x83, 0xd7, 0xf1, 0x18, 0x67, 0xb8,
+	0x22, 0xbe, 0x9d, 0x45, 0x7c, 0x72, 0xd5, 0x0a, 0xdf, 0x9b, 0x22, 0x6f, 0x63, 0x67, 0x09, 0xab,
+	0x45, 0x59, 0x19, 0x7e, 0x10, 0xc5, 0xf1, 0x88, 0xd1, 0x79, 0x3e, 0x41, 0x36, 0xe2, 0xb4, 0x45,
+	0x7b, 0x9c, 0x63, 0x4a, 0x17, 0x68, 0x20, 0x97, 0x39, 0x4d, 0x5b, 0xa0, 0x87, 0x4b, 0xb9, 0x47,
+	0xe3, 0xa2, 0x24, 0x94, 0x80, 0x40, 0x02, 0x78, 0xc4, 0xbe, 0xb6, 0xdf, 0xba, 0xa2, 0x5a, 0xf1,
+	0x54, 0xfe, 0x26, 0xa5, 0x09, 0x3c, 0x49, 0x51, 0x0b, 0x90, 0xd2, 0x80, 0x7a, 0xac, 0xaf, 0x9a,
+	0xaf, 0x87, 0x7a, 0x32, 0x55, 0x1d, 0xa3, 0x74, 0x45, 0xa4, 0x6c, 0x78, 0xef, 0x6f, 0x17, 0xfa,
+	0xa7, 0x66, 0x1e, 0x17, 0x6a, 0x42, 0xe4, 0x57, 0x07, 0x7a, 0x27, 0x52, 0xd7, 0xbc, 0x91, 0xa3,
+	0xd0, 0x36, 0xcd, 0x70, 0x89, 0x72, 0x8e, 0x37, 0x73, 0x64, 0x3c, 0x78, 0xb1, 0x06, 0x93, 0x65,
+	0xf4, 0x9a, 0xe1, 0xce, 0x06, 0x41, 0xe8, 0xbd, 0x97, 0xdd, 0x7a, 0x55, 0xb2, 0x44, 0xd1, 0x95,
+	0x0c, 0x42, 0xb5, 0x6f, 0xa1, 0xde, 0xb7, 0xf0, 0x54, 0xec, 0xdb, 0xce, 0x06, 0xf9, 0xd9, 0x81,
+	0xee, 0x27, 0xe1, 0x60, 0x25, 0xf3, 0xdc, 0x2e, 0xd3, 0x64, 0x68, 0x95, 0x23, 0x7f, 0xa2, 0x69,
+	0xf7, 0x07, 0x6c, 0x9d, 0x21, 0xaf, 0x8a, 0x38, 0xb4, 0xe7, 0xaa, 0xe3, 0x75, 0x09, 0xcf, 0x7c,
+	0x69, 0xa6, 0x00, 0x61, 0xc4, 0xc7, 0x84, 0x55, 0x6f, 0xcc, 0xc5, 0x88, 0x26, 0xc3, 0xc3, 0x88,
+	0x65, 0xa2, 0xa9, 0xe3, 0x06, 0xb6, 0xdf, 0xc5, 0xf1, 0x85, 0xfa, 0xce, 0x86, 0xb4, 0x72, 0xe4,
+	0xb5, 0x3d, 0xe9, 0x4a, 0xa2, 0x7d, 0x07, 0xbe, 0x41, 0x70, 0x2e, 0x3f, 0xef, 0x92, 0xfc, 0x21,
+	0xa7, 0x69, 0xa5, 0x7b, 0x62, 0xd7, 0xfd, 0x3f, 0xdb, 0x2e, 0xfe, 0xa7, 0x03, 0x83, 0xa6, 0x19,
+	0xc7, 0x85, 0xca, 0x44, 0xde, 0xf8, 0xda, 0xa8, 0x99, 0x5a, 0xf5, 0xed, 0xfa, 0x09, 0xcc, 0x3c,
+	0x7e, 0x77, 0xa0, 0x2f, 0x40, 0x43, 0x71, 0xb5, 0x4c, 0x69, 0x2f, 0xdd, 0x32, 0x37, 0x48, 0xba,
+	0xaa, 0x57, 0x6b, 0x71, 0x4d, 0x41, 0x19, 0xdc, 0x3e, 0x43, 0xf9, 0x4a, 0x9e, 0x38, 0x6d, 0xbb,
+	0x80, 0x6a, 0xed, 0xa7, 0x1e, 0x0c, 0xa3, 0xf8, 0x1d, 0x36, 0xd5, 0x9d, 0x1a, 0x8a, 0x0b, 0x4a,
+	0x0e, 0x5c, 0xcf, 0x9a, 0x84, 0x6b, 0xe5, 0x43, 0x4f, 0x96, 0x51, 0xff, 0x02, 0x9b, 0xea, 0xaa,
+	0x39, 0xab, 0xd7, 0xe0, 0xf6, 0xfd, 0x2b, 0x00, 0xe4, 0x51, 0x52, 0xd9, 0xf7, 0x1d, 0x4f, 0x58,
+	0x23, 0xf9, 0x81, 0x1f, 0xc9, 0x74, 0xc6, 0xe0, 0x8e, 0x30, 0x5b, 0x0a, 0x3b, 0x0e, 0xa6, 0x2e,
+	0xbb, 0xe7, 0x43, 0x31, 0xa2, 0x05, 0x80, 0xdc, 0x2e, 0xf9, 0x67, 0xe8, 0xd2, 0x6f, 0x85, 0xf6,
+	0xe8, 0xb7, 0x4e, 0xd2, 0xd2, 0xc7, 0x5b, 0x9f, 0xa1, 0x82, 0x8c, 0x6f, 0xc9, 0x51, 0xec, 0xff,
+	0x0b, 0x00, 0x00, 0xff, 0xff, 0x01, 0xb1, 0xec, 0x57, 0x3c, 0x09, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -76,6 +86,15 @@ type EvaluatordServiceClient interface {
 	AddSourcesToEvaluator(ctx context.Context, in *AddSourcesToEvaluatorRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 	RemoveSourcesFromEvaluator(ctx context.Context, in *RemoveSourcesFromEvaluatorRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 	ListEvaluatorsBySource(ctx context.Context, in *ListEvaluatorsBySourceRequest, opts ...grpc.CallOption) (*ListEvaluatorsBySourceResponse, error)
+	// Task
+	ListTasksBySource(ctx context.Context, in *ListTasksBySourceRequest, opts ...grpc.CallOption) (*ListTasksBySourceResponse, error)
+	GetTask(ctx context.Context, in *GetTaskRequest, opts ...grpc.CallOption) (*GetTaskResponse, error)
+	// Timer
+	CreateTimer(ctx context.Context, in *CreateTimerRequest, opts ...grpc.CallOption) (*CreateTimerResponse, error)
+	DeleteTimer(ctx context.Context, in *DeleteTimerRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	PatchTimer(ctx context.Context, in *PatchTimerRequest, opts ...grpc.CallOption) (*PatchTimerResponse, error)
+	GetTimer(ctx context.Context, in *GetTimerRequest, opts ...grpc.CallOption) (*GetTimerResponse, error)
+	ListTimers(ctx context.Context, in *ListTimersRequest, opts ...grpc.CallOption) (*ListTimersResponse, error)
 }
 
 type evaluatordServiceClient struct {
@@ -158,6 +177,69 @@ func (c *evaluatordServiceClient) ListEvaluatorsBySource(ctx context.Context, in
 	return out, nil
 }
 
+func (c *evaluatordServiceClient) ListTasksBySource(ctx context.Context, in *ListTasksBySourceRequest, opts ...grpc.CallOption) (*ListTasksBySourceResponse, error) {
+	out := new(ListTasksBySourceResponse)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.evaluatord.EvaluatordService/ListTasksBySource", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *evaluatordServiceClient) GetTask(ctx context.Context, in *GetTaskRequest, opts ...grpc.CallOption) (*GetTaskResponse, error) {
+	out := new(GetTaskResponse)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.evaluatord.EvaluatordService/GetTask", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *evaluatordServiceClient) CreateTimer(ctx context.Context, in *CreateTimerRequest, opts ...grpc.CallOption) (*CreateTimerResponse, error) {
+	out := new(CreateTimerResponse)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.evaluatord.EvaluatordService/CreateTimer", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *evaluatordServiceClient) DeleteTimer(ctx context.Context, in *DeleteTimerRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.evaluatord.EvaluatordService/DeleteTimer", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *evaluatordServiceClient) PatchTimer(ctx context.Context, in *PatchTimerRequest, opts ...grpc.CallOption) (*PatchTimerResponse, error) {
+	out := new(PatchTimerResponse)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.evaluatord.EvaluatordService/PatchTimer", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *evaluatordServiceClient) GetTimer(ctx context.Context, in *GetTimerRequest, opts ...grpc.CallOption) (*GetTimerResponse, error) {
+	out := new(GetTimerResponse)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.evaluatord.EvaluatordService/GetTimer", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *evaluatordServiceClient) ListTimers(ctx context.Context, in *ListTimersRequest, opts ...grpc.CallOption) (*ListTimersResponse, error) {
+	out := new(ListTimersResponse)
+	err := c.cc.Invoke(ctx, "/ai.metathings.service.evaluatord.EvaluatordService/ListTimers", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // EvaluatordServiceServer is the server API for EvaluatordService service.
 type EvaluatordServiceServer interface {
 	CreateEvaluator(context.Context, *CreateEvaluatorRequest) (*CreateEvaluatorResponse, error)
@@ -168,6 +250,15 @@ type EvaluatordServiceServer interface {
 	AddSourcesToEvaluator(context.Context, *AddSourcesToEvaluatorRequest) (*empty.Empty, error)
 	RemoveSourcesFromEvaluator(context.Context, *RemoveSourcesFromEvaluatorRequest) (*empty.Empty, error)
 	ListEvaluatorsBySource(context.Context, *ListEvaluatorsBySourceRequest) (*ListEvaluatorsBySourceResponse, error)
+	// Task
+	ListTasksBySource(context.Context, *ListTasksBySourceRequest) (*ListTasksBySourceResponse, error)
+	GetTask(context.Context, *GetTaskRequest) (*GetTaskResponse, error)
+	// Timer
+	CreateTimer(context.Context, *CreateTimerRequest) (*CreateTimerResponse, error)
+	DeleteTimer(context.Context, *DeleteTimerRequest) (*empty.Empty, error)
+	PatchTimer(context.Context, *PatchTimerRequest) (*PatchTimerResponse, error)
+	GetTimer(context.Context, *GetTimerRequest) (*GetTimerResponse, error)
+	ListTimers(context.Context, *ListTimersRequest) (*ListTimersResponse, error)
 }
 
 // UnimplementedEvaluatordServiceServer can be embedded to have forward compatible implementations.
@@ -197,6 +288,27 @@ func (*UnimplementedEvaluatordServiceServer) RemoveSourcesFromEvaluator(ctx cont
 }
 func (*UnimplementedEvaluatordServiceServer) ListEvaluatorsBySource(ctx context.Context, req *ListEvaluatorsBySourceRequest) (*ListEvaluatorsBySourceResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListEvaluatorsBySource not implemented")
+}
+func (*UnimplementedEvaluatordServiceServer) ListTasksBySource(ctx context.Context, req *ListTasksBySourceRequest) (*ListTasksBySourceResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListTasksBySource not implemented")
+}
+func (*UnimplementedEvaluatordServiceServer) GetTask(ctx context.Context, req *GetTaskRequest) (*GetTaskResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetTask not implemented")
+}
+func (*UnimplementedEvaluatordServiceServer) CreateTimer(ctx context.Context, req *CreateTimerRequest) (*CreateTimerResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateTimer not implemented")
+}
+func (*UnimplementedEvaluatordServiceServer) DeleteTimer(ctx context.Context, req *DeleteTimerRequest) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteTimer not implemented")
+}
+func (*UnimplementedEvaluatordServiceServer) PatchTimer(ctx context.Context, req *PatchTimerRequest) (*PatchTimerResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PatchTimer not implemented")
+}
+func (*UnimplementedEvaluatordServiceServer) GetTimer(ctx context.Context, req *GetTimerRequest) (*GetTimerResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetTimer not implemented")
+}
+func (*UnimplementedEvaluatordServiceServer) ListTimers(ctx context.Context, req *ListTimersRequest) (*ListTimersResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListTimers not implemented")
 }
 
 func RegisterEvaluatordServiceServer(s *grpc.Server, srv EvaluatordServiceServer) {
@@ -347,6 +459,132 @@ func _EvaluatordService_ListEvaluatorsBySource_Handler(srv interface{}, ctx cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _EvaluatordService_ListTasksBySource_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListTasksBySourceRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EvaluatordServiceServer).ListTasksBySource(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ai.metathings.service.evaluatord.EvaluatordService/ListTasksBySource",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EvaluatordServiceServer).ListTasksBySource(ctx, req.(*ListTasksBySourceRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _EvaluatordService_GetTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetTaskRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EvaluatordServiceServer).GetTask(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ai.metathings.service.evaluatord.EvaluatordService/GetTask",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EvaluatordServiceServer).GetTask(ctx, req.(*GetTaskRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _EvaluatordService_CreateTimer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateTimerRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EvaluatordServiceServer).CreateTimer(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ai.metathings.service.evaluatord.EvaluatordService/CreateTimer",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EvaluatordServiceServer).CreateTimer(ctx, req.(*CreateTimerRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _EvaluatordService_DeleteTimer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteTimerRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EvaluatordServiceServer).DeleteTimer(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ai.metathings.service.evaluatord.EvaluatordService/DeleteTimer",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EvaluatordServiceServer).DeleteTimer(ctx, req.(*DeleteTimerRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _EvaluatordService_PatchTimer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PatchTimerRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EvaluatordServiceServer).PatchTimer(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ai.metathings.service.evaluatord.EvaluatordService/PatchTimer",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EvaluatordServiceServer).PatchTimer(ctx, req.(*PatchTimerRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _EvaluatordService_GetTimer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetTimerRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EvaluatordServiceServer).GetTimer(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ai.metathings.service.evaluatord.EvaluatordService/GetTimer",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EvaluatordServiceServer).GetTimer(ctx, req.(*GetTimerRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _EvaluatordService_ListTimers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListTimersRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EvaluatordServiceServer).ListTimers(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ai.metathings.service.evaluatord.EvaluatordService/ListTimers",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EvaluatordServiceServer).ListTimers(ctx, req.(*ListTimersRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _EvaluatordService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "ai.metathings.service.evaluatord.EvaluatordService",
 	HandlerType: (*EvaluatordServiceServer)(nil),
@@ -382,6 +620,34 @@ var _EvaluatordService_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListEvaluatorsBySource",
 			Handler:    _EvaluatordService_ListEvaluatorsBySource_Handler,
+		},
+		{
+			MethodName: "ListTasksBySource",
+			Handler:    _EvaluatordService_ListTasksBySource_Handler,
+		},
+		{
+			MethodName: "GetTask",
+			Handler:    _EvaluatordService_GetTask_Handler,
+		},
+		{
+			MethodName: "CreateTimer",
+			Handler:    _EvaluatordService_CreateTimer_Handler,
+		},
+		{
+			MethodName: "DeleteTimer",
+			Handler:    _EvaluatordService_DeleteTimer_Handler,
+		},
+		{
+			MethodName: "PatchTimer",
+			Handler:    _EvaluatordService_PatchTimer_Handler,
+		},
+		{
+			MethodName: "GetTimer",
+			Handler:    _EvaluatordService_GetTimer_Handler,
+		},
+		{
+			MethodName: "ListTimers",
+			Handler:    _EvaluatordService_ListTimers_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

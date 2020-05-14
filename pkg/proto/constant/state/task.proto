@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package ai.metathings.constant.state;
+
+enum TaskState {
+	TASK_STATE_UNKNOWN = 0;
+	TASK_STATE_CREATED = 1;
+	TASK_STATE_RUNNING = 2;
+	TASK_STATE_DONE = 3;
+	TASK_STATE_ERROR = 4;
+}

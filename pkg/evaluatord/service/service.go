@@ -1,6 +1,9 @@
 package metathings_evaluatord_service
 
 import (
+	"context"
+
+	"github.com/golang/protobuf/ptypes/empty"
 	grpc_auth "github.com/grpc-ecosystem/go-grpc-middleware/auth"
 	log "github.com/sirupsen/logrus"
 
@@ -34,6 +37,31 @@ func (srv *MetathingsEvaluatordService) get_logger() log.FieldLogger {
 
 func (srv *MetathingsEvaluatordService) IsIgnoreMethod(md *grpc_helper.MethodDescription) bool {
 	return false
+}
+
+// Task
+func (srv *MetathingsEvaluatordService) ListTasksBySource(context.Context, *pb.ListTasksBySourceRequest) (*pb.ListTasksBySourceResponse, error) {
+	panic("unimplemented")
+}
+func (srv *MetathingsEvaluatordService) GetTask(context.Context, *pb.GetTaskRequest) (*pb.GetTaskResponse, error) {
+	panic("unimplemented")
+}
+
+// Timer
+func (srv *MetathingsEvaluatordService) CreateTimer(context.Context, *pb.CreateTimerRequest) (*pb.CreateTimerResponse, error) {
+	panic("unimplemented")
+}
+func (srv *MetathingsEvaluatordService) DeleteTimer(context.Context, *pb.DeleteTimerRequest) (*empty.Empty, error) {
+	panic("unimplemented")
+}
+func (srv *MetathingsEvaluatordService) PatchTimer(context.Context, *pb.PatchTimerRequest) (*pb.PatchTimerResponse, error) {
+	panic("unimplemented")
+}
+func (srv *MetathingsEvaluatordService) GetTimer(context.Context, *pb.GetTimerRequest) (*pb.GetTimerResponse, error) {
+	panic("unimplemented")
+}
+func (srv *MetathingsEvaluatordService) ListTimers(context.Context, *pb.ListTimersRequest) (*pb.ListTimersResponse, error) {
+	panic("unimplemented")
 }
 
 func NewMetathingsEvaludatorService(
