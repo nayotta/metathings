@@ -3,6 +3,8 @@ package metathings_deviced_connection
 import (
 	"errors"
 	"sync"
+
+	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 )
 
 var (
@@ -58,4 +60,16 @@ func NewBridgeFactory(name string, args ...interface{}) (BridgeFactory, error) {
 	}
 
 	return fty, nil
+}
+
+func ToBridgeFactory(y *BridgeFactory) func(string, interface{}) error {
+	return func(k string, v interface{}) error {
+		var ok bool
+		*y, ok = v.(BridgeFactory)
+		if !ok {
+			return opt_helper.InvalidArgument(k)
+		}
+
+		return nil
+	}
 }

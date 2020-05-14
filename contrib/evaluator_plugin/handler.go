@@ -6,7 +6,9 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"sync"
 
+	opentracing_helper "github.com/nayotta/metathings/pkg/common/opentracing"
 	evltr_plg_cmd "github.com/nayotta/metathings/pkg/plugin/evaluator/cmd"
 	service "github.com/nayotta/metathings/pkg/plugin/evaluator/service"
 )
@@ -34,12 +36,24 @@ func getFissionConfigPath() string {
 
 var srv *service.EvaluatorPluginService
 
+var evalHandler http.HandlerFunc
+var evalHandlerOnce sync.Once
+
 func EvalHandler(w http.ResponseWriter, r *http.Request) {
-	srv.Eval(w, r)
+	evalHandlerOnce.Do(func() {
+		evalHandler = opentracing_helper.Middleware(srv, "Eval")
+	})
+	evalHandler(w, r)
 }
 
+var receiveDataHandler http.HandlerFunc
+var receiveDataHandlerOnce sync.Once
+
 func ReceiveDataHandler(w http.ResponseWriter, r *http.Request) {
-	srv.ReceiveData(w, r)
+	receiveDataHandlerOnce.Do(func() {
+		receiveDataHandler = opentracing_helper.Middleware(srv, "ReceiveData")
+	})
+	receiveDataHandler(w, r)
 }
 
 func init() {

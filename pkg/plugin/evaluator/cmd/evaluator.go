@@ -3,9 +3,11 @@ package metathings_plugin_evaluator_cmd
 import (
 	"strings"
 
+	"github.com/opentracing/opentracing-go"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"go.uber.org/dig"
+	"go.uber.org/fx"
 
 	cmd_contrib "github.com/nayotta/metathings/cmd/contrib"
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
@@ -47,6 +49,7 @@ func LoadEvaluatorPluginOption(path string) func() (*EvaluatorPluginOption, erro
 
 		opt := NewEvaluatorPluginOption()
 		cmd_helper.UnmarshalConfig(&opt)
+		opt.SetServiceName("evaluator-plugin")
 
 		cmd_helper.InitManyStringMapFromConfigWithStage([]cmd_helper.InitManyOption{
 			{&opt.DataStorage, "data_storage"},
@@ -60,6 +63,7 @@ func LoadEvaluatorPluginOption(path string) func() (*EvaluatorPluginOption, erro
 
 func GetEvaluatorPluginOptions(opt *EvaluatorPluginOption) (
 	cmd_contrib.LoggerOptioner,
+	cmd_contrib.ServiceOptioner,
 	cmd_contrib.CredentialOptioner,
 	cmd_contrib.ServiceEndpointsOptioner,
 	cmd_contrib.OpentracingOptioner,
@@ -67,13 +71,22 @@ func GetEvaluatorPluginOptions(opt *EvaluatorPluginOption) (
 	return opt,
 		opt,
 		opt,
+		opt,
 		opt
 }
 
-func NewEvaluatorPluginServiceOption(o *EvaluatorPluginOption) (*service.EvaluatorPluginServiceOption, error) {
+type NewEvaluatorPluginOptionParams struct {
+	fx.In
+
+	Tracer opentracing.Tracer `name:"opentracing_tracer"`
+	Option *EvaluatorPluginOption
+}
+
+func NewEvaluatorPluginServiceOption(p NewEvaluatorPluginOptionParams) (*service.EvaluatorPluginServiceOption, error) {
 	opt := service.NewEvaluatorPluginServiceOption()
 
-	opt.Evaluator.Endpoint = o.Evaluator.Endpoint
+	opt.Evaluator.Endpoint = p.Option.Evaluator.Endpoint
+	opt.IsTraced = p.Tracer != nil
 
 	return opt, nil
 }

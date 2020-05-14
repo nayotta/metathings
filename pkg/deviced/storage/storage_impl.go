@@ -6,7 +6,6 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
-	"github.com/opentracing/opentracing-go"
 	log "github.com/sirupsen/logrus"
 	otgorm "github.com/smacker/opentracing-gorm"
 
@@ -1026,25 +1025,12 @@ func init_db(s *StorageImpl) error {
 
 func NewStorageImpl(driver, uri string, args ...interface{}) (Storage, error) {
 	var err error
-	var ok bool
 	var opt StorageImplOption
 	var logger log.FieldLogger
 
 	if err := opt_helper.Setopt(map[string]func(string, interface{}) error{
 		"logger": opt_helper.ToLogger(&logger),
-		"tracer": func(key string, val interface{}) error {
-			var tracer opentracing.Tracer
-
-			if tracer, ok = val.(opentracing.Tracer); !ok {
-				return opt_helper.InvalidArgument(key)
-			}
-
-			if tracer != nil {
-				opt.IsTraced = true
-			}
-
-			return nil
-		},
+		"tracer": opt_helper.ToIsTraced(&opt.IsTraced),
 	})(args...); err != nil {
 		return nil, err
 	}

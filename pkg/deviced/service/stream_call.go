@@ -26,7 +26,7 @@ func (self *MetathingsDevicedService) StreamCall(stm pb.DevicedService_StreamCal
 		return status.Errorf(codes.Internal, err.Error())
 	}
 
-	if err = self.cc.StreamCall(dev_s, cfg, stm); err != nil {
+	if err = self.cc.StreamCall(stm.Context(), dev_s, cfg, stm); err != nil {
 		self.logger.WithError(err).Errorf("failed to stream call")
 		return status.Errorf(codes.Internal, err.Error())
 	}

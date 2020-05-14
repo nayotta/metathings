@@ -5,18 +5,22 @@ import (
 	"context"
 	"encoding/base64"
 	"encoding/json"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"time"
 
 	"github.com/golang/protobuf/jsonpb"
 	"github.com/golang/protobuf/ptypes/wrappers"
+	"github.com/opentracing-contrib/go-stdlib/nethttp"
+	"github.com/opentracing/opentracing-go"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cast"
 
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
 	context_helper "github.com/nayotta/metathings/pkg/common/context"
 	hst "github.com/nayotta/metathings/pkg/common/http/status"
+	opentracing_helper "github.com/nayotta/metathings/pkg/common/opentracing"
 	token_helper "github.com/nayotta/metathings/pkg/common/token"
 	evltr_plg "github.com/nayotta/metathings/pkg/plugin/evaluator"
 	evltr_pb "github.com/nayotta/metathings/pkg/proto/evaluatord"
@@ -29,7 +33,8 @@ type EvaluatorPluginServiceOption struct {
 	Evaluator struct {
 		Endpoint string
 	}
-	Codec string
+	Codec    string
+	IsTraced bool
 }
 
 func NewEvaluatorPluginServiceOption() *EvaluatorPluginServiceOption {
@@ -221,8 +226,21 @@ func (srv *EvaluatorPluginService) build_evaluator_context(r *http.Request, info
 	return ctx, nil
 }
 
+func (srv *EvaluatorPluginService) new_request(options ...nethttp.ClientOption) func(context.Context, string, string, io.Reader) (*http.Request, *nethttp.Tracer, error) {
+	return opentracing_helper.NewRequester(srv)(options...)
+}
+
+func (srv *EvaluatorPluginService) get_http_client() *http.Client {
+	return opentracing_helper.GetHTTPClient(srv)
+}
+
+func (srv *EvaluatorPluginService) IsTraced(*http.Request) bool {
+	return srv.opt.IsTraced
+}
+
 func (srv *EvaluatorPluginService) Eval(w http.ResponseWriter, r *http.Request) {
-	// TODO(Peer): wrap opentracing tags
+	var err error
+
 	ctx := r.Context()
 	evltr_id := r.Header.Get("X-Evaluator-ID")
 	src_id := r.Header.Get(esdk.HTTP_HEADER_SOURCE_ID)
@@ -297,6 +315,11 @@ func (srv *EvaluatorPluginService) Eval(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
+	if srv.IsTraced(r) {
+		var sp opentracing.Span
+		sp, ctx = opentracing.StartSpanFromContext(ctx, "Evaluator.Eval")
+		defer sp.Finish()
+	}
 	err = evltr.Eval(ctx, dat)
 	if err != nil {
 		logger.WithError(err).Errorf("failed to eval")
@@ -326,8 +349,9 @@ func (srv *EvaluatorPluginService) list_evaluators_by_source(ctx context.Context
 }
 
 func (srv *EvaluatorPluginService) ReceiveData(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
+	var err error
 
+	ctx := r.Context()
 	src_id := r.Header.Get(esdk.HTTP_HEADER_SOURCE_ID)
 	src_typ := r.Header.Get(esdk.HTTP_HEADER_SOURCE_TYPE)
 
@@ -362,12 +386,29 @@ func (srv *EvaluatorPluginService) ReceiveData(w http.ResponseWriter, r *http.Re
 	}
 
 	for _, evltr := range evltrs {
+		dev_id := r.Header.Get(esdk.HTTP_HEADER_DEVICE_ID)
+		dat_ts := r.Header.Get(esdk.HTTP_HEADER_DATA_TIMESTAMP)
+
 		// TODO(Peer): tls support
-		req, err := http.NewRequest("POST", srv.opt.Evaluator.Endpoint, bytes.NewReader(body))
+		req, hr, err := srv.new_request(
+			nethttp.ClientSpanObserver(func(span opentracing.Span, r *http.Request) {
+				span.SetTag("source", src_id)
+				span.SetTag("source_type", src_typ)
+				if dev_id != "" {
+					span.SetTag("device", dev_id)
+				}
+				if dat_ts != "" {
+					span.SetTag("data_timestamp", dat_ts)
+				}
+			}),
+		)(ctx, "POST", srv.opt.Evaluator.Endpoint, bytes.NewReader(body))
 		if err != nil {
 			logger.WithError(err).Errorf("failed to new http request")
 			srv.HandleResponse(w, r, hst.WrapErrorHttpStatus(http.StatusInternalServerError, err))
 			return
+		}
+		if hr != nil {
+			defer hr.Finish()
 		}
 
 		req.Header.Set("Content-Type", r.Header.Get("Content-Type"))
@@ -375,21 +416,21 @@ func (srv *EvaluatorPluginService) ReceiveData(w http.ResponseWriter, r *http.Re
 		req.Header.Set("X-Evaluator-ID", evltr.GetId())
 		req.Header.Set(esdk.HTTP_HEADER_SOURCE_ID, r.Header.Get(esdk.HTTP_HEADER_SOURCE_ID))
 		req.Header.Set(esdk.HTTP_HEADER_SOURCE_TYPE, r.Header.Get(esdk.HTTP_HEADER_SOURCE_TYPE))
-		if buf := r.Header.Get(esdk.HTTP_HEADER_DEVICE_ID); buf != "" {
-			req.Header.Set(esdk.HTTP_HEADER_DEVICE_ID, buf)
+		if dev_id != "" {
+			req.Header.Set(esdk.HTTP_HEADER_DEVICE_ID, dev_id)
 		}
-		req.Header.Set(esdk.HTTP_HEADER_DATA_TIMESTAMP, r.Header.Get(esdk.HTTP_HEADER_DATA_TIMESTAMP))
+		req.Header.Set(esdk.HTTP_HEADER_DATA_TIMESTAMP, dat_ts)
 		if buf := r.Header.Get(esdk.HTTP_HEADER_DATA_TAGS); buf != "" {
 			req.Header.Set(esdk.HTTP_HEADER_DATA_TAGS, buf)
 		}
-		req = req.WithContext(ctx)
 
-		res, err := http.DefaultClient.Do(req)
+		res, err := srv.get_http_client().Do(req)
 		if err != nil {
 			logger.WithError(err).Errorf("failed to send http request")
 			srv.HandleResponse(w, r, hst.WrapErrorHttpStatus(http.StatusInternalServerError, err))
 			return
 		}
+		defer res.Body.Close()
 
 		if res.StatusCode >= 400 {
 			buf, err := ioutil.ReadAll(res.Body)

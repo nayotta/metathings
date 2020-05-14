@@ -14,7 +14,7 @@ jobs:
     - uses: actions/checkout@master
     - uses: actions/setup-go@v1
       with:
-        go-version: "1.12"
+        go-version: "1.14"
     - name: Compile Metathingsd Binary
       env:
         GOOS: ${{ matrix.goos }}
@@ -46,7 +46,7 @@ jobs:
     - uses: actions/checkout@master
     - uses: actions/setup-go@v1
       with:
-        go-version: "1.12"
+        go-version: "1.14"
     - name: Compile Metathings Binary
       env:
         GOOS: ${{ matrix.goos }}
@@ -69,7 +69,7 @@ jobs:
     - uses: actions/checkout@master
     - uses: actions/setup-go@v1
       with:
-        go-version: "1.12"
+        go-version: "1.14"
     - name: Install Zip
       run: |
         sudo apt install -y zip

@@ -7,6 +7,7 @@ import (
 
 	"github.com/spf13/pflag"
 
+	opentracing_helper "github.com/nayotta/metathings/pkg/common/opentracing"
 	evltr_plg_cmd "github.com/nayotta/metathings/pkg/plugin/evaluator/cmd"
 )
 
@@ -28,7 +29,8 @@ func main() {
 		panic(err)
 	}
 
-	http.HandleFunc("/eval", srv.Eval)
-	http.HandleFunc("/receive_data", srv.ReceiveData)
+	http.HandleFunc("/eval", opentracing_helper.Middleware(srv, "Eval"))
+	http.HandleFunc("/receive_data", opentracing_helper.Middleware(srv, "ReceiveData"))
+
 	log.Fatal(http.ListenAndServe(fmt.Sprintf("%v:%v", host, port), nil))
 }

@@ -1,6 +1,8 @@
 package metathings_deviced_sdk
 
 import (
+	"encoding/json"
+
 	"github.com/golang/protobuf/jsonpb"
 	stpb "github.com/golang/protobuf/ptypes/struct"
 	"github.com/golang/protobuf/ptypes/wrappers"
@@ -28,10 +30,13 @@ func FromConfig(x *pb.Config) (*Config, error) {
 		return nil, err
 	}
 
-	m, err := objx.FromJSON(js_str)
+	sm := map[string]interface{}{}
+	err = json.Unmarshal([]byte(js_str), &sm)
 	if err != nil {
 		return nil, err
 	}
+
+	m := objx.New(sm)
 
 	return &Config{
 		m:      m,

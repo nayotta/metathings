@@ -61,3 +61,8 @@ message LuaDescriptor {
 message OpLuaDescriptor {
 	google.protobuf.StringValue code = 8;
 }
+
+message Task {
+	string id = 1;
+	string name = 2;
+}
