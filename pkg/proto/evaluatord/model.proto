@@ -65,27 +65,33 @@ message OpLuaDescriptor {
 	google.protobuf.StringValue code = 8;
 }
 
+message OpTaskState {
+	google.protobuf.Timestamp at = 1;
+	ai.metathings.constant.state.TaskState state = 2;
+	google.protobuf.Struct tags = 8;
+}
+
+message TaskState {
+	google.protobuf.Timestamp at = 1;
+	ai.metathings.constant.state.TaskState state = 2;
+	google.protobuf.Struct tags = 8;
+}
+
 message OpTask {
 	google.protobuf.StringValue id = 1;
 	google.protobuf.Timestamp created_at = 2;
 	google.protobuf.Timestamp updated_at = 3;
-	ai.metathings.constant.state.TaskState state = 4;
+	OpTaskState current_state = 4;
 	OpResource source = 8;
 }
 
 message Task {
-	message StateNode {
-		google.protobuf.Timestamp at = 1;
-		ai.metathings.constant.state.TaskState state = 2;
-		google.protobuf.Struct tags = 8;
-	}
-
 	string id = 1;
 	google.protobuf.Timestamp created_at = 2;
 	google.protobuf.Timestamp updated_at = 3;
-	ai.metathings.constant.state.TaskState state = 4;
+	TaskState current_state = 4;
 	Resource source = 8;
-	repeated StateNode state_timeline = 9;
+	repeated TaskState states = 9;
 }
 
 message OpTimer {

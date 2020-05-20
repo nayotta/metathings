@@ -7,10 +7,10 @@ import (
 	fmt "fmt"
 	math "math"
 	proto "github.com/golang/protobuf/proto"
+	_ "github.com/golang/protobuf/ptypes/wrappers"
 	_ "github.com/golang/protobuf/ptypes/struct"
 	_ "github.com/golang/protobuf/ptypes/timestamp"
 	_ "github.com/nayotta/metathings/pkg/proto/constant/state"
-	_ "github.com/golang/protobuf/ptypes/wrappers"
 	github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
 )
 
@@ -141,6 +141,32 @@ func (this *OpLuaDescriptor) Validate() error {
 	}
 	return nil
 }
+func (this *OpTaskState) Validate() error {
+	if this.At != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.At); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("At", err)
+		}
+	}
+	if this.Tags != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Tags); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Tags", err)
+		}
+	}
+	return nil
+}
+func (this *TaskState) Validate() error {
+	if this.At != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.At); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("At", err)
+		}
+	}
+	if this.Tags != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Tags); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Tags", err)
+		}
+	}
+	return nil
+}
 func (this *OpTask) Validate() error {
 	if this.Id != nil {
 		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Id); err != nil {
@@ -155,6 +181,11 @@ func (this *OpTask) Validate() error {
 	if this.UpdatedAt != nil {
 		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.UpdatedAt); err != nil {
 			return github_com_mwitkow_go_proto_validators.FieldError("UpdatedAt", err)
+		}
+	}
+	if this.CurrentState != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.CurrentState); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("CurrentState", err)
 		}
 	}
 	if this.Source != nil {
@@ -175,29 +206,21 @@ func (this *Task) Validate() error {
 			return github_com_mwitkow_go_proto_validators.FieldError("UpdatedAt", err)
 		}
 	}
+	if this.CurrentState != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.CurrentState); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("CurrentState", err)
+		}
+	}
 	if this.Source != nil {
 		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Source); err != nil {
 			return github_com_mwitkow_go_proto_validators.FieldError("Source", err)
 		}
 	}
-	for _, item := range this.StateTimeline {
+	for _, item := range this.States {
 		if item != nil {
 			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {
-				return github_com_mwitkow_go_proto_validators.FieldError("StateTimeline", err)
+				return github_com_mwitkow_go_proto_validators.FieldError("States", err)
 			}
-		}
-	}
-	return nil
-}
-func (this *Task_StateNode) Validate() error {
-	if this.At != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.At); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("At", err)
-		}
-	}
-	if this.Tags != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Tags); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Tags", err)
 		}
 	}
 	return nil
