@@ -2,6 +2,7 @@ package metathings_evaluatord_storage
 
 import (
 	"context"
+	"sync"
 	"time"
 )
 
@@ -53,6 +54,23 @@ type EvaluatorSourceMapping struct {
 	SourceType  *string `gorm:"column:source_type"`
 }
 
+type TaskState struct {
+	At    *time.Time
+	State *string
+	Tags  map[string]interface{}
+}
+
+type Task struct {
+	Id        *string
+	CreatedAt time.Time
+	UpdatedAt time.Time
+
+	CurrentState *TaskState
+	Source       *Resource
+
+	States []*TaskState
+}
+
 type Storage interface {
 	CreateEvaluator(context.Context, *Evaluator) (*Evaluator, error)
 	DeleteEvaluator(ctx context.Context, id string) error
@@ -69,4 +87,31 @@ type Storage interface {
 
 func NewStorage(driver, uri string, args ...interface{}) (Storage, error) {
 	return NewStorageImpl(driver, uri, args...)
+}
+
+type TaskStorageFactory func(...interface{}) (TaskStorage, error)
+
+var task_storage_factories map[string]TaskStorageFactory
+var task_storage_factories_once sync.Once
+
+func register_task_storage_factory(name string, fty TaskStorageFactory) {
+	task_storage_factories_once.Do(func() {
+		task_storage_factories = map[string]TaskStorageFactory{}
+	})
+	task_storage_factories[name] = fty
+}
+
+type TaskStorage interface {
+	ListTasksBySource(ctx context.Context, src *Resource) ([]*Task, error)
+	GetTask(context.Context, string) (*Task, error)
+	PatchTask(context.Context, *Task, *TaskState) error
+}
+
+func NewTaskStorage(driver string, args ...interface{}) (TaskStorage, error) {
+	fty, ok := task_storage_factories[driver]
+	if !ok {
+		return nil, ErrUnknownTaskStorageDriver
+	}
+
+	return fty(args...)
 }

@@ -61,3 +61,19 @@ func GetTestPolicydDriverName() string {
 func GetTestPolicydConnectString() string {
 	return GetenvWithDefault("MTT_POLICYD_CONNECT_STRING", "host=127.0.0.1 port=5432 user=postgres password=postgres sslmode=disable")
 }
+
+func GetTestInfluxdb2Address() string {
+	return GetenvWithDefault("MTT_INFLUXDB2_ADDRESS", "http://localhost:9999")
+}
+
+func GetTestInfluxdb2Token() string {
+	return GetenvWithDefault("MTT_INFLUXDB2_TOKEN", "")
+}
+
+func GetTestInfluxdb2Org() string {
+	return GetenvWithDefault("MTT_INFLUXDB2_ORG", "")
+}
+
+func GetTestInfluxdb2Bucket() string {
+	return GetenvWithDefault("MTT_INFLUXDB2_BUCKET", "")
+}

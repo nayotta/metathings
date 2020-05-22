@@ -1,6 +1,7 @@
 package metathings_plugin_evaluator
 
 import (
+	"context"
 	"testing"
 
 	"github.com/stretchr/testify/mock"
@@ -19,6 +20,7 @@ type LuaOperatorTestSuite struct {
 	dat_stor  *dssdk.MockDataStorage
 	smpl_stor *dsdk.MockSimpleStorage
 	caller    *dsdk.MockCaller
+	gctx      context.Context
 	ctx       esdk.Data
 	dat       esdk.Data
 }
@@ -27,6 +29,7 @@ func (s *LuaOperatorTestSuite) SetupTest() {
 	s.dat_stor = new(dssdk.MockDataStorage)
 	s.smpl_stor = new(dsdk.MockSimpleStorage)
 	s.caller = new(dsdk.MockCaller)
+	s.gctx = context.TODO()
 }
 
 func (s *LuaOperatorTestSuite) BeforeTest(suiteName, testName string) {
@@ -60,7 +63,7 @@ func (s *LuaOperatorTestSuite) runMainTest() {
 		s.dat, _ = esdk.DataFromMap(nil)
 	}
 
-	_, err := s.op.Run(s.ctx, s.dat)
+	_, err := s.op.Run(s.gctx, s.ctx, s.dat)
 	s.Require().Nil(err)
 }
 
@@ -107,7 +110,7 @@ func (s *LuaOperatorTestSuite) TestRun() {
 		"e": []interface{}{4},
 	})
 
-	dat, err := s.op.Run(ctx, dat)
+	dat, err := s.op.Run(s.gctx, ctx, dat)
 	s.Require().Nil(err)
 	result_i := dat.Get("result")
 	s.NotNil(result_i)
