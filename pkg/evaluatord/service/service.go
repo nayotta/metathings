@@ -61,6 +61,7 @@ func NewMetathingsEvaludatorService(
 	opt *MetathingsEvaluatordServiceOption,
 	logger log.FieldLogger,
 	storage storage.Storage,
+	task_storage storage.TaskStorage,
 	authorizer identityd_authorizer.Authorizer,
 	validator identityd_validator.Validator,
 	tkvdr token_helper.TokenValidator,
@@ -68,14 +69,15 @@ func NewMetathingsEvaludatorService(
 	cli_fty *client_helper.ClientFactory,
 ) (pb.EvaluatordServiceServer, error) {
 	srv := &MetathingsEvaluatordService{
-		opt:        opt,
-		logger:     logger,
-		storage:    storage,
-		authorizer: authorizer,
-		validator:  validator,
-		tkvdr:      tkvdr,
-		tknr:       tknr,
-		cli_fty:    cli_fty,
+		opt:          opt,
+		logger:       logger,
+		storage:      storage,
+		task_storage: task_storage,
+		authorizer:   authorizer,
+		validator:    validator,
+		tkvdr:        tkvdr,
+		tknr:         tknr,
+		cli_fty:      cli_fty,
 	}
 
 	srv.ServiceAuthFuncOverride = afo_helper.NewAuthFuncOverrider(tkvdr, srv, logger)

@@ -4,12 +4,13 @@ import (
 	"context"
 
 	"github.com/opentracing/opentracing-go"
-	log "github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"go.uber.org/fx"
 
 	cmd_contrib "github.com/nayotta/metathings/cmd/contrib"
 	cmd_helper "github.com/nayotta/metathings/pkg/common/cmd"
+	cfg_helper "github.com/nayotta/metathings/pkg/common/config"
 	token_helper "github.com/nayotta/metathings/pkg/common/token"
 	service "github.com/nayotta/metathings/pkg/evaluatord/service"
 	storage "github.com/nayotta/metathings/pkg/evaluatord/storage"
@@ -19,6 +20,7 @@ import (
 
 type EvaluatordOption struct {
 	cmd_contrib.ServiceBaseOption `mapstructure:",squash"`
+	TaskStorage                   map[string]interface{}
 }
 
 func NewEvaluatordOption() *EvaluatordOption {
@@ -43,6 +45,10 @@ var (
 			opt_t := NewEvaluatordOption()
 			cmd_helper.UnmarshalConfig(opt_t)
 			base_opt = &opt_t.BaseOption
+
+			cmd_helper.InitManyStringMapFromConfigWithStage([]cmd_helper.InitManyOption{
+				{&opt_t.TaskStorage, "task_storage"},
+			})
 
 			evaluatord_opt = opt_t
 			evaluatord_opt.SetServiceName("evaluatord")
@@ -84,12 +90,32 @@ type NewEvaluatordStorageParams struct {
 	fx.In
 
 	Option cmd_contrib.StorageOptioner
-	Logger log.FieldLogger
+	Logger logrus.FieldLogger
 	Tracer opentracing.Tracer `name:"opentracing_tracer" optional:"true"`
 }
 
 func NewEvaluatordStorage(p NewEvaluatordStorageParams) (storage.Storage, error) {
 	return storage.NewStorage(p.Option.GetDriver(), p.Option.GetUri(), "logger", p.Logger, "tracer", p.Tracer)
+}
+
+type NewEvaluatordTaskStorageParams struct {
+	fx.In
+
+	Option EvaluatordOption
+	Logger logrus.FieldLogger
+	Tracer opentracing.Tracer `name:"opentracing_tracer" optional:"true"`
+}
+
+func NewEvaluatordTaskStorage(p NewEvaluatordTaskStorageParams) (storage.TaskStorage, error) {
+	var name string
+	var args []interface{}
+	var err error
+
+	if name, args, err = cfg_helper.ParseConfigOption("driver", p.Option.TaskStorage, "logger", p.Logger, "tracer", p.Tracer); err != nil {
+		return nil, err
+	}
+
+	return storage.NewTaskStorage(name, args...)
 }
 
 func runEvaluatord() error {
@@ -107,6 +133,7 @@ func runEvaluatord() error {
 			token_helper.NewTokenValidator,
 			NewMetathingsEvaulatordServiceOption,
 			NewEvaluatordStorage,
+			NewEvaluatordTaskStorage,
 			authorizer.NewAuthorizer,
 			cmd_contrib.NewValidator,
 			service.NewMetathingsEvaludatorService,

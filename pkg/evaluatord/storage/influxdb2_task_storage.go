@@ -199,7 +199,7 @@ func NewInfluxdb2TaskStorage(args ...interface{}) (TaskStorage, error) {
 		"token":   opt_helper.ToString(&opt.Token),
 		"org":     opt_helper.ToString(&opt.Org),
 		"bucket":  opt_helper.ToString(&opt.Bucket),
-	})(args...); err != nil {
+	}, opt_helper.SetSkip(true))(args...); err != nil {
 		return nil, err
 	}
 
