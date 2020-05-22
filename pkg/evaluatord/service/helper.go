@@ -1,13 +1,17 @@
 package metathings_evaluatord_service
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"errors"
 	"strings"
 
 	"github.com/golang/protobuf/jsonpb"
+	"github.com/golang/protobuf/ptypes"
 	stpb "github.com/golang/protobuf/ptypes/struct"
 
+	evaluatord_helper "github.com/nayotta/metathings/pkg/evaluatord/helper"
 	storage "github.com/nayotta/metathings/pkg/evaluatord/storage"
 	evaluator_plugin "github.com/nayotta/metathings/pkg/plugin/evaluator"
 	pb "github.com/nayotta/metathings/pkg/proto/evaluatord"
@@ -19,6 +23,10 @@ type evaluator_getter interface {
 
 type source_getter interface {
 	GetSource() *pb.OpResource
+}
+
+type task_getter interface {
+	GetTask() *pb.OpTask
 }
 
 func copy_lua_descriptor(x *storage.LuaDescriptor) *pb.Operator_Lua {
@@ -94,6 +102,57 @@ func copy_evaluators(xs []*storage.Evaluator) []*pb.Evaluator {
 		ys = append(ys, copy_evaluator(x))
 	}
 
+	return ys
+}
+
+func copy_task_state(x *storage.TaskState) *pb.TaskState {
+	var tags stpb.Struct
+
+	at, _ := ptypes.TimestampProto(*x.At)
+	tags_buf, _ := json.Marshal(x.Tags)
+	jsonpb.Unmarshal(bytes.NewReader(tags_buf), &tags)
+
+	y := &pb.TaskState{
+		At:    at,
+		State: evaluatord_helper.TASK_STATE_ENUMER.ToValue(*x.State),
+		Tags:  &tags,
+	}
+
+	return y
+}
+
+func copy_task_states(xs []*storage.TaskState) []*pb.TaskState {
+	var ys []*pb.TaskState
+	for _, x := range xs {
+		ys = append(ys, copy_task_state(x))
+	}
+	return ys
+}
+
+func copy_task(x *storage.Task) *pb.Task {
+	created_at, _ := ptypes.TimestampProto(*x.States[0].At)
+	updated_at, _ := ptypes.TimestampProto(*x.CurrentState.At)
+
+	y := &pb.Task{
+		Id:           *x.Id,
+		CreatedAt:    created_at,
+		UpdatedAt:    updated_at,
+		CurrentState: copy_task_state(x.CurrentState),
+		Source: &pb.Resource{
+			Id:   *x.Source.Id,
+			Type: *x.Source.Type,
+		},
+		States: copy_task_states(x.States),
+	}
+
+	return y
+}
+
+func copy_tasks(xs []*storage.Task) []*pb.Task {
+	var ys []*pb.Task
+	for _, x := range xs {
+		ys = append(ys, copy_task(x))
+	}
 	return ys
 }
 
@@ -196,6 +255,22 @@ func ensure_valid_operator_driver(x evaluator_getter) error {
 	drv_str := drv.GetValue()
 	if !evaluator_plugin.IsValidOperatorName(drv_str) {
 		return errors.New("evaluator.operator.driver is invalid")
+	}
+
+	return nil
+}
+
+func ensure_get_task(x task_getter) error {
+	if tsk := x.GetTask(); tsk == nil {
+		return errors.New("task is empty")
+	}
+
+	return nil
+}
+
+func ensure_get_task_id(x task_getter) error {
+	if tsk_id := x.GetTask().GetId(); tsk_id == nil {
+		return errors.New("task.id is empty")
 	}
 
 	return nil
