@@ -9,7 +9,7 @@ import "google/protobuf/timestamp.proto";
 import "model.proto";
 
 message ListTasksBySourceRequest {
-	Resource source = 1 [(validator.field) = {msg_exists: true}];
+	OpResource source = 1 [(validator.field) = {msg_exists: true}];
 	google.protobuf.Timestamp range_from = 2;
 	google.protobuf.Timestamp range_to = 3;
 }
