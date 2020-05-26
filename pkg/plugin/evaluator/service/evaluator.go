@@ -20,9 +20,13 @@ import (
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
 	context_helper "github.com/nayotta/metathings/pkg/common/context"
 	hst "github.com/nayotta/metathings/pkg/common/http/status"
+	id_helper "github.com/nayotta/metathings/pkg/common/id"
 	opentracing_helper "github.com/nayotta/metathings/pkg/common/opentracing"
 	token_helper "github.com/nayotta/metathings/pkg/common/token"
+	evltr_helper "github.com/nayotta/metathings/pkg/evaluatord/helper"
+	evltr_stor "github.com/nayotta/metathings/pkg/evaluatord/storage"
 	evltr_plg "github.com/nayotta/metathings/pkg/plugin/evaluator"
+	state_pb "github.com/nayotta/metathings/pkg/proto/constant/state"
 	evltr_pb "github.com/nayotta/metathings/pkg/proto/evaluatord"
 	dssdk "github.com/nayotta/metathings/sdk/data_storage"
 	dsdk "github.com/nayotta/metathings/sdk/deviced"
@@ -49,6 +53,7 @@ type EvaluatorPluginService struct {
 	tknr      token_helper.Tokener
 	dat_stor  dssdk.DataStorage
 	smpl_stor dsdk.SimpleStorage
+	task_stor evltr_stor.TaskStorage
 	caller    dsdk.Caller
 	cli_fty   *client_helper.ClientFactory
 }
@@ -240,11 +245,21 @@ func (srv *EvaluatorPluginService) IsTraced(*http.Request) bool {
 
 func (srv *EvaluatorPluginService) Eval(w http.ResponseWriter, r *http.Request) {
 	var err error
+	var hs *hst.HttpStatus
+	var log_msg string
 
 	ctx := r.Context()
 	evltr_id := r.Header.Get("X-Evaluator-ID")
 	src_id := r.Header.Get(esdk.HTTP_HEADER_SOURCE_ID)
 	src_typ := r.Header.Get(esdk.HTTP_HEADER_SOURCE_TYPE)
+	tsk_id := id_helper.NewId()
+	tsk := &evltr_stor.Task{
+		Id: &tsk_id,
+		Source: &evltr_stor.Resource{
+			Id:   &src_id,
+			Type: &src_typ,
+		},
+	}
 
 	logger := srv.get_logger().WithFields(log.Fields{
 		"#method":     "eval",
@@ -252,11 +267,42 @@ func (srv *EvaluatorPluginService) Eval(w http.ResponseWriter, r *http.Request) 
 		"source_type": src_typ,
 		"evaluator":   evltr_id,
 	})
+	defer func() {
+		if err != nil {
+			logger.WithError(err).Errorf(log_msg)
+			srv.HandleResponse(w, r, hs)
+			if err := srv.task_stor.PatchTask(ctx, tsk, &evltr_stor.TaskState{
+				State: evltr_helper.TASK_STATE_ENUMER.ToStringP(state_pb.TaskState_TASK_STATE_ERROR),
+				Tags: map[string]interface{}{
+					"error": err.Error(),
+				},
+			}); err != nil {
+				logger.WithError(err).Warning("failed to patch task")
+			}
+		} else {
+			srv.HandleResponse(w, r, hst.NewHttpStatus(http.StatusNoContent, nil))
+			if err := srv.task_stor.PatchTask(ctx, tsk, &evltr_stor.TaskState{
+				State: evltr_helper.TASK_STATE_ENUMER.ToStringP(state_pb.TaskState_TASK_STATE_DONE),
+			}); err != nil {
+				logger.WithError(err).Warning("failed to patch task")
+			}
+		}
+	}()
+
+	if err := srv.task_stor.PatchTask(ctx, tsk, &evltr_stor.TaskState{
+		State: evltr_helper.TASK_STATE_ENUMER.ToStringP(state_pb.TaskState_TASK_STATE_CREATED),
+		Tags: map[string]interface{}{
+			"evaluator.id": evltr_id,
+		},
+	}); err != nil {
+		logger.WithError(err).Warning("failed to patch task")
+		err = nil
+	}
 
 	dat, err := srv.decode_eval_request(r)
 	if err != nil {
-		logger.WithError(err).Errorf("failed to decode eval request")
-		srv.HandleResponse(w, r, hst.WrapErrorHttpStatus(http.StatusBadRequest, err))
+		log_msg = "failed to decode eval request"
+		hs = hst.WrapErrorHttpStatus(http.StatusBadRequest, err)
 		return
 	}
 
@@ -264,37 +310,37 @@ func (srv *EvaluatorPluginService) Eval(w http.ResponseWriter, r *http.Request) 
 	// TODO(Peer): cache evaluator info
 	evltr_cli, cfn, err := srv.cli_fty.NewEvaluatordServiceClient()
 	if err != nil {
-		logger.WithError(err).Errorf("failed to new evaluatord service client")
-		srv.HandleResponse(w, r, hst.WrapErrorHttpStatus(http.StatusInternalServerError, err))
+		log_msg = "failed to new evaluatord service client"
+		hs = hst.WrapErrorHttpStatus(http.StatusInternalServerError, err)
 		return
 	}
 	defer cfn()
 
 	evltr_info, err := srv.get_evaluator(ctx, evltr_cli, evltr_id)
 	if err != nil {
-		logger.WithError(err).Errorf("failed to get evaluator from evaluatord")
-		srv.HandleResponse(w, r, hst.WrapErrorHttpStatus(http.StatusInternalServerError, err))
+		log_msg = "failed to get evaluator from evaluatord"
+		hs = hst.WrapErrorHttpStatus(http.StatusInternalServerError, err)
 		return
 	}
 
 	evltr_inf, err := srv.evaluator_info_string_map_from_evaluator(evltr_info)
 	if err != nil {
-		logger.WithError(err).Errorf("failed to parse evaluator info")
-		srv.HandleResponse(w, r, hst.WrapErrorHttpStatus(http.StatusInternalServerError, err))
+		log_msg = "failed to parse evaluator info"
+		hs = hst.WrapErrorHttpStatus(http.StatusInternalServerError, err)
 		return
 	}
 
 	evltr_ctx, err := srv.build_evaluator_context(r, evltr_info)
 	if err != nil {
-		logger.WithError(err).Errorf("failed to build evaluator context")
-		srv.HandleResponse(w, r, hst.WrapErrorHttpStatus(http.StatusInternalServerError, err))
+		log_msg = "failed to build evaluator context"
+		hs = hst.WrapErrorHttpStatus(http.StatusInternalServerError, err)
 		return
 	}
 
 	op_opt, err := srv.operator_string_map_form_evaluator(evltr_info)
 	if err != nil {
-		logger.WithError(err).Errorf("failed to parse operator option")
-		srv.HandleResponse(w, r, hst.WrapErrorHttpStatus(http.StatusInternalServerError, err))
+		log_msg = "failed to parse operator option"
+		hs = hst.WrapErrorHttpStatus(http.StatusInternalServerError, err)
 		return
 	}
 
@@ -310,24 +356,28 @@ func (srv *EvaluatorPluginService) Eval(w http.ResponseWriter, r *http.Request) 
 		"client_factory", srv.cli_fty,
 	)
 	if err != nil {
-		logger.WithError(err).Errorf("failed to new evaluator instance")
-		srv.HandleResponse(w, r, hst.WrapErrorHttpStatus(http.StatusInternalServerError, err))
+		log_msg = "failed to new evaluator instance"
+		hs = hst.WrapErrorHttpStatus(http.StatusInternalServerError, err)
 		return
 	}
 
+	if err := srv.task_stor.PatchTask(ctx, tsk, &evltr_stor.TaskState{
+		State: evltr_helper.TASK_STATE_ENUMER.ToStringP(state_pb.TaskState_TASK_STATE_RUNNING),
+	}); err != nil {
+		logger.WithError(err).Warning("failed to patch task")
+	}
 	if srv.IsTraced(r) {
 		var sp opentracing.Span
 		sp, ctx = opentracing.StartSpanFromContext(ctx, "Evaluator.Eval")
 		defer sp.Finish()
 	}
+	// TODO(Peer): retry to eval
 	err = evltr.Eval(ctx, dat)
 	if err != nil {
-		logger.WithError(err).Errorf("failed to eval")
-		srv.HandleResponse(w, r, hst.WrapErrorHttpStatus(http.StatusInternalServerError, err))
+		log_msg = "failed to eval"
+		hs = hst.WrapErrorHttpStatus(http.StatusInternalServerError, err)
 		return
 	}
-
-	srv.HandleResponse(w, r, hst.NewHttpStatus(http.StatusNoContent, nil))
 	logger.Debugf("eval")
 }
 
@@ -460,6 +510,7 @@ func NewEvaluatorPluginService(
 	tknr token_helper.Tokener,
 	dat_stor dssdk.DataStorage,
 	smpl_stor dsdk.SimpleStorage,
+	task_stor evltr_stor.TaskStorage,
 	caller dsdk.Caller,
 	cli_fty *client_helper.ClientFactory,
 ) (*EvaluatorPluginService, error) {
@@ -469,6 +520,7 @@ func NewEvaluatorPluginService(
 		tknr:      tknr,
 		dat_stor:  dat_stor,
 		smpl_stor: smpl_stor,
+		task_stor: task_stor,
 		caller:    caller,
 		cli_fty:   cli_fty,
 	}, nil

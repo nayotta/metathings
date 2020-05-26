@@ -4,11 +4,13 @@ import (
 	"context"
 	"fmt"
 	"sort"
+	"strings"
 	"time"
 
 	influxdb2 "github.com/influxdata/influxdb-client-go"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cast"
+	"github.com/stretchr/objx"
 
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 )
@@ -96,25 +98,50 @@ func (s *Influxdb2TaskStorage) parse_tableresult_to_tasks(tr *influxdb2.QueryTab
 	return tsks, nil
 }
 
-func (s *Influxdb2TaskStorage) ListTasksBySource(ctx context.Context, src *Resource) ([]*Task, error) {
+func (s *Influxdb2TaskStorage) ListTasksBySource(ctx context.Context, src *Resource, opts ...ListTasksBySourceOption) ([]*Task, error) {
 	logger := s.get_logger()
 
-	query_api := s.influx.QueryApi(s.opt.Org)
-	query := fmt.Sprintf(`
-from(bucket: "%s")
-  |> range(start: -3650d)
-  |> filter(fn: (r) => r["_measurement"] == "%s")
-  |> filter(fn: (r) => r["#source"] == "%s" and r["#source_type"] == "%s")
-`,
-		s.opt.Bucket,
-		INFLUXDB2_TASK_MASUREMENT,
-		*src.Id,
-		*src.Type,
-	)
+	o := make(objx.Map)
+	for _, apply := range opts {
+		apply(o)
+	}
 
-	tr, err := query_api.Query(ctx, query)
+	query_api := s.influx.QueryApi(s.opt.Org)
+
+	var query strings.Builder
+	query.WriteString(`from(bucket: "`)
+	query.WriteString(s.opt.Bucket)
+	query.WriteString(`")`)
+	query.WriteString(` |> range(`)
+	if va, vb := o.Get("start"), o.Get("stop"); !va.IsNil() || !vb.IsNil() {
+		if !va.IsNil() {
+			query.WriteString(`start: `)
+			query.WriteString(va.String())
+		}
+
+		if !vb.IsNil() {
+			if !va.IsNil() {
+				query.WriteString(`, `)
+			}
+			query.WriteString(`stop: `)
+			query.WriteString(vb.String())
+		}
+	} else {
+		query.WriteString(`start: -3650d`)
+	}
+	query.WriteString(`)`)
+	query.WriteString(` |> filter(fn: (r) => r["_measurement"] == "`)
+	query.WriteString(INFLUXDB2_TASK_MASUREMENT)
+	query.WriteString(`")`)
+	query.WriteString(` |> filter(fn: (r) => r["#source"] == "`)
+	query.WriteString(*src.Id)
+	query.WriteString(`" and r["#source_type"] == "`)
+	query.WriteString(*src.Type)
+	query.WriteString(`")`)
+	query_str := query.String()
+	tr, err := query_api.Query(ctx, query_str)
 	if err != nil {
-		logger.WithError(err).Debugf("failed to list tasks by source")
+		logger.WithError(err).WithField("query", query_str).Debugf("failed to list tasks by source")
 		return nil, err
 	}
 

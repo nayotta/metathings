@@ -101,21 +101,21 @@ func NewEvaluatordStorage(p NewEvaluatordStorageParams) (storage.Storage, error)
 type NewEvaluatordTaskStorageParams struct {
 	fx.In
 
-	Option EvaluatordOption
+	Option *EvaluatordOption
 	Logger logrus.FieldLogger
 	Tracer opentracing.Tracer `name:"opentracing_tracer" optional:"true"`
 }
 
 func NewEvaluatordTaskStorage(p NewEvaluatordTaskStorageParams) (storage.TaskStorage, error) {
-	var name string
+	var drv string
 	var args []interface{}
 	var err error
 
-	if name, args, err = cfg_helper.ParseConfigOption("driver", p.Option.TaskStorage, "logger", p.Logger, "tracer", p.Tracer); err != nil {
+	if drv, args, err = cfg_helper.ParseConfigOption("driver", p.Option.TaskStorage, "logger", p.Logger, "tracer", p.Tracer); err != nil {
 		return nil, err
 	}
 
-	return storage.NewTaskStorage(name, args...)
+	return storage.NewTaskStorage(drv, args...)
 }
 
 func runEvaluatord() error {

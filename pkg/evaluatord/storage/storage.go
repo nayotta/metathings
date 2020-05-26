@@ -102,7 +102,7 @@ func register_task_storage_factory(name string, fty TaskStorageFactory) {
 }
 
 type TaskStorage interface {
-	ListTasksBySource(ctx context.Context, src *Resource) ([]*Task, error)
+	ListTasksBySource(ctx context.Context, src *Resource, opts ...ListTasksBySourceOption) ([]*Task, error)
 	GetTask(context.Context, string) (*Task, error)
 	PatchTask(context.Context, *Task, *TaskState) error
 }

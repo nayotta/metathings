@@ -14,6 +14,7 @@ import (
 	cmd_helper "github.com/nayotta/metathings/pkg/common/cmd"
 	cfg_helper "github.com/nayotta/metathings/pkg/common/config"
 	constant_helper "github.com/nayotta/metathings/pkg/common/constant"
+	evaluatord_storage "github.com/nayotta/metathings/pkg/evaluatord/storage"
 	service "github.com/nayotta/metathings/pkg/plugin/evaluator/service"
 	dssdk "github.com/nayotta/metathings/sdk/data_storage"
 	dsdk "github.com/nayotta/metathings/sdk/deviced"
@@ -26,6 +27,7 @@ type EvaluatorPluginOption struct {
 	}
 	DataStorage   map[string]interface{}
 	SimpleStorage map[string]interface{}
+	TaskStorage   map[string]interface{}
 	Caller        map[string]interface{}
 }
 
@@ -49,6 +51,11 @@ func LoadEvaluatorPluginOption(path string) func() (*EvaluatorPluginOption, erro
 
 		opt := NewEvaluatorPluginOption()
 		cmd_helper.UnmarshalConfig(&opt)
+
+		cmd_helper.InitManyStringMapFromConfigWithStage([]cmd_helper.InitManyOption{
+			{&opt.TaskStorage, "task_storage"},
+		})
+
 		opt.SetServiceName("evaluator-plugin")
 
 		cmd_helper.InitManyStringMapFromConfigWithStage([]cmd_helper.InitManyOption{
@@ -124,6 +131,27 @@ func NewSimpleStorage(o *EvaluatorPluginOption, cli_fty *client_helper.ClientFac
 	return ss, nil
 }
 
+type NewTaskStorageParams struct {
+	fx.In
+
+	Option *EvaluatorPluginOption
+	Logger log.FieldLogger
+	Tracer opentracing.Tracer `name:"opentracing_tracer" optional:"true"`
+}
+
+func NewTaskStorage(p NewTaskStorageParams) (evaluatord_storage.TaskStorage, error) {
+	var drv string
+	var args []interface{}
+	var err error
+
+	if drv, args, err = cfg_helper.ParseConfigOption("driver", p.Option.TaskStorage, "logger", p.Logger, "tracer", p.Tracer); err != nil {
+		return nil, err
+	}
+
+	return evaluatord_storage.NewTaskStorage(drv, args...)
+
+}
+
 func NewCaller(o *EvaluatorPluginOption, cli_fty *client_helper.ClientFactory, logger log.FieldLogger) (dsdk.Caller, error) {
 	name, args, err := cfg_helper.ParseConfigOption("name", o.Caller, "logger", logger)
 	if err != nil {
@@ -155,6 +183,7 @@ func NewEvaluatorPluginService(cfg string) (*service.EvaluatorPluginService, err
 	c.Provide(cmd_contrib.NewClientFactory)
 	c.Provide(NewDataStorage)
 	c.Provide(NewSimpleStorage)
+	c.Provide(NewTaskStorage)
 	c.Provide(NewCaller)
 	c.Provide(NewEvaluatorPluginServiceOption)
 	c.Provide(service.NewEvaluatorPluginService)

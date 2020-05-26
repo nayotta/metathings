@@ -9,8 +9,9 @@ type TaskStateEnumer struct {
 	enumer pb_helper.Enumer
 }
 
-func (e TaskStateEnumer) ToString(x pb_state.TaskState) string {
-	return e.enumer.ToString(int32(x))
+func (e TaskStateEnumer) ToStringP(x pb_state.TaskState) *string {
+	s := e.enumer.ToString(int32(x))
+	return &s
 }
 
 func (e TaskStateEnumer) ToValue(x string) pb_state.TaskState {
