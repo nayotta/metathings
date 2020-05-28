@@ -60,6 +60,13 @@ func (s *TracedTimerStorage) RemoveConfigsFromTimer(ctx context.Context, timer_i
 	return s.TimerStorage.RemoveConfigsFromTimer(ctx, timer_id, config_ids)
 }
 
+func (s *TracedTimerStorage) ExistTimer(ctx context.Context, t *Timer) (bool, error) {
+	span, ctx := s.TraceWrapper(ctx, "ExistTimer")
+	defer span.Finish()
+
+	return s.TimerStorage.ExistTimer(ctx, t)
+}
+
 func NewTracedTimerStorage(s TimerStorage, getter opentracing_storage_helper.RootDBConnGetter) (TimerStorage, error) {
 	return &TracedTimerStorage{
 		BaseTracedStorage: opentracing_storage_helper.NewBaseTracedStorage(getter),

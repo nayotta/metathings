@@ -308,6 +308,23 @@ func (s *DefaultTimerStorage) RemoveConfigsFromTimer(ctx context.Context, timer_
 	return nil
 }
 
+func (s *DefaultTimerStorage) ExistTimer(ctx context.Context, t *Timer) (bool, error) {
+	var cnt int
+	db := s.GetDBConn(ctx)
+	logger := s.get_logger()
+
+	if err := db.Find(&t).Count(&cnt).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return false, nil
+		}
+
+		logger.WithError(err).Debugf("failed to exist timer")
+		return false, err
+	}
+
+	return cnt > 0, nil
+}
+
 func NewDefaultTimerStorage(args ...interface{}) (TimerStorage, error) {
 	var err error
 	var ok bool

@@ -497,6 +497,10 @@ func (stor *StorageImpl) ExistEvaluator(ctx context.Context, e *Evaluator) (bool
 	logger := stor.get_logger()
 
 	if err := db.Find(&e).Count(&cnt).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return false, nil
+		}
+
 		logger.WithError(err).Debugf("failed to exist evaluator")
 		return false, err
 	}
@@ -510,6 +514,10 @@ func (stor *StorageImpl) ExistOperator(ctx context.Context, o *Operator) (bool, 
 	logger := stor.get_logger()
 
 	if err := db.Find(&o).Count(&cnt).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return false, nil
+		}
+
 		logger.WithError(err).Debugf("failed to exist operator")
 		return false, err
 	}

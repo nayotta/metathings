@@ -21,15 +21,16 @@ type MetathingsEvaluatordServiceOption struct{}
 
 type MetathingsEvaluatordService struct {
 	grpc_auth.ServiceAuthFuncOverride
-	tknr         token_helper.Tokener
-	cli_fty      *client_helper.ClientFactory
-	opt          *MetathingsEvaluatordServiceOption
-	logger       log.FieldLogger
-	storage      storage.Storage
-	task_storage storage.TaskStorage
-	authorizer   identityd_authorizer.Authorizer
-	validator    identityd_validator.Validator
-	tkvdr        token_helper.TokenValidator
+	tknr          token_helper.Tokener
+	cli_fty       *client_helper.ClientFactory
+	opt           *MetathingsEvaluatordServiceOption
+	logger        log.FieldLogger
+	storage       storage.Storage
+	task_storage  storage.TaskStorage
+	timer_storage storage.TimerStorage
+	authorizer    identityd_authorizer.Authorizer
+	validator     identityd_validator.Validator
+	tkvdr         token_helper.TokenValidator
 }
 
 func (srv *MetathingsEvaluatordService) get_logger() log.FieldLogger {
@@ -41,9 +42,6 @@ func (srv *MetathingsEvaluatordService) IsIgnoreMethod(md *grpc_helper.MethodDes
 }
 
 // Timer
-func (srv *MetathingsEvaluatordService) CreateTimer(context.Context, *pb.CreateTimerRequest) (*pb.CreateTimerResponse, error) {
-	panic("unimplemented")
-}
 func (srv *MetathingsEvaluatordService) DeleteTimer(context.Context, *pb.DeleteTimerRequest) (*empty.Empty, error) {
 	panic("unimplemented")
 }

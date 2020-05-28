@@ -155,6 +155,7 @@ type TimerStorage interface {
 	ListTimers(context.Context, *Timer) ([]*Timer, error)
 	AddConfigsToTimer(ctx context.Context, timer_id string, config_ids []string) error
 	RemoveConfigsFromTimer(ctx context.Context, timer_id string, config_ids []string) error
+	ExistTimer(context.Context, *Timer) (bool, error)
 }
 
 func NewTimerStorage(driver string, args ...interface{}) (TimerStorage, error) {

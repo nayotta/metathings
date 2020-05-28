@@ -163,6 +163,16 @@ func (s *DefaultTimerStorageTestSuite) TestAddConfigsToTimer() {
 	s.Contains(t.Configs, "config-id3")
 }
 
+func (s *DefaultTimerStorageTestSuite) TestExistTimer() {
+	exist, err := s.s.ExistTimer(s.ctx, &Timer{Id: &test_timer_id})
+	s.Require().Nil(err)
+	s.True(exist)
+
+	exist, err = s.s.ExistTimer(s.ctx, &Timer{Id: &new_test_timer_id})
+	s.Require().Nil(err)
+	s.False(exist)
+}
+
 func TestDefaultTimerStorageTestSuite(t *testing.T) {
 	suite.Run(t, new(DefaultTimerStorageTestSuite))
 }
