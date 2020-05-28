@@ -101,7 +101,7 @@ message OpTimer {
 	google.protobuf.StringValue schedule = 8;
 	google.protobuf.StringValue timezone = 9;
 	google.protobuf.BoolValue enabled = 10;
-	google.protobuf.Struct config = 11;
+	repeated google.protobuf.StringValue configs = 11;
 }
 
 message Timer {
@@ -111,5 +111,5 @@ message Timer {
 	string schedule = 8;
 	string timezone = 9;
 	bool enabled = 10;
-	google.protobuf.Struct config = 11;
+	repeated string configs = 11;
 }

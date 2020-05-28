@@ -190,6 +190,6 @@ func (s *Influxdb2TaskStorageTestSuite) TestAllInOne() {
 	s.Len(tsks, 0)
 }
 
-func TestInfluxdb2TaskStorageTestSuite(t *testing.T) {
+func SkipTestInfluxdb2TaskStorageTestSuite(t *testing.T) {
 	suite.Run(t, new(Influxdb2TaskStorageTestSuite))
 }

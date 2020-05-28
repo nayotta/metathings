@@ -7,10 +7,10 @@ import (
 	fmt "fmt"
 	math "math"
 	proto "github.com/golang/protobuf/proto"
-	_ "github.com/golang/protobuf/ptypes/wrappers"
 	_ "github.com/golang/protobuf/ptypes/struct"
 	_ "github.com/golang/protobuf/ptypes/timestamp"
 	_ "github.com/nayotta/metathings/pkg/proto/constant/state"
+	_ "github.com/golang/protobuf/ptypes/wrappers"
 	github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
 )
 
@@ -256,18 +256,15 @@ func (this *OpTimer) Validate() error {
 			return github_com_mwitkow_go_proto_validators.FieldError("Enabled", err)
 		}
 	}
-	if this.Config != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Config); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Config", err)
+	for _, item := range this.Configs {
+		if item != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("Configs", err)
+			}
 		}
 	}
 	return nil
 }
 func (this *Timer) Validate() error {
-	if this.Config != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Config); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Config", err)
-		}
-	}
 	return nil
 }
