@@ -23,6 +23,7 @@ func (srv *MetathingsEvaluatordService) ValidateDeleteTimer(ctx context.Context,
 		identityd_validator.Invokers{
 			ensure_get_timer,
 			ensure_get_timer_id,
+			ensure_timer_id_exists(ctx, srv.timer_storage),
 		},
 	)
 }

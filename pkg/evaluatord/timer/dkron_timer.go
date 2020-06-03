@@ -64,6 +64,8 @@ func (t *DkronTimerApi) Set(ctx context.Context, opts ...TimerOption) error {
 	}
 	if schedule := ox.Get("schedule"); !schedule.IsNil() {
 		body["schedule"] = schedule.String()
+	} else {
+		body["schedule"] = t.Schedule()
 	}
 
 	if timezone := ox.Get("timezone"); !timezone.IsNil() {
@@ -195,15 +197,20 @@ func (b *DkronTimerBackend) Create(ctx context.Context, opts ...TimerOption) (Ti
 	ox := objx.New(o)
 
 	timer_id := ox.Get("id").String()
+	if timer_id == "" {
+		return nil, ErrTimerIdIsEmpty
+	}
+
 	logger := b.get_logger().WithField("timer", timer_id)
 	body := map[string]interface{}{
 		"name":        timer_id,
 		"displayname": timer_id,
 		"schedule":    ox.Get("schedule").String(),
 		"timezone":    ox.Get("timezone").String(),
+		"disabled":    !ox.Get("enabled").Bool(),
 		"executor":    "http",
 		"executor_config": map[string]interface{}{
-			"expectedCode": 200,
+			"expectedCode": "200",
 			"method":       "POST",
 			"timeout":      fmt.Sprintf("%d", int(b.opt.Timeout/time.Second)),
 			"url":          must_url_join(b.opt.Webhook, timer_id),

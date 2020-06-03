@@ -9,6 +9,12 @@ dev:
   task_storage:
     driver: <task-storage-driver>
     ...
+  timer_storage:
+    driver: <timer-storage-driver>
+    ...
+  timer_backend:
+    driver: <timer-backend-driver>
+    ...
   service_endpoint:
     default:
       address: <metathings-address>

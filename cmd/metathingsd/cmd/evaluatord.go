@@ -14,6 +14,7 @@ import (
 	token_helper "github.com/nayotta/metathings/pkg/common/token"
 	service "github.com/nayotta/metathings/pkg/evaluatord/service"
 	storage "github.com/nayotta/metathings/pkg/evaluatord/storage"
+	timer_backend "github.com/nayotta/metathings/pkg/evaluatord/timer"
 	authorizer "github.com/nayotta/metathings/pkg/identityd2/authorizer"
 	pb "github.com/nayotta/metathings/pkg/proto/evaluatord"
 )
@@ -21,6 +22,8 @@ import (
 type EvaluatordOption struct {
 	cmd_contrib.ServiceBaseOption `mapstructure:",squash"`
 	TaskStorage                   map[string]interface{}
+	TimerStorage                  map[string]interface{}
+	TimerBackend                  map[string]interface{}
 }
 
 func NewEvaluatordOption() *EvaluatordOption {
@@ -48,6 +51,8 @@ var (
 
 			cmd_helper.InitManyStringMapFromConfigWithStage([]cmd_helper.InitManyOption{
 				{&opt_t.TaskStorage, "task_storage"},
+				{&opt_t.TimerStorage, "timer_storage"},
+				{&opt_t.TimerBackend, "timer_backend"},
 			})
 
 			evaluatord_opt = opt_t
@@ -118,6 +123,45 @@ func NewEvaluatordTaskStorage(p NewEvaluatordTaskStorageParams) (storage.TaskSto
 	return storage.NewTaskStorage(drv, args...)
 }
 
+type NewEvaluatordTimerStorageParams struct {
+	fx.In
+
+	Option *EvaluatordOption
+	Logger logrus.FieldLogger
+	Tracer opentracing.Tracer `name:"opentracing_tracer" optional:"true"`
+}
+
+func NewEvaluatordTimerStorage(p NewEvaluatordTimerStorageParams) (storage.TimerStorage, error) {
+	var drv string
+	var args []interface{}
+	var err error
+
+	if drv, args, err = cfg_helper.ParseConfigOption("driver", p.Option.TimerStorage, "logger", p.Logger, "tracer", p.Tracer); err != nil {
+		return nil, err
+	}
+
+	return storage.NewTimerStorage(drv, args...)
+}
+
+type NewEvaluatordTimerBackendParams struct {
+	fx.In
+
+	Option *EvaluatordOption
+	Logger logrus.FieldLogger
+}
+
+func NewEvaluatordTimerBackend(p NewEvaluatordTimerBackendParams) (timer_backend.TimerBackend, error) {
+	var drv string
+	var args []interface{}
+	var err error
+
+	if drv, args, err = cfg_helper.ParseConfigOption("driver", p.Option.TimerBackend, "logger", p.Logger); err != nil {
+		return nil, err
+	}
+
+	return timer_backend.NewTimerBackend(drv, args...)
+}
+
 func runEvaluatord() error {
 	app := fx.New(
 		fx.NopLogger,
@@ -134,6 +178,8 @@ func runEvaluatord() error {
 			NewMetathingsEvaulatordServiceOption,
 			NewEvaluatordStorage,
 			NewEvaluatordTaskStorage,
+			NewEvaluatordTimerStorage,
+			NewEvaluatordTimerBackend,
 			authorizer.NewAuthorizer,
 			cmd_contrib.NewValidator,
 			service.NewMetathingsEvaludatorService,

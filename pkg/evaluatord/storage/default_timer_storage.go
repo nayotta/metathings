@@ -345,7 +345,7 @@ func NewDefaultTimerStorage(args ...interface{}) (TimerStorage, error) {
 
 			return nil
 		},
-	})(args...); err != nil {
+	}, opt_helper.SetSkip(true))(args...); err != nil {
 		return nil, err
 	}
 

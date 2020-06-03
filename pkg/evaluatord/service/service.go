@@ -9,7 +9,7 @@ import (
 	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
 	token_helper "github.com/nayotta/metathings/pkg/common/token"
 	storage "github.com/nayotta/metathings/pkg/evaluatord/storage"
-	timer "github.com/nayotta/metathings/pkg/evaluatord/timer"
+	timer_backend "github.com/nayotta/metathings/pkg/evaluatord/timer"
 	identityd_authorizer "github.com/nayotta/metathings/pkg/identityd2/authorizer"
 	identityd_validator "github.com/nayotta/metathings/pkg/identityd2/validator"
 	pb "github.com/nayotta/metathings/pkg/proto/evaluatord"
@@ -26,7 +26,7 @@ type MetathingsEvaluatordService struct {
 	storage       storage.Storage
 	task_storage  storage.TaskStorage
 	timer_storage storage.TimerStorage
-	timer_backend timer.TimerBackend
+	timer_backend timer_backend.TimerBackend
 	authorizer    identityd_authorizer.Authorizer
 	validator     identityd_validator.Validator
 	tkvdr         token_helper.TokenValidator
@@ -45,6 +45,8 @@ func NewMetathingsEvaludatorService(
 	logger log.FieldLogger,
 	storage storage.Storage,
 	task_storage storage.TaskStorage,
+	timer_storage storage.TimerStorage,
+	timer_backend timer_backend.TimerBackend,
 	authorizer identityd_authorizer.Authorizer,
 	validator identityd_validator.Validator,
 	tkvdr token_helper.TokenValidator,
@@ -52,15 +54,17 @@ func NewMetathingsEvaludatorService(
 	cli_fty *client_helper.ClientFactory,
 ) (pb.EvaluatordServiceServer, error) {
 	srv := &MetathingsEvaluatordService{
-		opt:          opt,
-		logger:       logger,
-		storage:      storage,
-		task_storage: task_storage,
-		authorizer:   authorizer,
-		validator:    validator,
-		tkvdr:        tkvdr,
-		tknr:         tknr,
-		cli_fty:      cli_fty,
+		opt:           opt,
+		logger:        logger,
+		storage:       storage,
+		task_storage:  task_storage,
+		timer_storage: timer_storage,
+		timer_backend: timer_backend,
+		authorizer:    authorizer,
+		validator:     validator,
+		tkvdr:         tkvdr,
+		tknr:          tknr,
+		cli_fty:       cli_fty,
 	}
 
 	srv.ServiceAuthFuncOverride = afo_helper.NewAuthFuncOverrider(tkvdr, srv, logger)

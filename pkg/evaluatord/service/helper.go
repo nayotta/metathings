@@ -294,6 +294,28 @@ func ensure_timer_id_not_exists(ctx context.Context, ts storage.TimerStorage) fu
 	}
 }
 
+func ensure_timer_id_exists(ctx context.Context, ts storage.TimerStorage) func(x timer_getter) error {
+	return func(x timer_getter) error {
+		t := x.GetTimer()
+		tid := t.GetId()
+		if tid == nil {
+			return nil
+		}
+
+		tid_str := tid.GetValue()
+		exists, err := ts.ExistTimer(ctx, &storage.Timer{Id: &tid_str})
+		if err != nil {
+			return err
+		}
+
+		if !exists {
+			return errors.New("timer not exists")
+		}
+
+		return nil
+	}
+}
+
 func ensure_valid_operator_driver(x evaluator_getter) error {
 	drv := x.GetEvaluator().GetOperator().GetDriver()
 	if drv == nil {
