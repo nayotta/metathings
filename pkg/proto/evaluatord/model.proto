@@ -97,7 +97,7 @@ message Task {
 message OpTimer {
 	google.protobuf.StringValue id = 1;
 	google.protobuf.StringValue alias = 24;
-	google.protobuf.StringValue Description = 25;
+	google.protobuf.StringValue description = 25;
 	google.protobuf.StringValue schedule = 8;
 	google.protobuf.StringValue timezone = 9;
 	google.protobuf.BoolValue enabled = 10;
