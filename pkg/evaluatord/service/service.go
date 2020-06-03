@@ -1,9 +1,6 @@
 package metathings_evaluatord_service
 
 import (
-	"context"
-
-	"github.com/golang/protobuf/ptypes/empty"
 	grpc_auth "github.com/grpc-ecosystem/go-grpc-middleware/auth"
 	log "github.com/sirupsen/logrus"
 
@@ -12,6 +9,7 @@ import (
 	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
 	token_helper "github.com/nayotta/metathings/pkg/common/token"
 	storage "github.com/nayotta/metathings/pkg/evaluatord/storage"
+	timer "github.com/nayotta/metathings/pkg/evaluatord/timer"
 	identityd_authorizer "github.com/nayotta/metathings/pkg/identityd2/authorizer"
 	identityd_validator "github.com/nayotta/metathings/pkg/identityd2/validator"
 	pb "github.com/nayotta/metathings/pkg/proto/evaluatord"
@@ -28,6 +26,7 @@ type MetathingsEvaluatordService struct {
 	storage       storage.Storage
 	task_storage  storage.TaskStorage
 	timer_storage storage.TimerStorage
+	timer_backend timer.TimerBackend
 	authorizer    identityd_authorizer.Authorizer
 	validator     identityd_validator.Validator
 	tkvdr         token_helper.TokenValidator
@@ -39,20 +38,6 @@ func (srv *MetathingsEvaluatordService) get_logger() log.FieldLogger {
 
 func (srv *MetathingsEvaluatordService) IsIgnoreMethod(md *grpc_helper.MethodDescription) bool {
 	return false
-}
-
-// Timer
-func (srv *MetathingsEvaluatordService) DeleteTimer(context.Context, *pb.DeleteTimerRequest) (*empty.Empty, error) {
-	panic("unimplemented")
-}
-func (srv *MetathingsEvaluatordService) PatchTimer(context.Context, *pb.PatchTimerRequest) (*pb.PatchTimerResponse, error) {
-	panic("unimplemented")
-}
-func (srv *MetathingsEvaluatordService) GetTimer(context.Context, *pb.GetTimerRequest) (*pb.GetTimerResponse, error) {
-	panic("unimplemented")
-}
-func (srv *MetathingsEvaluatordService) ListTimers(context.Context, *pb.ListTimersRequest) (*pb.ListTimersResponse, error) {
-	panic("unimplemented")
 }
 
 func NewMetathingsEvaludatorService(

@@ -4,9 +4,10 @@ import (
 	"context"
 
 	"github.com/jinzhu/gorm"
-	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 	opentracing "github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
+
+	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 )
 
 type DefaultTimerStorageOption struct {

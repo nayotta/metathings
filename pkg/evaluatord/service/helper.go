@@ -332,6 +332,14 @@ func ensure_get_timer(x timer_getter) error {
 	return nil
 }
 
+func ensure_get_timer_id(x timer_getter) error {
+	if tmr_id := x.GetTimer().GetId(); tmr_id == nil {
+		return errors.New("timer.id is empty")
+	}
+
+	return nil
+}
+
 // TODO(Peer): unimplemented
 func ensure_valid_timer_timezone(x timer_getter) error {
 	return nil

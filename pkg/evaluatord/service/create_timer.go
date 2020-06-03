@@ -3,13 +3,15 @@ package metathings_evaluatord_service
 import (
 	"context"
 
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
+
 	id_helper "github.com/nayotta/metathings/pkg/common/id"
 	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
 	storage "github.com/nayotta/metathings/pkg/evaluatord/storage"
+	timer "github.com/nayotta/metathings/pkg/evaluatord/timer"
 	identityd_validator "github.com/nayotta/metathings/pkg/identityd2/validator"
 	pb "github.com/nayotta/metathings/pkg/proto/evaluatord"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 func (srv *MetathingsEvaluatordService) ValidateCreateTimer(ctx context.Context, in interface{}) error {
@@ -69,6 +71,17 @@ func (srv *MetathingsEvaluatordService) CreateTimer(ctx context.Context, req *pb
 
 	if tmr_s, err = srv.timer_storage.CreateTimer(ctx, tmr_s); err != nil {
 		logger.WithError(err).Errorf("failed to create timer in storage")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
+	if _, err = srv.timer_backend.Create(ctx,
+		timer.SetId(tmr_id_str),
+		timer.SetSchedule(tmr_schedule_str),
+		timer.SetTimezone(tmr_timezone_str),
+		timer.SetEnabled(tmr_enabled_bool),
+	); err != nil {
+		defer srv.timer_storage.DeleteTimer(ctx, tmr_id_str)
+		logger.WithError(err).Errorf("failed to create timer in backend")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
