@@ -18,6 +18,11 @@ import (
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 )
 
+const (
+	DKRON_EXECUTOR_CONFIG_EXPECTED_CODE = "204"
+	DKRON_EXECUTOR_CONFIG_METHOD        = "POST"
+)
+
 func must_url_join(url_str string, paths ...string) string {
 	u, _ := url.Parse(url_str)
 	u.Path = path.Join(append([]string{u.Path}, paths...)...)
@@ -210,13 +215,13 @@ func (b *DkronTimerBackend) Create(ctx context.Context, opts ...TimerOption) (Ti
 		"disabled":    !ox.Get("enabled").Bool(),
 		"executor":    "http",
 		"executor_config": map[string]interface{}{
-			"expectedCode": "200",
-			"method":       "POST",
+			"expectedCode": DKRON_EXECUTOR_CONFIG_EXPECTED_CODE,
+			"method":       DKRON_EXECUTOR_CONFIG_METHOD,
 			"timeout":      fmt.Sprintf("%d", int(b.opt.Timeout/time.Second)),
 			"url":          must_url_join(b.opt.Webhook, timer_id),
 		},
 	}
-	res, err := b.call(ctx, "POST", "/jobs", body)
+	res, err := b.call(ctx, DKRON_EXECUTOR_CONFIG_METHOD, "/jobs", body)
 	if err != nil {
 		logger.WithError(err).Debugf("failed to create timer")
 		return nil, err

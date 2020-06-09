@@ -24,6 +24,7 @@ func (srv *MetathingsEvaluatordService) ValidateRemoveSourcesFromEvaluator(ctx c
 		identityd_validator.Invokers{
 			ensure_get_evaluator,
 			ensure_get_evaluator_id,
+			ensure_evaluator_id_exists,
 		},
 	)
 }

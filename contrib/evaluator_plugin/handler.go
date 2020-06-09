@@ -56,6 +56,18 @@ func ReceiveDataHandler(w http.ResponseWriter, r *http.Request) {
 	receiveDataHandler(w, r)
 }
 
+/*
+var timerWebhookHandler http.HandlerFunc
+var timerWebhookHandlerOnce sync.Once
+
+func TimerWebhookHandler(w http.ResponseWriter, r *http.Request) {
+	timerWebhookHandlerOnce.Do(func() {
+		timerWebhookHandler = opentracing_helper.Middleware(srv, "TimerWebhook")
+	})
+	timerWebhookHandler(w, r)
+}
+*/
+
 func init() {
 	var err error
 	srv, err = evltr_plg_cmd.NewEvaluatorPluginService(getFissionConfigPath())

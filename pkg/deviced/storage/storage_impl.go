@@ -1049,7 +1049,7 @@ func NewStorageImpl(driver, uri string, args ...interface{}) (Storage, error) {
 	}
 
 	if s.opt.IsTraced {
-		return NewTracedStorage(s)
+		return NewTracedStorage(s, s)
 	}
 
 	return s, nil

@@ -14,6 +14,7 @@ import (
 	evaluatord_helper "github.com/nayotta/metathings/pkg/evaluatord/helper"
 	storage "github.com/nayotta/metathings/pkg/evaluatord/storage"
 	evaluator_plugin "github.com/nayotta/metathings/pkg/plugin/evaluator"
+	deviced_pb "github.com/nayotta/metathings/pkg/proto/deviced"
 	pb "github.com/nayotta/metathings/pkg/proto/evaluatord"
 )
 
@@ -161,6 +162,14 @@ func copy_tasks(xs []*storage.Task) []*pb.Task {
 }
 
 func copy_timer(x *storage.Timer) *pb.Timer {
+	var cfgs []*deviced_pb.Config
+
+	for _, cfg_id := range x.Configs {
+		cfgs = append(cfgs, &deviced_pb.Config{
+			Id: cfg_id,
+		})
+	}
+
 	y := &pb.Timer{
 		Id:          *x.Id,
 		Alias:       *x.Alias,
@@ -168,7 +177,7 @@ func copy_timer(x *storage.Timer) *pb.Timer {
 		Schedule:    *x.Schedule,
 		Timezone:    *x.Timezone,
 		Enabled:     *x.Enabled,
-		Configs:     x.Configs,
+		Configs:     cfgs,
 	}
 
 	return y
@@ -243,6 +252,28 @@ func ensure_evaluator_id_not_exists(ctx context.Context, s storage.Storage) func
 
 		if exists {
 			return errors.New("evaluator exists")
+		}
+
+		return nil
+	}
+}
+
+func ensure_evaluator_id_exists(ctx context.Context, s storage.Storage) func(x evaluator_getter) error {
+	return func(x evaluator_getter) error {
+		e := x.GetEvaluator()
+		eid := e.GetId()
+		if eid == nil {
+			return nil
+		}
+
+		eid_str := eid.GetValue()
+		exists, err := s.ExistEvaluator(ctx, &storage.Evaluator{Id: &eid_str})
+		if err != nil {
+			return err
+		}
+
+		if !exists {
+			return errors.New("evaluator not exists")
 		}
 
 		return nil

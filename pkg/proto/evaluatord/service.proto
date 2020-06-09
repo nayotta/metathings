@@ -22,6 +22,8 @@ import "delete_timer.proto";
 import "patch_timer.proto";
 import "get_timer.proto";
 import "list_timers.proto";
+import "add_configs_to_timer.proto";
+import "remove_configs_from_timer.proto";
 
 service EvaluatordService {
 	rpc CreateEvaluator(CreateEvaluatorRequest) returns (CreateEvaluatorResponse) {}
@@ -43,4 +45,6 @@ service EvaluatordService {
 	rpc PatchTimer(PatchTimerRequest) returns (PatchTimerResponse) {}
 	rpc GetTimer(GetTimerRequest) returns (GetTimerResponse) {}
 	rpc ListTimers(ListTimersRequest) returns (ListTimersResponse) {}
+	rpc AddConfigsToTimer(AddConfigsToTimerRequest) returns (google.protobuf.Empty) {}
+	rpc RemoveConfigsFromTimer(RemoveConfigsFromTimerRequest) returns (google.protobuf.Empty) {}
 }

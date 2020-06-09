@@ -8,6 +8,7 @@ import "google/protobuf/struct.proto";
 import "google/protobuf/timestamp.proto";
 
 import "github.com/nayotta/metathings/pkg/proto/constant/state/task.proto";
+import "github.com/nayotta/metathings/pkg/proto/deviced/model.proto";
 
 message Resource {
 	string id = 1;
@@ -101,7 +102,7 @@ message OpTimer {
 	google.protobuf.StringValue schedule = 8;
 	google.protobuf.StringValue timezone = 9;
 	google.protobuf.BoolValue enabled = 10;
-	repeated google.protobuf.StringValue configs = 11;
+	repeated ai.metathings.service.deviced.OpConfig configs = 11;
 }
 
 message Timer {
@@ -111,5 +112,5 @@ message Timer {
 	string schedule = 8;
 	string timezone = 9;
 	bool enabled = 10;
-	repeated string configs = 11;
+	repeated ai.metathings.service.deviced.Config configs = 11;
 }

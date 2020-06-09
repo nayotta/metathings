@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 
+	mux "github.com/gorilla/mux"
 	"github.com/spf13/pflag"
 
 	opentracing_helper "github.com/nayotta/metathings/pkg/common/opentracing"
@@ -29,8 +30,11 @@ func main() {
 		panic(err)
 	}
 
-	http.HandleFunc("/eval", opentracing_helper.Middleware(srv, "Eval"))
-	http.HandleFunc("/receive_data", opentracing_helper.Middleware(srv, "ReceiveData"))
+	r := mux.NewRouter()
+	r.HandleFunc("/eval", opentracing_helper.Middleware(srv, "Eval"))
+	r.HandleFunc("/receive_data", opentracing_helper.Middleware(srv, "ReceiveData"))
+	r.HandleFunc("/webhook/timers/{id}", opentracing_helper.Middleware(srv, "TimerWebhook"))
+	http.Handle("/", r)
 
 	log.Fatal(http.ListenAndServe(fmt.Sprintf("%v:%v", host, port), nil))
 }

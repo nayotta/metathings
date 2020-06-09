@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package ai.metathings.service.evaluatord;
+option go_package = "evaluatord";
+
+import "github.com/mwitkow/go-proto-validators/validator.proto";
+import "github.com/nayotta/metathings/pkg/proto/deviced/model.proto";
+
+import "model.proto";
+
+message RemoveConfigsFromTimerRequest {
+	OpTimer timer = 1 [(validator.field) = {msg_exists: true}];
+	repeated ai.metathings.service.deviced.OpConfig configs = 2;
+}
