@@ -29,7 +29,7 @@ var (
 		Description: &test_evaluator_description,
 		Config:      &test_evaluator_config,
 		Sources: []*Resource{
-			&Resource{
+			{
 				Id:   &test_source_id,
 				Type: &test_source_type,
 			},
@@ -123,11 +123,11 @@ func (s *StorageImplTestSuite) TestAddSourcesToEvaluator() {
 	new_source2_type := "new_source2_type"
 
 	err := s.stor.AddSourcesToEvaluator(s.ctx, test_evaluator_id, []*Resource{
-		&Resource{
+		{
 			Id:   &new_source1_id,
 			Type: &new_source1_type,
 		},
-		&Resource{
+		{
 			Id:   &new_source2_id,
 			Type: &new_source2_type,
 		},
@@ -146,7 +146,7 @@ func (s *StorageImplTestSuite) TestAddSourcesToEvaluator() {
 
 func (s *StorageImplTestSuite) TestRemoveSourcesFromEvaluator() {
 	err := s.stor.RemoveSourcesFromEvaluator(s.ctx, test_evaluator_id, []*Resource{
-		&Resource{
+		{
 			Id:   &test_source_id,
 			Type: &test_source_type,
 		},
@@ -168,7 +168,7 @@ func (s *StorageImplTestSuite) TestListEvaluatorsBySource() {
 	s.Len(evltrs, 1)
 
 	err = s.stor.RemoveSourcesFromEvaluator(s.ctx, test_evaluator_id, []*Resource{
-		&Resource{
+		{
 			Id:   &test_source_id,
 			Type: &test_source_type,
 		},

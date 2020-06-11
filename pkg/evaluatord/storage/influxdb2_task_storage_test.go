@@ -4,9 +4,9 @@ import (
 	"context"
 	"testing"
 
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/suite"
 
-	log_helper "github.com/nayotta/metathings/pkg/common/log"
 	test_helper "github.com/nayotta/metathings/pkg/common/test"
 )
 
@@ -29,8 +29,7 @@ type Influxdb2TaskStorageTestSuite struct {
 }
 
 func (s *Influxdb2TaskStorageTestSuite) SetupTest() {
-	logger, err := log_helper.NewLogger("test", "debug")
-	s.Require().Nil(err)
+	logger := logrus.New()
 
 	ts, err := NewInfluxdb2TaskStorage(
 		"logger", logger,

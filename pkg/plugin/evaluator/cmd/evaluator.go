@@ -52,13 +52,10 @@ func LoadEvaluatorPluginOption(path string) func() (*EvaluatorPluginOption, erro
 		opt := NewEvaluatorPluginOption()
 		cmd_helper.UnmarshalConfig(&opt)
 
-		cmd_helper.InitManyStringMapFromConfigWithStage([]cmd_helper.InitManyOption{
-			{&opt.TaskStorage, "task_storage"},
-		})
-
 		opt.SetServiceName("evaluator-plugin")
 
 		cmd_helper.InitManyStringMapFromConfigWithStage([]cmd_helper.InitManyOption{
+			{&opt.TaskStorage, "task_storage"},
 			{&opt.DataStorage, "data_storage"},
 			{&opt.SimpleStorage, "simple_storage"},
 			{&opt.Caller, "caller"},
@@ -144,7 +141,7 @@ func NewTaskStorage(p NewTaskStorageParams) (evaluatord_storage.TaskStorage, err
 	var args []interface{}
 	var err error
 
-	if drv, args, err = cfg_helper.ParseConfigOption("driver", p.Option.TaskStorage, "logger", p.Logger, "tracer", p.Tracer); err != nil {
+	if drv, args, err = cfg_helper.ParseConfigOption("name", p.Option.TaskStorage, "logger", p.Logger, "tracer", p.Tracer); err != nil {
 		return nil, err
 	}
 

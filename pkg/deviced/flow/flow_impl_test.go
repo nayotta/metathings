@@ -9,8 +9,8 @@ import (
 
 	"github.com/golang/protobuf/jsonpb"
 	struct_ "github.com/golang/protobuf/ptypes/struct"
-	"github.com/mongodb/mongo-go-driver/mongo"
 	"github.com/stretchr/testify/suite"
+	"go.mongodb.org/mongo-driver/mongo"
 
 	log_helper "github.com/nayotta/metathings/pkg/common/log"
 	test_helper "github.com/nayotta/metathings/pkg/common/test"
