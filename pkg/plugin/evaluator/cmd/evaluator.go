@@ -144,7 +144,7 @@ func NewTaskStorage(p NewTaskStorageParams) (evaluatord_storage.TaskStorage, err
 	var args []interface{}
 	var err error
 
-	if drv, args, err = cfg_helper.ParseConfigOption("driver", p.Option.TaskStorage, "logger", p.Logger, "tracer", p.Tracer); err != nil {
+	if drv, args, err = cfg_helper.ParseConfigOption("name", p.Option.TaskStorage, "logger", p.Logger, "tracer", p.Tracer); err != nil {
 		return nil, err
 	}
 
