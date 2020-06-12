@@ -18,14 +18,20 @@ type EvaluatorPluginServiceOption struct {
 	Evaluator struct {
 		Endpoint string
 	}
+	Server struct {
+		Name string
+	}
 	Codec    string
 	IsTraced bool
 }
 
 func NewEvaluatorPluginServiceOption() *EvaluatorPluginServiceOption {
-	return &EvaluatorPluginServiceOption{
-		Codec: "json",
-	}
+	opt := &EvaluatorPluginServiceOption{}
+
+	opt.Codec = "json"
+	opt.Server.Name = "fission"
+
+	return opt
 }
 
 type EvaluatorPluginService struct {
@@ -37,6 +43,7 @@ type EvaluatorPluginService struct {
 	task_stor evltr_stor.TaskStorage
 	caller    dsdk.Caller
 	cli_fty   *client_helper.ClientFactory
+	get_param GetParamFunc
 }
 
 func (srv *EvaluatorPluginService) get_logger() log.FieldLogger {
@@ -75,7 +82,7 @@ func NewEvaluatorPluginService(
 	caller dsdk.Caller,
 	cli_fty *client_helper.ClientFactory,
 ) (*EvaluatorPluginService, error) {
-	return &EvaluatorPluginService{
+	srv := &EvaluatorPluginService{
 		opt:       opt,
 		logger:    logger,
 		tknr:      tknr,
@@ -84,5 +91,16 @@ func NewEvaluatorPluginService(
 		task_stor: task_stor,
 		caller:    caller,
 		cli_fty:   cli_fty,
-	}, nil
+	}
+
+	switch opt.Server.Name {
+	case "gorilla":
+		srv.get_param = getGorillaParam
+	case "fission":
+		fallthrough
+	default:
+		srv.get_param = getFissionParam
+	}
+
+	return srv, nil
 }

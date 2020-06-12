@@ -25,6 +25,9 @@ type EvaluatorPluginOption struct {
 	Evaluator                     struct {
 		Endpoint string
 	}
+	Server struct {
+		Name string
+	}
 	DataStorage   map[string]interface{}
 	SimpleStorage map[string]interface{}
 	TaskStorage   map[string]interface{}
@@ -52,13 +55,10 @@ func LoadEvaluatorPluginOption(path string) func() (*EvaluatorPluginOption, erro
 		opt := NewEvaluatorPluginOption()
 		cmd_helper.UnmarshalConfig(&opt)
 
-		cmd_helper.InitManyStringMapFromConfigWithStage([]cmd_helper.InitManyOption{
-			{&opt.TaskStorage, "task_storage"},
-		})
-
 		opt.SetServiceName("evaluator-plugin")
 
 		cmd_helper.InitManyStringMapFromConfigWithStage([]cmd_helper.InitManyOption{
+			{&opt.TaskStorage, "task_storage"},
 			{&opt.DataStorage, "data_storage"},
 			{&opt.SimpleStorage, "simple_storage"},
 			{&opt.Caller, "caller"},
@@ -93,6 +93,9 @@ func NewEvaluatorPluginServiceOption(p NewEvaluatorPluginOptionParams) (*service
 	opt := service.NewEvaluatorPluginServiceOption()
 
 	opt.Evaluator.Endpoint = p.Option.Evaluator.Endpoint
+	if p.Option.Server.Name != "" {
+		opt.Server.Name = p.Option.Server.Name
+	}
 	opt.IsTraced = p.Tracer != nil
 
 	return opt, nil

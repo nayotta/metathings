@@ -64,24 +64,19 @@ func (t *DkronTimerApi) Set(ctx context.Context, opts ...TimerOption) error {
 	}
 	ox := objx.New(o)
 
-	body := map[string]interface{}{
-		"name": t.Id(),
-	}
 	if schedule := ox.Get("schedule"); !schedule.IsNil() {
-		body["schedule"] = schedule.String()
-	} else {
-		body["schedule"] = t.Schedule()
+		t.body.Set("schedule", schedule.String())
 	}
 
 	if timezone := ox.Get("timezone"); !timezone.IsNil() {
-		body["timezone"] = timezone.String()
+		t.body.Set("timezone", timezone.String())
 	}
 
 	if enabled := ox.Get("enabled"); !enabled.IsNil() {
-		body["disabled"] = !enabled.Bool()
+		t.body.Set("disabled", !enabled.Bool())
 	}
 
-	body, err := t.call(ctx, "POST", "/jobs", body)
+	body, err := t.call(ctx, "POST", "/jobs", t.body)
 	if err != nil {
 		logger.WithError(err).Debugf("failed to set timer")
 		return err

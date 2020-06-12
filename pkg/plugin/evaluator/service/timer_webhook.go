@@ -101,7 +101,7 @@ func (srv *EvaluatorPluginService) TimerWebhook(w http.ResponseWriter, r *http.R
 	var log_msg string
 
 	ctx := r.Context()
-	id := r.Header.Get("X-Fission-Params-ID")
+	id := srv.get_param(r, "id")
 
 	src_id := id
 	src_typ := "timer"
@@ -159,18 +159,22 @@ func (srv *EvaluatorPluginService) TimerWebhook(w http.ResponseWriter, r *http.R
 		return
 	}
 
-	cfgx, err := objx.FromJSON(cfg_str)
+	var cfgm map[string]interface{}
+	err = json.Unmarshal([]byte(cfg_str), &cfgm)
 	if err != nil {
-		log_msg = "failed to new config objx map string"
+		log_msg = "failed to new config mapping from map string"
 		hs = hst.WrapErrorHttpStatus(http.StatusInternalServerError, err)
 		return
 	}
 
+	cfgx := objx.New(objx.New(cfgm).Get("body").Data())
 	switch cfgx.Get("version").String() {
 	case "v1":
 		err, log_msg, hs = srv.launch_data_by_timer_v1(ctx, evltr_cli, src_id, src_typ, cfgx)
 		return
 	}
+
+	logger.WithField("version", cfgx.Get("version")).Warningf("unsupported default config version")
 }
 
 func (srv *EvaluatorPluginService) launch_data_by_timer_v1(
