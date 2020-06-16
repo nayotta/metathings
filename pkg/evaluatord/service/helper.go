@@ -1,15 +1,20 @@
 package metathings_evaluatord_service
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"errors"
 	"strings"
 
 	"github.com/golang/protobuf/jsonpb"
+	"github.com/golang/protobuf/ptypes"
 	stpb "github.com/golang/protobuf/ptypes/struct"
 
+	evaluatord_helper "github.com/nayotta/metathings/pkg/evaluatord/helper"
 	storage "github.com/nayotta/metathings/pkg/evaluatord/storage"
 	evaluator_plugin "github.com/nayotta/metathings/pkg/plugin/evaluator"
+	deviced_pb "github.com/nayotta/metathings/pkg/proto/deviced"
 	pb "github.com/nayotta/metathings/pkg/proto/evaluatord"
 )
 
@@ -19,6 +24,14 @@ type evaluator_getter interface {
 
 type source_getter interface {
 	GetSource() *pb.OpResource
+}
+
+type task_getter interface {
+	GetTask() *pb.OpTask
+}
+
+type timer_getter interface {
+	GetTimer() *pb.OpTimer
 }
 
 func copy_lua_descriptor(x *storage.LuaDescriptor) *pb.Operator_Lua {
@@ -97,6 +110,87 @@ func copy_evaluators(xs []*storage.Evaluator) []*pb.Evaluator {
 	return ys
 }
 
+func copy_task_state(x *storage.TaskState) *pb.TaskState {
+	var tags stpb.Struct
+
+	at, _ := ptypes.TimestampProto(*x.At)
+	tags_buf, _ := json.Marshal(x.Tags)
+	jsonpb.Unmarshal(bytes.NewReader(tags_buf), &tags)
+
+	y := &pb.TaskState{
+		At:    at,
+		State: evaluatord_helper.TASK_STATE_ENUMER.ToValue(*x.State),
+		Tags:  &tags,
+	}
+
+	return y
+}
+
+func copy_task_states(xs []*storage.TaskState) []*pb.TaskState {
+	var ys []*pb.TaskState
+	for _, x := range xs {
+		ys = append(ys, copy_task_state(x))
+	}
+	return ys
+}
+
+func copy_task(x *storage.Task) *pb.Task {
+	created_at, _ := ptypes.TimestampProto(*x.States[0].At)
+	updated_at, _ := ptypes.TimestampProto(*x.CurrentState.At)
+
+	y := &pb.Task{
+		Id:           *x.Id,
+		CreatedAt:    created_at,
+		UpdatedAt:    updated_at,
+		CurrentState: copy_task_state(x.CurrentState),
+		Source: &pb.Resource{
+			Id:   *x.Source.Id,
+			Type: *x.Source.Type,
+		},
+		States: copy_task_states(x.States),
+	}
+
+	return y
+}
+
+func copy_tasks(xs []*storage.Task) []*pb.Task {
+	var ys []*pb.Task
+	for _, x := range xs {
+		ys = append(ys, copy_task(x))
+	}
+	return ys
+}
+
+func copy_timer(x *storage.Timer) *pb.Timer {
+	var cfgs []*deviced_pb.Config
+
+	for _, cfg_id := range x.Configs {
+		cfgs = append(cfgs, &deviced_pb.Config{
+			Id: cfg_id,
+		})
+	}
+
+	y := &pb.Timer{
+		Id:          *x.Id,
+		Alias:       *x.Alias,
+		Description: *x.Description,
+		Schedule:    *x.Schedule,
+		Timezone:    *x.Timezone,
+		Enabled:     *x.Enabled,
+		Configs:     cfgs,
+	}
+
+	return y
+}
+
+func copy_timers(xs []*storage.Timer) []*pb.Timer {
+	var ys []*pb.Timer
+	for _, x := range xs {
+		ys = append(ys, copy_timer(x))
+	}
+	return ys
+}
+
 func ensure_get_source(x source_getter) error {
 	if x.GetSource() == nil {
 		return errors.New("source is empty")
@@ -164,6 +258,28 @@ func ensure_evaluator_id_not_exists(ctx context.Context, s storage.Storage) func
 	}
 }
 
+func ensure_evaluator_id_exists(ctx context.Context, s storage.Storage) func(x evaluator_getter) error {
+	return func(x evaluator_getter) error {
+		e := x.GetEvaluator()
+		eid := e.GetId()
+		if eid == nil {
+			return nil
+		}
+
+		eid_str := eid.GetValue()
+		exists, err := s.ExistEvaluator(ctx, &storage.Evaluator{Id: &eid_str})
+		if err != nil {
+			return err
+		}
+
+		if !exists {
+			return errors.New("evaluator not exists")
+		}
+
+		return nil
+	}
+}
+
 func ensure_operator_id_not_exists(ctx context.Context, s storage.Storage) func(x evaluator_getter) error {
 	return func(x evaluator_getter) error {
 		e := x.GetEvaluator()
@@ -187,6 +303,50 @@ func ensure_operator_id_not_exists(ctx context.Context, s storage.Storage) func(
 	}
 }
 
+func ensure_timer_id_not_exists(ctx context.Context, ts storage.TimerStorage) func(x timer_getter) error {
+	return func(x timer_getter) error {
+		t := x.GetTimer()
+		tid := t.GetId()
+		if tid == nil {
+			return nil
+		}
+
+		tid_str := tid.GetValue()
+		exists, err := ts.ExistTimer(ctx, &storage.Timer{Id: &tid_str})
+		if err != nil {
+			return err
+		}
+
+		if exists {
+			return errors.New("timer exists")
+		}
+
+		return nil
+	}
+}
+
+func ensure_timer_id_exists(ctx context.Context, ts storage.TimerStorage) func(x timer_getter) error {
+	return func(x timer_getter) error {
+		t := x.GetTimer()
+		tid := t.GetId()
+		if tid == nil {
+			return nil
+		}
+
+		tid_str := tid.GetValue()
+		exists, err := ts.ExistTimer(ctx, &storage.Timer{Id: &tid_str})
+		if err != nil {
+			return err
+		}
+
+		if !exists {
+			return errors.New("timer not exists")
+		}
+
+		return nil
+	}
+}
+
 func ensure_valid_operator_driver(x evaluator_getter) error {
 	drv := x.GetEvaluator().GetOperator().GetDriver()
 	if drv == nil {
@@ -198,5 +358,47 @@ func ensure_valid_operator_driver(x evaluator_getter) error {
 		return errors.New("evaluator.operator.driver is invalid")
 	}
 
+	return nil
+}
+
+func ensure_get_task(x task_getter) error {
+	if tsk := x.GetTask(); tsk == nil {
+		return errors.New("task is empty")
+	}
+
+	return nil
+}
+
+func ensure_get_task_id(x task_getter) error {
+	if tsk_id := x.GetTask().GetId(); tsk_id == nil {
+		return errors.New("task.id is empty")
+	}
+
+	return nil
+}
+
+func ensure_get_timer(x timer_getter) error {
+	if tmr := x.GetTimer(); tmr == nil {
+		return errors.New("timer is empty")
+	}
+
+	return nil
+}
+
+func ensure_get_timer_id(x timer_getter) error {
+	if tmr_id := x.GetTimer().GetId(); tmr_id == nil {
+		return errors.New("timer.id is empty")
+	}
+
+	return nil
+}
+
+// TODO(Peer): unimplemented
+func ensure_valid_timer_timezone(x timer_getter) error {
+	return nil
+}
+
+// TODO(Peer): unimplemented
+func ensure_valid_timer_schedule(x timer_getter) error {
 	return nil
 }

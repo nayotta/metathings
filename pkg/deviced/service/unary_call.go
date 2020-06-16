@@ -41,7 +41,7 @@ func (self *MetathingsDevicedService) UnaryCall(ctx context.Context, req *pb.Una
 		return nil, status.Convert(err).Err()
 	}
 
-	if val, err = self.cc.UnaryCall(dev_s, req.GetValue()); err != nil {
+	if val, err = self.cc.UnaryCall(ctx, dev_s, req.GetValue()); err != nil {
 		self.logger.WithError(err).Debugf("failed to unray call")
 		return nil, status.Convert(err).Err()
 	}

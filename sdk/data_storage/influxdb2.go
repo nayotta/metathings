@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/influxdata/influxdb-client-go"
+	influxdb2 "github.com/influxdata/influxdb-client-go"
 	log "github.com/sirupsen/logrus"
 
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
@@ -21,7 +21,7 @@ type Influxdb2DataStorageOption struct {
 
 type Influxdb2DataStorage struct {
 	opt    *Influxdb2DataStorageOption
-	influx *influxdb.Client
+	influx influxdb2.InfluxDBClient
 	logger log.FieldLogger
 }
 
@@ -45,9 +45,9 @@ func (s *Influxdb2DataStorage) Write(ctx context.Context, measurement string, ta
 		"tags":        tags,
 	})
 
-	metrics := []influxdb.Metric{influxdb.NewRowMetric(data, measurement, tags, ts)}
-
-	if _, err := s.influx.Write(ctx, s.opt.Bucket, s.opt.Org, metrics...); err != nil {
+	writer := s.influx.WriteApiBlocking(s.opt.Org, s.opt.Bucket)
+	point := influxdb2.NewPoint(measurement, tags, data, ts)
+	if err := writer.WritePoint(ctx, point); err != nil {
 		logger.WithError(err).Debugf("failed to write data to influxdb")
 		return err
 	}
@@ -74,11 +74,7 @@ func NewInfluxdb2DataStorage(args ...interface{}) (DataStorage, error) {
 	}
 
 	// TODO(Peer): allow userpass login
-	influx, err := influxdb.New(opt.Address, opt.Token)
-	if err != nil {
-		logger.WithError(err).Debugf("failed to new influxdb client")
-		return nil, err
-	}
+	influx := influxdb2.NewClient(opt.Address, opt.Token)
 
 	s := &Influxdb2DataStorage{
 		opt:    &opt,

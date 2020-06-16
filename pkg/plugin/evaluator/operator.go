@@ -1,13 +1,14 @@
 package metathings_plugin_evaluator
 
 import (
+	"context"
 	"sync"
 
 	esdk "github.com/nayotta/metathings/sdk/evaluatord"
 )
 
 type Operator interface {
-	Run(ctx, dat esdk.Data) (esdk.Data, error)
+	Run(gctx context.Context, ctx, dat esdk.Data) (esdk.Data, error)
 	Close() error
 }
 

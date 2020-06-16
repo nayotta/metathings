@@ -3,15 +3,18 @@ package metathings_plugin_evaluator_cmd
 import (
 	"strings"
 
+	"github.com/opentracing/opentracing-go"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"go.uber.org/dig"
+	"go.uber.org/fx"
 
 	cmd_contrib "github.com/nayotta/metathings/cmd/contrib"
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
 	cmd_helper "github.com/nayotta/metathings/pkg/common/cmd"
 	cfg_helper "github.com/nayotta/metathings/pkg/common/config"
 	constant_helper "github.com/nayotta/metathings/pkg/common/constant"
+	evaluatord_storage "github.com/nayotta/metathings/pkg/evaluatord/storage"
 	service "github.com/nayotta/metathings/pkg/plugin/evaluator/service"
 	dssdk "github.com/nayotta/metathings/sdk/data_storage"
 	dsdk "github.com/nayotta/metathings/sdk/deviced"
@@ -22,8 +25,12 @@ type EvaluatorPluginOption struct {
 	Evaluator                     struct {
 		Endpoint string
 	}
+	Server struct {
+		Name string
+	}
 	DataStorage   map[string]interface{}
 	SimpleStorage map[string]interface{}
+	TaskStorage   map[string]interface{}
 	Caller        map[string]interface{}
 }
 
@@ -48,7 +55,10 @@ func LoadEvaluatorPluginOption(path string) func() (*EvaluatorPluginOption, erro
 		opt := NewEvaluatorPluginOption()
 		cmd_helper.UnmarshalConfig(&opt)
 
+		opt.SetServiceName("evaluator-plugin")
+
 		cmd_helper.InitManyStringMapFromConfigWithStage([]cmd_helper.InitManyOption{
+			{&opt.TaskStorage, "task_storage"},
 			{&opt.DataStorage, "data_storage"},
 			{&opt.SimpleStorage, "simple_storage"},
 			{&opt.Caller, "caller"},
@@ -60,6 +70,7 @@ func LoadEvaluatorPluginOption(path string) func() (*EvaluatorPluginOption, erro
 
 func GetEvaluatorPluginOptions(opt *EvaluatorPluginOption) (
 	cmd_contrib.LoggerOptioner,
+	cmd_contrib.ServiceOptioner,
 	cmd_contrib.CredentialOptioner,
 	cmd_contrib.ServiceEndpointsOptioner,
 	cmd_contrib.OpentracingOptioner,
@@ -67,13 +78,25 @@ func GetEvaluatorPluginOptions(opt *EvaluatorPluginOption) (
 	return opt,
 		opt,
 		opt,
+		opt,
 		opt
 }
 
-func NewEvaluatorPluginServiceOption(o *EvaluatorPluginOption) (*service.EvaluatorPluginServiceOption, error) {
+type NewEvaluatorPluginOptionParams struct {
+	fx.In
+
+	Tracer opentracing.Tracer `name:"opentracing_tracer"`
+	Option *EvaluatorPluginOption
+}
+
+func NewEvaluatorPluginServiceOption(p NewEvaluatorPluginOptionParams) (*service.EvaluatorPluginServiceOption, error) {
 	opt := service.NewEvaluatorPluginServiceOption()
 
-	opt.Evaluator.Endpoint = o.Evaluator.Endpoint
+	opt.Evaluator.Endpoint = p.Option.Evaluator.Endpoint
+	if p.Option.Server.Name != "" {
+		opt.Server.Name = p.Option.Server.Name
+	}
+	opt.IsTraced = p.Tracer != nil
 
 	return opt, nil
 }
@@ -111,6 +134,27 @@ func NewSimpleStorage(o *EvaluatorPluginOption, cli_fty *client_helper.ClientFac
 	return ss, nil
 }
 
+type NewTaskStorageParams struct {
+	fx.In
+
+	Option *EvaluatorPluginOption
+	Logger log.FieldLogger
+	Tracer opentracing.Tracer `name:"opentracing_tracer" optional:"true"`
+}
+
+func NewTaskStorage(p NewTaskStorageParams) (evaluatord_storage.TaskStorage, error) {
+	var drv string
+	var args []interface{}
+	var err error
+
+	if drv, args, err = cfg_helper.ParseConfigOption("name", p.Option.TaskStorage, "logger", p.Logger, "tracer", p.Tracer); err != nil {
+		return nil, err
+	}
+
+	return evaluatord_storage.NewTaskStorage(drv, args...)
+
+}
+
 func NewCaller(o *EvaluatorPluginOption, cli_fty *client_helper.ClientFactory, logger log.FieldLogger) (dsdk.Caller, error) {
 	name, args, err := cfg_helper.ParseConfigOption("name", o.Caller, "logger", logger)
 	if err != nil {
@@ -142,6 +186,7 @@ func NewEvaluatorPluginService(cfg string) (*service.EvaluatorPluginService, err
 	c.Provide(cmd_contrib.NewClientFactory)
 	c.Provide(NewDataStorage)
 	c.Provide(NewSimpleStorage)
+	c.Provide(NewTaskStorage)
 	c.Provide(NewCaller)
 	c.Provide(NewEvaluatorPluginServiceOption)
 	c.Provide(service.NewEvaluatorPluginService)

@@ -55,7 +55,7 @@ func (ss *luaMetathingsCoreSimpleStorage) GetImmutableOption() objx.Map {
 }
 
 func (ss *luaMetathingsCoreSimpleStorage) get_context() context.Context {
-	return context_helper.WithToken(context.TODO(), cast.ToString(ss.core.GetContext().Get("token")))
+	return context_helper.WithToken(ss.core.GetGoContext(), cast.ToString(ss.core.GetContext().Get("token")))
 }
 
 // LUA_FUNCTION: simple_storage:put(option#table, content#string)

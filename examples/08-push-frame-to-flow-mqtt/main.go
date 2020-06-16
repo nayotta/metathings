@@ -256,7 +256,8 @@ func ping_once(c mqtt.Client, pub_tpc string) {
 
 func send_data_loop(c mqtt.Client, pub_tpc string) {
 	for {
-		time.Sleep(time.Duration(500+rand.Int63n(1000)) * time.Millisecond)
+		// time.Sleep(time.Duration(500+rand.Int63n(1000)) * time.Millisecond)
+		time.Sleep(1 * time.Second)
 		send_data_once(c, pub_tpc)
 	}
 }

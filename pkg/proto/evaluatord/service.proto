@@ -14,6 +14,17 @@ import "add_sources_to_evaluator.proto";
 import "remove_sources_from_evaluator.proto";
 import "list_evaluators_by_source.proto";
 
+import "list_tasks_by_source.proto";
+import "get_task.proto";
+
+import "create_timer.proto";
+import "delete_timer.proto";
+import "patch_timer.proto";
+import "get_timer.proto";
+import "list_timers.proto";
+import "add_configs_to_timer.proto";
+import "remove_configs_from_timer.proto";
+
 service EvaluatordService {
 	rpc CreateEvaluator(CreateEvaluatorRequest) returns (CreateEvaluatorResponse) {}
 	rpc DeleteEvaluator(DeleteEvaluatorRequest) returns (google.protobuf.Empty) {}
@@ -23,4 +34,17 @@ service EvaluatordService {
 	rpc AddSourcesToEvaluator(AddSourcesToEvaluatorRequest) returns (google.protobuf.Empty) {}
 	rpc RemoveSourcesFromEvaluator(RemoveSourcesFromEvaluatorRequest) returns (google.protobuf.Empty) {}
 	rpc ListEvaluatorsBySource(ListEvaluatorsBySourceRequest) returns (ListEvaluatorsBySourceResponse) {}
+
+	// Task
+	rpc ListTasksBySource(ListTasksBySourceRequest) returns (ListTasksBySourceResponse) {}
+	rpc GetTask(GetTaskRequest) returns (GetTaskResponse) {}
+
+	// Timer
+	rpc CreateTimer(CreateTimerRequest) returns (CreateTimerResponse) {}
+	rpc DeleteTimer(DeleteTimerRequest) returns (google.protobuf.Empty) {}
+	rpc PatchTimer(PatchTimerRequest) returns (PatchTimerResponse) {}
+	rpc GetTimer(GetTimerRequest) returns (GetTimerResponse) {}
+	rpc ListTimers(ListTimersRequest) returns (ListTimersResponse) {}
+	rpc AddConfigsToTimer(AddConfigsToTimerRequest) returns (google.protobuf.Empty) {}
+	rpc RemoveConfigsFromTimer(RemoveConfigsFromTimerRequest) returns (google.protobuf.Empty) {}
 }

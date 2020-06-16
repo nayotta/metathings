@@ -140,7 +140,16 @@ func NewDevicedStorage(p NewDevicedStorageParams) (storage.Storage, error) {
 	return storage.NewStorage(p.Option.GetDriver(), p.Option.GetUri(), "logger", p.Logger, "tracer", p.Tracer)
 }
 
-func NewConnectionCenter(opt *DevicedOption, sess_stor session_storage.SessionStorage, logger log.FieldLogger) (connection.ConnectionCenter, error) {
+type NewConnectionCenterParams struct {
+	fx.In
+
+	Option         *DevicedOption
+	SessionStorage session_storage.SessionStorage
+	Logger         log.FieldLogger
+	Tracer         opentracing.Tracer `name:"opentracing_tracer" optional:"true"`
+}
+
+func NewConnectionCenter(p NewConnectionCenterParams) (connection.ConnectionCenter, error) {
 	var name string
 	var args []interface{}
 	var err error
@@ -148,7 +157,7 @@ func NewConnectionCenter(opt *DevicedOption, sess_stor session_storage.SessionSt
 	var conn_brfty connection.BridgeFactory
 	var cc connection.ConnectionCenter
 
-	if name, args, err = cfg_helper.ParseConfigOption("name", opt.ConnectionCenter.Storage, "logger", logger); err != nil {
+	if name, args, err = cfg_helper.ParseConfigOption("name", p.Option.ConnectionCenter.Storage, "logger", p.Logger); err != nil {
 		return nil, err
 	}
 
@@ -156,7 +165,7 @@ func NewConnectionCenter(opt *DevicedOption, sess_stor session_storage.SessionSt
 		return nil, err
 	}
 
-	if name, args, err = cfg_helper.ParseConfigOption("name", opt.ConnectionCenter.Bridge, "logger", logger); err != nil {
+	if name, args, err = cfg_helper.ParseConfigOption("name", p.Option.ConnectionCenter.Bridge, "logger", p.Logger); err != nil {
 		return nil, err
 	}
 
@@ -164,7 +173,13 @@ func NewConnectionCenter(opt *DevicedOption, sess_stor session_storage.SessionSt
 		return nil, err
 	}
 
-	if cc, err = connection.NewConnectionCenter(conn_brfty, conn_stor, sess_stor, logger); err != nil {
+	if cc, err = connection.NewConnectionCenter(
+		"bridge_factory", conn_brfty,
+		"storage", conn_stor,
+		"session_storage", p.SessionStorage,
+		"logger", p.Logger,
+		"tracer", p.Tracer,
+	); err != nil {
 		return nil, err
 	}
 
