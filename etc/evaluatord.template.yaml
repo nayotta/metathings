@@ -1,0 +1,24 @@
+dev:
+  listen: 0.0.0.0:5003
+  verbose: true
+  log:
+    level: info
+  storage:
+    driver: <storage-driver>
+    ...
+  task_storage:
+    driver: <task-storage-driver>
+    ...
+  timer_storage:
+    driver: <timer-storage-driver>
+    ...
+  timer_backend:
+    driver: <timer-backend-driver>
+    ...
+  service_endpoint:
+    default:
+      address: <metathings-address>
+  credential:
+    domain: <credential-domain>
+    id: <credential-id>
+    secret: <credential-key>

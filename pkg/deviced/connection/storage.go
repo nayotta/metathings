@@ -1,6 +1,10 @@
 package metathings_deviced_connection
 
-import "errors"
+import (
+	"errors"
+
+	opt_helper "github.com/nayotta/metathings/pkg/common/option"
+)
 
 var (
 	ErrUnknownStorageDriver = errors.New("unknown storage driver")
@@ -34,4 +38,16 @@ func NewStorage(name string, args ...interface{}) (Storage, error) {
 		return nil, err
 	}
 	return stor, nil
+}
+
+func ToStorage(y *Storage) func(string, interface{}) error {
+	return func(k string, v interface{}) error {
+		var ok bool
+
+		if *y, ok = v.(Storage); !ok {
+			return opt_helper.InvalidArgument(k)
+		}
+
+		return nil
+	}
 }

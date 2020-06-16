@@ -1,6 +1,8 @@
 package metathings_plugin_evaluator
 
 import (
+	"context"
+
 	log "github.com/sirupsen/logrus"
 	lua "github.com/yuin/gopher-lua"
 
@@ -22,8 +24,9 @@ type LuaOperator struct {
 	env       *lua.LState
 }
 
-func (lo *LuaOperator) Run(ctx, dat esdk.Data) (esdk.Data, error) {
+func (lo *LuaOperator) Run(gctx context.Context, ctx, dat esdk.Data) (esdk.Data, error) {
 	core, err := newLuaMetathingsCore(
+		"gocontext", gctx,
 		"context", ctx,
 		"data", dat,
 		"data_storage", lo.dat_stor,

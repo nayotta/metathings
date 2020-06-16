@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/golang/protobuf/ptypes/wrappers"
 	"github.com/spf13/pflag"
@@ -93,8 +94,11 @@ flow=%v
 			panic(err)
 		}
 
+		fmt.Println(time.Now())
+
 		pack := res.GetPack()
 		if pack == nil {
+			fmt.Println(res.GetId())
 			continue
 		}
 

@@ -24,6 +24,10 @@ const (
 	HTTP_HEADER_DATA_TAGS      = "X-Evaluator-Data-Tags"
 )
 
+const (
+	TIMER_DEFAULT_CONFIG = "default"
+)
+
 type HttpDataLauncherOption struct {
 	Endpoint  string
 	DataCodec string

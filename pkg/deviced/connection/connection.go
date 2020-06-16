@@ -6,11 +6,13 @@ import (
 
 	"github.com/golang/protobuf/proto"
 	"github.com/golang/protobuf/ptypes/wrappers"
+	"github.com/opentracing/opentracing-go"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
 	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
+	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 	session_helper "github.com/nayotta/metathings/pkg/common/session"
 	session_storage "github.com/nayotta/metathings/pkg/deviced/session_storage"
 	storage "github.com/nayotta/metathings/pkg/deviced/storage"
@@ -74,9 +76,9 @@ type streamConnection struct {
 }
 
 type ConnectionCenter interface {
-	BuildConnection(*storage.Device, pb.DevicedService_ConnectServer) (Connection, error)
-	UnaryCall(*storage.Device, *pb.OpUnaryCallValue) (*pb.UnaryCallValue, error)
-	StreamCall(*storage.Device, *pb.OpStreamCallConfig, pb.DevicedService_StreamCallServer) error
+	BuildConnection(context.Context, *storage.Device, pb.DevicedService_ConnectServer) (Connection, error)
+	UnaryCall(context.Context, *storage.Device, *pb.OpUnaryCallValue) (*pb.UnaryCallValue, error)
+	StreamCall(context.Context, *storage.Device, *pb.OpStreamCallConfig, pb.DevicedService_StreamCallServer) error
 }
 
 type connectionCenter struct {
@@ -84,6 +86,7 @@ type connectionCenter struct {
 	brfty           BridgeFactory
 	storage         Storage
 	session_storage session_storage.SessionStorage
+	is_traced       bool
 }
 
 func (self *connectionCenter) connection_loop(dev *storage.Device, conn Connection, br Bridge, stm pb.DevicedService_ConnectServer) {
@@ -332,9 +335,8 @@ func (self *connectionCenter) new_south_from_bridge_handler(dev *storage.Device,
 	}
 }
 
-func (self *connectionCenter) BuildConnection(dev *storage.Device, stm pb.DevicedService_ConnectServer) (Connection, error) {
+func (self *connectionCenter) BuildConnection(ctx context.Context, dev *storage.Device, stm pb.DevicedService_ConnectServer) (Connection, error) {
 	var cleanup_cb func()
-	ctx := stm.Context()
 	sess := grpc_helper.GetSessionFromContext(ctx)
 	dev_id := *dev.Id
 
@@ -415,7 +417,8 @@ func (self *connectionCenter) BuildConnection(dev *storage.Device, stm pb.Device
 	return conn, nil
 }
 
-func (self *connectionCenter) UnaryCall(dev *storage.Device, req *pb.OpUnaryCallValue) (*pb.UnaryCallValue, error) {
+// TODO(Peer): replace hard code tracing to callback tracing
+func (self *connectionCenter) UnaryCall(ctx context.Context, dev *storage.Device, req *pb.OpUnaryCallValue) (*pb.UnaryCallValue, error) {
 	var startup_sess int32
 	var br_ids []string
 	var br_id string
@@ -426,7 +429,19 @@ func (self *connectionCenter) UnaryCall(dev *storage.Device, req *pb.OpUnaryCall
 	var ucv *pb.UnaryCallValue
 	var err error
 	var crerr *pb.ErrorValue
+	var sp opentracing.Span
+
 	dev_id := *dev.Id
+
+	if self.is_traced {
+		parentSpan := opentracing.SpanFromContext(ctx)
+		if parentSpan != nil {
+			tr := parentSpan.Tracer()
+			sp = tr.StartSpan("unary_call", opentracing.ChildOf(parentSpan.Context()))
+			sp.SetTag("device", dev_id)
+			defer sp.Finish()
+		}
+	}
 
 	if startup_sess, err = self.session_storage.GetStartupSession(dev_id); err != nil {
 		self.logger.WithError(err).Debugf("failed to get startup session")
@@ -434,6 +449,9 @@ func (self *connectionCenter) UnaryCall(dev *storage.Device, req *pb.OpUnaryCall
 
 	conn_sess := session_helper.GenerateTempSession()
 	sess := session_helper.NewSession(startup_sess, conn_sess)
+	if self.is_traced && sp != nil {
+		sp.SetTag("temp_session", sess)
+	}
 
 	if br_ids, err = self.storage.ListBridgesFromDevice(dev_id, startup_sess); err != nil {
 		return nil, err
@@ -449,6 +467,9 @@ func (self *connectionCenter) UnaryCall(dev *storage.Device, req *pb.OpUnaryCall
 		return nil, err
 	}
 	br_id = br_ids[0]
+	if self.is_traced && sp != nil {
+		sp.SetTag("major_bridge", br_id)
+	}
 
 	if conn_br, err = self.brfty.GetBridge(br_id); err != nil {
 		return nil, err
@@ -460,7 +481,13 @@ func (self *connectionCenter) UnaryCall(dev *storage.Device, req *pb.OpUnaryCall
 		return nil, err
 	}
 	defer sess_br.Close()
-	self.logger.WithField("bridge", sess_br.Id()).Debugf("build session bridge")
+	sess_br_id := sess_br.Id()
+	self.logger.WithField("bridge", sess_br_id).Debugf("build session bridge")
+	if self.is_traced && sp != nil {
+		sp.SetTag("session_bridge", sess_br_id)
+		sp.SetTag("module", req.GetName().GetValue())
+		sp.SetTag("method", req.GetMethod().GetValue())
+	}
 
 	conn_req := &pb.ConnectRequest{
 		SessionId: &wrappers.Int64Value{Value: sess},
@@ -501,7 +528,8 @@ func (self *connectionCenter) UnaryCall(dev *storage.Device, req *pb.OpUnaryCall
 	return ucv, nil
 }
 
-func (self *connectionCenter) StreamCall(dev *storage.Device, cfg *pb.OpStreamCallConfig, stm pb.DevicedService_StreamCallServer) error {
+// TODO(Peer): replace hard code tracing to callback tracing
+func (self *connectionCenter) StreamCall(ctx context.Context, dev *storage.Device, cfg *pb.OpStreamCallConfig, stm pb.DevicedService_StreamCallServer) error {
 	var startup_sess int32
 	var br_ids []string
 	var br_id string
@@ -509,7 +537,18 @@ func (self *connectionCenter) StreamCall(dev *storage.Device, cfg *pb.OpStreamCa
 	var sess_br Bridge
 	var buf []byte
 	var err error
+	var sp opentracing.Span
 	dev_id := *dev.Id
+
+	if self.is_traced {
+		parentSpan := opentracing.SpanFromContext(ctx)
+		if parentSpan != nil {
+			tr := parentSpan.Tracer()
+			sp = tr.StartSpan("stream_call", opentracing.ChildOf(parentSpan.Context()))
+			sp.SetTag("device", dev_id)
+			defer sp.Finish()
+		}
+	}
 
 	logger := self.logger.WithFields(log.Fields{
 		"device": dev_id,
@@ -523,6 +562,9 @@ func (self *connectionCenter) StreamCall(dev *storage.Device, cfg *pb.OpStreamCa
 
 	conn_sess := session_helper.GenerateMinorSession()
 	sess := session_helper.NewSession(startup_sess, conn_sess)
+	if self.is_traced && sp != nil {
+		sp.SetTag("minor_session", sess)
+	}
 
 	logger = logger.WithField("session", sess)
 	self.printSessionInfo(sess)
@@ -540,6 +582,9 @@ func (self *connectionCenter) StreamCall(dev *storage.Device, cfg *pb.OpStreamCa
 		return ErrDeviceOffline
 	}
 	br_id = br_ids[0]
+	if self.is_traced && sp != nil {
+		sp.SetTag("major_bridge", br_id)
+	}
 
 	if conn_br, err = self.brfty.GetBridge(br_id); err != nil {
 		logger.WithError(err).Debugf("failed to get bridge from bridge factory")
@@ -553,6 +598,9 @@ func (self *connectionCenter) StreamCall(dev *storage.Device, cfg *pb.OpStreamCa
 	}
 	defer sess_br.Close()
 	logger.WithField("bridge", sess_br.Id()).Debugf("build session bridge")
+	if self.is_traced && sp != nil {
+		sp.SetTag("minor_bridge", sess_br.Id())
+	}
 
 	go func() {
 		defer conn_br.Close()
@@ -578,6 +626,11 @@ func (self *connectionCenter) StreamCall(dev *storage.Device, cfg *pb.OpStreamCa
 			return
 		}
 		logger.Debugf("send config request to device")
+
+		if self.is_traced && sp != nil {
+			sp.SetTag("module", cfg.GetName().GetValue())
+			sp.SetTag("method", cfg.GetMethod().GetValue())
+		}
 	}()
 
 	wg := &sync.WaitGroup{}
@@ -813,11 +866,29 @@ func (self *connectionCenter) new_north_from_bridge_handler(dev *storage.Device,
 	}
 }
 
-func NewConnectionCenter(brfty BridgeFactory, stor Storage, sess_stor session_storage.SessionStorage, logger log.FieldLogger) (ConnectionCenter, error) {
+func NewConnectionCenter(args ...interface{}) (ConnectionCenter, error) {
+	var brfty BridgeFactory
+	var stor Storage
+	var sess_stor session_storage.SessionStorage
+	var logger log.FieldLogger
+	var is_traced bool
+	var err error
+
+	if err = opt_helper.Setopt(map[string]func(string, interface{}) error{
+		"logger":          opt_helper.ToLogger(&logger),
+		"bridge_factory":  ToBridgeFactory(&brfty),
+		"storage":         ToStorage(&stor),
+		"session_storage": session_storage.ToSessionStorage(&sess_stor),
+		"tracer":          opt_helper.ToIsTraced(&is_traced),
+	})(args...); err != nil {
+		return nil, err
+	}
+
 	return &connectionCenter{
 		logger:          logger,
 		brfty:           brfty,
 		storage:         stor,
 		session_storage: sess_stor,
+		is_traced:       is_traced,
 	}, nil
 }

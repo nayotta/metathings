@@ -27,7 +27,7 @@ LDFLAGS="-X main.FissionConfigName=evaluator-plugin-config/evaluator-plugin.yaml
 # use vendor mode if the vendor dir exists when go version is greater
 # than 1.12 (the version that fission started to support go module).
 if [ -d "vendor" ] && [ ! -z ${GOLANG_VERSION} ] && version_ge ${GOLANG_VERSION} "1.12"; then
-  go build -mod=vendor -buildmode=plugin -ldflags="${LDFLAGS}" -o ${DEPLOY_PKG} .
+  go build -mod=vendor -buildmode=plugin -ldflags="${LDFLAGS}" -o ${DEPLOY_PKG} ./contrib/evaluator_plugin/*.go
 else
-  go build -buildmode=plugin -ldflags="${LDFLAGS}" -o ${DEPLOY_PKG} .
+  go build -buildmode=plugin -ldflags="${LDFLAGS}" -o ${DEPLOY_PKG} ./contrib/evaluator_plugin/*.go
 fi

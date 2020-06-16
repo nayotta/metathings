@@ -5,7 +5,6 @@ import (
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
-	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/opentracing/opentracing-go"
 	log "github.com/sirupsen/logrus"
 	otgorm "github.com/smacker/opentracing-gorm"
@@ -497,6 +496,10 @@ func (stor *StorageImpl) ExistEvaluator(ctx context.Context, e *Evaluator) (bool
 	logger := stor.get_logger()
 
 	if err := db.Find(&e).Count(&cnt).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return false, nil
+		}
+
 		logger.WithError(err).Debugf("failed to exist evaluator")
 		return false, err
 	}
@@ -510,6 +513,10 @@ func (stor *StorageImpl) ExistOperator(ctx context.Context, o *Operator) (bool, 
 	logger := stor.get_logger()
 
 	if err := db.Find(&o).Count(&cnt).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return false, nil
+		}
+
 		logger.WithError(err).Debugf("failed to exist operator")
 		return false, err
 	}
@@ -582,7 +589,7 @@ func NewStorageImpl(driver, uri string, args ...interface{}) (Storage, error) {
 	}
 
 	if s.opt.IsTraced {
-		return NewTracedStorage(s)
+		return NewTracedStorage(s, s)
 	}
 
 	return s, nil
