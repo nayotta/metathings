@@ -2,7 +2,7 @@
 
 ## 1. 概要
 
-`Evaluator` 插件, 是提供一个运行时环境, 对数据通道上传的数据进行一个在线处理平台.
+`Evaluator` 插件, 是提供一个运行时环境, 对数据通道上传的数据进行在线处理的平台.
 
 ## 2. 使用步骤
 
@@ -34,7 +34,7 @@ local val = metathings:data("key")
 
 获取 `evaluator`的 `context`内容.
 
-[context结构](https://github.com/nayotta/metathings/pkg/plugin/evaluator/lua_operator_core.go#L40)描述.
+[context结构](https://github.com/nayotta/metathings/blob/master/pkg/plugin/evaluator/lua_operator_core.go#L41)描述.
 
 `metathings:context(key#string)`
 
@@ -440,4 +440,136 @@ local objs = smpl_stor:list({
   ["depth"] = 1
 })
 ...
+```
+
+## 4. Timer(定时器)
+
+### 4.1. 描述
+
+定时器允许定时执行指定的`Evaluator`.
+
+### 4.2. 使用步骤
+
+1. 创建需要被执行的`Evaluator`.
+2. 创建对应的定时器`Timer`.
+3. 将`Timer`添加到`Evaluator`.
+
+### 4.3.  详细步骤
+
+#### 4.3.1. 创建Evaluator
+
+使用`ai.metathings.service.evaluatord.EvaluatordService/CreateEvaluator`接口创建`Evaluator`.
+
+范例:
+
+```bash
+// set token to MT_TOKEN
+// set address to MT_ADDR
+$ echo ${MT_TOKEN}
+"<token>"
+$ cat create_evaluator.json
+{
+  "evaluator": {
+    "alias":  "echo",
+    "timezone": "Asia/Shanghai",
+    "enabled": false
+  }
+}
+$ cat create_timer.json | grpcurl -protoset pkg/proto/evaluatord/service.protoset -H "authorization: Bearer ${MT_TOKEN}" -d @ "${MT_ADDR}" ai.metathings.service.evaluatord.EvaluatordService/CreateTimer
+{
+  "timer": {
+    "id": "c6e1e19eb5274040a7d5b2bfed7ee613",
+    "schedule": "@every 10s",
+    "timezone": "Asia/Shanghai",
+    "configs": [],
+    "alias": "c6e1e19eb5274040a7d5b2bfed7ee613"
+  }
+}
+$ cat create_timer_config.json
+{
+  "config": {
+    "alias": "default",
+    "body": {
+      "version": "v1",
+      "device": {
+        "id": "c2a652e6de95483d968b30eeb82f384a"
+      },
+      "data": {
+        "text": "hello, world!"
+      }
+    }
+  }
+}
+$ cat create_timer_config.json | grpcurl -protoset pkg/proto/deviced/service.protoset -H "authorization: Bearer ${MT_TOKEN}" -d @ "${MT_ADDR}" ai.metathings.service.deviced.DevicedService/CreateConfig
+{
+  "config": {
+    "id": "44e5317df2664bd7912a688e8c217393",
+    "alias": "default",
+    "body": {
+      "data": {
+        "text": "hello, world!"
+      },
+      "device": {
+        "id": "c2a652e6de95483d968b30eeb82f384a"
+      },
+      "version": "v1"
+    }
+  }
+}
+$ cat add_configs_to_timer.json
+{
+  "timer": {
+    "id": "c6e1e19eb5274040a7d5b2bfed7ee613"
+  },
+  "configs": [
+    {
+      "id": "44e5317df2664bd7912a688e8c217393"
+    }
+  ]
+}
+$ cat add_configs_to_timer.json | grpcurl -protoset pkg/proto/evaluatord/service.protoset -H "authorization: Bearer ${MT_TOKEN}" -d @ "${MT_ADDR}" ai.metathings.service.evaluatord.EvaluatordService/AddConfigsToTimer
+{}
+$ cat add_timers_to_evaluator.json
+{
+  "evaluator": {
+    "id": "d84735aa83e1488294f6483578f92055"
+  }, "sources": [
+    {
+      "id": "c6e1e19eb5274040a7d5b2bfed7ee613",
+      "type": "timer"
+    }
+  ]
+}
+```
+
+#### 4.3.3. 添加Timer到Evaluator
+
+1. 使用`ai.metathings.service.evaluatord.EvaluatordService/AddSourcesToEvaluator`接口添加`Timer`到`Evlauator`.
+2. 使用`ai.metathings.service.evaluatord.EvaluatordService/PatchTimer`接口启用`Timer`.
+
+```bash
+$ cat add_timers_to_evaluator.json | grpcurl -protoset pkg/proto/evaluatord/service.protoset -H "authorization: Bearer ${MT_TOKEN}" -d @ "${MT_ADDR}" ai.metathings.service.evaluatord.EvaluatordService/AddSourcesToEvaluator
+{}
+$ cat enable_timer.json
+{
+  "timer": {
+    "id": "c6e1e19eb5274040a7d5b2bfed7ee613",
+    "enabled": true
+  }
+}
+$ cat enable_timer.json | grpcurl -protoset pkg/proto/evaluatord/service.protoset -H "authorization: Bearer ${MT_TOKEN}" -d @ "${MT_ADDR}" ai.metathings.service.evaluatord.EvaluatordService/PatchTimer
+{
+  "timer": {
+    "id": "c6e1e19eb5274040a7d5b2bfed7ee613",
+    "schedule": "@every 10s",
+    "timezone": "Asia/Shanghai",
+    "enabled": true,
+    "configs": [
+      {
+        "id": "44e5317df2664bd7912a688e8c217393"
+      }
+    ],
+    "alias": "c6e1e19eb5274040a7d5b2bfed7ee613"
+  }
+}
 ```
