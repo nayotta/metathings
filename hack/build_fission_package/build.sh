@@ -3,7 +3,7 @@
 set -ex
 
 TMPDIR=${TMPDIR:-"/tmp"}
-METATHINGS_HOME="$(go env GOPATH)/src/github.com/nayotta/metathings"
+METATHINGS_HOME=${METATHINGS_HOME:-"`pwd`"}
 BUILD="${TMPDIR}/metathings_fission_package"
 
 rm -rf ${BUILD}
