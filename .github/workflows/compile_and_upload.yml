@@ -81,7 +81,7 @@ jobs:
     - name: Upload Evaluator Plugin Package Asset
       uses: PeerXu/upload-asset@v1
       with:
-        file: build/evaluator_plugin.zip
+        file: evaluator_plugin.zip
         suffix: ".zip"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

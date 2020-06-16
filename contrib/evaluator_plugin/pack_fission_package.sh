@@ -2,14 +2,19 @@
 
 set -ex
 
-METATHINGS_HOME="$(go env GOPATH)/src/github.com/nayotta/metathings"
-BUILD=${BUILD_PATH:-"build"}
+TMPDIR=${TMPDIR:-"/tmp"}
+METATHINGS_HOME=${METATHINGS_HOME:-"`pwd`"}
+BUILD="${TMPDIR}/build"
+
+rm -rf ${BUILD}
 
 cp -r ${METATHINGS_HOME} ${BUILD}
+
 cd ${BUILD}
-if [ "x${HACK_BRANCH}" != "x" ]; then
-    sed -i "s/latest/${HACK_BRANCH}/g" go.mod
-fi
+
 go mod tidy
 go mod vendor
+
 zip -qr evaluator_plugin.zip .
+
+mv evaluator_plugin.zip ${METATHINGS_HOME}
