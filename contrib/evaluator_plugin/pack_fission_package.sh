@@ -2,7 +2,7 @@
 
 set -ex
 
-METATHINGS_HOME="$(go env GOPATH)/src/github.com/nayotta/metathings"
+METATHINGS_HOME=${METATHINGS_HOME:-"`pwd`"}
 BUILD=${BUILD_PATH:-"build"}
 
 cp -r ${METATHINGS_HOME} ${BUILD}
