@@ -1,6 +1,7 @@
 package metathings_deviced_simple_storage
 
 import (
+	"bytes"
 	"io/ioutil"
 	"os"
 	"strings"
@@ -11,16 +12,31 @@ import (
 	log_helper "github.com/nayotta/metathings/pkg/common/log"
 )
 
+const (
+	_TEST_LARGE_OBJECT_CONTENT_SIZE = 513
+	_TEST_LARGE_OBJECT_CONTENT_MASK = 42
+)
+
 var (
 	test_device_id      = "test_device_id"
 	test_object_prefix  = "test_object_prefix"
 	test_object_name    = "test_object_name.txt"
 	test_object_content = "test object content"
 
+	test_large_object_prefix  = "test_large_object_prefix"
+	test_large_object_name    = "test_large_object_name"
+	test_large_object_content = make([]byte, _TEST_LARGE_OBJECT_CONTENT_SIZE)
+
 	test_object = &Object{
 		Device: test_device_id,
 		Prefix: test_object_prefix,
 		Name:   test_object_name,
+	}
+
+	test_large_object = &Object{
+		Device: test_device_id,
+		Prefix: test_large_object_prefix,
+		Name:   test_large_object_name,
 	}
 )
 
@@ -60,6 +76,25 @@ func (s *fileSimpleStorageTestSuite) TestGetObjectContent() {
 	}
 
 	s.Equal(test_object_content, content)
+}
+
+func (s *fileSimpleStorageTestSuite) TestGetObjectContentWithLargeFile() {
+	for i := 0; i < _TEST_LARGE_OBJECT_CONTENT_SIZE; i++ {
+		test_large_object_content[i] = byte(i % (_TEST_LARGE_OBJECT_CONTENT_MASK + 1))
+	}
+
+	err := s.fss.PutObject(test_large_object, bytes.NewReader(test_large_object_content))
+	s.Require().Nil(err)
+
+	ch, err := s.fss.GetObjectContent(test_large_object)
+	s.Require().Nil(err)
+
+	var sb strings.Builder
+	for buf, ok := <-ch; ok; buf, ok = <-ch {
+		sb.Write(buf)
+	}
+
+	s.Equal(test_large_object_content, []byte(sb.String()))
 }
 
 func (s *fileSimpleStorageTestSuite) TestGetObject() {
@@ -107,7 +142,7 @@ func (s *fileSimpleStorageTestSuite) TestRenameObject() {
 
 func (s *fileSimpleStorageTestSuite) TestListObjects() {
 	fltr := NewObject(test_device_id, test_object_prefix, "")
-	objs, err := s.fss.ListObjects(fltr, nil)
+	objs, err := s.fss.ListObjects(fltr, &ListObjectsOption{})
 	s.Nil(err)
 	s.Len(objs, 1)
 }
