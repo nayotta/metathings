@@ -214,3 +214,39 @@ message Config {
 	string alias = 2;
 	google.protobuf.Struct body = 3;
 }
+
+message OpFirmwareHub {
+	google.protobuf.StringValue id = 1;
+	google.protobuf.StringValue alias = 2;
+	google.protobuf.StringValue description = 4;
+	repeated OpDevice devices = 8;
+
+	repeated OpFirmwareDescriptor firmware_descriptors = 9;
+}
+
+message FirmwareHub {
+	string id = 1;
+	string alias = 3;
+	string description = 4;
+	repeated Device devices = 8;
+
+	repeated FirmwareDescriptor firmware_descriptors = 9;
+}
+
+message OpFirmwareDescriptor {
+	google.protobuf.StringValue id = 1;
+	google.protobuf.StringValue name = 2;
+	google.protobuf.StringValue description = 4;
+	google.protobuf.Timestamp created_at = 5;
+
+	OpConfig config = 9;
+}
+
+message FirmwareDescriptor {
+	string id = 1;
+	string name = 2;
+	string description = 4;
+	google.protobuf.Timestamp created_at = 5;
+
+	Config config = 9;
+}

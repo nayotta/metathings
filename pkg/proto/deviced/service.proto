@@ -49,6 +49,19 @@ import "get_object_content.proto";
 import "get_object_streaming_content.proto";
 import "list_objects.proto";
 
+import "create_firmware_hub.proto";
+import "delete_firmware_hub.proto";
+import "patch_firmware_hub.proto";
+import "get_firmware_hub.proto";
+import "list_firmware_hubs.proto";
+import "add_devices_to_firmware_hub.proto";
+import "remove_devices_from_firmware_hub.proto";
+import "add_firmware_descriptor_to_firmware_hub.proto";
+import "remove_firmware_descriptor_from_firmware_hub.proto";
+import "get_device_firmware_descriptor.proto";
+import "set_device_firmware_descriptor.proto";
+import "sync_device_firmware_descriptor.proto";
+
 import "show_device.proto";
 import "connect.proto";
 import "heartbeat.proto";
@@ -103,6 +116,20 @@ service DevicedService {
 	rpc GetObjectContent(GetObjectContentRequest) returns (GetObjectContentResponse) {}
 	rpc GetObjectStreamingContent(GetObjectStreamingContentRequest) returns (stream GetObjectStreamingContentResponse) {}
 	rpc ListObjects(ListObjectsRequest) returns (ListObjectsResponse) {}
+
+	// Firmware Hub
+	rpc CreateFirmwareHub(CreateFirmwareHubRequest) returns (CreateFirmwareHubResponse) {}
+	rpc DeleteFirmwareHub(DeleteFirmwareHubRequest) returns (google.protobuf.Empty) {}
+	rpc PatchFirmwareHub(PatchFirmwareHubRequest) returns (PatchFirmwareHubResponse) {}
+	rpc GetFirmwareHub(GetFirmwareHubRequest) returns (GetFirmwareHubResponse) {}
+	rpc ListFirmwareHubs(ListFirmwareHubsRequest) returns (ListFirmwareHubsResponse) {}
+	rpc AddDevicesToFirmwareHub(AddDevicesToFirmwareHubRequest) returns (google.protobuf.Empty) {}
+	rpc RemoveDevicesFromFirmwareHub(RemoveDevicesFromFirmwareHubRequest) returns (google.protobuf.Empty) {}
+	rpc AddFirmwareDescriptorToFirmwareHub(AddFirmwareDescriptorToFirmwareHubRequest) returns (google.protobuf.Empty) {}
+	rpc RemoveFirmwareDescriptorFromFirmwareHub(RemoveFirmwareDescriptorFromFirmwareHubRequest) returns (google.protobuf.Empty) {}
+	rpc GetDeviceFirmwareDescriptor(GetDeviceFirmwareDescriptorRequest) returns (GetDeviceFirmwareDescriptorResponse) {}
+	rpc SetDeviceFirmwareDescriptor(SetDeviceFirmwareDescriptorRequest) returns (google.protobuf.Empty) {}
+	rpc SyncDeviceFirmwareDescriptor(SyncDeviceFirmwareDescriptorRequest) returns (google.protobuf.Empty) {}
 
 	// internal device only
 	rpc ShowDevice(google.protobuf.Empty) returns (ShowDeviceResponse) {}
