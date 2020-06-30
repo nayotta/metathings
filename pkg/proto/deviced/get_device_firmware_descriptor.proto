@@ -11,5 +11,5 @@ message GetDeviceFirmwareDescriptorRequest {
 }
 
 message GetDeviceFirmwareDescriptorResponse {
-	OpFirmwareDescriptor firmware_descriptor = 1;
+	FirmwareDescriptor firmware_descriptor = 1;
 }
