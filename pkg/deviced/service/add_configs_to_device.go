@@ -53,7 +53,6 @@ func (self *MetathingsDevicedService) AddConfigsToDevice(ctx context.Context, re
 	}
 
 	logger.WithFields(log.Fields{
-		"device":  dev_id_str,
 		"configs": cfg_ids_expect,
 	}).Infof("add configs to device")
 

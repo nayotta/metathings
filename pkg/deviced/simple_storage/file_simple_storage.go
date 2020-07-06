@@ -9,6 +9,7 @@ import (
 	"os"
 	"path"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
 
@@ -204,6 +205,10 @@ func (fss *FileSimpleStorage) GetObject(x *Object) (y *Object, err error) {
 
 	fi, err := os.Stat(p)
 	if err != nil {
+		if os.IsNotExist(err) {
+			return nil, os.ErrNotExist
+		}
+
 		return
 	}
 
@@ -222,6 +227,10 @@ func (fss *FileSimpleStorage) GetObjectContent(obj *Object) (chan []byte, error)
 
 	f, err := os.Open(p)
 	if err != nil {
+		if os.IsNotExist(err) {
+			return nil, os.ErrNotExist
+		}
+
 		return nil, err
 	}
 
@@ -240,6 +249,24 @@ func (fss *FileSimpleStorage) GetObjectContent(obj *Object) (chan []byte, error)
 	}()
 
 	return ch, nil
+}
+
+func (fss *FileSimpleStorage) GetObjectContentSync(obj *Object) ([]byte, error) {
+	var sb strings.Builder
+	ch, err := fss.GetObjectContent(obj)
+	if err != nil {
+		return nil, err
+	}
+
+	for {
+		select {
+		case buf, ok := <-ch:
+			if !ok {
+				return []byte(sb.String()), nil
+			}
+			sb.Write(buf)
+		}
+	}
 }
 
 func (fss *FileSimpleStorage) list_objects(obj *Object, recursive bool, depth int) ([]*Object, error) {

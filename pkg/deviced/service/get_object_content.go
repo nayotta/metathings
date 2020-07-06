@@ -2,6 +2,7 @@ package metathings_deviced_service
 
 import (
 	"context"
+	"os"
 
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc/codes"
@@ -37,8 +38,14 @@ func (self *MetathingsDevicedService) GetObjectContent(ctx context.Context, req 
 
 	ch, err := self.simple_storage.GetObjectContent(obj_s)
 	if err != nil {
-		self.logger.WithError(err).Errorf("failed to get object content in simple storage")
-		return nil, status.Errorf(codes.Internal, err.Error())
+		switch err {
+		case os.ErrNotExist:
+			self.logger.WithError(err).Warningf("object not found")
+			return nil, status.Errorf(codes.NotFound, err.Error())
+		default:
+			self.logger.WithError(err).Errorf("failed to get object content in simple storage")
+			return nil, status.Errorf(codes.Internal, err.Error())
+		}
 	}
 
 	var contents []byte

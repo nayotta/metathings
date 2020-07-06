@@ -109,12 +109,16 @@ type FirmwareDescriptor struct {
 	CreatedAt time.Time
 	UpdatedAt time.Time
 
-	Name *string `gorm:"column:name"`
-
+	Name          *string `gorm:"column:name"`
 	FirmwareHubId *string `gorm:"column:firmware_hub_id"`
-	ConfigId      *string `gorm:"column:config_id"`
+	Descriptor    *string `gorm:"column:descriptor"`
+}
 
-	Config *Config `gorm:"-"`
+type DeviceFirmwareDescriptorMapping struct {
+	CreatedAt time.Time
+
+	DeviceId             *string `gorm:"column:device_id"`
+	FirmwareDescriptorId *string `gorm:"column:firmware_descriptor_id"`
 }
 
 type Storage interface {
@@ -161,10 +165,15 @@ type Storage interface {
 	PatchFirmwareHub(ctx context.Context, id string, fh *FirmwareHub) (*FirmwareHub, error)
 	GetFirmwareHub(ctx context.Context, id string) (*FirmwareHub, error)
 	ListFirmwareHubs(ctx context.Context, frm_hub *FirmwareHub) ([]*FirmwareHub, error)
-	AddDevicesToFirmwareHub(ctx context.Context, dev_ids []string, frm_hub_id string) error
-	RemoveDevicesFromFirmwareHub(ctx context.Context, dev_ids []string, frm_hub_id string) error
+	AddDeviceToFirmwareHub(ctx context.Context, frm_hub_id, dev_id string) error
+	RemoveDeviceFromFirmwareHub(ctx context.Context, frm_hub_id, dev_id string) error
+	RemoveAllDevicesInFirmwareHub(ctx context.Context, frm_hub_id string) error
 	CreateFirmwareDescriptor(ctx context.Context, frm_desc *FirmwareDescriptor) error
 	DeleteFirmwareDescriptor(ctx context.Context, frm_desc_id string) error
+	ListViewDevicesByFirmwareHubId(ctx context.Context, frm_hub_id string) ([]*Device, error)
+	SetDeviceFirmwareDescriptor(ctx context.Context, dev_id, desc_id string) error
+	UnsetDeviceFirmwareDescriptor(ctx context.Context, dev_id string) error
+	GetDeviceFirmwareDescriptor(ctx context.Context, dev_id string) (*FirmwareDescriptor, error)
 }
 
 func NewStorage(driver, uri string, args ...interface{}) (Storage, error) {

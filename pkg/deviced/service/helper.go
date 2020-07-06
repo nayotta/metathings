@@ -3,6 +3,7 @@ package metathings_deviced_service
 import (
 	"context"
 	"errors"
+	"strings"
 
 	"github.com/golang/protobuf/jsonpb"
 	"github.com/golang/protobuf/ptypes"
@@ -200,6 +201,62 @@ func copy_objects(xs []*simple_storage.Object) []*pb.Object {
 	return ys
 }
 
+func copy_firmware_descriptor(x *storage.FirmwareDescriptor) *pb.FirmwareDescriptor {
+	created_at, _ := ptypes.TimestampProto(x.CreatedAt)
+
+	var desc stpb.Struct
+	jsonpb.Unmarshal(strings.NewReader(*x.Descriptor), &desc)
+
+	y := &pb.FirmwareDescriptor{
+		Id:          *x.Id,
+		Name:        *x.Name,
+		CreatedAt:   created_at,
+		Descriptor_: &desc,
+	}
+
+	return y
+}
+
+func copy_firmware_descriptors(xs []*storage.FirmwareDescriptor) []*pb.FirmwareDescriptor {
+	var ys []*pb.FirmwareDescriptor
+
+	for _, x := range xs {
+		ys = append(ys, copy_firmware_descriptor(x))
+	}
+
+	return ys
+}
+
+func copy_firmware_hub(x *storage.FirmwareHub) *pb.FirmwareHub {
+	var devices []*pb.Device
+
+	for _, dev_s := range x.Devices {
+		devices = append(devices, &pb.Device{
+			Id: *dev_s.Id,
+		})
+	}
+
+	y := &pb.FirmwareHub{
+		Id:                  *x.Id,
+		Alias:               *x.Alias,
+		Description:         *x.Description,
+		Devices:             devices,
+		FirmwareDescriptors: copy_firmware_descriptors(x.FirmwareDescriptors),
+	}
+
+	return y
+}
+
+func copy_firmware_hubs(xs []*storage.FirmwareHub) []*pb.FirmwareHub {
+	var ys []*pb.FirmwareHub
+
+	for _, x := range xs {
+		ys = append(ys, copy_firmware_hub(x))
+	}
+
+	return ys
+}
+
 type descriptor_getter interface {
 	GetDescriptor_() *pb.OpDescriptor
 }
@@ -230,6 +287,14 @@ type flow_set_getter interface {
 
 type config_getter interface {
 	GetConfig() *pb.OpConfig
+}
+
+type firmware_hub_getter interface {
+	GetFirmwareHub() *pb.OpFirmwareHub
+}
+
+type firmware_descriptor_getter interface {
+	GetFirmwareDescriptor() *pb.OpFirmwareDescriptor
 }
 
 func ensure_get_descriptor_body(x descriptor_getter) error {
@@ -319,6 +384,15 @@ func ensure_get_config_id(x config_getter) error {
 	cfg := x.GetConfig()
 	if cfg.GetId() == nil {
 		return errors.New("config.id is empty")
+	}
+
+	return nil
+}
+
+func ensure_get_firmware_hub_id(x firmware_hub_getter) error {
+	fh := x.GetFirmwareHub()
+	if fh.GetId() == nil {
+		return errors.New("firmware_hub.id is empty")
 	}
 
 	return nil

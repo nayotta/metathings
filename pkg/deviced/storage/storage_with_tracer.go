@@ -258,18 +258,25 @@ func (s *TracedStorage) ListFirmwareHubs(ctx context.Context, frm_hub *FirmwareH
 	return s.Storage.ListFirmwareHubs(ctx, frm_hub)
 }
 
-func (s *TracedStorage) AddDevicesToFirmwareHub(ctx context.Context, dev_ids []string, frm_hub_id string) error {
-	span, ctx := s.TraceWrapper(ctx, "AddDevicesToFirmwareHub")
+func (s *TracedStorage) AddDeviceToFirmwareHub(ctx context.Context, frm_hub_id, dev_id string) error {
+	span, ctx := s.TraceWrapper(ctx, "AddDeviceToFirmwareHub")
 	defer span.Finish()
 
-	return s.Storage.AddDevicesToFirmwareHub(ctx, dev_ids, frm_hub_id)
+	return s.Storage.AddDeviceToFirmwareHub(ctx, frm_hub_id, dev_id)
 }
 
-func (s *TracedStorage) RemoveDevicesFromFirmwareHub(ctx context.Context, dev_ids []string, frm_hub_id string) error {
-	span, ctx := s.TraceWrapper(ctx, "RemoveDevicesFromFirmwareHub")
+func (s *TracedStorage) RemoveDevicesFromFirmwareHub(ctx context.Context, frm_hub_id, dev_id string) error {
+	span, ctx := s.TraceWrapper(ctx, "RemoveDeviceFromFirmwareHub")
 	defer span.Finish()
 
-	return s.Storage.RemoveDevicesFromFirmwareHub(ctx, dev_ids, frm_hub_id)
+	return s.Storage.RemoveDeviceFromFirmwareHub(ctx, frm_hub_id, dev_id)
+}
+
+func (s *TracedStorage) RemoveAllDevicesInFirmwareHub(ctx context.Context, frm_hub_id string) error {
+	span, ctx := s.TraceWrapper(ctx, "RemoveAllDevicesInFirmwareHub")
+	defer span.Finish()
+
+	return s.Storage.RemoveAllDevicesInFirmwareHub(ctx, frm_hub_id)
 }
 
 func (s *TracedStorage) CreateFirmwareDescriptor(ctx context.Context, frm_desc *FirmwareDescriptor) error {
@@ -284,6 +291,34 @@ func (s *TracedStorage) DeleteFirmwareDescriptor(ctx context.Context, frm_desc_i
 	defer span.Finish()
 
 	return s.Storage.DeleteFirmwareDescriptor(ctx, frm_desc_id)
+}
+
+func (s *TracedStorage) ListViewDevicesByFirmwareHubId(ctx context.Context, frm_hub_id string) ([]*Device, error) {
+	span, ctx := s.TraceWrapper(ctx, "ListViewDevicesByFirmwareHubId")
+	defer span.Finish()
+
+	return s.Storage.ListViewDevicesByFirmwareHubId(ctx, frm_hub_id)
+}
+
+func (s *TracedStorage) SetDeviceFirmwareDescriptor(ctx context.Context, dev_id, desc_id string) error {
+	span, ctx := s.TraceWrapper(ctx, "SetDeviceFirmwareDescriptor")
+	defer span.Finish()
+
+	return s.Storage.SetDeviceFirmwareDescriptor(ctx, dev_id, desc_id)
+}
+
+func (s *TracedStorage) UnsetDeviceFirmwareDescriptor(ctx context.Context, dev_id string) error {
+	span, ctx := s.TraceWrapper(ctx, "UnsetDeviceFirmwareDescriptor")
+	defer span.Finish()
+
+	return s.Storage.UnsetDeviceFirmwareDescriptor(ctx, dev_id)
+}
+
+func (s *TracedStorage) GetDeviceFirmwareDescriptor(ctx context.Context, dev_id string) (*FirmwareDescriptor, error) {
+	span, ctx := s.TraceWrapper(ctx, "GetDeviceFirmwareDescriptor")
+	defer span.Finish()
+
+	return s.Storage.GetDeviceFirmwareDescriptor(ctx, dev_id)
 }
 
 func NewTracedStorage(s Storage, getter opentracing_storage_helper.RootDBConnGetter) (Storage, error) {

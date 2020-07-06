@@ -3,6 +3,7 @@ package metathings_deviced_service
 import (
 	"context"
 
+	"github.com/golang/protobuf/ptypes/empty"
 	grpc_auth "github.com/grpc-ecosystem/go-grpc-middleware/auth"
 	"github.com/grpc-ecosystem/go-grpc-middleware/util/metautils"
 	log "github.com/sirupsen/logrus"
@@ -43,6 +44,7 @@ type MetathingsDevicedServiceOption struct {
 			AliveInterval int64
 		}
 	}
+	Domain string
 }
 
 type MetathingsDevicedService struct {
@@ -173,6 +175,22 @@ func (self *MetathingsDevicedService) offline_device(ctx context.Context, dev_id
 	}
 
 	return
+}
+
+func (self *MetathingsDevicedService) PatchFirmwareHub(context.Context, *pb.PatchFirmwareHubRequest) (*pb.PatchFirmwareHubResponse, error) {
+	panic("unimplemented")
+}
+
+func (self *MetathingsDevicedService) GetFirmwareHub(context.Context, *pb.GetFirmwareHubRequest) (*pb.GetFirmwareHubResponse, error) {
+	panic("unimplemented")
+}
+
+func (self *MetathingsDevicedService) ListFirmwareHubs(context.Context, *pb.ListFirmwareHubsRequest) (*pb.ListFirmwareHubsResponse, error) {
+	panic("unimplemented")
+}
+
+func (self *MetathingsDevicedService) SyncDeviceFirmwareDescriptor(context.Context, *pb.SyncDeviceFirmwareDescriptorRequest) (*empty.Empty, error) {
+	panic("unimplemented")
 }
 
 func (self *MetathingsDevicedService) IsIgnoreMethod(md *grpc_helper.MethodDescription) bool {
