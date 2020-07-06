@@ -7,13 +7,13 @@ import (
 	fmt "fmt"
 	math "math"
 	proto "github.com/golang/protobuf/proto"
+	_ "github.com/golang/protobuf/ptypes/wrappers"
+	_ "github.com/golang/protobuf/ptypes/any"
+	_ "github.com/golang/protobuf/ptypes/timestamp"
 	_ "github.com/golang/protobuf/ptypes/struct"
 	_ "github.com/nayotta/metathings/pkg/proto/identityd2"
 	_ "github.com/nayotta/metathings/pkg/proto/constant/state"
 	_ "github.com/nayotta/metathings/pkg/proto/constant/kind"
-	_ "github.com/golang/protobuf/ptypes/wrappers"
-	_ "github.com/golang/protobuf/ptypes/any"
-	_ "github.com/golang/protobuf/ptypes/timestamp"
 	github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
 )
 
@@ -539,9 +539,9 @@ func (this *OpFirmwareDescriptor) Validate() error {
 			return github_com_mwitkow_go_proto_validators.FieldError("CreatedAt", err)
 		}
 	}
-	if this.Config != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Config); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Config", err)
+	if this.Descriptor_ != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Descriptor_); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Descriptor_", err)
 		}
 	}
 	return nil
@@ -552,9 +552,9 @@ func (this *FirmwareDescriptor) Validate() error {
 			return github_com_mwitkow_go_proto_validators.FieldError("CreatedAt", err)
 		}
 	}
-	if this.Config != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Config); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Config", err)
+	if this.Descriptor_ != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Descriptor_); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Descriptor_", err)
 		}
 	}
 	return nil

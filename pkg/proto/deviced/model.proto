@@ -238,7 +238,7 @@ message OpFirmwareDescriptor {
 	google.protobuf.StringValue name = 2;
 	google.protobuf.Timestamp created_at = 5;
 
-	OpConfig config = 9;
+	google.protobuf.Struct descriptor = 10;
 }
 
 message FirmwareDescriptor {
@@ -246,5 +246,5 @@ message FirmwareDescriptor {
 	string name = 2;
 	google.protobuf.Timestamp created_at = 5;
 
-	Config config = 9;
+	google.protobuf.Struct descriptor = 10;
 }
