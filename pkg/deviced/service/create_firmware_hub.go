@@ -22,7 +22,7 @@ func (self *MetathingsDevicedService) ValidateCreateFirmwareHub(ctx context.Cont
 				return req, req
 			},
 		},
-		identityd_validator.Invokers{ensure_get_firmware_hub_id},
+		identityd_validator.Invokers{},
 	)
 }
 
@@ -45,6 +45,10 @@ func (self *MetathingsDevicedService) CreateFirmwareHub(ctx context.Context, req
 	})
 
 	fh_alias_str := fh.GetAlias().GetValue()
+	if fh_alias_str == "" {
+		fh_alias_str = fh_id_str
+	}
+
 	fh_description_str := fh.GetDescription().GetValue()
 
 	fh_s := &storage.FirmwareHub{

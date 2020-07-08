@@ -1138,8 +1138,13 @@ func (self *StorageImpl) GetFirmwareHub(ctx context.Context, id string) (*Firmwa
 	logger := self.logger.WithField("id", id)
 
 	if fh, err = self.get_firmware_hub(ctx, id); err != nil {
-		logger.WithError(err).Debugf("failed to get firmware hub")
-		return nil, err
+		if err == gorm.ErrRecordNotFound {
+			logger.WithError(err).Debugf("firmware hub not found")
+			return nil, RecordNotFound
+		} else {
+			logger.WithError(err).Debugf("failed to get firmware hub")
+			return nil, err
+		}
 	}
 
 	logger.Debugf("get firmware hub")
@@ -1301,13 +1306,13 @@ func (self *StorageImpl) GetDeviceFirmwareDescriptor(ctx context.Context, dev_id
 	var dfdm DeviceFirmwareDescriptorMapping
 	if err = self.GetDBConn(ctx).First(&dfdm, "device_id = ?", dev_id).Error; err != nil {
 		logger.WithError(err).Debugf("failed to get device firmware descriptor")
-		return nil, err
+		return nil, parse_error(err)
 	}
 
 	var fd *FirmwareDescriptor
 	if fd, err = self.get_firmware_descriptor(ctx, *dfdm.FirmwareDescriptorId); err != nil {
 		logger.WithError(err).Debugf("failed to get firmware descriptor")
-		return nil, err
+		return nil, parse_error(err)
 	}
 
 	logger.Debugf("get device firmware descriptor")

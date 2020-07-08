@@ -225,6 +225,30 @@ func (s *StorageImplTestSuite) TestGetDeviceFirmwareDescriptor() {
 	s.Equal(test_firmware_descriptor_descriptor, *fd.Descriptor)
 }
 
+func (s *StorageImplTestSuite) TestSetDeviceFirmwareDescriptor() {
+	err := s.stor.UnsetDeviceFirmwareDescriptor(s.ctx, test_device_id)
+	s.Require().Nil(err)
+
+	err = s.stor.CreateFirmwareDescriptor(s.ctx, test_firmware_descriptor2)
+	s.Require().Nil(err)
+
+	err = s.stor.SetDeviceFirmwareDescriptor(s.ctx, test_device_id, test_firmware_descriptor2_id)
+	s.Require().Nil(err)
+
+	desc, err := s.stor.GetDeviceFirmwareDescriptor(s.ctx, test_device_id)
+	s.Require().Nil(err)
+
+	s.Equal(test_firmware_descriptor2_id, *desc.Id)
+}
+
+func (s *StorageImplTestSuite) TestUnsetDeviceFirmwareDescriptor() {
+	err := s.stor.UnsetDeviceFirmwareDescriptor(s.ctx, test_device_id)
+	s.Require().Nil(err)
+
+	_, err = s.stor.GetDeviceFirmwareDescriptor(s.ctx, test_device_id)
+	s.Require().Equal(RecordNotFound, err)
+}
+
 func TestStorageImplTestSuite(t *testing.T) {
 	suite.Run(t, new(StorageImplTestSuite))
 }

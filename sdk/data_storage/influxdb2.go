@@ -21,7 +21,7 @@ type Influxdb2DataStorageOption struct {
 
 type Influxdb2DataStorage struct {
 	opt    *Influxdb2DataStorageOption
-	influx influxdb2.InfluxDBClient
+	influx influxdb2.Client
 	logger log.FieldLogger
 }
 

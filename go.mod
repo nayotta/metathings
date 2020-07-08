@@ -3,7 +3,6 @@ module github.com/nayotta/metathings
 go 1.14
 
 require (
-	9fans.net/go v0.0.2 // indirect
 	github.com/casbin/casbin-server v0.0.0-20200301012118-fcbb32cf841d
 	github.com/codahale/hdrhistogram v0.0.0-20161010025455-3a0bb77429bd // indirect
 	github.com/eclipse/paho.mqtt.golang v1.2.0
@@ -17,11 +16,9 @@ require (
 	github.com/jhump/protoreflect v1.7.0
 	github.com/jinzhu/gorm v1.9.14
 	github.com/mwitkow/go-proto-validators v0.3.0
-	github.com/nsf/gocode v0.0.0-20190302080247-5bee97b48836 // indirect
 	github.com/opentracing-contrib/go-gorilla v0.0.0-20190110000444-ced666783644
 	github.com/opentracing-contrib/go-stdlib v1.0.0
 	github.com/opentracing/opentracing-go v1.1.0
-	github.com/rogpeppe/godef v1.1.2 // indirect
 	github.com/satori/go.uuid v1.2.0
 	github.com/sirupsen/logrus v1.6.0
 	github.com/smacker/opentracing-gorm v0.0.0-20181207094635-cd4974441042

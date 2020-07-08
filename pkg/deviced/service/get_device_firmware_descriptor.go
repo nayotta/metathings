@@ -10,6 +10,7 @@ import (
 	"google.golang.org/grpc/status"
 
 	simple_storage "github.com/nayotta/metathings/pkg/deviced/simple_storage"
+	storage "github.com/nayotta/metathings/pkg/deviced/storage"
 	pb "github.com/nayotta/metathings/pkg/proto/deviced"
 )
 
@@ -26,13 +27,26 @@ func (self *MetathingsDevicedService) GetDeviceFirmwareDescriptor(ctx context.Co
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
+	var fd_s_desc_str string
 	fd_s, err := self.storage.GetDeviceFirmwareDescriptor(ctx, dev_id_str)
 	if err != nil {
-		logger.WithError(err).Errorf("failed to get device firmware descriptor in storage")
-		return nil, status.Errorf(codes.Internal, err.Error())
+		if err != storage.RecordNotFound {
+			logger.WithError(err).Errorf("failed to get device firmware descriptor in storage")
+			return nil, status.Errorf(codes.Internal, err.Error())
+		} else {
+			fd_name_str := "unknown"
+			fd_id_str := "unknown"
+			fd_s = &storage.FirmwareDescriptor{
+				Id:   &fd_id_str,
+				Name: &fd_name_str,
+			}
+			fd_s_desc_str = "{}"
+		}
+	} else {
+		fd_s_desc_str = *fd_s.Descriptor
 	}
 
-	fdsx, err := objx.FromJSON(*fd_s.Descriptor)
+	fdsx, err := objx.FromJSON(fd_s_desc_str)
 	if err != nil {
 		logger.WithError(err).Errorf("failed to parse device firmware descriptor")
 		return nil, status.Errorf(codes.Internal, err.Error())
@@ -52,9 +66,19 @@ func (self *MetathingsDevicedService) GetDeviceFirmwareDescriptor(ctx context.Co
 
 		dev_cur_ver = []byte("unknown")
 	}
+
 	fdx.Set("device.version.current", string(dev_cur_ver))
+
 	if val := fdsx.Get("device.version.next").String(); val != "" && val != string(dev_cur_ver) {
 		fdx.Set("device.version.next", val)
+
+		if val = fdsx.Get("device.sha256.next").String(); val != "" {
+			fdx.Set("device.sha256.next", val)
+		}
+
+		if val = fdsx.Get("device.uri.next").String(); val != "" {
+			fdx.Set("device.uri.next", val)
+		}
 	}
 
 	for _, mdl_s := range dev_s.Modules {
@@ -73,9 +97,18 @@ func (self *MetathingsDevicedService) GetDeviceFirmwareDescriptor(ctx context.Co
 			mdl_cur_ver = []byte("unknown")
 		}
 
-		fdx.Set(fmt.Sprintf("modules.%s.version.current", *mdl_s.Name), mdl_cur_ver)
+		fdx.Set(fmt.Sprintf("modules.%s.version.current", *mdl_s.Name), string(mdl_cur_ver))
+
 		if val := fdsx.Get(fmt.Sprintf("modules.%s.version.next", *mdl_s.Name)).String(); val != "" && val != string(dev_cur_ver) {
 			fdx.Set(fmt.Sprintf("modules.%s.version.next", *mdl_s.Name), val)
+
+			if val = fdsx.Get(fmt.Sprintf("modules.%s.sha256.next", *mdl_s.Name)).String(); val != "" {
+				fdx.Set(fmt.Sprintf("modules.%s.sha256.next", *mdl_s.Name), val)
+			}
+
+			if val = fdsx.Get(fmt.Sprintf("modules.%s.uri.next", *mdl_s.Name)).String(); val != "" {
+				fdx.Set(fmt.Sprintf("modules.%s.uri.next", *mdl_s.Name), val)
+			}
 		}
 	}
 

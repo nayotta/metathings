@@ -5,8 +5,6 @@ import (
 	"os"
 
 	log "github.com/sirupsen/logrus"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 
 	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
 	identityd_validator "github.com/nayotta/metathings/pkg/identityd2/validator"
@@ -41,11 +39,10 @@ func (self *MetathingsDevicedService) GetObjectContent(ctx context.Context, req 
 		switch err {
 		case os.ErrNotExist:
 			self.logger.WithError(err).Warningf("object not found")
-			return nil, status.Errorf(codes.NotFound, err.Error())
 		default:
 			self.logger.WithError(err).Errorf("failed to get object content in simple storage")
-			return nil, status.Errorf(codes.Internal, err.Error())
 		}
+		return nil, self.ParseError(err)
 	}
 
 	var contents []byte

@@ -42,7 +42,7 @@ func (self *MetathingsDevicedService) GetObject(ctx context.Context, req *pb.Get
 		case os.ErrNotExist:
 			self.logger.WithError(err).Warningf("object not found")
 			return nil, status.Errorf(codes.NotFound, err.Error())
-		defalut:
+		default:
 			self.logger.WithError(err).Errorf("failed to get object in simple storage")
 			return nil, status.Errorf(codes.Internal, err.Error())
 		}

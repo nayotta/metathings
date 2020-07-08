@@ -27,6 +27,7 @@ type MetathingsDeviceService interface {
 type MetathingsDeviceServiceOption struct {
 	ModuleAliveTimeout   time.Duration
 	HeartbeatInterval    time.Duration
+	HeartbeatMaxRetry    int
 	MaxReconnectInterval time.Duration
 	MinReconnectInterval time.Duration
 	PingInterval         time.Duration
@@ -49,6 +50,8 @@ type MetathingsDeviceServiceImpl struct {
 	conn_cfn         client_helper.CloseFn
 
 	startup_session int32
+
+	stats_heartbeat_fails int
 }
 
 var (

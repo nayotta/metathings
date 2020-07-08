@@ -49,6 +49,7 @@ type MetathingsDevicedServiceOption struct {
 
 type MetathingsDevicedService struct {
 	grpc_auth.ServiceAuthFuncOverride
+	*grpc_helper.ErrorParser
 	tknr            token_helper.Tokener
 	cli_fty         *client_helper.ClientFactory
 	opt             *MetathingsDevicedServiceOption
@@ -177,18 +178,6 @@ func (self *MetathingsDevicedService) offline_device(ctx context.Context, dev_id
 	return
 }
 
-func (self *MetathingsDevicedService) PatchFirmwareHub(context.Context, *pb.PatchFirmwareHubRequest) (*pb.PatchFirmwareHubResponse, error) {
-	panic("unimplemented")
-}
-
-func (self *MetathingsDevicedService) GetFirmwareHub(context.Context, *pb.GetFirmwareHubRequest) (*pb.GetFirmwareHubResponse, error) {
-	panic("unimplemented")
-}
-
-func (self *MetathingsDevicedService) ListFirmwareHubs(context.Context, *pb.ListFirmwareHubsRequest) (*pb.ListFirmwareHubsResponse, error) {
-	panic("unimplemented")
-}
-
 func (self *MetathingsDevicedService) SyncDeviceFirmwareDescriptor(context.Context, *pb.SyncDeviceFirmwareDescriptorRequest) (*empty.Empty, error) {
 	panic("unimplemented")
 }
@@ -215,6 +204,7 @@ func NewMetathingsDevicedService(
 	data_launcher evaluatord_sdk.DataLauncher,
 ) (pb.DevicedServiceServer, error) {
 	srv := &MetathingsDevicedService{
+		ErrorParser:     grpc_helper.NewErrorParser(em),
 		opt:             opt,
 		logger:          logger,
 		storage:         storage,

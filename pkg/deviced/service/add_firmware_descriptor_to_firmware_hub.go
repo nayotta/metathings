@@ -44,8 +44,8 @@ func (self *MetathingsDevicedService) AddFirmwareDescriptorToFirmwareHub(ctx con
 	desc_name_str := desc.GetName().GetValue()
 
 	logger := self.logger.WithFields(log.Fields{
-		"firmware_hub":             fh_id_str,
-		"firmware_descriptor.name": desc_name_str,
+		"firmware_hub":        fh_id_str,
+		"firmware_descriptor": desc_name_str,
 	})
 
 	desc_desc := desc.GetDescriptor_()
