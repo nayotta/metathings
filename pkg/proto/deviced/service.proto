@@ -63,6 +63,7 @@ import "set_device_firmware_descriptor.proto";
 import "sync_device_firmware_descriptor.proto";
 
 import "show_device.proto";
+import "show_device_firmware_descriptor.proto";
 import "connect.proto";
 import "heartbeat.proto";
 
@@ -133,6 +134,7 @@ service DevicedService {
 
 	// internal device only
 	rpc ShowDevice(google.protobuf.Empty) returns (ShowDeviceResponse) {}
+  rpc ShowDeviceFirmwareDescriptor(google.protobuf.Empty) returns (ShowDeviceFirmwareDescriptorResponse) {}
 	rpc Connect(stream ConnectResponse) returns (stream ConnectRequest) {}
 	rpc Heartbeat(HeartbeatRequest) returns (google.protobuf.Empty) {}
 }
