@@ -32,6 +32,33 @@ func (self *MetathingsDevicedService) AuthorizeAddFirmwareDescriptorToFirmwareHu
 	return self.authorizer.Authorize(ctx, in.(*pb.AddFirmwareDescriptorToFirmwareHubRequest).GetFirmwareHub().GetId().GetValue(), "deviced:add_firmware_descriptor_to_firmware_hub")
 }
 
+/*
+ * Descriptor Format:
+ *
+ * device.sha256.next:
+ * device.uri.next:
+ * device.version.next:
+ * modules.<name>.sha256.next:
+ * modules.<name>.uri.next:
+ * modules.<name>.version.next:
+ *
+ * Example:
+ *
+ * {
+ *   "device": {
+ *     "sha256": { "next": "8484848484848484848484848484848484848484848484848484848484848484" },
+ *     "uri": { "next": "http://example.com/firmwares/device/device/v1_0_0/device_v1_0_0.bin" },
+ *     "version": { "next": "v1.0.0" }
+ *   },
+ *   "modules": {
+ *     "answer42": {
+ *       "sha256": { "next": "4242424242424242424242424242424242424242424242424242424242424242" },
+ *       "uri": { "next": "http://example.com/firmwares/modules/answer42/v1_0_0/answeer_v1_0_0.bin" },
+ *       "version": { "next": "v1.0.0" }
+ *     }
+ *   }
+ * }
+ */
 func (self *MetathingsDevicedService) AddFirmwareDescriptorToFirmwareHub(ctx context.Context, req *pb.AddFirmwareDescriptorToFirmwareHubRequest) (*empty.Empty, error) {
 	var err error
 

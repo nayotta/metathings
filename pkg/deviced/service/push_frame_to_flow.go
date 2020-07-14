@@ -116,7 +116,7 @@ match_flow_loop:
 	flwst_frm_dev := &pb.Device{
 		Id: dev_id,
 		Flows: []*pb.Flow{
-			&pb.Flow{Name: flw_name_r},
+			{Name: flw_name_r},
 		},
 	}
 
@@ -176,7 +176,7 @@ match_flow_loop:
 				return status.Errorf(codes.Internal, err.Error())
 			}
 
-			go func() {
+			go func(fs flow.FlowSet) {
 				if self.data_launcher == nil {
 					return
 				}
@@ -189,7 +189,7 @@ match_flow_loop:
 					evltrsdk_dat); err != nil {
 					logger.WithError(err).Warningf("failed to launch data")
 				}
-			}()
+			}(fs)
 		}
 
 		if push_ack {

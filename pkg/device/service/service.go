@@ -9,16 +9,20 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	afo_helper "github.com/nayotta/metathings/pkg/common/auth_func_overrider"
+	"github.com/nayotta/metathings/pkg/common/binary_synchronizer"
+	bin_sync "github.com/nayotta/metathings/pkg/common/binary_synchronizer"
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
 	fx_helper "github.com/nayotta/metathings/pkg/common/fx"
 	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
 	session_helper "github.com/nayotta/metathings/pkg/common/session"
 	token_helper "github.com/nayotta/metathings/pkg/common/token"
+	version_helper "github.com/nayotta/metathings/pkg/common/version"
 	pb "github.com/nayotta/metathings/pkg/proto/device"
 	deviced_pb "github.com/nayotta/metathings/pkg/proto/deviced"
 )
 
 type MetathingsDeviceService interface {
+	version_helper.Versioner
 	pb.DeviceServiceServer
 	Start() error
 	Stop() error
@@ -35,11 +39,13 @@ type MetathingsDeviceServiceOption struct {
 
 type MetathingsDeviceServiceImpl struct {
 	grpc_auth.ServiceAuthFuncOverride
+	version_helper.Versioner
 	tknr       token_helper.Tokener
 	cli_fty    *client_helper.ClientFactory
 	logger     log.FieldLogger
 	opt        *MetathingsDeviceServiceOption
 	app_getter *fx_helper.FxAppGetter
+	bs         bin_sync.BinarySynchronizer
 
 	info             *deviced_pb.Device
 	mdl_db           ModuleDatabase
@@ -79,14 +85,18 @@ func (self *MetathingsDeviceServiceImpl) connection_stream() deviced_pb.DevicedS
 }
 
 func NewMetathingsDeviceService(
+	ver version_helper.Versioner,
 	tknr token_helper.Tokener,
 	cli_fty *client_helper.ClientFactory,
 	logger log.FieldLogger,
 	tkvdr token_helper.TokenValidator,
 	opt *MetathingsDeviceServiceOption,
 	app_getter *fx_helper.FxAppGetter,
+	bs binary_synchronizer.BinarySynchronizer,
 ) (MetathingsDeviceService, error) {
 	srv := &MetathingsDeviceServiceImpl{
+		Versioner:        ver,
+		bs:               bs,
 		tknr:             tknr,
 		cli_fty:          cli_fty,
 		logger:           logger,

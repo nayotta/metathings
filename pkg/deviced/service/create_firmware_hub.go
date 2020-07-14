@@ -3,9 +3,6 @@ package metathings_deviced_service
 import (
 	"context"
 
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
-
 	id_helper "github.com/nayotta/metathings/pkg/common/id"
 	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
 	storage "github.com/nayotta/metathings/pkg/deviced/storage"
@@ -59,7 +56,7 @@ func (self *MetathingsDevicedService) CreateFirmwareHub(ctx context.Context, req
 
 	if fh_s, err = self.storage.CreateFirmwareHub(ctx, fh_s); err != nil {
 		logger.WithError(err).Errorf("failed to create firmware hub in storage")
-		return nil, status.Errorf(codes.Internal, err.Error())
+		return nil, self.ParseError(err)
 	}
 
 	res := &pb.CreateFirmwareHubResponse{

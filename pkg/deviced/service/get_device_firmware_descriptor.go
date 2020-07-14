@@ -14,21 +14,17 @@ import (
 	pb "github.com/nayotta/metathings/pkg/proto/deviced"
 )
 
-func (self *MetathingsDevicedService) GetDeviceFirmwareDescriptor(ctx context.Context, req *pb.GetDeviceFirmwareDescriptorRequest) (*pb.GetDeviceFirmwareDescriptorResponse, error) {
-	var err error
-
-	dev := req.GetDevice()
-	dev_id_str := dev.GetId().GetValue()
+func (self *MetathingsDevicedService) get_device_firmware_descriptor(ctx context.Context, dev_id_str string) (fd_s *storage.FirmwareDescriptor, error error) {
 	logger := self.logger.WithField("device", dev_id_str)
 
 	dev_s, err := self.storage.GetDevice(ctx, dev_id_str)
 	if err != nil {
 		logger.WithError(err).Errorf("failed to get device in storage")
-		return nil, status.Errorf(codes.Internal, err.Error())
+		return nil, self.ParseError(err)
 	}
 
 	var fd_s_desc_str string
-	fd_s, err := self.storage.GetDeviceFirmwareDescriptor(ctx, dev_id_str)
+	fd_s, err = self.storage.GetDeviceFirmwareDescriptor(ctx, dev_id_str)
 	if err != nil {
 		if err != storage.RecordNotFound {
 			logger.WithError(err).Errorf("failed to get device firmware descriptor in storage")
@@ -49,7 +45,7 @@ func (self *MetathingsDevicedService) GetDeviceFirmwareDescriptor(ctx context.Co
 	fdsx, err := objx.FromJSON(fd_s_desc_str)
 	if err != nil {
 		logger.WithError(err).Errorf("failed to parse device firmware descriptor")
-		return nil, status.Errorf(codes.Internal, err.Error())
+		return nil, self.ParseError(err)
 	}
 
 	fdx := objx.New(map[string]interface{}{})
@@ -61,7 +57,7 @@ func (self *MetathingsDevicedService) GetDeviceFirmwareDescriptor(ctx context.Co
 	if err != nil {
 		if err != os.ErrNotExist {
 			logger.WithError(err).Errorf("failed to get current device version")
-			return nil, status.Errorf(codes.Internal, err.Error())
+			return nil, self.ParseError(err)
 		}
 
 		dev_cur_ver = []byte("unknown")
@@ -91,7 +87,7 @@ func (self *MetathingsDevicedService) GetDeviceFirmwareDescriptor(ctx context.Co
 		if err != nil {
 			if err != os.ErrNotExist {
 				logger.WithError(err).Errorf("failed to get current module version")
-				return nil, status.Errorf(codes.Internal, err.Error())
+				return nil, self.ParseError(err)
 			}
 
 			mdl_cur_ver = []byte("unknown")
@@ -115,10 +111,26 @@ func (self *MetathingsDevicedService) GetDeviceFirmwareDescriptor(ctx context.Co
 	var buf string
 	if buf, err = fdx.JSON(); err != nil {
 		logger.WithError(err).Errorf("failed to parse firmware descriptor map to json string")
-		return nil, status.Errorf(codes.Internal, err.Error())
+		return nil, self.ParseError(err)
 	}
 
 	fd_s.Descriptor = &buf
+
+	return fd_s, nil
+}
+
+func (self *MetathingsDevicedService) GetDeviceFirmwareDescriptor(ctx context.Context, req *pb.GetDeviceFirmwareDescriptorRequest) (*pb.GetDeviceFirmwareDescriptorResponse, error) {
+	var err error
+
+	dev := req.GetDevice()
+	dev_id_str := dev.GetId().GetValue()
+	logger := self.logger.WithField("device", dev_id_str)
+
+	fd_s, err := self.get_device_firmware_descriptor(ctx, dev_id_str)
+	if err != nil {
+		return nil, err
+	}
+
 	res := &pb.GetDeviceFirmwareDescriptorResponse{
 		FirmwareDescriptor: copy_firmware_descriptor(fd_s),
 	}

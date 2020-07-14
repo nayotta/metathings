@@ -3,9 +3,6 @@ package metathings_deviced_service
 import (
 	"context"
 
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
-
 	storage "github.com/nayotta/metathings/pkg/deviced/storage"
 	pb "github.com/nayotta/metathings/pkg/proto/deviced"
 )
@@ -32,7 +29,7 @@ func (self *MetathingsDevicedService) ListFirmwareHubs(ctx context.Context, req 
 
 	if frm_hubs_s, err = self.storage.ListFirmwareHubs(ctx, frm_hub_s); err != nil {
 		logger.WithError(err).Errorf("failed to list firmware hubs in storage")
-		return nil, status.Errorf(codes.Internal, err.Error())
+		return nil, self.ParseError(err)
 	}
 
 	res := &pb.ListFirmwareHubsResponse{

@@ -3,7 +3,6 @@ package metathings_deviced_service
 import (
 	"context"
 
-	"github.com/golang/protobuf/ptypes/empty"
 	grpc_auth "github.com/grpc-ecosystem/go-grpc-middleware/auth"
 	"github.com/grpc-ecosystem/go-grpc-middleware/util/metautils"
 	log "github.com/sirupsen/logrus"
@@ -67,10 +66,8 @@ type MetathingsDevicedService struct {
 	data_launcher   evaluatord_sdk.DataLauncher
 }
 
-func (self *MetathingsDevicedService) get_device_by_context(ctx context.Context) (*storage.Device, error) {
+func (self *MetathingsDevicedService) get_device_id_from_context(ctx context.Context) string {
 	var tkn *identityd_pb.Token
-	var dev_s *storage.Device
-	var err error
 
 	// try to get device id from context
 	dev_id := metautils.ExtractIncoming(ctx).Get("MT-Device")
@@ -79,6 +76,14 @@ func (self *MetathingsDevicedService) get_device_by_context(ctx context.Context)
 		dev_id = tkn.Entity.Id
 	}
 
+	return dev_id
+}
+
+func (self *MetathingsDevicedService) get_device_by_context(ctx context.Context) (*storage.Device, error) {
+	var dev_s *storage.Device
+	var err error
+
+	dev_id := self.get_device_id_from_context(ctx)
 	if dev_s, err = self.storage.GetDevice(ctx, dev_id); err != nil {
 		return nil, err
 	}
@@ -176,10 +181,6 @@ func (self *MetathingsDevicedService) offline_device(ctx context.Context, dev_id
 	}
 
 	return
-}
-
-func (self *MetathingsDevicedService) SyncDeviceFirmwareDescriptor(context.Context, *pb.SyncDeviceFirmwareDescriptorRequest) (*empty.Empty, error) {
-	panic("unimplemented")
 }
 
 func (self *MetathingsDevicedService) IsIgnoreMethod(md *grpc_helper.MethodDescription) bool {

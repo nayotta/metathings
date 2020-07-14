@@ -5,8 +5,6 @@ import (
 
 	"github.com/golang/protobuf/ptypes/empty"
 	log "github.com/sirupsen/logrus"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 
 	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
 	identityd_validator "github.com/nayotta/metathings/pkg/identityd2/validator"
@@ -39,9 +37,14 @@ func (self *MetathingsDevicedService) SetDeviceFirmwareDescriptor(ctx context.Co
 		"firmware_descriptor": desc_id_str,
 	})
 
+	if err = self.storage.UnsetDeviceFirmwareDescriptor(ctx, dev_id_str); err != nil {
+		logger.WithError(err).Errorf("failed to cleanup device firmware descriptor")
+		return nil, self.ParseError(err)
+	}
+
 	if err = self.storage.SetDeviceFirmwareDescriptor(ctx, dev_id_str, desc_id_str); err != nil {
 		logger.WithError(err).Errorf("failed to set device firmware descriptor in storage")
-		return nil, status.Errorf(codes.Internal, err.Error())
+		return nil, self.ParseError(err)
 	}
 
 	logger.Infof("set device firmware descriptor")

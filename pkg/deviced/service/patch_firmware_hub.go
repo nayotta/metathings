@@ -3,9 +3,6 @@ package metathings_deviced_service
 import (
 	"context"
 
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
-
 	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
 	storage "github.com/nayotta/metathings/pkg/deviced/storage"
 	identityd_validator "github.com/nayotta/metathings/pkg/identityd2/validator"
@@ -46,7 +43,7 @@ func (self *MetathingsDevicedService) PatchFirmwareHub(ctx context.Context, req 
 
 	if frm_hub_s, err = self.storage.PatchFirmwareHub(ctx, frm_hub_id_str, frm_hub_s); err != nil {
 		logger.WithError(err).Errorf("failed to patch firmware hub in storage")
-		return nil, status.Errorf(codes.Internal, err.Error())
+		return nil, self.ParseError(err)
 	}
 
 	res := &pb.PatchFirmwareHubResponse{

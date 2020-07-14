@@ -5,8 +5,6 @@ import (
 
 	"github.com/golang/protobuf/ptypes/empty"
 	log "github.com/sirupsen/logrus"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 
 	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
 	storage "github.com/nayotta/metathings/pkg/deviced/storage"
@@ -45,7 +43,7 @@ func (self *MetathingsDevicedService) AddDevicesToFirmwareHub(ctx context.Contex
 
 	if devs_s, err = self.storage.ListViewDevicesByFirmwareHubId(ctx, fh_id_str); err != nil {
 		logger.WithError(err).Errorf("failed to list view devices by firmware hub id")
-		return nil, status.Errorf(codes.Internal, err.Error())
+		return nil, self.ParseError(err)
 	}
 
 	var dev_ids_expect []string
@@ -61,7 +59,7 @@ func (self *MetathingsDevicedService) AddDevicesToFirmwareHub(ctx context.Contex
 		if !exists {
 			if err = self.storage.AddDeviceToFirmwareHub(ctx, fh_id_str, dev_id_str); err != nil {
 				logger.WithError(err).Errorf("failed to add device to device in storage")
-				return nil, status.Errorf(codes.Internal, err.Error())
+				return nil, self.ParseError(err)
 			}
 			dev_ids_expect = append(dev_ids_expect, dev_id_str)
 		}

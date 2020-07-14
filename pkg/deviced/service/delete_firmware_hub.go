@@ -5,8 +5,6 @@ import (
 
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/golang/protobuf/ptypes/wrappers"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 
 	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
 	storage "github.com/nayotta/metathings/pkg/deviced/storage"
@@ -41,12 +39,12 @@ func (self *MetathingsDevicedService) DeleteFirmwareHub(ctx context.Context, req
 
 	if fh, err = self.storage.GetFirmwareHub(ctx, fh_id_str); err != nil {
 		logger.WithError(err).Errorf("failed to get firmware hub in storage")
-		return nil, status.Errorf(codes.Internal, err.Error())
+		return nil, self.ParseError(err)
 	}
 
 	if err = self.storage.RemoveAllDevicesInFirmwareHub(ctx, fh_id_str); err != nil {
 		logger.WithError(err).Errorf("failed to remove all devices in firmware hub in storage")
-		return nil, status.Errorf(codes.Internal, err.Error())
+		return nil, self.ParseError(err)
 	}
 
 	for _, frm_desc := range fh.FirmwareDescriptors {
@@ -64,7 +62,7 @@ func (self *MetathingsDevicedService) DeleteFirmwareHub(ctx context.Context, req
 
 	if err = self.storage.DeleteFirmwareHub(ctx, fh_id_str); err != nil {
 		logger.WithError(err).Errorf("failed to delete firmware hub in storage")
-		return nil, status.Errorf(codes.Internal, err.Error())
+		return nil, self.ParseError(err)
 	}
 
 	logger.Infof("delete firmware hub")

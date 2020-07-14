@@ -81,7 +81,7 @@ func (o *WebhookServiceOption) GetWebhook(v string) WebhookOptioner {
 
 func (o *WebhookServiceOption) Keys() []string {
 	ks := []string{}
-	for k, _ := range o.WebhookService {
+	for k := range o.WebhookService {
 		ks = append(ks, k)
 	}
 	return ks
