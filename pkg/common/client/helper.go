@@ -142,7 +142,7 @@ func (f *ClientFactory) NewDeviceServiceClient(opts ...grpc.DialOption) (device_
 	return device_pb.NewDeviceServiceClient(conn), conn.Close, nil
 }
 
-func (f *ClientFactory) NewModuleSerivceClient(opts ...grpc.DialOption) (component_pb.ModuleServiceClient, CloseFn, error) {
+func (f *ClientFactory) NewModuleServiceClient(opts ...grpc.DialOption) (component_pb.ModuleServiceClient, CloseFn, error) {
 	conn, err := f.NewConnection(MODULE_CONFIG, opts...)
 	if err != nil {
 		return nil, nil, err

@@ -40,6 +40,7 @@ type MetathingsDeviceServiceOption struct {
 type MetathingsDeviceServiceImpl struct {
 	grpc_auth.ServiceAuthFuncOverride
 	version_helper.Versioner
+	*grpc_helper.ErrorParser
 	tknr       token_helper.Tokener
 	cli_fty    *client_helper.ClientFactory
 	logger     log.FieldLogger
@@ -84,6 +85,16 @@ func (self *MetathingsDeviceServiceImpl) connection_stream() deviced_pb.DevicedS
 	return self.conn_stm
 }
 
+func (self *MetathingsDeviceServiceImpl) get_module_info(id string) (*deviced_pb.Module, error) {
+	for _, m := range self.info.Modules {
+		if m.Id == id {
+			return m, nil
+		}
+	}
+
+	return nil, ErrModuleNotFound
+}
+
 func NewMetathingsDeviceService(
 	ver version_helper.Versioner,
 	tknr token_helper.Tokener,
@@ -95,6 +106,7 @@ func NewMetathingsDeviceService(
 	bs binary_synchronizer.BinarySynchronizer,
 ) (MetathingsDeviceService, error) {
 	srv := &MetathingsDeviceServiceImpl{
+		ErrorParser:      grpc_helper.NewErrorParser(em),
 		Versioner:        ver,
 		bs:               bs,
 		tknr:             tknr,

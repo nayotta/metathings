@@ -11,10 +11,12 @@ import (
 	"sync"
 	"time"
 
-	log_helper "github.com/nayotta/metathings/pkg/common/log"
-	deviced_pb "github.com/nayotta/metathings/pkg/proto/deviced"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/pflag"
+
+	log_helper "github.com/nayotta/metathings/pkg/common/log"
+	version_helper "github.com/nayotta/metathings/pkg/common/version"
+	deviced_pb "github.com/nayotta/metathings/pkg/proto/deviced"
 )
 
 type ModuleServiceLookuper interface {
@@ -35,6 +37,8 @@ type ModuleOption struct {
 }
 
 type Module struct {
+	version_helper.Versioner
+
 	name_once *sync.Once
 	name      string
 
@@ -305,10 +309,16 @@ func (m *Module) Launch() error {
 
 func NewModule(name string, target interface{}) (*Module, error) {
 	return &Module{
+		Versioner: version_helper.NewVersioner(version_str),
 		name_once: new(sync.Once),
-
-		tgt:   target,
-		opt:   &ModuleOption{},
-		flags: pflag.NewFlagSet(name, pflag.ExitOnError),
+		tgt:       target,
+		opt:       &ModuleOption{},
+		flags:     pflag.NewFlagSet(name, pflag.ExitOnError),
 	}, nil
+}
+
+var version_str string
+
+func SetVersion(v string) {
+	version_str = v
 }
