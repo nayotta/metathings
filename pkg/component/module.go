@@ -310,12 +310,12 @@ func (m *Module) Launch() error {
 
 func NewDefaultModuleOption() objx.Map {
 	return objx.New(map[string]interface{}{
-		"version", "unknown",
+		"version": "unknown",
 	})
 
 }
 
-func NewModule(name string, target interface{}, opts ...ModuleOption) (*Module, error) {
+func NewModule(name string, target interface{}, opts ...NewModuleOption) (*Module, error) {
 	o := NewDefaultModuleOption()
 
 	for _, opt := range opts {
