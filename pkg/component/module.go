@@ -13,6 +13,7 @@ import (
 
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/pflag"
+	"github.com/stretchr/objx"
 
 	log_helper "github.com/nayotta/metathings/pkg/common/log"
 	version_helper "github.com/nayotta/metathings/pkg/common/version"
@@ -307,18 +308,27 @@ func (m *Module) Launch() error {
 	return m.Serve()
 }
 
-func NewModule(name string, target interface{}) (*Module, error) {
+func NewDefaultModuleOption() objx.Map {
+	return objx.New(map[string]interface{}{
+		"version", "unknown",
+	})
+
+}
+
+func NewModule(name string, target interface{}, opts ...ModuleOption) (*Module, error) {
+	o := NewDefaultModuleOption()
+
+	for _, opt := range opts {
+		opt(o)
+	}
+
+	ver := o.Get("version").String()
+
 	return &Module{
-		Versioner: version_helper.NewVersioner(version_str)(),
+		Versioner: version_helper.NewVersioner(ver)(),
 		name_once: new(sync.Once),
 		tgt:       target,
 		opt:       &ModuleOption{},
 		flags:     pflag.NewFlagSet(name, pflag.ExitOnError),
 	}, nil
-}
-
-var version_str string
-
-func SetVersion(v string) {
-	version_str = v
 }
