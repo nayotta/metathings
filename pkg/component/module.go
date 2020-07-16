@@ -309,7 +309,7 @@ func (m *Module) Launch() error {
 
 func NewModule(name string, target interface{}) (*Module, error) {
 	return &Module{
-		Versioner: version_helper.NewVersioner(version_str),
+		Versioner: version_helper.NewVersioner(version_str)(),
 		name_once: new(sync.Once),
 		tgt:       target,
 		opt:       &ModuleOption{},
