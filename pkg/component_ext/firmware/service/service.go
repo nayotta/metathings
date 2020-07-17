@@ -87,7 +87,14 @@ func (svc *ComponentExtFirmwareService) do_sync_firmware(uri, sha256sum string) 
 		return err
 	}
 
-	dst := fmt.Sprintf("%v.%v", filepath.Base(src), time.Now().Unix())
+	var postfix string
+	if len(sha256sum) > 12 {
+		postfix = sha256sum[:12]
+	} else {
+		postfix = fmt.Sprintf("%d", time.Now().Unix())
+	}
+
+	dst := fmt.Sprintf("%v.%v", filepath.Base(src), postfix)
 	if err = svc.bs.Sync(svc.module.Kernel().Context(), src, dst, uri, sha256sum); err != nil {
 		logger.WithError(err).Debugf("failed to sync firmware")
 		return err

@@ -2,6 +2,7 @@ package metathings_component
 
 import (
 	"context"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"os"
@@ -171,6 +172,10 @@ func (m *Module) init_server() error {
 	return nil
 }
 
+func (m *Module) init_version() error {
+	return m.Kernel().PutObject(fmt.Sprintf("/sys/firmware/modules/%s/version/current", m.Name()), strings.NewReader(m.GetVersion()))
+}
+
 func (m *Module) Name() string {
 	m.name_once.Do(func() {
 		mdl, err := m.Kernel().Show()
@@ -264,6 +269,11 @@ func (m *Module) Init() error {
 		return err
 	}
 
+	err = m.init_version()
+	if err != nil {
+		return err
+	}
+
 	err = m.init_server()
 	if err != nil {
 		return err
@@ -322,10 +332,8 @@ func NewModule(name string, target interface{}, opts ...NewModuleOption) (*Modul
 		opt(o)
 	}
 
-	ver := o.Get("version").String()
-
 	return &Module{
-		Versioner: version_helper.NewVersioner(ver)(),
+		Versioner: version_helper.NewVersioner(o.Get("version").String())(),
 		name_once: new(sync.Once),
 		tgt:       target,
 		opt:       &ModuleOption{},

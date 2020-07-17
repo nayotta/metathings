@@ -28,7 +28,14 @@ func (self *MetathingsDeviceServiceImpl) do_sync_firmware(uri, sha256sum string)
 		return err
 	}
 
-	dst := fmt.Sprintf("%v.%v", filepath.Base(src), time.Now().Unix())
+	var postfix string
+	if len(sha256sum) > 12 {
+		postfix = sha256sum[:12]
+	} else {
+		postfix = fmt.Sprintf("%d", time.Now().Unix())
+	}
+
+	dst := fmt.Sprintf("%v.%v", filepath.Base(src), postfix)
 	if err = self.bs.Sync(self.context(), src, dst, uri, sha256sum); err != nil {
 		logger.WithError(err).Debugf("failed to sync firmware")
 		return err
@@ -58,8 +65,9 @@ func (self *MetathingsDeviceServiceImpl) do_sync_modules_firmware() {
 		if err != nil {
 			loop_logger.WithError(err).Warningf("failed to send sync firmware unary call")
 		}
-		logger.Debugf("sync module firmware")
 	}
+
+	logger.Debugf("sync modules firmware")
 }
 
 func (self *MetathingsDeviceServiceImpl) get_device_firmware_descriptor(cli deviced_pb.DevicedServiceClient, ctx context.Context) (*deviced_pb.FirmwareDescriptor, error) {
@@ -100,7 +108,7 @@ func (self *MetathingsDeviceServiceImpl) sync_firmware() (err error) {
 	}
 
 	dev_nxt_ver := descx.Get("device.version.next").String()
-	if dev_nxt_ver != self.GetVersion() {
+	if dev_nxt_ver != "" && dev_nxt_ver != self.GetVersion() {
 		uri := descx.Get("device.uri.next").String()
 		sha256sum := descx.Get("device.sha256.next").String()
 		go self.do_sync_firmware(uri, sha256sum)
