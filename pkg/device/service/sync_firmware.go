@@ -22,6 +22,18 @@ func (self *MetathingsDeviceServiceImpl) do_sync_firmware(uri, sha256sum string)
 		"sha256sum": sha256sum,
 	})
 
+	if self.is_synchronizing_firmware_state() {
+		logger.Warningf("synchronizing firmware, please wait a minutes")
+		return nil
+	}
+
+	self.synchronizing_firmware_mtx.Lock()
+	self.stats_synchronizing_firmware = true
+	defer func() {
+		self.stats_synchronizing_firmware = false
+		self.synchronizing_firmware_mtx.Unlock()
+	}()
+
 	src, err := os.Executable()
 	if err != nil {
 		logger.WithError(err).Debugf("failed to get executable info")
@@ -77,6 +89,10 @@ func (self *MetathingsDeviceServiceImpl) get_device_firmware_descriptor(cli devi
 	}
 
 	return res.GetFirmwareDescriptor(), nil
+}
+
+func (self *MetathingsDeviceServiceImpl) is_synchronizing_firmware_state() bool {
+	return self.stats_synchronizing_firmware
 }
 
 func (self *MetathingsDeviceServiceImpl) sync_firmware() (err error) {

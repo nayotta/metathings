@@ -89,7 +89,7 @@ func (self *MetathingsDeviceServiceImpl) heartbeat_once() {
 		self.logger.WithError(err).Warningf("failed to heartbeat")
 
 		if self.stats_heartbeat_fails >= self.opt.HeartbeatMaxRetry {
-			// TODO(Peer): reconncect streaming, not stop device and restart
+			// TODO(Peer): reconncect streaming, not restart device
 			defer self.Stop()
 
 			return

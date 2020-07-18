@@ -51,14 +51,17 @@ type MetathingsDeviceServiceImpl struct {
 	info             *deviced_pb.Device
 	mdl_db           ModuleDatabase
 	conn_stm         deviced_pb.DevicedService_ConnectClient
-	conn_stm_rwmtx   *sync.RWMutex
-	conn_stm_wg      *sync.WaitGroup
-	conn_stm_wg_once *sync.Once
+	conn_stm_rwmtx   sync.RWMutex
+	conn_stm_wg      sync.WaitGroup
+	conn_stm_wg_once sync.Once
 	conn_cfn         client_helper.CloseFn
 
 	startup_session int32
 
 	stats_heartbeat_fails int
+
+	synchronizing_firmware_mtx   sync.Mutex
+	stats_synchronizing_firmware bool
 }
 
 var (
@@ -106,18 +109,17 @@ func NewMetathingsDeviceService(
 	bs binary_synchronizer.BinarySynchronizer,
 ) (MetathingsDeviceService, error) {
 	srv := &MetathingsDeviceServiceImpl{
-		ErrorParser:      grpc_helper.NewErrorParser(em),
-		Versioner:        ver,
-		bs:               bs,
-		tknr:             tknr,
-		cli_fty:          cli_fty,
-		logger:           logger,
-		opt:              opt,
-		conn_stm_rwmtx:   new(sync.RWMutex),
-		conn_stm_wg:      new(sync.WaitGroup),
-		conn_stm_wg_once: new(sync.Once),
-		startup_session:  session_helper.GenerateStartupSession(),
-		app_getter:       app_getter,
+		ErrorParser:     grpc_helper.NewErrorParser(em),
+		Versioner:       ver,
+		bs:              bs,
+		tknr:            tknr,
+		cli_fty:         cli_fty,
+		logger:          logger,
+		opt:             opt,
+		startup_session: session_helper.GenerateStartupSession(),
+		app_getter:      app_getter,
+
+		stats_synchronizing_firmware: false,
 	}
 	srv.ServiceAuthFuncOverride = afo_helper.NewAuthFuncOverrider(tkvdr, srv, logger)
 

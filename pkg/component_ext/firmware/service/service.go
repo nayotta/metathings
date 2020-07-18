@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"sync"
 	"time"
 
 	"github.com/golang/protobuf/jsonpb"
@@ -25,6 +26,13 @@ import (
 type ComponentExtFirmwareService struct {
 	module *component.Module
 	bs     binary_synchronizer.BinarySynchronizer
+
+	synchronizing_firmware_mtx   sync.Mutex
+	stats_synchronizing_firmware bool
+}
+
+func (svc *ComponentExtFirmwareService) is_synchronizing_firmware() bool {
+	return svc.stats_synchronizing_firmware
 }
 
 func (svc *ComponentExtFirmwareService) HANDLE_GRPC_SyncFirmware(ctx context.Context, in *any.Any) (*any.Any, error) {
@@ -81,6 +89,18 @@ func (svc *ComponentExtFirmwareService) do_sync_firmware(uri, sha256sum string) 
 		"sha256sum": sha256sum,
 	})
 
+	if svc.is_synchronizing_firmware() {
+		logger.Wanringf("synchronizing firmware, please wait a minutes")
+		return nil
+	}
+
+	svc.synchronizing_firmware_mtx.Lock()
+	svc.stats_synchronizing_firmware = true
+	defer func() {
+		svc.stats_synchronizing_firmware = false
+		svc.synchronizing_firmware_mtx.Unlock()
+	}()
+
 	src, err := os.Executable()
 	if err != nil {
 		logger.WithError(err).Debugf("failed to get executable info")
@@ -116,6 +136,8 @@ func NewComponentExtFirmwareService(m *component.Module) (*ComponentExtFirmwareS
 	srv := &ComponentExtFirmwareService{
 		module: m,
 		bs:     bs,
+
+		stats_synchronizing_firmware: false,
 	}
 
 	return srv, nil
