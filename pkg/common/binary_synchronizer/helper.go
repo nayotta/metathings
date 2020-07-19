@@ -91,7 +91,9 @@ func (bs *binarySynchronizer) Sync(ctx context.Context, src_filepath, dst_filena
 		return err
 	}
 
-	if err = os.Chmod(res.Filename, 0755); err != nil {
+	// TODO(Peer): support tar and gzip
+	tmp_filepath := res.Filename
+	if err = os.Chmod(tmp_filepath, 0755); err != nil {
 		logger.WithError(err).Debugf("failed to chmod downloaded file")
 		return err
 	}
@@ -99,8 +101,8 @@ func (bs *binarySynchronizer) Sync(ctx context.Context, src_filepath, dst_filena
 	real_source_path := filepath.Dir(real_source_filepath)
 	dst_filepath := filepath.Join(real_source_path, dst_filename)
 
-	if err = os.Rename(res.Filename, dst_filepath); err != nil {
-		defer os.Remove(res.Filename)
+	if err = os.Rename(tmp_filepath, dst_filepath); err != nil {
+		defer os.Remove(tmp_filepath)
 		logger.WithError(err).Debugf("failed to rename downloaded file to destination")
 		return err
 	}

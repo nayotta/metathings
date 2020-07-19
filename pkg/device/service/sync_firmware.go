@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/golang/protobuf/jsonpb"
@@ -47,7 +48,7 @@ func (self *MetathingsDeviceServiceImpl) do_sync_firmware(uri, sha256sum string)
 		postfix = fmt.Sprintf("%d", time.Now().Unix())
 	}
 
-	dst := fmt.Sprintf("%v.%v", filepath.Base(src), postfix)
+	dst := fmt.Sprintf("%v.%v", strings.TrimSuffix(src, filepath.Ext(src)), postfix)
 	if err = self.bs.Sync(self.context(), src, dst, uri, sha256sum); err != nil {
 		logger.WithError(err).Debugf("failed to sync firmware")
 		return err

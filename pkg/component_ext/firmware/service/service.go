@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 	"sync"
 	"time"
 
@@ -90,7 +91,7 @@ func (svc *ComponentExtFirmwareService) do_sync_firmware(uri, sha256sum string) 
 	})
 
 	if svc.is_synchronizing_firmware() {
-		logger.Wanringf("synchronizing firmware, please wait a minutes")
+		logger.Warningf("synchronizing firmware, please wait a minutes")
 		return nil
 	}
 
@@ -114,7 +115,7 @@ func (svc *ComponentExtFirmwareService) do_sync_firmware(uri, sha256sum string) 
 		postfix = fmt.Sprintf("%d", time.Now().Unix())
 	}
 
-	dst := fmt.Sprintf("%v.%v", filepath.Base(src), postfix)
+	dst := fmt.Sprintf("%v.%v", strings.TrimSuffix(src, filepath.Ext(src)), postfix)
 	if err = svc.bs.Sync(svc.module.Kernel().Context(), src, dst, uri, sha256sum); err != nil {
 		logger.WithError(err).Debugf("failed to sync firmware")
 		return err
