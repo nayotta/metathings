@@ -78,7 +78,9 @@ OTA 带来的优势是可以不用物理接触物理设备, 即可对设备进�
 
  详情请参考 [MetathingsDeviceServiceImpl.do_sync_modules_firmware](https://github.com/nayotta/metathings/blob/master/pkg/device/service/handle.go)(`Advanced Device`), [DeviceConnection.handle_system_unary_request_sync_firmware](https://github.com/nayotta/metathings/blob/master/pkg/device_cloud/service/handle.go)(`Simple Device`) 和 [ComponentExtFirmwareService.SyncFirmware](https://github.com/nayotta/metathings/blob/master/pkg/component_ext/firmware/service/service.go) 等.
 
-*注意* `Advanced Module`的 `FirmwareService` 是以插件的形式编写的, 所以只需要引入并且初始化就会获取OTA的功能. [Example](https://github.com/nayotta/metathings/blob/master/pkg/component_ext/firmware/service/example_test.go)
+*注意* `Module`有义务在启动时, 把当前的版本写入 SimpleStorage(`/sys/firmware/modules/<name>/version/current`)内, `<name>`为 `Module`的名字.
+
+*注意2* `Advanced Module`的 `FirmwareService` 是以插件的形式编写的, 所以只需要引入并且初始化就会获取OTA的功能. [Example](https://github.com/nayotta/metathings/blob/master/pkg/component_ext/firmware/service/example_test.go)
 
 ## 4. OTA流程
 
