@@ -2,6 +2,7 @@ package metathings_deviced_storage
 
 import (
 	"context"
+	"database/sql"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
@@ -1318,6 +1319,43 @@ func (self *StorageImpl) GetDeviceFirmwareDescriptor(ctx context.Context, dev_id
 	logger.Debugf("get device firmware descriptor")
 
 	return fd, nil
+}
+
+func (self *StorageImpl) FirmwareHubContainsDeviceAndFirmwareDescriptor(ctx context.Context, dev_id, desc_id string) (bool, error) {
+	var rows *sql.Rows
+	var cnt int
+	var err error
+
+	logger := self.logger.WithFields(log.Fields{
+		"device":              dev_id,
+		"firmware_descriptor": desc_id,
+	})
+
+	if rows, err = self.GetDBConn(ctx).Raw(`
+SELECT *
+FROM (
+  SELECT firmware_hub_id
+  FROM device_firmware_hub_mappings
+  WHERE device_id = ?
+) t1
+JOIN (
+  SELECT firmware_hub_id
+  FROM firmware_descriptors
+  WHERE id = ?
+) t2
+ON t1.firmware_hub_id = t2.firmware_hub_id
+`, dev_id, desc_id).Rows(); err != nil {
+		logger.WithError(err).Debugf("failed to assert firmware hub contains device and firmware descriptor")
+		return false, err
+	}
+
+	for rows.Next() {
+		cnt++
+	}
+
+	logger.Debugf("assert firmware hub contains device and firmware descriptor")
+
+	return cnt > 0, nil
 }
 
 func init_args(s *StorageImpl, args ...interface{}) error {

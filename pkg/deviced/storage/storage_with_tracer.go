@@ -321,6 +321,13 @@ func (s *TracedStorage) GetDeviceFirmwareDescriptor(ctx context.Context, dev_id 
 	return s.Storage.GetDeviceFirmwareDescriptor(ctx, dev_id)
 }
 
+func (s *TracedStorage) FirmwareHubContainsDeviceAndFirmwareDescriptor(ctx context.Context, dev_id, desc_id string) (bool, error) {
+	span, ctx := s.TraceWrapper(ctx, "FirmwareHubContainsDeviceAndFirmwareDescriptor")
+	defer span.Finish()
+
+	return s.Storage.FirmwareHubContainsDeviceAndFirmwareDescriptor(ctx, dev_id, desc_id)
+}
+
 func NewTracedStorage(s Storage, getter opentracing_storage_helper.RootDBConnGetter) (Storage, error) {
 	return &TracedStorage{
 		BaseTracedStorage: opentracing_storage_helper.NewBaseTracedStorage(getter),

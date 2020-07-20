@@ -397,3 +397,30 @@ func ensure_get_firmware_hub_id(x firmware_hub_getter) error {
 
 	return nil
 }
+
+func ensure_get_firmware_descriptor_id(x firmware_descriptor_getter) error {
+	fd := x.GetFirmwareDescriptor()
+	if fd.GetId() == nil {
+		return errors.New("frimware_descriptor.id is empty")
+	}
+
+	return nil
+}
+
+func ensure_firmware_hub_contains_device_and_firmware_descriptor(ctx context.Context, s storage.Storage) func(device_getter, firmware_descriptor_getter) error {
+	return func(x device_getter, y firmware_descriptor_getter) error {
+		dev_id := x.GetDevice().GetId().GetValue()
+		desc_id := y.GetFirmwareDescriptor().GetId().GetValue()
+		contained, err := s.FirmwareHubContainsDeviceAndFirmwareDescriptor(ctx, dev_id, desc_id)
+		if err != nil {
+			return err
+		}
+
+		if !contained {
+			return errors.New("device and firmware descriptor not in the same firmware hub")
+		}
+
+		return nil
+	}
+
+}

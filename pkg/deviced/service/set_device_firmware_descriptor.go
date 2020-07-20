@@ -18,12 +18,16 @@ func (self *MetathingsDevicedService) AuthorizeSetDeviceFirmwareDescriptor(ctx c
 func (self *MetathingsDevicedService) ValidateSetDeviceFirmwareDescriptor(ctx context.Context, in interface{}) error {
 	return self.validator.Validate(
 		identityd_validator.Providers{
-			func() (policy_helper.Validator, device_getter) {
+			func() (policy_helper.Validator, device_getter, firmware_descriptor_getter) {
 				req := in.(*pb.SetDeviceFirmwareDescriptorRequest)
-				return req, req
+				return req, req, req
 			},
 		},
-		identityd_validator.Invokers{ensure_get_device_id},
+		identityd_validator.Invokers{
+			ensure_get_device_id,
+			ensure_get_firmware_descriptor_id,
+			ensure_firmware_hub_contains_device_and_firmware_descriptor(ctx, self.storage),
+		},
 	)
 }
 

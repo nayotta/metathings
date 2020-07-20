@@ -174,6 +174,7 @@ type Storage interface {
 	SetDeviceFirmwareDescriptor(ctx context.Context, dev_id, desc_id string) error
 	UnsetDeviceFirmwareDescriptor(ctx context.Context, dev_id string) error
 	GetDeviceFirmwareDescriptor(ctx context.Context, dev_id string) (*FirmwareDescriptor, error)
+	FirmwareHubContainsDeviceAndFirmwareDescriptor(ctx context.Context, dev_id, desc_id string) (bool, error)
 }
 
 func NewStorage(driver, uri string, args ...interface{}) (Storage, error) {
