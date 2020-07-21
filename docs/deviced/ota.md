@@ -18,7 +18,7 @@ OTA 带来的优势是可以不用物理接触物理设备, 即可对设备进�
 
 通常假设 `Module` 无法直接连接到 `Deviced Service`上, 所以添加了 `Device` 来负责通信中转功能.
 
-通常情况下, 客户端调用指令以 `Device`为最终调用实体, 至于 `Device` 与 `Module`之间的通信协议可以通过不同的实现(http, grpc, bluetooth等)来完成.
+通常情况下, 客户端调用指令以 `Device`为最终调用实体, 至于 `Device` 与 `Module`之间的通信协议可以通过不同的实现(grpc, mqtt等)来完成.
 
 ### 2.3. FirmwareHub
 
@@ -26,7 +26,7 @@ OTA 带来的优势是可以不用物理接触物理设备, 即可对设备进�
 
 `FirmwareHub` 包含了 `Device` 与 `FirmwareDescriptor`, 在同一个`FirmwareHub`下的`Device`, 可以设置`FirmwareDescriptor` 为该 `FirmwareHub`下的 `FirmwareDescriptor`.
 
-### 2.4. firmwareDescriptor
+### 2.4. FirmwareDescriptor
 
 `FirmwareDescriptor`主要负责描述具体的版本信息, 例如 `name`, `uri`, `sha256`等.
 
