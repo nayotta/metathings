@@ -74,10 +74,16 @@ func (self *MetathingsDeviceServiceImpl) handle_system_unary_request(req *device
 	case "system$system$pong":
 		logger.Debugf("receive pong response")
 		return nil
+	case "system$system$sync_firmware":
+		return self.handle_system_unary_request_sync_firmware(req)
 	default:
 		self.logger.WithField("sign", req_sign).Warningf("unsupported request sign")
 		return nil
 	}
+}
+
+func (self *MetathingsDeviceServiceImpl) handle_system_unary_request_sync_firmware(req *deviced_pb.ConnectRequest) error {
+	return self.sync_firmware()
 }
 
 func (self *MetathingsDeviceServiceImpl) handle_system_stream_request(req *deviced_pb.ConnectRequest) error {

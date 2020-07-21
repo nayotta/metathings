@@ -235,6 +235,8 @@ func NewFlowSetFactory(opt *DevicedOption, logger log.FieldLogger) (flow.FlowSet
 func NewMetathingsDevicedServiceOption(opt *DevicedOption) *service.MetathingsDevicedServiceOption {
 	o := &service.MetathingsDevicedServiceOption{}
 
+	o.Domain = "default"
+
 	o.Methods.PutObjectStreaming.Timeout = 1200
 	if to, ok := opt.SimpleStorage["timeout"]; ok {
 		if toi, ok := to.(int); ok {

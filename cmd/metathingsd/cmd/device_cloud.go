@@ -138,6 +138,7 @@ func NewDeviceCloudRouting(p NewDeviceCloudRoutingParams) error {
 	sr.HandleFunc("/actions/issue_module_token", p.Service.IssueModuleToken).Methods("POST")
 	sr.HandleFunc("/actions/show_module", p.Service.ShowModule).Methods("POST")
 	sr.HandleFunc("/actions/push_frame_to_flow", p.Service.PushFrameToFlow).Methods("POST")
+	sr.HandleFunc("/actions/show_module_firmware_descriptor", p.Service.ShowModuleFirmwareDescriptor).Methods("POST")
 
 	return nil
 }

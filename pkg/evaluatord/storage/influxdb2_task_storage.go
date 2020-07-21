@@ -8,6 +8,7 @@ import (
 	"time"
 
 	influxdb2 "github.com/influxdata/influxdb-client-go"
+	"github.com/influxdata/influxdb-client-go/api"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cast"
 	"github.com/stretchr/objx"
@@ -28,7 +29,7 @@ type Influxdb2TaskStorageOption struct {
 
 type Influxdb2TaskStorage struct {
 	opt    *Influxdb2TaskStorageOption
-	influx influxdb2.InfluxDBClient
+	influx influxdb2.Client
 	logger logrus.FieldLogger
 }
 
@@ -36,7 +37,7 @@ func (s *Influxdb2TaskStorage) get_logger() logrus.FieldLogger {
 	return s.logger
 }
 
-func (s *Influxdb2TaskStorage) parse_tableresult_to_tasks(tr *influxdb2.QueryTableResult) ([]*Task, error) {
+func (s *Influxdb2TaskStorage) parse_tableresult_to_tasks(tr *api.QueryTableResult) ([]*Task, error) {
 	var tsks []*Task
 	tskm := map[string]*Task{}
 	idtsm := map[string]map[time.Time]*TaskState{}

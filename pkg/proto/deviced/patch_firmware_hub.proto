@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package ai.metathings.service.deviced;
+
+import "github.com/mwitkow/go-proto-validators/validator.proto";
+
+import "model.proto";
+
+message PatchFirmwareHubRequest {
+	OpFirmwareHub firmware_hub = 1 [(validator.field) = {msg_exists: true}];
+}
+
+message PatchFirmwareHubResponse {
+	FirmwareHub firmware_hub = 1;
+}

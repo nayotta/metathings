@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 package ai.metathings.service.identityd2;
+option go_package = "identityd2";
 
 import "google/protobuf/wrappers.proto";
 import "google/protobuf/timestamp.proto";

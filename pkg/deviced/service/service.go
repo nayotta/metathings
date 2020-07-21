@@ -43,10 +43,12 @@ type MetathingsDevicedServiceOption struct {
 			AliveInterval int64
 		}
 	}
+	Domain string
 }
 
 type MetathingsDevicedService struct {
 	grpc_auth.ServiceAuthFuncOverride
+	*grpc_helper.ErrorParser
 	tknr            token_helper.Tokener
 	cli_fty         *client_helper.ClientFactory
 	opt             *MetathingsDevicedServiceOption
@@ -64,10 +66,8 @@ type MetathingsDevicedService struct {
 	data_launcher   evaluatord_sdk.DataLauncher
 }
 
-func (self *MetathingsDevicedService) get_device_by_context(ctx context.Context) (*storage.Device, error) {
+func (self *MetathingsDevicedService) get_device_id_from_context(ctx context.Context) string {
 	var tkn *identityd_pb.Token
-	var dev_s *storage.Device
-	var err error
 
 	// try to get device id from context
 	dev_id := metautils.ExtractIncoming(ctx).Get("MT-Device")
@@ -76,6 +76,14 @@ func (self *MetathingsDevicedService) get_device_by_context(ctx context.Context)
 		dev_id = tkn.Entity.Id
 	}
 
+	return dev_id
+}
+
+func (self *MetathingsDevicedService) get_device_by_context(ctx context.Context) (*storage.Device, error) {
+	var dev_s *storage.Device
+	var err error
+
+	dev_id := self.get_device_id_from_context(ctx)
 	if dev_s, err = self.storage.GetDevice(ctx, dev_id); err != nil {
 		return nil, err
 	}
@@ -197,6 +205,7 @@ func NewMetathingsDevicedService(
 	data_launcher evaluatord_sdk.DataLauncher,
 ) (pb.DevicedServiceServer, error) {
 	srv := &MetathingsDevicedService{
+		ErrorParser:     grpc_helper.NewErrorParser(em),
 		opt:             opt,
 		logger:          logger,
 		storage:         storage,

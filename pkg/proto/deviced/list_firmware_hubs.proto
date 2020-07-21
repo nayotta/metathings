@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package ai.metathings.service.deviced;
+
+import "model.proto";
+
+message ListFirmwareHubsRequest {
+	OpFirmwareHub firmware_hub = 1;
+}
+
+message ListFirmwareHubsResponse {
+	repeated FirmwareHub firmware_hubs = 1;
+}

@@ -61,10 +61,16 @@ func (dc *DeviceConnection) handle_system_unary_request(req *pb.ConnectRequest) 
 	case "system$system$pong":
 		logger.Debugf("receive pong response")
 		return nil
+	case "system$system$sync_firmware":
+		return dc.handle_system_unary_request_sync_firmware(req)
 	default:
 		dc.logger.WithField("sign", req_sign).Warningf("unsupported request sign")
 		return nil
 	}
+}
+
+func (dc *DeviceConnection) handle_system_unary_request_sync_firmware(req *pb.ConnectRequest) error {
+	return dc.sync_firmware()
 }
 
 func (dc *DeviceConnection) handle_system_stream_request(req *pb.ConnectRequest) error {

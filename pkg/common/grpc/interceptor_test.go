@@ -4,6 +4,7 @@ import (
 	"context"
 	"testing"
 
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
 	"google.golang.org/grpc"
@@ -44,7 +45,7 @@ type unaryServerInterceptorTestSuite struct {
 func (self *unaryServerInterceptorTestSuite) SetupTest() {
 	self.server = &unary_test_server{}
 	self.ctx = context.Background()
-	self.interceptor = UnaryServerInterceptor()
+	self.interceptor = UnaryServerInterceptor(logrus.New())
 	self.req = &struct{}{}
 	self.full_method = "/ai.metathings.service.testd.TestdService/FuncTest"
 	self.info = &grpc.UnaryServerInfo{

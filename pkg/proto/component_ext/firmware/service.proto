@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package ai.metathings.component.ext.firmware;
+option go_package = "component_ext_firmware";
+
+import "google/protobuf/empty.proto";
+
+service ModuleFirmwareService {
+  rpc SyncFirmware(google.protobuf.Empty) returns (google.protobuf.Empty) {}
+}

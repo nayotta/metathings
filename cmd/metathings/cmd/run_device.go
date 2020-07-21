@@ -13,12 +13,14 @@ import (
 	cmd_helper "github.com/nayotta/metathings/pkg/common/cmd"
 	fx_helper "github.com/nayotta/metathings/pkg/common/fx"
 	token_helper "github.com/nayotta/metathings/pkg/common/token"
+	version_helper "github.com/nayotta/metathings/pkg/common/version"
 	service "github.com/nayotta/metathings/pkg/device/service"
 	pb "github.com/nayotta/metathings/pkg/proto/device"
 )
 
 type RunDeviceOption struct {
 	cmd_contrib.ClientBaseOption `mapstructure:",squash"`
+	BinarySynchronizer           map[string]interface{}
 }
 
 func NewRunDeviceOption() *RunDeviceOption {
@@ -44,6 +46,10 @@ var (
 			cmd_helper.UnmarshalConfig(run_device_opt)
 			base_opt = &run_device_opt.BaseOption
 
+			cmd_helper.InitManyStringMapFromConfigWithStage([]cmd_helper.InitManyOption{
+				{&run_device_opt.BinarySynchronizer, "binary_synchronizer"},
+			})
+
 			run_device_opt.SetStage(cmd_helper.GetStageFromEnv())
 		}),
 		Run: cmd_helper.Run("run device", run_device),
@@ -57,19 +63,24 @@ func GetRunDeviceOptions() (
 	cmd_contrib.CredentialOptioner,
 	cmd_contrib.ListenOptioner,
 	cmd_contrib.TransportCredentialOptioner,
+	cmd_contrib.BinarySynchronizerOption,
 ) {
 	return run_device_opt,
 		run_device_opt,
 		run_device_opt,
 		run_device_opt,
 		run_device_opt,
-		run_device_opt
+		run_device_opt,
+		cmd_contrib.BinarySynchronizerOption{
+			Option: run_device_opt.BinarySynchronizer,
+		}
 }
 
 func NewMetathingsDeviceServiceOption(opt *RunDeviceOption) *service.MetathingsDeviceServiceOption {
 	return &service.MetathingsDeviceServiceOption{
 		ModuleAliveTimeout:   83 * time.Second,
 		HeartbeatInterval:    17 * time.Second,
+		HeartbeatMaxRetry:    3,
 		MinReconnectInterval: 7 * time.Second,
 		MaxReconnectInterval: 137 * time.Second,
 		PingInterval:         29 * time.Second,
@@ -89,6 +100,8 @@ func run_device() error {
 			cmd_contrib.NewServerTransportCredentials,
 			cmd_contrib.NewClientFactory,
 			cmd_contrib.NewTokener,
+			cmd_contrib.NewBinarySynchronizer,
+			version_helper.NewVersioner(version_str),
 			token_helper.NewTokenValidator,
 			NewMetathingsDeviceServiceOption,
 			service.NewMetathingsDeviceService,

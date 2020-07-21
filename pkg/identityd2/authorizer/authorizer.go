@@ -36,9 +36,16 @@ func (a *authorizer) Authorize(ctx context.Context, object, action string) error
 		Action: &identityd_pb.OpAction{Name: &wrappers.StringValue{Value: action}},
 	}
 	_, err = cli.AuthorizeToken(new_ctx, req)
+
 	if err != nil {
-		a.logger.WithError(err).Warningf("permission denied")
-		return status.Errorf(codes.PermissionDenied, err.Error())
+		if gst, ok := status.FromError(err); ok {
+			err = status.Errorf(gst.Code(), gst.Err().Error())
+		} else {
+			err = status.Errorf(codes.Internal, err.Error())
+		}
+
+		a.logger.WithError(err).Warningf("failed to authorize token")
+		return err
 	}
 
 	return nil

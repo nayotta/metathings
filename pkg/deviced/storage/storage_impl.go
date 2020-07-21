@@ -2,6 +2,7 @@ package metathings_deviced_storage
 
 import (
 	"context"
+	"database/sql"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
@@ -410,6 +411,112 @@ func (self *StorageImpl) list_configs_by_device_id(ctx context.Context, id strin
 	}
 
 	return cfgs, nil
+}
+
+func (self *StorageImpl) internal_list_view_devices_by_firmware_hub(ctx context.Context, frm_hub_id string) ([]*Device, error) {
+	var dfhms []*DeviceFirmwareHubMapping
+	var devs []*Device
+	var err error
+
+	if err = self.GetDBConn(ctx).Find(&dfhms, "firmware_hub_id = ?", frm_hub_id).Error; err != nil {
+		return nil, err
+	}
+
+	for _, m := range dfhms {
+		devs = append(devs, &Device{
+			Id: m.DeviceId,
+		})
+	}
+
+	return devs, nil
+}
+
+func (self *StorageImpl) list_firmware_descriptors_by_firmware_hub(ctx context.Context, frm_hub_id string) ([]*FirmwareDescriptor, error) {
+	var frm_descs []*FirmwareDescriptor
+	var err error
+
+	if err = self.GetDBConn(ctx).Find(&frm_descs, "firmware_hub_id = ?", frm_hub_id).Error; err != nil {
+		return nil, err
+	}
+
+	return frm_descs, nil
+}
+
+func (self *StorageImpl) get_firmware_descriptor(ctx context.Context, desc_id string) (*FirmwareDescriptor, error) {
+	var desc FirmwareDescriptor
+	var err error
+
+	if err = self.GetDBConn(ctx).First(&desc, "id = ?", desc_id).Error; err != nil {
+		return nil, err
+	}
+
+	return &desc, nil
+}
+
+func (self *StorageImpl) get_firmware_hub(ctx context.Context, frm_hub_id string) (*FirmwareHub, error) {
+	var err error
+	var fh FirmwareHub
+
+	if err = self.GetDBConn(ctx).First(&fh, "id = ?", frm_hub_id).Error; err != nil {
+		return nil, err
+	}
+
+	if fh.Devices, err = self.internal_list_view_devices_by_firmware_hub(ctx, frm_hub_id); err != nil {
+		return nil, err
+	}
+
+	if fh.FirmwareDescriptors, err = self.list_firmware_descriptors_by_firmware_hub(ctx, frm_hub_id); err != nil {
+		return nil, err
+	}
+
+	return &fh, nil
+}
+
+func (self *StorageImpl) list_firmware_hubs(ctx context.Context, frm_hub *FirmwareHub) ([]*FirmwareHub, error) {
+	var err error
+	var fhs_t []*FirmwareHub
+
+	fh := &FirmwareHub{}
+	if frm_hub.Id != nil {
+		fh.Id = frm_hub.Id
+	}
+
+	if frm_hub.Alias != nil {
+		fh.Alias = frm_hub.Alias
+	}
+
+	if err = self.GetDBConn(ctx).Select("id").Find(&fhs_t, fh).Error; err != nil {
+		return nil, err
+	}
+
+	var fhs []*FirmwareHub
+	for _, fh := range fhs_t {
+		if fh, err = self.get_firmware_hub(ctx, *fh.Id); err != nil {
+			return nil, err
+		}
+
+		fhs = append(fhs, fh)
+	}
+
+	return fhs, nil
+}
+
+func (self *StorageImpl) list_view_devices_by_firmware_hub_id(ctx context.Context, frm_hub_id string) ([]*Device, error) {
+	var err error
+	var dfhms []*DeviceFirmwareHubMapping
+	var devs []*Device
+
+	if err = self.GetDBConn(ctx).Find(&dfhms, "firmware_hub_id = ?", frm_hub_id).Error; err != nil {
+		return nil, err
+	}
+
+	for _, m := range dfhms {
+		devs = append(devs, &Device{
+			Id: m.DeviceId,
+		})
+	}
+
+	return devs, nil
 }
 
 func (self *StorageImpl) CreateDevice(ctx context.Context, dev *Device) (*Device, error) {
@@ -965,6 +1072,292 @@ func (self *StorageImpl) ListConfigsByDeviceId(ctx context.Context, id string) (
 	return cfgs, nil
 }
 
+func (self *StorageImpl) CreateFirmwareHub(ctx context.Context, frm_hub *FirmwareHub) (*FirmwareHub, error) {
+	var err error
+	logger := self.logger.WithField("id", *frm_hub.Id)
+
+	if err = self.GetDBConn(ctx).Create(frm_hub).Error; err != nil {
+		logger.WithError(err).Debugf("failed to create firmware hub")
+		return nil, err
+	}
+
+	if frm_hub, err = self.get_firmware_hub(ctx, *frm_hub.Id); err != nil {
+		logger.WithError(err).Debugf("failed to get firmware hub")
+		return nil, err
+	}
+
+	logger.Debugf("create firmware hub")
+
+	return frm_hub, nil
+}
+
+func (self *StorageImpl) DeleteFirmwareHub(ctx context.Context, id string) error {
+	var err error
+	logger := self.logger.WithField("id", id)
+
+	if err = self.GetDBConn(ctx).Delete(&FirmwareHub{}, "id = ?", id).Error; err != nil {
+		logger.WithError(err).Debugf("failed to delete firmware hub")
+		return err
+	}
+
+	logger.Debugf("delete firmware hub")
+
+	return nil
+}
+
+func (self *StorageImpl) PatchFirmwareHub(ctx context.Context, id string, firmware_hub *FirmwareHub) (*FirmwareHub, error) {
+	var err error
+	var fh FirmwareHub
+	logger := self.logger.WithField("id", id)
+
+	if firmware_hub.Alias != nil {
+		fh.Alias = firmware_hub.Alias
+	}
+
+	if firmware_hub.Description != nil {
+		fh.Description = firmware_hub.Description
+	}
+
+	if err = self.GetDBConn(ctx).Model(&FirmwareHub{Id: &id}).Update(fh).Error; err != nil {
+		logger.WithError(err).Debugf("failed to patch firmware hub")
+		return nil, err
+	}
+
+	if firmware_hub, err = self.get_firmware_hub(ctx, id); err != nil {
+		logger.WithError(err).Debugf("failed to get firmware hub")
+		return nil, err
+	}
+
+	logger.Debugf("patch firmware hub")
+
+	return firmware_hub, nil
+}
+
+func (self *StorageImpl) GetFirmwareHub(ctx context.Context, id string) (*FirmwareHub, error) {
+	var err error
+	var fh *FirmwareHub
+	logger := self.logger.WithField("id", id)
+
+	if fh, err = self.get_firmware_hub(ctx, id); err != nil {
+		if err == gorm.ErrRecordNotFound {
+			logger.WithError(err).Debugf("firmware hub not found")
+			return nil, RecordNotFound
+		} else {
+			logger.WithError(err).Debugf("failed to get firmware hub")
+			return nil, err
+		}
+	}
+
+	logger.Debugf("get firmware hub")
+
+	return fh, nil
+}
+
+func (self *StorageImpl) ListFirmwareHubs(ctx context.Context, frm_hub *FirmwareHub) ([]*FirmwareHub, error) {
+	var fhs []*FirmwareHub
+	var err error
+	logger := self.logger
+
+	if fhs, err = self.list_firmware_hubs(ctx, frm_hub); err != nil {
+		logger.WithError(err).Debugf("failed to list firmware hubs")
+		return nil, err
+	}
+
+	logger.Debugf("list firmware hubs")
+
+	return fhs, nil
+}
+
+func (self *StorageImpl) AddDeviceToFirmwareHub(ctx context.Context, frm_hub_id, dev_id string) error {
+	var err error
+	logger := self.logger.WithFields(log.Fields{
+		"firmware_hub": frm_hub_id,
+		"device":       dev_id,
+	})
+
+	if err = self.GetDBConn(ctx).Create(&DeviceFirmwareHubMapping{
+		DeviceId:      &dev_id,
+		FirmwareHubId: &frm_hub_id,
+	}).Error; err != nil {
+		logger.WithError(err).Debugf("failed to add devices to firmware hub")
+		return err
+	}
+
+	logger.Debugf("add devices to firmware hub")
+
+	return nil
+}
+
+func (self *StorageImpl) RemoveDeviceFromFirmwareHub(ctx context.Context, frm_hub_id, dev_id string) error {
+	var err error
+	logger := self.logger.WithFields(log.Fields{
+		"firmware_hub": frm_hub_id,
+		"device":       dev_id,
+	})
+
+	if err = self.GetDBConn(ctx).Delete(DeviceFirmwareHubMapping{}, "device_id = ?", dev_id).Error; err != nil {
+		return err
+	}
+
+	logger.Debugf("remove devices from firmware hub")
+
+	return nil
+}
+
+func (self *StorageImpl) CreateFirmwareDescriptor(ctx context.Context, frm_desc *FirmwareDescriptor) error {
+	var err error
+	logger := self.logger.WithFields(log.Fields{
+		"firmware_hub":        *frm_desc.FirmwareHubId,
+		"firmware_descriptor": *frm_desc.Id,
+	})
+
+	if err = self.GetDBConn(ctx).Create(frm_desc).Error; err != nil {
+		logger.WithError(err).Debugf("failed to create firmware descriptor")
+		return err
+	}
+
+	logger.Debugf("create firmware descriptor")
+
+	return nil
+}
+
+func (self *StorageImpl) DeleteFirmwareDescriptor(ctx context.Context, frm_desc_id string) error {
+	var err error
+	logger := self.logger.WithField("id", frm_desc_id)
+
+	if err = self.GetDBConn(ctx).Delete(&FirmwareDescriptor{}, "id = ?", frm_desc_id).Error; err != nil {
+		logger.WithError(err).Debugf("failed to delete firmware descriptor")
+		return err
+	}
+
+	logger.Debugf("delete firmware descriptor")
+
+	return nil
+}
+
+func (self *StorageImpl) RemoveAllDevicesInFirmwareHub(ctx context.Context, frm_hub_id string) error {
+	var err error
+	logger := self.logger.WithField("id", frm_hub_id)
+
+	if err = self.GetDBConn(ctx).Delete(&DeviceFirmwareHubMapping{}, "firmware_hub_id = ?", frm_hub_id).Error; err != nil {
+		logger.WithError(err).Debugf("failed to remove all devices in firmware hub")
+		return err
+	}
+
+	logger.Debugf("remove all devices in firmware hub")
+
+	return nil
+}
+
+func (self *StorageImpl) ListViewDevicesByFirmwareHubId(ctx context.Context, frm_hub_id string) ([]*Device, error) {
+	var devs []*Device
+	var err error
+	logger := self.logger.WithField("id", frm_hub_id)
+
+	if devs, err = self.list_view_devices_by_firmware_hub_id(ctx, frm_hub_id); err != nil {
+		logger.WithError(err).Debugf("failed to list devices by firmware hub")
+		return nil, err
+	}
+
+	logger.Debugf("list devices by firmware hub id")
+
+	return devs, nil
+}
+
+func (self *StorageImpl) SetDeviceFirmwareDescriptor(ctx context.Context, dev_id, desc_id string) error {
+	var err error
+	logger := self.logger.WithFields(log.Fields{
+		"firmware_descriptor": desc_id,
+		"device":              dev_id,
+	})
+
+	if err = self.GetDBConn(ctx).Create(&DeviceFirmwareDescriptorMapping{
+		DeviceId:             &dev_id,
+		FirmwareDescriptorId: &desc_id,
+	}).Error; err != nil {
+		logger.WithError(err).Debugf("failed to set firmware descriptor to device")
+		return err
+	}
+
+	logger.Debugf("set firmware descriptor to device")
+
+	return nil
+}
+
+func (self *StorageImpl) UnsetDeviceFirmwareDescriptor(ctx context.Context, dev_id string) error {
+	var err error
+
+	logger := self.logger.WithField("device", dev_id)
+
+	if err = self.GetDBConn(ctx).Delete(&DeviceFirmwareDescriptorMapping{}, "device_id = ?", dev_id).Error; err != nil {
+		logger.WithError(err).Debugf("failed to unset firmware descriptor from device")
+		return err
+	}
+
+	logger.Debugf("unset firmware descriptor from device")
+
+	return nil
+}
+
+func (self *StorageImpl) GetDeviceFirmwareDescriptor(ctx context.Context, dev_id string) (*FirmwareDescriptor, error) {
+	var err error
+
+	logger := self.logger.WithField("device", dev_id)
+
+	var dfdm DeviceFirmwareDescriptorMapping
+	if err = self.GetDBConn(ctx).First(&dfdm, "device_id = ?", dev_id).Error; err != nil {
+		logger.WithError(err).Debugf("failed to get device firmware descriptor")
+		return nil, parse_error(err)
+	}
+
+	var fd *FirmwareDescriptor
+	if fd, err = self.get_firmware_descriptor(ctx, *dfdm.FirmwareDescriptorId); err != nil {
+		logger.WithError(err).Debugf("failed to get firmware descriptor")
+		return nil, parse_error(err)
+	}
+
+	logger.Debugf("get device firmware descriptor")
+
+	return fd, nil
+}
+
+func (self *StorageImpl) FirmwareHubContainsDeviceAndFirmwareDescriptor(ctx context.Context, dev_id, desc_id string) (bool, error) {
+	var rows *sql.Rows
+	var cnt int
+	var err error
+
+	logger := self.logger.WithFields(log.Fields{
+		"device":              dev_id,
+		"firmware_descriptor": desc_id,
+	})
+
+	if rows, err = self.GetDBConn(ctx).Raw(`
+SELECT *
+FROM (
+  SELECT firmware_hub_id
+  FROM device_firmware_hub_mappings
+  WHERE device_id = ?
+) t1
+JOIN (
+  SELECT firmware_hub_id
+  FROM firmware_descriptors
+  WHERE id = ?
+) t2
+ON t1.firmware_hub_id = t2.firmware_hub_id
+`, dev_id, desc_id).Rows(); err != nil {
+		logger.WithError(err).Debugf("failed to assert firmware hub contains device and firmware descriptor")
+		return false, err
+	}
+
+	for rows.Next() {
+		cnt++
+	}
+
+	logger.Debugf("assert firmware hub contains device and firmware descriptor")
+
+	return cnt > 0, nil
+}
+
 func init_args(s *StorageImpl, args ...interface{}) error {
 	var key string
 	var ok bool
@@ -1010,13 +1403,17 @@ func new_db(s *StorageImpl, driver, uri string) error {
 
 func init_db(s *StorageImpl) error {
 	s.GetRootDBConn().AutoMigrate(
-		&Device{},
-		&Module{},
-		&Flow{},
-		&FlowSet{},
-		&FlowFlowSetMapping{},
-		&Config{},
-		&DeviceConfigMapping{},
+		new(Device),
+		new(Module),
+		new(Flow),
+		new(FlowSet),
+		new(FlowFlowSetMapping),
+		new(Config),
+		new(DeviceConfigMapping),
+		new(FirmwareHub),
+		new(DeviceFirmwareHubMapping),
+		new(FirmwareDescriptor),
+		new(DeviceFirmwareDescriptorMapping),
 	)
 
 	return nil
