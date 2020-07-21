@@ -60,9 +60,9 @@ OTA 带来的优势是可以不用物理接触物理设备, 即可对设备进�
 
 详情请参考 [connectionCenter.SyncFirmware](https://github.com/nayotta/metathings/blob/master/pkg/deviced/connection/connection.go) 与 [MetathingsDeviceServiceImpl.handle_system_unary_request_sync_firmware](https://github.com/nayotta/metathings/blob/master/pkg/device/service/handle.go)实现.
 
-*注意* `Device`有义务在启动时, 把当前的版本写入 SimpleStorage(`/sys/firmware/device/version/current`) 内.
+**注意:** `Device`有义务在启动时, 把当前的版本写入 SimpleStorage(`/sys/firmware/device/version/current`) 内.
 
-*注意2* `Simple` 类型的 `Device` 采用的是 `Device Cloud`代理 `Device`, 此类型设备的 `Device`不支持 OTA(`Module`是支持的).
+**注意2:** `Simple` 类型的 `Device` 采用的是 `Device Cloud`代理 `Device`, 此类型设备的 `Device`不支持 OTA(`Module`是支持的).
 
 ### 3.3. Device 与 Module 的协议
 
@@ -76,20 +76,121 @@ OTA 带来的优势是可以不用物理接触物理设备, 即可对设备进�
 }
 ```
 
- 详情请参考 [MetathingsDeviceServiceImpl.do_sync_modules_firmware](https://github.com/nayotta/metathings/blob/master/pkg/device/service/handle.go)(`Advanced Device`), [DeviceConnection.handle_system_unary_request_sync_firmware](https://github.com/nayotta/metathings/blob/master/pkg/device_cloud/service/handle.go)(`Simple Device`) 和 [ComponentExtFirmwareService.SyncFirmware](https://github.com/nayotta/metathings/blob/master/pkg/component_ext/firmware/service/service.go) 等.
+详情请参考 [MetathingsDeviceServiceImpl.do_sync_modules_firmware](https://github.com/nayotta/metathings/blob/master/pkg/device/service/handle.go)(`Advanced Device`), [DeviceConnection.handle_system_unary_request_sync_firmware](https://github.com/nayotta/metathings/blob/master/pkg/device_cloud/service/handle.go)(`Simple Device`) 和 [ComponentExtFirmwareService.SyncFirmware](https://github.com/nayotta/metathings/blob/master/pkg/component_ext/firmware/service/service.go) 等.
 
-*注意* `Module`有义务在启动时, 把当前的版本写入 SimpleStorage(`/sys/firmware/modules/<name>/version/current`)内, `<name>`为 `Module`的名字.
+**注意:** `Module`有义务在启动时, 把当前的版本写入 SimpleStorage(`/sys/firmware/modules/<name>/version/current`)内, `<name>`为 `Module`的名字.
 
-*注意2* `Advanced Module`的 `FirmwareService` 是以插件的形式编写的, 所以只需要引入并且初始化就会获取OTA的功能. [Example](https://github.com/nayotta/metathings/blob/master/pkg/component_ext/firmware/service/example_test.go)
+**注意2:** `Advanced Module`的 `FirmwareService` 是以插件的形式编写的, 所以只需要引入并且初始化就会获取OTA的功能. [Example](https://github.com/nayotta/metathings/blob/master/pkg/component_ext/firmware/service/example_test.go)
 
-## 4. OTA流程
+## 4. `OTA` 流程
 
-### 4.1. `Device` 流程概览
+### 4.1. `OTA` 预处理
 
-### 4.2. `Device` 详细流程
+#### 4.1.1. 创建 `FirmwareHub`
 
-### 4.3. `Module` 流程概述
+调用`CreateFirmwareHub`接口, 创建 `FirmwareHub`.
 
-### 4.4. `Module` 详细流程
+#### 4.1.2. 上传固件到指定的服务器
 
-## 5. 总结
+计算固件文件的 `sha256` 值, 记录该值.
+
+上传固件文件到文件服务器, 并且记录下载连接路径.
+
+#### 4.1.3.  添加 `Device` 到 `FirmwareHub`
+
+#### 4.1.4.  添加 `FirmwareDescriptor` 到 `FirmwareHub`
+
+调用`AddFirmwareDescriptorToFirmwareHub`接口, 添加`FirmwareDescriptor`到`FirmwareHub`.
+
+`AddFirmwareDescriptorToFirmwareHubRequest`格式如下:
+
+```
+{
+  "firmware_hub": {
+    "id": "<firmware_hub_id>"
+  },
+  "firmware_descriptor": {
+    "name": "<firmware_descriptor_name>",  // 此处可以作为整个 FirmwareDescriptor 的版本号
+    "descriptor": <descriptor>             // FirmwareDescriptor的具体描述信息, 参考下面
+  }
+}
+```
+
+`descriptor` 格式如下:
+
+```
+{
+  "device": {
+    "version": {
+      "next": "<version>"    // Device固件的版本号
+    },
+    "sha256": {
+      "next": "<sha256>"     // Device固件的sha256校验值
+    },
+    "uri": {
+      "next": "<uri>"        // Device固件的下载地址
+    }
+  },
+  "modules": {
+    "<module1>": {           // Module的名字, 如果有多个Module, 就应该录入多个Module的固件信息
+      "version": {
+        "next": "<version>"  // Module1固件的版本号
+      },
+      "sha256": {
+        "next": "<sha256>"   // Module1固件的sha256校验值
+      },
+      "uri": {
+        "next": "<uri>"      // Module1固件的下载地址
+      },
+    }
+  }
+}
+```
+
+### 4.2. `Device` `OTA` 流程概览
+
+#### 4.2.1. 查询 `Device` 支持的 `FirmwareDescriptor`
+
+通过 `GetFirmwareHub`接口, 获取支持这个`Device`的`FirmwareDescriptor`.
+
+#### 4.2.2. 设置 `Device` 的 `FirmwareDescriptor`
+
+通过 `SetDeviceFirmwareDescriptor`接口, 设置 `Device`的`FirmwareDescriptor`.
+
+#### 4.2.3. 同步 `Device` 的 `FirmwareDescriptor`
+
+通过 `SyncDeviceFirmwareDescriptor`接口, 同步`Device`的`FirmwareDescriptor`.
+
+**注意:** 通常情况下, 同步完成之后, 需要重启 `Device`与`Module`的服务才会重新使用新的固件.
+
+#### 4.2.4. 查询 `Device` 的 `FirmwareDescriptor`
+
+通过 `GetDeviceFirmwareDescriptor`接口, 获取 `Device` 的 `FirmwareDescriptor`信息.
+
+如果当前固件版本已经与设置的固件版本相同的话, 只会显示当前版本的信息. 否则就会显示当前与将要同步的固件信息.
+
+### 4.3. `Device` `OTA` 详细流程
+
+`Device`的详细流程请参考 [MetathingsDeviceServiceImpl.do_sync_modules_firmware](https://github.com/nayotta/metathings/blob/master/pkg/device/service/handle.go).
+
+### 4.4. `Module` `OTA` 流程
+
+#### 4.4.1. `Module` 实现 `SyncFirmware` 接口
+
+在 Module 的实现里面, 实现 [`SyncFirmware`接口](https://github.com/nayotta/metathings/blob/master/pkg/proto/component_ext/firmware/service.proto).
+
+由于暂时存在两种类型的 `Module` (`Simple` 与 `Advanced`), 所以不同类型的实现会有不一样. 
+
+#### 4.4.2. `Module` 执行 `SyncFirmware` 命令
+
+通过 `ShowFirmwareDescriptor` 接口 (`Simple Module` 通过 `Device Cloud`的 `/actions/show_module_firmware_descriptor`接口)获取到 `FirmwareDescriptor`
+
+在 `FirmwareDescriptor` 内获取 `Module`固件的 `uri` 与 `sha256`.
+
+最后执行下载固件并且更新固件的行为.
+
+`Advanced Module`可以参考[ComponentExtFirmwareService.SyncFirmware](https://github.com/nayotta/metathings/blob/master/pkg/component_ext/firmware/service/service.go).
+
+`Simple Module`需要根据芯片需求进行改动.
+
+更新固件后, 程序可以选择自动重启或被动重启.
