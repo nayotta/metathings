@@ -116,7 +116,7 @@ match_flow_loop:
 	flwst_frm_dev := &pb.Device{
 		Id: dev_id,
 		Flows: []*pb.Flow{
-			&pb.Flow{Name: flw_name_r},
+			{Name: flw_name_r},
 		},
 	}
 
