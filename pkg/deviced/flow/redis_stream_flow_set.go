@@ -12,11 +12,27 @@ import (
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 	pool_helper "github.com/nayotta/metathings/pkg/common/pool"
 	pb_helper "github.com/nayotta/metathings/pkg/common/protobuf"
+	rand_helper "github.com/nayotta/metathings/pkg/common/rand"
 	pb "github.com/nayotta/metathings/pkg/proto/deviced"
 )
 
 type RedisStreamFlowSetOption struct {
 	Id string
+
+	ReadStreamGroupBlockTime time.Duration
+	StreamExpireTime         time.Duration
+	StreamTrimLimit          int64
+	StreamTrimProb           float32
+}
+
+func NewRedisStreamFlowSetOption(id string) *RedisStreamFlowSetOption {
+	return &RedisStreamFlowSetOption{
+		Id:                       id,
+		ReadStreamGroupBlockTime: 3 * time.Second,
+		StreamExpireTime:         30 * time.Minute,
+		StreamTrimLimit:          15,
+		StreamTrimProb:           0.001,
+	}
 }
 
 type RedisStreamFlowSet struct {
@@ -88,6 +104,16 @@ func (rsfs *RedisStreamFlowSet) PushFrame(flwst_frm *FlowSetFrame) error {
 		return err
 	}
 
+	if err = rsfs.rs_cli.Expire(rsfs.redis_stream_key(), rsfs.opt.StreamExpireTime).Err(); err != nil {
+		rsfs.logger.WithError(err).Debugf("failed to expire stream")
+	}
+
+	if rand_helper.Float32() < rsfs.opt.StreamTrimProb {
+		if err = rsfs.rs_cli.XTrimApprox(rsfs.redis_stream_key(), rsfs.opt.StreamTrimLimit).Err(); err != nil {
+			rsfs.logger.WithError(err).Debugf("failed to trim stream")
+		}
+	}
+
 	return nil
 }
 
@@ -119,6 +145,10 @@ func (rsfs *RedisStreamFlowSet) pull_frame_from_redis_stream_loop(frm_ch chan<- 
 	}()
 
 	for !rsfs.closed {
+		if err = cli.Expire(key, rsfs.opt.StreamExpireTime).Err(); err != nil {
+			logger.WithError(err).Debugf("failed to set expire stream")
+		}
+
 		vals, err := cli.XReadGroup(&redis.XReadGroupArgs{
 			Group:    nonce,
 			Consumer: nonce,
@@ -190,9 +220,7 @@ func (fty *RedisStreamFlowSetFactory) New(opt *FlowSetOption) (FlowSet, error) {
 	}
 
 	return &RedisStreamFlowSet{
-		opt: &RedisStreamFlowSetOption{
-			Id: opt.FlowSetId,
-		},
+		opt:    NewRedisStreamFlowSetOption(opt.FlowSetId),
 		rs_cli: cli.(*redis.Client),
 		logger: fty.logger,
 		close_cbs: []func() error{

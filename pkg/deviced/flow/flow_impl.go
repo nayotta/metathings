@@ -10,7 +10,7 @@ import (
 
 	"github.com/go-redis/redis"
 	"github.com/golang/protobuf/jsonpb"
-	struct_ "github.com/golang/protobuf/ptypes/struct"
+	stpb "github.com/golang/protobuf/ptypes/struct"
 	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -20,6 +20,7 @@ import (
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 	pool_helper "github.com/nayotta/metathings/pkg/common/pool"
 	pb_helper "github.com/nayotta/metathings/pkg/common/protobuf"
+	rand_helper "github.com/nayotta/metathings/pkg/common/rand"
 	pb "github.com/nayotta/metathings/pkg/proto/deviced"
 )
 
@@ -28,8 +29,27 @@ var (
 	json_decoder = jsonpb.Unmarshaler{}
 )
 
+type flowOption struct {
+	*FlowOption
+
+	ReadStreamGroupBlockTime time.Duration
+	StreamExpireTime         time.Duration
+	StreamTrimLimit          int64
+	StreamTrimProb           float32
+}
+
+func newFlowOption(o *FlowOption) *flowOption {
+	return &flowOption{
+		FlowOption:               o,
+		ReadStreamGroupBlockTime: 3 * time.Second,
+		StreamExpireTime:         30 * time.Minute,
+		StreamTrimLimit:          15,
+		StreamTrimProb:           0.001,
+	}
+}
+
 type flow struct {
-	opt    *FlowOption
+	opt    *flowOption
 	logger log.FieldLogger
 
 	mgo_db *mongo.Database
@@ -121,6 +141,16 @@ func (f *flow) push_frame_to_redis_stream(frm *pb.Frame) error {
 		return err
 	}
 
+	if err = f.rs_cli.Expire(f.redis_stream_key(), f.opt.StreamExpireTime).Err(); err != nil {
+		f.logger.WithError(err).Debugf("failed to expire stream")
+	}
+
+	if rand_helper.Float32() < f.opt.StreamTrimProb {
+		if err = f.rs_cli.XTrimApprox(f.redis_stream_key(), f.opt.StreamTrimLimit).Err(); err != nil {
+			f.logger.WithError(err).Debugf("failed to trim stream")
+		}
+	}
+
 	return nil
 }
 
@@ -175,15 +205,18 @@ func (f *flow) pull_frame_from_redis_stream_loop(frm_ch chan<- *pb.Frame) {
 	}()
 
 	for !f.closed {
+		if err = cli.Expire(key, f.opt.StreamExpireTime).Err(); err != nil {
+			f.logger.WithError(err).Debugf("failed to expire stream")
+		}
+
 		vals, err := cli.XReadGroup(&redis.XReadGroupArgs{
 			Group:    nonce,
 			Consumer: nonce,
 			Streams:  []string{key, ">"},
 			Count:    1,
-			Block:    3 * time.Second,
+			Block:    f.opt.ReadStreamGroupBlockTime,
 			NoAck:    true,
 		}).Result()
-
 		switch err {
 		case redis.Nil:
 			continue
@@ -272,7 +305,7 @@ func (f *flow) query_frame(coll *mongo.Collection, flr *FlowFilter) ([]*pb.Frame
 			return nil, err
 		}
 
-		var frm_dat struct_.Struct
+		var frm_dat stpb.Struct
 		err = dec.Unmarshal(bytes.NewReader(frm_dat_txt), &frm_dat)
 		if err != nil {
 			return nil, err
@@ -349,7 +382,7 @@ func (ff *flowFactory) New(opt *FlowOption) (Flow, error) {
 	}
 
 	return &flow{
-		opt:    opt,
+		opt:    newFlowOption(opt),
 		mgo_db: mgo_db,
 		rs_cli: rs_cli,
 		logger: ff.logger,
