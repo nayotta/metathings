@@ -62,7 +62,7 @@ func (e *EvaluatorImpl) Eval(ctx context.Context, dat esdk.Data) error {
 	defer op.Close()
 
 	// TODO(Peer): handle operator result
-	_, err = op.Run(e.get_eval_context(), dat)
+	_, err = op.Run(ctx, e.get_eval_context(), dat)
 	if err != nil {
 		logger.WithError(err).Debugf("failed to run operator")
 		return err

@@ -1,10 +1,12 @@
 package option_helper
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"time"
 
+	"github.com/opentracing/opentracing-go"
 	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/objx"
 )
@@ -357,6 +359,24 @@ func ToStringMapString(v *map[string]string) func(string, interface{}) error {
 		if !ok {
 			return InvalidArgument(key)
 		}
+		return nil
+	}
+}
+
+func ToContext(y *context.Context) func(string, interface{}) error {
+	return func(key string, val interface{}) error {
+		var ok bool
+		*y, ok = val.(context.Context)
+		if !ok {
+			return InvalidArgument(key)
+		}
+		return nil
+	}
+}
+
+func ToIsTraced(y *bool) func(string, interface{}) error {
+	return func(k string, v interface{}) error {
+		_, *y = v.(opentracing.Tracer)
 		return nil
 	}
 }

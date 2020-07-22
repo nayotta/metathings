@@ -32,7 +32,7 @@ func (d *luaMetathingsCoreDevice) check(L *lua.LState) *luaMetathingsCoreDevice 
 }
 
 func (d *luaMetathingsCoreDevice) get_context() context.Context {
-	return context_helper.WithToken(context.TODO(), cast.ToString(d.core.GetContext().Get("token")))
+	return context_helper.WithToken(d.core.GetGoContext(), cast.ToString(d.core.GetContext().Get("token")))
 }
 
 func (d *luaMetathingsCoreDevice) Id() string {

@@ -38,3 +38,27 @@ func ErrorWrapper(err error) error {
 
 	return s.Err()
 }
+
+type ErrorMapping map[error]codes.Code
+
+type ErrorParser struct {
+	em ErrorMapping
+}
+
+func (ep *ErrorParser) ParseError(err error) error {
+	s, ok := status.FromError(err)
+	if ok {
+		return s.Err()
+	}
+
+	c, ok := ep.em[err]
+	if !ok {
+		c = codes.Internal
+	}
+
+	return status.Errorf(c, err.Error())
+}
+
+func NewErrorParser(em ErrorMapping) *ErrorParser {
+	return &ErrorParser{em: em}
+}

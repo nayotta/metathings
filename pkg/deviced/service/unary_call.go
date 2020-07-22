@@ -3,8 +3,6 @@ package metathings_deviced_service
 import (
 	"context"
 
-	"google.golang.org/grpc/status"
-
 	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
 	storage "github.com/nayotta/metathings/pkg/deviced/storage"
 	identityd_validator "github.com/nayotta/metathings/pkg/identityd2/validator"
@@ -37,13 +35,13 @@ func (self *MetathingsDevicedService) UnaryCall(ctx context.Context, req *pb.Una
 
 	dev_id_str := req.GetDevice().GetId().GetValue()
 	if dev_s, err = self.storage.GetDevice(ctx, dev_id_str); err != nil {
-		self.logger.WithError(err).Debugf("failed to get device in storage")
-		return nil, status.Convert(err).Err()
+		self.logger.WithError(err).Errorf("failed to get device in storage")
+		return nil, self.ParseError(err)
 	}
 
-	if val, err = self.cc.UnaryCall(dev_s, req.GetValue()); err != nil {
-		self.logger.WithError(err).Debugf("failed to unray call")
-		return nil, status.Convert(err).Err()
+	if val, err = self.cc.UnaryCall(ctx, dev_s, req.GetValue()); err != nil {
+		self.logger.WithError(err).Errorf("failed to unray call")
+		return nil, self.ParseError(err)
 	}
 
 	res := &pb.UnaryCallResponse{

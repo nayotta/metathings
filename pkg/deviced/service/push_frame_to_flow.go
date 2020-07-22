@@ -176,7 +176,7 @@ match_flow_loop:
 				return status.Errorf(codes.Internal, err.Error())
 			}
 
-			go func() {
+			go func(fs flow.FlowSet) {
 				if self.data_launcher == nil {
 					return
 				}
@@ -189,7 +189,7 @@ match_flow_loop:
 					evltrsdk_dat); err != nil {
 					logger.WithError(err).Warningf("failed to launch data")
 				}
-			}()
+			}(fs)
 		}
 
 		if push_ack {

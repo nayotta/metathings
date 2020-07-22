@@ -4,6 +4,7 @@ import (
 	"context"
 	"testing"
 
+	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/suite"
 

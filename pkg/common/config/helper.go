@@ -35,3 +35,14 @@ func ParseConfigOption(k string, m map[string]interface{}, a ...interface{}) (st
 
 	return name, y, nil
 }
+
+func FlattenConfigOption(m map[string]interface{}, a ...interface{}) []interface{} {
+	var y []interface{}
+	for k, v := range m {
+		y = append(y, k, v)
+	}
+
+	y = append(y, a...)
+
+	return y
+}

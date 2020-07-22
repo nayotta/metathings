@@ -16,6 +16,7 @@ import (
 var (
 	base_opt         *cmd_contrib.BaseOption
 	init_config_once sync.Once
+	version_str      string
 )
 
 var (
@@ -24,6 +25,10 @@ var (
 		Short: "MetaThings Command Line Toolkits",
 	}
 )
+
+func SetVersion(v string) {
+	version_str = v
+}
 
 func initConfig() {
 	init_config_once.Do(func() {

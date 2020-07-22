@@ -7,13 +7,13 @@ import (
 	fmt "fmt"
 	math "math"
 	proto "github.com/golang/protobuf/proto"
+	_ "github.com/nayotta/metathings/pkg/proto/identityd2"
 	_ "github.com/nayotta/metathings/pkg/proto/constant/state"
 	_ "github.com/nayotta/metathings/pkg/proto/constant/kind"
 	_ "github.com/golang/protobuf/ptypes/wrappers"
 	_ "github.com/golang/protobuf/ptypes/any"
 	_ "github.com/golang/protobuf/ptypes/timestamp"
 	_ "github.com/golang/protobuf/ptypes/struct"
-	_ "github.com/nayotta/metathings/pkg/proto/identityd2"
 	github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
 )
 
@@ -470,6 +470,91 @@ func (this *Config) Validate() error {
 	if this.Body != nil {
 		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Body); err != nil {
 			return github_com_mwitkow_go_proto_validators.FieldError("Body", err)
+		}
+	}
+	return nil
+}
+func (this *OpFirmwareHub) Validate() error {
+	if this.Id != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Id); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Id", err)
+		}
+	}
+	if this.Alias != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Alias); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Alias", err)
+		}
+	}
+	if this.Description != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Description); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Description", err)
+		}
+	}
+	for _, item := range this.Devices {
+		if item != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("Devices", err)
+			}
+		}
+	}
+	for _, item := range this.FirmwareDescriptors {
+		if item != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("FirmwareDescriptors", err)
+			}
+		}
+	}
+	return nil
+}
+func (this *FirmwareHub) Validate() error {
+	for _, item := range this.Devices {
+		if item != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("Devices", err)
+			}
+		}
+	}
+	for _, item := range this.FirmwareDescriptors {
+		if item != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("FirmwareDescriptors", err)
+			}
+		}
+	}
+	return nil
+}
+func (this *OpFirmwareDescriptor) Validate() error {
+	if this.Id != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Id); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Id", err)
+		}
+	}
+	if this.Name != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Name); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Name", err)
+		}
+	}
+	if this.CreatedAt != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.CreatedAt); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("CreatedAt", err)
+		}
+	}
+	if this.Descriptor_ != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Descriptor_); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Descriptor_", err)
+		}
+	}
+	return nil
+}
+func (this *FirmwareDescriptor) Validate() error {
+	if this.CreatedAt != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.CreatedAt); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("CreatedAt", err)
+		}
+	}
+	if this.Descriptor_ != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Descriptor_); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Descriptor_", err)
 		}
 	}
 	return nil

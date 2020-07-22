@@ -15,7 +15,6 @@ type JaegerTracerFactory struct{}
 var set_jaeger_as_global_tracer_once sync.Once
 
 func (jtf *JaegerTracerFactory) New(args ...interface{}) (opentracing.Tracer, io.Closer, error) {
-	var opt *TracerOption
 	var ok bool
 	var service_name string
 	var disabled string
@@ -31,7 +30,7 @@ func (jtf *JaegerTracerFactory) New(args ...interface{}) (opentracing.Tracer, io
 	if err = opt_helper.Setopt(map[string]func(string, interface {
 	}) error{
 		"option": func(key string, val interface{}) error {
-			if opt, ok = val.(*TracerOption); !ok {
+			if _, ok = val.(*TracerOption); !ok {
 				return opt_helper.InvalidArgument("option")
 			}
 			return nil

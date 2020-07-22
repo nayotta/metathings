@@ -1,6 +1,14 @@
 package metathings_deviced_service
 
-import "errors"
+import (
+	"errors"
+	"os"
+
+	"google.golang.org/grpc/codes"
+
+	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
+	storage "github.com/nayotta/metathings/pkg/deviced/storage"
+)
 
 var (
 	ErrUnexpectedMessage = errors.New("unexpected message")
@@ -12,3 +20,8 @@ var (
 	ErrPutObjectStreamingTimeout = errors.New("put object streaming timeout")
 	ErrInvalidProtoset           = errors.New("invaild protoset")
 )
+
+var em = grpc_helper.ErrorMapping{
+	storage.RecordNotFound: codes.NotFound,
+	os.ErrNotExist:         codes.NotFound,
+}

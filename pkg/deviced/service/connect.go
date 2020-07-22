@@ -30,7 +30,7 @@ func (self *MetathingsDevicedService) Connect(stream pb.DevicedService_ConnectSe
 		}
 	}()
 
-	if conn, err = self.cc.BuildConnection(dev_s, stream); err != nil {
+	if conn, err = self.cc.BuildConnection(stream.Context(), dev_s, stream); err != nil {
 		self.logger.WithError(err).Errorf("failed to build connection")
 		return status.Errorf(codes.Internal, err.Error())
 	}

@@ -1,6 +1,10 @@
 package metathings_deviced_session_storage
 
-import "time"
+import (
+	"time"
+
+	opt_helper "github.com/nayotta/metathings/pkg/common/option"
+)
 
 type SessionStorage interface {
 	GetStartupSession(id string) (int32, error)
@@ -33,4 +37,16 @@ func NewSessionStorage(driver string, args ...interface{}) (SessionStorage, erro
 	}
 
 	return stor, nil
+}
+
+func ToSessionStorage(y *SessionStorage) func(string, interface{}) error {
+	return func(k string, v interface{}) error {
+		var ok bool
+
+		if *y, ok = v.(SessionStorage); !ok {
+			return opt_helper.InvalidArgument(k)
+		}
+
+		return nil
+	}
 }

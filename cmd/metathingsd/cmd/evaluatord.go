@@ -4,21 +4,26 @@ import (
 	"context"
 
 	"github.com/opentracing/opentracing-go"
-	log "github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"go.uber.org/fx"
 
 	cmd_contrib "github.com/nayotta/metathings/cmd/contrib"
 	cmd_helper "github.com/nayotta/metathings/pkg/common/cmd"
+	cfg_helper "github.com/nayotta/metathings/pkg/common/config"
 	token_helper "github.com/nayotta/metathings/pkg/common/token"
 	service "github.com/nayotta/metathings/pkg/evaluatord/service"
 	storage "github.com/nayotta/metathings/pkg/evaluatord/storage"
+	timer_backend "github.com/nayotta/metathings/pkg/evaluatord/timer"
 	authorizer "github.com/nayotta/metathings/pkg/identityd2/authorizer"
 	pb "github.com/nayotta/metathings/pkg/proto/evaluatord"
 )
 
 type EvaluatordOption struct {
 	cmd_contrib.ServiceBaseOption `mapstructure:",squash"`
+	TaskStorage                   map[string]interface{}
+	TimerStorage                  map[string]interface{}
+	TimerBackend                  map[string]interface{}
 }
 
 func NewEvaluatordOption() *EvaluatordOption {
@@ -43,6 +48,12 @@ var (
 			opt_t := NewEvaluatordOption()
 			cmd_helper.UnmarshalConfig(opt_t)
 			base_opt = &opt_t.BaseOption
+
+			cmd_helper.InitManyStringMapFromConfigWithStage([]cmd_helper.InitManyOption{
+				{&opt_t.TaskStorage, "task_storage"},
+				{&opt_t.TimerStorage, "timer_storage"},
+				{&opt_t.TimerBackend, "timer_backend"},
+			})
 
 			evaluatord_opt = opt_t
 			evaluatord_opt.SetServiceName("evaluatord")
@@ -84,12 +95,71 @@ type NewEvaluatordStorageParams struct {
 	fx.In
 
 	Option cmd_contrib.StorageOptioner
-	Logger log.FieldLogger
+	Logger logrus.FieldLogger
 	Tracer opentracing.Tracer `name:"opentracing_tracer" optional:"true"`
 }
 
 func NewEvaluatordStorage(p NewEvaluatordStorageParams) (storage.Storage, error) {
 	return storage.NewStorage(p.Option.GetDriver(), p.Option.GetUri(), "logger", p.Logger, "tracer", p.Tracer)
+}
+
+type NewEvaluatordTaskStorageParams struct {
+	fx.In
+
+	Option *EvaluatordOption
+	Logger logrus.FieldLogger
+	Tracer opentracing.Tracer `name:"opentracing_tracer" optional:"true"`
+}
+
+func NewEvaluatordTaskStorage(p NewEvaluatordTaskStorageParams) (storage.TaskStorage, error) {
+	var drv string
+	var args []interface{}
+	var err error
+
+	if drv, args, err = cfg_helper.ParseConfigOption("driver", p.Option.TaskStorage, "logger", p.Logger, "tracer", p.Tracer); err != nil {
+		return nil, err
+	}
+
+	return storage.NewTaskStorage(drv, args...)
+}
+
+type NewEvaluatordTimerStorageParams struct {
+	fx.In
+
+	Option *EvaluatordOption
+	Logger logrus.FieldLogger
+	Tracer opentracing.Tracer `name:"opentracing_tracer" optional:"true"`
+}
+
+func NewEvaluatordTimerStorage(p NewEvaluatordTimerStorageParams) (storage.TimerStorage, error) {
+	var drv string
+	var args []interface{}
+	var err error
+
+	if drv, args, err = cfg_helper.ParseConfigOption("driver", p.Option.TimerStorage, "logger", p.Logger, "tracer", p.Tracer); err != nil {
+		return nil, err
+	}
+
+	return storage.NewTimerStorage(drv, args...)
+}
+
+type NewEvaluatordTimerBackendParams struct {
+	fx.In
+
+	Option *EvaluatordOption
+	Logger logrus.FieldLogger
+}
+
+func NewEvaluatordTimerBackend(p NewEvaluatordTimerBackendParams) (timer_backend.TimerBackend, error) {
+	var drv string
+	var args []interface{}
+	var err error
+
+	if drv, args, err = cfg_helper.ParseConfigOption("driver", p.Option.TimerBackend, "logger", p.Logger); err != nil {
+		return nil, err
+	}
+
+	return timer_backend.NewTimerBackend(drv, args...)
 }
 
 func runEvaluatord() error {
@@ -107,6 +177,9 @@ func runEvaluatord() error {
 			token_helper.NewTokenValidator,
 			NewMetathingsEvaulatordServiceOption,
 			NewEvaluatordStorage,
+			NewEvaluatordTaskStorage,
+			NewEvaluatordTimerStorage,
+			NewEvaluatordTimerBackend,
 			authorizer.NewAuthorizer,
 			cmd_contrib.NewValidator,
 			service.NewMetathingsEvaludatorService,

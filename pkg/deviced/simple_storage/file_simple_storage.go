@@ -9,6 +9,7 @@ import (
 	"os"
 	"path"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
 
@@ -20,11 +21,18 @@ import (
 )
 
 type FileSimpleStorageOption struct {
-	Home string
+	Home            string
+	ReadBufferSize  int
+	WriteBufferSize int
 }
 
 func NewFileSimpleStorageOption() *FileSimpleStorageOption {
-	return &FileSimpleStorageOption{}
+	opt := &FileSimpleStorageOption{}
+
+	opt.ReadBufferSize = 64 * 1024
+	opt.WriteBufferSize = 64 * 1024
+
+	return opt
 }
 
 type FileSimpleStorage struct {
@@ -108,7 +116,7 @@ func (fss *FileSimpleStorage) PutObject(obj *Object, reader io.Reader) error {
 	}
 	defer f.Close()
 
-	slice := make([]byte, 4096)
+	slice := make([]byte, fss.opt.WriteBufferSize)
 	for n, err := reader.Read(slice); n > 0 && err == nil; n, err = reader.Read(slice) {
 		if n, err = f.Write(slice[:n]); err != nil {
 			return err
@@ -197,6 +205,10 @@ func (fss *FileSimpleStorage) GetObject(x *Object) (y *Object, err error) {
 
 	fi, err := os.Stat(p)
 	if err != nil {
+		if os.IsNotExist(err) {
+			return nil, os.ErrNotExist
+		}
+
 		return
 	}
 
@@ -215,14 +227,18 @@ func (fss *FileSimpleStorage) GetObjectContent(obj *Object) (chan []byte, error)
 
 	f, err := os.Open(p)
 	if err != nil {
+		if os.IsNotExist(err) {
+			return nil, os.ErrNotExist
+		}
+
 		return nil, err
 	}
 
 	ch := make(chan []byte)
 
 	go func() {
-		slice := make([]byte, 512)
 		for {
+			slice := make([]byte, fss.opt.ReadBufferSize)
 			n, err := f.Read(slice)
 			if err != nil || n == 0 {
 				break
@@ -233,6 +249,24 @@ func (fss *FileSimpleStorage) GetObjectContent(obj *Object) (chan []byte, error)
 	}()
 
 	return ch, nil
+}
+
+func (fss *FileSimpleStorage) GetObjectContentSync(obj *Object) ([]byte, error) {
+	var sb strings.Builder
+	ch, err := fss.GetObjectContent(obj)
+	if err != nil {
+		return nil, err
+	}
+
+	for {
+		select {
+		case buf, ok := <-ch:
+			if !ok {
+				return []byte(sb.String()), nil
+			}
+			sb.Write(buf)
+		}
+	}
 }
 
 func (fss *FileSimpleStorage) list_objects(obj *Object, recursive bool, depth int) ([]*Object, error) {
@@ -281,8 +315,10 @@ func new_file_simple_storage(args ...interface{}) (SimpleStorage, error) {
 	opt := NewFileSimpleStorageOption()
 
 	err := opt_helper.Setopt(map[string]func(string, interface{}) error{
-		"home":   opt_helper.ToString(&opt.Home),
-		"logger": opt_helper.ToLogger(&logger),
+		"home":              opt_helper.ToString(&opt.Home),
+		"read_buffer_size":  opt_helper.ToInt(&opt.ReadBufferSize),
+		"write_buffer_size": opt_helper.ToInt(&opt.WriteBufferSize),
+		"logger":            opt_helper.ToLogger(&logger),
 	}, opt_helper.SetSkip(true))(args...)
 	if err != nil {
 		return nil, err

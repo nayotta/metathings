@@ -9,6 +9,9 @@ import (
 	proto "github.com/golang/protobuf/proto"
 	_ "github.com/golang/protobuf/ptypes/wrappers"
 	_ "github.com/golang/protobuf/ptypes/struct"
+	_ "github.com/golang/protobuf/ptypes/timestamp"
+	_ "github.com/nayotta/metathings/pkg/proto/constant/state"
+	_ "github.com/nayotta/metathings/pkg/proto/deviced"
 	github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
 )
 
@@ -135,6 +138,140 @@ func (this *OpLuaDescriptor) Validate() error {
 	if this.Code != nil {
 		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Code); err != nil {
 			return github_com_mwitkow_go_proto_validators.FieldError("Code", err)
+		}
+	}
+	return nil
+}
+func (this *OpTaskState) Validate() error {
+	if this.At != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.At); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("At", err)
+		}
+	}
+	if this.Tags != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Tags); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Tags", err)
+		}
+	}
+	return nil
+}
+func (this *TaskState) Validate() error {
+	if this.At != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.At); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("At", err)
+		}
+	}
+	if this.Tags != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Tags); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Tags", err)
+		}
+	}
+	return nil
+}
+func (this *OpTask) Validate() error {
+	if this.Id != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Id); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Id", err)
+		}
+	}
+	if this.CreatedAt != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.CreatedAt); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("CreatedAt", err)
+		}
+	}
+	if this.UpdatedAt != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.UpdatedAt); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("UpdatedAt", err)
+		}
+	}
+	if this.CurrentState != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.CurrentState); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("CurrentState", err)
+		}
+	}
+	if this.Source != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Source); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Source", err)
+		}
+	}
+	return nil
+}
+func (this *Task) Validate() error {
+	if this.CreatedAt != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.CreatedAt); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("CreatedAt", err)
+		}
+	}
+	if this.UpdatedAt != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.UpdatedAt); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("UpdatedAt", err)
+		}
+	}
+	if this.CurrentState != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.CurrentState); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("CurrentState", err)
+		}
+	}
+	if this.Source != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Source); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Source", err)
+		}
+	}
+	for _, item := range this.States {
+		if item != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("States", err)
+			}
+		}
+	}
+	return nil
+}
+func (this *OpTimer) Validate() error {
+	if this.Id != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Id); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Id", err)
+		}
+	}
+	if this.Alias != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Alias); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Alias", err)
+		}
+	}
+	if this.Description != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Description); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Description", err)
+		}
+	}
+	if this.Schedule != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Schedule); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Schedule", err)
+		}
+	}
+	if this.Timezone != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Timezone); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Timezone", err)
+		}
+	}
+	if this.Enabled != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Enabled); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Enabled", err)
+		}
+	}
+	for _, item := range this.Configs {
+		if item != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("Configs", err)
+			}
+		}
+	}
+	return nil
+}
+func (this *Timer) Validate() error {
+	for _, item := range this.Configs {
+		if item != nil {
+			if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(item); err != nil {
+				return github_com_mwitkow_go_proto_validators.FieldError("Configs", err)
+			}
 		}
 	}
 	return nil

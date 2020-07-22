@@ -85,7 +85,7 @@ func (self *MetathingsDevicedService) PullFrameFromFlowSet(req *pb.PullFrameFrom
 			if err = stm.Send(&pb.PullFrameFromFlowSetResponse{
 				Id: "ffffffffffffffffffffffffffffffff",
 				Response: &pb.PullFrameFromFlowSetResponse_Ack_{
-					&pb.PullFrameFromFlowSetResponse_Ack{},
+					Ack: new(pb.PullFrameFromFlowSetResponse_Ack),
 				},
 			}); err != nil {
 				logger.WithError(err).Errorf("failed to send alive response")

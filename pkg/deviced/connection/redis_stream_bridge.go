@@ -124,8 +124,6 @@ func (c *redisStreamChannel) Send(buf []byte) error {
 		logger.WithError(err).Warningf("failed to set expire for stream")
 	}
 
-	logger.Debugf("send msg")
-
 	return nil
 }
 
@@ -230,14 +228,14 @@ func (c *redisStreamChannel) Close() error {
 	defer c.client_mutex.Unlock()
 
 	close(c.closed)
-	c.get_logger().Debugf("send close signal")
-
 	if err := c.pool.Put(c.client); err != nil {
+		c.get_logger().WithError(err).Debugf("failed to put client back to pool")
 		return err
 	}
 	c.get_logger().WithField("pool_size", c.pool.Size()).Debugf("put client to pool")
 
 	c.get_logger().Debugf("channel closed")
+
 	return nil
 }
 
@@ -360,10 +358,14 @@ func (f *redisStreamBridgeFactory) init_pool() {
 
 func (f *redisStreamBridgeFactory) BuildBridge(device_id string, sess int64) (Bridge, error) {
 	id := parse_bridge_id(device_id, sess)
+<<<<<<< HEAD
 	defer f.logger.WithFields(log.Fields{
 		"bridge":  id,
 		"session": sess,
 	}).Debugf("build bridge")
+=======
+	f.logger.WithField("bridge", id).Debugf("build bridge")
+>>>>>>> dev
 	return f.get_bridge(id)
 }
 
@@ -387,7 +389,7 @@ func (f *redisStreamBridgeFactory) get_bridge(id string) (Bridge, error) {
 }
 
 func (f *redisStreamBridgeFactory) GetBridge(id string) (Bridge, error) {
-	defer f.logger.WithField("bridge", id).Debugf("get bridge")
+	f.logger.WithField("bridge", id).Debugf("get bridge")
 	return f.get_bridge(id)
 }
 

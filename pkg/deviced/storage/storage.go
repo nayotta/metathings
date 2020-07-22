@@ -85,6 +85,42 @@ type DeviceConfigMapping struct {
 	ConfigId *string `gorm:"column:config_id"`
 }
 
+type FirmwareHub struct {
+	Id        *string
+	CreatedAt time.Time
+	UpdatedAt time.Time
+
+	Alias       *string `gorm:"column:alias"`
+	Description *string `gorm:"column:description"`
+
+	Devices             []*Device             `gorm:"-"`
+	FirmwareDescriptors []*FirmwareDescriptor `gorm:"-"`
+}
+
+type DeviceFirmwareHubMapping struct {
+	CreatedAt time.Time
+
+	DeviceId      *string `gorm:"column:device_id"`
+	FirmwareHubId *string `gorm:"column:firmware_hub_id"`
+}
+
+type FirmwareDescriptor struct {
+	Id        *string
+	CreatedAt time.Time
+	UpdatedAt time.Time
+
+	Name          *string `gorm:"column:name"`
+	FirmwareHubId *string `gorm:"column:firmware_hub_id"`
+	Descriptor    *string `gorm:"column:descriptor"`
+}
+
+type DeviceFirmwareDescriptorMapping struct {
+	CreatedAt time.Time
+
+	DeviceId             *string `gorm:"column:device_id"`
+	FirmwareDescriptorId *string `gorm:"column:firmware_descriptor_id"`
+}
+
 type Storage interface {
 	CreateDevice(context.Context, *Device) (*Device, error)
 	DeleteDevice(ctx context.Context, id string) error
@@ -123,6 +159,22 @@ type Storage interface {
 	ListViewFlowSetsByFlowId(ctx context.Context, id string) ([]*FlowSet, error)
 	AddFlowToFlowSet(ctx context.Context, flow_set_id, flow_id string) error
 	RemoveFlowFromFlowSet(ctx context.Context, flow_set_id, flow_id string) error
+
+	CreateFirmwareHub(context.Context, *FirmwareHub) (*FirmwareHub, error)
+	DeleteFirmwareHub(ctx context.Context, id string) error
+	PatchFirmwareHub(ctx context.Context, id string, fh *FirmwareHub) (*FirmwareHub, error)
+	GetFirmwareHub(ctx context.Context, id string) (*FirmwareHub, error)
+	ListFirmwareHubs(ctx context.Context, frm_hub *FirmwareHub) ([]*FirmwareHub, error)
+	AddDeviceToFirmwareHub(ctx context.Context, frm_hub_id, dev_id string) error
+	RemoveDeviceFromFirmwareHub(ctx context.Context, frm_hub_id, dev_id string) error
+	RemoveAllDevicesInFirmwareHub(ctx context.Context, frm_hub_id string) error
+	CreateFirmwareDescriptor(ctx context.Context, frm_desc *FirmwareDescriptor) error
+	DeleteFirmwareDescriptor(ctx context.Context, frm_desc_id string) error
+	ListViewDevicesByFirmwareHubId(ctx context.Context, frm_hub_id string) ([]*Device, error)
+	SetDeviceFirmwareDescriptor(ctx context.Context, dev_id, desc_id string) error
+	UnsetDeviceFirmwareDescriptor(ctx context.Context, dev_id string) error
+	GetDeviceFirmwareDescriptor(ctx context.Context, dev_id string) (*FirmwareDescriptor, error)
+	FirmwareHubContainsDeviceAndFirmwareDescriptor(ctx context.Context, dev_id, desc_id string) (bool, error)
 }
 
 func NewStorage(driver, uri string, args ...interface{}) (Storage, error) {

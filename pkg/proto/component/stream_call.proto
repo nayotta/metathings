@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 package ai.metathings.component;
+option go_package = "component";
 
 import "google/protobuf/wrappers.proto";
 import "google/protobuf/any.proto";

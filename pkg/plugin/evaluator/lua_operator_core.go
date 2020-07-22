@@ -1,6 +1,7 @@
 package metathings_plugin_evaluator
 
 import (
+	"context"
 	"encoding/json"
 	"strconv"
 	"sync"
@@ -57,6 +58,8 @@ func luaInitOnceObject(L *lua.LState, name string, obj luaBaseObject) {
  */
 
 type luaMetathingsCore struct {
+	gocontext context.Context
+
 	dat_stor  dssdk.DataStorage
 	smpl_stor dsdk.SimpleStorage
 	caller    dsdk.Caller
@@ -66,12 +69,14 @@ type luaMetathingsCore struct {
 }
 
 func newLuaMetathingsCore(args ...interface{}) (*luaMetathingsCore, error) {
+	var gctx context.Context
 	var ctx, dat esdk.Data
 	var ds dssdk.DataStorage
 	var ss dsdk.SimpleStorage
 	var caller dsdk.Caller
 
 	if err := opt_helper.Setopt(map[string]func(string, interface{}) error{
+		"gocontext":      opt_helper.ToContext(&gctx),
 		"context":        esdk.ToData(&ctx),
 		"data":           esdk.ToData(&dat),
 		"data_storage":   dssdk.ToDataStorage(&ds),
@@ -82,6 +87,7 @@ func newLuaMetathingsCore(args ...interface{}) (*luaMetathingsCore, error) {
 	}
 
 	return &luaMetathingsCore{
+		gocontext: gctx,
 		context:   ctx,
 		data:      dat,
 		dat_stor:  ds,
@@ -100,6 +106,10 @@ func (c *luaMetathingsCore) check(L *lua.LState) *luaMetathingsCore {
 	}
 
 	return v
+}
+
+func (c *luaMetathingsCore) GetGoContext() context.Context {
+	return c.gocontext
 }
 
 func (c *luaMetathingsCore) GetContext() esdk.Data {

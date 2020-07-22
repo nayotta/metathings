@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 package ai.metathings.constant.state;
+option go_package = "constant";
 
 enum DeviceState {
 	DEVICE_STATE_UNKNOWN = 0;

@@ -107,7 +107,7 @@ func (s *luaMetathingsCoreStorage) luaWith(L *lua.LState) int {
 	return 1
 }
 
-// LUA_FUNCTION: storage:write(data#table, [option#table])
+// LUA_FUNCTION: storage:write(data#table, option#table<optional>)
 //   option:
 //     timestamp: data timestamp
 func (s *luaMetathingsCoreStorage) luaWrite(L *lua.LState) int {
