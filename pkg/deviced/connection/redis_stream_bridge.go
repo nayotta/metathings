@@ -358,14 +358,10 @@ func (f *redisStreamBridgeFactory) init_pool() {
 
 func (f *redisStreamBridgeFactory) BuildBridge(device_id string, sess int64) (Bridge, error) {
 	id := parse_bridge_id(device_id, sess)
-<<<<<<< HEAD
 	defer f.logger.WithFields(log.Fields{
 		"bridge":  id,
 		"session": sess,
 	}).Debugf("build bridge")
-=======
-	f.logger.WithField("bridge", id).Debugf("build bridge")
->>>>>>> dev
 	return f.get_bridge(id)
 }
 
