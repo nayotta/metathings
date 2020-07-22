@@ -438,7 +438,12 @@ func (self *connectionCenter) UnaryCall(ctx context.Context, dev *storage.Device
 	}
 
 	if startup_sess, err = self.session_storage.GetStartupSession(dev_id); err != nil {
+<<<<<<< HEAD
+		self.logger.WithError(err).Debugf("failed to get startup session")
+		return nil, err
+=======
 		logger.WithError(err).Debugf("failed to get startup session")
+>>>>>>> dev
 	}
 
 	conn_sess := session_helper.GenerateTempSession()
