@@ -88,7 +88,8 @@ flow_set=%v
 
 		pack := res.GetPack()
 		if pack == nil {
-			panic("unexpected response")
+			fmt.Println(res.GetId())
+			continue
 		}
 
 		dev := pack.GetDevice()
