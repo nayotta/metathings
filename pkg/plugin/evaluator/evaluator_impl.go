@@ -39,7 +39,7 @@ func (e *EvaluatorImpl) Id() string {
 	return e.info.Get("id").(string)
 }
 
-func (e *EvaluatorImpl) Eval(ctx context.Context, dat esdk.Data) error {
+func (e *EvaluatorImpl) Eval(ctx context.Context, dat esdk.Data) (esdk.Data, error) {
 	logger := e.get_logger().WithField("evaluator", e.Id())
 
 	op_drv, args, err := cfg_helper.ParseConfigOption(
@@ -51,24 +51,23 @@ func (e *EvaluatorImpl) Eval(ctx context.Context, dat esdk.Data) error {
 	)
 	if err != nil {
 		logger.WithError(err).Debugf("failed to parse operator config option")
-		return err
+		return nil, err
 	}
 
 	op, err := NewOperator(op_drv, args...)
 	if err != nil {
 		logger.WithError(err).Debugf("failed to new operator")
-		return err
+		return nil, err
 	}
 	defer op.Close()
 
-	// TODO(Peer): handle operator result
-	_, err = op.Run(ctx, e.get_eval_context(), dat)
+	ret, err := op.Run(ctx, e.get_eval_context(), dat)
 	if err != nil {
 		logger.WithError(err).Debugf("failed to run operator")
-		return err
+		return nil, err
 	}
 
-	return nil
+	return ret, nil
 }
 
 func NewEvaluatorImpl(args ...interface{}) (*EvaluatorImpl, error) {
