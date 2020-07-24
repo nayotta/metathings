@@ -3,7 +3,9 @@ module github.com/nayotta/metathings
 go 1.14
 
 require (
+	github.com/avast/retry-go v2.6.0+incompatible
 	github.com/casbin/casbin-server v0.0.0-20200301012118-fcbb32cf841d
+	github.com/cavaliercoder/grab v2.0.0+incompatible
 	github.com/codahale/hdrhistogram v0.0.0-20161010025455-3a0bb77429bd // indirect
 	github.com/eclipse/paho.mqtt.golang v1.2.0
 	github.com/go-redis/redis v6.15.8+incompatible
@@ -39,6 +41,5 @@ require (
 	golang.org/x/mod v0.3.0 // indirect
 	golang.org/x/tools v0.0.0-20200702044944-0cc1aa72b347 // indirect
 	google.golang.org/grpc v1.30.0
-	github.com/cavaliercoder/grab v2.0.0+incompatible
 	gopkg.in/yaml.v2 v2.3.0
 )
