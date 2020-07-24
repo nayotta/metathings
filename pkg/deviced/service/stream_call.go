@@ -6,6 +6,7 @@ import (
 
 	storage "github.com/nayotta/metathings/pkg/deviced/storage"
 	pb "github.com/nayotta/metathings/pkg/proto/deviced"
+	log "github.com/sirupsen/logrus"
 )
 
 func (self *MetathingsDevicedService) StreamCall(stm pb.DevicedService_StreamCallServer) error {
@@ -13,25 +14,36 @@ func (self *MetathingsDevicedService) StreamCall(stm pb.DevicedService_StreamCal
 	var dev_s *storage.Device
 	var err error
 
+	logger := self.logger
+
 	if req, err = stm.Recv(); err != nil {
-		self.logger.WithError(err).Errorf("failed to recv config msg")
+		logger.WithError(err).Errorf("failed to recv config msg")
 		return status.Errorf(codes.Internal, err.Error())
 	}
-	self.logger.Debugf("recv config msg")
 
 	cfg := req.GetValue().GetConfig()
 	dev_id_str := req.GetDevice().GetId().GetValue()
+	mdl_name_str := cfg.GetName().GetValue()
+	meth_str := cfg.GetMethod().GetValue()
+	logger = self.logger.WithFields(log.Fields{
+		"device": dev_id_str,
+		"module": mdl_name_str,
+		"method": meth_str,
+	})
+
+	logger.Debugf("recv config msg")
+
 	if dev_s, err = self.storage.GetDevice(stm.Context(), dev_id_str); err != nil {
-		self.logger.WithError(err).Errorf("failed to get device in storage")
+		logger.WithError(err).Errorf("failed to get device in storage")
 		return status.Errorf(codes.Internal, err.Error())
 	}
 
 	if err = self.cc.StreamCall(stm.Context(), dev_s, cfg, stm); err != nil {
-		self.logger.WithError(err).Errorf("failed to stream call")
+		logger.WithError(err).Errorf("failed to stream call")
 		return status.Errorf(codes.Internal, err.Error())
 	}
 
-	self.logger.Debugf("stream call done")
+	logger.Debugf("stream call done")
 
 	return nil
 }
