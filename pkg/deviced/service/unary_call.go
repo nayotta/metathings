@@ -7,6 +7,7 @@ import (
 	storage "github.com/nayotta/metathings/pkg/deviced/storage"
 	identityd_validator "github.com/nayotta/metathings/pkg/identityd2/validator"
 	pb "github.com/nayotta/metathings/pkg/proto/deviced"
+	log "github.com/sirupsen/logrus"
 )
 
 func (self *MetathingsDevicedService) ValidateUnaryCall(ctx context.Context, in interface{}) error {
@@ -34,13 +35,24 @@ func (self *MetathingsDevicedService) UnaryCall(ctx context.Context, req *pb.Una
 	var err error
 
 	dev_id_str := req.GetDevice().GetId().GetValue()
+
+	logger := self.logger.WithFields(log.Fields{
+		"device": dev_id_str,
+	})
 	if dev_s, err = self.storage.GetDevice(ctx, dev_id_str); err != nil {
-		self.logger.WithError(err).Errorf("failed to get device in storage")
+		logger.WithError(err).Errorf("failed to get device in storage")
 		return nil, self.ParseError(err)
 	}
 
+	mdl_name_str := req.GetValue().GetName().GetValue()
+	meth_str := req.GetValue().GetMethod().GetValue()
+	logger = logger.WithFields(log.Fields{
+		"module": mdl_name_str,
+		"method": meth_str,
+	})
+
 	if val, err = self.cc.UnaryCall(ctx, dev_s, req.GetValue()); err != nil {
-		self.logger.WithError(err).Errorf("failed to unray call")
+		logger.WithError(err).Errorf("failed to unray call")
 		return nil, self.ParseError(err)
 	}
 
@@ -49,7 +61,7 @@ func (self *MetathingsDevicedService) UnaryCall(ctx context.Context, req *pb.Una
 		Value:  val,
 	}
 
-	self.logger.WithField("id", dev_id_str).Debugf("unary call")
+	logger.Debugf("unary call")
 
 	return res, nil
 }
