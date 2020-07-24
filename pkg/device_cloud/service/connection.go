@@ -6,6 +6,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/avast/retry-go"
 	"github.com/golang/protobuf/ptypes/wrappers"
 	log "github.com/sirupsen/logrus"
 
@@ -242,13 +243,32 @@ func (dc *DeviceConnection) clear() {
 		}
 	}
 
-	err = dc.storage.UnsetDeviceConnectSession(dc.opt.Device.Id, dc.opt.DeviceCloud.Session.Id)
-	if err != nil {
+	if err = retry.Do(func() error {
+		return dc.storage.UnsetDeviceConnectSession(dc.opt.Device.Id, dc.opt.DeviceCloud.Session.Id)
+	},
+		retry.Attempts(uint(dc.opt.Config.Retry)),
+		retry.Delay(dc.opt.Config.RetryInterval),
+		retry.DelayType(retry.BackOffDelay),
+		retry.MaxDelay(dc.opt.Config.MaxRetryInterval),
+		retry.OnRetry(func(n uint, err error) {
+			dc.logger.WithError(err).Warningf("retry to unset device connect sessiona")
+		}),
+	); err != nil {
 		dc.logger.WithError(err).Warningf("failed to unconnect device in storage")
 	}
 
 	for _, mdl := range dc.info.Modules {
-		if err = dc.storage.UnsetModuleSession(mdl.Id); err != nil {
+		if err = retry.Do(func() error {
+			return dc.storage.UnsetModuleSession(mdl.Id)
+		},
+			retry.Attempts(uint(dc.opt.Config.Retry)),
+			retry.Delay(dc.opt.Config.MaxRetryInterval),
+			retry.DelayType(retry.BackOffDelay),
+			retry.MaxDelay(dc.opt.Config.MaxRetryInterval),
+			retry.OnRetry(func(n uint, err error) {
+				dc.logger.WithError(err).Warningf("retry to unset module connect session")
+			}),
+		); err != nil {
 			dc.logger.WithError(err).Warningf("faild to unset module session in storage")
 		}
 	}
