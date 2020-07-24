@@ -50,8 +50,14 @@ func (d *data) ensure_buf() {
 
 func (d *data) Iter() map[string]interface{} {
 	var out map[string]interface{}
+
+	if d == nil {
+		return nil
+	}
+
 	d.ensure_buf()
 	json.Unmarshal(d.buf, &out)
+
 	return out
 }
 

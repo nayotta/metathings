@@ -184,6 +184,7 @@ func (srv *EvaluatorPluginService) Eval(w http.ResponseWriter, r *http.Request) 
 	var err error
 	var hs *hst.HttpStatus
 	var log_msg string
+	var ret esdk.Data
 
 	ctx := r.Context()
 	evltr_id := r.Header.Get("X-Evaluator-ID")
@@ -220,6 +221,7 @@ func (srv *EvaluatorPluginService) Eval(w http.ResponseWriter, r *http.Request) 
 			srv.HandleResponse(w, r, hst.NewHttpStatus(http.StatusNoContent, nil))
 			if err := srv.task_stor.PatchTask(ctx, tsk, &evltr_stor.TaskState{
 				State: evltr_helper.TASK_STATE_ENUMER.ToStringP(state_pb.TaskState_TASK_STATE_DONE),
+				Tags:  ret.Iter(),
 			}); err != nil {
 				logger.WithError(err).Warning("failed to patch task")
 			}
@@ -308,12 +310,14 @@ func (srv *EvaluatorPluginService) Eval(w http.ResponseWriter, r *http.Request) 
 		sp, ctx = opentracing.StartSpanFromContext(ctx, "Evaluator.Eval")
 		defer sp.Finish()
 	}
+
 	// TODO(Peer): retry to eval
-	err = evltr.Eval(ctx, dat)
+	ret, err = evltr.Eval(ctx, dat)
 	if err != nil {
 		log_msg = "failed to eval"
 		hs = hst.WrapErrorHttpStatus(http.StatusInternalServerError, err)
 		return
 	}
+
 	logger.Debugf("eval")
 }

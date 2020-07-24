@@ -8,7 +8,7 @@ import (
 
 type Evaluator interface {
 	Id() string
-	Eval(context.Context, esdk.Data) error
+	Eval(context.Context, esdk.Data) (esdk.Data, error)
 }
 
 func NewEvaluator(args ...interface{}) (Evaluator, error) {
