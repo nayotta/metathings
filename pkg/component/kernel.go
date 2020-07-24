@@ -112,6 +112,22 @@ func (k *Kernel) Show() (*deviced_pb.Module, error) {
 	return mdl, nil
 }
 
+func (k *Kernel) ShowFirmwareDescriptor() (*deviced_pb.FirmwareDescriptor, error) {
+	cli, cfn, err := k.cli_fty.NewDeviceServiceClient()
+	if err != nil {
+		return nil, err
+	}
+	defer cfn()
+
+	ctx := k.Context()
+	desc, err := _show_module_firmware_descriptor(cli, ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return desc, nil
+}
+
 func (k *Kernel) PutObject(name string, content io.Reader) error {
 	cli, cfn, err := k.cli_fty.NewDeviceServiceClient()
 	if err != nil {
@@ -480,6 +496,15 @@ func _show_module(cli pb.DeviceServiceClient, ctx context.Context) (*deviced_pb.
 	}
 
 	return res.GetModule(), nil
+}
+
+func _show_module_firmware_descriptor(cli pb.DeviceServiceClient, ctx context.Context) (*deviced_pb.FirmwareDescriptor, error) {
+	res, err := cli.ShowModuleFirmwareDescriptor(ctx, &empty.Empty{})
+	if err != nil {
+		return nil, err
+	}
+
+	return res.GetFirmwareDescriptor(), nil
 }
 
 func _put_object(cli pb.DeviceServiceClient, ctx context.Context, name string, content io.Reader) error {

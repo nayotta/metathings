@@ -64,14 +64,14 @@ var (
 			init_service_cmd_option(opt_t, deviced_opt)
 
 			cmd_helper.InitManyStringMapFromConfigWithStage([]cmd_helper.InitManyOption{
-				{&opt_t.SessionStorage, "session_storage"},
-				{&opt_t.SimpleStorage, "simple_storage"},
-				{&opt_t.DescriptorStorage, "descriptor_storage"},
-				{&opt_t.ConnectionCenter.Storage, "connection_center.storage"},
-				{&opt_t.ConnectionCenter.Bridge, "connection_center.bridge"},
-				{&opt_t.Flow, "flow"},
-				{&opt_t.FlowSet, "flow_set"},
-				{&opt_t.DataLauncher, "data_launcher"},
+				{Dst: &opt_t.SessionStorage, Key: "session_storage"},
+				{Dst: &opt_t.SimpleStorage, Key: "simple_storage"},
+				{Dst: &opt_t.DescriptorStorage, Key: "descriptor_storage"},
+				{Dst: &opt_t.ConnectionCenter.Storage, Key: "connection_center.storage"},
+				{Dst: &opt_t.ConnectionCenter.Bridge, Key: "connection_center.bridge"},
+				{Dst: &opt_t.Flow, Key: "flow"},
+				{Dst: &opt_t.FlowSet, Key: "flow_set"},
+				{Dst: &opt_t.DataLauncher, Key: "data_launcher"},
 			})
 
 			deviced_opt = opt_t
@@ -234,6 +234,8 @@ func NewFlowSetFactory(opt *DevicedOption, logger log.FieldLogger) (flow.FlowSet
 
 func NewMetathingsDevicedServiceOption(opt *DevicedOption) *service.MetathingsDevicedServiceOption {
 	o := &service.MetathingsDevicedServiceOption{}
+
+	o.Domain = "default"
 
 	o.Methods.PutObjectStreaming.Timeout = 1200
 	if to, ok := opt.SimpleStorage["timeout"]; ok {

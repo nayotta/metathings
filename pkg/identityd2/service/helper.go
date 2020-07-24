@@ -14,7 +14,7 @@ import (
 )
 
 const (
-	NONEXPIRATION = 100 * 365 * 24 * time.Hour // 100 years
+	NONEXPIRATION = 7 * 24 * time.Hour // 7 days
 )
 
 func new_token(dom_id, ent_id, cred_id *string, expire time.Duration) *storage.Token {

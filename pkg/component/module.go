@@ -2,6 +2,7 @@ package metathings_component
 
 import (
 	"context"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"os"
@@ -11,10 +12,13 @@ import (
 	"sync"
 	"time"
 
-	log_helper "github.com/nayotta/metathings/pkg/common/log"
-	deviced_pb "github.com/nayotta/metathings/pkg/proto/deviced"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/pflag"
+	"github.com/stretchr/objx"
+
+	log_helper "github.com/nayotta/metathings/pkg/common/log"
+	version_helper "github.com/nayotta/metathings/pkg/common/version"
+	deviced_pb "github.com/nayotta/metathings/pkg/proto/deviced"
 )
 
 type ModuleServiceLookuper interface {
@@ -35,6 +39,8 @@ type ModuleOption struct {
 }
 
 type Module struct {
+	version_helper.Versioner
+
 	name_once *sync.Once
 	name      string
 
@@ -166,6 +172,10 @@ func (m *Module) init_server() error {
 	return nil
 }
 
+func (m *Module) init_version() error {
+	return m.Kernel().PutObject(fmt.Sprintf("/sys/firmware/modules/%s/version/current", m.Name()), strings.NewReader(m.GetVersion()))
+}
+
 func (m *Module) Name() string {
 	m.name_once.Do(func() {
 		mdl, err := m.Kernel().Show()
@@ -259,6 +269,11 @@ func (m *Module) Init() error {
 		return err
 	}
 
+	err = m.init_version()
+	if err != nil {
+		return err
+	}
+
 	err = m.init_server()
 	if err != nil {
 		return err
@@ -303,12 +318,25 @@ func (m *Module) Launch() error {
 	return m.Serve()
 }
 
-func NewModule(name string, target interface{}) (*Module, error) {
-	return &Module{
-		name_once: new(sync.Once),
+func NewDefaultModuleOption() objx.Map {
+	return objx.New(map[string]interface{}{
+		"version": "unknown",
+	})
 
-		tgt:   target,
-		opt:   &ModuleOption{},
-		flags: pflag.NewFlagSet(name, pflag.ExitOnError),
+}
+
+func NewModule(name string, target interface{}, opts ...NewModuleOption) (*Module, error) {
+	o := NewDefaultModuleOption()
+
+	for _, opt := range opts {
+		opt(o)
+	}
+
+	return &Module{
+		Versioner: version_helper.NewVersioner(o.Get("version").String())(),
+		name_once: new(sync.Once),
+		tgt:       target,
+		opt:       &ModuleOption{},
+		flags:     pflag.NewFlagSet(name, pflag.ExitOnError),
 	}, nil
 }

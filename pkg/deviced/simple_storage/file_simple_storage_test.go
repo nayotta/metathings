@@ -78,6 +78,13 @@ func (s *fileSimpleStorageTestSuite) TestGetObjectContent() {
 	s.Equal(test_object_content, content)
 }
 
+func (s *fileSimpleStorageTestSuite) TestGetObjectContentSync() {
+	content, err := s.fss.GetObjectContentSync(test_object)
+	s.Nil(err)
+
+	s.Equal(test_object_content, string(content))
+}
+
 func (s *fileSimpleStorageTestSuite) TestGetObjectContentWithLargeFile() {
 	for i := 0; i < _TEST_LARGE_OBJECT_CONTENT_SIZE; i++ {
 		test_large_object_content[i] = byte(i % (_TEST_LARGE_OBJECT_CONTENT_MASK + 1))

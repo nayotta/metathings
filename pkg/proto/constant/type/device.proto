@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 package ai.metathings.constant.type;
+option go_package = "type";
 
 enum DeviceType {
 	DEVICE_TYPE_UNKNOWN = 0;

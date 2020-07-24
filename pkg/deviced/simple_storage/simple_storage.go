@@ -60,6 +60,7 @@ type SimpleStorage interface {
 	RenameObject(src, dst *Object) error
 	GetObject(obj *Object) (*Object, error)
 	GetObjectContent(obj *Object) (chan []byte, error)
+	GetObjectContentSync(obj *Object) ([]byte, error)
 	ListObjects(obj *Object, opt *ListObjectsOption) ([]*Object, error)
 }
 

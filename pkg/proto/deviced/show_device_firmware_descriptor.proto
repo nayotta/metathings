@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package ai.metathings.service.deviced;
+option go_package = "deviced";
+
+import "model.proto";
+
+message ShowDeviceFirmwareDescriptorResponse {
+  FirmwareDescriptor firmware_descriptor = 1;
+}

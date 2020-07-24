@@ -85,14 +85,19 @@ func (self *MetathingsDeviceServiceImpl) heartbeat_once() {
 
 	_, err = cli.Heartbeat(self.context(), req)
 	if err != nil {
-		// TODO(Peer): reconncect streaming, not stop device and restart
-		defer self.Stop()
-
+		self.stats_heartbeat_fails += 1
 		self.logger.WithError(err).Warningf("failed to heartbeat")
-		return
-	}
 
-	self.logger.WithFields(log.Fields{
-		"heartbeat_at": now,
-	}).Debugf("heartbeat")
+		if self.stats_heartbeat_fails >= self.opt.HeartbeatMaxRetry {
+			// TODO(Peer): reconncect streaming, not restart device
+			defer self.Stop()
+
+			return
+		}
+	} else {
+		self.stats_heartbeat_fails = 0
+		self.logger.WithFields(log.Fields{
+			"heartbeat_at": now,
+		}).Debugf("heartbeat")
+	}
 }

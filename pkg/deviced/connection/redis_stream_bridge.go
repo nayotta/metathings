@@ -16,6 +16,18 @@ import (
 type redisStreamChannelOption struct {
 	Id   string
 	Side Side
+
+	ReadStreamGroupBlockTime time.Duration
+	StreamExpireTime         time.Duration
+}
+
+func newRedisStreamChannelOption(id string, side Side) *redisStreamChannelOption {
+	return &redisStreamChannelOption{
+		Id:                       id,
+		Side:                     side,
+		ReadStreamGroupBlockTime: 3 * time.Second,
+		StreamExpireTime:         3 * time.Minute,
+	}
 }
 
 func newRedisStreamChannel(opt *redisStreamChannelOption, pool pool_helper.Pool, logger log.FieldLogger) *redisStreamChannel {
@@ -107,8 +119,10 @@ func (c *redisStreamChannel) Send(buf []byte) error {
 		logger.WithError(err).Debugf("failed to send msg")
 		return err
 	}
-
-	logger.Debugf("send msg")
+	err = client.Expire(key, c.opt.StreamExpireTime).Err()
+	if err != nil {
+		logger.WithError(err).Warningf("failed to set expire for stream")
+	}
 
 	return nil
 }
@@ -130,7 +144,8 @@ func (c *redisStreamChannel) init_async_recv() {
 	key := c.receiving_key()
 
 	logger := c.get_logger().WithFields(log.Fields{
-		"key":   c.receiving_key(),
+		"key":   key,
+		"group": c.opt.Id,
 		"side":  c.opt.Side,
 		"event": "recv",
 	})
@@ -152,6 +167,10 @@ func (c *redisStreamChannel) init_async_recv() {
 			logger.WithError(err).Debugf("failed to create redis stream group")
 			return
 		}
+		err = client.Expire(key, c.opt.StreamExpireTime).Err()
+		if err != nil {
+			logger.WithError(err).Warningf("failed to set expire for stream")
+		}
 
 		for {
 			select {
@@ -160,13 +179,18 @@ func (c *redisStreamChannel) init_async_recv() {
 			default:
 			}
 
-			// TODO(Peer): closed checking
+			// refresh stream expire time
+			err = client.Expire(key, c.opt.StreamExpireTime).Err()
+			if err != nil {
+				logger.WithError(err).Warningf("failed to set expire for stream")
+			}
+
 			vals, err := client.XReadGroup(&redis.XReadGroupArgs{
 				Group:    c.opt.Id,
 				Consumer: c.opt.Id,
 				Streams:  []string{key, ">"},
 				Count:    1,
-				Block:    3 * time.Second,
+				Block:    c.opt.ReadStreamGroupBlockTime,
 				NoAck:    true,
 			}).Result()
 
@@ -204,14 +228,14 @@ func (c *redisStreamChannel) Close() error {
 	defer c.client_mutex.Unlock()
 
 	close(c.closed)
-	c.get_logger().Debugf("send close signal")
-
 	if err := c.pool.Put(c.client); err != nil {
+		c.get_logger().WithError(err).Debugf("failed to put client back to pool")
 		return err
 	}
 	c.get_logger().WithField("pool_size", c.pool.Size()).Debugf("put client to pool")
 
 	c.get_logger().Debugf("channel closed")
+
 	return nil
 }
 
@@ -238,10 +262,7 @@ func (f *redisStreamBridge) Id() string {
 }
 
 func (f *redisStreamBridge) init_north() {
-	opt := &redisStreamChannelOption{
-		Id:   f.Id(),
-		Side: NORTH_SIDE,
-	}
+	opt := newRedisStreamChannelOption(f.Id(), NORTH_SIDE)
 	f.north = newRedisStreamChannel(opt, f.pool, f.logger.WithFields(log.Fields{
 		"side": "north",
 	}))
@@ -256,10 +277,7 @@ func (f *redisStreamBridge) North() Channel {
 }
 
 func (f *redisStreamBridge) init_south() {
-	opt := &redisStreamChannelOption{
-		Id:   f.Id(),
-		Side: SOUTH_SIDE,
-	}
+	opt := newRedisStreamChannelOption(f.Id(), SOUTH_SIDE)
 	f.south = newRedisStreamChannel(opt, f.pool, f.logger.WithFields(log.Fields{
 		"side": "south",
 	}))
@@ -340,7 +358,10 @@ func (f *redisStreamBridgeFactory) init_pool() {
 
 func (f *redisStreamBridgeFactory) BuildBridge(device_id string, sess int64) (Bridge, error) {
 	id := parse_bridge_id(device_id, sess)
-	defer f.logger.WithField("bridge", id).Debugf("build bridge")
+	defer f.logger.WithFields(log.Fields{
+		"bridge":  id,
+		"session": sess,
+	}).Debugf("build bridge")
 	return f.get_bridge(id)
 }
 
@@ -364,7 +385,7 @@ func (f *redisStreamBridgeFactory) get_bridge(id string) (Bridge, error) {
 }
 
 func (f *redisStreamBridgeFactory) GetBridge(id string) (Bridge, error) {
-	defer f.logger.WithField("bridge", id).Debugf("get bridge")
+	f.logger.WithField("bridge", id).Debugf("get bridge")
 	return f.get_bridge(id)
 }
 

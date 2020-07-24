@@ -60,6 +60,7 @@ func (s *casbinBackendTestSuite) SetupTest() {
 	var b Backend
 	var logger log.FieldLogger
 	var cli_fty *client_helper.ClientFactory
+	ctx := context.TODO()
 	opt := new_casbin_backend_option()
 	mdl_txt := `[request_definition]
 r = sub, grp, obj, act
@@ -137,7 +138,10 @@ m = (g2(r.sub, r.grp, p.sub) && g3(r.obj, r.grp, p.obj) && r.grp == p.grp && r.a
 
 	srv_opt := cmd_contrib.CreateServiceEndpointsOption()
 	srv_opt.ServiceEndpoint[client_helper.DEFAULT_CONFIG.String()].Address = test_helper.GetTestPolicydAddress()
-	cli_fty, err = cmd_contrib.NewClientFactory(&srv_opt, nil, logger)
+	cli_fty, err = cmd_contrib.NewClientFactory(cmd_contrib.NewClientFactoryParams{
+		Endpoints: &srv_opt,
+		Logger:    logger,
+	})
 	s.Nil(err)
 
 	cli, cfn, err := cli_fty.NewPolicydServiceClient()
@@ -173,112 +177,132 @@ m = (g2(r.sub, r.grp, p.sub) && g3(r.obj, r.grp, p.obj) && r.grp == p.grp && r.a
 
 	s.b = b.(*CasbinBackend)
 
-	s.Nil(s.b.AddRoleToGroup(test_group, test_role))
-	s.Nil(s.b.AddSubjectToGroup(test_group, test_subject))
-	s.Nil(s.b.AddObjectToGroup(test_group, test_object))
-	s.Nil(s.b.AddRoleToEntity(test_entity, test_sysadmin_role))
+	s.Nil(s.b.AddRoleToGroup(ctx, test_group, test_role))
+	s.Nil(s.b.AddSubjectToGroup(ctx, test_group, test_subject))
+	s.Nil(s.b.AddObjectToGroup(ctx, test_group, test_object))
+	s.Nil(s.b.AddRoleToEntity(ctx, test_entity, test_sysadmin_role))
 }
 
 func (s *casbinBackendTestSuite) TestEnforce() {
-	s.Nil(s.b.Enforce(test_subject, test_object, test_action))
-	s.NotNil(s.b.Enforce(test_subject2, test_object, test_action))
-	s.NotNil(s.b.Enforce(test_subject, test_object2, test_action))
-	s.NotNil(s.b.Enforce(test_subject, test_object, test_action2))
-	s.Nil(s.b.Enforce(test_entity, test_object, test_action))
+	ctx := context.TODO()
+
+	s.Nil(s.b.Enforce(ctx, test_subject, test_object, test_action))
+	s.NotNil(s.b.Enforce(ctx, test_subject2, test_object, test_action))
+	s.NotNil(s.b.Enforce(ctx, test_subject, test_object2, test_action))
+	s.NotNil(s.b.Enforce(ctx, test_subject, test_object, test_action2))
+	s.Nil(s.b.Enforce(ctx, test_entity, test_object, test_action))
 }
 
 func (s *casbinBackendTestSuite) TestDeleteGroup() {
+	ctx := context.TODO()
+
 	cli, cfn, err := s.b.cli_fty.NewPolicydServiceClient()
 	s.Nil(err)
 	defer cfn()
 
-	s.Nil(s.b.DeleteGroup(test_group))
+	s.Nil(s.b.DeleteGroup(ctx, test_group))
 
-	rs, err := s.b._list_grouping_policies(cli, CASBIN_BACKEND_SUBJECT_PTYPE, ConvertSubject(test_subject), ConvertGroup(test_group))
+	rs, err := s.b._list_grouping_policies(ctx, cli, CASBIN_BACKEND_SUBJECT_PTYPE, ConvertSubject(test_subject), ConvertGroup(test_group))
 	s.Nil(err)
 	s.Len(rs, 0)
 
-	rs, err = s.b._list_grouping_policies(cli, CASBIN_BACKEND_OBJECT_PTYPE, ConvertObject(test_object), ConvertGroup(test_group))
+	rs, err = s.b._list_grouping_policies(ctx, cli, CASBIN_BACKEND_OBJECT_PTYPE, ConvertObject(test_object), ConvertGroup(test_group))
 	s.Nil(err)
 	s.Len(rs, 0)
 
-	s.NotNil(s.b.Enforce(test_subject, test_object, test_action))
+	s.NotNil(s.b.Enforce(ctx, test_subject, test_object, test_action))
 }
 
 func (s *casbinBackendTestSuite) TestAddSubjectToGroup() {
+	ctx := context.TODO()
+
 	cli, cfn, err := s.b.cli_fty.NewPolicydServiceClient()
 	s.Nil(err)
 	defer cfn()
 
-	s.Nil(s.b.AddSubjectToGroup(test_group, test_subject2))
+	s.Nil(s.b.AddSubjectToGroup(ctx, test_group, test_subject2))
 
-	rs, err := s.b._list_grouping_policies(cli, CASBIN_BACKEND_SUBJECT_PTYPE, ConvertSubject(test_subject2), ConvertGroup(test_group))
+	rs, err := s.b._list_grouping_policies(ctx, cli, CASBIN_BACKEND_SUBJECT_PTYPE, ConvertSubject(test_subject2), ConvertGroup(test_group))
 	s.Nil(err)
 	s.Len(rs, 1)
 
-	s.Nil(s.b.Enforce(test_subject2, test_object, test_action))
+	s.Nil(s.b.Enforce(ctx, test_subject2, test_object, test_action))
 }
 
 func (s *casbinBackendTestSuite) TestRemoveSubjectFromGroup() {
+	ctx := context.TODO()
+
 	cli, cfn, err := s.b.cli_fty.NewPolicydServiceClient()
 	s.Nil(err)
 	defer cfn()
 
-	s.Nil(s.b.RemoveSubjectFromGroup(test_group, test_subject))
+	s.Nil(s.b.RemoveSubjectFromGroup(ctx, test_group, test_subject))
 
-	rs, err := s.b._list_grouping_policies(cli, CASBIN_BACKEND_SUBJECT_PTYPE, ConvertSubject(test_subject), ConvertGroup(test_group))
+	rs, err := s.b._list_grouping_policies(ctx, cli, CASBIN_BACKEND_SUBJECT_PTYPE, ConvertSubject(test_subject), ConvertGroup(test_group))
 	s.Nil(err)
 	s.Len(rs, 0)
 
-	s.NotNil(s.b.Enforce(test_subject, test_object, test_action))
+	s.NotNil(s.b.Enforce(ctx, test_subject, test_object, test_action))
 }
 
 func (s *casbinBackendTestSuite) TestAddObjectToGroup() {
+	ctx := context.TODO()
+
 	cli, cfn, err := s.b.cli_fty.NewPolicydServiceClient()
 	s.Nil(err)
 	defer cfn()
 
-	s.Nil(s.b.AddObjectToGroup(test_group, test_object2))
+	s.Nil(s.b.AddObjectToGroup(ctx, test_group, test_object2))
 
-	rs, err := s.b._list_grouping_policies(cli, CASBIN_BACKEND_OBJECT_PTYPE, ConvertObject(test_object2), ConvertGroup(test_group))
+	rs, err := s.b._list_grouping_policies(ctx, cli, CASBIN_BACKEND_OBJECT_PTYPE, ConvertObject(test_object2), ConvertGroup(test_group))
 	s.Nil(err)
 	s.Len(rs, 1)
 
-	s.Nil(s.b.Enforce(test_subject, test_object2, test_action))
+	s.Nil(s.b.Enforce(ctx, test_subject, test_object2, test_action))
 }
 
 func (s *casbinBackendTestSuite) TestRemoveObjectFromGroup() {
+	ctx := context.TODO()
+
 	cli, cfn, err := s.b.cli_fty.NewPolicydServiceClient()
 	s.Nil(err)
 	defer cfn()
 
-	s.Nil(s.b.RemoveObjectFromGroup(test_group, test_object))
+	s.Nil(s.b.RemoveObjectFromGroup(ctx, test_group, test_object))
 
-	rs, err := s.b._list_grouping_policies(cli, CASBIN_BACKEND_OBJECT_PTYPE, ConvertObject(test_object), ConvertGroup(test_group))
+	rs, err := s.b._list_grouping_policies(ctx, cli, CASBIN_BACKEND_OBJECT_PTYPE, ConvertObject(test_object), ConvertGroup(test_group))
 	s.Nil(err)
 	s.Len(rs, 0)
 
-	s.NotNil(s.b.Enforce(test_subject, test_object, test_action))
+	s.NotNil(s.b.Enforce(ctx, test_subject, test_object, test_action))
 }
 
 func (s *casbinBackendTestSuite) TestAddRoleToGroup() {
-	s.Nil(s.b.AddRoleToGroup(test_group, test_role2))
-	s.Nil(s.b.Enforce(test_subject, test_object, test_action2))
+	ctx := context.TODO()
+
+	s.Nil(s.b.AddRoleToGroup(ctx, test_group, test_role2))
+	s.Nil(s.b.Enforce(ctx, test_subject, test_object, test_action2))
 }
 
 func (s *casbinBackendTestSuite) TestRemoveRoleFromGroup() {
-	s.Nil(s.b.RemoveRoleFromGroup(test_group, test_role))
-	s.NotNil(s.b.Enforce(test_subject, test_object, test_action))
+	ctx := context.TODO()
+
+	s.Nil(s.b.RemoveRoleFromGroup(ctx, test_group, test_role))
+	s.NotNil(s.b.Enforce(ctx, test_subject, test_object, test_action))
 }
 
 func (s *casbinBackendTestSuite) TestAddRoleToEntity() {
-	s.Nil(s.b.AddRoleToEntity(test_subject, test_sysadmin_role))
-	s.Nil(s.b.Enforce(test_subject, test_object, test_action2))
+	ctx := context.TODO()
+
+	s.Nil(s.b.AddRoleToEntity(ctx, test_subject, test_sysadmin_role))
+	s.Nil(s.b.Enforce(ctx, test_subject, test_object, test_action2))
 }
 
 func (s *casbinBackendTestSuite) TestRemoveRoleFromEntity() {
-	s.Nil(s.b.RemoveRoleFromEntity(test_entity, test_sysadmin_role))
-	s.NotNil(s.b.Enforce(test_entity, test_object, test_action))
+	ctx := context.TODO()
+
+	s.Nil(s.b.RemoveRoleFromEntity(ctx, test_entity, test_sysadmin_role))
+	s.NotNil(s.b.Enforce(ctx, test_entity, test_object, test_action))
 }
 
 func TestCasbinBackendTestSuite(t *testing.T) {

@@ -263,7 +263,7 @@ func (cb *CasbinBackend) _enforce(ctx context.Context, cli pb.PolicydServiceClie
 	obj_s := ConvertObject(obj)
 
 	reqs := []*casbin_pb.EnforceRequest{
-		&casbin_pb.EnforceRequest{
+		{
 			EnforcerHandler: cb.opt.EnforcerHandler,
 			Params:          []string{ConvertEntity(sub), CASBIN_BACKEND_UNGROUPING, obj_s, *act.Name},
 		},
