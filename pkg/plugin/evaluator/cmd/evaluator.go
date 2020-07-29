@@ -18,6 +18,7 @@ import (
 	service "github.com/nayotta/metathings/pkg/plugin/evaluator/service"
 	dssdk "github.com/nayotta/metathings/sdk/data_storage"
 	dsdk "github.com/nayotta/metathings/sdk/deviced"
+	smssdk "github.com/nayotta/metathings/sdk/sms"
 )
 
 type EvaluatorPluginOption struct {
@@ -32,6 +33,7 @@ type EvaluatorPluginOption struct {
 	SimpleStorage map[string]interface{}
 	TaskStorage   map[string]interface{}
 	Caller        map[string]interface{}
+	SmsSender     map[string]interface{}
 }
 
 func NewEvaluatorPluginOption() *EvaluatorPluginOption {
@@ -58,10 +60,11 @@ func LoadEvaluatorPluginOption(path string) func() (*EvaluatorPluginOption, erro
 		opt.SetServiceName("evaluator-plugin")
 
 		cmd_helper.InitManyStringMapFromConfigWithStage([]cmd_helper.InitManyOption{
-			{&opt.TaskStorage, "task_storage"},
-			{&opt.DataStorage, "data_storage"},
-			{&opt.SimpleStorage, "simple_storage"},
-			{&opt.Caller, "caller"},
+			{Dst: &opt.TaskStorage, Key: "task_storage"},
+			{Dst: &opt.DataStorage, Key: "data_storage"},
+			{Dst: &opt.SimpleStorage, Key: "simple_storage"},
+			{Dst: &opt.Caller, Key: "caller"},
+			{Dst: &opt.SmsSender, Key: "sms_sender"},
 		})
 
 		return opt, nil
@@ -174,6 +177,25 @@ func NewCaller(o *EvaluatorPluginOption, cli_fty *client_helper.ClientFactory, l
 	return c, nil
 }
 
+func NewSmsSender(o *EvaluatorPluginOption, logger log.FieldLogger) (smssdk.SmsSender, error) {
+	name, args, err := cfg_helper.ParseConfigOption("name", o.SmsSender, "logger", logger)
+	if err != nil {
+		if err != cfg_helper.ErrExpectedKeyNotFound {
+			return nil, err
+		}
+
+		name = "dummy"
+		logger.Warningf("sms sender not found, using dummy driver")
+	}
+
+	sms_sender, err := smssdk.NewSmsSender(name, args...)
+	if err != nil {
+		return nil, err
+	}
+
+	return sms_sender, nil
+}
+
 func NewEvaluatorPluginService(cfg string) (*service.EvaluatorPluginService, error) {
 	var srv *service.EvaluatorPluginService
 
@@ -188,6 +210,7 @@ func NewEvaluatorPluginService(cfg string) (*service.EvaluatorPluginService, err
 	c.Provide(NewSimpleStorage)
 	c.Provide(NewTaskStorage)
 	c.Provide(NewCaller)
+	c.Provide(NewSmsSender)
 	c.Provide(NewEvaluatorPluginServiceOption)
 	c.Provide(service.NewEvaluatorPluginService)
 	if err := c.Invoke(func(evltr_plg_srv *service.EvaluatorPluginService) {
