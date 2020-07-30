@@ -41,7 +41,7 @@ var (
 	cred_srt     string
 	mqtt_qos     int
 	flow_name    string
-	times        int
+	interval     int
 	request_file string
 )
 
@@ -77,7 +77,6 @@ func get_http_client(ep cmd_contrib.ServiceEndpointOption) *http.Client {
 		}
 	}
 
-	panic("unsupport now")
 }
 
 func main() {
@@ -91,7 +90,7 @@ func main() {
 	pflag.StringVar(&cred_id, "credential-id", "", "Credential ID")
 	pflag.StringVar(&cred_srt, "credential-secret", "", "Credential Secret")
 	pflag.StringVar(&flow_name, "flow", "", "Flow Name")
-	pflag.IntVar(&times, "times", 3, "Repeat to send data times")
+	pflag.IntVar(&interval, "interval", 1, "Send data interval")
 	pflag.StringVar(&request_file, "request-file", "", "Request File(json)")
 	pflag.Parse()
 
@@ -140,8 +139,8 @@ mqtt_pwd=%v
 mqtt_cli=%v
 device=%v
 flow=%v
-times=%v
-`, base_opt.Token, dc_ep_opt.Address, mqtt_addr, mqtt_qos, cred_id, cred_srt, mqtt_username, mqtt_password, mqtt_clientid, device_id, flow_name, times)
+interval=%v
+`, base_opt.Token, dc_ep_opt.Address, mqtt_addr, mqtt_qos, cred_id, cred_srt, mqtt_username, mqtt_password, mqtt_clientid, device_id, flow_name, interval)
 
 	pftf_cfg_req := &device_pb.PushFrameToFlowRequest{
 		Id: &wrappers.StringValue{Value: id_helper.NewId()},
@@ -256,9 +255,8 @@ func ping_once(c mqtt.Client, pub_tpc string) {
 
 func send_data_loop(c mqtt.Client, pub_tpc string) {
 	for {
-		// time.Sleep(time.Duration(500+rand.Int63n(1000)) * time.Millisecond)
-		time.Sleep(1 * time.Second)
 		send_data_once(c, pub_tpc)
+		time.Sleep(time.Duration(interval) * time.Second)
 	}
 }
 

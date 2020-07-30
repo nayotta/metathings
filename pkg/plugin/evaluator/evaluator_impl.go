@@ -11,6 +11,7 @@ import (
 	dssdk "github.com/nayotta/metathings/sdk/data_storage"
 	dsdk "github.com/nayotta/metathings/sdk/deviced"
 	esdk "github.com/nayotta/metathings/sdk/evaluatord"
+	smssdk "github.com/nayotta/metathings/sdk/sms"
 )
 
 type EvaluatorImplOption struct {
@@ -18,13 +19,14 @@ type EvaluatorImplOption struct {
 }
 
 type EvaluatorImpl struct {
-	opt       *EvaluatorImplOption
-	dat_stor  dssdk.DataStorage
-	smpl_stor dsdk.SimpleStorage
-	info      esdk.Data
-	ctx       esdk.Data
-	logger    log.FieldLogger
-	caller    dsdk.Caller
+	opt        *EvaluatorImplOption
+	dat_stor   dssdk.DataStorage
+	smpl_stor  dsdk.SimpleStorage
+	info       esdk.Data
+	ctx        esdk.Data
+	logger     log.FieldLogger
+	caller     dsdk.Caller
+	sms_sender smssdk.SmsSender
 }
 
 func (e *EvaluatorImpl) get_eval_context() esdk.Data {
@@ -48,6 +50,7 @@ func (e *EvaluatorImpl) Eval(ctx context.Context, dat esdk.Data) (esdk.Data, err
 		"data_storage", e.dat_stor,
 		"simple_storage", e.smpl_stor,
 		"caller", e.caller,
+		"sms_sender", e.sms_sender,
 	)
 	if err != nil {
 		logger.WithError(err).Debugf("failed to parse operator config option")
@@ -77,6 +80,7 @@ func NewEvaluatorImpl(args ...interface{}) (*EvaluatorImpl, error) {
 	var ds dssdk.DataStorage
 	var ss dsdk.SimpleStorage
 	var caller dsdk.Caller
+	var sms_sender smssdk.SmsSender
 	var cli_fty *client_helper.ClientFactory
 	opt := &EvaluatorImplOption{}
 
@@ -85,6 +89,7 @@ func NewEvaluatorImpl(args ...interface{}) (*EvaluatorImpl, error) {
 		"info":           opt_helper.ToStringMap(&info),
 		"operator":       opt_helper.ToStringMap(&opt.Operator),
 		"caller":         dsdk.ToCaller(&caller),
+		"sms_sender":     smssdk.ToSmsSender(&sms_sender),
 		"context":        opt_helper.ToStringMap(&context),
 		"data_storage":   dssdk.ToDataStorage(&ds),
 		"simple_storage": dsdk.ToSimpleStorage(&ss),
@@ -104,13 +109,14 @@ func NewEvaluatorImpl(args ...interface{}) (*EvaluatorImpl, error) {
 	}
 
 	evltr := &EvaluatorImpl{
-		opt:       opt,
-		info:      inf,
-		ctx:       ctx,
-		dat_stor:  ds,
-		smpl_stor: ss,
-		logger:    logger,
-		caller:    caller,
+		opt:        opt,
+		info:       inf,
+		ctx:        ctx,
+		dat_stor:   ds,
+		smpl_stor:  ss,
+		logger:     logger,
+		caller:     caller,
+		sms_sender: sms_sender,
 	}
 
 	return evltr, nil
