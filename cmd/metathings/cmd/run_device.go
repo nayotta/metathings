@@ -47,7 +47,7 @@ var (
 			base_opt = &run_device_opt.BaseOption
 
 			cmd_helper.InitManyStringMapFromConfigWithStage([]cmd_helper.InitManyOption{
-				{&run_device_opt.BinarySynchronizer, "binary_synchronizer"},
+				{Dst: &run_device_opt.BinarySynchronizer, Key: "binary_synchronizer"},
 			})
 
 			run_device_opt.SetStage(cmd_helper.GetStageFromEnv())

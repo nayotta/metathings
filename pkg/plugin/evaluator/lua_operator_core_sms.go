@@ -59,7 +59,7 @@ func (p *luaMetathingsCoreSms) luaSend(L *lua.LState) int {
 	}
 
 	cfgx := objx.New(sms_cfg)
-	nums := cfgx.Get("numbers").StringSlice()
+	nums := cast.ToStringSlice(cfgx.Get("numbers").Data())
 	if len(nums) == 0 {
 		L.RaiseError("numbers is empty")
 		return 0

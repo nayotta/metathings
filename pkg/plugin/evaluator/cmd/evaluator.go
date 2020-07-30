@@ -185,6 +185,7 @@ func NewSmsSender(o *EvaluatorPluginOption, logger log.FieldLogger) (smssdk.SmsS
 		}
 
 		name = "dummy"
+		args = []interface{}{"logger", logger}
 		logger.Warningf("sms sender not found, using dummy driver")
 	}
 
