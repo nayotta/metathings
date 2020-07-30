@@ -23,13 +23,14 @@ func new_token(dom_id, ent_id, cred_id *string, expire time.Duration) *storage.T
 	expires_at := now.Add(expire)
 
 	return &storage.Token{
-		Id:           &id,
-		DomainId:     dom_id,
-		EntityId:     ent_id,
-		CredentialId: cred_id,
-		IssuedAt:     &now,
-		ExpiresAt:    &expires_at,
-		Text:         &id, // token text is token id now.
+		Id:            &id,
+		DomainId:      dom_id,
+		EntityId:      ent_id,
+		CredentialId:  cred_id,
+		IssuedAt:      &now,
+		ExpiresAt:     &expires_at,
+		ExpiresPeriod: (*int64)(&expire),
+		Text:          &id, // token text is token id now.
 	}
 }
 

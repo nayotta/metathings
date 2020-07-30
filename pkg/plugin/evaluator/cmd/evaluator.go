@@ -204,7 +204,7 @@ func NewEvaluatorPluginService(cfg string) (*service.EvaluatorPluginService, err
 	c.Provide(LoadEvaluatorPluginOption(cfg))
 	c.Provide(GetEvaluatorPluginOptions)
 	c.Provide(cmd_contrib.NewLogger("evaluator-plugin"))
-	c.Provide(cmd_contrib.NewTokener)
+	c.Provide(cmd_contrib.NewNoExpireTokener)
 	c.Provide(cmd_contrib.NewOpentracing)
 	c.Provide(cmd_contrib.NewClientFactory)
 	c.Provide(NewDataStorage)

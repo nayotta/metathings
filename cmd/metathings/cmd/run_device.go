@@ -99,7 +99,7 @@ func run_device() error {
 			cmd_contrib.NewLogger("device"),
 			cmd_contrib.NewServerTransportCredentials,
 			cmd_contrib.NewClientFactory,
-			cmd_contrib.NewTokener,
+			cmd_contrib.NewNoExpireTokener,
 			cmd_contrib.NewBinarySynchronizer,
 			version_helper.NewVersioner(version_str),
 			token_helper.NewTokenValidator,
