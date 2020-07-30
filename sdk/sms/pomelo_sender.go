@@ -24,7 +24,20 @@ type PomeloSmsSender struct {
 }
 
 func (ss *PomeloSmsSender) SendSms(ctx context.Context, id string, numbers []string, arguments map[string]string) error {
-	return ss.sdk.SendSMS(ctx, id, numbers, arguments)
+	logger := ss.logger.WithFields(logrus.Fields{
+		"sms":     id,
+		"numbers": numbers,
+	})
+
+	err := ss.sdk.SendSMS(ctx, id, numbers, arguments)
+	if err != nil {
+		logger.WithError(err).Debugf("failed to send sms")
+		return err
+	}
+
+	logger.Debugf("send sms")
+
+	return nil
 }
 
 func NewPomeloSmsSender(args ...interface{}) (SmsSender, error) {
