@@ -76,12 +76,12 @@ func (self *MetathingsIdentitydService) is_invalid_token(tkn *storage.Token) boo
 }
 
 func (self *MetathingsIdentitydService) is_refreshable_token(tkn *storage.Token) bool {
-	return tkn.ExpiresAt.Sub(time.Now()) < time.Duration(.25*float64(self.opt.TokenExpire))
+	return tkn.ExpiresAt.Sub(time.Now()) < time.Duration(.5*float64(*tkn.ExpiresPeriod))
 }
 
 func (self *MetathingsIdentitydService) refresh_token(ctx context.Context, tkn *storage.Token) error {
 	tkn_id := *tkn.Id
-	expires_at := time.Now().Add(self.opt.TokenExpire)
+	expires_at := time.Now().Add(time.Duration(*tkn.ExpiresPeriod))
 
 	return self.storage.RefreshToken(ctx, tkn_id, expires_at)
 }
