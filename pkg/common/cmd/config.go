@@ -12,6 +12,10 @@ import (
 
 func UnmarshalConfig(dst interface{}, vs ...*viper.Viper) {
 	v := GetFromStage(vs...)
+	if v == nil {
+		log.Fatalf("failed to get config in stage, please check config file")
+	}
+
 	err := v.Unmarshal(dst)
 	if err != nil {
 		log.WithError(err).Fatalf("failed to unmarshal config")
