@@ -124,13 +124,13 @@ func (self *tokener) refreshTokenOnce() error {
 	}
 	defer cfn()
 
-	ct_req := &pb.CheckTokenRequest{
+	vt_req := &pb.ValidateTokenRequest{
 		Token: &pb.OpToken{
 			Text: &wrappers.StringValue{Value: self.credential_token},
 		},
 	}
 
-	if _, err = cli.CheckToken(context.TODO(), ct_req); err != nil {
+	if _, err = cli.ValidateToken(context.TODO(), vt_req); err != nil {
 		return err
 	}
 
