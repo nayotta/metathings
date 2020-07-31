@@ -10,6 +10,7 @@ import (
 	dssdk "github.com/nayotta/metathings/sdk/data_storage"
 	dsdk "github.com/nayotta/metathings/sdk/deviced"
 	esdk "github.com/nayotta/metathings/sdk/evaluatord"
+	smssdk "github.com/nayotta/metathings/sdk/sms"
 )
 
 type LuaOperatorOption struct {
@@ -17,11 +18,12 @@ type LuaOperatorOption struct {
 }
 
 type LuaOperator struct {
-	dat_stor  dssdk.DataStorage
-	smpl_stor dsdk.SimpleStorage
-	caller    dsdk.Caller
-	opt       *LuaOperatorOption
-	env       *lua.LState
+	dat_stor   dssdk.DataStorage
+	smpl_stor  dsdk.SimpleStorage
+	caller     dsdk.Caller
+	sms_sender smssdk.SmsSender
+	opt        *LuaOperatorOption
+	env        *lua.LState
 }
 
 func (lo *LuaOperator) Run(gctx context.Context, ctx, dat esdk.Data) (esdk.Data, error) {
@@ -32,6 +34,7 @@ func (lo *LuaOperator) Run(gctx context.Context, ctx, dat esdk.Data) (esdk.Data,
 		"data_storage", lo.dat_stor,
 		"simple_storage", lo.smpl_stor,
 		"caller", lo.caller,
+		"sms_sender", lo.sms_sender,
 	)
 	if err != nil {
 		return nil, err
@@ -69,6 +72,7 @@ func NewLuaOperator(args ...interface{}) (Operator, error) {
 	var ds dssdk.DataStorage
 	var ss dsdk.SimpleStorage
 	var caller dsdk.Caller
+	var sms_sender smssdk.SmsSender
 
 	opt := &LuaOperatorOption{}
 
@@ -78,16 +82,18 @@ func NewLuaOperator(args ...interface{}) (Operator, error) {
 		"data_storage":   dssdk.ToDataStorage(&ds),
 		"simple_storage": dsdk.ToSimpleStorage(&ss),
 		"caller":         dsdk.ToCaller(&caller),
+		"sms_sender":     smssdk.ToSmsSender(&sms_sender),
 	}, opt_helper.SetSkip(true))(args...); err != nil {
 		return nil, err
 	}
 
 	op := &LuaOperator{
-		dat_stor:  ds,
-		smpl_stor: ss,
-		caller:    caller,
-		opt:       opt,
-		env:       lua.NewState(),
+		dat_stor:   ds,
+		smpl_stor:  ss,
+		caller:     caller,
+		sms_sender: sms_sender,
+		opt:        opt,
+		env:        lua.NewState(),
 	}
 
 	return op, nil

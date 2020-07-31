@@ -18,6 +18,7 @@ import (
 	dssdk "github.com/nayotta/metathings/sdk/data_storage"
 	dsdk "github.com/nayotta/metathings/sdk/deviced"
 	esdk "github.com/nayotta/metathings/sdk/evaluatord"
+	smssdk "github.com/nayotta/metathings/sdk/sms"
 )
 
 type luaBaseObject interface {
@@ -60,9 +61,10 @@ func luaInitOnceObject(L *lua.LState, name string, obj luaBaseObject) {
 type luaMetathingsCore struct {
 	gocontext context.Context
 
-	dat_stor  dssdk.DataStorage
-	smpl_stor dsdk.SimpleStorage
-	caller    dsdk.Caller
+	dat_stor   dssdk.DataStorage
+	smpl_stor  dsdk.SimpleStorage
+	caller     dsdk.Caller
+	sms_sender smssdk.SmsSender
 
 	context esdk.Data
 	data    esdk.Data
@@ -74,6 +76,7 @@ func newLuaMetathingsCore(args ...interface{}) (*luaMetathingsCore, error) {
 	var ds dssdk.DataStorage
 	var ss dsdk.SimpleStorage
 	var caller dsdk.Caller
+	var sms_sender smssdk.SmsSender
 
 	if err := opt_helper.Setopt(map[string]func(string, interface{}) error{
 		"gocontext":      opt_helper.ToContext(&gctx),
@@ -82,17 +85,19 @@ func newLuaMetathingsCore(args ...interface{}) (*luaMetathingsCore, error) {
 		"data_storage":   dssdk.ToDataStorage(&ds),
 		"simple_storage": dsdk.ToSimpleStorage(&ss),
 		"caller":         dsdk.ToCaller(&caller),
+		"sms_sender":     smssdk.ToSmsSender(&sms_sender),
 	})(args...); err != nil {
 		return nil, err
 	}
 
 	return &luaMetathingsCore{
-		gocontext: gctx,
-		context:   ctx,
-		data:      dat,
-		dat_stor:  ds,
-		smpl_stor: ss,
-		caller:    caller,
+		gocontext:  gctx,
+		context:    ctx,
+		data:       dat,
+		dat_stor:   ds,
+		smpl_stor:  ss,
+		caller:     caller,
+		sms_sender: sms_sender,
 	}, nil
 }
 
@@ -132,6 +137,10 @@ func (c *luaMetathingsCore) GetCaller() dsdk.Caller {
 	return c.caller
 }
 
+func (c *luaMetathingsCore) GetSmsSender() smssdk.SmsSender {
+	return c.sms_sender
+}
+
 func (c *luaMetathingsCore) MetatableIndex() map[string]lua.LGFunction {
 	return map[string]lua.LGFunction{
 		"data":           c.luaGetData,
@@ -139,6 +148,7 @@ func (c *luaMetathingsCore) MetatableIndex() map[string]lua.LGFunction {
 		"storage":        c.luaNewStorage,
 		"simple_storage": c.luaNewSimpleStorage,
 		"device":         c.luaGetDevice,
+		"sms":            c.luaGetSms,
 	}
 }
 
@@ -243,6 +253,20 @@ func (c *luaMetathingsCore) luaGetDevice(L *lua.LState) int {
 	}
 
 	_, ud := luaBindingObjectMethods(L, dev)
+	L.Push(ud)
+
+	return 1
+}
+
+// LUA_FUNCTION: core:sms() sms
+func (c *luaMetathingsCore) luaGetSms(L *lua.LState) int {
+	sms, err := newLuaMetathingsCoreSms("core", c, "sms_sender", c.sms_sender)
+	if err != nil {
+		L.RaiseError("failed to get sms")
+		return 0
+	}
+
+	_, ud := luaBindingObjectMethods(L, sms)
 	L.Push(ud)
 
 	return 1
@@ -371,6 +395,10 @@ func parse_ltable_to_pb_object(getter opt_helper.GetImmutableOptioner, x *lua.LT
 	}
 
 	return y
+}
+
+func parse_ltable_to_string_slice(x *lua.LTable) []string {
+	panic("unimplemnetd")
 }
 
 func parse_pb_message_to_ltable(L *lua.LState, x proto.Message) (y *lua.LTable) {

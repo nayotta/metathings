@@ -47,7 +47,7 @@ var (
 			base_opt = &run_device_opt.BaseOption
 
 			cmd_helper.InitManyStringMapFromConfigWithStage([]cmd_helper.InitManyOption{
-				{&run_device_opt.BinarySynchronizer, "binary_synchronizer"},
+				{Dst: &run_device_opt.BinarySynchronizer, Key: "binary_synchronizer"},
 			})
 
 			run_device_opt.SetStage(cmd_helper.GetStageFromEnv())
@@ -99,7 +99,7 @@ func run_device() error {
 			cmd_contrib.NewLogger("device"),
 			cmd_contrib.NewServerTransportCredentials,
 			cmd_contrib.NewClientFactory,
-			cmd_contrib.NewTokener,
+			cmd_contrib.NewNoExpireTokener,
 			cmd_contrib.NewBinarySynchronizer,
 			version_helper.NewVersioner(version_str),
 			token_helper.NewTokenValidator,

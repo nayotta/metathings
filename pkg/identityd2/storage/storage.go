@@ -153,12 +153,13 @@ type Token struct {
 	CreatedAt time.Time
 	UpdatedAt time.Time
 
-	DomainId     *string    `gorm:"column:domain_id"`
-	EntityId     *string    `gorm:"column:entity_id"`
-	CredentialId *string    `gorm:"column:credential_id"`
-	IssuedAt     *time.Time `gorm:"column:issued_at"`
-	ExpiresAt    *time.Time `gorm:"column:expires_at"`
-	Text         *string    `gorm:"column:text"`
+	DomainId      *string    `gorm:"column:domain_id"`
+	EntityId      *string    `gorm:"column:entity_id"`
+	CredentialId  *string    `gorm:"column:credential_id"`
+	IssuedAt      *time.Time `gorm:"column:issued_at"`
+	ExpiresAt     *time.Time `gorm:"column:expires_at"`
+	ExpiresPeriod *int64     `gorm:"column:expires_period;default:0"`
+	Text          *string    `gorm:"column:text"`
 
 	Domain     *Domain     `gorm:"-"`
 	Entity     *Entity     `gorm:"-"`
