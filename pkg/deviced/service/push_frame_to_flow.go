@@ -12,6 +12,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+// TODO(Peer): merge PushFrameToFlow and PushFrameToFlowOnce to one function
 func (self *MetathingsDevicedService) PushFrameToFlow(stm pb.DevicedService_PushFrameToFlowServer) error {
 	req, err := stm.Recv()
 	if err != nil {
@@ -138,6 +139,7 @@ match_flow_loop:
 			logger.WithError(err).Errorf("failed to marshal data to json string")
 			return status.Errorf(codes.InvalidArgument, err.Error())
 		}
+
 		evltrsdk_dat, err := evaluatord_sdk.DataFromBytes([]byte(opdat_str))
 		if err != nil {
 			logger.WithError(err).Errorf("failed to transfer json string to evaluatord sdk data")
@@ -151,21 +153,15 @@ match_flow_loop:
 		}
 		logger.WithField("request", req_id).Debugf("push frame to flow")
 
-		go func() {
-			if self.data_launcher == nil {
-				return
-			}
-
-			nctx := evaluatord_sdk.WithToken(ctx, tkn_txt)
-			nctx = evaluatord_sdk.WithDevice(nctx, dev_id)
-			err = self.data_launcher.Launch(
-				nctx,
-				evaluatord_sdk.NewResource(f.Id(), RESOURCE_TYPE_FLOW),
-				evltrsdk_dat)
-			if err != nil {
-				logger.WithError(err).Warningf("failed to launch data")
-			}
-		}()
+		nctx := evaluatord_sdk.WithToken(ctx, tkn_txt)
+		nctx = evaluatord_sdk.WithDevice(nctx, dev_id)
+		err = self.data_launcher.Launch(
+			nctx,
+			evaluatord_sdk.NewResource(f.Id(), RESOURCE_TYPE_FLOW),
+			evltrsdk_dat)
+		if err != nil {
+			logger.WithError(err).Warningf("failed to launch data")
+		}
 
 		for _, fs := range fss {
 			if err = fs.PushFrame(&flow.FlowSetFrame{
@@ -176,20 +172,12 @@ match_flow_loop:
 				return status.Errorf(codes.Internal, err.Error())
 			}
 
-			go func(fs flow.FlowSet) {
-				if self.data_launcher == nil {
-					return
-				}
-
-				nctx := evaluatord_sdk.WithToken(ctx, tkn_txt)
-				nctx = evaluatord_sdk.WithDevice(nctx, dev_id)
-				if err = self.data_launcher.Launch(
-					nctx,
-					evaluatord_sdk.NewResource(fs.Id(), RESOURCE_TYPE_FLOWSET),
-					evltrsdk_dat); err != nil {
-					logger.WithError(err).Warningf("failed to launch data")
-				}
-			}(fs)
+			if err = self.data_launcher.Launch(
+				nctx,
+				evaluatord_sdk.NewResource(fs.Id(), RESOURCE_TYPE_FLOWSET),
+				evltrsdk_dat); err != nil {
+				logger.WithError(err).Warningf("failed to launch data")
+			}
 		}
 
 		if push_ack {

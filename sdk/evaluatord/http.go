@@ -69,14 +69,18 @@ func (hdl *HttpDataLauncher) http_device_id(ctx context.Context) string {
 }
 
 func (hdl *HttpDataLauncher) Launch(ctx context.Context, src Resource, dat Data) error {
+	logger := hdl.logger
+
 	body, err := hdl.data_encoder.Encode(dat)
 	if err != nil {
+		logger.WithError(err).Debugf("failed to encode data")
 		return err
 	}
 
 	// TODO(Peer): tls support
 	req, err := http.NewRequest("POST", hdl.opt.Endpoint, bytes.NewReader(body))
 	if err != nil {
+		logger.WithError(err).Debugf("failed to new http request")
 		return err
 	}
 
@@ -86,6 +90,7 @@ func (hdl *HttpDataLauncher) Launch(ctx context.Context, src Resource, dat Data)
 	req.Header.Set(HTTP_HEADER_SOURCE_TYPE, src.GetType())
 	if buf := hdl.http_device_id(ctx); buf != "" {
 		req.Header.Set(HTTP_HEADER_DEVICE_ID, buf)
+		logger = logger.WithField("device", buf)
 	}
 	req.Header.Set(HTTP_HEADER_DATA_CODEC, hdl.opt.DataCodec)
 	req.Header.Set(HTTP_HEADER_DATA_TIMESTAMP, hdl.http_data_timestamp(ctx))
@@ -94,8 +99,14 @@ func (hdl *HttpDataLauncher) Launch(ctx context.Context, src Resource, dat Data)
 	}
 	req = req.WithContext(ctx)
 
+	logger = logger.WithFields(log.Fields{
+		"source":      src.GetId(),
+		"source_type": src.GetType(),
+	})
+
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {
+		logger.WithError(err).Debugf("failed to send http request")
 		return err
 	}
 	defer res.Body.Close()
@@ -103,6 +114,7 @@ func (hdl *HttpDataLauncher) Launch(ctx context.Context, src Resource, dat Data)
 	if res.StatusCode >= 400 {
 		buf, err := ioutil.ReadAll(res.Body)
 		if err != nil {
+			logger.WithError(err).Debugf("failed to read response body")
 			return err
 		}
 
@@ -110,11 +122,17 @@ func (hdl *HttpDataLauncher) Launch(ctx context.Context, src Resource, dat Data)
 			Message string
 		}
 		if err = json.Unmarshal(buf, &res_body); err != nil {
+			logger.WithError(err).Debugf("failed to unmarshal response body to json")
 			return err
 		}
 
-		return errors.New(res_body.Message)
+		err = errors.New(res_body.Message)
+		logger.WithError(err).Debugf("failed to launch data")
+
+		return err
 	}
+
+	logger.Debugf("launch data")
 
 	return nil
 }

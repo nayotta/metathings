@@ -24,4 +24,5 @@ var (
 var em = grpc_helper.ErrorMapping{
 	storage.RecordNotFound: codes.NotFound,
 	os.ErrNotExist:         codes.NotFound,
+	ErrFlowNotFound:        codes.NotFound,
 }
