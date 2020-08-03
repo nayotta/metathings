@@ -123,6 +123,7 @@ func NewDevicedDataLauncher(p NewDevicedDataLauncherParams) (evaluatord_sdk.Data
 		}
 
 		name = "dummy"
+		args = []interface{}{"logger", p.Logger}
 	}
 
 	return evaluatord_sdk.NewDataLauncher(name, args...)

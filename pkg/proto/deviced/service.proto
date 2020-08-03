@@ -29,6 +29,7 @@ import "stream_call.proto";
 
 import "pull_frame_from_flow.proto";
 import "push_frame_to_flow.proto";
+import "push_frame_to_flow_once.proto";
 import "query_frames_from_flow.proto";
 
 import "create_flow_set.proto";
@@ -96,6 +97,7 @@ service DevicedService {
 	// Flow
 	rpc PullFrameFromFlow(PullFrameFromFlowRequest) returns (stream PullFrameFromFlowResponse) {}
 	rpc PushFrameToFlow(stream PushFrameToFlowRequest) returns (stream PushFrameToFlowResponse) {}
+  rpc PushFrameToFlowOnce(PushFrameToFlowOnceRequest) returns (google.protobuf.Empty) {}
 	rpc QueryFramesFromFlow(QueryFramesFromFlowRequest) returns (QueryFramesFromFlowResponse) {}
 
 	// Flow Set

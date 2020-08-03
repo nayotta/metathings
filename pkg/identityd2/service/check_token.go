@@ -13,6 +13,7 @@ import (
 )
 
 func (self *MetathingsIdentitydService) CheckToken(ctx context.Context, req *pb.CheckTokenRequest) (*empty.Empty, error) {
+	var dom_id_str string
 	var tkn_s *storage.Token
 	var err error
 
@@ -22,8 +23,20 @@ func (self *MetathingsIdentitydService) CheckToken(ctx context.Context, req *pb.
 	}
 
 	tkn := req.GetToken()
+	if dom_id_str = tkn.GetDomain().GetId().GetValue(); dom_id_str == "" {
+		err = errors.New("token.domain.id is empty")
+		self.logger.WithError(err).Warningf("failed to validate request data")
+		return nil, status.Errorf(codes.InvalidArgument, err.Error())
+	}
+
 	if tkn_s, err = self.validate_token(ctx, tkn); err != nil {
 		return nil, err
+	}
+
+	if *tkn_s.Domain.Id != dom_id_str {
+		err = policy.ErrUnauthenticated
+		self.logger.WithError(err).Warningf("failed to match request domain id and token domain id")
+		return nil, status.Errorf(codes.Unauthenticated, err.Error())
 	}
 
 	self.logger.WithFields(log.Fields{
