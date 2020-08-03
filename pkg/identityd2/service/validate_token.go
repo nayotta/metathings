@@ -31,11 +31,6 @@ func (self *MetathingsIdentitydService) validate_token(ctx context.Context, tkn 
 		return nil, status.Errorf(codes.Unauthenticated, policy.ErrUnauthenticated.Error())
 	}
 
-	if tkn_dom_str := tkn.GetDomain().GetId().GetValue(); tkn_dom_str != *tkn_s.Domain.Id {
-		self.logger.WithError(err).Errorf("failed to match request domain id and token domain id")
-		return nil, status.Errorf(codes.Unauthenticated, policy.ErrUnauthenticated.Error())
-	}
-
 	if self.is_invalid_token(tkn_s) {
 		if err = self.revoke_token(ctx, *tkn_s.Id); err != nil {
 			self.logger.WithError(err).Warningf("failed to revoke token")
