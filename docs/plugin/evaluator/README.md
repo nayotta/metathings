@@ -1,4 +1,4 @@
-# Evaluator Plugin  使用指南
+# Evaluator Plugin 使用指南
 
 ## 1. 概要
 
@@ -52,9 +52,9 @@ local val = metathings:context("key")
 
 获取 `evaluator`的 `device`对象.
 
-`metathings:device(name_or_alias#string)`
+`metathings:device(alias#string)`
 
-当 `name_or_alias` 指定为`"self"`时, 如果此次的请求是由 `device` 发起的话, 就可以获取当前请求的 `device`.
+当 `alias` 指定为`"self"`时, 如果此次的请求是由 `device` 发起的话, 就可以获取当前请求的 `device`.
 
 #### 3.1.3.2. 范例
 
@@ -97,6 +97,24 @@ local stor = metathings:storage("temperature", {["device"] = "<device-id>"})
 ```lua
 ...
 local smpl_stor = metathings:simple_storage()
+...
+```
+
+#### 3.1.6. metathings:flow
+
+#### 3.1.6.1. 描述
+
+获取 `metathings`的 `flow`对象.
+
+`metathings:flow(alias#string, name#string) flow`
+
+`flow` 对象的具体使用方法可以参考 `3.5`章节.
+
+#### 3.1.6.2. 范例
+
+```lua
+...
+local flw = metathings:flow("self", "greeting")
 ...
 ```
 
@@ -159,15 +177,34 @@ local smpl_stor = dev:simple_storage()
 ...
 ```
 
-### 3.2.4. device:unary_call
+### 3.2.4. device:flow
 
 #### 3.2.4.1. 描述
+
+获取 `device`的`flow`对象.
+
+`device:flow(name#string) flow`
+
+`flow`  对象的具体使用方法可以参考 `3.4`章节.
+
+#### 3.2.4.2. 范例
+
+```lua
+...
+local dev = metathings:device("self")
+local flw = dev:flow("greeting")
+...
+```
+
+### 3.2.5. device:unary_call
+
+#### 3.2.5.1. 描述
 
 调用 `device`的`unary_call` 方法.
 
 `device:unary_call(module#string, method#string, argument#table) table`
 
-#### 3.2.4.2 范例
+#### 3.2.5.2. 范例
 
 ```lua
 ...
@@ -178,7 +215,7 @@ dev:unary_call("echo", "Echo", {
 ...
 ```
 
-#### 3.2.4.3 备注
+#### 3.2.5.3. 备注
 
 `unary_call`接口需要预先设置相关配置.
 
@@ -438,6 +475,27 @@ local objs = smpl_stor:list({
   ["name"] = "/",
   ["recursive"] = true,
   ["depth"] = 1
+})
+...
+```
+
+### 3.4. flow
+
+#### 3.4.1. flow:push_frame
+
+#### 3.4.1.1. 描述
+
+推送数据到流.
+
+`flow:push_frame(data#table)`
+
+#### 3.4.1.2. 范例
+
+```lua
+...
+local flw = metathings:flow("self", "greeting")
+flw:push_frame({
+  ["text"] = "hello, world!",
 })
 ...
 ```
