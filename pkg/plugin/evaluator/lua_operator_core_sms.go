@@ -74,7 +74,7 @@ func (p *luaMetathingsCoreSms) luaSend(L *lua.LState) int {
 		}
 	}
 
-	if err = p.sms_sender.SendSms(p.core.GetGoContext(), sms_id, nums, args); err != nil {
+	if err = p.sms_sender.SendSms(p.core.GetGoContextWithToken(), sms_id, nums, args); err != nil {
 		L.RaiseError(err.Error())
 		return 0
 	}

@@ -202,5 +202,5 @@ func NewDevicedSimpleStorage(args ...interface{}) (SimpleStorage, error) {
 }
 
 func init() {
-	registry_simple_storage_factory("default", NewDevicedSimpleStorage)
+	register_simple_storage_factory("default", NewDevicedSimpleStorage)
 }

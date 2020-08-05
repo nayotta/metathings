@@ -21,6 +21,7 @@ type LuaOperator struct {
 	dat_stor   dssdk.DataStorage
 	smpl_stor  dsdk.SimpleStorage
 	caller     dsdk.Caller
+	flow       dsdk.Flow
 	sms_sender smssdk.SmsSender
 	opt        *LuaOperatorOption
 	env        *lua.LState
@@ -33,6 +34,7 @@ func (lo *LuaOperator) Run(gctx context.Context, ctx, dat esdk.Data) (esdk.Data,
 		"data", dat,
 		"data_storage", lo.dat_stor,
 		"simple_storage", lo.smpl_stor,
+		"flow", lo.flow,
 		"caller", lo.caller,
 		"sms_sender", lo.sms_sender,
 	)
@@ -71,6 +73,7 @@ func NewLuaOperator(args ...interface{}) (Operator, error) {
 	var logger log.FieldLogger
 	var ds dssdk.DataStorage
 	var ss dsdk.SimpleStorage
+	var flw dsdk.Flow
 	var caller dsdk.Caller
 	var sms_sender smssdk.SmsSender
 
@@ -81,6 +84,7 @@ func NewLuaOperator(args ...interface{}) (Operator, error) {
 		"logger":         opt_helper.ToLogger(&logger),
 		"data_storage":   dssdk.ToDataStorage(&ds),
 		"simple_storage": dsdk.ToSimpleStorage(&ss),
+		"flow":           dsdk.ToFlow(&flw),
 		"caller":         dsdk.ToCaller(&caller),
 		"sms_sender":     smssdk.ToSmsSender(&sms_sender),
 	}, opt_helper.SetSkip(true))(args...); err != nil {
@@ -90,6 +94,7 @@ func NewLuaOperator(args ...interface{}) (Operator, error) {
 	op := &LuaOperator{
 		dat_stor:   ds,
 		smpl_stor:  ss,
+		flow:       flw,
 		caller:     caller,
 		sms_sender: sms_sender,
 		opt:        opt,
@@ -100,6 +105,6 @@ func NewLuaOperator(args ...interface{}) (Operator, error) {
 }
 
 func init() {
-	registry_operator_factory("lua", NewLuaOperator)
-	registry_operator_factory("default", NewLuaOperator)
+	register_operator_factory("lua", NewLuaOperator)
+	register_operator_factory("default", NewLuaOperator)
 }

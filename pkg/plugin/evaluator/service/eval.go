@@ -292,6 +292,7 @@ func (srv *EvaluatorPluginService) Eval(w http.ResponseWriter, r *http.Request) 
 		"logger", srv.get_logger(),
 		"data_storage", srv.dat_stor,
 		"simple_storage", srv.smpl_stor,
+		"flow", srv.flow,
 		"client_factory", srv.cli_fty,
 	)
 	if err != nil {

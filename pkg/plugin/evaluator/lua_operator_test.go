@@ -20,6 +20,7 @@ type LuaOperatorTestSuite struct {
 	op         *LuaOperator
 	dat_stor   *dssdk.MockDataStorage
 	smpl_stor  *dsdk.MockSimpleStorage
+	flow       *dsdk.MockFlow
 	caller     *dsdk.MockCaller
 	sms_sender *smssdk.MockSmsSender
 	gctx       context.Context
@@ -30,6 +31,7 @@ type LuaOperatorTestSuite struct {
 func (s *LuaOperatorTestSuite) SetupTest() {
 	s.dat_stor = new(dssdk.MockDataStorage)
 	s.smpl_stor = new(dsdk.MockSimpleStorage)
+	s.flow = new(dsdk.MockFlow)
 	s.caller = new(dsdk.MockCaller)
 	s.sms_sender = new(smssdk.MockSmsSender)
 	s.gctx = context.TODO()
@@ -43,6 +45,8 @@ func (s *LuaOperatorTestSuite) BeforeTest(suiteName, testName string) {
 		"TestRunWithAliasDeviceDataStorage": s.setupTestRunWithAliasDeviceDataStorage,
 		"TestRunWithSimpleStorage":          s.setupTestRunWithSimpleStorage,
 		"TestRunWithDeviceSimpleStorage":    s.setupTestRunWithDeviceSimpleStorage,
+		"TestRunWithFlow":                   s.setupTestRunWithFlow,
+		"TestRunWithDeviceFlow":             s.setupTestRunWithDeviceFlow,
 		"TestRunWithDeviceCaller":           s.setupTestRunWithDeviceCaller,
 		"TestRunWithSms":                    s.setupTestRunWithSms,
 		"TestRunWithAliasSms":               s.setupTestRunWithAliasSms,
@@ -54,6 +58,7 @@ func (s *LuaOperatorTestSuite) setupOperator(code string) {
 		"code", code,
 		"data_storage", s.dat_stor,
 		"simple_storage", s.smpl_stor,
+		"flow", s.flow,
 		"caller", s.caller,
 		"sms_sender", s.sms_sender,
 	)
@@ -371,6 +376,62 @@ return {}
 }
 
 func (s *LuaOperatorTestSuite) TestRunWithDeviceSimpleStorage() {
+	s.runMainTest()
+}
+
+func (s *LuaOperatorTestSuite) setupTestRunWithFlow() {
+	code := `
+local flow = metathings:flow("self", "greeting")
+flow:push_frame({
+  ["text"] = "hello, world!"
+})
+return {}
+`
+
+	s.flow.On("PushFrame", mock.Anything, "hello", "greeting", map[string]interface{}{
+		"text": "hello, world!",
+	})
+
+	s.setupOperator(code)
+
+	s.ctx, _ = esdk.DataFromMap(map[string]interface{}{
+		"device": map[string]interface{}{
+			"id": "hello",
+		},
+	})
+	s.dat, _ = esdk.DataFromMap(nil)
+
+}
+
+func (s *LuaOperatorTestSuite) TestRunWithFlow() {
+	s.runMainTest()
+}
+
+func (s *LuaOperatorTestSuite) setupTestRunWithDeviceFlow() {
+	code := `
+local dev = metathings:device("self")
+local flow = dev:flow("greeting")
+flow:push_frame({
+  ["text"] = "hello, world!"
+})
+return {}
+`
+
+	s.flow.On("PushFrame", mock.Anything, "hello", "greeting", map[string]interface{}{
+		"text": "hello, world!",
+	})
+
+	s.setupOperator(code)
+
+	s.ctx, _ = esdk.DataFromMap(map[string]interface{}{
+		"device": map[string]interface{}{
+			"id": "hello",
+		},
+	})
+	s.dat, _ = esdk.DataFromMap(nil)
+}
+
+func (s *LuaOperatorTestSuite) TestRunWithDeviceFlow() {
 	s.runMainTest()
 }
 
