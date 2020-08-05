@@ -189,5 +189,5 @@ func NewDevicedCaller(args ...interface{}) (Caller, error) {
 }
 
 func init() {
-	registry_caller_factory("default", NewDevicedCaller)
+	register_caller_factory("default", NewDevicedCaller)
 }
