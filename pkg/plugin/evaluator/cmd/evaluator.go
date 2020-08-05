@@ -31,6 +31,7 @@ type EvaluatorPluginOption struct {
 	}
 	DataStorage   map[string]interface{}
 	SimpleStorage map[string]interface{}
+	Flow          map[string]interface{}
 	TaskStorage   map[string]interface{}
 	Caller        map[string]interface{}
 	SmsSender     map[string]interface{}
@@ -63,6 +64,7 @@ func LoadEvaluatorPluginOption(path string) func() (*EvaluatorPluginOption, erro
 			{Dst: &opt.TaskStorage, Key: "task_storage"},
 			{Dst: &opt.DataStorage, Key: "data_storage"},
 			{Dst: &opt.SimpleStorage, Key: "simple_storage"},
+			{Dst: &opt.Flow, Key: "flow"},
 			{Dst: &opt.Caller, Key: "caller"},
 			{Dst: &opt.SmsSender, Key: "sms_sender"},
 		})
@@ -137,6 +139,20 @@ func NewSimpleStorage(o *EvaluatorPluginOption, cli_fty *client_helper.ClientFac
 	return ss, nil
 }
 
+func NewFlow(o *EvaluatorPluginOption, cli_fty *client_helper.ClientFactory, logger log.FieldLogger) (dsdk.Flow, error) {
+	name, args, err := cfg_helper.ParseConfigOption("name", o.Flow, "client_factory", cli_fty, "logger", logger)
+	if err != nil {
+		return nil, err
+	}
+
+	flw, err := dsdk.NewFlow(name, args...)
+	if err != nil {
+		return nil, err
+	}
+
+	return flw, nil
+}
+
 type NewTaskStorageParams struct {
 	fx.In
 
@@ -209,6 +225,7 @@ func NewEvaluatorPluginService(cfg string) (*service.EvaluatorPluginService, err
 	c.Provide(cmd_contrib.NewClientFactory)
 	c.Provide(NewDataStorage)
 	c.Provide(NewSimpleStorage)
+	c.Provide(NewFlow)
 	c.Provide(NewTaskStorage)
 	c.Provide(NewCaller)
 	c.Provide(NewSmsSender)

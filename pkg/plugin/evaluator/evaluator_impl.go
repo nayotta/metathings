@@ -22,6 +22,7 @@ type EvaluatorImpl struct {
 	opt        *EvaluatorImplOption
 	dat_stor   dssdk.DataStorage
 	smpl_stor  dsdk.SimpleStorage
+	flow       dsdk.Flow
 	info       esdk.Data
 	ctx        esdk.Data
 	logger     log.FieldLogger
@@ -49,6 +50,7 @@ func (e *EvaluatorImpl) Eval(ctx context.Context, dat esdk.Data) (esdk.Data, err
 		"logger", e.get_logger(),
 		"data_storage", e.dat_stor,
 		"simple_storage", e.smpl_stor,
+		"flow", e.flow,
 		"caller", e.caller,
 		"sms_sender", e.sms_sender,
 	)
@@ -79,6 +81,7 @@ func NewEvaluatorImpl(args ...interface{}) (*EvaluatorImpl, error) {
 	var info map[string]interface{}
 	var ds dssdk.DataStorage
 	var ss dsdk.SimpleStorage
+	var flw dsdk.Flow
 	var caller dsdk.Caller
 	var sms_sender smssdk.SmsSender
 	var cli_fty *client_helper.ClientFactory
@@ -93,6 +96,7 @@ func NewEvaluatorImpl(args ...interface{}) (*EvaluatorImpl, error) {
 		"context":        opt_helper.ToStringMap(&context),
 		"data_storage":   dssdk.ToDataStorage(&ds),
 		"simple_storage": dsdk.ToSimpleStorage(&ss),
+		"flow":           dsdk.ToFlow(&flw),
 		"client_factory": client_helper.ToClientFactory(&cli_fty),
 	}, opt_helper.SetSkip(true))(args...); err != nil {
 		return nil, err
@@ -114,6 +118,7 @@ func NewEvaluatorImpl(args ...interface{}) (*EvaluatorImpl, error) {
 		ctx:        ctx,
 		dat_stor:   ds,
 		smpl_stor:  ss,
+		flow:       flw,
 		logger:     logger,
 		caller:     caller,
 		sms_sender: sms_sender,

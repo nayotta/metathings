@@ -41,6 +41,7 @@ type EvaluatorPluginService struct {
 	tknr       token_helper.Tokener
 	dat_stor   dssdk.DataStorage
 	smpl_stor  dsdk.SimpleStorage
+	flow       dsdk.Flow
 	task_stor  evltr_stor.TaskStorage
 	caller     dsdk.Caller
 	sms_sender smssdk.SmsSender
@@ -80,6 +81,7 @@ func NewEvaluatorPluginService(
 	tknr token_helper.Tokener,
 	dat_stor dssdk.DataStorage,
 	smpl_stor dsdk.SimpleStorage,
+	flow dsdk.Flow,
 	task_stor evltr_stor.TaskStorage,
 	caller dsdk.Caller,
 	sms_sender smssdk.SmsSender,
@@ -91,6 +93,7 @@ func NewEvaluatorPluginService(
 		tknr:       tknr,
 		dat_stor:   dat_stor,
 		smpl_stor:  smpl_stor,
+		flow:       flow,
 		task_stor:  task_stor,
 		caller:     caller,
 		sms_sender: sms_sender,
