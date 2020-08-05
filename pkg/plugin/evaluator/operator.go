@@ -17,7 +17,7 @@ type OperatorFactory func(args ...interface{}) (Operator, error)
 var operator_factories map[string]OperatorFactory
 var operator_factories_once sync.Once
 
-func registry_operator_factory(driver string, fty OperatorFactory) {
+func register_operator_factory(driver string, fty OperatorFactory) {
 	operator_factories_once.Do(func() {
 		operator_factories = make(map[string]OperatorFactory)
 	})

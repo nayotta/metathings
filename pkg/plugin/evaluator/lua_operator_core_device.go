@@ -1,12 +1,9 @@
 package metathings_plugin_evaluator
 
 import (
-	"context"
-
 	"github.com/spf13/cast"
 	lua "github.com/yuin/gopher-lua"
 
-	context_helper "github.com/nayotta/metathings/pkg/common/context"
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 )
 
@@ -29,10 +26,6 @@ func (d *luaMetathingsCoreDevice) check(L *lua.LState) *luaMetathingsCoreDevice 
 	}
 
 	return v
-}
-
-func (d *luaMetathingsCoreDevice) get_context() context.Context {
-	return context_helper.WithToken(d.core.GetGoContext(), cast.ToString(d.core.GetContext().Get("token")))
 }
 
 func (d *luaMetathingsCoreDevice) Id() string {
@@ -106,6 +99,27 @@ func (d *luaMetathingsCoreDevice) luaNewSimpleStorage(L *lua.LState) int {
 	return 1
 }
 
+// LUA_FUNCTION: device:flow(name#string) flow
+func (d *luaMetathingsCoreDevice) luaNewFlow(L *lua.LState) int {
+	d.check(L)
+
+	name := L.CheckString(2)
+	f, err := newLuaMetathingsCoreFlow(
+		"device", d.Id(),
+		"flow", name,
+		"core", d.core,
+	)
+	if err != nil {
+		L.RaiseError("failed to new device flow")
+		return 0
+	}
+
+	_, ud := luaBindingObjectMethods(L, f)
+	L.Push(ud)
+
+	return 1
+}
+
 // LUA_FUNCTION: device:unary_call(module#string, method#string, argument#table) table
 func (d *luaMetathingsCoreDevice) luaUnaryCall(L *lua.LState) int {
 	d.check(L)
@@ -115,7 +129,7 @@ func (d *luaMetathingsCoreDevice) luaUnaryCall(L *lua.LState) int {
 	args_tb := L.CheckTable(4)
 	args := parse_ltable_to_string_map(args_tb)
 
-	ret, err := d.core.GetCaller().UnaryCall(d.get_context(), d.Id(), mdl, meth, args)
+	ret, err := d.core.GetCaller().UnaryCall(d.core.GetGoContextWithToken(), d.Id(), mdl, meth, args)
 	if err != nil {
 		L.RaiseError("failed to unary call")
 		return 0
@@ -132,6 +146,7 @@ func (d *luaMetathingsCoreDevice) MetatableIndex() map[string]lua.LGFunction {
 		"id":             d.luaGetId,
 		"storage":        d.luaNewStorage,
 		"simple_storage": d.luaNewSimpleStorage,
+		"flow":           d.luaNewFlow,
 		"unary_call":     d.luaUnaryCall,
 	}
 }
