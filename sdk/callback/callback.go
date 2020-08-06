@@ -7,7 +7,7 @@ import (
 )
 
 type Callback interface {
-	Emit(data interface{}) error
+	Emit(data interface{}, tags map[string]string) error
 }
 
 type CallbackFactory func(args ...interface{}) (Callback, error)

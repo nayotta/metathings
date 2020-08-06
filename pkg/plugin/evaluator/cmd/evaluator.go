@@ -33,6 +33,7 @@ type EvaluatorPluginOption struct {
 	SimpleStorage map[string]interface{}
 	Flow          map[string]interface{}
 	TaskStorage   map[string]interface{}
+	Callback      map[string]interface{}
 	Caller        map[string]interface{}
 	SmsSender     map[string]interface{}
 }
@@ -66,6 +67,7 @@ func LoadEvaluatorPluginOption(path string) func() (*EvaluatorPluginOption, erro
 			{Dst: &opt.SimpleStorage, Key: "simple_storage"},
 			{Dst: &opt.Flow, Key: "flow"},
 			{Dst: &opt.Caller, Key: "caller"},
+			{Dst: &opt.Callback, Key: "callback"},
 			{Dst: &opt.SmsSender, Key: "sms_sender"},
 		})
 
@@ -102,6 +104,7 @@ func NewEvaluatorPluginServiceOption(p NewEvaluatorPluginOptionParams) (*service
 		opt.Server.Name = p.Option.Server.Name
 	}
 	opt.IsTraced = p.Tracer != nil
+	opt.Callback = p.Option.Callback
 
 	return opt, nil
 }

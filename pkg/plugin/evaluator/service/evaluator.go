@@ -24,6 +24,8 @@ type EvaluatorPluginServiceOption struct {
 	}
 	Codec    string
 	IsTraced bool
+
+	Callback map[string]interface{}
 }
 
 func NewEvaluatorPluginServiceOption() *EvaluatorPluginServiceOption {

@@ -7,7 +7,6 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/cast"
 	"github.com/stretchr/objx"
 	"github.com/stretchr/testify/suite"
@@ -20,11 +19,11 @@ type WebhookCallbackTestSuite struct {
 }
 
 func (s *WebhookCallbackTestSuite) TestEmit() {
-	logger := logrus.New()
-
 	rr := http.NewServeMux()
 	rr.HandleFunc("/webhook", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		s.Equal("hello, world!", r.Header.Get("X-Text"))
+		s.Equal("a", r.Header.Get("X-MTE-Tag-A"))
+		s.Equal("b", r.Header.Get("X-MTE-Tag-B"))
 
 		buf, err := ioutil.ReadAll(r.Body)
 		s.Require().Nil(err)
@@ -48,20 +47,24 @@ func (s *WebhookCallbackTestSuite) TestEmit() {
 	custom_headers := map[string]string{
 		"X-Text": "hello, world!",
 	}
-	data := map[string]interface{}{
-		"text":   "hello, world!",
-		"answer": 42,
-	}
 
 	cb, err := cbsdk.NewCallback("default",
 		"allow_plain_text", true,
-		"logger", logger,
 		"custom_headers", custom_headers,
 		"url", ts.URL+"/webhook",
 	)
 	s.Require().Nil(err)
 
-	err = cb.Emit(data)
+	data := map[string]interface{}{
+		"text":   "hello, world!",
+		"answer": 42,
+	}
+	tags := map[string]string{
+		"a": "a",
+		"b": "b",
+	}
+
+	err = cb.Emit(data, tags)
 	s.Nil(err)
 }
 

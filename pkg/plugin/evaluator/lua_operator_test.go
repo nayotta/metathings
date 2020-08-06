@@ -2,8 +2,14 @@ package metathings_plugin_evaluator
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
+	"net/http"
+	"net/http/httptest"
 	"testing"
 
+	"github.com/stretchr/objx"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
 
@@ -38,7 +44,7 @@ func (s *LuaOperatorTestSuite) SetupTest() {
 }
 
 func (s *LuaOperatorTestSuite) BeforeTest(suiteName, testName string) {
-	map[string]func(){
+	if fn, ok := map[string]func(){
 		"TestRun":                           s.setupTestRun,
 		"TestRunWithDataStorage":            s.setupTestRunWithDataStorage,
 		"TestRunWithDeviceDataStorage":      s.setupTestRunWithDeviceDataStorage,
@@ -50,7 +56,9 @@ func (s *LuaOperatorTestSuite) BeforeTest(suiteName, testName string) {
 		"TestRunWithDeviceCaller":           s.setupTestRunWithDeviceCaller,
 		"TestRunWithSms":                    s.setupTestRunWithSms,
 		"TestRunWithAliasSms":               s.setupTestRunWithAliasSms,
-	}[testName]()
+	}[testName]; ok {
+		fn()
+	}
 }
 
 func (s *LuaOperatorTestSuite) setupOperator(code string) {
@@ -432,6 +440,69 @@ return {}
 
 func (s *LuaOperatorTestSuite) TestRunWithDeviceFlow() {
 	s.runMainTest()
+}
+
+func (s *LuaOperatorTestSuite) TestRunWithCallback() {
+	code := `
+local cb = metathings:callback()
+cb:emit({
+  ["text"] = "hello, world!",
+})
+return {}
+`
+	s.setupOperator(code)
+
+	rr := http.NewServeMux()
+	rr.HandleFunc("/webhook", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		s.Equal("light", r.Header.Get("X-MTE-Tag-Device"))
+		s.Equal("sensor", r.Header.Get("X-MTE-Tag-Source"))
+		s.Equal("flow", r.Header.Get("X-MTE-Tag-Source-Type"))
+		s.Equal("bearer youshallnotpass", r.Header.Get("Token"))
+
+		buf, err := ioutil.ReadAll(r.Body)
+		if err != nil {
+			s.Require().Nil(err)
+		}
+		defer r.Body.Close()
+
+		body := map[string]interface{}{}
+		err = json.Unmarshal(buf, &body)
+		s.Require().Nil(err)
+
+		bodyx := objx.New(body)
+		s.Equal("hello, world!", bodyx.Get("text").String())
+
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("{}"))
+	}))
+
+	ts := httptest.NewServer(rr)
+	defer ts.Close()
+
+	s.ctx, _ = esdk.DataFromBytes([]byte(fmt.Sprintf(`
+{
+  "device": {
+    "id": "light"
+  },
+  "source": {
+    "id": "sensor",
+    "type": "flow"
+  },
+  "config": {
+    "callback": {
+      "name": "webhook",
+      "allow_plain_text": true,
+      "url": "%s",
+      "custom_headers": {
+        "token": "bearer youshallnotpass"
+      }
+    }
+  }
+}
+`, ts.URL+"/webhook")))
+	s.dat, _ = esdk.DataFromMap(nil)
+	_, err := s.op.Run(s.gctx, s.ctx, s.dat)
+	s.Require().Nil(err)
 }
 
 func (s *LuaOperatorTestSuite) setupTestRunWithDeviceCaller() {
