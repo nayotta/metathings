@@ -428,7 +428,6 @@ return {}
 			"id": "hello",
 		},
 	})
-	s.dat, _ = esdk.DataFromMap(nil)
 }
 
 func (s *LuaOperatorTestSuite) TestRunWithDeviceFlow() {
