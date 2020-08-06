@@ -443,6 +443,7 @@ func (s *LuaOperatorTestSuite) TestRunWithDeviceFlow() {
 }
 
 func (s *LuaOperatorTestSuite) TestRunWithCallback() {
+	tag_prefix := "custom_tag-prefix-"
 	code := `
 local cb = metathings:callback()
 cb:emit({
@@ -454,9 +455,9 @@ return {}
 
 	rr := http.NewServeMux()
 	rr.HandleFunc("/webhook", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		s.Equal("light", r.Header.Get("X-MTE-Tag-Device"))
-		s.Equal("sensor", r.Header.Get("X-MTE-Tag-Source"))
-		s.Equal("flow", r.Header.Get("X-MTE-Tag-Source-Type"))
+		s.Equal("light", r.Header.Get("Custom-Tag-Prefix-Device"))
+		s.Equal("sensor", r.Header.Get("Custom-Tag-Prefix-Source"))
+		s.Equal("flow", r.Header.Get("Custom-Tag-Prefix-Source-Type"))
 		s.Equal("bearer youshallnotpass", r.Header.Get("Token"))
 
 		buf, err := ioutil.ReadAll(r.Body)
@@ -492,6 +493,7 @@ return {}
     "callback": {
       "name": "webhook",
       "allow_plain_text": true,
+      "tag_prefix": "%s",
       "url": "%s",
       "custom_headers": {
         "token": "bearer youshallnotpass"
@@ -499,7 +501,7 @@ return {}
     }
   }
 }
-`, ts.URL+"/webhook")))
+`, tag_prefix, ts.URL+"/webhook")))
 	s.dat, _ = esdk.DataFromMap(nil)
 	_, err := s.op.Run(s.gctx, s.ctx, s.dat)
 	s.Require().Nil(err)
