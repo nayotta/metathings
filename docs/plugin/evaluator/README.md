@@ -108,7 +108,7 @@ local smpl_stor = metathings:simple_storage()
 
 `metathings:flow(alias#string, name#string) flow`
 
-`flow` 对象的具体使用方法可以参考 `3.5`章节.
+`flow` 对象的具体使用方法可以参考 `3.4`章节.
 
 #### 3.1.6.2. 范例
 
@@ -117,6 +117,16 @@ local smpl_stor = metathings:simple_storage()
 local flw = metathings:flow("self", "greeting")
 ...
 ```
+
+#### 3.1.7. metathings:callback
+
+#### 3.1.7.1. 描述
+
+获取 `metathings`的 `callback`对象.
+
+`metathings:callback() callback`
+
+`callback` 对象的具体使用方法可以参考 `5`章节.
 
 ### 3.2. device
 
@@ -629,5 +639,104 @@ $ cat enable_timer.json | grpcurl -protoset pkg/proto/evaluatord/service.protose
     ],
     "alias": "c6e1e19eb5274040a7d5b2bfed7ee613"
   }
+}
+```
+
+## 5. Callback(回调)
+
+### 5.1. 描述
+
+回调的设计目标是, 允许`Evaluator` 对数据进行处理后, 将数据发送到外部服务, 来实现更多的功能.
+
+例如:
+
+* 发送短信通知
+
+etc.
+
+### 5.2. 配置
+
+`callback` 的配置文件附属在 `evaluator`的`config` 字段.
+
+`callback` 的配置:
+
+* `name`#`string`: `callback`的驱动名字, 暂时只支持 `"webhook"`.
+
+`webhook callback` 的配置:
+
+* `url`#`string`: `webhook callback` 的地址.
+* `useragent`#`string`: http 请求的 User-Agent, 默认为 `Metathings/beta.v1 EvaluatorPluginWebhookClient`.
+* `custom_headers`#`map[string]string`:  自定义的 Headers, 可以传递用户自定义字段, 例如 `token`, 默认为空字典.
+* `tag_prefix`#`string`: emit时, tag 字段的前序内容, 暂时会带上 `<prefix>-source`, `<prefix>-source-type` 和 `<prefix>-device`(如果 evaluator 的执行请求带上 `device`字段), 默认为 `X-Mte-Tag-`.
+* `timeout`#`int`:  请求的超时时间, 默认`5**, 单位是秒.
+
+***注意:*** 默认只允许回调地址为 `https`协议, 如果需要支持 `http`协议 或者 自签名的证书的话, 请修改 `evaluator-plugin` 的配置文件(`callback.allow_plain_text` 和`callback.insecure`).
+
+
+### 5.3. 范例
+
+假设 `webhook callback` 的 `url` 为 `https://example.com/webhook`
+
+```bash
+$ cat patch_evaluator.json
+{
+  "evaluator": {
+    "id": "d84735aa83e1488294f6483578f92055",
+    "config": {
+      "callback": {
+        "name": "webhook", 
+        "url": "https://example.com/webhook"
+      }
+    }
+  }
+}
+$ cat patch_evaluator.json | grpcurl -protoset pkg/proto/evaluatord/service.protoset -H "authorization: Bearer ${MT_TOKEN}" -d @ "${MT_ADDR}" ai.metathings.service.evaluatord.EvaluatordService/PatchEvaluator
+{
+  "evaluator": {
+    "id": "d84735aa83e1488294f6483578f92055",
+    "sources": [
+      {
+        "id": "1f32a3dd62b94750a48376c7d8a16986",
+        "type": "flow"
+      }
+    ],
+    "operator": {
+      "id": "e5cca77fd6c6468b8fb63fc01c4f8ff0",
+      "driver": "lua",
+      "alias": "test",
+      "description": "test",
+      "lua": {
+        "code": "local cb = metathings:callback()\ncb:emit({\n  [\"text\"] = metathings:data(\"text\"),\n})\nreturn {}\n"
+      }
+    },
+    "config": {
+        "callback": {
+              "name": "webhook",
+              "url": "https://example.com/webhook"
+            }
+      },
+    "alias": "test",
+    "description": "test"
+  }
+}
+```
+
+`webhook server` 应该会收到一下的内容:
+
+```
+Headers:
+
+...
+User-Agent:     Metathings/beta.v1 EvaluatorPluginWebhookClient
+Content-Type:   application/json
+X-Mte-Tag-Device:       c2a652e6de95483d968b30eeb82f384a
+X-Mte-Tag-Source:       1f32a3dd62b94750a48376c7d8a16986
+X-Mte-Tag-Source-Type:  flow
+...
+
+Body:
+
+{
+  "text": "hello, world!"
 }
 ```
