@@ -17,6 +17,7 @@ require (
 	github.com/jeremywohl/flatten v1.0.1
 	github.com/jhump/protoreflect v1.7.0
 	github.com/jinzhu/gorm v1.9.14
+	github.com/levigross/grequests v0.0.0-20190908174114-253788527a1a
 	github.com/mwitkow/go-proto-validators v0.3.0
 	github.com/nayotta/pomelo-sdk-go v0.0.0-20200731080617-457fd795850f
 	github.com/opentracing-contrib/go-gorilla v0.0.0-20190110000444-ced666783644

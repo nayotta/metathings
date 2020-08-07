@@ -161,6 +161,7 @@ func (c *luaMetathingsCore) MetatableIndex() map[string]lua.LGFunction {
 		"storage":        c.luaNewStorage,
 		"simple_storage": c.luaNewSimpleStorage,
 		"flow":           c.luaNewFlow,
+		"callback":       c.luaNewCallback,
 		"device":         c.luaGetDevice,
 		"sms":            c.luaGetSms,
 	}
@@ -265,6 +266,32 @@ func (c *luaMetathingsCore) luaNewFlow(L *lua.LState) int {
 	}
 
 	_, ud := luaBindingObjectMethods(L, f)
+	L.Push(ud)
+
+	return 1
+}
+
+// LUA_FUNCTION: core:callback() callback
+func (c *luaMetathingsCore) luaNewCallback(L *lua.LState) int {
+	c.check(L)
+
+	ctx := c.GetContext()
+	tags := map[string]string{
+		"source":      cast.ToString(ctx.Get("source.id")),
+		"source_type": cast.ToString(ctx.Get("source.type")),
+	}
+
+	if dev_id := c.get_device_id_by_alias("self"); dev_id != "" {
+		tags["device"] = dev_id
+	}
+
+	cb, err := newLuaMetathingsCoreCallback("tags", tags, "core", c)
+	if err != nil {
+		L.RaiseError("failed to new callback")
+		return 0
+	}
+
+	_, ud := luaBindingObjectMethods(L, cb)
 	L.Push(ud)
 
 	return 1

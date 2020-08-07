@@ -8,6 +8,7 @@ import (
 
 	"github.com/opentracing/opentracing-go"
 	log "github.com/sirupsen/logrus"
+	"github.com/spf13/cast"
 	"github.com/stretchr/objx"
 )
 
@@ -343,9 +344,9 @@ func ToLogger(v *log.FieldLogger) func(string, interface{}) error {
 
 func ToStringMap(v *map[string]interface{}) func(string, interface{}) error {
 	return func(key string, val interface{}) error {
-		var ok bool
-		*v, ok = val.(map[string]interface{})
-		if !ok {
+		var err error
+		*v, err = cast.ToStringMapE(val)
+		if err != nil {
 			return InvalidArgument(key)
 		}
 		return nil
@@ -354,9 +355,9 @@ func ToStringMap(v *map[string]interface{}) func(string, interface{}) error {
 
 func ToStringMapString(v *map[string]string) func(string, interface{}) error {
 	return func(key string, val interface{}) error {
-		var ok bool
-		*v, ok = val.(map[string]string)
-		if !ok {
+		var err error
+		*v, err = cast.ToStringMapStringE(val)
+		if err != nil {
 			return InvalidArgument(key)
 		}
 		return nil
