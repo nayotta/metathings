@@ -2,8 +2,14 @@ package metathings_plugin_evaluator
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
+	"net/http"
+	"net/http/httptest"
 	"testing"
 
+	"github.com/stretchr/objx"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
 
@@ -20,6 +26,7 @@ type LuaOperatorTestSuite struct {
 	op         *LuaOperator
 	dat_stor   *dssdk.MockDataStorage
 	smpl_stor  *dsdk.MockSimpleStorage
+	flow       *dsdk.MockFlow
 	caller     *dsdk.MockCaller
 	sms_sender *smssdk.MockSmsSender
 	gctx       context.Context
@@ -30,23 +37,28 @@ type LuaOperatorTestSuite struct {
 func (s *LuaOperatorTestSuite) SetupTest() {
 	s.dat_stor = new(dssdk.MockDataStorage)
 	s.smpl_stor = new(dsdk.MockSimpleStorage)
+	s.flow = new(dsdk.MockFlow)
 	s.caller = new(dsdk.MockCaller)
 	s.sms_sender = new(smssdk.MockSmsSender)
 	s.gctx = context.TODO()
 }
 
 func (s *LuaOperatorTestSuite) BeforeTest(suiteName, testName string) {
-	map[string]func(){
+	if fn, ok := map[string]func(){
 		"TestRun":                           s.setupTestRun,
 		"TestRunWithDataStorage":            s.setupTestRunWithDataStorage,
 		"TestRunWithDeviceDataStorage":      s.setupTestRunWithDeviceDataStorage,
 		"TestRunWithAliasDeviceDataStorage": s.setupTestRunWithAliasDeviceDataStorage,
 		"TestRunWithSimpleStorage":          s.setupTestRunWithSimpleStorage,
 		"TestRunWithDeviceSimpleStorage":    s.setupTestRunWithDeviceSimpleStorage,
+		"TestRunWithFlow":                   s.setupTestRunWithFlow,
+		"TestRunWithDeviceFlow":             s.setupTestRunWithDeviceFlow,
 		"TestRunWithDeviceCaller":           s.setupTestRunWithDeviceCaller,
 		"TestRunWithSms":                    s.setupTestRunWithSms,
 		"TestRunWithAliasSms":               s.setupTestRunWithAliasSms,
-	}[testName]()
+	}[testName]; ok {
+		fn()
+	}
 }
 
 func (s *LuaOperatorTestSuite) setupOperator(code string) {
@@ -54,6 +66,7 @@ func (s *LuaOperatorTestSuite) setupOperator(code string) {
 		"code", code,
 		"data_storage", s.dat_stor,
 		"simple_storage", s.smpl_stor,
+		"flow", s.flow,
 		"caller", s.caller,
 		"sms_sender", s.sms_sender,
 	)
@@ -372,6 +385,126 @@ return {}
 
 func (s *LuaOperatorTestSuite) TestRunWithDeviceSimpleStorage() {
 	s.runMainTest()
+}
+
+func (s *LuaOperatorTestSuite) setupTestRunWithFlow() {
+	code := `
+local flow = metathings:flow("self", "greeting")
+flow:push_frame({
+  ["text"] = "hello, world!"
+})
+return {}
+`
+
+	s.flow.On("PushFrame", mock.Anything, "hello", "greeting", map[string]interface{}{
+		"text": "hello, world!",
+	})
+
+	s.setupOperator(code)
+
+	s.ctx, _ = esdk.DataFromMap(map[string]interface{}{
+		"device": map[string]interface{}{
+			"id": "hello",
+		},
+	})
+	s.dat, _ = esdk.DataFromMap(nil)
+
+}
+
+func (s *LuaOperatorTestSuite) TestRunWithFlow() {
+	s.runMainTest()
+}
+
+func (s *LuaOperatorTestSuite) setupTestRunWithDeviceFlow() {
+	code := `
+local dev = metathings:device("self")
+local flow = dev:flow("greeting")
+flow:push_frame({
+  ["text"] = "hello, world!"
+})
+return {}
+`
+
+	s.flow.On("PushFrame", mock.Anything, "hello", "greeting", map[string]interface{}{
+		"text": "hello, world!",
+	})
+
+	s.setupOperator(code)
+
+	s.ctx, _ = esdk.DataFromMap(map[string]interface{}{
+		"device": map[string]interface{}{
+			"id": "hello",
+		},
+	})
+}
+
+func (s *LuaOperatorTestSuite) TestRunWithDeviceFlow() {
+	s.runMainTest()
+}
+
+func (s *LuaOperatorTestSuite) TestRunWithCallback() {
+	tag_prefix := "custom_tag-prefix-"
+	code := `
+local cb = metathings:callback()
+cb:emit({
+  ["text"] = "hello, world!",
+})
+return {}
+`
+	s.setupOperator(code)
+
+	rr := http.NewServeMux()
+	rr.HandleFunc("/webhook", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		s.Equal("light", r.Header.Get("Custom-Tag-Prefix-Device"))
+		s.Equal("sensor", r.Header.Get("Custom-Tag-Prefix-Source"))
+		s.Equal("flow", r.Header.Get("Custom-Tag-Prefix-Source-Type"))
+		s.Equal("bearer youshallnotpass", r.Header.Get("Token"))
+
+		buf, err := ioutil.ReadAll(r.Body)
+		if err != nil {
+			s.Require().Nil(err)
+		}
+		defer r.Body.Close()
+
+		body := map[string]interface{}{}
+		err = json.Unmarshal(buf, &body)
+		s.Require().Nil(err)
+
+		bodyx := objx.New(body)
+		s.Equal("hello, world!", bodyx.Get("text").String())
+
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("{}"))
+	}))
+
+	ts := httptest.NewServer(rr)
+	defer ts.Close()
+
+	s.ctx, _ = esdk.DataFromBytes([]byte(fmt.Sprintf(`
+{
+  "device": {
+    "id": "light"
+  },
+  "source": {
+    "id": "sensor",
+    "type": "flow"
+  },
+  "config": {
+    "callback": {
+      "name": "webhook",
+      "allow_plain_text": true,
+      "tag_prefix": "%s",
+      "url": "%s",
+      "custom_headers": {
+        "token": "bearer youshallnotpass"
+      }
+    }
+  }
+}
+`, tag_prefix, ts.URL+"/webhook")))
+	s.dat, _ = esdk.DataFromMap(nil)
+	_, err := s.op.Run(s.gctx, s.ctx, s.dat)
+	s.Require().Nil(err)
 }
 
 func (s *LuaOperatorTestSuite) setupTestRunWithDeviceCaller() {

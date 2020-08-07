@@ -30,7 +30,7 @@ type SimpleStorageFactory func(...interface{}) (SimpleStorage, error)
 var simple_storage_factories_once sync.Once
 var simple_storage_factories map[string]SimpleStorageFactory
 
-func registry_simple_storage_factory(name string, fty SimpleStorageFactory) {
+func register_simple_storage_factory(name string, fty SimpleStorageFactory) {
 	simple_storage_factories_once.Do(func() {
 		simple_storage_factories = make(map[string]SimpleStorageFactory)
 	})

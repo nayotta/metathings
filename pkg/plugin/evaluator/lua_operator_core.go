@@ -12,6 +12,7 @@ import (
 	"github.com/stretchr/objx"
 	lua "github.com/yuin/gopher-lua"
 
+	context_helper "github.com/nayotta/metathings/pkg/common/context"
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 	deviced_pb "github.com/nayotta/metathings/pkg/proto/deviced"
 	pb "github.com/nayotta/metathings/pkg/proto/deviced"
@@ -63,6 +64,7 @@ type luaMetathingsCore struct {
 
 	dat_stor   dssdk.DataStorage
 	smpl_stor  dsdk.SimpleStorage
+	flow       dsdk.Flow
 	caller     dsdk.Caller
 	sms_sender smssdk.SmsSender
 
@@ -75,6 +77,7 @@ func newLuaMetathingsCore(args ...interface{}) (*luaMetathingsCore, error) {
 	var ctx, dat esdk.Data
 	var ds dssdk.DataStorage
 	var ss dsdk.SimpleStorage
+	var fw dsdk.Flow
 	var caller dsdk.Caller
 	var sms_sender smssdk.SmsSender
 
@@ -84,6 +87,7 @@ func newLuaMetathingsCore(args ...interface{}) (*luaMetathingsCore, error) {
 		"data":           esdk.ToData(&dat),
 		"data_storage":   dssdk.ToDataStorage(&ds),
 		"simple_storage": dsdk.ToSimpleStorage(&ss),
+		"flow":           dsdk.ToFlow(&fw),
 		"caller":         dsdk.ToCaller(&caller),
 		"sms_sender":     smssdk.ToSmsSender(&sms_sender),
 	})(args...); err != nil {
@@ -96,6 +100,7 @@ func newLuaMetathingsCore(args ...interface{}) (*luaMetathingsCore, error) {
 		data:       dat,
 		dat_stor:   ds,
 		smpl_stor:  ss,
+		flow:       fw,
 		caller:     caller,
 		sms_sender: sms_sender,
 	}, nil
@@ -117,6 +122,10 @@ func (c *luaMetathingsCore) GetGoContext() context.Context {
 	return c.gocontext
 }
 
+func (c *luaMetathingsCore) GetGoContextWithToken() context.Context {
+	return context_helper.WithToken(c.GetGoContext(), cast.ToString(c.GetContext().Get("token")))
+}
+
 func (c *luaMetathingsCore) GetContext() esdk.Data {
 	return c.context
 }
@@ -133,6 +142,10 @@ func (c *luaMetathingsCore) GetSimpleStorage() dsdk.SimpleStorage {
 	return c.smpl_stor
 }
 
+func (c *luaMetathingsCore) GetFlow() dsdk.Flow {
+	return c.flow
+}
+
 func (c *luaMetathingsCore) GetCaller() dsdk.Caller {
 	return c.caller
 }
@@ -147,6 +160,8 @@ func (c *luaMetathingsCore) MetatableIndex() map[string]lua.LGFunction {
 		"context":        c.luaGetContext,
 		"storage":        c.luaNewStorage,
 		"simple_storage": c.luaNewSimpleStorage,
+		"flow":           c.luaNewFlow,
+		"callback":       c.luaNewCallback,
 		"device":         c.luaGetDevice,
 		"sms":            c.luaGetSms,
 	}
@@ -228,19 +243,65 @@ func (c *luaMetathingsCore) luaNewSimpleStorage(L *lua.LState) int {
 	return 1
 }
 
-// LUA_FUNCTION: core:device(name_or_alias#string) device
-func (c *luaMetathingsCore) luaGetDevice(L *lua.LState) int {
-	var dev_id string
-
+// LUA_FUNCTION: core:flow(device_alias#string, flow_name#string) flow
+func (c *luaMetathingsCore) luaNewFlow(L *lua.LState) int {
 	c.check(L)
 
-	noa := L.CheckString(2)
-	if noa == "self" {
-		dev_id = cast.ToString(c.GetContext().Get("device.id"))
-	} else {
-		dev_id = cast.ToString(c.GetContext().Get("config.alias.device." + noa))
+	dev_id := c.get_device_id_by_alias(L.CheckString(2))
+	if dev_id == "" {
+		L.ArgError(2, "unsupported device name or alias")
+		return 0
 	}
 
+	flw_name := L.CheckString(3)
+
+	f, err := newLuaMetathingsCoreFlow(
+		"device", dev_id,
+		"flow", flw_name,
+		"core", c,
+	)
+	if err != nil {
+		L.RaiseError("failed to new flow")
+		return 0
+	}
+
+	_, ud := luaBindingObjectMethods(L, f)
+	L.Push(ud)
+
+	return 1
+}
+
+// LUA_FUNCTION: core:callback() callback
+func (c *luaMetathingsCore) luaNewCallback(L *lua.LState) int {
+	c.check(L)
+
+	ctx := c.GetContext()
+	tags := map[string]string{
+		"source":      cast.ToString(ctx.Get("source.id")),
+		"source_type": cast.ToString(ctx.Get("source.type")),
+	}
+
+	if dev_id := c.get_device_id_by_alias("self"); dev_id != "" {
+		tags["device"] = dev_id
+	}
+
+	cb, err := newLuaMetathingsCoreCallback("tags", tags, "core", c)
+	if err != nil {
+		L.RaiseError("failed to new callback")
+		return 0
+	}
+
+	_, ud := luaBindingObjectMethods(L, cb)
+	L.Push(ud)
+
+	return 1
+}
+
+// LUA_FUNCTION: core:device(alias#string) device
+func (c *luaMetathingsCore) luaGetDevice(L *lua.LState) int {
+	c.check(L)
+
+	dev_id := c.get_device_id_by_alias(L.CheckString(2))
 	if dev_id == "" {
 		L.ArgError(2, "unsupported device name or alias")
 		return 0
@@ -270,6 +331,18 @@ func (c *luaMetathingsCore) luaGetSms(L *lua.LState) int {
 	L.Push(ud)
 
 	return 1
+}
+
+func (c *luaMetathingsCore) get_device_id_by_alias(x string) string {
+	var y string
+
+	if x == "self" {
+		y = cast.ToString(c.GetContext().Get("device.id"))
+	} else {
+		y = cast.ToString(c.GetContext().Get("config.alias.device." + x))
+	}
+
+	return y
 }
 
 func parse_string_map_to_ltable(L *lua.LState, xs map[string]interface{}) *lua.LTable {

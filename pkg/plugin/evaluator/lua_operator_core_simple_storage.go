@@ -1,15 +1,12 @@
 package metathings_plugin_evaluator
 
 import (
-	"context"
 	"strings"
 
 	"github.com/golang/protobuf/proto"
-	"github.com/spf13/cast"
 	"github.com/stretchr/objx"
 	lua "github.com/yuin/gopher-lua"
 
-	context_helper "github.com/nayotta/metathings/pkg/common/context"
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 	dsdk "github.com/nayotta/metathings/sdk/deviced"
 )
@@ -54,10 +51,6 @@ func (ss *luaMetathingsCoreSimpleStorage) GetImmutableOption() objx.Map {
 	return ss.immutables
 }
 
-func (ss *luaMetathingsCoreSimpleStorage) get_context() context.Context {
-	return context_helper.WithToken(ss.core.GetGoContext(), cast.ToString(ss.core.GetContext().Get("token")))
-}
-
 // LUA_FUNCTION: simple_storage:put(option#table, content#string)
 //   option:
 //     device: ...  # type: string
@@ -70,7 +63,7 @@ func (ss *luaMetathingsCoreSimpleStorage) luaPut(L *lua.LState) int {
 	cnt := L.CheckString(3)
 	obj := parse_ltable_to_pb_object(ss, opt_tb)
 
-	if err := ss.core.GetSimpleStorage().Put(ss.get_context(), obj, strings.NewReader(cnt)); err != nil {
+	if err := ss.core.GetSimpleStorage().Put(ss.core.GetGoContextWithToken(), obj, strings.NewReader(cnt)); err != nil {
 		L.RaiseError("failed to put object to simple storage")
 		return 0
 	}
@@ -89,7 +82,7 @@ func (ss *luaMetathingsCoreSimpleStorage) luaRemove(L *lua.LState) int {
 	opt_tb := L.CheckTable(2)
 	obj := parse_ltable_to_pb_object(ss, opt_tb)
 
-	if err := ss.core.GetSimpleStorage().Remove(ss.get_context(), obj); err != nil {
+	if err := ss.core.GetSimpleStorage().Remove(ss.core.GetGoContextWithToken(), obj); err != nil {
 		L.RaiseError("failed to remove object from simple storage")
 		return 0
 	}
@@ -114,7 +107,7 @@ func (ss *luaMetathingsCoreSimpleStorage) luaRename(L *lua.LState) int {
 	src := parse_ltable_to_pb_object(ss, src_tb)
 	dst := parse_ltable_to_pb_object(ss, dst_tb)
 
-	if err := ss.core.GetSimpleStorage().Rename(ss.get_context(), src, dst); err != nil {
+	if err := ss.core.GetSimpleStorage().Rename(ss.core.GetGoContextWithToken(), src, dst); err != nil {
 		L.RaiseError("failed to rename object in simple storage")
 		return 0
 	}
@@ -141,7 +134,7 @@ func (ss *luaMetathingsCoreSimpleStorage) luaGet(L *lua.LState) int {
 	opt_tb := L.CheckTable(2)
 	obj := parse_ltable_to_pb_object(ss, opt_tb)
 
-	obj, err := ss.core.GetSimpleStorage().Get(ss.get_context(), obj)
+	obj, err := ss.core.GetSimpleStorage().Get(ss.core.GetGoContextWithToken(), obj)
 	if err != nil {
 		L.RaiseError("failed to get object from simple storage")
 		return 0
@@ -164,7 +157,7 @@ func (ss *luaMetathingsCoreSimpleStorage) luaGetContent(L *lua.LState) int {
 	opt_tb := L.CheckTable(2)
 	obj := parse_ltable_to_pb_object(ss, opt_tb)
 
-	buf, err := ss.core.GetSimpleStorage().GetContent(ss.get_context(), obj)
+	buf, err := ss.core.GetSimpleStorage().GetContent(ss.core.GetGoContextWithToken(), obj)
 	if err != nil {
 		L.RaiseError("failed to get object content from simple storage")
 		return 0
@@ -201,7 +194,7 @@ func (ss *luaMetathingsCoreSimpleStorage) luaList(L *lua.LState) int {
 		dsdk.SimpleStorageListOption_SetDepth(int(opt.Get("depth").Float64())),
 	}
 
-	objs, err := ss.core.GetSimpleStorage().List(ss.get_context(), obj, opts...)
+	objs, err := ss.core.GetSimpleStorage().List(ss.core.GetGoContextWithToken(), obj, opts...)
 	if err != nil {
 		L.RaiseError("failed to list objects from simple storage")
 		return 0

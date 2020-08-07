@@ -177,6 +177,16 @@ func (srv *EvaluatorPluginService) evaluator_config_string_map_from_evaluator(in
 		return nil, err
 	}
 
+	// merge callback configurations
+	cbcfg := map[string]interface{}{}
+	for k, v := range srv.opt.Callback {
+		cbcfg[k] = v
+	}
+	for k, v := range cast.ToStringMap(cfg["callback"]) {
+		cbcfg[k] = v
+	}
+	cfg["callback"] = cbcfg
+
 	return cfg, nil
 }
 
@@ -292,6 +302,7 @@ func (srv *EvaluatorPluginService) Eval(w http.ResponseWriter, r *http.Request) 
 		"logger", srv.get_logger(),
 		"data_storage", srv.dat_stor,
 		"simple_storage", srv.smpl_stor,
+		"flow", srv.flow,
 		"client_factory", srv.cli_fty,
 	)
 	if err != nil {

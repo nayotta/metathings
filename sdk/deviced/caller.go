@@ -17,7 +17,7 @@ type CallerFactory func(...interface{}) (Caller, error)
 var caller_factories_once sync.Once
 var caller_factories map[string]CallerFactory
 
-func registry_caller_factory(name string, fty CallerFactory) {
+func register_caller_factory(name string, fty CallerFactory) {
 	caller_factories_once.Do(func() {
 		caller_factories = make(map[string]CallerFactory)
 	})
