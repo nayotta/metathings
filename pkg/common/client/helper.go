@@ -4,11 +4,9 @@ import (
 	"crypto/tls"
 	"fmt"
 	"strings"
-	"time"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
-	"google.golang.org/grpc/keepalive"
 
 	constant_helper "github.com/nayotta/metathings/pkg/common/constant"
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
@@ -172,12 +170,7 @@ func NewDefaultServiceConfigs(addr string, cred credentials.TransportCredentials
 }
 
 func DefaultDialOption() []grpc.DialOption {
-	return []grpc.DialOption{
-		grpc.WithKeepaliveParams(keepalive.ClientParameters{
-			Timeout:             3600 * time.Second,
-			PermitWithoutStream: true,
-		}),
-	}
+	return []grpc.DialOption{}
 }
 
 func NewClientTransportCredentials(cert_file, key_file string, plain_text, insecure bool) (credentials.TransportCredentials, error) {
