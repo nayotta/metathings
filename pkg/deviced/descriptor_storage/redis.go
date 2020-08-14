@@ -1,16 +1,21 @@
 package metathings_deviced_descriptor_storage
 
 import (
+	"context"
 	"encoding/base64"
 	"fmt"
 
-	"github.com/go-redis/redis"
+	"github.com/go-redis/redis/v8"
 
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
 )
 
 type RedisDescriptorStorage struct {
-	client *redis.Client
+	client client_helper.RedisClient
+}
+
+func (rds *RedisDescriptorStorage) context() context.Context {
+	return context.TODO()
 }
 
 func (rds *RedisDescriptorStorage) sha1_key(sha1 string) string {
@@ -18,11 +23,13 @@ func (rds *RedisDescriptorStorage) sha1_key(sha1 string) string {
 }
 
 func (rds *RedisDescriptorStorage) SetDescriptor(sha1 string, body []byte) error {
-	return rds.client.Set(rds.sha1_key(sha1), base64.StdEncoding.EncodeToString(body), 0).Err()
+	ctx := rds.context()
+	return rds.client.Set(ctx, rds.sha1_key(sha1), base64.StdEncoding.EncodeToString(body), 0).Err()
 }
 
 func (rds *RedisDescriptorStorage) GetDescriptor(sha1 string) ([]byte, error) {
-	buf, err := rds.client.Get(rds.sha1_key(sha1)).Result()
+	ctx := rds.context()
+	buf, err := rds.client.Get(ctx, rds.sha1_key(sha1)).Result()
 	if err != nil {
 		if err == redis.Nil {
 			return nil, ErrDescriptorNotFound

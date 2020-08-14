@@ -1,13 +1,15 @@
 package metathings_deviced_flow
 
 import (
+	"context"
 	"strings"
 	"sync"
 	"time"
 
-	"github.com/go-redis/redis"
+	"github.com/go-redis/redis/v8"
 	log "github.com/sirupsen/logrus"
 
+	client_helper "github.com/nayotta/metathings/pkg/common/client"
 	nonce_helper "github.com/nayotta/metathings/pkg/common/nonce"
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 	pool_helper "github.com/nayotta/metathings/pkg/common/pool"
@@ -39,7 +41,7 @@ type RedisStreamFlowSet struct {
 	opt    *RedisStreamFlowSetOption
 	logger log.FieldLogger
 
-	rs_cli *redis.Client
+	rs_cli client_helper.RedisClient
 
 	close_cbs  []func() error
 	close_once sync.Once
@@ -54,6 +56,10 @@ func (rsfs *RedisStreamFlowSet) get_logger() log.FieldLogger {
 
 func (rsfs *RedisStreamFlowSet) redis_stream_key() string {
 	return "mt.flwst." + rsfs.Id()
+}
+
+func (rsfs *RedisStreamFlowSet) context() context.Context {
+	return context.TODO()
 }
 
 func (rsfs *RedisStreamFlowSet) Id() string {
@@ -81,6 +87,8 @@ func (rsfs *RedisStreamFlowSet) Close() (err error) {
 }
 
 func (rsfs *RedisStreamFlowSet) PushFrame(flwst_frm *FlowSetFrame) error {
+	ctx := rsfs.context()
+
 	ts := pb_helper.Now()
 	flwst_frm.Frame.Ts = &ts
 
@@ -94,7 +102,7 @@ func (rsfs *RedisStreamFlowSet) PushFrame(flwst_frm *FlowSetFrame) error {
 		return err
 	}
 
-	if err = rsfs.rs_cli.XAdd(&redis.XAddArgs{
+	if err = rsfs.rs_cli.XAdd(ctx, &redis.XAddArgs{
 		Stream: rsfs.redis_stream_key(),
 		Values: map[string]interface{}{
 			"device": dev_txt,
@@ -104,12 +112,12 @@ func (rsfs *RedisStreamFlowSet) PushFrame(flwst_frm *FlowSetFrame) error {
 		return err
 	}
 
-	if err = rsfs.rs_cli.Expire(rsfs.redis_stream_key(), rsfs.opt.StreamExpireTime).Err(); err != nil {
+	if err = rsfs.rs_cli.Expire(ctx, rsfs.redis_stream_key(), rsfs.opt.StreamExpireTime).Err(); err != nil {
 		rsfs.logger.WithError(err).Debugf("failed to expire stream")
 	}
 
 	if rand_helper.Float32() < rsfs.opt.StreamTrimProb {
-		if err = rsfs.rs_cli.XTrimApprox(rsfs.redis_stream_key(), rsfs.opt.StreamTrimLimit).Err(); err != nil {
+		if err = rsfs.rs_cli.XTrimApprox(ctx, rsfs.redis_stream_key(), rsfs.opt.StreamTrimLimit).Err(); err != nil {
 			rsfs.logger.WithError(err).Debugf("failed to trim stream")
 		}
 	}
@@ -129,27 +137,28 @@ func (rsfs *RedisStreamFlowSet) pull_frame_from_redis_stream_loop(frm_ch chan<- 
 	defer close(frm_ch)
 
 	var err error
+	ctx := rsfs.context()
 	cli := rsfs.rs_cli
 	key := rsfs.redis_stream_key()
 	logger := rsfs.get_logger()
 
 	nonce := nonce_helper.GenerateNonce()
-	if err = cli.XGroupCreateMkStream(key, nonce, "$").Err(); err != nil {
+	if err = cli.XGroupCreateMkStream(ctx, key, nonce, "$").Err(); err != nil {
 		logger.WithError(err).Debugf("failed to create redis stream group")
 		return
 	}
 	defer func() {
-		if err = cli.XGroupDestroy(key, nonce).Err(); err != nil {
+		if err = cli.XGroupDestroy(ctx, key, nonce).Err(); err != nil {
 			logger.WithError(err).Debugf("failed to destory redis stream group")
 		}
 	}()
 
 	for !rsfs.closed {
-		if err = cli.Expire(key, rsfs.opt.StreamExpireTime).Err(); err != nil {
+		if err = cli.Expire(ctx, key, rsfs.opt.StreamExpireTime).Err(); err != nil {
 			logger.WithError(err).Debugf("failed to set expire stream")
 		}
 
-		vals, err := cli.XReadGroup(&redis.XReadGroupArgs{
+		vals, err := cli.XReadGroup(ctx, &redis.XReadGroupArgs{
 			Group:    nonce,
 			Consumer: nonce,
 			Streams:  []string{key, ">"},
@@ -221,7 +230,7 @@ func (fty *RedisStreamFlowSetFactory) New(opt *FlowSetOption) (FlowSet, error) {
 
 	return &RedisStreamFlowSet{
 		opt:    NewRedisStreamFlowSetOption(opt.FlowSetId),
-		rs_cli: cli.(*redis.Client),
+		rs_cli: cli.(client_helper.RedisClient),
 		logger: fty.logger,
 		close_cbs: []func() error{
 			func() error { return fty.redis_stream_pool.Put(cli) },
@@ -238,24 +247,15 @@ func new_redis_stream_flow_set_factory(args ...interface{}) (FlowSetFactory, err
 	opt.RedisStreamPoolMax = 23
 
 	if err := opt_helper.Setopt(map[string]func(string, interface{}) error{
-		"redis_stream_addr":         opt_helper.ToString(&opt.RedisStreamAddr),
-		"redis_stream_db":           opt_helper.ToInt(&opt.RedisStreamDB),
-		"redis_stream_password":     opt_helper.ToString(&opt.RedisStreamPassword),
-		"redis_stream_pool_initial": opt_helper.ToInt(&opt.RedisStreamPoolInitial),
-		"redis_stream_pool_max":     opt_helper.ToInt(&opt.RedisStreamPoolMax),
-		"logger":                    opt_helper.ToLogger(&logger),
-	})(args...); err != nil {
+		"pool_initial": opt_helper.ToInt(&opt.RedisStreamPoolInitial),
+		"pool_max":     opt_helper.ToInt(&opt.RedisStreamPoolMax),
+		"logger":       opt_helper.ToLogger(&logger),
+	}, opt_helper.SetSkip(true))(args...); err != nil {
 		return nil, err
 	}
 
 	rspool, err := pool_helper.NewPool(opt.RedisStreamPoolInitial, opt.RedisStreamPoolMax, func() (pool_helper.Client, error) {
-		rdopt := &redis.Options{
-			Addr:     opt.RedisStreamAddr,
-			DB:       opt.RedisStreamDB,
-			Password: opt.RedisStreamPassword,
-		}
-
-		return redis.NewClient(rdopt), nil
+		return client_helper.NewRedisClient(args...)
 	})
 	if err != nil {
 		logger.WithError(err).Debugf("failed to new redis stream pool")
