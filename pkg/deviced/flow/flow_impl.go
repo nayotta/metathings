@@ -8,13 +8,15 @@ import (
 	"sync"
 	"time"
 
-	"github.com/go-redis/redis"
+	"github.com/go-redis/redis/v8"
 	"github.com/golang/protobuf/jsonpb"
 	stpb "github.com/golang/protobuf/ptypes/struct"
 	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 
+	client_helper "github.com/nayotta/metathings/pkg/common/client"
+	cfg_helper "github.com/nayotta/metathings/pkg/common/config"
 	mongo_helper "github.com/nayotta/metathings/pkg/common/mongo"
 	nonce_helper "github.com/nayotta/metathings/pkg/common/nonce"
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
@@ -53,7 +55,7 @@ type flow struct {
 	logger log.FieldLogger
 
 	mgo_db *mongo.Database
-	rs_cli *redis.Client
+	rs_cli client_helper.RedisClient
 
 	close_cbs  []func() error
 	close_once sync.Once
@@ -127,12 +129,14 @@ func (f *flow) PushFrame(frm *pb.Frame) error {
 }
 
 func (f *flow) push_frame_to_redis_stream(frm *pb.Frame) error {
+	ctx := f.context()
+
 	frm_txt, err := json_encoder.MarshalToString(frm)
 	if err != nil {
 		return err
 	}
 
-	if err := f.rs_cli.XAdd(&redis.XAddArgs{
+	if err := f.rs_cli.XAdd(ctx, &redis.XAddArgs{
 		Stream: f.redis_stream_key(),
 		Values: map[string]interface{}{
 			"frame": frm_txt,
@@ -141,12 +145,12 @@ func (f *flow) push_frame_to_redis_stream(frm *pb.Frame) error {
 		return err
 	}
 
-	if err = f.rs_cli.Expire(f.redis_stream_key(), f.opt.StreamExpireTime).Err(); err != nil {
+	if err = f.rs_cli.Expire(ctx, f.redis_stream_key(), f.opt.StreamExpireTime).Err(); err != nil {
 		f.logger.WithError(err).Debugf("failed to expire stream")
 	}
 
 	if rand_helper.Float32() < f.opt.StreamTrimProb {
-		if err = f.rs_cli.XTrimApprox(f.redis_stream_key(), f.opt.StreamTrimLimit).Err(); err != nil {
+		if err = f.rs_cli.XTrimApprox(ctx, f.redis_stream_key(), f.opt.StreamTrimLimit).Err(); err != nil {
 			f.logger.WithError(err).Debugf("failed to trim stream")
 		}
 	}
@@ -191,25 +195,26 @@ func (f *flow) pull_frame_from_redis_stream_loop(frm_ch chan<- *pb.Frame) {
 	var err error
 	cli := f.rs_cli
 	key := f.redis_stream_key()
+	ctx := f.context()
 
 	nonce := nonce_helper.GenerateNonce()
-	if err = cli.XGroupCreateMkStream(key, nonce, "$").Err(); err != nil {
+	if err = cli.XGroupCreateMkStream(ctx, key, nonce, "$").Err(); err != nil {
 		f.logger.WithError(err).Debugf("failed to create redis stream group")
 		return
 	}
 	defer func() {
-		if err = cli.XGroupDestroy(key, nonce).Err(); err != nil {
+		if err = cli.XGroupDestroy(ctx, key, nonce).Err(); err != nil {
 			f.logger.WithError(err).Debugf("failed to destory redis stream group")
 		}
 
 	}()
 
 	for !f.closed {
-		if err = cli.Expire(key, f.opt.StreamExpireTime).Err(); err != nil {
+		if err = cli.Expire(ctx, key, f.opt.StreamExpireTime).Err(); err != nil {
 			f.logger.WithError(err).Debugf("failed to expire stream")
 		}
 
-		vals, err := cli.XReadGroup(&redis.XReadGroupArgs{
+		vals, err := cli.XReadGroup(ctx, &redis.XReadGroupArgs{
 			Group:    nonce,
 			Consumer: nonce,
 			Streams:  []string{key, ">"},
@@ -344,17 +349,23 @@ type flowFactory struct {
 	mongo_pool        pool_helper.Pool
 }
 
-func (ff *flowFactory) get_alive_redis_stream_client() (*redis.Client, error) {
+func (ff *flowFactory) context() context.Context {
+	return context.TODO()
+}
+
+func (ff *flowFactory) get_alive_redis_stream_client() (client_helper.RedisClient, error) {
 	// TODO(Peer): max retry should greater than redis stream pool max size, magic number here.
 	for i := 0; i < 6; i++ {
+		ctx := ff.context()
+
 		cli, err := ff.redis_stream_pool.Get()
 		if err != nil {
 			ff.logger.WithError(err).Debugf("failed to get redis stream client in pool")
 			return nil, err
 		}
 
-		rs_cli := cli.(*redis.Client)
-		if err = rs_cli.Ping().Err(); err != nil {
+		rs_cli := cli.(client_helper.RedisClient)
+		if err = rs_cli.Ping(ctx).Err(); err != nil {
 			defer rs_cli.Close()
 			continue
 		}
@@ -407,29 +418,44 @@ func new_default_flow_factory(args ...interface{}) (FlowFactory, error) {
 	opt.RedisStreamPoolInitial = 5
 	opt.RedisStreamPoolMax = 23
 
+	redis_config, err := cfg_helper.FoldConfigOption(args, "redis")
+	if err != nil {
+		return nil, err
+	}
+
+	mongo_config, err := cfg_helper.FoldConfigOption(args, "mongo")
+	if err != nil {
+		return nil, err
+	}
+
 	if err := opt_helper.Setopt(map[string]func(string, interface{}) error{
-		"redis_stream_addr":         opt_helper.ToString(&opt.RedisStreamAddr),
-		"redis_stream_db":           opt_helper.ToInt(&opt.RedisStreamDB),
-		"redis_stream_password":     opt_helper.ToString(&opt.RedisStreamPassword),
-		"redis_stream_pool_initial": opt_helper.ToInt(&opt.RedisStreamPoolInitial),
-		"redis_stream_pool_max":     opt_helper.ToInt(&opt.RedisStreamPoolMax),
-		"mongo_uri":                 opt_helper.ToString(&opt.MongoUri),
-		"mongo_database":            opt_helper.ToString(&opt.MongoDatabase),
-		"logger":                    opt_helper.ToLogger(&logger),
-	})(args...); err != nil {
+		"logger": opt_helper.ToLogger(&logger),
+	}, opt_helper.SetSkip(true))(args...); err != nil {
+		return nil, err
+	}
+
+	redis_args := cfg_helper.FlattenConfigOption(redis_config)
+	mongo_args := cfg_helper.FlattenConfigOption(mongo_config)
+
+	if err := opt_helper.Setopt(map[string]func(string, interface{}) error{
+		"pool_initial": opt_helper.ToInt(&opt.RedisStreamPoolInitial),
+		"pool_max":     opt_helper.ToInt(&opt.RedisStreamPoolMax),
+	}, opt_helper.SetSkip(true))(redis_args...); err != nil {
+		return nil, err
+	}
+
+	if err := opt_helper.Setopt(map[string]func(string, interface{}) error{
+		"pool_initial": opt_helper.ToInt(&opt.MongoPoolInitial),
+		"pool_max":     opt_helper.ToInt(&opt.MongoPoolMax),
+		"uri":          opt_helper.ToString(&opt.MongoUri),
+		"database":     opt_helper.ToString(&opt.MongoDatabase),
+	}, opt_helper.SetSkip(true))(mongo_args...); err != nil {
 		return nil, err
 	}
 
 	rspool, err := pool_helper.NewPool(opt.RedisStreamPoolInitial, opt.RedisStreamPoolMax, func() (pool_helper.Client, error) {
-		rdopt := &redis.Options{
-			Addr:     opt.RedisStreamAddr,
-			DB:       opt.RedisStreamDB,
-			Password: opt.RedisStreamPassword,
-		}
-
-		return redis.NewClient(rdopt), nil
+		return client_helper.NewRedisClient(redis_args...)
 	})
-
 	if err != nil {
 		logger.WithError(err).Debugf("failed to new redis stream pool")
 		return nil, err
@@ -438,7 +464,6 @@ func new_default_flow_factory(args ...interface{}) (FlowFactory, error) {
 	mgopool, err := pool_helper.NewPool(opt.MongoPoolInitial, opt.MongoPoolMax, func() (pool_helper.Client, error) {
 		return mongo_helper.NewMongoClient(opt.MongoUri)
 	})
-
 	if err != nil {
 		logger.WithError(err).Debugf("failed to new mongo pool")
 		return nil, err

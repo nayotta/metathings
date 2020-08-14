@@ -13,6 +13,7 @@ import (
 
 	cmd_contrib "github.com/nayotta/metathings/cmd/contrib"
 	cmd_helper "github.com/nayotta/metathings/pkg/common/cmd"
+	cfg_helper "github.com/nayotta/metathings/pkg/common/config"
 	id_helper "github.com/nayotta/metathings/pkg/common/id"
 	token_helper "github.com/nayotta/metathings/pkg/common/token"
 	service "github.com/nayotta/metathings/pkg/device_cloud/service"
@@ -95,25 +96,15 @@ func GetDeviceCloudOptions() (
 }
 
 func NewDeviceCloudStorage(opt *DeviceCloudOption, logger log.FieldLogger) (storage.Storage, error) {
-	drv, ok := opt.Storage["driver"]
-	if !ok {
-		return nil, storage.ErrInvalidStorageDriver
-	}
+	var drv string
+	var args []interface{}
+	var err error
 
-	args := []interface{}{"logger", logger}
-	for k, v := range opt.Storage {
-		if k == "driver" {
-			continue
-		}
-		args = append(args, k, v)
-	}
-
-	stor, err := storage.NewStorage(drv.(string), args...)
-	if err != nil {
+	if drv, args, err = cfg_helper.ParseConfigOption("driver", opt.Storage, "logger", logger); err != nil {
 		return nil, err
 	}
 
-	return stor, nil
+	return storage.NewStorage(drv, args...)
 }
 
 func NewMetathingsDeviceCloudServiceOption(opt *DeviceCloudOption) *service.MetathingsDeviceCloudServiceOption {

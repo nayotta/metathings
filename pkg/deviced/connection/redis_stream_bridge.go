@@ -1,13 +1,15 @@
 package metathings_deviced_connection
 
 import (
+	"context"
 	"fmt"
 	"sync"
 	"time"
 
-	"github.com/go-redis/redis"
+	"github.com/go-redis/redis/v8"
 	log "github.com/sirupsen/logrus"
 
+	client_helper "github.com/nayotta/metathings/pkg/common/client"
 	nonce_helper "github.com/nayotta/metathings/pkg/common/nonce"
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 	pool_helper "github.com/nayotta/metathings/pkg/common/pool"
@@ -50,14 +52,14 @@ type redisStreamChannel struct {
 	closed chan struct{}
 
 	pool   pool_helper.Pool
-	client *redis.Client
+	client client_helper.RedisClient
 }
 
 func (c *redisStreamChannel) get_logger() log.FieldLogger {
 	return c.logger
 }
 
-func (c *redisStreamChannel) get_client() (*redis.Client, error) {
+func (c *redisStreamChannel) get_client() (client_helper.RedisClient, error) {
 	c.client_mutex.Lock()
 	defer c.client_mutex.Unlock()
 
@@ -70,10 +72,14 @@ func (c *redisStreamChannel) get_client() (*redis.Client, error) {
 		c.get_logger().WithField("pool_size", c.pool.Size()).Debugf("get client from pool")
 
 		// TODO(Peer): check client alive or not.
-		c.client = cli.(*redis.Client)
+		c.client = cli.(client_helper.RedisClient)
 	}
 
 	return c.client, nil
+}
+
+func (c *redisStreamChannel) get_context() context.Context {
+	return context.TODO()
 }
 
 func (c *redisStreamChannel) another_side() Side {
@@ -97,6 +103,7 @@ func (c *redisStreamChannel) receiving_key() string {
 }
 
 func (c *redisStreamChannel) Send(buf []byte) error {
+	ctx := c.get_context()
 	key := c.sending_key()
 	logger := c.get_logger().WithFields(log.Fields{
 		"key":   key,
@@ -109,7 +116,7 @@ func (c *redisStreamChannel) Send(buf []byte) error {
 		return err
 	}
 
-	err = client.XAdd(&redis.XAddArgs{
+	err = client.XAdd(ctx, &redis.XAddArgs{
 		Stream: key,
 		Values: map[string]interface{}{
 			"value": buf,
@@ -119,7 +126,7 @@ func (c *redisStreamChannel) Send(buf []byte) error {
 		logger.WithError(err).Debugf("failed to send msg")
 		return err
 	}
-	err = client.Expire(key, c.opt.StreamExpireTime).Err()
+	err = client.Expire(ctx, key, c.opt.StreamExpireTime).Err()
 	if err != nil {
 		logger.WithError(err).Warningf("failed to set expire for stream")
 	}
@@ -162,12 +169,14 @@ func (c *redisStreamChannel) init_async_recv() {
 			return
 		}
 
-		err = client.XGroupCreateMkStream(key, c.opt.Id, "$").Err()
+		ctx := c.get_context()
+
+		err = client.XGroupCreateMkStream(ctx, key, c.opt.Id, "$").Err()
 		if err != nil {
 			logger.WithError(err).Debugf("failed to create redis stream group")
 			return
 		}
-		err = client.Expire(key, c.opt.StreamExpireTime).Err()
+		err = client.Expire(ctx, key, c.opt.StreamExpireTime).Err()
 		if err != nil {
 			logger.WithError(err).Warningf("failed to set expire for stream")
 		}
@@ -180,12 +189,12 @@ func (c *redisStreamChannel) init_async_recv() {
 			}
 
 			// refresh stream expire time
-			err = client.Expire(key, c.opt.StreamExpireTime).Err()
+			err = client.Expire(ctx, key, c.opt.StreamExpireTime).Err()
 			if err != nil {
 				logger.WithError(err).Warningf("failed to set expire for stream")
 			}
 
-			vals, err := client.XReadGroup(&redis.XReadGroupArgs{
+			vals, err := client.XReadGroup(ctx, &redis.XReadGroupArgs{
 				Group:    c.opt.Id,
 				Consumer: c.opt.Id,
 				Streams:  []string{key, ">"},
@@ -319,9 +328,7 @@ func (f *redisStreamBridge) Close() error {
 
 type redisStreamFactoryOption struct {
 	Redis struct {
-		Addr     string
-		Password string
-		DB       int
+		Args []interface{}
 	}
 	Pool struct {
 		Initial int
@@ -342,13 +349,7 @@ func (f *redisStreamBridgeFactory) init_pool() {
 	var err error
 
 	f.pool, err = pool_helper.NewPool(f.opt.Pool.Initial, f.opt.Pool.Max, func() (pool_helper.Client, error) {
-		opt := &redis.Options{
-			Addr:     f.opt.Redis.Addr,
-			DB:       f.opt.Redis.DB,
-			Password: f.opt.Redis.Password,
-		}
-
-		return redis.NewClient(opt), nil
+		return client_helper.NewRedisClient(f.opt.Redis.Args...)
 	})
 
 	if err != nil {
@@ -396,13 +397,13 @@ func new_redis_stream_bridge_factory(args ...interface{}) (BridgeFactory, error)
 	opt := &redisStreamFactoryOption{}
 	opt.Pool.Initial = 5
 	opt.Pool.Max = 23
+	opt.Redis.Args = args
 
 	if err = opt_helper.Setopt(map[string]func(string, interface{}) error{
-		"logger":   opt_helper.ToLogger(&logger),
-		"addr":     opt_helper.ToString(&opt.Redis.Addr),
-		"db":       opt_helper.ToInt(&opt.Redis.DB),
-		"password": opt_helper.ToString(&opt.Redis.Password),
-	})(args...); err != nil {
+		"logger":       opt_helper.ToLogger(&logger),
+		"pool_initial": opt_helper.ToInt(&opt.Pool.Initial),
+		"pool_max":     opt_helper.ToInt(&opt.Pool.Max),
+	}, opt_helper.SetSkip(true))(args...); err != nil {
 		return nil, err
 	}
 

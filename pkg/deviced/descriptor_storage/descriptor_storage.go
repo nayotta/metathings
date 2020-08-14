@@ -1,6 +1,8 @@
 package metathings_deviced_descriptor_storage
 
-import "sync"
+import (
+	"sync"
+)
 
 type DescriptorStorage interface {
 	SetDescriptor(sha1 string, body []byte) error
