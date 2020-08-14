@@ -364,6 +364,17 @@ func ToStringMapString(v *map[string]string) func(string, interface{}) error {
 	}
 }
 
+func ToStringSlice(v *[]string) func(string, interface{}) error {
+	return func(key string, val interface{}) error {
+		var err error
+		*v, err = cast.ToStringSliceE(val)
+		if err != nil {
+			return InvalidArgument(key)
+		}
+		return nil
+	}
+}
+
 func ToContext(y *context.Context) func(string, interface{}) error {
 	return func(key string, val interface{}) error {
 		var ok bool

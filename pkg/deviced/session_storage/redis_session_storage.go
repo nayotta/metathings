@@ -1,10 +1,11 @@
 package metathings_deviced_session_storage
 
 import (
+	"context"
 	"strconv"
 	"time"
 
-	"github.com/go-redis/redis"
+	"github.com/go-redis/redis/v8"
 
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
 )
@@ -14,11 +15,16 @@ func startup_session_key(id string) string {
 }
 
 type RedisSessionStorage struct {
-	client *redis.Client
+	client redis.Cmdable
+}
+
+func (self *RedisSessionStorage) context() context.Context {
+	return context.TODO()
 }
 
 func (self *RedisSessionStorage) GetStartupSession(id string) (int32, error) {
-	r := self.client.Get(startup_session_key(id))
+	ctx := self.context()
+	r := self.client.Get(ctx, startup_session_key(id))
 	if err := r.Err(); err != nil {
 		if err == redis.Nil {
 			return 0, nil
@@ -35,7 +41,8 @@ func (self *RedisSessionStorage) GetStartupSession(id string) (int32, error) {
 }
 
 func (self *RedisSessionStorage) SetStartupSessionIfNotExists(id string, sess int32, expire time.Duration) error {
-	r := self.client.SetNX(startup_session_key(id), sess, expire)
+	ctx := self.context()
+	r := self.client.SetNX(ctx, startup_session_key(id), sess, expire)
 	if r.Err() != nil {
 		return r.Err()
 	}
@@ -44,7 +51,8 @@ func (self *RedisSessionStorage) SetStartupSessionIfNotExists(id string, sess in
 }
 
 func (self *RedisSessionStorage) UnsetStartupSession(id string) error {
-	r := self.client.Del(startup_session_key(id))
+	ctx := self.context()
+	r := self.client.Del(ctx, startup_session_key(id))
 	if r.Err() != nil {
 		return r.Err()
 	}
@@ -52,7 +60,8 @@ func (self *RedisSessionStorage) UnsetStartupSession(id string) error {
 }
 
 func (self *RedisSessionStorage) RefreshStartupSession(id string, expire time.Duration) error {
-	r := self.client.Expire(startup_session_key(id), expire)
+	ctx := self.context()
+	r := self.client.Expire(ctx, startup_session_key(id), expire)
 	if r.Err() != nil {
 		return r.Err()
 	}

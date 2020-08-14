@@ -1,11 +1,12 @@
 package metathings_device_cloud_storage
 
 import (
+	"context"
 	"fmt"
 	"strconv"
 	"time"
 
-	"github.com/go-redis/redis"
+	"github.com/go-redis/redis/v8"
 	log "github.com/sirupsen/logrus"
 
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
@@ -45,14 +46,18 @@ func (s *RedisStorage) get_logger() log.FieldLogger {
 	return s.logger
 }
 
-func (s *RedisStorage) get_redis_client() (*redis.Client, func(), error) {
+func (s *RedisStorage) context() context.Context {
+	return context.TODO()
+}
+
+func (s *RedisStorage) get_redis_client() (client_helper.RedisClient, func(), error) {
 	cli, err := s.pool.Get()
 	if err != nil {
 		s.get_logger().WithError(err).Debugf("failed to get redis client")
 		return nil, nil, err
 	}
 
-	return cli.(*redis.Client), func() { s.pool.Put(cli) }, nil
+	return cli.(client_helper.RedisClient), func() { s.pool.Put(cli) }, nil
 }
 
 func (s *RedisStorage) module_heartbeat_key(mdl_id string) string {
@@ -68,13 +73,14 @@ func (s *RedisStorage) module_session_key(mdl_id string) string {
 }
 
 func (s *RedisStorage) Heartbeat(mdl_id string) error {
+	ctx := s.context()
 	cli, cfn, err := s.get_redis_client()
 	if err != nil {
 		return err
 	}
 	defer cfn()
 
-	err = s.heartbeat(cli, mdl_id)
+	err = s.heartbeat(cli, ctx, mdl_id)
 	if err != nil {
 		s.get_logger().WithError(err).Debugf("failed to heartbeat in redis")
 		return err
@@ -85,9 +91,9 @@ func (s *RedisStorage) Heartbeat(mdl_id string) error {
 	return nil
 }
 
-func (s *RedisStorage) heartbeat(cli *redis.Client, mdl_id string) error {
+func (s *RedisStorage) heartbeat(cli client_helper.RedisClient, ctx context.Context, mdl_id string) error {
 	now := time.Now()
-	if err := cli.Set(s.module_heartbeat_key(mdl_id), now.UnixNano(), 0).Err(); err != nil {
+	if err := cli.Set(ctx, s.module_heartbeat_key(mdl_id), now.UnixNano(), 0).Err(); err != nil {
 		return err
 	}
 
@@ -95,17 +101,18 @@ func (s *RedisStorage) heartbeat(cli *redis.Client, mdl_id string) error {
 }
 
 func (s *RedisStorage) IsDeviceConnectSession(dev_id string, sess string) error {
+	ctx := s.context()
 	cli, cfn, err := s.get_redis_client()
 	if err != nil {
 		return err
 	}
 	defer cfn()
 
-	return s.is_device_connect_session(cli, dev_id, sess)
+	return s.is_device_connect_session(cli, ctx, dev_id, sess)
 }
 
-func (s *RedisStorage) is_device_connect_session(cli *redis.Client, dev_id string, sess string) error {
-	res := cli.Get(s.device_connect_session_key(dev_id))
+func (s *RedisStorage) is_device_connect_session(cli client_helper.RedisClient, ctx context.Context, dev_id string, sess string) error {
+	res := cli.Get(ctx, s.device_connect_session_key(dev_id))
 
 	if err := res.Err(); err != nil {
 		if err == redis.Nil {
@@ -122,13 +129,14 @@ func (s *RedisStorage) is_device_connect_session(cli *redis.Client, dev_id strin
 }
 
 func (s *RedisStorage) SetDeviceConnectSession(dev_id string, sess string) error {
+	ctx := s.context()
 	cli, cfn, err := s.get_redis_client()
 	if err != nil {
 		return err
 	}
 	defer cfn()
 
-	err = s.set_device_connect_session(cli, dev_id, sess)
+	err = s.set_device_connect_session(cli, ctx, dev_id, sess)
 	if err != nil {
 		s.get_logger().WithError(err).Debugf("failed to set device connection session in redis")
 		return err
@@ -142,8 +150,8 @@ func (s *RedisStorage) SetDeviceConnectSession(dev_id string, sess string) error
 	return nil
 }
 
-func (s *RedisStorage) set_device_connect_session(cli *redis.Client, dev_id string, sess string) error {
-	if err := cli.Set(s.device_connect_session_key(dev_id), sess, s.opt.Device.Session.Timeout).Err(); err != nil {
+func (s *RedisStorage) set_device_connect_session(cli client_helper.RedisClient, ctx context.Context, dev_id string, sess string) error {
+	if err := cli.Set(ctx, s.device_connect_session_key(dev_id), sess, s.opt.Device.Session.Timeout).Err(); err != nil {
 		return err
 	}
 
@@ -151,13 +159,14 @@ func (s *RedisStorage) set_device_connect_session(cli *redis.Client, dev_id stri
 }
 
 func (s *RedisStorage) UnsetDeviceConnectSession(dev_id string, sess string) error {
+	ctx := s.context()
 	cli, cfn, err := s.get_redis_client()
 	if err != nil {
 		return err
 	}
 	defer cfn()
 
-	err = s.unset_device_connect_session(cli, dev_id, sess)
+	err = s.unset_device_connect_session(cli, ctx, dev_id, sess)
 	if err != nil {
 		s.get_logger().WithError(err).Debugf("failed to unset device connect session in redis")
 		return err
@@ -171,10 +180,10 @@ func (s *RedisStorage) UnsetDeviceConnectSession(dev_id string, sess string) err
 	return nil
 }
 
-func (s *RedisStorage) unset_device_connect_session(cli *redis.Client, dev_id string, sess string) error {
-	err := s.is_device_connect_session(cli, dev_id, sess)
+func (s *RedisStorage) unset_device_connect_session(cli client_helper.RedisClient, ctx context.Context, dev_id string, sess string) error {
+	err := s.is_device_connect_session(cli, ctx, dev_id, sess)
 	if err == nil {
-		if err = cli.Del(s.device_connect_session_key(dev_id)).Err(); err != nil {
+		if err = cli.Del(ctx, s.device_connect_session_key(dev_id)).Err(); err != nil {
 			return err
 		}
 	} else {
@@ -185,13 +194,14 @@ func (s *RedisStorage) unset_device_connect_session(cli *redis.Client, dev_id st
 }
 
 func (s *RedisStorage) GetDeviceConnectSession(dev_id string) (string, error) {
+	ctx := s.context()
 	cli, cfn, err := s.get_redis_client()
 	if err != nil {
 		return "", err
 	}
 	defer cfn()
 
-	sess, err := s.get_device_connect_session(cli, dev_id)
+	sess, err := s.get_device_connect_session(cli, ctx, dev_id)
 	if err != nil {
 		if err != ErrNotConnected {
 			s.get_logger().WithError(err).Debugf("failed to get device connect session")
@@ -202,8 +212,8 @@ func (s *RedisStorage) GetDeviceConnectSession(dev_id string) (string, error) {
 	return sess, nil
 }
 
-func (s *RedisStorage) get_device_connect_session(cli *redis.Client, dev_id string) (string, error) {
-	res := cli.Get(s.device_connect_session_key(dev_id))
+func (s *RedisStorage) get_device_connect_session(cli client_helper.RedisClient, ctx context.Context, dev_id string) (string, error) {
+	res := cli.Get(ctx, s.device_connect_session_key(dev_id))
 	if err := res.Err(); err != nil {
 		if err == redis.Nil {
 			return "", ErrNotConnected
@@ -215,13 +225,14 @@ func (s *RedisStorage) get_device_connect_session(cli *redis.Client, dev_id stri
 }
 
 func (s *RedisStorage) GetHeartbeatAt(mdl_id string) (time.Time, error) {
+	ctx := s.context()
 	cli, cfn, err := s.get_redis_client()
 	if err != nil {
 		return NOTIME, err
 	}
 	defer cfn()
 
-	t, err := s.get_heartbeat_at(cli, mdl_id)
+	t, err := s.get_heartbeat_at(cli, ctx, mdl_id)
 	if err != nil {
 		s.get_logger().WithError(err).Debugf("failed to get heartbeat time in redis")
 		return NOTIME, err
@@ -230,9 +241,9 @@ func (s *RedisStorage) GetHeartbeatAt(mdl_id string) (time.Time, error) {
 	return t, nil
 }
 
-func (s *RedisStorage) get_heartbeat_at(cli *redis.Client, mdl_id string) (time.Time, error) {
+func (s *RedisStorage) get_heartbeat_at(cli client_helper.RedisClient, ctx context.Context, mdl_id string) (time.Time, error) {
 	var ts int64
-	res := cli.Get(s.module_heartbeat_key(mdl_id))
+	res := cli.Get(ctx, s.module_heartbeat_key(mdl_id))
 	if err := res.Err(); err != nil {
 		if err == redis.Nil {
 			ts = 0
@@ -250,13 +261,14 @@ func (s *RedisStorage) get_heartbeat_at(cli *redis.Client, mdl_id string) (time.
 }
 
 func (s *RedisStorage) SetModuleSession(mdl_id string, sess int64) error {
+	ctx := s.context()
 	cli, cfn, err := s.get_redis_client()
 	if err != nil {
 		return err
 	}
 	defer cfn()
 
-	err = s.set_module_session(cli, mdl_id, sess)
+	err = s.set_module_session(cli, ctx, mdl_id, sess)
 	if err != nil {
 		s.get_logger().WithError(err).Debugf("failed to set module session in redis")
 		return err
@@ -270,8 +282,8 @@ func (s *RedisStorage) SetModuleSession(mdl_id string, sess int64) error {
 	return nil
 }
 
-func (s *RedisStorage) set_module_session(cli *redis.Client, mdl_id string, sess int64) error {
-	if err := cli.Set(s.module_session_key(mdl_id), sess, s.opt.Module.Session.Timeout).Err(); err != nil {
+func (s *RedisStorage) set_module_session(cli client_helper.RedisClient, ctx context.Context, mdl_id string, sess int64) error {
+	if err := cli.Set(ctx, s.module_session_key(mdl_id), sess, s.opt.Module.Session.Timeout).Err(); err != nil {
 		return err
 	}
 
@@ -279,13 +291,14 @@ func (s *RedisStorage) set_module_session(cli *redis.Client, mdl_id string, sess
 }
 
 func (s *RedisStorage) UnsetModuleSession(mdl_id string) error {
+	ctx := s.context()
 	cli, cfn, err := s.get_redis_client()
 	if err != nil {
 		return err
 	}
 	defer cfn()
 
-	err = s.unset_module_session(cli, mdl_id)
+	err = s.unset_module_session(cli, ctx, mdl_id)
 	if err != nil {
 		s.get_logger().WithError(err).Debugf("failed to unset module session in redis")
 		return err
@@ -298,8 +311,8 @@ func (s *RedisStorage) UnsetModuleSession(mdl_id string) error {
 	return nil
 }
 
-func (s *RedisStorage) unset_module_session(cli *redis.Client, mdl_id string) error {
-	if err := cli.Del(s.module_session_key(mdl_id)).Err(); err != nil {
+func (s *RedisStorage) unset_module_session(cli client_helper.RedisClient, ctx context.Context, mdl_id string) error {
+	if err := cli.Del(ctx, s.module_session_key(mdl_id)).Err(); err != nil {
 		return err
 	}
 
@@ -307,13 +320,14 @@ func (s *RedisStorage) unset_module_session(cli *redis.Client, mdl_id string) er
 }
 
 func (s *RedisStorage) GetModuleSession(mdl_id string) (int64, error) {
+	ctx := s.context()
 	cli, cfn, err := s.get_redis_client()
 	if err != nil {
 		return 0, err
 	}
 	defer cfn()
 
-	sess, err := s.get_module_session(cli, mdl_id)
+	sess, err := s.get_module_session(cli, ctx, mdl_id)
 	if err != nil {
 		s.get_logger().WithError(err).Debugf("failed to get module session in redis")
 		return 0, err
@@ -327,8 +341,8 @@ func (s *RedisStorage) GetModuleSession(mdl_id string) (int64, error) {
 	return sess, nil
 }
 
-func (s *RedisStorage) get_module_session(cli *redis.Client, mdl_id string) (int64, error) {
-	res := cli.Get(s.module_session_key(mdl_id))
+func (s *RedisStorage) get_module_session(cli client_helper.RedisClient, ctx context.Context, mdl_id string) (int64, error) {
+	res := cli.Get(ctx, s.module_session_key(mdl_id))
 	if err := res.Err(); err != nil {
 		if err == redis.Nil {
 			return 0, nil
@@ -359,23 +373,16 @@ func (f *RedisStorageFactory) New(args ...interface{}) (Storage, error) {
 
 	if err = opt_helper.Setopt(map[string]func(string, interface{}) error{
 		"logger":                 opt_helper.ToLogger(&logger),
-		"addr":                   opt_helper.ToString(&opt.Redis.Address),
-		"passwd":                 opt_helper.ToString(&opt.Redis.Password),
-		"db":                     opt_helper.ToInt(&opt.Redis.Db),
 		"module_session_timeout": opt_helper.ToDuration(&opt.Module.Session.Timeout),
 		"device_session_timeout": opt_helper.ToDuration(&opt.Device.Session.Timeout),
 		"pool_initial":           opt_helper.ToInt(&opt.Redis.Pool.Init),
 		"pool_max":               opt_helper.ToInt(&opt.Redis.Pool.Max),
-	})(args...); err != nil {
+	}, opt_helper.SetSkip(true))(args...); err != nil {
 		return nil, err
 	}
 
 	if pool, err = pool_helper.NewPool(opt.Redis.Pool.Init, opt.Redis.Pool.Max, func() (pool_helper.Client, error) {
-		return client_helper.NewRedisClient(
-			"addr", opt.Redis.Address,
-			"password", opt.Redis.Password,
-			"db", opt.Redis.Db,
-		)
+		return client_helper.NewRedisClient(args...)
 	}); err != nil {
 		logger.WithError(err).Debugf("failed to new redis client pool")
 		return nil, err

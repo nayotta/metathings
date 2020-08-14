@@ -7,7 +7,7 @@ dev:
     default:
       address: <metathings-address>
   storage:
-    driver: redis>
+    driver: <redis>
     addr: <redis-address>
     db: <redis-db>
     password: <redis-password>

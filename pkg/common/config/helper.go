@@ -1,6 +1,9 @@
 package config_helper
 
-import "errors"
+import (
+	"errors"
+	"strings"
+)
 
 var (
 	ErrInvalidArgument     = errors.New("invalid argument")
@@ -45,4 +48,20 @@ func FlattenConfigOption(m map[string]interface{}, a ...interface{}) []interface
 	y = append(y, a...)
 
 	return y
+}
+
+func FoldConfigOption(xs []interface{}, t string) (map[string]interface{}, error) {
+	y := map[string]interface{}{}
+	for i := 0; i < len(xs); i += 2 {
+		k, ok := xs[i].(string)
+		if !ok {
+			return nil, ErrInvalidArgument
+		}
+		v := xs[i+1]
+		ks := strings.SplitN(k, ".", 2)
+		if len(ks) > 1 && ks[0] == t {
+			y[ks[1]] = v
+		}
+	}
+	return y, nil
 }
