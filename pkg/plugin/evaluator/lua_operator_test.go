@@ -17,21 +17,19 @@ import (
 	dssdk "github.com/nayotta/metathings/sdk/data_storage"
 	dsdk "github.com/nayotta/metathings/sdk/deviced"
 	esdk "github.com/nayotta/metathings/sdk/evaluatord"
-	smssdk "github.com/nayotta/metathings/sdk/sms"
 )
 
 type LuaOperatorTestSuite struct {
 	suite.Suite
 
-	op         *LuaOperator
-	dat_stor   *dssdk.MockDataStorage
-	smpl_stor  *dsdk.MockSimpleStorage
-	flow       *dsdk.MockFlow
-	caller     *dsdk.MockCaller
-	sms_sender *smssdk.MockSmsSender
-	gctx       context.Context
-	ctx        esdk.Data
-	dat        esdk.Data
+	op        *LuaOperator
+	dat_stor  *dssdk.MockDataStorage
+	smpl_stor *dsdk.MockSimpleStorage
+	flow      *dsdk.MockFlow
+	caller    *dsdk.MockCaller
+	gctx      context.Context
+	ctx       esdk.Data
+	dat       esdk.Data
 }
 
 func (s *LuaOperatorTestSuite) SetupTest() {
@@ -39,7 +37,6 @@ func (s *LuaOperatorTestSuite) SetupTest() {
 	s.smpl_stor = new(dsdk.MockSimpleStorage)
 	s.flow = new(dsdk.MockFlow)
 	s.caller = new(dsdk.MockCaller)
-	s.sms_sender = new(smssdk.MockSmsSender)
 	s.gctx = context.TODO()
 }
 
@@ -54,8 +51,6 @@ func (s *LuaOperatorTestSuite) BeforeTest(suiteName, testName string) {
 		"TestRunWithFlow":                   s.setupTestRunWithFlow,
 		"TestRunWithDeviceFlow":             s.setupTestRunWithDeviceFlow,
 		"TestRunWithDeviceCaller":           s.setupTestRunWithDeviceCaller,
-		"TestRunWithSms":                    s.setupTestRunWithSms,
-		"TestRunWithAliasSms":               s.setupTestRunWithAliasSms,
 	}[testName]; ok {
 		fn()
 	}
@@ -68,7 +63,6 @@ func (s *LuaOperatorTestSuite) setupOperator(code string) {
 		"simple_storage", s.smpl_stor,
 		"flow", s.flow,
 		"caller", s.caller,
-		"sms_sender", s.sms_sender,
 	)
 	s.Require().Nil(err)
 	s.op = op.(*LuaOperator)
@@ -531,78 +525,6 @@ return {}
 }
 
 func (s *LuaOperatorTestSuite) TestRunWithDeviceCaller() {
-	s.runMainTest()
-}
-
-func (s *LuaOperatorTestSuite) setupTestRunWithSms() {
-	code := `
-metathings:sms():send("smsid", {
-  ["a"] = "1",
-  ["b"] = "2",
-  ["c"] = "3",
-})
-return {}
-`
-
-	s.sms_sender.On("SendSms", mock.Anything, "smsid", []string{"12345678901"}, map[string]string{
-		"a": "1",
-		"b": "2",
-		"c": "3",
-		"d": "4",
-	}).Return(nil)
-
-	s.setupOperator(code)
-
-	s.ctx, _ = esdk.DataFromMap(map[string]interface{}{
-		"config": map[string]interface{}{
-			"sms_sender": map[string]interface{}{
-				"smsid": map[string]interface{}{
-					"numbers": []string{"12345678901"},
-					"arguments": map[string]interface{}{
-						"c": "0",
-						"d": "4",
-					},
-				},
-			},
-		},
-	})
-}
-
-func (s *LuaOperatorTestSuite) TestRunWithSms() {
-	s.runMainTest()
-}
-
-func (s *LuaOperatorTestSuite) setupTestRunWithAliasSms() {
-	code := `
-metathings:sms():send("alias", {
-  ["a"] = "1",
-})
-return {}
-`
-
-	s.sms_sender.On("SendSms", mock.Anything, "smsid", []string{"12345678901"}, map[string]string{
-		"a": "1",
-	}).Return(nil)
-
-	s.setupOperator(code)
-
-	s.ctx, _ = esdk.DataFromMap(map[string]interface{}{
-		"config": map[string]interface{}{
-			"alias": map[string]interface{}{
-				"sms_sender": map[string]interface{}{
-					"alias": "smsid",
-				},
-			},
-			"sms_sender": map[string]interface{}{
-				"smsid": map[string]interface{}{
-					"numbers": []string{"12345678901"},
-				},
-			},
-		},
-	})
-}
-
-func (s *LuaOperatorTestSuite) TestRunWithAliasSms() {
 	s.runMainTest()
 }
 
