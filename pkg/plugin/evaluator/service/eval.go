@@ -298,7 +298,6 @@ func (srv *EvaluatorPluginService) Eval(w http.ResponseWriter, r *http.Request) 
 		"context", evltr_ctx,
 		"operator", op_opt,
 		"caller", srv.caller,
-		"sms_sender", srv.sms_sender,
 		"logger", srv.get_logger(),
 		"data_storage", srv.dat_stor,
 		"simple_storage", srv.smpl_stor,

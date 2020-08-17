@@ -12,7 +12,6 @@ import (
 	evltr_stor "github.com/nayotta/metathings/pkg/evaluatord/storage"
 	dssdk "github.com/nayotta/metathings/sdk/data_storage"
 	dsdk "github.com/nayotta/metathings/sdk/deviced"
-	smssdk "github.com/nayotta/metathings/sdk/sms"
 )
 
 type EvaluatorPluginServiceOption struct {
@@ -38,17 +37,16 @@ func NewEvaluatorPluginServiceOption() *EvaluatorPluginServiceOption {
 }
 
 type EvaluatorPluginService struct {
-	opt        *EvaluatorPluginServiceOption
-	logger     log.FieldLogger
-	tknr       token_helper.Tokener
-	dat_stor   dssdk.DataStorage
-	smpl_stor  dsdk.SimpleStorage
-	flow       dsdk.Flow
-	task_stor  evltr_stor.TaskStorage
-	caller     dsdk.Caller
-	sms_sender smssdk.SmsSender
-	cli_fty    *client_helper.ClientFactory
-	get_param  GetParamFunc
+	opt       *EvaluatorPluginServiceOption
+	logger    log.FieldLogger
+	tknr      token_helper.Tokener
+	dat_stor  dssdk.DataStorage
+	smpl_stor dsdk.SimpleStorage
+	flow      dsdk.Flow
+	task_stor evltr_stor.TaskStorage
+	caller    dsdk.Caller
+	cli_fty   *client_helper.ClientFactory
+	get_param GetParamFunc
 }
 
 func (srv *EvaluatorPluginService) get_logger() log.FieldLogger {
@@ -86,20 +84,18 @@ func NewEvaluatorPluginService(
 	flow dsdk.Flow,
 	task_stor evltr_stor.TaskStorage,
 	caller dsdk.Caller,
-	sms_sender smssdk.SmsSender,
 	cli_fty *client_helper.ClientFactory,
 ) (*EvaluatorPluginService, error) {
 	srv := &EvaluatorPluginService{
-		opt:        opt,
-		logger:     logger,
-		tknr:       tknr,
-		dat_stor:   dat_stor,
-		smpl_stor:  smpl_stor,
-		flow:       flow,
-		task_stor:  task_stor,
-		caller:     caller,
-		sms_sender: sms_sender,
-		cli_fty:    cli_fty,
+		opt:       opt,
+		logger:    logger,
+		tknr:      tknr,
+		dat_stor:  dat_stor,
+		smpl_stor: smpl_stor,
+		flow:      flow,
+		task_stor: task_stor,
+		caller:    caller,
+		cli_fty:   cli_fty,
 	}
 
 	switch opt.Server.Name {
