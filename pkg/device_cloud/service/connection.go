@@ -49,11 +49,18 @@ func (s *MetathingsDeviceCloudService) try_to_build_device_connection(dev *pb.De
 	dev_id := dev.Id
 
 	cur_sess := s.get_session_id()
+	logger := s.get_logger().WithFields(log.Fields{
+		"device":          dev_id,
+		"current_session": cur_sess,
+	})
+
 	sess, err := s.storage.GetDeviceConnectSession(dev_id)
 	if err == nil {
+		logger = logger.WithField("maintaining_session", sess)
+
 		if sess == cur_sess {
 			if err = s.storage.SetDeviceConnectSession(dev_id, cur_sess); err != nil {
-				s.get_logger().WithError(err).Warningf("failed to refresh device connect session")
+				logger.WithError(err).Warningf("failed to refresh device connect session")
 			}
 		}
 		// else {
@@ -66,7 +73,7 @@ func (s *MetathingsDeviceCloudService) try_to_build_device_connection(dev *pb.De
 		// mark down instance session for the device
 		err = s.storage.SetDeviceConnectSession(dev_id, s.get_session_id())
 		if err != nil {
-			s.get_logger().WithError(err).Debugf("failed to lock connection in current instance, maybe locked by other instance")
+			logger.WithError(err).Debugf("failed to lock connection in current instance, maybe locked by other instance")
 			return
 		}
 
@@ -74,13 +81,13 @@ func (s *MetathingsDeviceCloudService) try_to_build_device_connection(dev *pb.De
 		if err != nil {
 			// unmark instance session on failed
 			s.storage.UnsetDeviceConnectSession(dev_id, s.get_session_id())
-			s.get_logger().WithError(err).Errorf("failed to build device connection")
+			logger.WithError(err).Errorf("failed to build device connection")
 			return
 		}
 
-		s.get_logger().Infof("build device connection")
+		logger.Infof("build device connection")
 	} else {
-		s.get_logger().WithError(err).Debugf("failed to get device connection status")
+		logger.WithError(err).Debugf("failed to get device connection status")
 	}
 }
 
@@ -253,7 +260,12 @@ func (dc *DeviceConnection) clear() {
 	}
 
 	if err = retry.Do(func() error {
-		return dc.storage.UnsetDeviceConnectSession(dc.opt.Device.Id, dc.opt.DeviceCloud.Session.Id)
+		if cerr := dc.storage.UnsetDeviceConnectSession(dc.opt.Device.Id, dc.opt.DeviceCloud.Session.Id); cerr != nil &&
+			cerr != storage.ErrNotConnected &&
+			cerr != storage.ErrConnectedByOtherDeviceCloud {
+			return cerr
+		}
+		return nil
 	},
 		retry.Attempts(uint(dc.opt.Config.Retry)),
 		retry.Delay(dc.opt.Config.RetryInterval),
@@ -306,7 +318,7 @@ func (dc *DeviceConnection) main_loop() {
 		if err != nil || cur_sess != dc.opt.DeviceCloud.Session.Id {
 			logger.WithFields(log.Fields{
 				"device_cloud_session": dc.opt.DeviceCloud.Session.Id,
-				"current_crrent":       cur_sess,
+				"current_session":      cur_sess,
 			}).WithError(err).Warningf("device connection is not maintaining by this instance")
 			return
 		}

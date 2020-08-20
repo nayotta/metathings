@@ -14,6 +14,7 @@ require (
 	github.com/gorilla/mux v1.7.4
 	github.com/grpc-ecosystem/go-grpc-middleware v1.2.0
 	github.com/influxdata/influxdb-client-go v1.3.0
+	github.com/influxdata/influxdb-client-go/v2 v2.0.1
 	github.com/jeremywohl/flatten v1.0.1
 	github.com/jhump/protoreflect v1.7.0
 	github.com/jinzhu/gorm v1.9.14
