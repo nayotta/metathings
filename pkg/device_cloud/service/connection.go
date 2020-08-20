@@ -272,7 +272,7 @@ func (dc *DeviceConnection) clear() {
 		retry.DelayType(retry.BackOffDelay),
 		retry.MaxDelay(dc.opt.Config.MaxRetryInterval),
 		retry.OnRetry(func(n uint, err error) {
-			logger.WithError(err).Warningf("retry to unset device connect sessiona")
+			logger.WithError(err).Warningf("retry to unset device connect session")
 		}),
 	); err != nil {
 		logger.WithError(err).Warningf("failed to unconnect device in storage")
@@ -299,10 +299,19 @@ func (dc *DeviceConnection) is_closed() bool {
 	return dc.closed
 }
 
+func (dc *DeviceConnection) is_maintaining_instance() (bool, error) {
+	cur_sess, err := dc.storage.GetDeviceConnectSession(dc.opt.Device.Id)
+	if err != nil {
+		return false, err
+	}
+
+	return cur_sess == dc.opt.DeviceCloud.Session.Id, nil
+}
+
 func (dc *DeviceConnection) main_loop() {
 	rc := 0
 	rc_tvl := dc.opt.Config.RetryInterval
-	logger := dc.get_logger()
+	logger := dc.get_logger().WithField("device_cloud_session", dc.opt.DeviceCloud.Session.Id)
 
 	defer func() {
 		dc.Stop()
@@ -314,12 +323,9 @@ func (dc *DeviceConnection) main_loop() {
 			return
 		}
 
-		cur_sess, err := dc.storage.GetDeviceConnectSession(dc.opt.Device.Id)
-		if err != nil || cur_sess != dc.opt.DeviceCloud.Session.Id {
-			logger.WithFields(log.Fields{
-				"device_cloud_session": dc.opt.DeviceCloud.Session.Id,
-				"current_session":      cur_sess,
-			}).WithError(err).Warningf("device connection is not maintaining by this instance")
+		maintained, err := dc.is_maintaining_instance()
+		if err != nil || !maintained {
+			logger.WithError(err).Warningf("device connection is not maintaining by this instance anymore")
 			return
 		}
 
@@ -395,10 +401,21 @@ func (dc *DeviceConnection) internal_main_loop() error {
 
 func (dc *DeviceConnection) heartbeat_loop() {
 	dc.stm_wg.Wait()
-	defer dc.get_logger().Debugf("device connection heartbeat loop exited")
+
+	logger := dc.get_logger().WithField("device_cloud_session", dc.opt.DeviceCloud.Session.Id)
+	defer func() {
+		dc.Stop()
+		logger.Debugf("device connection heartbeat loop exited")
+	}()
 
 	for {
 		if dc.is_closed() {
+			return
+		}
+
+		maintained, err := dc.is_maintaining_instance()
+		if err != nil || !maintained {
+			logger.WithError(err).Warningf("device connection is not maintaining by this instance anymore")
 			return
 		}
 
