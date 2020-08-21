@@ -4,7 +4,8 @@ import (
 	"encoding/json"
 	"sync"
 
-	map_helper "github.com/nayotta/metathings/pkg/common/map"
+	"github.com/stretchr/objx"
+
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 )
 
@@ -64,7 +65,7 @@ func (d *data) Iter() map[string]interface{} {
 func (d *data) Get(key string) interface{} {
 	d.ensure_raw()
 
-	return map_helper.Seeker(d.raw).Find(key)
+	return objx.New(d.raw).Get(key).Data()
 }
 
 func (d *data) With(key string, val interface{}) Data {

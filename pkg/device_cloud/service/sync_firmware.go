@@ -15,9 +15,8 @@ func (dc *DeviceConnection) sync_firmware() error {
 }
 
 func (dc *DeviceConnection) do_sync_modules_firmware() error {
-	logger := dc.logger.WithFields(log.Fields{
+	logger := dc.get_logger().WithFields(log.Fields{
 		"#method": "do_sync_modules_firmware",
-		"device":  dc.info.Id,
 	})
 
 	for _, m := range dc.info.Modules {

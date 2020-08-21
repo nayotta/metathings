@@ -19,7 +19,6 @@ require (
 	github.com/jinzhu/gorm v1.9.14
 	github.com/levigross/grequests v0.0.0-20190908174114-253788527a1a
 	github.com/mwitkow/go-proto-validators v0.3.0
-	github.com/nayotta/pomelo-sdk-go v0.0.0-20200731080617-457fd795850f
 	github.com/opentracing-contrib/go-gorilla v0.0.0-20190110000444-ced666783644
 	github.com/opentracing-contrib/go-stdlib v1.0.0
 	github.com/opentracing/opentracing-go v1.2.0
@@ -45,4 +44,5 @@ require (
 	golang.org/x/tools v0.0.0-20200702044944-0cc1aa72b347 // indirect
 	google.golang.org/grpc v1.31.0
 	gopkg.in/yaml.v2 v2.3.0
+	gopkg.in/yaml.v3 v3.0.0-20200615113413-eeeca48fe776 // indirect
 )

@@ -24,7 +24,7 @@ func (dc *DeviceConnection) handle(req *pb.ConnectRequest) error {
 	case pb.ConnectMessageKind_CONNECT_MESSAGE_KIND_USER:
 		return dc.handle_user_request(req)
 	default:
-		dc.logger.Warningf("unexpected request data")
+		dc.get_logger().Warningf("unexpected request data")
 		return nil
 	}
 }
@@ -36,7 +36,7 @@ func (dc *DeviceConnection) handle_system_request(req *pb.ConnectRequest) error 
 	case *pb.ConnectRequest_StreamCall:
 		return dc.handle_system_stream_request(req)
 	default:
-		dc.logger.WithField("union", req.Union).Debugf("unsupported union type")
+		dc.get_logger().WithField("union", req.Union).Debugf("unsupported union type")
 		return nil
 	}
 }
@@ -48,7 +48,7 @@ func (dc *DeviceConnection) handle_system_unary_request(req *pb.ConnectRequest) 
 	name := req_val.GetName().GetValue()
 	method := req_val.GetMethod().GetValue()
 
-	logger := dc.logger.WithFields(log.Fields{
+	logger := dc.get_logger().WithFields(log.Fields{
 		"#session":   sess,
 		"#component": component,
 		"#name":      name,
@@ -64,7 +64,7 @@ func (dc *DeviceConnection) handle_system_unary_request(req *pb.ConnectRequest) 
 	case "system$system$sync_firmware":
 		return dc.handle_system_unary_request_sync_firmware(req)
 	default:
-		dc.logger.WithField("sign", req_sign).Warningf("unsupported request sign")
+		logger.WithField("sign", req_sign).Warningf("unsupported request sign")
 		return nil
 	}
 }
@@ -84,7 +84,7 @@ func (dc *DeviceConnection) handle_user_request(req *pb.ConnectRequest) error {
 	case *pb.ConnectRequest_StreamCall:
 		return dc.handle_user_stream_request(req)
 	default:
-		dc.logger.WithField("union", req.Union).Debugf("unsupported union type")
+		dc.get_logger().WithField("union", req.Union).Debugf("unsupported union type")
 		return nil
 	}
 }
@@ -97,7 +97,7 @@ func (dc *DeviceConnection) handle_user_unary_request(req *pb.ConnectRequest) er
 	name := req_val.GetName().GetValue()
 	method := req_val.GetMethod().GetValue()
 
-	logger := dc.logger.WithFields(log.Fields{
+	logger := dc.get_logger().WithFields(log.Fields{
 		"#session":   sess,
 		"#component": component,
 		"#name":      name,
@@ -169,7 +169,7 @@ func (dc *DeviceConnection) handle_user_stream_request(req *pb.ConnectRequest) e
 	component := cfg.GetComponent().GetValue()
 	method := cfg.GetMethod().GetValue()
 
-	logger := dc.logger.WithFields(log.Fields{
+	logger := dc.get_logger().WithFields(log.Fields{
 		"#session":   req_sess,
 		"#component": component,
 		"#name":      name,
