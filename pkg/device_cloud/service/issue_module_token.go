@@ -12,16 +12,18 @@ import (
 
 func (s *MetathingsDeviceCloudService) IssueModuleToken(w http.ResponseWriter, r *http.Request) {
 	req := new(device_pb.IssueModuleTokenRequest)
+	logger := s.get_logger()
+
 	err := ParseHttpRequestBody(r, req)
 	if err != nil {
-		s.get_logger().WithError(err).Errorf("failed to parse request body")
+		logger.WithError(err).Errorf("failed to parse request body")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
 	ts, err := ptypes.Timestamp(req.GetTimestamp())
 	if err != nil {
-		s.get_logger().WithError(err).Errorf("failed to parse timestamp")
+		logger.WithError(err).Errorf("failed to parse timestamp")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -29,9 +31,11 @@ func (s *MetathingsDeviceCloudService) IssueModuleToken(w http.ResponseWriter, r
 	nonce := req.GetNonce().GetValue()
 	hmac := req.GetHmac().GetValue()
 
+	logger = logger.WithField("credential_id", cred_id)
+
 	cli, cfn, err := s.cli_fty.NewIdentityd2ServiceClient()
 	if err != nil {
-		s.get_logger().WithError(err).Errorf("failed to connect identityd2 service")
+		logger.WithError(err).Errorf("failed to connect identityd2 service")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -39,7 +43,7 @@ func (s *MetathingsDeviceCloudService) IssueModuleToken(w http.ResponseWriter, r
 
 	tkn, err := device_service.IssueModuleTokenWithClient(cli, r.Context(), cred_id, ts, nonce, hmac)
 	if err != nil {
-		s.get_logger().WithError(err).Errorf("failed to issue module token")
+		logger.WithError(err).Errorf("failed to issue module token")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -50,7 +54,7 @@ func (s *MetathingsDeviceCloudService) IssueModuleToken(w http.ResponseWriter, r
 
 	buf, err := ParseHttpResponseBody(res)
 	if err != nil {
-		s.get_logger().WithError(err).Errorf("failed to marshal response")
+		logger.WithError(err).Errorf("failed to marshal response")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -59,7 +63,7 @@ func (s *MetathingsDeviceCloudService) IssueModuleToken(w http.ResponseWriter, r
 	w.WriteHeader(http.StatusCreated)
 	w.Write([]byte(buf))
 
-	s.get_logger().WithFields(log.Fields{
+	logger.WithFields(log.Fields{
 		"module": tkn.Entity.Id,
 	}).Debugf("issue module token")
 }
