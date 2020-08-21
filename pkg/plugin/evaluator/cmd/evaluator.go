@@ -18,7 +18,6 @@ import (
 	service "github.com/nayotta/metathings/pkg/plugin/evaluator/service"
 	dssdk "github.com/nayotta/metathings/sdk/data_storage"
 	dsdk "github.com/nayotta/metathings/sdk/deviced"
-	smssdk "github.com/nayotta/metathings/sdk/sms"
 )
 
 type EvaluatorPluginOption struct {
@@ -196,26 +195,6 @@ func NewCaller(o *EvaluatorPluginOption, cli_fty *client_helper.ClientFactory, l
 	return c, nil
 }
 
-func NewSmsSender(o *EvaluatorPluginOption, logger log.FieldLogger) (smssdk.SmsSender, error) {
-	name, args, err := cfg_helper.ParseConfigOption("name", o.SmsSender, "logger", logger)
-	if err != nil {
-		if err != cfg_helper.ErrExpectedKeyNotFound {
-			return nil, err
-		}
-
-		name = "dummy"
-		args = []interface{}{"logger", logger}
-		logger.Warningf("sms sender not found, using dummy driver")
-	}
-
-	sms_sender, err := smssdk.NewSmsSender(name, args...)
-	if err != nil {
-		return nil, err
-	}
-
-	return sms_sender, nil
-}
-
 func NewEvaluatorPluginService(cfg string) (*service.EvaluatorPluginService, error) {
 	var srv *service.EvaluatorPluginService
 
@@ -231,7 +210,6 @@ func NewEvaluatorPluginService(cfg string) (*service.EvaluatorPluginService, err
 	c.Provide(NewFlow)
 	c.Provide(NewTaskStorage)
 	c.Provide(NewCaller)
-	c.Provide(NewSmsSender)
 	c.Provide(NewEvaluatorPluginServiceOption)
 	c.Provide(service.NewEvaluatorPluginService)
 	if err := c.Invoke(func(evltr_plg_srv *service.EvaluatorPluginService) {

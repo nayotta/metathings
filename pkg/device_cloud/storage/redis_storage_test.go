@@ -31,13 +31,13 @@ func (suite *redisStorageTestSuite) SetupTest() {
 	suite.Nil(err)
 
 	redis_addr := test_helper.GetTestRedisAddr()
-	redis_passwd := test_helper.GetTestRedisPassword()
+	redis_password := test_helper.GetTestRedisPassword()
 	redis_db, _ := strconv.Atoi(test_helper.GetTestRedisDB())
 
 	stor, err := NewStorage("redis",
 		"logger", logger,
 		"addr", redis_addr,
-		"passwd", redis_passwd,
+		"password", redis_password,
 		"db", redis_db,
 	)
 	suite.Nil(err)

@@ -8,7 +8,7 @@ require (
 	github.com/cavaliercoder/grab v2.0.0+incompatible
 	github.com/codahale/hdrhistogram v0.0.0-20161010025455-3a0bb77429bd // indirect
 	github.com/eclipse/paho.mqtt.golang v1.2.0
-	github.com/go-redis/redis v6.15.8+incompatible
+	github.com/go-redis/redis/v8 v8.0.0-beta.7
 	github.com/gogo/protobuf v1.3.1
 	github.com/golang/protobuf v1.4.2
 	github.com/gorilla/mux v1.7.4
@@ -22,7 +22,7 @@ require (
 	github.com/nayotta/pomelo-sdk-go v0.0.0-20200731080617-457fd795850f
 	github.com/opentracing-contrib/go-gorilla v0.0.0-20190110000444-ced666783644
 	github.com/opentracing-contrib/go-stdlib v1.0.0
-	github.com/opentracing/opentracing-go v1.1.0
+	github.com/opentracing/opentracing-go v1.2.0
 	github.com/satori/go.uuid v1.2.0
 	github.com/sirupsen/logrus v1.6.0
 	github.com/smacker/opentracing-gorm v0.0.0-20181207094635-cd4974441042
@@ -37,11 +37,12 @@ require (
 	github.com/uber/jaeger-lib v2.2.0+incompatible // indirect
 	github.com/yuin/gopher-lua v0.0.0-20200603152657-dc2b0ca8b37e
 	go.mongodb.org/mongo-driver v1.3.4
+	go.opentelemetry.io/otel v0.10.0 // indirect
 	go.uber.org/dig v1.10.0
 	go.uber.org/fx v1.13.0
 	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9
 	golang.org/x/mod v0.3.0 // indirect
 	golang.org/x/tools v0.0.0-20200702044944-0cc1aa72b347 // indirect
-	google.golang.org/grpc v1.30.0
+	google.golang.org/grpc v1.31.0
 	gopkg.in/yaml.v2 v2.3.0
 )
