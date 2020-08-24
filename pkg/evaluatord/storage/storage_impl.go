@@ -374,7 +374,7 @@ func (stor *StorageImpl) PatchEvaluator(ctx context.Context, id string, e *Evalu
 			fallthrough
 		case "default":
 			if po.LuaDescriptor != nil {
-				if err = tx.Model(&LuaDescriptor{OperatorId: se.Operator.Id}).Update(po.LuaDescriptor).Error; err != nil {
+				if err = tx.Model(new(LuaDescriptor)).Where("operator_id = ?", se.Operator.Id).Update(po.LuaDescriptor).Error; err != nil {
 					logger.WithError(err).Debugf("failed to patch lua descriptor")
 					return err
 				}
