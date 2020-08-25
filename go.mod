@@ -7,6 +7,7 @@ require (
 	github.com/casbin/casbin-server v0.0.0-20200301012118-fcbb32cf841d
 	github.com/cavaliercoder/grab v2.0.0+incompatible
 	github.com/codahale/hdrhistogram v0.0.0-20161010025455-3a0bb77429bd // indirect
+	github.com/deepmap/oapi-codegen v1.3.11 // indirect
 	github.com/eclipse/paho.mqtt.golang v1.2.0
 	github.com/go-redis/redis/v8 v8.0.0-beta.7
 	github.com/gogo/protobuf v1.3.1
@@ -14,6 +15,7 @@ require (
 	github.com/gorilla/mux v1.7.4
 	github.com/grpc-ecosystem/go-grpc-middleware v1.2.0
 	github.com/influxdata/influxdb-client-go v1.3.0
+	github.com/influxdata/influxdb-client-go/v2 v2.0.1
 	github.com/jeremywohl/flatten v1.0.1
 	github.com/jhump/protoreflect v1.7.0
 	github.com/jinzhu/gorm v1.9.14
@@ -39,8 +41,11 @@ require (
 	go.opentelemetry.io/otel v0.10.0 // indirect
 	go.uber.org/dig v1.10.0
 	go.uber.org/fx v1.13.0
-	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9
+	golang.org/x/crypto v0.0.0-20200728195943-123391ffb6de
 	golang.org/x/mod v0.3.0 // indirect
+	golang.org/x/net v0.0.0-20200813134508-3edf25e44fcc // indirect
+	golang.org/x/sys v0.0.0-20200817155316-9781c653f443 // indirect
+	golang.org/x/text v0.3.3 // indirect
 	golang.org/x/tools v0.0.0-20200702044944-0cc1aa72b347 // indirect
 	google.golang.org/grpc v1.31.0
 	gopkg.in/yaml.v2 v2.3.0

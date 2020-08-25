@@ -1,6 +1,8 @@
 package metathings_evaluatord_service
 
 import (
+	"context"
+
 	grpc_auth "github.com/grpc-ecosystem/go-grpc-middleware/auth"
 	log "github.com/sirupsen/logrus"
 
@@ -38,6 +40,10 @@ func (srv *MetathingsEvaluatordService) get_logger() log.FieldLogger {
 
 func (srv *MetathingsEvaluatordService) IsIgnoreMethod(md *grpc_helper.MethodDescription) bool {
 	return false
+}
+
+func (srv *MetathingsEvaluatordService) QueryStorageByDevice(ctx context.Context, req *pb.QueryStorageByDeviceRequest) (*pb.QueryStorageByDeviceResponse, error) {
+	panic("unimplemented")
 }
 
 func NewMetathingsEvaludatorService(

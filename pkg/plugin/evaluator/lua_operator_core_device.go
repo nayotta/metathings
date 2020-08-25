@@ -73,7 +73,7 @@ func (d *luaMetathingsCoreDevice) luaNewStorage(L *lua.LState) int {
 	return 1
 }
 
-// LUA_FUNCTION: device:simple_storage(option#table) simple_storage
+// LUA_FUNCTION: device:simple_storage(option#table<optional>) simple_storage
 func (d *luaMetathingsCoreDevice) luaNewSimpleStorage(L *lua.LState) int {
 	var opt map[string]interface{}
 

@@ -7,8 +7,8 @@ import (
 	"strings"
 	"time"
 
-	influxdb2 "github.com/influxdata/influxdb-client-go"
-	"github.com/influxdata/influxdb-client-go/api"
+	influxdb2 "github.com/influxdata/influxdb-client-go/v2"
+	"github.com/influxdata/influxdb-client-go/v2/api"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cast"
 	"github.com/stretchr/objx"
@@ -17,7 +17,11 @@ import (
 )
 
 const (
-	INFLUXDB2_TASK_MASUREMENT = "evaluatord.task"
+	INFLUXDB2_CONST_TASK_MASUREMENT = "evaluatord.task"
+	INFLUXDB2_CONST_TASK            = "#task"
+	INFLUXDB2_CONST_SOURCE          = "#source"
+	INFLUXDB2_CONST_SOURCE_TYPE     = "#source_type"
+	INFLUXDB2_CONST_STATE           = "$state"
 )
 
 type Influxdb2TaskStorageOption struct {
@@ -46,9 +50,9 @@ func (s *Influxdb2TaskStorage) parse_tableresult_to_tasks(tr *api.QueryTableResu
 		r := tr.Record()
 		rvs := r.Values()
 		at := r.Time()
-		id := cast.ToString(rvs["#task"])
-		src := cast.ToString(rvs["#source"])
-		src_typ := cast.ToString(rvs["#source_type"])
+		id := cast.ToString(rvs[INFLUXDB2_CONST_TASK])
+		src := cast.ToString(rvs[INFLUXDB2_CONST_SOURCE])
+		src_typ := cast.ToString(rvs[INFLUXDB2_CONST_SOURCE_TYPE])
 		if _, ok := tskm[id]; !ok {
 			tskm[id] = &Task{
 				Id: &id,
@@ -107,7 +111,7 @@ func (s *Influxdb2TaskStorage) ListTasksBySource(ctx context.Context, src *Resou
 		apply(o)
 	}
 
-	query_api := s.influx.QueryApi(s.opt.Org)
+	query_api := s.influx.QueryAPI(s.opt.Org)
 
 	var query strings.Builder
 	query.WriteString(`from(bucket: "`)
@@ -132,11 +136,15 @@ func (s *Influxdb2TaskStorage) ListTasksBySource(ctx context.Context, src *Resou
 	}
 	query.WriteString(`)`)
 	query.WriteString(` |> filter(fn: (r) => r["_measurement"] == "`)
-	query.WriteString(INFLUXDB2_TASK_MASUREMENT)
+	query.WriteString(INFLUXDB2_CONST_TASK_MASUREMENT)
 	query.WriteString(`")`)
-	query.WriteString(` |> filter(fn: (r) => r["#source"] == "`)
+	query.WriteString(` |> filter(fn: (r) => r["`)
+	query.WriteString(INFLUXDB2_CONST_SOURCE)
+	query.WriteString(`"] == "`)
 	query.WriteString(*src.Id)
-	query.WriteString(`" and r["#source_type"] == "`)
+	query.WriteString(`" and r["`)
+	query.WriteString(INFLUXDB2_CONST_SOURCE_TYPE)
+	query.WriteString(`"] == "`)
 	query.WriteString(*src.Type)
 	query.WriteString(`")`)
 	query_str := query.String()
@@ -163,10 +171,11 @@ func (s *Influxdb2TaskStorage) GetTask(ctx context.Context, id string) (*Task, e
 from(bucket: "%s")
   |> range(start: -3650d)
   |> filter(fn: (r) => r["_measurement"] == "%s")
-  |> filter(fn: (r) => r["#task"] == "%s")
+  |> filter(fn: (r) => r["%s"] == "%s")
 `,
 		s.opt.Bucket,
-		INFLUXDB2_TASK_MASUREMENT,
+		INFLUXDB2_CONST_TASK_MASUREMENT,
+		INFLUXDB2_CONST_TASK,
 		id,
 	)
 
@@ -203,12 +212,12 @@ func (s *Influxdb2TaskStorage) PatchTask(ctx context.Context, tsk *Task, ts *Tas
 	for k, v := range ts.Tags {
 		tags[fmt.Sprintf("$%v", k)] = v
 	}
-	tags["$state"] = *ts.State
+	tags[INFLUXDB2_CONST_STATE] = *ts.State
 
-	point := influxdb2.NewPoint(INFLUXDB2_TASK_MASUREMENT, map[string]string{
-		"#task":        *tsk.Id,
-		"#source":      *tsk.Source.Id,
-		"#source_type": *tsk.Source.Type,
+	point := influxdb2.NewPoint(INFLUXDB2_CONST_TASK_MASUREMENT, map[string]string{
+		INFLUXDB2_CONST_TASK:        *tsk.Id,
+		INFLUXDB2_CONST_SOURCE:      *tsk.Source.Id,
+		INFLUXDB2_CONST_SOURCE_TYPE: *tsk.Source.Type,
 	}, tags, *ts.At)
 	if err := write_api.WritePoint(ctx, point); err != nil {
 		return err

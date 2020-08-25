@@ -4,10 +4,11 @@ import (
 	"context"
 	"time"
 
-	opt_helper "github.com/nayotta/metathings/pkg/common/option"
-	dssdk "github.com/nayotta/metathings/sdk/data_storage"
 	"github.com/spf13/cast"
 	lua "github.com/yuin/gopher-lua"
+
+	opt_helper "github.com/nayotta/metathings/pkg/common/option"
+	dssdk "github.com/nayotta/metathings/sdk/data_storage"
 )
 
 type luaMetathingsCoreStorage struct {

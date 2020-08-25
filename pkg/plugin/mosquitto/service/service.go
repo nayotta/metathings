@@ -101,7 +101,7 @@ func (s *MosquittoPluginService) handle_create_credential_event(evt *webhook_hel
 		Username: &id,
 		Password: &passwd,
 		Permissions: []*storage.Permission{
-			&storage.Permission{
+			{
 				Topic: &topic,
 				Mask:  &mask,
 			},

@@ -157,13 +157,17 @@ func (c *luaMetathingsCore) MetatableIndex() map[string]lua.LGFunction {
 	}
 }
 
-// LUA_FUNCTION: core:data(key#string)
+// LUA_FUNCTION: core:data(key#string<optional>)
 func (c *luaMetathingsCore) luaGetData(L *lua.LState) int {
 	c.check(L)
 
-	key := L.CheckString(2)
-
-	ival := c.GetData().Get(key)
+	var ival interface{}
+	if L.GetTop() > 1 {
+		key := L.CheckString(2)
+		ival = c.GetData().Get(key)
+	} else {
+		ival = c.GetData().Iter()
+	}
 	val := parse_interface_to_lvalue(L, ival)
 	L.Push(val)
 

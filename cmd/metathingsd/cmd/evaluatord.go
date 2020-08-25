@@ -50,9 +50,9 @@ var (
 			base_opt = &opt_t.BaseOption
 
 			cmd_helper.InitManyStringMapFromConfigWithStage([]cmd_helper.InitManyOption{
-				{&opt_t.TaskStorage, "task_storage"},
-				{&opt_t.TimerStorage, "timer_storage"},
-				{&opt_t.TimerBackend, "timer_backend"},
+				{Dst: &opt_t.TaskStorage, Key: "task_storage"},
+				{Dst: &opt_t.TimerStorage, Key: "timer_storage"},
+				{Dst: &opt_t.TimerBackend, Key: "timer_backend"},
 			})
 
 			evaluatord_opt = opt_t
