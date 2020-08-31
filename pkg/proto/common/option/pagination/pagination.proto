@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package ai.metathings.common.option.pagination;
+option go_package = "pagination";
+
+import "google/protobuf/wrappers.proto";
+
+message OpPaginationOption {
+  google.protobuf.Int32Value page_size = 1;
+  google.protobuf.StringValue page_token = 2;
+}
+
+message PaginationOption {
+  string next_page_token = 1;
+}

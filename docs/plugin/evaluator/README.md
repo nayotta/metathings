@@ -18,13 +18,23 @@ TBD.
 
 获取触发本次`eval`事件的数据.
 
-`metathings:data(key#string)`
+`metathings:data(key#string<optional>)`
 
 #### 3.1.1.2. 范例
+
+获取指定 key 的内容:
 
 ```lua
 ...
 local val = metathings:data("key")
+...
+```
+
+获取整个 data 数据:
+
+```lua
+...
+local dat = metathings:data()
 ...
 ```
 

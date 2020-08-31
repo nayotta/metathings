@@ -19,18 +19,17 @@ func (s *MetathingsDeviceCloudService) start_push_frame_loop(dev_id string, req 
 	flw_name := req_cfg.GetFlow().GetName().GetValue()
 	req_id := req.GetId().GetValue()
 
-	cli, cfn, err := s.cli_fty.NewDevicedServiceClient()
-	if err != nil {
-		s.get_logger().WithError(err).Warningf("failed to new deviced service client")
-		return err
-	}
-
 	logger := s.get_logger().WithFields(log.Fields{
 		"device":     dev_id,
 		"flow":       flw_name,
-		"config_ack": cfg_ack,
-		"push_ack":   psh_ack,
+		"request_id": req_id,
 	})
+
+	cli, cfn, err := s.cli_fty.NewDevicedServiceClient()
+	if err != nil {
+		logger.WithError(err).Warningf("failed to new deviced service client")
+		return err
+	}
 
 	ctx := s.context_with_device(dev_id)
 	stm, err := cli.PushFrameToFlow(ctx)
@@ -39,7 +38,7 @@ func (s *MetathingsDeviceCloudService) start_push_frame_loop(dev_id string, req 
 		logger.WithField("request", req_id).WithError(err).Warningf("failed to create push frame to flow streaming")
 		return err
 	}
-	logger.WithField("request", req_id).Debugf("build push frame to flow streaming")
+	logger.Debugf("build push frame to flow streaming")
 
 	cfg := &deviced_pb.PushFrameToFlowRequest{
 		Id: &wrappers.StringValue{Value: req.GetId().GetValue()},
@@ -59,26 +58,26 @@ func (s *MetathingsDeviceCloudService) start_push_frame_loop(dev_id string, req 
 
 	if err = stm.Send(cfg); err != nil {
 		defer cfn()
-		logger.WithField("request", req_id).WithError(err).Warningf("failed to config push frame to flow streaming")
+		logger.WithError(err).Warningf("failed to config push frame to flow streaming")
 		return err
 	}
-	logger.WithField("request", req_id).Debugf("send push frame to flow config request")
+	logger.Debugf("send push frame to flow config request")
 
 	if cfg_ack {
-		logger.WithField("request", req_id).Debugf("waiting for config ack")
+		logger.Debugf("waiting for config ack")
 		res, err := stm.Recv()
 		if err != nil {
 			defer cfn()
-			logger.WithField("request", req_id).Warningf("failed to recv push frame to flow config response ack")
+			logger.Warningf("failed to recv push frame to flow config response ack")
 			return err
 		}
 
 		if req_id != res.GetId() {
 			defer cfn()
-			logger.WithField("request", req_id).Warningf("failed to match push frame to flow config response ack")
+			logger.Warningf("failed to match push frame to flow config response ack")
 			return ErrUnmatchedRequestId
 		}
-		logger.WithField("request", req_id).Debugf("recv config ack")
+		logger.Debugf("recv config ack")
 
 	}
 
@@ -116,21 +115,23 @@ func (s *MetathingsDeviceCloudService) start_push_frame_loop(dev_id string, req 
 	}
 
 	go s.push_frame_loop(stm, pffch, cfn, psh_ack)
-	s.get_logger().Debugf("push frame loop started")
+	logger.Debugf("push frame loop started")
 
 	return nil
 }
 
 func (s *MetathingsDeviceCloudService) push_frame_loop(stm deviced_pb.DevicedService_PushFrameToFlowClient, pffch PushFrameToFlowChannel, cfn client_helper.CloseFn, push_ack bool) {
+	logger := s.get_logger()
+
 	defer func() {
 		cfn()
 		pffch.Close()
-		s.get_logger().Debugf("push frame loop stoped")
+		logger.Debugf("push frame loop stoped")
 	}()
 	for {
 		frm, ok := <-pffch.Channel()
 		if !ok {
-			s.get_logger().Debugf("push frame to flow channel closed")
+			logger.Debugf("push frame to flow channel closed")
 			return
 		}
 
@@ -142,7 +143,7 @@ func (s *MetathingsDeviceCloudService) push_frame_loop(stm deviced_pb.DevicedSer
 		}
 
 		if err := stm.Send(req); err != nil {
-			s.get_logger().WithError(err).Warningf("failed to send frame to streaming")
+			logger.WithError(err).Warningf("failed to send frame to streaming")
 			return
 		}
 	}

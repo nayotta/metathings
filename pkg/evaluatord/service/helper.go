@@ -34,6 +34,10 @@ type timer_getter interface {
 	GetTimer() *pb.OpTimer
 }
 
+type device_getter interface {
+	GetDevice() *deviced_pb.OpDevice
+}
+
 func copy_lua_descriptor(x *storage.LuaDescriptor) *pb.Operator_Lua {
 	y := &pb.Operator_Lua{
 		Lua: &pb.LuaDescriptor{

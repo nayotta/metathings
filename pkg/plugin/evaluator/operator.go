@@ -26,7 +26,7 @@ func register_operator_factory(driver string, fty OperatorFactory) {
 }
 
 func IsValidOperatorName(driver string) bool {
-	for key, _ := range operator_factories {
+	for key := range operator_factories {
 		if key == driver {
 			return true
 		}

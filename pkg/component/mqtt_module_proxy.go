@@ -56,7 +56,10 @@ type MqttModuleProxy struct {
 }
 
 func (p *MqttModuleProxy) get_logger() log.FieldLogger {
-	return p.logger
+	return p.logger.WithFields(log.Fields{
+		"module":  p.opt.Module.Id,
+		"startup": p.startup_session(),
+	})
 }
 
 func (p *MqttModuleProxy) get_client() (mqtt.Client, error) {
@@ -140,13 +143,21 @@ func (p *MqttModuleProxy) subscribe_session(sess int64) (chan *pb.UpStreamFrame,
 	p.mtx.Lock()
 	defer p.mtx.Unlock()
 
+	logger := p.get_logger()
+	if session_helper.IsMinorSession(sess) {
+		logger = logger.WithField("minor_session", sess)
+	} else if session_helper.IsTempSession(sess) {
+		logger = logger.WithField("temp_session", sess)
+	}
+
 	if _, ok := p.sess_chans[sess]; ok {
+		logger.Warningf("session existed")
 		return nil, ErrSubscribedSession
 	}
 
 	ch := make(chan *pb.UpStreamFrame)
 	p.sess_chans[sess] = ch
-	p.get_logger().WithField("session", sess).Debugf("subscribe session")
+	logger.Debugf("subscribe session")
 
 	return ch, nil
 }
@@ -158,13 +169,21 @@ func (p *MqttModuleProxy) unsubscribe_session(sess int64) error {
 	p.mtx.Lock()
 	defer p.mtx.Unlock()
 
+	logger := p.get_logger()
+	if session_helper.IsMinorSession(sess) {
+		logger = logger.WithField("minor_session", sess)
+	} else if session_helper.IsTempSession(sess) {
+		logger = logger.WithField("temp_session", sess)
+	}
+
 	if ch, ok = p.sess_chans[sess]; !ok {
+		logger.Warningf("session not existed")
 		return ErrUnsubscribedSession
 	}
 
 	close(ch)
 	delete(p.sess_chans, sess)
-	p.get_logger().WithField("session", sess).Debugf("unsubscribe session")
+	logger.Debugf("unsubscribe session")
 
 	return nil
 }
@@ -214,6 +233,7 @@ func (p *MqttModuleProxy) mqtt_topic(mdl_id string, sess interface{}, dir string
 
 func (p *MqttModuleProxy) UnaryCall(ctx context.Context, method string, value *any.Any) (*any.Any, error) {
 	temp_sess := p.generate_temp_session()
+	logger := p.get_logger().WithField("temp_session", temp_sess)
 
 	req := &pb.DownStreamFrame{
 		Kind: pb.StreamFrameKind_STREAM_FRAME_KIND_USER,
@@ -228,11 +248,13 @@ func (p *MqttModuleProxy) UnaryCall(ctx context.Context, method string, value *a
 
 	err := p.publish_message(p.opt.Session.Id, req)
 	if err != nil {
+		logger.WithError(err).Debugf("failed to publish message")
 		return nil, err
 	}
 
 	ch, err := p.subscribe_session(temp_sess)
 	if err != nil {
+		logger.WithError(err).Debugf("failed to subscribe session")
 		return nil, err
 	}
 	defer p.unsubscribe_session(temp_sess)
@@ -241,14 +263,19 @@ func (p *MqttModuleProxy) UnaryCall(ctx context.Context, method string, value *a
 	select {
 	case res = <-ch:
 	case <-time.After(p.opt.Config.UnaryCallTimeout):
-		return nil, ErrUnaryCallTimeout
+		err = ErrUnaryCallTimeout
+		logger.WithError(err).Debugf("unary call timeout")
+		return nil, err
 	}
 
 	uc := res.GetUnaryCall()
 	if uc == nil {
-		return nil, ErrUnexceptedResponse
+		err = ErrUnexceptedResponse
+		logger.WithError(err).Debugf("unexpected unary call response")
+		return nil, err
 	}
 
+	logger.Debugf("unary call")
 	return uc.GetValue(), nil
 }
 
@@ -302,24 +329,27 @@ func (p *MqttModuleProxy) StreamCall(ctx context.Context, method string, upstm M
 		return err
 	}
 	defer p.unsubscribe_session(minor_sess)
+	logger := p.get_logger().WithFields(log.Fields{
+		"minor_session": minor_sess,
+	})
 
 	if err = p.init_downstream(minor_sess, ch, method); err != nil {
 		return err
 	}
-	p.get_logger().Debugf("downstream initialized")
+	logger.Debugf("downstream initialized")
 
 	north2south_wait := make(chan struct{}, 1)
 	south2north_wait := make(chan struct{}, 1)
 	go p.stm_north2south(upstm, minor_sess, north2south_wait)
 	go p.stm_south2north(upstm, minor_sess, ch, south2north_wait)
 
-	p.get_logger().Debugf("stream call started")
+	logger.Debugf("stream call started")
 	select {
 	case <-north2south_wait:
 	case <-south2north_wait:
 	}
 
-	p.get_logger().Debugf("stream call done")
+	logger.Debugf("stream call done")
 
 	return nil
 }
@@ -328,9 +358,9 @@ func (p *MqttModuleProxy) stm_north2south(north ModuleProxyStream, sess int64, w
 	var val *any.Any
 	var err error
 
-	logger := p.logger.WithFields(log.Fields{
-		"dir":     "NS",
-		"session": sess,
+	logger := p.get_logger().WithFields(log.Fields{
+		"dir":           "NS",
+		"minor_session": sess,
 	})
 
 	defer close(wait)
@@ -370,8 +400,8 @@ func (p *MqttModuleProxy) stm_south2north(north ModuleProxyStream, sess int64, s
 	var ok bool
 
 	logger := p.get_logger().WithFields(log.Fields{
-		"dir":     "SN",
-		"session": sess,
+		"dir":           "SN",
+		"minor_session": sess,
 	})
 
 	defer close(wait)
@@ -436,7 +466,12 @@ func (f *MqttModuleProxyFactory) NewModuleProxy(args ...interface{}) (ModuleProx
 	})(args...); err != nil {
 		return nil, err
 	}
-	p.logger = p.logger.WithField("id", string([]byte(id_helper.NewId())[:6]))
+
+	p.get_logger().WithFields(log.Fields{
+		"mqtt_address":  p.opt.MQTT.Address,
+		"mqtt_username": p.opt.MQTT.Username,
+		"mqtt_clientid": p.opt.MQTT.ClientId,
+	}).Debugf("new module proxy")
 
 	return p, nil
 }
