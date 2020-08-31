@@ -7,11 +7,11 @@ import (
 	fmt "fmt"
 	math "math"
 	proto "github.com/golang/protobuf/proto"
-	_ "github.com/nayotta/metathings/pkg/proto/common/option/pagination"
-	_ "github.com/golang/protobuf/ptypes/wrappers"
 	_ "github.com/golang/protobuf/ptypes/timestamp"
 	_ "github.com/mwitkow/go-proto-validators"
 	_ "github.com/nayotta/metathings/pkg/proto/deviced"
+	_ "github.com/nayotta/metathings/pkg/proto/common/option/pagination"
+	_ "github.com/golang/protobuf/ptypes/wrappers"
 	github_com_mwitkow_go_proto_validators "github.com/mwitkow/go-proto-validators"
 )
 
@@ -29,12 +29,12 @@ func (this *QueryStorageByDeviceRequest) Validate() error {
 			return github_com_mwitkow_go_proto_validators.FieldError("Device", err)
 		}
 	}
-	if nil == this.Resource {
-		return github_com_mwitkow_go_proto_validators.FieldError("Resource", fmt.Errorf("message must exist"))
+	if nil == this.Source {
+		return github_com_mwitkow_go_proto_validators.FieldError("Source", fmt.Errorf("message must exist"))
 	}
-	if this.Resource != nil {
-		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Resource); err != nil {
-			return github_com_mwitkow_go_proto_validators.FieldError("Resource", err)
+	if this.Source != nil {
+		if err := github_com_mwitkow_go_proto_validators.CallValidatorIfExists(this.Source); err != nil {
+			return github_com_mwitkow_go_proto_validators.FieldError("Source", err)
 		}
 	}
 	if nil == this.Measurement {

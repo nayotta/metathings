@@ -166,7 +166,7 @@ func (s *Influxdb2TaskStorage) ListTasksBySource(ctx context.Context, src *Resou
 func (s *Influxdb2TaskStorage) GetTask(ctx context.Context, id string) (*Task, error) {
 	logger := s.get_logger()
 
-	query_api := s.influx.QueryApi(s.opt.Org)
+	query_api := s.influx.QueryAPI(s.opt.Org)
 	query := fmt.Sprintf(`
 from(bucket: "%s")
   |> range(start: -3650d)
@@ -206,7 +206,7 @@ func (s *Influxdb2TaskStorage) PatchTask(ctx context.Context, tsk *Task, ts *Tas
 		ts.At = &now
 	}
 
-	write_api := s.influx.WriteApiBlocking(s.opt.Org, s.opt.Bucket)
+	write_api := s.influx.WriteAPIBlocking(s.opt.Org, s.opt.Bucket)
 
 	tags := map[string]interface{}{}
 	for k, v := range ts.Tags {

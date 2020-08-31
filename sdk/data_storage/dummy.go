@@ -26,6 +26,15 @@ func (s *DummyDataStorage) Write(ctx context.Context, measurement string, tags m
 	return nil
 }
 
+func (s *DummyDataStorage) Query(ctx context.Context, measurement string, tags map[string]string, opts ...QueryOption) (QueryResult, error) {
+	s.get_logger().WithFields(log.Fields{
+		"measurement": measurement,
+		"tags":        tags,
+	}).Debugf("query")
+
+	return NewQueryResult(nil, ""), nil
+}
+
 func NewDummyDataStorage(args ...interface{}) (DataStorage, error) {
 	logger, err := log_helper.NewLogger("dummy-data-storage", "debug")
 	if err != nil {
