@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"context"
+	"time"
 
 	"github.com/opentracing/opentracing-go"
 	"github.com/sirupsen/logrus"
@@ -17,11 +18,13 @@ import (
 	timer_backend "github.com/nayotta/metathings/pkg/evaluatord/timer"
 	authorizer "github.com/nayotta/metathings/pkg/identityd2/authorizer"
 	pb "github.com/nayotta/metathings/pkg/proto/evaluatord"
+	dssdk "github.com/nayotta/metathings/sdk/data_storage"
 )
 
 type EvaluatordOption struct {
 	cmd_contrib.ServiceBaseOption `mapstructure:",squash"`
 	TaskStorage                   map[string]interface{}
+	DataStorage                   map[string]interface{}
 	TimerStorage                  map[string]interface{}
 	TimerBackend                  map[string]interface{}
 }
@@ -50,9 +53,10 @@ var (
 			base_opt = &opt_t.BaseOption
 
 			cmd_helper.InitManyStringMapFromConfigWithStage([]cmd_helper.InitManyOption{
-				{&opt_t.TaskStorage, "task_storage"},
-				{&opt_t.TimerStorage, "timer_storage"},
-				{&opt_t.TimerBackend, "timer_backend"},
+				{Dst: &opt_t.TaskStorage, Key: "task_storage"},
+				{Dst: &opt_t.DataStorage, Key: "data_storage"},
+				{Dst: &opt_t.TimerStorage, Key: "timer_storage"},
+				{Dst: &opt_t.TimerBackend, Key: "timer_backend"},
 			})
 
 			evaluatord_opt = opt_t
@@ -86,9 +90,12 @@ func GetEvaluatordOptions() (
 }
 
 func NewMetathingsEvaulatordServiceOption(opt *EvaluatordOption) *service.MetathingsEvaluatordServiceOption {
-	o := &service.MetathingsEvaluatordServiceOption{}
+	var o service.MetathingsEvaluatordServiceOption
 
-	return o
+	o.Methods.QueryStorageByDevice.DefaultRangeFromDuration = -1 * time.Hour
+	o.Methods.QueryStorageByDevice.DefaultPageSize = 50
+
+	return &o
 }
 
 type NewEvaluatordStorageParams struct {
@@ -121,6 +128,22 @@ func NewEvaluatordTaskStorage(p NewEvaluatordTaskStorageParams) (storage.TaskSto
 	}
 
 	return storage.NewTaskStorage(drv, args...)
+}
+
+type NewEvaluatordDataStorageParams struct {
+	fx.In
+
+	Option *EvaluatordOption
+	Logger logrus.FieldLogger
+}
+
+func NewEvaluatordDataStorage(p NewEvaluatordDataStorageParams) (dssdk.DataStorage, error) {
+	name, args, err := cfg_helper.ParseConfigOption("name", p.Option.DataStorage, "logger", p.Logger)
+	if err != nil {
+		return nil, err
+	}
+
+	return dssdk.NewDataStorage(name, args...)
 }
 
 type NewEvaluatordTimerStorageParams struct {
@@ -178,6 +201,7 @@ func runEvaluatord() error {
 			NewMetathingsEvaulatordServiceOption,
 			NewEvaluatordStorage,
 			NewEvaluatordTaskStorage,
+			NewEvaluatordDataStorage,
 			NewEvaluatordTimerStorage,
 			NewEvaluatordTimerBackend,
 			authorizer.NewAuthorizer,

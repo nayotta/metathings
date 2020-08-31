@@ -17,6 +17,8 @@ import "list_evaluators_by_source.proto";
 import "list_tasks_by_source.proto";
 import "get_task.proto";
 
+import "query_storage_by_device.proto";
+
 import "create_timer.proto";
 import "delete_timer.proto";
 import "patch_timer.proto";
@@ -38,6 +40,9 @@ service EvaluatordService {
 	// Task
 	rpc ListTasksBySource(ListTasksBySourceRequest) returns (ListTasksBySourceResponse) {}
 	rpc GetTask(GetTaskRequest) returns (GetTaskResponse) {}
+
+  // Storage
+  rpc QueryStorageByDevice(QueryStorageByDeviceRequest) returns (QueryStorageByDeviceResponse) {}
 
 	// Timer
 	rpc CreateTimer(CreateTimerRequest) returns (CreateTimerResponse) {}
