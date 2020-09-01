@@ -7,7 +7,7 @@ import (
 	"time"
 
 	mqtt "github.com/eclipse/paho.mqtt.golang"
-	"github.com/gogo/protobuf/proto"
+	"github.com/golang/protobuf/proto"
 	log "github.com/sirupsen/logrus"
 
 	id_helper "github.com/nayotta/metathings/pkg/common/id"
