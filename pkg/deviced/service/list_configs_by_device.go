@@ -36,7 +36,7 @@ func (self *MetathingsDevicedService) ListConfigsByDevice(ctx context.Context, r
 
 	dev := req.GetDevice()
 	dev_id_str := dev.GetId().GetValue()
-	logger := self.logger.WithField("device", dev_id_str)
+	logger := self.get_logger().WithField("device", dev_id_str)
 
 	if cfgs_s, err = self.storage.ListConfigsByDeviceId(ctx, dev_id_str); err != nil {
 		logger.WithError(err).Errorf("failed to list configs by device")

@@ -32,7 +32,7 @@ func (self *MetathingsDevicedService) SyncDeviceFirmwareDescriptor(ctx context.C
 	var err error
 
 	dev_id_str := req.GetDevice().GetId().GetValue()
-	logger := self.logger.WithField("device", dev_id_str)
+	logger := self.get_logger().WithField("device", dev_id_str)
 
 	if dev_s, err = self.storage.GetDevice(ctx, dev_id_str); err != nil {
 		logger.WithError(err).Errorf("failed to get devicein storage")

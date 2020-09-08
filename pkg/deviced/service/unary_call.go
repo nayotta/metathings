@@ -36,7 +36,7 @@ func (self *MetathingsDevicedService) UnaryCall(ctx context.Context, req *pb.Una
 
 	dev_id_str := req.GetDevice().GetId().GetValue()
 
-	logger := self.logger.WithFields(log.Fields{
+	logger := self.get_logger().WithFields(log.Fields{
 		"device": dev_id_str,
 	})
 	if dev_s, err = self.storage.GetDevice(ctx, dev_id_str); err != nil {

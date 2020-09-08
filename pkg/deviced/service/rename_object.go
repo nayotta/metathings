@@ -50,16 +50,19 @@ func (self *MetathingsDevicedService) RenameObject(ctx context.Context, req *pb.
 	src_s := parse_object(src)
 	dst_s := parse_object(dst)
 
-	err := self.simple_storage.RenameObject(src_s, dst_s)
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, err.Error())
-	}
-
-	self.logger.WithFields(log.Fields{
+	logger := self.get_logger().WithFields(log.Fields{
 		"device":      src_s.Device,
 		"source":      src_s.FullName(),
 		"destination": dst_s.FullName(),
-	}).Infof("renmae object")
+	})
+
+	err := self.simple_storage.RenameObject(src_s, dst_s)
+	if err != nil {
+		logger.WithError(err).Errorf("failed to remove object in simple storage")
+		return nil, status.Errorf(codes.Internal, err.Error())
+	}
+
+	logger.Infof("renmae object")
 
 	return &empty.Empty{}, nil
 }

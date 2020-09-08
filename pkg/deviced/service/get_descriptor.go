@@ -29,14 +29,16 @@ func (self *MetathingsDevicedService) ValidateGetDescriptor(ctx context.Context,
 func (self *MetathingsDevicedService) GetDescriptor(ctx context.Context, req *pb.GetDescriptorRequest) (*pb.GetDescriptorResponse, error) {
 	sha1 := req.GetDescriptor_().GetSha1().GetValue()
 
+	logger := self.get_logger().WithField("sha1", sha1)
+
 	body, err := self.desc_storage.GetDescriptor(sha1)
 	if err != nil {
 		if err == descriptor_storage.ErrDescriptorNotFound {
-			self.logger.WithError(err).Errorf("descriptor sha1 not found")
+			logger.WithError(err).Errorf("descriptor sha1 not found")
 			return nil, status.Errorf(codes.NotFound, err.Error())
 		}
 
-		self.logger.WithError(err).Errorf("failed to get descriptor with sha1 in descriptor storage")
+		logger.WithError(err).Errorf("failed to get descriptor with sha1 in descriptor storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
@@ -47,7 +49,7 @@ func (self *MetathingsDevicedService) GetDescriptor(ctx context.Context, req *pb
 		},
 	}
 
-	self.logger.WithField("sha1", sha1).Debugf("get descriptor")
+	logger.Debugf("get descriptor")
 
 	return res, nil
 }

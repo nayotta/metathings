@@ -116,6 +116,8 @@ func (self *MetathingsDevicedService) CreateDevice(ctx context.Context, req *pb.
 		dev_alias_str = dev.GetAlias().GetValue()
 	}
 
+	logger := self.get_logger().WithField("device", dev_id_str)
+
 	dev_s := &storage.Device{
 		Id:    &dev_id_str,
 		Kind:  &dev_kind_str,
@@ -129,7 +131,7 @@ func (self *MetathingsDevicedService) CreateDevice(ctx context.Context, req *pb.
 	}
 
 	if err = self.create_device_entity(ctx, dev_s); err != nil {
-		self.logger.WithError(err).Errorf("failed to create entity for device")
+		logger.WithError(err).Errorf("failed to create entity for device")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
@@ -155,12 +157,12 @@ func (self *MetathingsDevicedService) CreateDevice(ctx context.Context, req *pb.
 		}
 
 		if err = self.create_module_entity(ctx, mdl_s); err != nil {
-			self.logger.WithError(err).Errorf("failed to create entity for module")
+			logger.WithError(err).Errorf("failed to create entity for module")
 			return nil, status.Errorf(codes.Internal, err.Error())
 		}
 
 		if _, err = self.storage.CreateModule(ctx, mdl_s); err != nil {
-			self.logger.WithError(err).Errorf("failed to create module in storage")
+			logger.WithError(err).Errorf("failed to create module in storage")
 			return nil, status.Errorf(codes.Internal, err.Error())
 		}
 	}
@@ -182,18 +184,18 @@ func (self *MetathingsDevicedService) CreateDevice(ctx context.Context, req *pb.
 		}
 
 		if err = self.create_flow_entity(ctx, flw_s); err != nil {
-			self.logger.WithError(err).Errorf("failed to create entity to flow")
+			logger.WithError(err).Errorf("failed to create entity to flow")
 			return nil, status.Errorf(codes.Internal, err.Error())
 		}
 
 		if _, err = self.storage.CreateFlow(ctx, flw_s); err != nil {
-			self.logger.WithError(err).Errorf("failed to create flow in storage")
+			logger.WithError(err).Errorf("failed to create flow in storage")
 			return nil, status.Errorf(codes.Internal, err.Error())
 		}
 	}
 
 	if dev_s, err = self.storage.CreateDevice(ctx, dev_s); err != nil {
-		self.logger.WithError(err).Errorf("failed to create device in storage")
+		logger.WithError(err).Errorf("failed to create device in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
@@ -201,7 +203,7 @@ func (self *MetathingsDevicedService) CreateDevice(ctx context.Context, req *pb.
 		Device: copy_device(dev_s),
 	}
 
-	self.logger.WithField("id", dev_id_str).Infof("create device")
+	logger.Infof("create device")
 
 	return res, nil
 }

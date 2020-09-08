@@ -20,7 +20,7 @@ func (self *MetathingsDevicedService) AddConfigsToDevice(ctx context.Context, re
 
 	dev := req.GetDevice()
 	dev_id_str := dev.GetId().GetValue()
-	logger := self.logger.WithField("device", dev_id_str)
+	logger := self.get_logger().WithField("device", dev_id_str)
 
 	var cfg_ids_str []string
 	for _, cfg := range req.GetConfigs() {

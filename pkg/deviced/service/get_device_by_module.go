@@ -3,7 +3,6 @@ package metathings_deviced_service
 import (
 	"context"
 
-	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
@@ -34,8 +33,10 @@ func (self *MetathingsDevicedService) GetDeviceByModule(ctx context.Context, req
 	var err error
 
 	mdl_id_str := req.GetModule().GetId().GetValue()
+	logger := self.get_logger().WithField("module", mdl_id_str)
+
 	if dev_s, err = self.storage.GetDeviceByModuleId(ctx, mdl_id_str); err != nil {
-		self.logger.WithError(err).Errorf("failed to get device by module id in storage")
+		logger.WithError(err).Errorf("failed to get device by module id in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
@@ -43,9 +44,7 @@ func (self *MetathingsDevicedService) GetDeviceByModule(ctx context.Context, req
 		Device: copy_device(dev_s),
 	}
 
-	self.logger.WithFields(log.Fields{
-		"module_id": mdl_id_str,
-	}).Debugf("get device by module")
+	logger.Debugf("get device by module")
 
 	return res, nil
 }

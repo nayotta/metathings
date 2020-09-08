@@ -36,6 +36,8 @@ func (self *MetathingsDevicedService) ListObjects(ctx context.Context, req *pb.L
 	obj_s := parse_object(obj)
 	opt := &simple_storage.ListObjectsOption{}
 
+	logger := self.get_logger()
+
 	if recur := req.GetRecursive(); recur != nil {
 		opt.Recursive = recur.GetValue()
 	}
@@ -50,20 +52,22 @@ func (self *MetathingsDevicedService) ListObjects(ctx context.Context, req *pb.L
 
 	objs_s, err := self.simple_storage.ListObjects(obj_s, opt)
 	if err != nil {
-		self.logger.WithError(err).Errorf("failed to list objects in storage")
+		logger.WithError(err).Errorf("failed to list objects in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
+
+	logger = logger.WithFields(log.Fields{
+		"device":    obj_s.Device,
+		"object":    obj_s.FullName(),
+		"recursive": opt.Recursive,
+		"depth":     opt.Depth,
+	})
 
 	res := &pb.ListObjectsResponse{
 		Objects: copy_objects(objs_s),
 	}
 
-	self.logger.WithFields(log.Fields{
-		"device":    obj_s.Device,
-		"object":    obj_s.FullName(),
-		"recursive": opt.Recursive,
-		"depth":     opt.Depth,
-	}).Debugf("list objects")
+	logger.Debugf("list objects")
 
 	return res, nil
 }

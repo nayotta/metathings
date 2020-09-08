@@ -34,7 +34,7 @@ func (self *MetathingsDevicedService) AddDevicesToFirmwareHub(ctx context.Contex
 
 	fh := req.GetFirmwareHub()
 	fh_id_str := fh.GetId().GetValue()
-	logger := self.logger.WithField("firmware_hub", fh_id_str)
+	logger := self.get_logger().WithField("firmware_hub", fh_id_str)
 
 	var dev_ids_str []string
 	for _, dev := range req.GetDevices() {

@@ -37,7 +37,7 @@ func (self *MetathingsDevicedService) CreateFirmwareHub(ctx context.Context, req
 		fh_id_str = fh.GetId().GetValue()
 	}
 
-	logger := self.logger.WithFields(log.Fields{
+	logger := self.get_logger().WithFields(log.Fields{
 		"id": fh_id_str,
 	})
 

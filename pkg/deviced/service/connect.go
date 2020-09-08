@@ -17,9 +17,11 @@ func (self *MetathingsDevicedService) Connect(stream pb.DevicedService_ConnectSe
 	var conn connection.Connection
 	var err error
 
+	logger := self.get_logger()
+
 	ctx := stream.Context()
 	if dev_s, err = self.get_device_by_context(ctx); err != nil {
-		self.logger.WithError(err).Errorf("failed to get device by context in storage")
+		logger.WithError(err).Errorf("failed to get device by context in storage")
 		return status.Errorf(codes.Internal, err.Error())
 	}
 
@@ -30,24 +32,26 @@ func (self *MetathingsDevicedService) Connect(stream pb.DevicedService_ConnectSe
 		}
 	}()
 
+	logger = logger.WithFields(log.Fields{
+		"session": sess,
+		"device":  *dev_s.Id,
+		"kind":    *dev_s.Kind,
+		"name":    *dev_s.Name,
+	})
+
 	if conn, err = self.cc.BuildConnection(stream.Context(), dev_s, stream); err != nil {
-		self.logger.WithError(err).Errorf("failed to build connection")
+		logger.WithError(err).Errorf("failed to build connection")
 		return status.Errorf(codes.Internal, err.Error())
 	}
 	defer conn.Cleanup()
 
-	self.logger.WithFields(log.Fields{
-		"session":   sess,
-		"device_id": *dev_s.Id,
-		"kind":      *dev_s.Kind,
-		"name":      *dev_s.Name,
-	}).Debugf("build connection")
+	logger.Debugf("build connection")
 
 	<-conn.Wait()
-	self.logger.WithField("device_id", *dev_s.Id).Debugf("connection closed")
+	logger.Debugf("connection closed")
 
 	if err = conn.Err(); err != nil {
-		self.logger.WithError(err).Errorf("connect error")
+		logger.WithError(err).Errorf("connect error")
 		return status.Errorf(codes.Internal, err.Error())
 	}
 

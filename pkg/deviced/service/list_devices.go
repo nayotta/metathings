@@ -20,6 +20,8 @@ func (self *MetathingsDevicedService) ListDevices(ctx context.Context, req *pb.L
 	dev := req.GetDevice()
 	dev_s := &storage.Device{}
 
+	logger := self.get_logger()
+
 	id := dev.GetId()
 	if id != nil {
 		dev_s.Id = &id.Value
@@ -48,7 +50,7 @@ func (self *MetathingsDevicedService) ListDevices(ctx context.Context, req *pb.L
 	}
 
 	if devs_s, err = self.storage.ListDevices(ctx, dev_s); err != nil {
-		self.logger.WithError(err).Errorf("failed to list devices in storage")
+		logger.WithError(err).Errorf("failed to list devices in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
@@ -56,7 +58,7 @@ func (self *MetathingsDevicedService) ListDevices(ctx context.Context, req *pb.L
 		Devices: copy_devices(devs_s),
 	}
 
-	self.logger.Debugf("list devices")
+	logger.Debugf("list devices")
 
 	return res, nil
 }

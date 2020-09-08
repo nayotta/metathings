@@ -34,7 +34,7 @@ func (self *MetathingsDevicedService) put_object_streaming_send_pull_request_loo
 	sem chan struct{},
 	errs chan error,
 ) {
-	logger := self.logger
+	logger := self.get_logger()
 
 	defer func() {
 		close(quit)
@@ -89,7 +89,7 @@ func (self *MetathingsDevicedService) put_object_streaming_recv_push_response_lo
 	sem chan struct{},
 	errs chan error,
 ) {
-	logger := self.logger
+	logger := self.get_logger()
 
 	defer func() {
 		close(quit)
@@ -130,28 +130,30 @@ func (self *MetathingsDevicedService) put_object_streaming_recv_push_response_lo
 }
 
 func (self *MetathingsDevicedService) PutObjectStreaming(stm pb.DevicedService_PutObjectStreamingServer) error {
+	logger := self.get_logger()
+
 	req, err := stm.Recv()
 	if err != nil {
-		self.logger.WithError(err).Errorf("failed to recv metadata request")
+		logger.WithError(err).Errorf("failed to recv metadata request")
 		return status.Errorf(codes.Internal, err.Error())
 	}
 
 	md_req := req.GetMetadata()
 	if md_req == nil {
-		self.logger.WithError(err).Errorf("metadata is empty")
+		logger.WithError(err).Errorf("metadata is empty")
 		return status.Errorf(codes.InvalidArgument, err.Error())
 	}
 
 	obj := md_req.GetObject()
 	if obj == nil {
-		self.logger.WithError(err).Errorf("metadata.object is empty")
+		logger.WithError(err).Errorf("metadata.object is empty")
 		return status.Errorf(codes.InvalidArgument, err.Error())
 	}
 	obj_s := parse_object(obj)
 
 	sha1 := md_req.GetSha1()
 	if sha1 == nil {
-		self.logger.WithError(err).Errorf("metadata.sha1 is empty")
+		logger.WithError(err).Errorf("metadata.sha1 is empty")
 		return status.Errorf(codes.InvalidArgument, err.Error())
 	}
 	sha1_str := sha1.GetValue()
@@ -161,7 +163,7 @@ func (self *MetathingsDevicedService) PutObjectStreaming(stm pb.DevicedService_P
 		ChunkSize: self.opt.Methods.PutObjectStreaming.ChunkSize,
 	})
 	if err != nil {
-		self.logger.WithError(err).Errorf("failed to put object async")
+		logger.WithError(err).Errorf("failed to put object async")
 		return status.Errorf(codes.Internal, err.Error())
 	}
 
@@ -181,20 +183,22 @@ func (self *MetathingsDevicedService) PutObjectStreaming(stm pb.DevicedService_P
 
 	select {
 	case <-req_quit:
-		self.logger.Debugf("sync file")
+		logger.Debugf("sync file")
 	case <-res_quit:
-		self.logger.Debugf("sync file")
+		logger.Debugf("sync file")
 	case err := <-errs:
-		self.logger.WithError(err).Errorf("failed to sync file")
+		logger.WithError(err).Errorf("failed to sync file")
 		if err == ErrPutObjectStreamingTimeout {
 			return status.Errorf(codes.DeadlineExceeded, ErrPutObjectStreamingTimeout.Error())
 		}
 		return status.Errorf(codes.Internal, err.Error())
 	case <-time.After(time.Duration(self.opt.Methods.PutObjectStreaming.Timeout) * time.Second):
 		err = ErrPutObjectStreamingTimeout
-		self.logger.WithError(err).Errorf("failed to sync file")
+		logger.WithError(err).Errorf("failed to sync file")
 		return status.Errorf(codes.Internal, err.Error())
 	}
+
+	logger.Infof("put object streaming done")
 
 	return nil
 }

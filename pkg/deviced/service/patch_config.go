@@ -37,7 +37,7 @@ func (self *MetathingsDevicedService) PatchConfig(ctx context.Context, req *pb.P
 
 	cfg := req.GetConfig()
 	cfg_id_str := cfg.GetId().GetValue()
-	logger := self.logger.WithField("config", cfg_id_str)
+	logger := self.get_logger().WithField("config", cfg_id_str)
 
 	if alias := cfg.GetAlias(); alias != nil {
 		cfg_s.Alias = &alias.Value

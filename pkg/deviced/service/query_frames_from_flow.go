@@ -10,6 +10,7 @@ import (
 	pb_helper "github.com/nayotta/metathings/pkg/common/protobuf"
 	flow "github.com/nayotta/metathings/pkg/deviced/flow"
 	pb "github.com/nayotta/metathings/pkg/proto/deviced"
+	log "github.com/sirupsen/logrus"
 )
 
 func (self *MetathingsDevicedService) QueryFramesFromFlow(ctx context.Context, req *pb.QueryFramesFromFlowRequest) (*pb.QueryFramesFromFlowResponse, error) {
@@ -28,9 +29,13 @@ func (self *MetathingsDevicedService) QueryFramesFromFlow(ctx context.Context, r
 		end_at_r = pb_helper.ToTime(*req.GetTo())
 	}
 
+	logger := self.get_logger().WithFields(log.Fields{
+		"device": dev_id,
+	})
+
 	dev_s, err := self.storage.GetDevice(ctx, dev_id)
 	if err != nil {
-		self.logger.WithError(err).Errorf("failed to get device")
+		logger.WithError(err).Errorf("failed to get device")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
@@ -44,7 +49,7 @@ func (self *MetathingsDevicedService) QueryFramesFromFlow(ctx context.Context, r
 
 			f, err := self.new_flow(dev_id, *flw_s.Id)
 			if err != nil {
-				self.logger.WithError(err).Errorf("failed to new flow")
+				logger.WithError(err).Errorf("failed to new flow")
 				return nil, status.Errorf(codes.Internal, err.Error())
 			}
 			defer f.Close()
@@ -55,7 +60,7 @@ func (self *MetathingsDevicedService) QueryFramesFromFlow(ctx context.Context, r
 			})
 
 			if err != nil {
-				self.logger.WithError(err).Errorf("failed to query frame")
+				logger.WithError(err).Errorf("failed to query frame")
 				return nil, status.Errorf(codes.Internal, err.Error())
 			}
 
@@ -69,7 +74,7 @@ func (self *MetathingsDevicedService) QueryFramesFromFlow(ctx context.Context, r
 		}
 	}
 
-	self.logger.Debugf("query frame from flow")
+	logger.Debugf("query frame from flow")
 
 	return res, nil
 }

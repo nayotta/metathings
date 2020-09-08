@@ -35,7 +35,7 @@ func (self *MetathingsDevicedService) DeleteFirmwareHub(ctx context.Context, req
 	var err error
 
 	fh_id_str := req.GetFirmwareHub().GetId().GetValue()
-	logger := self.logger.WithField("id", fh_id_str)
+	logger := self.get_logger().WithField("id", fh_id_str)
 
 	if fh, err = self.storage.GetFirmwareHub(ctx, fh_id_str); err != nil {
 		logger.WithError(err).Errorf("failed to get firmware hub in storage")
