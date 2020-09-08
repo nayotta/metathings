@@ -31,7 +31,7 @@ func (self *MetathingsDevicedService) PatchFirmwareHub(ctx context.Context, req 
 
 	frm_hub := req.GetFirmwareHub()
 	frm_hub_id_str := frm_hub.GetId().GetValue()
-	logger := self.logger.WithField("firmware_hub", frm_hub_id_str)
+	logger := self.get_logger().WithField("firmware_hub", frm_hub_id_str)
 
 	if alias := frm_hub.GetAlias(); alias != nil {
 		frm_hub_s.Alias = &alias.Value

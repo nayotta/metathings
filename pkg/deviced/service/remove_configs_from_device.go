@@ -22,7 +22,7 @@ func (self *MetathingsDevicedService) RemoveConfigsFromDevice(ctx context.Contex
 
 	cfgs := req.GetConfigs()
 
-	logger := self.logger.WithField("device", dev_id_str)
+	logger := self.get_logger().WithField("device", dev_id_str)
 
 	var cfg_ids_str []string
 	for _, cfg := range cfgs {

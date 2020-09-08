@@ -33,7 +33,7 @@ func (self *MetathingsDevicedService) DeleteConfig(ctx context.Context, req *pb.
 
 	cfg_id_str := req.GetConfig().GetId().GetValue()
 
-	logger := self.logger.WithField("config", cfg_id_str)
+	logger := self.get_logger().WithField("config", cfg_id_str)
 
 	if err = self.storage.RemoveConfigFromDeviceByConfigId(ctx, cfg_id_str); err != nil {
 		logger.WithError(err).Errorf("failed to remove config form device by config id in storage")

@@ -8,6 +8,7 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	log "github.com/sirupsen/logrus"
 	otgorm "github.com/smacker/opentracing-gorm"
+	"github.com/stretchr/objx"
 
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 	storage_helper "github.com/nayotta/metathings/pkg/common/storage"
@@ -23,6 +24,10 @@ type StorageImpl struct {
 	logger  log.FieldLogger
 }
 
+func (self *StorageImpl) get_logger() log.FieldLogger {
+	return self.logger.WithField("#component", "storage")
+}
+
 func (self *StorageImpl) GetRootDBConn() *gorm.DB {
 	return self.root_db
 }
@@ -35,15 +40,20 @@ func (self *StorageImpl) GetDBConn(ctx context.Context) *gorm.DB {
 	return self.GetRootDBConn()
 }
 
-func (self *StorageImpl) get_flow(ctx context.Context, id string) (*Flow, error) {
+func (self *StorageImpl) get_flow(ctx context.Context, id string, optx objx.Map) (*Flow, error) {
 	var err error
 	flw := &Flow{}
 
-	if err = self.GetDBConn(ctx).First(flw, "id = ?", id).Error; err != nil {
+	conn := self.GetDBConn(ctx)
+	if fields := optx.Get("fields#flow").StringSlice(); len(fields) > 0 {
+		conn = conn.Select(fields)
+	}
+
+	if err = conn.First(flw, "id = ?", id).Error; err != nil {
 		return nil, err
 	}
 
-	flw.Device = &Device{Id: flw.DeviceId}
+	flw = wrap_flow(flw)
 
 	return flw, nil
 }
@@ -132,21 +142,22 @@ func (self *StorageImpl) get_flow_set(ctx context.Context, id string) (*FlowSet,
 	return flwst, nil
 }
 
-func (self *StorageImpl) list_flows_by_device_id(ctx context.Context, id string) ([]*Flow, error) {
+func (self *StorageImpl) list_flows_by_device_id(ctx context.Context, id string, optx objx.Map) ([]*Flow, error) {
 	var err error
 	var flws_t []*Flow
+	var flws []*Flow
 
-	if err = self.GetDBConn(ctx).Select("id").Find(&flws_t, "device_id = ?", id).Error; err != nil {
+	conn := self.GetDBConn(ctx)
+	if fields := optx.Get("fields#flow").StringSlice(); len(fields) > 0 {
+		conn = conn.Select(fields)
+	}
+
+	if err = conn.Find(&flws_t, "device_id = ?", id).Error; err != nil {
 		return nil, err
 	}
 
-	flws := []*Flow{}
-	for _, f := range flws_t {
-		if f, err = self.get_flow(ctx, *f.Id); err != nil {
-			return nil, err
-		}
-
-		flws = append(flws, f)
+	for _, flw := range flws_t {
+		flws = append(flws, wrap_flow(flw))
 	}
 
 	return flws, nil
@@ -179,7 +190,7 @@ func (self *StorageImpl) list_flows(ctx context.Context, flw *Flow) ([]*Flow, er
 
 	var flws []*Flow
 	for _, f = range flws_t {
-		if f, err = self.get_flow(ctx, *f.Id); err != nil {
+		if f, err = self.get_flow(ctx, *f.Id, nil); err != nil {
 			return nil, err
 		}
 
@@ -189,42 +200,70 @@ func (self *StorageImpl) list_flows(ctx context.Context, flw *Flow) ([]*Flow, er
 	return flws, nil
 }
 
-func (self *StorageImpl) get_module(ctx context.Context, id string) (*Module, error) {
+func (self *StorageImpl) get_module(ctx context.Context, id string, optx objx.Map) (*Module, error) {
 	var err error
 	mdl := &Module{}
 
-	if err = self.GetDBConn(ctx).First(mdl, "id = ?", id).Error; err != nil {
+	conn := self.GetDBConn(ctx)
+	if fields := optx.Get("fields#module").StringSlice(); len(fields) > 0 {
+		conn = conn.Select(fields)
+	}
+
+	if err = conn.First(mdl, "id = ?", id).Error; err != nil {
 		return nil, err
 	}
 
-	mdl.Device = &Device{Id: mdl.DeviceId}
+	mdl = wrap_module(mdl)
 
 	return mdl, nil
 }
 
-func (self *StorageImpl) list_modules_by_device_id(ctx context.Context, id string) ([]*Module, error) {
+func (self *StorageImpl) list_modules_by_device_id(ctx context.Context, id string, optx objx.Map) ([]*Module, error) {
 	var err error
-	var mdls_t []*Module
+	var mdls []*Module
+	var mdls_r []*Module
 
-	if err = self.GetDBConn(ctx).Select("id").Find(&mdls_t, "device_id = ?", id).Error; err != nil {
+	conn := self.GetDBConn(ctx)
+	if fields := optx.Get("fields#module").StringSlice(); len(fields) > 0 {
+		conn = conn.Select(fields)
+	}
+
+	if err = conn.Find(&mdls, "device_id = ?", id).Error; err != nil {
 		return nil, err
 	}
 
-	mdls := []*Module{}
-	for _, m := range mdls_t {
-		if m, err = self.get_module(ctx, *m.Id); err != nil {
-			return nil, err
-		}
-
-		mdls = append(mdls, m)
+	for _, mdl := range mdls {
+		mdl = wrap_module(mdl)
+		mdls_r = append(mdls_r, mdl)
 	}
 
-	return mdls, nil
+	return mdls_r, nil
 }
 
-func (self *StorageImpl) list_modules(ctx context.Context, mdl *Module) ([]*Module, error) {
+// func (self *StorageImpl) list_modules_by_device_id(ctx context.Context, id string, optx objx.Map) ([]*Module, error) {
+// 	var err error
+// 	var mdls_t []*Module
+
+// 	if err = self.GetDBConn(ctx).Select("id").Find(&mdls_t, "device_id = ?", id).Error; err != nil {
+// 		return nil, err
+// 	}
+
+// 	mdls := []*Module{}
+// 	for _, m := range mdls_t {
+// 		if m, err = self.get_module(ctx, *m.Id); err != nil {
+// 			return nil, err
+// 		}
+
+// 		mdls = append(mdls, m)
+// 	}
+
+// 	return mdls, nil
+// }
+
+func (self *StorageImpl) list_modules(ctx context.Context, mdl *Module, optx objx.Map) ([]*Module, error) {
 	var err error
-	var mdls_t []*Module
+	var mdls []*Module
+	var mdls_r []*Module
 
 	m := &Module{}
 	if mdl.Id != nil {
@@ -255,46 +294,54 @@ func (self *StorageImpl) list_modules(ctx context.Context, mdl *Module) ([]*Modu
 		m.Alias = mdl.Alias
 	}
 
-	if err = self.GetDBConn(ctx).Select("id").Find(&mdls_t, m).Error; err != nil {
+	conn := self.GetDBConn(ctx)
+
+	if fields := optx.Get("fields#module").StringSlice(); len(fields) > 0 {
+		conn = conn.Select(fields)
+	}
+
+	if err = conn.Find(&mdls, m).Error; err != nil {
 		return nil, err
 	}
 
-	var mdls []*Module
-	for _, m = range mdls_t {
-		if m, err = self.get_module(ctx, *m.Id); err != nil {
-			return nil, err
-		}
-
-		mdls = append(mdls, m)
+	for _, mdl := range mdls {
+		mdls_r = append(mdls_r, wrap_module(mdl))
 	}
 
-	return mdls, nil
+	return mdls_r, nil
 }
 
-func (self *StorageImpl) internal_get_device(ctx context.Context, dev *Device) (*Device, error) {
+func (self *StorageImpl) internal_get_device(ctx context.Context, dev *Device, optx objx.Map) (*Device, error) {
 	var err error
 
-	if dev.Modules, err = self.list_modules_by_device_id(ctx, *dev.Id); err != nil {
+	if dev.Modules, err = self.list_modules_by_device_id(ctx, *dev.Id, optx); err != nil {
 		return nil, err
 	}
 
-	if dev.Flows, err = self.list_flows_by_device_id(ctx, *dev.Id); err != nil {
+	if dev.Flows, err = self.list_flows_by_device_id(ctx, *dev.Id, optx); err != nil {
 		return nil, err
 	}
 
 	return dev, nil
 }
 
-func (self *StorageImpl) get_device(ctx context.Context, id string) (*Device, error) {
+func (self *StorageImpl) get_device(ctx context.Context, id string, optx objx.Map) (*Device, error) {
 	var err error
 	dev := &Device{}
 
-	if err = self.GetDBConn(ctx).First(dev, "id = ?", id).Error; err != nil {
+	conn := self.GetDBConn(ctx)
+	if fields := optx.Get("fields#device").StringSlice(); len(fields) > 0 {
+		conn = conn.Select(fields)
+	}
+
+	if err = conn.First(dev, "id = ?", id).Error; err != nil {
 		return nil, err
 	}
 
-	if dev, err = self.internal_get_device(ctx, dev); err != nil {
-		return nil, err
+	if skip_internal_query := optx.Get("skip_internal_query").Bool(); !skip_internal_query {
+		if dev, err = self.internal_get_device(ctx, dev, optx); err != nil {
+			return nil, err
+		}
 	}
 
 	return dev, nil
@@ -308,7 +355,7 @@ func (self *StorageImpl) get_device_by_module_id(ctx context.Context, id string)
 		return nil, err
 	}
 
-	return self.get_device(ctx, *mdl.DeviceId)
+	return self.get_device(ctx, *mdl.DeviceId, nil)
 }
 
 func (self *StorageImpl) list_devices(ctx context.Context, dev *Device) ([]*Device, error) {
@@ -342,7 +389,7 @@ func (self *StorageImpl) list_devices(ctx context.Context, dev *Device) ([]*Devi
 
 	var devs []*Device
 	for _, d = range devs_t {
-		if d, err = self.get_device(ctx, *d.Id); err != nil {
+		if d, err = self.get_device(ctx, *d.Id, nil); err != nil {
 			return nil, err
 		}
 
@@ -519,44 +566,11 @@ func (self *StorageImpl) list_view_devices_by_firmware_hub_id(ctx context.Contex
 	return devs, nil
 }
 
-func (self *StorageImpl) CreateDevice(ctx context.Context, dev *Device) (*Device, error) {
-	var err error
-
-	if err = self.GetDBConn(ctx).Create(dev).Error; err != nil {
-		self.logger.WithError(err).Debugf("failed to create device")
-		return nil, err
-	}
-
-	if dev.ExtraHelper != nil {
-		if err = storage_helper.UpdateExtra(self.GetDBConn(ctx), &Device{Id: dev.Id}, dev.ExtraHelper); err != nil {
-			self.logger.WithError(err).Debugf("failed to update extra field")
-		}
-	}
-
-	if dev, err = self.get_device(ctx, *dev.Id); err != nil {
-		self.logger.WithError(err).Debugf("failed to get device")
-		return nil, err
-	}
-
-	self.logger.WithField("id", *dev.Id).Debugf("create device")
-
-	return dev, nil
-}
-
-func (self *StorageImpl) DeleteDevice(ctx context.Context, id string) error {
-	if err := self.GetDBConn(ctx).Delete(&Device{}, "id = ?", id).Error; err != nil {
-		self.logger.WithError(err).Debugf("failed to delete device")
-		return err
-	}
-
-	self.logger.WithField("id", id).Debugf("delete device")
-
-	return nil
-}
-
-func (self *StorageImpl) PatchDevice(ctx context.Context, id string, device *Device) (*Device, error) {
+func (self *StorageImpl) modify_device(ctx context.Context, id string, device *Device) error {
 	var err error
 	var dev Device
+
+	logger := self.get_logger().WithField("device", id)
 
 	if device.Alias != nil {
 		dev.Alias = device.Alias
@@ -571,98 +585,19 @@ func (self *StorageImpl) PatchDevice(ctx context.Context, id string, device *Dev
 	}
 
 	if err = self.GetDBConn(ctx).Model(&Device{Id: &id}).Update(dev).Error; err != nil {
-		self.logger.WithError(err).Debugf("failed to patch device")
-		return nil, err
+		return err
 	}
 
 	if device.ExtraHelper != nil {
 		if err = storage_helper.UpdateExtra(self.GetDBConn(ctx), &Device{Id: &id}, device.ExtraHelper); err != nil {
-			self.logger.WithError(err).Debugf("failed to update extra field")
+			logger.WithError(err).Debugf("failed to update extra field")
 		}
 	}
-
-	if device, err = self.get_device(ctx, id); err != nil {
-		self.logger.WithError(err).Debugf("failed to get device")
-		return nil, err
-	}
-
-	self.logger.WithField("id", id).Debugf("patch device")
-
-	return device, nil
-}
-
-func (self *StorageImpl) GetDevice(ctx context.Context, id string) (*Device, error) {
-	var dev *Device
-	var err error
-
-	if dev, err = self.get_device(ctx, id); err != nil {
-		self.logger.WithError(err).Debugf("failed to get device")
-		return nil, err
-	}
-
-	self.logger.WithField("id", id).Debugf("get device")
-
-	return dev, nil
-}
-
-func (self *StorageImpl) ListDevices(ctx context.Context, dev *Device) ([]*Device, error) {
-	var devs []*Device
-	var err error
-
-	if devs, err = self.list_devices(ctx, dev); err != nil {
-		self.logger.WithError(err).Debugf("failed to list devices")
-		return nil, err
-	}
-
-	self.logger.Debugf("list devices")
-
-	return devs, nil
-}
-
-func (self *StorageImpl) GetDeviceByModuleId(ctx context.Context, id string) (*Device, error) {
-	var dev *Device
-	var err error
-
-	if dev, err = self.get_device_by_module_id(ctx, id); err != nil {
-		self.logger.WithError(err).Debugf("failed to get device by module id")
-		return nil, err
-	}
-
-	return dev, nil
-}
-
-func (self *StorageImpl) CreateModule(ctx context.Context, mdl *Module) (*Module, error) {
-	var err error
-
-	if err = self.GetDBConn(ctx).Create(mdl).Error; err != nil {
-		self.logger.WithError(err).Debugf("failed to create module")
-		return nil, err
-	}
-
-	if mdl, err = self.get_module(ctx, *mdl.Id); err != nil {
-		self.logger.WithError(err).Debugf("failed to get module")
-		return nil, err
-	}
-
-	self.logger.WithField("id", *mdl.Id).Debugf("create module")
-
-	return mdl, nil
-}
-
-func (self *StorageImpl) DeleteModule(ctx context.Context, id string) error {
-	var err error
-
-	if err = self.GetDBConn(ctx).Delete(&Module{}, "id = ?", id).Error; err != nil {
-		self.logger.WithError(err).Debugf("failed to delete module")
-		return err
-	}
-
-	self.logger.WithField("id", id).Debugf("delete module")
 
 	return nil
 }
 
-func (self *StorageImpl) PatchModule(ctx context.Context, id string, mdl *Module) (*Module, error) {
+func (self *StorageImpl) modify_module(ctx context.Context, id string, mdl *Module) error {
 	var err error
 	var m Module
 
@@ -679,30 +614,245 @@ func (self *StorageImpl) PatchModule(ctx context.Context, id string, mdl *Module
 	}
 
 	if err = self.GetDBConn(ctx).Model(&Module{Id: &id}).Update(m).Error; err != nil {
-		self.logger.WithError(err).Debugf("failed to patch module")
+		return err
+	}
+
+	return nil
+}
+
+func (self *StorageImpl) CreateDevice(ctx context.Context, dev *Device) (*Device, error) {
+	var err error
+
+	logger := self.get_logger().WithField("device", *dev.Id)
+
+	if err = self.GetDBConn(ctx).Create(dev).Error; err != nil {
+		logger.WithError(err).Debugf("failed to create device")
 		return nil, err
 	}
 
-	if mdl, err = self.get_module(ctx, id); err != nil {
-		self.logger.WithError(err).Debugf("failed to get module")
+	if dev.ExtraHelper != nil {
+		if err = storage_helper.UpdateExtra(self.GetDBConn(ctx), &Device{Id: dev.Id}, dev.ExtraHelper); err != nil {
+			logger.WithError(err).Debugf("failed to update extra field")
+		}
+	}
+
+	if dev, err = self.get_device(ctx, *dev.Id, nil); err != nil {
+		logger.WithError(err).Debugf("failed to get device")
 		return nil, err
 	}
 
-	self.logger.WithField("id", id).Debugf("patch module")
+	logger.Debugf("create device")
+
+	return dev, nil
+}
+
+func (self *StorageImpl) DeleteDevice(ctx context.Context, id string) error {
+	logger := self.get_logger().WithField("device", id)
+
+	if err := self.GetDBConn(ctx).Delete(&Device{}, "id = ?", id).Error; err != nil {
+		logger.WithError(err).Debugf("failed to delete device")
+		return err
+	}
+
+	logger.Debugf("delete device")
+
+	return nil
+}
+
+func (self *StorageImpl) PatchDevice(ctx context.Context, id string, device *Device) (*Device, error) {
+	var err error
+
+	logger := self.get_logger().WithField("device", id)
+
+	if err = self.modify_device(ctx, id, device); err != nil {
+		logger.WithError(err).Debugf("failed to modify device")
+		return nil, err
+	}
+
+	if device, err = self.get_device(ctx, id, nil); err != nil {
+		logger.WithError(err).Debugf("failed to get device")
+		return nil, err
+	}
+
+	logger.Debugf("patch device")
+
+	return device, nil
+}
+
+func (self *StorageImpl) ModifyDevice(ctx context.Context, id string, device *Device) error {
+	var err error
+
+	logger := self.get_logger().WithField("device", id)
+
+	if err = self.modify_device(ctx, id, device); err != nil {
+		logger.WithError(err).Debugf("failed to modify device")
+		return err
+	}
+
+	logger.Debugf("modify device")
+
+	return nil
+}
+
+func (self *StorageImpl) GetDevice(ctx context.Context, id string, opts ...GetDeviceOption) (*Device, error) {
+	var dev *Device
+	var err error
+
+	o := map[string]interface{}{}
+	for _, opt := range opts {
+		opt(o)
+	}
+	ox := objx.New(o)
+
+	logger := self.get_logger().WithField("device", id)
+
+	if dev, err = self.get_device(ctx, id, ox); err != nil {
+		logger.WithError(err).Debugf("failed to get device")
+		return nil, err
+	}
+
+	logger.Debugf("get device")
+
+	return dev, nil
+}
+
+func (self *StorageImpl) ListDevices(ctx context.Context, dev *Device) ([]*Device, error) {
+	var devs []*Device
+	var err error
+
+	logger := self.get_logger()
+
+	if devs, err = self.list_devices(ctx, dev); err != nil {
+		logger.WithError(err).Debugf("failed to list devices")
+		return nil, err
+	}
+
+	logger.Debugf("list devices")
+
+	return devs, nil
+}
+
+func (self *StorageImpl) GetDeviceByModuleId(ctx context.Context, id string) (*Device, error) {
+	var dev *Device
+	var err error
+
+	logger := self.get_logger().WithField("module", id)
+
+	if dev, err = self.get_device_by_module_id(ctx, id); err != nil {
+		logger.WithError(err).Debugf("failed to get device by module id")
+		return nil, err
+	}
+
+	logger.Debugf("get device by module")
+
+	return dev, nil
+}
+
+func (self *StorageImpl) ListModulesByDeviceId(ctx context.Context, dev_id string, opts ...ListModulesByDeviceIdOption) ([]*Module, error) {
+	var mdls []*Module
+	var err error
+
+	o := map[string]interface{}{}
+	for _, opt := range opts {
+		opt(o)
+	}
+	ox := objx.New(o)
+
+	logger := self.get_logger().WithField("device", dev_id)
+
+	if mdls, err = self.list_modules_by_device_id(ctx, dev_id, ox); err != nil {
+		logger.WithError(err).Debugf("failed to list modules by device id")
+		return nil, err
+	}
+
+	return mdls, nil
+}
+
+func (self *StorageImpl) CreateModule(ctx context.Context, mdl *Module) (*Module, error) {
+	var err error
+
+	logger := self.get_logger().WithFields(log.Fields{
+		"module": *mdl.Id,
+		"device": *mdl.DeviceId,
+	})
+
+	if err = self.GetDBConn(ctx).Create(mdl).Error; err != nil {
+		logger.WithError(err).Debugf("failed to create module")
+		return nil, err
+	}
+
+	if mdl, err = self.get_module(ctx, *mdl.Id, nil); err != nil {
+		logger.WithError(err).Debugf("failed to get module")
+		return nil, err
+	}
+
+	logger.Debugf("create module")
 
 	return mdl, nil
+}
+
+func (self *StorageImpl) DeleteModule(ctx context.Context, id string) error {
+	var err error
+
+	logger := self.get_logger().WithField("module", id)
+
+	if err = self.GetDBConn(ctx).Delete(&Module{}, "id = ?", id).Error; err != nil {
+		logger.WithError(err).Debugf("failed to delete module")
+		return err
+	}
+
+	logger.Debugf("delete module")
+
+	return nil
+}
+
+func (self *StorageImpl) PatchModule(ctx context.Context, id string, mdl *Module) (*Module, error) {
+	var err error
+
+	logger := self.get_logger().WithField("module", id)
+
+	if err = self.modify_module(ctx, id, mdl); err != nil {
+		logger.WithError(err).Debugf("failed to modify module")
+		return nil, err
+	}
+
+	if mdl, err = self.get_module(ctx, id, nil); err != nil {
+		logger.WithError(err).Debugf("failed to get module")
+		return nil, err
+	}
+
+	logger.Debugf("patch module")
+
+	return mdl, nil
+}
+
+func (self *StorageImpl) ModifyModule(ctx context.Context, id string, mdl *Module) error {
+	var err error
+
+	logger := self.get_logger().WithField("module", id)
+
+	if err = self.modify_module(ctx, id, mdl); err != nil {
+		logger.WithError(err).Debugf("failed to modify module")
+		return err
+	}
+
+	logger.Debugf("modify module")
+
+	return nil
 }
 
 func (self *StorageImpl) GetModule(ctx context.Context, id string) (*Module, error) {
 	var mdl *Module
 	var err error
 
-	if mdl, err = self.get_module(ctx, id); err != nil {
-		self.logger.WithError(err).Debugf("failed to get module")
+	logger := self.get_logger().WithField("module", id)
+
+	if mdl, err = self.get_module(ctx, id, nil); err != nil {
+		logger.WithError(err).Debugf("failed to get module")
 		return nil, err
 	}
 
-	self.logger.WithField("id", id).Debugf("get module")
+	logger.Debugf("get module")
 
 	return mdl, nil
 }
@@ -711,12 +861,14 @@ func (self *StorageImpl) ListModules(ctx context.Context, mdl *Module) ([]*Modul
 	var mdls []*Module
 	var err error
 
-	if mdls, err = self.list_modules(ctx, mdl); err != nil {
-		self.logger.WithError(err).Debugf("failed to list modules")
+	logger := self.get_logger()
+
+	if mdls, err = self.list_modules(ctx, mdl, nil); err != nil {
+		logger.WithError(err).Debugf("failed to list modules")
 		return nil, err
 	}
 
-	self.logger.Debugf("list modules")
+	logger.Debugf("list modules")
 
 	return mdls, nil
 }
@@ -724,17 +876,19 @@ func (self *StorageImpl) ListModules(ctx context.Context, mdl *Module) ([]*Modul
 func (self *StorageImpl) CreateFlow(ctx context.Context, flw *Flow) (*Flow, error) {
 	var err error
 
+	logger := self.get_logger().WithField("flow", *flw.Id)
+
 	if err = self.GetDBConn(ctx).Create(flw).Error; err != nil {
-		self.logger.WithError(err).Debugf("failed to create flow")
+		logger.WithError(err).Debugf("failed to create flow")
 		return nil, err
 	}
 
-	if flw, err = self.get_flow(ctx, *flw.Id); err != nil {
-		self.logger.WithError(err).Debugf("failed to get flow")
+	if flw, err = self.get_flow(ctx, *flw.Id, nil); err != nil {
+		logger.WithError(err).Debugf("failed to get flow")
 		return nil, err
 	}
 
-	self.logger.WithField("id", *flw.Id).Debugf("create flow")
+	logger.Debugf("create flow")
 
 	return flw, nil
 }
@@ -742,12 +896,14 @@ func (self *StorageImpl) CreateFlow(ctx context.Context, flw *Flow) (*Flow, erro
 func (self *StorageImpl) DeleteFlow(ctx context.Context, id string) error {
 	var err error
 
+	logger := self.get_logger().WithField("device", id)
+
 	if err = self.GetDBConn(ctx).Delete(&Flow{}, "id = ?", id).Error; err != nil {
-		self.logger.WithError(err).Debugf("failed to delete flow")
+		logger.WithError(err).Debugf("failed to delete flow")
 		return err
 	}
 
-	self.logger.WithField("id", id).Debugf("delete flow")
+	logger.Debugf("delete flow")
 
 	return nil
 }
@@ -756,21 +912,23 @@ func (self *StorageImpl) PatchFlow(ctx context.Context, id string, flw *Flow) (*
 	var err error
 	var f Flow
 
+	logger := self.get_logger().WithField("flow", id)
+
 	if flw.Alias != nil {
 		f.Alias = flw.Alias
 	}
 
 	if err = self.GetDBConn(ctx).Model(&Flow{Id: &id}).Update(f).Error; err != nil {
-		self.logger.WithError(err).Debugf("failed to patch flow")
+		logger.WithError(err).Debugf("failed to patch flow")
 		return nil, err
 	}
 
-	if flw, err = self.get_flow(ctx, id); err != nil {
-		self.logger.WithError(err).Debugf("failed to get flow")
+	if flw, err = self.get_flow(ctx, id, nil); err != nil {
+		logger.WithError(err).Debugf("failed to get flow")
 		return nil, err
 	}
 
-	self.logger.WithField("id", id).Debugf("patch flow")
+	logger.Debugf("patch flow")
 
 	return flw, nil
 }
@@ -779,12 +937,14 @@ func (self *StorageImpl) GetFlow(ctx context.Context, id string) (*Flow, error) 
 	var flw *Flow
 	var err error
 
-	if flw, err = self.get_flow(ctx, id); err != nil {
-		self.logger.WithError(err).Debugf("failed to get flow")
+	logger := self.get_logger().WithField("flow", id)
+
+	if flw, err = self.get_flow(ctx, id, nil); err != nil {
+		logger.WithError(err).Debugf("failed to get flow")
 		return nil, err
 	}
 
-	self.logger.WithField("id", id).Debugf("get flow")
+	logger.Debugf("get flow")
 
 	return flw, nil
 }
@@ -793,12 +953,14 @@ func (self *StorageImpl) ListFlows(ctx context.Context, flw *Flow) ([]*Flow, err
 	var flws []*Flow
 	var err error
 
+	logger := self.get_logger()
+
 	if flws, err = self.list_flows(ctx, flw); err != nil {
-		self.logger.WithError(err).Debugf("failed to list flows")
+		logger.WithError(err).Debugf("failed to list flows")
 		return nil, err
 	}
 
-	self.logger.Debugf("list flows")
+	logger.Debugf("list flows")
 
 	return flws, nil
 }
@@ -806,28 +968,32 @@ func (self *StorageImpl) ListFlows(ctx context.Context, flw *Flow) ([]*Flow, err
 func (self *StorageImpl) CreateFlowSet(ctx context.Context, flwst *FlowSet) (*FlowSet, error) {
 	var err error
 
+	logger := self.get_logger().WithField("flow_set", *flwst.Id)
+
 	if err = self.GetDBConn(ctx).Create(flwst).Error; err != nil {
-		self.logger.WithError(err).Debugf("failed to create flow set")
+		logger.WithError(err).Debugf("failed to create flow set")
 		return nil, err
 	}
 
 	if flwst, err = self.get_flow_set(ctx, *flwst.Id); err != nil {
-		self.logger.WithError(err).Debugf("failed to get flow set")
+		logger.WithError(err).Debugf("failed to get flow set")
 		return nil, err
 	}
 
-	self.logger.WithField("id", *flwst.Id).Debugf("create flow set")
+	logger.Debugf("create flow set")
 
 	return flwst, nil
 }
 
 func (self *StorageImpl) DeleteFlowSet(ctx context.Context, id string) error {
+	logger := self.get_logger().WithField("flow_set", id)
+
 	if err := self.GetDBConn(ctx).Delete(&FlowSet{}, "id = ?", id).Error; err != nil {
-		self.logger.WithError(err).Debugf("failed to delete flow set")
+		logger.WithError(err).Debugf("failed to delete flow set")
 		return err
 	}
 
-	self.logger.WithField("id", id).Debugf("delete flow set")
+	logger.Debugf("delete flow set")
 
 	return nil
 }
@@ -836,21 +1002,23 @@ func (self *StorageImpl) PatchFlowSet(ctx context.Context, id string, flwst *Flo
 	var err error
 	var fs FlowSet
 
+	logger := self.get_logger().WithField("flow_set", id)
+
 	if flwst.Alias != nil {
 		fs.Alias = flwst.Alias
 	}
 
 	if err = self.GetDBConn(ctx).Model(&FlowSet{Id: &id}).Update(fs).Error; err != nil {
-		self.logger.WithError(err).Debugf("failed to patch flow set")
+		logger.WithError(err).Debugf("failed to patch flow set")
 		return nil, err
 	}
 
 	if flwst, err = self.get_flow_set(ctx, id); err != nil {
-		self.logger.WithError(err).Debugf("failed to get flow set")
+		logger.WithError(err).Debugf("failed to get flow set")
 		return nil, err
 	}
 
-	self.logger.WithField("id", id).Debugf("patch flow set")
+	logger.Debugf("patch flow set")
 
 	return flwst, nil
 }
@@ -859,12 +1027,14 @@ func (self *StorageImpl) GetFlowSet(ctx context.Context, id string) (*FlowSet, e
 	var flwst *FlowSet
 	var err error
 
+	logger := self.get_logger().WithField("flow_set", id)
+
 	if flwst, err = self.get_flow_set(ctx, id); err != nil {
-		self.logger.WithError(err).Debugf("failed to get flow set")
+		logger.WithError(err).Debugf("failed to get flow set")
 		return nil, err
 	}
 
-	self.logger.WithField("id", id).Debugf("get flow set")
+	logger.Debugf("get flow set")
 
 	return flwst, nil
 }
@@ -873,12 +1043,14 @@ func (self *StorageImpl) ListFlowSets(ctx context.Context, flwst *FlowSet) ([]*F
 	var flwsts []*FlowSet
 	var err error
 
+	logger := self.get_logger()
+
 	if flwsts, err = self.list_flow_sets(ctx, flwst); err != nil {
-		self.logger.WithError(err).Debugf("failed to list flow sets")
+		logger.WithError(err).Debugf("failed to list flow sets")
 		return nil, err
 	}
 
-	self.logger.Debugf("list flow sets")
+	logger.Debugf("list flow sets")
 
 	return flwsts, nil
 }
@@ -887,45 +1059,51 @@ func (self *StorageImpl) ListViewFlowSetsByFlowId(ctx context.Context, id string
 	var flwsts []*FlowSet
 	var err error
 
+	logger := self.get_logger().WithField("flow", id)
+
 	if flwsts, err = self.list_view_flow_sets_by_flow_id(ctx, id); err != nil {
-		self.logger.WithError(err).Debugf("failed to list flow sets by flow id")
+		logger.WithError(err).Debugf("failed to list flow sets by flow id")
 		return nil, err
 	}
 
-	self.logger.WithField("flow", id).Debugf("list flow sets by flow id")
+	logger.Debugf("list flow sets by flow id")
 
 	return flwsts, nil
 }
 
 func (self *StorageImpl) AddFlowToFlowSet(ctx context.Context, flwst_id, flw_id string) error {
+	logger := self.get_logger().WithFields(log.Fields{
+		"flow_set": flwst_id,
+		"flow":     flw_id,
+	})
+
 	m := &FlowFlowSetMapping{
 		FlowSetId: &flwst_id,
 		FlowId:    &flw_id,
 	}
 
 	if err := self.GetDBConn(ctx).Create(m).Error; err != nil {
-		self.logger.WithError(err).Debugf("failed to add flow to flow set")
+		logger.WithError(err).Debugf("failed to add flow to flow set")
 		return err
 	}
 
-	self.logger.WithFields(log.Fields{
-		"flow_id":     flw_id,
-		"flow_set_id": flwst_id,
-	}).Debugf("add flow to flow set")
+	logger.Debugf("add flow to flow set")
 
 	return nil
 }
 
 func (self *StorageImpl) RemoveFlowFromFlowSet(ctx context.Context, flwst_id, flw_id string) error {
+	logger := self.get_logger().WithFields(log.Fields{
+		"flow_set": flwst_id,
+		"flow":     flw_id,
+	})
+
 	if err := self.GetDBConn(ctx).Delete(&FlowFlowSetMapping{}, "flow_set_id = ? and flow_id = ?", flwst_id, flw_id).Error; err != nil {
-		self.logger.WithError(err).Debugf("failed to remove flow from flow set")
+		logger.WithError(err).Debugf("failed to remove flow from flow set")
 		return err
 	}
 
-	self.logger.WithFields(log.Fields{
-		"flow_set_id": flwst_id,
-		"flow_id":     flw_id,
-	}).Debugf("remove flow from flow set")
+	logger.Debugf("remove flow from flow set")
 
 	return nil
 }
@@ -933,28 +1111,32 @@ func (self *StorageImpl) RemoveFlowFromFlowSet(ctx context.Context, flwst_id, fl
 func (self *StorageImpl) CreateConfig(ctx context.Context, cfg *Config) (*Config, error) {
 	var err error
 
+	logger := self.get_logger().WithField("config", *cfg.Id)
+
 	if err = self.GetDBConn(ctx).Create(cfg).Error; err != nil {
-		self.logger.WithError(err).Debugf("failed to create config")
+		logger.WithError(err).Debugf("failed to create config")
 		return nil, err
 	}
 
 	if cfg, err = self.get_config(ctx, *cfg.Id); err != nil {
-		self.logger.WithError(err).Debugf("failed to get config")
+		logger.WithError(err).Debugf("failed to get config")
 		return nil, err
 	}
 
-	self.logger.WithField("id", *cfg.Id).Debugf("create config")
+	logger.Debugf("create config")
 
 	return cfg, nil
 }
 
 func (self *StorageImpl) DeleteConfig(ctx context.Context, id string) error {
+	logger := self.get_logger().WithField("config", id)
+
 	if err := self.GetDBConn(ctx).Delete(&Config{}, "id = ?", id).Error; err != nil {
-		self.logger.WithError(err).Debugf("failed to delete config")
+		logger.WithError(err).Debugf("failed to delete config")
 		return err
 	}
 
-	self.logger.WithField("id", id).Debugf("delete device")
+	logger.Debugf("delete device")
 
 	return nil
 }
@@ -962,6 +1144,8 @@ func (self *StorageImpl) DeleteConfig(ctx context.Context, id string) error {
 func (self *StorageImpl) PatchConfig(ctx context.Context, id string, config *Config) (*Config, error) {
 	var err error
 	var cfg Config
+
+	logger := self.get_logger().WithField("config", id)
 
 	if config.Alias != nil {
 		cfg.Alias = config.Alias
@@ -972,16 +1156,16 @@ func (self *StorageImpl) PatchConfig(ctx context.Context, id string, config *Con
 	}
 
 	if err = self.GetDBConn(ctx).Model(&Config{Id: &id}).Update(cfg).Error; err != nil {
-		self.logger.WithError(err).Debugf("failed to patch config")
+		logger.WithError(err).Debugf("failed to patch config")
 		return nil, err
 	}
 
 	if config, err = self.get_config(ctx, id); err != nil {
-		self.logger.WithError(err).Debugf("failed to get config")
+		logger.WithError(err).Debugf("failed to get config")
 		return nil, err
 	}
 
-	self.logger.WithField("id", id).Debugf("patch config")
+	logger.Debugf("patch config")
 
 	return config, nil
 }
@@ -990,12 +1174,14 @@ func (self *StorageImpl) GetConfig(ctx context.Context, id string) (*Config, err
 	var cfg *Config
 	var err error
 
+	logger := self.get_logger().WithField("config", id)
+
 	if cfg, err = self.get_config(ctx, id); err != nil {
-		self.logger.WithError(err).Debugf("failed to get config")
+		logger.WithError(err).Debugf("failed to get config")
 		return nil, err
 	}
 
-	self.logger.WithField("id", id).Debugf("get config")
+	logger.Debugf("get config")
 
 	return cfg, nil
 }
@@ -1004,12 +1190,14 @@ func (self *StorageImpl) ListConfigs(ctx context.Context, cfg *Config) ([]*Confi
 	var cfgs []*Config
 	var err error
 
+	logger := self.get_logger()
+
 	if cfgs, err = self.list_configs(ctx, cfg); err != nil {
-		self.logger.WithError(err).Debugf("failed to list configs")
+		logger.WithError(err).Debugf("failed to list configs")
 		return nil, err
 	}
 
-	self.logger.Debugf("list configs")
+	logger.Debugf("list configs")
 
 	return cfgs, nil
 }
@@ -1020,40 +1208,46 @@ func (self *StorageImpl) AddConfigToDevice(ctx context.Context, dev_id, cfg_id s
 		ConfigId: &cfg_id,
 	}
 
+	logger := self.get_logger().WithFields(log.Fields{
+		"device": dev_id,
+		"config": cfg_id,
+	})
+
 	if err := self.GetDBConn(ctx).Create(m).Error; err != nil {
-		self.logger.WithError(err).Debugf("failed to add config to device")
+		logger.WithError(err).Debugf("failed to add config to device")
 		return err
 	}
 
-	self.logger.WithFields(log.Fields{
-		"config_id": cfg_id,
-		"device_id": dev_id,
-	}).Debugf("add config to device")
+	logger.Debugf("add config to device")
 
 	return nil
 }
 
 func (self *StorageImpl) RemoveConfigFromDevice(ctx context.Context, dev_id, cfg_id string) error {
+	logger := self.get_logger().WithFields(log.Fields{
+		"device": dev_id,
+		"config": cfg_id,
+	})
+
 	if err := self.GetDBConn(ctx).Delete(&DeviceConfigMapping{}, "device_id = ? and config_id = ?", dev_id, cfg_id).Error; err != nil {
-		self.logger.WithError(err).Debugf("failed to remove config from device")
+		logger.WithError(err).Debugf("failed to remove config from device")
 		return err
 	}
 
-	self.logger.WithFields(log.Fields{
-		"config_id": cfg_id,
-		"device_id": dev_id,
-	}).Debugf("remove config from device")
+	logger.Debugf("remove config from device")
 
 	return nil
 }
 
 func (self *StorageImpl) RemoveConfigFromDeviceByConfigId(ctx context.Context, cfg_id string) error {
+	logger := self.get_logger().WithField("config", cfg_id)
+
 	if err := self.GetDBConn(ctx).Delete(&DeviceConfigMapping{}, "config_id = ?", cfg_id).Error; err != nil {
-		self.logger.WithError(err).Debugf("failed to remove config from device by config id")
+		logger.WithError(err).Debugf("failed to remove config from device by config id")
 		return err
 	}
 
-	self.logger.WithField("config_id", cfg_id).Debugf("remove config from device by config id")
+	logger.Debugf("remove config from device by config id")
 
 	return nil
 }
@@ -1062,19 +1256,21 @@ func (self *StorageImpl) ListConfigsByDeviceId(ctx context.Context, id string) (
 	var cfgs []*Config
 	var err error
 
+	logger := self.get_logger().WithField("device", id)
+
 	if cfgs, err = self.list_configs_by_device_id(ctx, id); err != nil {
-		self.logger.WithError(err).Debugf("failed to list configs by device id")
+		logger.WithError(err).Debugf("failed to list configs by device id")
 		return nil, err
 	}
 
-	self.logger.WithField("device", id).Debugf("list configs by device id")
+	logger.Debugf("list configs by device id")
 
 	return cfgs, nil
 }
 
 func (self *StorageImpl) CreateFirmwareHub(ctx context.Context, frm_hub *FirmwareHub) (*FirmwareHub, error) {
 	var err error
-	logger := self.logger.WithField("id", *frm_hub.Id)
+	logger := self.get_logger().WithField("id", *frm_hub.Id)
 
 	if err = self.GetDBConn(ctx).Create(frm_hub).Error; err != nil {
 		logger.WithError(err).Debugf("failed to create firmware hub")
@@ -1093,7 +1289,7 @@ func (self *StorageImpl) CreateFirmwareHub(ctx context.Context, frm_hub *Firmwar
 
 func (self *StorageImpl) DeleteFirmwareHub(ctx context.Context, id string) error {
 	var err error
-	logger := self.logger.WithField("id", id)
+	logger := self.get_logger().WithField("id", id)
 
 	if err = self.GetDBConn(ctx).Delete(&FirmwareHub{}, "id = ?", id).Error; err != nil {
 		logger.WithError(err).Debugf("failed to delete firmware hub")
@@ -1108,7 +1304,7 @@ func (self *StorageImpl) DeleteFirmwareHub(ctx context.Context, id string) error
 func (self *StorageImpl) PatchFirmwareHub(ctx context.Context, id string, firmware_hub *FirmwareHub) (*FirmwareHub, error) {
 	var err error
 	var fh FirmwareHub
-	logger := self.logger.WithField("id", id)
+	logger := self.get_logger().WithField("id", id)
 
 	if firmware_hub.Alias != nil {
 		fh.Alias = firmware_hub.Alias
@@ -1136,7 +1332,7 @@ func (self *StorageImpl) PatchFirmwareHub(ctx context.Context, id string, firmwa
 func (self *StorageImpl) GetFirmwareHub(ctx context.Context, id string) (*FirmwareHub, error) {
 	var err error
 	var fh *FirmwareHub
-	logger := self.logger.WithField("id", id)
+	logger := self.get_logger().WithField("id", id)
 
 	if fh, err = self.get_firmware_hub(ctx, id); err != nil {
 		if err == gorm.ErrRecordNotFound {
@@ -1156,7 +1352,7 @@ func (self *StorageImpl) GetFirmwareHub(ctx context.Context, id string) (*Firmwa
 func (self *StorageImpl) ListFirmwareHubs(ctx context.Context, frm_hub *FirmwareHub) ([]*FirmwareHub, error) {
 	var fhs []*FirmwareHub
 	var err error
-	logger := self.logger
+	logger := self.get_logger()
 
 	if fhs, err = self.list_firmware_hubs(ctx, frm_hub); err != nil {
 		logger.WithError(err).Debugf("failed to list firmware hubs")
@@ -1170,7 +1366,7 @@ func (self *StorageImpl) ListFirmwareHubs(ctx context.Context, frm_hub *Firmware
 
 func (self *StorageImpl) AddDeviceToFirmwareHub(ctx context.Context, frm_hub_id, dev_id string) error {
 	var err error
-	logger := self.logger.WithFields(log.Fields{
+	logger := self.get_logger().WithFields(log.Fields{
 		"firmware_hub": frm_hub_id,
 		"device":       dev_id,
 	})
@@ -1190,7 +1386,7 @@ func (self *StorageImpl) AddDeviceToFirmwareHub(ctx context.Context, frm_hub_id,
 
 func (self *StorageImpl) RemoveDeviceFromFirmwareHub(ctx context.Context, frm_hub_id, dev_id string) error {
 	var err error
-	logger := self.logger.WithFields(log.Fields{
+	logger := self.get_logger().WithFields(log.Fields{
 		"firmware_hub": frm_hub_id,
 		"device":       dev_id,
 	})
@@ -1206,7 +1402,7 @@ func (self *StorageImpl) RemoveDeviceFromFirmwareHub(ctx context.Context, frm_hu
 
 func (self *StorageImpl) CreateFirmwareDescriptor(ctx context.Context, frm_desc *FirmwareDescriptor) error {
 	var err error
-	logger := self.logger.WithFields(log.Fields{
+	logger := self.get_logger().WithFields(log.Fields{
 		"firmware_hub":        *frm_desc.FirmwareHubId,
 		"firmware_descriptor": *frm_desc.Id,
 	})
@@ -1223,7 +1419,7 @@ func (self *StorageImpl) CreateFirmwareDescriptor(ctx context.Context, frm_desc 
 
 func (self *StorageImpl) DeleteFirmwareDescriptor(ctx context.Context, frm_desc_id string) error {
 	var err error
-	logger := self.logger.WithField("id", frm_desc_id)
+	logger := self.get_logger().WithField("id", frm_desc_id)
 
 	if err = self.GetDBConn(ctx).Delete(&FirmwareDescriptor{}, "id = ?", frm_desc_id).Error; err != nil {
 		logger.WithError(err).Debugf("failed to delete firmware descriptor")
@@ -1237,7 +1433,7 @@ func (self *StorageImpl) DeleteFirmwareDescriptor(ctx context.Context, frm_desc_
 
 func (self *StorageImpl) RemoveAllDevicesInFirmwareHub(ctx context.Context, frm_hub_id string) error {
 	var err error
-	logger := self.logger.WithField("id", frm_hub_id)
+	logger := self.get_logger().WithField("id", frm_hub_id)
 
 	if err = self.GetDBConn(ctx).Delete(&DeviceFirmwareHubMapping{}, "firmware_hub_id = ?", frm_hub_id).Error; err != nil {
 		logger.WithError(err).Debugf("failed to remove all devices in firmware hub")
@@ -1252,7 +1448,7 @@ func (self *StorageImpl) RemoveAllDevicesInFirmwareHub(ctx context.Context, frm_
 func (self *StorageImpl) ListViewDevicesByFirmwareHubId(ctx context.Context, frm_hub_id string) ([]*Device, error) {
 	var devs []*Device
 	var err error
-	logger := self.logger.WithField("id", frm_hub_id)
+	logger := self.get_logger().WithField("id", frm_hub_id)
 
 	if devs, err = self.list_view_devices_by_firmware_hub_id(ctx, frm_hub_id); err != nil {
 		logger.WithError(err).Debugf("failed to list devices by firmware hub")
@@ -1266,7 +1462,7 @@ func (self *StorageImpl) ListViewDevicesByFirmwareHubId(ctx context.Context, frm
 
 func (self *StorageImpl) SetDeviceFirmwareDescriptor(ctx context.Context, dev_id, desc_id string) error {
 	var err error
-	logger := self.logger.WithFields(log.Fields{
+	logger := self.get_logger().WithFields(log.Fields{
 		"firmware_descriptor": desc_id,
 		"device":              dev_id,
 	})
@@ -1287,7 +1483,7 @@ func (self *StorageImpl) SetDeviceFirmwareDescriptor(ctx context.Context, dev_id
 func (self *StorageImpl) UnsetDeviceFirmwareDescriptor(ctx context.Context, dev_id string) error {
 	var err error
 
-	logger := self.logger.WithField("device", dev_id)
+	logger := self.get_logger().WithField("device", dev_id)
 
 	if err = self.GetDBConn(ctx).Delete(&DeviceFirmwareDescriptorMapping{}, "device_id = ?", dev_id).Error; err != nil {
 		logger.WithError(err).Debugf("failed to unset firmware descriptor from device")
@@ -1302,7 +1498,7 @@ func (self *StorageImpl) UnsetDeviceFirmwareDescriptor(ctx context.Context, dev_
 func (self *StorageImpl) GetDeviceFirmwareDescriptor(ctx context.Context, dev_id string) (*FirmwareDescriptor, error) {
 	var err error
 
-	logger := self.logger.WithField("device", dev_id)
+	logger := self.get_logger().WithField("device", dev_id)
 
 	var dfdm DeviceFirmwareDescriptorMapping
 	if err = self.GetDBConn(ctx).First(&dfdm, "device_id = ?", dev_id).Error; err != nil {
@@ -1326,7 +1522,7 @@ func (self *StorageImpl) FirmwareHubContainsDeviceAndFirmwareDescriptor(ctx cont
 	var cnt int
 	var err error
 
-	logger := self.logger.WithFields(log.Fields{
+	logger := self.get_logger().WithFields(log.Fields{
 		"device":              dev_id,
 		"firmware_descriptor": desc_id,
 	})

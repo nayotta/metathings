@@ -35,7 +35,7 @@ func (self *MetathingsDevicedService) RemoveDevicesFromFirmwareHub(ctx context.C
 
 	devs := req.GetDevices()
 
-	logger := self.logger.WithFields(log.Fields{
+	logger := self.get_logger().WithFields(log.Fields{
 		"firmware_hub": fh_id_str,
 	})
 

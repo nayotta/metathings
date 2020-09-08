@@ -240,6 +240,7 @@ type Storage interface {
 	DeleteToken(ctx context.Context, id string) error
 	RefreshToken(ctx context.Context, id string, expires_at time.Time) error
 	GetTokenByText(ctx context.Context, text string) (*Token, error)
+	GetViewTokenByText(ctx context.Context, text string) (*Token, error)
 	GetToken(ctx context.Context, id string) (*Token, error)
 	ListTokens(context.Context, *Token) ([]*Token, error)
 }

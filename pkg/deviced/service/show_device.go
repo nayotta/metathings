@@ -15,16 +15,20 @@ func (self *MetathingsDevicedService) ShowDevice(ctx context.Context, _ *empty.E
 	var dev_s *storage.Device
 	var err error
 
+	logger := self.get_logger()
+
 	if dev_s, err = self.get_device_by_context(ctx); err != nil {
-		self.logger.WithError(err).Errorf("failed to get device by context in storage")
+		logger.WithError(err).Errorf("failed to get device by context in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
+
+	logger = logger.WithField("device", *dev_s.Id)
 
 	res := &pb.ShowDeviceResponse{
 		Device: copy_device(dev_s),
 	}
 
-	self.logger.WithField("id", *dev_s.Id).Debugf("show device")
+	logger.Debugf("show device")
 
 	return res, nil
 }

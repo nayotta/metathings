@@ -36,7 +36,7 @@ func (self *MetathingsDevicedService) GetConfig(ctx context.Context, req *pb.Get
 	var err error
 
 	cfg_id_str := req.GetConfig().GetId().GetValue()
-	logger := self.logger.WithFields(log.Fields{
+	logger := self.get_logger().WithFields(log.Fields{
 		"config": cfg_id_str,
 	})
 

@@ -18,7 +18,7 @@ func (self *MetathingsDevicedService) PullFrameFromFlowSet(req *pb.PullFrameFrom
 	cfg_flwst_id := cfg_flwst.GetId().GetValue()
 	cfg_ack := cfg.GetConfigAck().GetValue()
 
-	logger := self.logger.WithFields(log.Fields{
+	logger := self.get_logger().WithFields(log.Fields{
 		"config": cfg_req_id,
 	})
 

@@ -53,9 +53,11 @@ func (self *MetathingsDevicedService) CreateConfig(ctx context.Context, req *pb.
 	cfg_alias_str := cfg.GetAlias().GetValue()
 	cfg_body := cfg.GetBody()
 
+	logger := self.get_logger().WithField("config", cfg_id_str)
+
 	cfg_body_str, err := new(jsonpb.Marshaler).MarshalToString(cfg_body)
 	if err != nil {
-		self.logger.WithError(err).Errorf("failed to marshal config body to string")
+		logger.WithError(err).Errorf("failed to marshal config body to string")
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 
@@ -66,7 +68,7 @@ func (self *MetathingsDevicedService) CreateConfig(ctx context.Context, req *pb.
 	}
 
 	if cfg_s, err = self.storage.CreateConfig(ctx, cfg_s); err != nil {
-		self.logger.WithError(err).Errorf("failed to create config in storage")
+		logger.WithError(err).Errorf("failed to create config in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
@@ -74,7 +76,7 @@ func (self *MetathingsDevicedService) CreateConfig(ctx context.Context, req *pb.
 		Config: copy_config(cfg_s),
 	}
 
-	self.logger.WithField("id", cfg_id_str).Infof("create config")
+	logger.Infof("create config")
 
 	return res, nil
 }

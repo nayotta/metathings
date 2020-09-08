@@ -51,6 +51,8 @@ func (self *MetathingsDevicedService) CreateFlowSet(ctx context.Context, req *pb
 		flwst_alias_str = flwst.GetAlias().GetValue()
 	}
 
+	logger := self.get_logger().WithField("flow_set", flwst_id_str)
+
 	flwst_s := &storage.FlowSet{
 		Id:    &flwst_id_str,
 		Name:  &flwst_name_str,
@@ -58,7 +60,7 @@ func (self *MetathingsDevicedService) CreateFlowSet(ctx context.Context, req *pb
 	}
 
 	if flwst_s, err = self.storage.CreateFlowSet(ctx, flwst_s); err != nil {
-		self.logger.WithError(err).Errorf("failed to create flow set in storage")
+		logger.WithError(err).Errorf("failed to create flow set in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
@@ -66,7 +68,7 @@ func (self *MetathingsDevicedService) CreateFlowSet(ctx context.Context, req *pb
 		FlowSet: copy_flow_set(flwst_s),
 	}
 
-	self.logger.WithField("id", flwst_id_str).Infof("create flow set")
+	logger.Infof("create flow set")
 
 	return res, nil
 }

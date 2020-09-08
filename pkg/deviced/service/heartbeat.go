@@ -36,6 +36,7 @@ func (self *MetathingsDevicedService) AuthorizeHeartbeat(ctx context.Context, in
 
 func (self *MetathingsDevicedService) Heartbeat(ctx context.Context, req *pb.HeartbeatRequest) (*empty.Empty, error) {
 	var dev_s *storage.Device
+	var mdls_s []*storage.Module
 	var patch_dev_s *storage.Device
 	var patch_mdl_s *storage.Module
 	var err error
@@ -44,36 +45,44 @@ func (self *MetathingsDevicedService) Heartbeat(ctx context.Context, req *pb.Hea
 	dev_id_str := dev.GetId().GetValue()
 	sess := req.GetStartupSession().GetValue()
 
+	logger := self.get_logger().WithFields(log.Fields{
+		"device":          dev_id_str,
+		"startup_session": sess,
+	})
+
 	cur_sess, err := self.session_storage.GetStartupSession(dev_id_str)
 	if err != nil {
-		self.logger.WithError(err).Errorf("failed to get startup session")
+		logger.WithError(err).Errorf("failed to get startup session")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
 	if cur_sess == 0 {
 		err = ErrUnconnectedDevice
-		self.logger.WithError(err).Warningf("device not connected")
+		logger.WithError(err).Warningf("device not connected")
 		return nil, status.Errorf(codes.NotFound, err.Error())
 	}
 
 	if cur_sess != sess {
 		err = ErrDuplicatedDevice
-		self.logger.WithError(err).Errorf("current startup session not equal heartbeat startup session")
+		logger.WithError(err).Errorf("current startup session not equal heartbeat startup session")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
 	if err = self.session_storage.RefreshStartupSession(dev_id_str, session_helper.STARTUP_SESSION_EXPIRE); err != nil {
-		self.logger.WithError(err).Errorf("failed to refresh startup session")
+		logger.WithError(err).Errorf("failed to refresh startup session")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
-	if dev_s, err = self.storage.GetDevice(ctx, dev_id_str); err != nil {
-		self.logger.WithError(err).Errorf("failed to get device in storage")
+	if mdls_s, err = self.storage.ListModulesByDeviceId(
+		ctx, dev_id_str,
+		storage.SelectFieldsOption("module", "id", "state"),
+	); err != nil {
+		logger.WithError(err).Errorf("failed to list modules by device id in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
 	for _, mdl_from_dev := range dev.GetModules() {
-		for _, mdl_from_stor := range dev_s.Modules {
+		for _, mdl_from_stor := range mdls_s {
 			if mdl_from_dev.GetId().GetValue() == *mdl_from_stor.Id {
 				mdl_id_str := *mdl_from_stor.Id
 
@@ -87,12 +96,12 @@ func (self *MetathingsDevicedService) Heartbeat(ctx context.Context, req *pb.Hea
 				if mdl_state_from_dev_str != mdl_state_from_stor_str {
 					patch_mdl_s.State = &mdl_state_from_dev_str
 				}
-				if _, err = self.storage.PatchModule(ctx, mdl_id_str, patch_mdl_s); err != nil {
-					self.logger.WithError(err).Errorf("failed to patch module in storage")
+				if err = self.storage.ModifyModule(ctx, mdl_id_str, patch_mdl_s); err != nil {
+					logger.WithError(err).Errorf("failed to patch module in storage")
 					return nil, status.Errorf(codes.Internal, err.Error())
 				}
 
-				self.logger.WithFields(log.Fields{
+				logger.WithFields(log.Fields{
 					"device_id":    dev_id_str,
 					"module_id":    mdl_id_str,
 					"heartbeat_at": heartbeat_at,
@@ -102,6 +111,11 @@ func (self *MetathingsDevicedService) Heartbeat(ctx context.Context, req *pb.Hea
 		}
 	}
 
+	dev_s, err = self.storage.GetDevice(
+		ctx, dev_id_str,
+		storage.SkipInternalQueryOption(true),
+		storage.SelectFieldsOption("device", "state"),
+	)
 	heartbeat_at := pb_helper.ToTime(*dev.GetHeartbeatAt())
 	patch_dev_s = &storage.Device{
 		HeartbeatAt: &heartbeat_at,
@@ -110,12 +124,12 @@ func (self *MetathingsDevicedService) Heartbeat(ctx context.Context, req *pb.Hea
 		state_str := deviced_helper.DEVICE_STATE_ENUMER.ToString(state_pb.DeviceState_DEVICE_STATE_ONLINE)
 		patch_dev_s.State = &state_str
 	}
-	if dev_s, err = self.storage.PatchDevice(ctx, dev_id_str, patch_dev_s); err != nil {
-		self.logger.WithError(err).Errorf("failed to patch device in storage")
+	if err = self.storage.ModifyDevice(ctx, dev_id_str, patch_dev_s); err != nil {
+		logger.WithError(err).Errorf("failed to patch device in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
-	self.logger.WithFields(log.Fields{
+	logger.WithFields(log.Fields{
 		"device_id":    dev_id_str,
 		"heartbeat_at": heartbeat_at,
 		"state":        *dev_s.State,

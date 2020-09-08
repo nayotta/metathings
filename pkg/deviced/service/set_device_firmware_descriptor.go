@@ -36,7 +36,7 @@ func (self *MetathingsDevicedService) SetDeviceFirmwareDescriptor(ctx context.Co
 
 	dev_id_str := req.GetDevice().GetId().GetValue()
 	desc_id_str := req.GetFirmwareDescriptor().GetId().GetValue()
-	logger := self.logger.WithFields(log.Fields{
+	logger := self.get_logger().WithFields(log.Fields{
 		"device":              dev_id_str,
 		"firmware_descriptor": desc_id_str,
 	})

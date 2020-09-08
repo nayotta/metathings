@@ -32,8 +32,10 @@ func (self *MetathingsDevicedService) ListFlowSets(ctx context.Context, req *pb.
 		flwst_s.Alias = &alias.Value
 	}
 
+	logger := self.get_logger()
+
 	if flwsts_s, err = self.storage.ListFlowSets(ctx, flwst_s); err != nil {
-		self.logger.WithError(err).Errorf("failed to list flow set in storage")
+		logger.WithError(err).Errorf("failed to list flow set in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
@@ -41,7 +43,7 @@ func (self *MetathingsDevicedService) ListFlowSets(ctx context.Context, req *pb.
 		FlowSets: copy_flow_sets(flwsts_s),
 	}
 
-	self.logger.Debugf("list flow sets")
+	logger.Debugf("list flow sets")
 
 	return res, nil
 }

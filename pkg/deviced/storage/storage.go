@@ -3,6 +3,8 @@ package metathings_deviced_storage
 import (
 	"context"
 	"time"
+
+	"github.com/spf13/cast"
 )
 
 type Device struct {
@@ -121,13 +123,40 @@ type DeviceFirmwareDescriptorMapping struct {
 	FirmwareDescriptorId *string `gorm:"column:firmware_descriptor_id"`
 }
 
+type GetDeviceOption func(map[string]interface{})
+type ListModulesByDeviceIdOption func(map[string]interface{})
+
+func SelectFieldsOption(scope string, fields ...string) func(map[string]interface{}) {
+	return func(opt map[string]interface{}) {
+		var fs_ss []string
+		key := "fields#" + scope
+		fs_i, ok := opt[key]
+		if !ok {
+			fs_ss = []string{}
+		} else {
+			fs_ss = cast.ToStringSlice(fs_i)
+		}
+		fs_ss = append(fs_ss, fields...)
+		opt[key] = fs_ss
+	}
+
+}
+
+func SkipInternalQueryOption(skip bool) func(map[string]interface{}) {
+	return func(opt map[string]interface{}) {
+		opt["skip_internal_query"] = skip
+	}
+}
+
 type Storage interface {
 	CreateDevice(context.Context, *Device) (*Device, error)
 	DeleteDevice(ctx context.Context, id string) error
 	PatchDevice(ctx context.Context, id string, device *Device) (*Device, error)
-	GetDevice(ctx context.Context, id string) (*Device, error)
+	ModifyDevice(ctx context.Context, id string, device *Device) error
+	GetDevice(ctx context.Context, id string, opts ...GetDeviceOption) (*Device, error)
 	ListDevices(context.Context, *Device) ([]*Device, error)
 	GetDeviceByModuleId(ctx context.Context, id string) (*Device, error)
+	ListModulesByDeviceId(ctx context.Context, dev_id string, opts ...ListModulesByDeviceIdOption) ([]*Module, error)
 
 	CreateConfig(context.Context, *Config) (*Config, error)
 	DeleteConfig(ctx context.Context, id string) error
@@ -142,6 +171,7 @@ type Storage interface {
 	CreateModule(context.Context, *Module) (*Module, error)
 	DeleteModule(ctx context.Context, id string) error
 	PatchModule(ctx context.Context, id string, module *Module) (*Module, error)
+	ModifyModule(ctx context.Context, id string, module *Module) error
 	GetModule(ctx context.Context, id string) (*Module, error)
 	ListModules(context.Context, *Module) ([]*Module, error)
 

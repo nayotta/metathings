@@ -30,7 +30,7 @@ func (self *MetathingsDevicedService) GetFirmwareHub(ctx context.Context, req *p
 	var err error
 
 	frm_hub_id_str := req.GetFirmwareHub().GetId().GetValue()
-	logger := self.logger.WithField("firmware_hub", frm_hub_id_str)
+	logger := self.get_logger().WithField("firmware_hub", frm_hub_id_str)
 
 	if frm_hub_s, err = self.storage.GetFirmwareHub(ctx, frm_hub_id_str); err != nil {
 		logger.WithError(err).Errorf("failed to get firmware hub in storage")

@@ -404,6 +404,13 @@ func (s *TracedStorage) GetTokenByText(ctx context.Context, text string) (*Token
 	return s.StorageImpl.GetTokenByText(ctx, text)
 }
 
+func (s *TracedStorage) GetViewTokenByText(ctx context.Context, text string) (*Token, error) {
+	span, ctx := s.TraceWrapper(ctx, "GetViewTokenByText")
+	defer span.Finish()
+
+	return s.StorageImpl.GetViewTokenByText(ctx, text)
+}
+
 func (s *TracedStorage) GetToken(ctx context.Context, id string) (*Token, error) {
 	span, ctx := s.TraceWrapper(ctx, "GetToken")
 	defer span.Finish()

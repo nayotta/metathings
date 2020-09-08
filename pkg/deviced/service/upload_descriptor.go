@@ -34,30 +34,32 @@ func (self *MetathingsDevicedService) UploadDescriptor(ctx context.Context, req 
 	var fds dpb.FileDescriptorSet
 
 	body := req.GetDescriptor_().GetBody().GetValue()
+	logger := self.get_logger()
 
 	if err := proto.Unmarshal(body, &fds); err != nil {
-		self.logger.WithError(err).Errorf("failed to unmarshal descriptor body")
+		logger.WithError(err).Errorf("failed to unmarshal descriptor body")
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 
 	fd, err := desc.CreateFileDescriptorFromSet(&fds)
 	if err != nil {
-		self.logger.WithError(err).Errorf("failed to create file descriptor from protoset")
+		logger.WithError(err).Errorf("failed to create file descriptor from protoset")
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
 	}
 
 	srvs := fd.GetServices()
 	if len(srvs) == 0 {
 		err = ErrInvalidProtoset
-		self.logger.WithError(err).Errorf("no service in protoset")
+		logger.WithError(err).Errorf("no service in protoset")
 		return nil, status.Errorf(codes.InvalidArgument, ErrInvalidProtoset.Error())
 	}
 
 	sha1 := fmt.Sprintf("%x", sha1.Sum(body))
 	if err = self.desc_storage.SetDescriptor(sha1, body); err != nil {
-		self.logger.WithError(err).Errorf("failed to set descriptor in descriptor storage")
+		logger.WithError(err).Errorf("failed to set descriptor in descriptor storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
+	logger = logger.WithField("sha1", sha1)
 
 	res := &pb.UploadDescriptorResponse{
 		Descriptor_: &pb.Descriptor{
@@ -65,7 +67,7 @@ func (self *MetathingsDevicedService) UploadDescriptor(ctx context.Context, req 
 		},
 	}
 
-	self.logger.WithField("sha1", sha1).Infof("upload descriptor")
+	logger.Infof("upload descriptor")
 
 	return res, nil
 }

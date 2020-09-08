@@ -16,7 +16,7 @@ func (self *MetathingsDevicedService) ListConfigs(ctx context.Context, req *pb.L
 
 	cfg := req.GetConfig()
 	cfg_s := &storage.Config{}
-	logger := self.logger
+	logger := self.get_logger()
 
 	if cfg.GetId().GetValue() != "" {
 		cfg_s.Id = &cfg.Id.Value
