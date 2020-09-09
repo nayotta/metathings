@@ -24,29 +24,47 @@ func (s *TracedStorage) DeleteDevice(ctx context.Context, id string) error {
 
 	return s.Storage.DeleteDevice(ctx, id)
 }
+
 func (s *TracedStorage) PatchDevice(ctx context.Context, id string, device *Device) (*Device, error) {
-	span, ctx := s.TraceWrapper(ctx, "patchDevice")
+	span, ctx := s.TraceWrapper(ctx, "PatchDevice")
 	defer span.Finish()
 
 	return s.Storage.PatchDevice(ctx, id, device)
 }
-func (s *TracedStorage) GetDevice(ctx context.Context, id string) (*Device, error) {
+
+func (s *TracedStorage) ModifyDevice(ctx context.Context, id string, device *Device) error {
+	span, ctx := s.TraceWrapper(ctx, "ModifyDevice")
+	defer span.Finish()
+
+	return s.Storage.ModifyDevice(ctx, id, device)
+}
+
+func (s *TracedStorage) GetDevice(ctx context.Context, id string, opts ...GetDeviceOption) (*Device, error) {
 	span, ctx := s.TraceWrapper(ctx, "GetDevice")
 	defer span.Finish()
 
-	return s.Storage.GetDevice(ctx, id)
+	return s.Storage.GetDevice(ctx, id, opts...)
 }
+
 func (s *TracedStorage) ListDevices(ctx context.Context, dev *Device) ([]*Device, error) {
 	span, ctx := s.TraceWrapper(ctx, "ListDevices")
 	defer span.Finish()
 
 	return s.Storage.ListDevices(ctx, dev)
 }
+
 func (s *TracedStorage) GetDeviceByModuleId(ctx context.Context, id string) (*Device, error) {
 	span, ctx := s.TraceWrapper(ctx, "GetDeviceByModuleId")
 	defer span.Finish()
 
 	return s.Storage.GetDeviceByModuleId(ctx, id)
+}
+
+func (s *TracedStorage) ListModulesByDeviceId(ctx context.Context, dev_id string, opts ...ListModulesByDeviceIdOption) ([]*Module, error) {
+	span, ctx := s.TraceWrapper(ctx, "ListModulesByDeviceId")
+	defer span.Finish()
+
+	return s.Storage.ListModulesByDeviceId(ctx, dev_id, opts...)
 }
 
 func (s *TracedStorage) CreateModule(ctx context.Context, dev *Module) (*Module, error) {
@@ -61,18 +79,28 @@ func (s *TracedStorage) DeleteModule(ctx context.Context, id string) error {
 
 	return s.Storage.DeleteModule(ctx, id)
 }
+
 func (s *TracedStorage) PatchModule(ctx context.Context, id string, module *Module) (*Module, error) {
 	span, ctx := s.TraceWrapper(ctx, "PatchModule")
 	defer span.Finish()
 
 	return s.Storage.PatchModule(ctx, id, module)
 }
+
+func (s *TracedStorage) ModifyModule(ctx context.Context, id string, module *Module) error {
+	span, ctx := s.TraceWrapper(ctx, "ModifyModule")
+	defer span.Finish()
+
+	return s.Storage.ModifyModule(ctx, id, module)
+}
+
 func (s *TracedStorage) GetModule(ctx context.Context, id string) (*Module, error) {
 	span, ctx := s.TraceWrapper(ctx, "GetModule")
 	defer span.Finish()
 
 	return s.Storage.GetModule(ctx, id)
 }
+
 func (s *TracedStorage) ListModules(ctx context.Context, mdl *Module) ([]*Module, error) {
 	span, ctx := s.TraceWrapper(ctx, "ListModules")
 	defer span.Finish()

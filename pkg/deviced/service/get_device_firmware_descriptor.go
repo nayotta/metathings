@@ -15,7 +15,7 @@ import (
 )
 
 func (self *MetathingsDevicedService) get_device_firmware_descriptor(ctx context.Context, dev_id_str string) (fd_s *storage.FirmwareDescriptor, error error) {
-	logger := self.logger.WithField("device", dev_id_str)
+	logger := self.get_logger().WithField("device", dev_id_str)
 
 	dev_s, err := self.storage.GetDevice(ctx, dev_id_str)
 	if err != nil {
@@ -124,7 +124,7 @@ func (self *MetathingsDevicedService) GetDeviceFirmwareDescriptor(ctx context.Co
 
 	dev := req.GetDevice()
 	dev_id_str := dev.GetId().GetValue()
-	logger := self.logger.WithField("device", dev_id_str)
+	logger := self.get_logger().WithField("device", dev_id_str)
 
 	fd_s, err := self.get_device_firmware_descriptor(ctx, dev_id_str)
 	if err != nil {

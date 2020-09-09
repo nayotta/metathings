@@ -40,7 +40,7 @@ func (self *MetathingsDevicedService) RemoveFirmwareDescriptorFromFirmwareHub(ct
 	desc := req.GetFirmwareDescriptor()
 	desc_id_str := desc.GetId().GetValue()
 
-	logger := self.logger.WithFields(log.Fields{
+	logger := self.get_logger().WithFields(log.Fields{
 		"firmware_hub":        fh_id_str,
 		"firmware_descriptor": desc_id_str,
 	})

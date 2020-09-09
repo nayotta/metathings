@@ -17,7 +17,7 @@ func (self *MetathingsDevicedService) ListFirmwareHubs(ctx context.Context, req 
 
 	frm_hub_s := &storage.FirmwareHub{}
 	frm_hub := req.GetFirmwareHub()
-	logger := self.logger
+	logger := self.get_logger()
 
 	if id := frm_hub.GetId(); id != nil {
 		frm_hub_s.Id = &id.Value

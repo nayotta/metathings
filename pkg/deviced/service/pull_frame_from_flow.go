@@ -17,7 +17,7 @@ func (self *MetathingsDevicedService) PullFrameFromFlow(req *pb.PullFrameFromFlo
 	dev_id := dev_r.GetId().GetValue()
 	cfg_ack := cfg.GetConfigAck().GetValue()
 
-	logger := self.logger.WithFields(log.Fields{
+	logger := self.get_logger().WithFields(log.Fields{
 		"device":  dev_id,
 		"#method": "PullFrameFromFlow",
 	})

@@ -627,7 +627,7 @@ func (self *StorageImpl) list_view_groups_by_entity_id(ctx context.Context, id s
 	}
 
 	var grps []*Group
-	for grp_id, _ := range grps_m {
+	for grp_id := range grps_m {
 		grpIdStr := grp_id
 		grps = append(grps, &Group{Id: &grpIdStr})
 	}
@@ -934,7 +934,7 @@ func (self *StorageImpl) list_view_all_roles_by_entity_id(ctx context.Context, i
 	}
 
 	roles = nil
-	for id, _ := range role_ids_set {
+	for id := range role_ids_set {
 		roles = append(roles, &Role{Id: &id})
 	}
 
@@ -1574,19 +1574,30 @@ func (self *StorageImpl) get_token(ctx context.Context, id string) (*Token, erro
 }
 
 func (self *StorageImpl) get_token_by_text(ctx context.Context, text string) (*Token, error) {
-	var tkn Token
+	var tkn *Token
 	var tknp *Token
+	var err error
+
+	if tkn, err = self.get_view_token_by_text(ctx, text); err != nil {
+		return nil, err
+	}
+
+	if tknp, err = self.internal_get_token(ctx, tkn); err != nil {
+		return nil, err
+	}
+
+	return tknp, nil
+}
+
+func (self *StorageImpl) get_view_token_by_text(ctx context.Context, text string) (*Token, error) {
+	var tkn Token
 	var err error
 
 	if err = self.GetDBConn(ctx).First(&tkn, "text = ?", text).Error; err != nil {
 		return nil, err
 	}
 
-	if tknp, err = self.internal_get_token(ctx, &tkn); err != nil {
-		return nil, err
-	}
-
-	return tknp, nil
+	return wrap_token(&tkn), nil
 }
 
 func (self *StorageImpl) list_tokens(ctx context.Context, tkn *Token) ([]*Token, error) {
@@ -1628,11 +1639,7 @@ func (self *StorageImpl) list_tokens(ctx context.Context, tkn *Token) ([]*Token,
 func (self *StorageImpl) internal_get_token(ctx context.Context, tkn *Token) (*Token, error) {
 	var err error
 
-	tkn.Domain = &Domain{Id: tkn.DomainId}
-	tkn.Entity = &Entity{Id: tkn.EntityId}
-
 	if tkn.CredentialId != nil {
-		tkn.Credential = &Credential{Id: tkn.CredentialId}
 		if tkn.Roles, err = self.list_view_credential_roles(ctx, *tkn.CredentialId); err != nil {
 			return nil, err
 		}
@@ -1702,6 +1709,20 @@ func (self *StorageImpl) GetTokenByText(ctx context.Context, text string) (*Toke
 	}
 
 	self.logger.WithField("text", text).Debugf("get token by text")
+
+	return tkn, nil
+}
+
+func (self *StorageImpl) GetViewTokenByText(ctx context.Context, text string) (*Token, error) {
+	var tkn *Token
+	var err error
+
+	if tkn, err = self.get_view_token_by_text(ctx, text); err != nil {
+		self.logger.WithError(err).Debugf("failed to get view token by text")
+		return nil, err
+	}
+
+	self.logger.WithField("text", text).Debugf("get view token by text")
 
 	return tkn, nil
 }

@@ -34,24 +34,26 @@ func (self *MetathingsDevicedService) DeleteFlowSet(ctx context.Context, req *pb
 	var err error
 
 	flwst_id_str := req.GetFlowSet().GetId().GetValue()
+	logger := self.get_logger().WithField("flow_set", flwst_id_str)
+
 	if flwst, err = self.storage.GetFlowSet(ctx, flwst_id_str); err != nil {
-		self.logger.WithError(err).Errorf("failed to get flow set in storage")
+		logger.WithError(err).Errorf("failed to get flow set in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
 	for _, flw := range flwst.Flows {
 		if err = self.storage.RemoveFlowFromFlowSet(ctx, flwst_id_str, *flw.Id); err != nil {
-			self.logger.WithError(err).Errorf("failed to remove flow from flow set")
+			logger.WithError(err).Errorf("failed to remove flow from flow set")
 			return nil, status.Errorf(codes.Internal, err.Error())
 		}
 	}
 
 	if err = self.storage.DeleteFlowSet(ctx, flwst_id_str); err != nil {
-		self.logger.WithError(err).Errorf("failed to delete flow set in storage")
+		logger.WithError(err).Errorf("failed to delete flow set in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
-	self.logger.WithField("id", flwst_id_str).Infof("delete flow set")
+	logger.Infof("delete flow set")
 
 	return &empty.Empty{}, nil
 }

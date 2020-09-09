@@ -33,8 +33,10 @@ func (self *MetathingsDevicedService) GetDevice(ctx context.Context, req *pb.Get
 	var err error
 
 	dev_id_str := req.GetDevice().GetId().GetValue()
+	logger := self.get_logger().WithField("device", dev_id_str)
+
 	if dev_s, err = self.storage.GetDevice(ctx, dev_id_str); err != nil {
-		self.logger.WithError(err).Errorf("failed to get device in storage")
+		logger.WithError(err).Errorf("failed to get device in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
@@ -42,7 +44,7 @@ func (self *MetathingsDevicedService) GetDevice(ctx context.Context, req *pb.Get
 		Device: copy_device(dev_s),
 	}
 
-	self.logger.WithField("id", dev_id_str).Debugf("get device")
+	logger.Debugf("get device")
 
 	return res, nil
 }

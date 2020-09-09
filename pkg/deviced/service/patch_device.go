@@ -36,6 +36,8 @@ func (self *MetathingsDevicedService) PatchDevice(ctx context.Context, req *pb.P
 	dev := req.GetDevice()
 	dev_id_str := dev.GetId().GetValue()
 
+	logger := self.get_logger().WithField("device", dev_id_str)
+
 	if alias := dev.GetAlias(); alias != nil {
 		dev_s.Alias = &alias.Value
 	}
@@ -45,7 +47,7 @@ func (self *MetathingsDevicedService) PatchDevice(ctx context.Context, req *pb.P
 	}
 
 	if dev_s, err = self.storage.PatchDevice(ctx, dev_id_str, dev_s); err != nil {
-		self.logger.WithError(err).Errorf("failed to patch device in storage")
+		logger.WithError(err).Errorf("failed to patch device in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
@@ -53,7 +55,7 @@ func (self *MetathingsDevicedService) PatchDevice(ctx context.Context, req *pb.P
 		Device: copy_device(dev_s),
 	}
 
-	self.logger.WithField("id", dev_id_str).Infof("patch device")
+	logger.Infof("patch device")
 
 	return res, nil
 }

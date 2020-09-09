@@ -66,6 +66,10 @@ type MetathingsDevicedService struct {
 	data_launcher   evaluatord_sdk.DataLauncher
 }
 
+func (self *MetathingsDevicedService) get_logger() log.FieldLogger {
+	return self.logger.WithField("#compnent", "service")
+}
+
 func (self *MetathingsDevicedService) get_device_id_from_context(ctx context.Context) string {
 	var tkn *identityd_pb.Token
 
@@ -148,11 +152,14 @@ func (self *MetathingsDevicedService) get_flow_ids_by_devices(ctx context.Contex
 
 func (self *MetathingsDevicedService) offline_device(ctx context.Context, dev_id string) (err error) {
 	var dev_s *storage.Device
+
+	logger := self.get_logger().WithField("device", dev_id)
+
 	defer func() {
 		if err != nil {
-			self.logger.WithField("device", dev_id).WithError(err).Debugf("failed to offline device")
+			logger.WithError(err).Debugf("failed to offline device")
 		} else {
-			self.logger.WithField("device", dev_id).Debugf("device offline")
+			logger.Debugf("device offline")
 		}
 
 	}()

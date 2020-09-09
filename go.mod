@@ -9,7 +9,6 @@ require (
 	github.com/codahale/hdrhistogram v0.0.0-20161010025455-3a0bb77429bd // indirect
 	github.com/eclipse/paho.mqtt.golang v1.2.0
 	github.com/go-redis/redis/v8 v8.0.0-beta.8
-	github.com/gogo/protobuf v1.3.1
 	github.com/golang/protobuf v1.4.2
 	github.com/gorilla/mux v1.8.0
 	github.com/grpc-ecosystem/go-grpc-middleware v1.2.1

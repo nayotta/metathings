@@ -14,7 +14,7 @@ func (self *MetathingsDevicedService) StreamCall(stm pb.DevicedService_StreamCal
 	var dev_s *storage.Device
 	var err error
 
-	logger := self.logger
+	logger := self.get_logger()
 
 	if req, err = stm.Recv(); err != nil {
 		logger.WithError(err).Errorf("failed to recv config msg")
@@ -25,7 +25,7 @@ func (self *MetathingsDevicedService) StreamCall(stm pb.DevicedService_StreamCal
 	dev_id_str := req.GetDevice().GetId().GetValue()
 	mdl_name_str := cfg.GetName().GetValue()
 	meth_str := cfg.GetMethod().GetValue()
-	logger = self.logger.WithFields(log.Fields{
+	logger = self.get_logger().WithFields(log.Fields{
 		"device": dev_id_str,
 		"module": mdl_name_str,
 		"method": meth_str,

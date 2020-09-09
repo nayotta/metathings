@@ -43,7 +43,7 @@ func (self *MetathingsDevicedService) PushFrameToFlowOnce(ctx context.Context, r
 		req_id = id_helper.NewId()
 	}
 
-	logger := self.logger.WithFields(logrus.Fields{
+	logger := self.get_logger().WithFields(logrus.Fields{
 		"request_id": req_id,
 		"device":     dev_id_str,
 	})

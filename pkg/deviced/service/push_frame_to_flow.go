@@ -14,13 +14,15 @@ import (
 
 // TODO(Peer): merge PushFrameToFlow and PushFrameToFlowOnce to one function
 func (self *MetathingsDevicedService) PushFrameToFlow(stm pb.DevicedService_PushFrameToFlowServer) error {
+
+	logger := self.get_logger().WithField("#method", "PushFrameToFlow")
+
 	req, err := stm.Recv()
 	if err != nil {
-		self.logger.WithError(err).Errorf("failed to receive config request")
+		logger.WithError(err).Errorf("failed to receive config request")
 		return status.Errorf(codes.Internal, err.Error())
 	}
 
-	var logger log.FieldLogger
 	var dev_r *pb.OpDevice
 	var dev_id string
 	var cfg_ack, push_ack bool
@@ -36,7 +38,7 @@ func (self *MetathingsDevicedService) PushFrameToFlow(stm pb.DevicedService_Push
 	push_ack = cfg.GetPushAck().GetValue()
 	ctx := stm.Context()
 
-	logger = self.logger.WithFields(log.Fields{
+	logger = logger.WithFields(log.Fields{
 		"config": req_id,
 		"device": dev_id,
 	})

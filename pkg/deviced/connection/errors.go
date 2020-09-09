@@ -11,7 +11,7 @@ var (
 	ErrChannelClosed   = errors.New("channel closed")
 	// ErrUnexpectedResponse       = errors.New("unexpected response")
 	ErrBridgeClosed             = errors.New("bridge closed")
-	ErrTimeout                  = errors.New("timeout")
+	ErrReceiveTimeout           = errors.New("receive timeout")
 	ErrDuplicatedDeviceInstance = errors.New("duplicated device instance")
 	ErrDeviceOffline            = errors.New("device offline")
 )

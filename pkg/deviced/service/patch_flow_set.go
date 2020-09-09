@@ -35,13 +35,15 @@ func (self *MetathingsDevicedService) PatchFlowSet(ctx context.Context, req *pb.
 	flwst := req.GetFlowSet()
 	flwst_id_str := flwst.GetId().GetValue()
 
+	logger := self.get_logger().WithField("flow_set", flwst_id_str)
+
 	alias := flwst.GetAlias()
 	if alias != nil {
 		flwst_s.Alias = &alias.Value
 	}
 
 	if flwst_s, err = self.storage.PatchFlowSet(ctx, flwst_id_str, flwst_s); err != nil {
-		self.logger.WithError(err).Errorf("failed to patch flow set in storage")
+		logger.WithError(err).Errorf("failed to patch flow set in storage")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
@@ -49,7 +51,7 @@ func (self *MetathingsDevicedService) PatchFlowSet(ctx context.Context, req *pb.
 		FlowSet: copy_flow_set(flwst_s),
 	}
 
-	self.logger.WithField("flowset", flwst_id_str).Infof("patch flow set")
+	logger.Infof("patch flow set")
 
 	return res, nil
 }

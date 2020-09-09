@@ -34,13 +34,15 @@ func (self *MetathingsDevicedService) GetObjectContent(ctx context.Context, req 
 	obj := req.GetObject()
 	obj_s := parse_object(obj)
 
+	logger := self.get_logger()
+
 	ch, err := self.simple_storage.GetObjectContent(obj_s)
 	if err != nil {
 		switch err {
 		case os.ErrNotExist:
-			self.logger.WithError(err).Warningf("object not found")
+			logger.WithError(err).Warningf("object not found")
 		default:
-			self.logger.WithError(err).Errorf("failed to get object content in simple storage")
+			logger.WithError(err).Errorf("failed to get object content in simple storage")
 		}
 		return nil, self.ParseError(err)
 	}
@@ -54,12 +56,14 @@ func (self *MetathingsDevicedService) GetObjectContent(ctx context.Context, req 
 		contents = append(contents, buf...)
 	}
 
-	res := &pb.GetObjectContentResponse{Content: contents}
-
-	self.logger.WithFields(log.Fields{
+	logger = logger.WithFields(log.Fields{
 		"device": obj_s.Device,
 		"object": obj_s.FullName(),
-	}).Debugf("get object content")
+	})
+
+	res := &pb.GetObjectContentResponse{Content: contents}
+
+	logger.Debugf("get object content")
 
 	return res, nil
 }

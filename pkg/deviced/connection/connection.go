@@ -3,6 +3,7 @@ package metathings_deviced_connection
 import (
 	"context"
 	"sync"
+	"time"
 
 	"github.com/golang/protobuf/proto"
 	"github.com/golang/protobuf/ptypes/wrappers"
@@ -82,7 +83,13 @@ type ConnectionCenter interface {
 	SyncFirmware(context.Context, *storage.Device) error
 }
 
+type connectionCenterOption struct {
+	UnaryCallRequestDeplay time.Duration
+	ReceiveTimeout         time.Duration
+}
+
 type connectionCenter struct {
+	opt             *connectionCenterOption
 	logger          log.FieldLogger
 	brfty           BridgeFactory
 	storage         Storage
@@ -296,7 +303,6 @@ func (self *connectionCenter) south_from_bridge(
 			if err = handler(&req, logger); err != nil {
 				return
 			}
-
 		}
 	}()
 
@@ -422,6 +428,7 @@ func (self *connectionCenter) UnaryCall(ctx context.Context, dev *storage.Device
 	var err error
 	var crerr *pb.ErrorValue
 	var sp opentracing.Span
+	var ok bool
 
 	dev_id := *dev.Id
 
@@ -503,13 +510,28 @@ func (self *connectionCenter) UnaryCall(ctx context.Context, dev *storage.Device
 		return nil, err
 	}
 
-	if err = conn_br.North().Send(buf); err != nil {
+	errs := make(chan error)
+	defer close(errs)
+	go func() {
+		time.Sleep(self.opt.UnaryCallRequestDeplay)
+		if err = conn_br.North().Send(buf); err != nil {
+			errs <- err
+		}
+	}()
+
+	select {
+	case buf, ok = <-sess_br.North().AsyncRecv():
+		if !ok {
+			err = ErrBridgeClosed
+			logger.WithError(err).Debugf("failed to receive data from session bridge")
+			return nil, err
+		}
+	case err = <-errs:
 		logger.WithError(err).Debugf("failed to send connect request to major bridge")
 		return nil, err
-	}
-
-	if buf, err = sess_br.North().Recv(); err != nil {
-		logger.WithError(err).Debugf("failed to receive data from session bridge")
+	case <-time.After(self.opt.ReceiveTimeout):
+		err = ErrReceiveTimeout
+		logger.WithError(err).Debugf("receive response message from session bridge timeout")
 		return nil, err
 	}
 
@@ -950,6 +972,11 @@ func NewConnectionCenter(args ...interface{}) (ConnectionCenter, error) {
 	var is_traced bool
 	var err error
 
+	opt := &connectionCenterOption{
+		ReceiveTimeout:         31 * time.Second,
+		UnaryCallRequestDeplay: time.Millisecond,
+	}
+
 	if err = opt_helper.Setopt(map[string]func(string, interface{}) error{
 		"logger":          opt_helper.ToLogger(&logger),
 		"bridge_factory":  ToBridgeFactory(&brfty),
@@ -961,6 +988,7 @@ func NewConnectionCenter(args ...interface{}) (ConnectionCenter, error) {
 	}
 
 	return &connectionCenter{
+		opt:             opt,
 		logger:          logger,
 		brfty:           brfty,
 		storage:         stor,
