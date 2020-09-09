@@ -21,6 +21,7 @@ type redisStreamChannelOption struct {
 
 	ReadStreamGroupBlockTime time.Duration
 	StreamExpireTime         time.Duration
+	ReceiveTimeout           time.Duration
 }
 
 func newRedisStreamChannelOption(id string, side Side) *redisStreamChannelOption {
@@ -29,6 +30,7 @@ func newRedisStreamChannelOption(id string, side Side) *redisStreamChannelOption
 		Side:                     side,
 		ReadStreamGroupBlockTime: 3 * time.Second,
 		StreamExpireTime:         3 * time.Minute,
+		ReceiveTimeout:           31 * time.Second,
 	}
 }
 
@@ -138,6 +140,8 @@ func (c *redisStreamChannel) Recv() ([]byte, error) {
 	select {
 	case buf := <-c.AsyncRecv():
 		return buf, nil
+	case <-time.After(c.opt.ReceiveTimeout):
+		return nil, ErrReceiveTimeout
 	case <-c.closed:
 		return nil, ErrChannelClosed
 	}
