@@ -5,10 +5,13 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
 	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
+	"github.com/spf13/cast"
 	"github.com/spf13/cobra"
+	"github.com/stretchr/objx"
 	"go.uber.org/fx"
 
 	cmd_contrib "github.com/nayotta/metathings/cmd/contrib"
@@ -24,6 +27,7 @@ type DeviceCloudOption struct {
 	cmd_contrib.ServiceBaseOption `mapstructure:",squash"`
 	Storage                       map[string]interface{}
 	Connection                    map[string]interface{}
+	Methods                       map[string]interface{}
 }
 
 func NewDeviceCloudOption() *DeviceCloudOption {
@@ -67,6 +71,10 @@ var (
 
 			init_device_cloud_storage(opt_t)
 
+			cmd_helper.InitManyStringMapFromConfigWithStage([]cmd_helper.InitManyOption{
+				{Dst: &opt_t.Methods, Key: "methods"},
+			})
+
 			device_cloud_opt = opt_t
 			device_cloud_opt.SetServiceName("device_cloud")
 			device_cloud_opt.SetStage(cmd_helper.GetStageFromEnv())
@@ -109,10 +117,21 @@ func NewDeviceCloudStorage(opt *DeviceCloudOption, logger log.FieldLogger) (stor
 
 func NewMetathingsDeviceCloudServiceOption(opt *DeviceCloudOption) *service.MetathingsDeviceCloudServiceOption {
 	dc_opt := &service.MetathingsDeviceCloudServiceOption{}
+
 	dc_opt.Session.Id = id_helper.NewId()
+
 	dc_opt.Connection = opt.Connection
+
 	dc_opt.Credential.Id = opt.GetCredentialId()
 	dc_opt.Credential.Secret = opt.GetCredentialSecret()
+
+	dc_opt.Methods.PushFrameToFlow.SendTimeout = 7000 * time.Millisecond
+
+	mx := objx.Map(opt.Methods)
+	if val := mx.Get("push_frame_to_flow.send_timeout").Data(); val != nil {
+		dc_opt.Methods.PushFrameToFlow.SendTimeout = cast.ToDuration(val) * time.Millisecond
+	}
+
 	return dc_opt
 }
 

@@ -9,7 +9,8 @@ import (
 )
 
 var (
-	ErrModuleNotFound = errors.New("module not found")
+	ErrModuleNotFound             = errors.New("module not found")
+	ErrSendRequestToStreamTimeout = errors.New("send request to stream timeout")
 )
 
 var em = grpc_helper.ErrorMapping{

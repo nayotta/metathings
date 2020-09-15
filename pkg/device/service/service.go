@@ -35,6 +35,11 @@ type MetathingsDeviceServiceOption struct {
 	MaxReconnectInterval time.Duration
 	MinReconnectInterval time.Duration
 	PingInterval         time.Duration
+	Methods              struct {
+		PushFrameToFlow struct {
+			SendTimeout time.Duration
+		}
+	}
 }
 
 type MetathingsDeviceServiceImpl struct {

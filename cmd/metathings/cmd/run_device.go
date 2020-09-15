@@ -6,7 +6,9 @@ import (
 	"time"
 
 	log "github.com/sirupsen/logrus"
+	"github.com/spf13/cast"
 	"github.com/spf13/cobra"
+	"github.com/stretchr/objx"
 	"go.uber.org/fx"
 
 	cmd_contrib "github.com/nayotta/metathings/cmd/contrib"
@@ -21,6 +23,7 @@ import (
 type RunDeviceOption struct {
 	cmd_contrib.ClientBaseOption `mapstructure:",squash"`
 	BinarySynchronizer           map[string]interface{}
+	Methods                      map[string]interface{}
 }
 
 func NewRunDeviceOption() *RunDeviceOption {
@@ -48,6 +51,7 @@ var (
 
 			cmd_helper.InitManyStringMapFromConfigWithStage([]cmd_helper.InitManyOption{
 				{Dst: &run_device_opt.BinarySynchronizer, Key: "binary_synchronizer"},
+				{Dst: &run_device_opt.Methods, Key: "methods"},
 			})
 
 			run_device_opt.SetStage(cmd_helper.GetStageFromEnv())
@@ -77,14 +81,22 @@ func GetRunDeviceOptions() (
 }
 
 func NewMetathingsDeviceServiceOption(opt *RunDeviceOption) *service.MetathingsDeviceServiceOption {
-	return &service.MetathingsDeviceServiceOption{
-		ModuleAliveTimeout:   83 * time.Second,
-		HeartbeatInterval:    17 * time.Second,
-		HeartbeatMaxRetry:    3,
-		MinReconnectInterval: 7 * time.Second,
-		MaxReconnectInterval: 137 * time.Second,
-		PingInterval:         29 * time.Second,
+	o := &service.MetathingsDeviceServiceOption{}
+
+	o.ModuleAliveTimeout = 83 * time.Second
+	o.HeartbeatInterval = 17 * time.Second
+	o.HeartbeatMaxRetry = 3
+	o.MinReconnectInterval = 7 * time.Second
+	o.MaxReconnectInterval = 137 * time.Second
+	o.PingInterval = 29 * time.Second
+	o.Methods.PushFrameToFlow.SendTimeout = 7000 * time.Millisecond
+
+	mx := objx.New(opt.Methods)
+	if val := mx.Get("push_frame_to_flow.send_timeout"); val != nil {
+		o.Methods.PushFrameToFlow.SendTimeout = cast.ToDuration(val.Data()) * time.Millisecond
 	}
+
+	return o
 }
 
 func run_device() error {

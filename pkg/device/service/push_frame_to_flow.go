@@ -2,6 +2,7 @@ package metathings_device_service
 
 import (
 	"sync"
+	"time"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -81,10 +82,24 @@ func (self *MetathingsDeviceServiceImpl) PushFrameToFlow(stm pb.DeviceService_Pu
 				}
 			}
 
-			err = upstm.Send(creq)
-			if err != nil {
-				self.logger.WithError(err).Warningf("failed to send push frame to flow request to deviced service")
+			sent := make(chan struct{})
+			go func() {
+				err = upstm.Send(creq)
+				if err != nil {
+					self.logger.WithError(err).Warningf("failed to send push frame to flow request to deviced service")
+					return
+				}
+				close(sent)
+			}()
+
+			select {
+			case <-time.After(self.opt.Methods.PushFrameToFlow.SendTimeout):
+				defer close(sent)
+				err = ErrSendRequestToStreamTimeout
+				self.logger.WithError(err).Warningf("send request to stream timeout")
 				return
+			case <-sent:
+				// request sent to stream
 			}
 		}
 	}()

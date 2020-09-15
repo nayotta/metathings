@@ -2,6 +2,7 @@ package metathings_device_cloud_service
 
 import (
 	"context"
+	"time"
 
 	log "github.com/sirupsen/logrus"
 
@@ -12,6 +13,11 @@ import (
 )
 
 type MetathingsDeviceCloudServiceOption struct {
+	Methods struct {
+		PushFrameToFlow struct {
+			SendTimeout time.Duration
+		}
+	}
 	Session struct {
 		Id string
 	}

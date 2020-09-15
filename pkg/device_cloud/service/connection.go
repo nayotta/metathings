@@ -82,8 +82,11 @@ func (s *MetathingsDeviceCloudService) try_to_build_device_connection(dev *pb.De
 }
 
 func (s *MetathingsDeviceCloudService) build_device_connection(dev *pb.Device) error {
+	logger := s.get_logger().WithField("device", dev.Id)
+
 	drv, args, err := config_helper.ParseConfigOption("driver", s.opt.Connection)
 	if err != nil {
+		logger.WithError(err).Debugf("failed to parse device connection config options")
 		return err
 	}
 
@@ -102,17 +105,21 @@ func (s *MetathingsDeviceCloudService) build_device_connection(dev *pb.Device) e
 
 		dc, err := NewDeviceConnection(args...)
 		if err != nil {
+			logger.WithError(err).Debugf("failed to new device connection")
 			return err
 		}
 
 		err = dc.Start()
 		if err != nil {
+			logger.WithError(err).Debugf("failed to start device connection")
 			return err
 		}
 
 		return nil
 	default:
-		return ErrUnsupportedDeviceConnectionDriver
+		err = ErrUnsupportedDeviceConnectionDriver
+		logger.WithError(err).Debugf("unsupported device connection driver")
+		return err
 	}
 }
 

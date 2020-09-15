@@ -1,6 +1,8 @@
 package metathings_device_cloud_service
 
 import (
+	"time"
+
 	"github.com/golang/protobuf/ptypes/wrappers"
 	log "github.com/sirupsen/logrus"
 
@@ -114,15 +116,13 @@ func (s *MetathingsDeviceCloudService) start_push_frame_loop(dev_id string, req 
 		return err
 	}
 
-	go s.push_frame_loop(stm, pffch, cfn, psh_ack)
+	go s.push_frame_loop(stm, pffch, cfn, psh_ack, logger)
 	logger.Debugf("push frame loop started")
 
 	return nil
 }
 
-func (s *MetathingsDeviceCloudService) push_frame_loop(stm deviced_pb.DevicedService_PushFrameToFlowClient, pffch PushFrameToFlowChannel, cfn client_helper.CloseFn, push_ack bool) {
-	logger := s.get_logger()
-
+func (s *MetathingsDeviceCloudService) push_frame_loop(stm deviced_pb.DevicedService_PushFrameToFlowClient, pffch PushFrameToFlowChannel, cfn client_helper.CloseFn, push_ack bool, logger log.FieldLogger) {
 	defer func() {
 		cfn()
 		pffch.Close()
@@ -142,9 +142,23 @@ func (s *MetathingsDeviceCloudService) push_frame_loop(stm deviced_pb.DevicedSer
 			},
 		}
 
-		if err := stm.Send(req); err != nil {
-			logger.WithError(err).Warningf("failed to send frame to streaming")
+		sent := make(chan struct{})
+		go func() {
+			if err := stm.Send(req); err != nil {
+				logger.WithError(err).Warningf("failed to send frame to streaming")
+				return
+			}
+			close(sent)
+		}()
+
+		select {
+		case <-time.After(s.opt.Methods.PushFrameToFlow.SendTimeout):
+			defer close(sent)
+			err := ErrSendRequestToStreamTimeout
+			logger.WithError(err).Warningf("send request to stream timeout")
 			return
+		case <-sent:
+			// request sent to stream
 		}
 	}
 }

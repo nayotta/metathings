@@ -9,4 +9,5 @@ var (
 	ErrUnsupportedFlowChannelDriver      = errors.New("unsupported flow channel driver")
 	ErrUnsupportedDeviceConnectionDriver = errors.New("unsupported device connection driver")
 	ErrUnmatchedRequestId                = errors.New("unmatched request id")
+	ErrSendRequestToStreamTimeout        = errors.New("send request to stream timeout")
 )
