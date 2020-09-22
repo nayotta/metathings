@@ -66,12 +66,8 @@ func (self *MetathingsDevicedService) ValidateCreateDevice(ctx context.Context, 
 	)
 }
 
-func (self *MetathingsDevicedService) create_entity(ctx context.Context, ent_id, ent_name string) error {
-	cli, cfn, err := self.cli_fty.NewIdentityd2ServiceClient()
-	if err != nil {
-		return err
-	}
-	defer cfn()
+func (self *MetathingsDevicedService) create_entity(cli identityd_pb.IdentitydServiceClient, ctx context.Context, ent_id, ent_name string) error {
+	var err error
 
 	new_ctx := context_helper.WithToken(ctx, self.tknr.GetToken())
 	req := &identityd_pb.CreateEntityRequest{
@@ -87,16 +83,12 @@ func (self *MetathingsDevicedService) create_entity(ctx context.Context, ent_id,
 	return nil
 }
 
-func (self *MetathingsDevicedService) create_device_entity(ctx context.Context, dev *storage.Device) error {
-	return self.create_entity(ctx, *dev.Id, "/deviced/device/"+*dev.Name)
+func (self *MetathingsDevicedService) create_device_entity(cli identityd_pb.IdentitydServiceClient, ctx context.Context, dev *storage.Device) error {
+	return self.create_entity(cli, ctx, *dev.Id, "/deviced/device/"+*dev.Name)
 }
 
-func (self *MetathingsDevicedService) create_module_entity(ctx context.Context, mdl *storage.Module) error {
-	return self.create_entity(ctx, *mdl.Id, "/deviced/module/"+*mdl.Name)
-}
-
-func (self *MetathingsDevicedService) create_flow_entity(ctx context.Context, flw *storage.Flow) error {
-	return self.create_entity(ctx, *flw.Id, "/deviced/flow/"+*flw.Name)
+func (self *MetathingsDevicedService) create_module_entity(cli identityd_pb.IdentitydServiceClient, ctx context.Context, mdl *storage.Module) error {
+	return self.create_entity(cli, ctx, *mdl.Id, "/deviced/module/"+*mdl.Name)
 }
 
 func (self *MetathingsDevicedService) CreateDevice(ctx context.Context, req *pb.CreateDeviceRequest) (*pb.CreateDeviceResponse, error) {
@@ -130,7 +122,14 @@ func (self *MetathingsDevicedService) CreateDevice(ctx context.Context, req *pb.
 		dev_s.ExtraHelper = pb_helper.ExtractStringMapToString(extra)
 	}
 
-	if err = self.create_device_entity(ctx, dev_s); err != nil {
+	identityd_cli, identityd_cfn, err := self.cli_fty.NewIdentityd2ServiceClient()
+	if err != nil {
+		logger.WithError(err).Errorf("failed to new identityd2 service client")
+		return nil, err
+	}
+	defer identityd_cfn()
+
+	if err = self.create_device_entity(identityd_cli, ctx, dev_s); err != nil {
 		logger.WithError(err).Errorf("failed to create entity for device")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
@@ -156,7 +155,7 @@ func (self *MetathingsDevicedService) CreateDevice(ctx context.Context, req *pb.
 			Endpoint:  &mdl_endpoint_str,
 		}
 
-		if err = self.create_module_entity(ctx, mdl_s); err != nil {
+		if err = self.create_module_entity(identityd_cli, ctx, mdl_s); err != nil {
 			logger.WithError(err).Errorf("failed to create entity for module")
 			return nil, status.Errorf(codes.Internal, err.Error())
 		}
@@ -181,11 +180,6 @@ func (self *MetathingsDevicedService) CreateDevice(ctx context.Context, req *pb.
 			Id:       &flw_id_str,
 			Name:     &flw_name_str,
 			Alias:    &flw_alias_str,
-		}
-
-		if err = self.create_flow_entity(ctx, flw_s); err != nil {
-			logger.WithError(err).Errorf("failed to create entity to flow")
-			return nil, status.Errorf(codes.Internal, err.Error())
 		}
 
 		if _, err = self.storage.CreateFlow(ctx, flw_s); err != nil {

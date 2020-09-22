@@ -1,6 +1,10 @@
 package metathings_device_cloud_service
 
 import (
+	"math"
+	"sync"
+	"time"
+
 	"github.com/golang/protobuf/ptypes/wrappers"
 	log "github.com/sirupsen/logrus"
 
@@ -20,9 +24,9 @@ func (s *MetathingsDeviceCloudService) start_push_frame_loop(dev_id string, req 
 	req_id := req.GetId().GetValue()
 
 	logger := s.get_logger().WithFields(log.Fields{
-		"device":     dev_id,
-		"flow":       flw_name,
-		"request_id": req_id,
+		"device":  dev_id,
+		"flow":    flw_name,
+		"request": req_id,
 	})
 
 	cli, cfn, err := s.cli_fty.NewDevicedServiceClient()
@@ -35,7 +39,7 @@ func (s *MetathingsDeviceCloudService) start_push_frame_loop(dev_id string, req 
 	stm, err := cli.PushFrameToFlow(ctx)
 	if err != nil {
 		defer cfn()
-		logger.WithField("request", req_id).WithError(err).Warningf("failed to create push frame to flow streaming")
+		logger.WithError(err).Warningf("failed to create push frame to flow streaming")
 		return err
 	}
 	logger.Debugf("build push frame to flow streaming")
@@ -114,32 +118,99 @@ func (s *MetathingsDeviceCloudService) start_push_frame_loop(dev_id string, req 
 		return err
 	}
 
-	go s.push_frame_loop(stm, pffch, cfn, psh_ack)
+	go s.push_frame_loop(stm, pffch, cfn, psh_ack, logger)
 	logger.Debugf("push frame loop started")
 
 	return nil
 }
 
-func (s *MetathingsDeviceCloudService) push_frame_loop(stm deviced_pb.DevicedService_PushFrameToFlowClient, pffch PushFrameToFlowChannel, cfn client_helper.CloseFn, push_ack bool) {
-	logger := s.get_logger()
-
+func (s *MetathingsDeviceCloudService) push_frame_loop(stm deviced_pb.DevicedService_PushFrameToFlowClient, pffch PushFrameToFlowChannel, cfn client_helper.CloseFn, push_ack bool, logger log.FieldLogger) {
 	defer func() {
 		cfn()
 		pffch.Close()
 		logger.Debugf("push frame loop stoped")
 	}()
-	for {
+
+	var acks sync.Map
+	var ack_timeout_cnt int
+	var push_ack_failed_limit int
+
+	if push_ack {
+		push_ack_failed_limit = s.opt.Methods.PushFrameToFlow.PushAckFailedLimit
+	} else {
+		push_ack_failed_limit = math.MaxInt64
+	}
+
+	if push_ack {
+		go func() {
+			defer logger.Debugf("push ack loop closed")
+			for ack_timeout_cnt < push_ack_failed_limit {
+				res, err := stm.Recv()
+				if err != nil {
+					logger.WithError(err).Debugf("failed to recv message from stream")
+					return
+				}
+
+				req_id := res.GetId()
+				go func(req_id string) {
+					inner_logger := logger.WithFields(log.Fields{
+						"current_request": req_id,
+					})
+
+					defer func() {
+						if recover() != nil {
+							inner_logger.Debugf("ack channel already closed")
+						}
+					}()
+
+					chi, ok := acks.Load(req_id)
+					if !ok {
+						inner_logger.Debugf("failed to get ack channel in ack map")
+					}
+					chi.(chan struct{}) <- struct{}{}
+				}(req_id)
+			}
+		}()
+	}
+
+	for ack_timeout_cnt < push_ack_failed_limit {
 		frm, ok := <-pffch.Channel()
 		if !ok {
 			logger.Debugf("push frame to flow channel closed")
 			return
 		}
 
+		req_id := id_helper.NewId()
+
 		req := &deviced_pb.PushFrameToFlowRequest{
-			Id: &wrappers.StringValue{Value: id_helper.NewId()},
+			Id: &wrappers.StringValue{Value: req_id},
 			Request: &deviced_pb.PushFrameToFlowRequest_Frame{
 				Frame: frm,
 			},
+		}
+
+		if push_ack {
+			ch := make(chan struct{})
+			acks.Store(req_id, ch)
+			go func() {
+				inner_logger := logger.WithField("current_request", req_id)
+				defer func() {
+					close(ch)
+					acks.Delete(req_id)
+				}()
+				select {
+				case <-time.After(s.opt.Methods.PushFrameToFlow.PushAckTimeout):
+					ack_timeout_cnt++
+					inner_logger.WithField("ack_timeout_count", ack_timeout_cnt).Debugf("failed to get ack response")
+				case _, ok := <-ch:
+					if ok {
+						// recv ack response
+						ack_timeout_cnt = 0
+					} else {
+						ack_timeout_cnt++
+					}
+				}
+			}()
 		}
 
 		if err := stm.Send(req); err != nil {

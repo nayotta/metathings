@@ -2,6 +2,7 @@ package metathings_device_cloud_service
 
 import (
 	"context"
+	"time"
 
 	log "github.com/sirupsen/logrus"
 
@@ -19,6 +20,12 @@ type MetathingsDeviceCloudServiceOption struct {
 	Credential struct {
 		Id     string
 		Secret string
+	}
+	Methods struct {
+		PushFrameToFlow struct {
+			PushAckTimeout     time.Duration
+			PushAckFailedLimit int
+		}
 	}
 }
 
