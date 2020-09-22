@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
 	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
@@ -113,6 +114,10 @@ func NewMetathingsDeviceCloudServiceOption(opt *DeviceCloudOption) *service.Meta
 	dc_opt.Connection = opt.Connection
 	dc_opt.Credential.Id = opt.GetCredentialId()
 	dc_opt.Credential.Secret = opt.GetCredentialSecret()
+
+	dc_opt.Methods.PushFrameToFlow.PushAckTimeout = 3 * time.Second
+	dc_opt.Methods.PushFrameToFlow.PushAckFailedLimit = 7
+
 	return dc_opt
 }
 
