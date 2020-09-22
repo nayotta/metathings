@@ -39,8 +39,8 @@ func (self *MetathingsDevicedService) PushFrameToFlow(stm pb.DevicedService_Push
 	ctx := stm.Context()
 
 	logger = logger.WithFields(log.Fields{
-		"config": req_id,
-		"device": dev_id,
+		"request": req_id,
+		"device":  dev_id,
 	})
 
 	tkn_txt, err := grpc_helper.GetTokenFromContext(ctx)
@@ -130,7 +130,7 @@ match_flow_loop:
 			logger.WithError(err).Errorf("failed to receive frame request")
 			return status.Errorf(codes.Internal, err.Error())
 		}
-		logger.WithField("request", req_id).Debugf("recv data request")
+		logger.Debugf("recv data request")
 
 		// TODO(Peer): async recv and send frame
 		opfrm := req.GetFrame()
@@ -153,7 +153,7 @@ match_flow_loop:
 			logger.WithError(err).Errorf("failed to push frame to flow")
 			return status.Errorf(codes.Internal, err.Error())
 		}
-		logger.WithField("request", req_id).Debugf("push frame to flow")
+		logger.Debugf("push frame to flow")
 
 		nctx := evaluatord_sdk.WithToken(ctx, tkn_txt)
 		nctx = evaluatord_sdk.WithDevice(nctx, dev_id)
@@ -191,7 +191,7 @@ match_flow_loop:
 				logger.WithError(err).Errorf("failed to send push ack message")
 				return status.Errorf(codes.Internal, err.Error())
 			}
-			logger.WithField("request", req_id).Debugf("send flow data ack response")
+			logger.Debugf("send flow data ack response")
 		}
 	}
 }
