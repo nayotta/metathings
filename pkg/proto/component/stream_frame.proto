@@ -6,7 +6,7 @@ option go_package = "component";
 import "google/protobuf/wrappers.proto";
 import "google/protobuf/any.proto";
 
-import "github.com/mwitkow/go-proto-validators/validator.proto";
+import "validate/validate.proto";
 
 enum StreamFrameKind {
 	STREAM_FRAME_KIND_UNKNOWN = 0;
@@ -38,9 +38,9 @@ message OpStreamCallExit {}
 message StreamCallExit {}
 
 message OpUnaryCallValue {
-	google.protobuf.Int64Value session = 1 [(validator.field) = {msg_exists: true}];
-	google.protobuf.StringValue method = 2 [(validator.field) = {msg_exists: true}];
-	google.protobuf.Any value = 3 [(validator.field) = {msg_exists: true}];
+	google.protobuf.Int64Value session = 1 [(validate.rules).message.required = true];
+	google.protobuf.StringValue method = 2 [(validate.rules).message.required = true];
+	google.protobuf.Any value = 3 [(validate.rules).any.required = true];
 }
 
 message UnaryCallValue {
@@ -82,7 +82,7 @@ message UpStreamFrame {
 }
 
 message DownStreamFrame {
-	StreamFrameKind kind = 1 [(validator.field) = {msg_exists: true}];
+	StreamFrameKind kind = 1 [(validate.rules).enum.defined_only = true];
 	oneof union {
 		OpUnaryCallValue unary_call = 2;
 		OpStreamCallValue stream_call = 3;

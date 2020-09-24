@@ -2,11 +2,11 @@ syntax = "proto3";
 
 package ai.metathings.service.deviced;
 
-import "github.com/mwitkow/go-proto-validators/validator.proto";
+import "validate/validate.proto";
 
 import "model.proto";
 
 message RemoveDevicesFromFirmwareHubRequest {
-	OpFirmwareHub firmware_hub = 1 [(validator.field) = {msg_exists: true}];
-	repeated OpDevice devices = 2 [(validator.field) = {msg_exists: true}];
+	OpFirmwareHub firmware_hub = 1 [(validate.rules).message.required = true];
+	repeated OpDevice devices = 2 [(validate.rules).repeated = {min_items: 1}];
 }

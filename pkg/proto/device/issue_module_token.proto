@@ -5,15 +5,15 @@ package ai.metathings.service.device;
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/wrappers.proto";
 
-import "github.com/mwitkow/go-proto-validators/validator.proto";
+import "validate/validate.proto";
 
 import "github.com/nayotta/metathings/pkg/proto/identityd2/model.proto";
 
 message IssueModuleTokenRequest {
-	ai.metathings.service.identityd2.OpCredential credential = 1 [(validator.field) = {msg_exists: true}];
-	google.protobuf.Timestamp timestamp = 2 [(validator.field) = {msg_exists: true}];
-	google.protobuf.Int64Value nonce = 3 [(validator.field) = {msg_exists: true}];
-	google.protobuf.StringValue hmac = 4 [(validator.field) = {msg_exists: true}];
+	ai.metathings.service.identityd2.OpCredential credential = 1 [(validate.rules).message.required = true];
+	google.protobuf.Timestamp timestamp = 2 [(validate.rules).timestamp.required = true];
+	google.protobuf.Int64Value nonce = 3 [(validate.rules).message.required = true];
+	google.protobuf.StringValue hmac = 4 [(validate.rules).message.required = true];
 }
 
 message IssueModuleTokenResponse {

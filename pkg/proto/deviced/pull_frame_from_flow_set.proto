@@ -4,7 +4,7 @@ package ai.metathings.service.deviced;
 
 import "google/protobuf/wrappers.proto";
 
-import "github.com/mwitkow/go-proto-validators/validator.proto";
+import "validate/validate.proto";
 
 import "model.proto";
 
@@ -14,7 +14,7 @@ message PullFrameFromFlowSetRequest {
 		google.protobuf.BoolValue config_ack = 2;
 	}
 
-	google.protobuf.StringValue id = 1 [(validator.field) = {msg_exists: true}];
+	google.protobuf.StringValue id = 1 [(validate.rules).message.required = true];
 	oneof request {
 		Config config = 2;
 	}

@@ -2,11 +2,11 @@ syntax = "proto3";
 
 package ai.metathings.service.deviced;
 
-import "github.com/mwitkow/go-proto-validators/validator.proto";
+import "validate/validate.proto";
 
 import "model.proto";
 
 message AddFirmwareDescriptorToFirmwareHubRequest {
-	OpFirmwareHub firmware_hub = 1 [(validator.field) = {msg_exists: true}];
-	OpFirmwareDescriptor firmware_descriptor = 2 [(validator.field) = {msg_exists: true}];
+	OpFirmwareHub firmware_hub = 1 [(validate.rules).message.required = true];
+	OpFirmwareDescriptor firmware_descriptor = 2 [(validate.rules).message.required = true];
 }

@@ -1,11 +1,12 @@
 syntax = "proto3";
 
 package ai.metathings.service.deviced;
+
 option go_package = "deviced";
 
 import "google/protobuf/wrappers.proto";
 
-import "github.com/mwitkow/go-proto-validators/validator.proto";
+import "validate/validate.proto";
 
 import "model.proto";
 
@@ -16,7 +17,7 @@ message PushFrameToFlowRequest {
 		google.protobuf.BoolValue push_ack = 3;
 	}
 
-	google.protobuf.StringValue id = 1 [(validator.field) = {msg_exists: true}];
+	google.protobuf.StringValue id = 1 [(validate.rules).message.required = true];
 	oneof request {
 		Config config = 2;
 		OpFrame frame = 3;

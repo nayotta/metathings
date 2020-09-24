@@ -5,19 +5,19 @@ option go_package = "device";
 
 import "google/protobuf/wrappers.proto";
 
-import "github.com/mwitkow/go-proto-validators/validator.proto";
+import "validate/validate.proto";
 
 import "github.com/nayotta/metathings/pkg/proto/deviced/model.proto";
 
 message PushFrameToFlowRequest {
 	message Config {
-		ai.metathings.service.deviced.OpFlow flow = 1 [(validator.field) = {msg_exists: true}];
+		ai.metathings.service.deviced.OpFlow flow = 1 [(validate.rules).message.required = true];
 		google.protobuf.BoolValue config_ack = 2;
 		google.protobuf.BoolValue push_ack = 3;
 	}
 	message Ping {}
 
-	google.protobuf.StringValue id = 1 [(validator.field) = {msg_exists: true}];
+	google.protobuf.StringValue id = 1 [(validate.rules).message.required = true];
 	oneof request {
 		Config config = 2;
 		Ping ping = 3;

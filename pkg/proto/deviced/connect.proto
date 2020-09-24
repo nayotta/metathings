@@ -4,7 +4,7 @@ package ai.metathings.service.deviced;
 
 import "google/protobuf/wrappers.proto";
 
-import "github.com/mwitkow/go-proto-validators/validator.proto";
+import "validate/validate.proto";
 
 import "model.proto";
 
@@ -25,8 +25,8 @@ message ConnectResponse {
 }
 
 message ConnectRequest {
-	google.protobuf.Int64Value session_id = 1 [(validator.field) = {msg_exists: true}];
-	ConnectMessageKind kind = 2 [(validator.field) = {msg_exists: true}];
+	google.protobuf.Int64Value session_id = 1 [(validate.rules).message.required = true];
+	ConnectMessageKind kind = 2 [(validate.rules).enum.defined_only = true];
 	oneof union {
 		OpUnaryCallValue unary_call = 3;
 		OpStreamCallValue stream_call = 4;

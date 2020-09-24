@@ -4,11 +4,11 @@ package ai.metathings.service.device;
 
 import "google/protobuf/wrappers.proto";
 
-import "github.com/mwitkow/go-proto-validators/validator.proto";
+import "validate/validate.proto";
 
 import "github.com/nayotta/metathings/pkg/proto/deviced/model.proto";
 
 message PutObjectRequest {
-	ai.metathings.service.deviced.OpObject object = 1 [(validator.field) = {msg_exists: true}];
-	google.protobuf.BytesValue content = 2 [(validator.field) = {msg_exists: true}];
+	ai.metathings.service.deviced.OpObject object = 1 [(validate.rules).message.required = true];
+	google.protobuf.BytesValue content = 2 [(validate.rules).message.required = true];
 }

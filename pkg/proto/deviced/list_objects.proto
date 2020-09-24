@@ -5,12 +5,12 @@ option go_package = "deviced";
 
 import "google/protobuf/wrappers.proto";
 
-import "github.com/mwitkow/go-proto-validators/validator.proto";
+import "validate/validate.proto";
 
 import "model.proto";
 
 message ListObjectsRequest {
-	OpObject object = 1 [(validator.field) = {msg_exists: true}];
+	OpObject object = 1 [(validate.rules).message.required = true];
 	google.protobuf.BoolValue recursive = 2;
 	google.protobuf.Int32Value depth = 3;
 }

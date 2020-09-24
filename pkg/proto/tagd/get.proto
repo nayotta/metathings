@@ -4,11 +4,11 @@ package ai.metathings.service.tagd;
 
 import "google/protobuf/wrappers.proto";
 
-import "github.com/mwitkow/go-proto-validators/validator.proto";
+import "validate/validate.proto";
 
 message GetRequest {
-	google.protobuf.StringValue id = 1 [(validator.field) = {msg_exists: true}];
-	google.protobuf.StringValue namespace = 2 [(validator.field) = {msg_exists: true}];
+	google.protobuf.StringValue id = 1 [(validate.rules).message.required = true];
+	google.protobuf.StringValue namespace = 2 [(validate.rules).message.required = true];
 }
 
 message GetResponse {

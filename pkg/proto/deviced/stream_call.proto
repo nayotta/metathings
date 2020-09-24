@@ -3,16 +3,13 @@ syntax = "proto3";
 package ai.metathings.service.deviced;
 option go_package = "deviced";
 
-import "google/protobuf/wrappers.proto";
-import "google/protobuf/any.proto";
-
-import "github.com/mwitkow/go-proto-validators/validator.proto";
+import "validate/validate.proto";
 
 import "model.proto";
 
 message StreamCallRequest {
-	OpDevice device = 1 [(validator.field) = {msg_exists: true}];
-	OpStreamCallValue value = 2 [(validator.field) = {msg_exists: true}];
+	OpDevice device = 1 [(validate.rules).message.required = true];
+	OpStreamCallValue value = 2 [(validate.rules).message.required = true];
 }
 
 message StreamCallResponse {

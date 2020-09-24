@@ -1,14 +1,15 @@
 syntax = "proto3";
 
 package ai.metathings.service.deviced;
+
 option go_package = "deviced";
 
-import "github.com/mwitkow/go-proto-validators/validator.proto";
+import "validate/validate.proto";
 
 import "model.proto";
 
 message GetObjectStreamingContentRequest {
-	OpObject object = 1 [(validator.field) = {msg_exists: true}];
+	OpObject object = 1 [(validate.rules).message.required = true];
 }
 
 message GetObjectStreamingContentResponse {

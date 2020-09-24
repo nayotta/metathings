@@ -1,14 +1,15 @@
 syntax = "proto3";
 
 package ai.metathings.service.evaluatord;
+
 option go_package = "evaluatord";
 
-import "github.com/mwitkow/go-proto-validators/validator.proto";
+import "validate/validate.proto";
 
 import "model.proto";
 
 message GetTaskRequest {
-	OpTask task = 1 [(validator.field) = {msg_exists: true}];
+	OpTask task = 1 [(validate.rules).message.required = true];
 }
 
 message GetTaskResponse {

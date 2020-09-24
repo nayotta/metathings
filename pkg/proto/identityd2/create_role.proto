@@ -2,12 +2,12 @@ syntax = "proto3";
 
 package ai.metathings.service.identityd2;
 
-import "github.com/mwitkow/go-proto-validators/validator.proto";
+import "validate/validate.proto";
 
 import "model.proto";
 
 message CreateRoleRequest {
-	OpRole role = 1 [(validator.field) = {msg_exists: true}];
+	OpRole role = 1 [(validate.rules).message.required = true];
 }
 
 message CreateRoleResponse {
