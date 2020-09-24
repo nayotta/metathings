@@ -8,7 +8,6 @@ import "google/protobuf/any.proto";
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/struct.proto";
 
-import "github.com/nayotta/metathings/pkg/proto/identityd2/model.proto";
 import "github.com/nayotta/metathings/pkg/proto/constant/state/device.proto";
 import "github.com/nayotta/metathings/pkg/proto/constant/kind/device.proto";
 import "github.com/nayotta/metathings/pkg/proto/constant/state/module.proto";
