@@ -10,7 +10,7 @@ clean:
 	$(RM) -rf $(CLEAN_PATHS)
 
 protos_from_docker:
-	$(DOCKER_EXE) run --entrypoint /usr/bin/make --rm -v $(CUR_PATH):/go/src/github.com/nayotta/metathings ainizetap2/protoc-gen-validate -C /go/src/github.com/nayotta/metathings/pkg/proto
+	$(DOCKER_EXE) run --rm --entrypoint /go/src/github.com/nayotta/metathings/hack/protos/gen_gopb.sh -v $(CUR_PATH):/go/src/github.com/nayotta/metathings ainizetap2/protoc-gen-validate
 
 protos:
 	$(MAKE) -C pkg/proto all

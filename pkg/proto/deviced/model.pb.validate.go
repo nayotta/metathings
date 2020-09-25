@@ -17,9 +17,9 @@ import (
 
 	"github.com/golang/protobuf/ptypes"
 
-	kind "github.com/nayotta/metathings/pkg/proto/constant/kind"
+	kind "github.com/nayotta/metathings/proto/constant/kind"
 
-	constant "github.com/nayotta/metathings/pkg/proto/constant/state"
+	constant "github.com/nayotta/metathings/proto/constant/state"
 )
 
 // ensure the imports are used
