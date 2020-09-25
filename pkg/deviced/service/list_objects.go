@@ -10,7 +10,7 @@ import (
 	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
 	simple_storage "github.com/nayotta/metathings/pkg/deviced/simple_storage"
 	identityd_validator "github.com/nayotta/metathings/pkg/identityd2/validator"
-	pb "github.com/nayotta/metathings/pkg/proto/deviced"
+	pb "github.com/nayotta/metathings/proto/deviced"
 )
 
 func (self *MetathingsDevicedService) ValidateListObjects(ctx context.Context, in interface{}) error {

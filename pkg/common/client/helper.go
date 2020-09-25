@@ -10,12 +10,12 @@ import (
 
 	constant_helper "github.com/nayotta/metathings/pkg/common/constant"
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
-	component_pb "github.com/nayotta/metathings/pkg/proto/component"
-	device_pb "github.com/nayotta/metathings/pkg/proto/device"
-	deviced_pb "github.com/nayotta/metathings/pkg/proto/deviced"
-	evaluatord_pb "github.com/nayotta/metathings/pkg/proto/evaluatord"
-	identityd2_pb "github.com/nayotta/metathings/pkg/proto/identityd2"
-	policyd_pb "github.com/nayotta/metathings/pkg/proto/policyd"
+	component_pb "github.com/nayotta/metathings/proto/component"
+	device_pb "github.com/nayotta/metathings/proto/device"
+	deviced_pb "github.com/nayotta/metathings/proto/deviced"
+	evaluatord_pb "github.com/nayotta/metathings/proto/evaluatord"
+	identityd2_pb "github.com/nayotta/metathings/proto/identityd2"
+	policyd_pb "github.com/nayotta/metathings/proto/policyd"
 )
 
 type ClientType int32

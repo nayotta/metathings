@@ -17,7 +17,7 @@ import (
 	session_helper "github.com/nayotta/metathings/pkg/common/session"
 	session_storage "github.com/nayotta/metathings/pkg/deviced/session_storage"
 	storage "github.com/nayotta/metathings/pkg/deviced/storage"
-	pb "github.com/nayotta/metathings/pkg/proto/deviced"
+	pb "github.com/nayotta/metathings/proto/deviced"
 )
 
 type Connection interface {

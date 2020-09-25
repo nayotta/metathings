@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	id_helper "github.com/nayotta/metathings/pkg/common/id"
-	device_pb "github.com/nayotta/metathings/pkg/proto/device"
+	device_pb "github.com/nayotta/metathings/proto/device"
 	log "github.com/sirupsen/logrus"
 )
 

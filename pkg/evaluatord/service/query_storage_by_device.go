@@ -9,14 +9,14 @@ import (
 	"github.com/golang/protobuf/jsonpb"
 	"github.com/golang/protobuf/ptypes"
 	structpb "github.com/golang/protobuf/ptypes/struct"
+	log "github.com/sirupsen/logrus"
 
 	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
 	identityd_validator "github.com/nayotta/metathings/pkg/identityd2/validator"
-	"github.com/nayotta/metathings/pkg/proto/common/option/pagination"
-	deviced_pb "github.com/nayotta/metathings/pkg/proto/deviced"
-	pb "github.com/nayotta/metathings/pkg/proto/evaluatord"
+	"github.com/nayotta/metathings/proto/common/option/pagination"
+	deviced_pb "github.com/nayotta/metathings/proto/deviced"
+	pb "github.com/nayotta/metathings/proto/evaluatord"
 	dssdk "github.com/nayotta/metathings/sdk/data_storage"
-	log "github.com/sirupsen/logrus"
 )
 
 func (srv *MetathingsEvaluatordService) ValidateQueryStorageByDevice(ctx context.Context, in interface{}) error {

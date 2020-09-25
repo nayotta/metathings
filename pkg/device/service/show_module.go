@@ -6,7 +6,7 @@ import (
 	"github.com/golang/protobuf/ptypes/empty"
 
 	context_helper "github.com/nayotta/metathings/pkg/common/context"
-	pb "github.com/nayotta/metathings/pkg/proto/device"
+	pb "github.com/nayotta/metathings/proto/device"
 )
 
 func (self *MetathingsDeviceServiceImpl) ShowModule(ctx context.Context, req *empty.Empty) (*pb.ShowModuleResponse, error) {

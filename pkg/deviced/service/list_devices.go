@@ -8,9 +8,9 @@ import (
 
 	deviced_helper "github.com/nayotta/metathings/pkg/deviced/helper"
 	storage "github.com/nayotta/metathings/pkg/deviced/storage"
-	pb_kind "github.com/nayotta/metathings/pkg/proto/constant/kind"
-	pb_state "github.com/nayotta/metathings/pkg/proto/constant/state"
-	pb "github.com/nayotta/metathings/pkg/proto/deviced"
+	pb_kind "github.com/nayotta/metathings/proto/constant/kind"
+	pb_state "github.com/nayotta/metathings/proto/constant/state"
+	pb "github.com/nayotta/metathings/proto/deviced"
 )
 
 func (self *MetathingsDevicedService) ListDevices(ctx context.Context, req *pb.ListDevicesRequest) (*pb.ListDevicesResponse, error) {

@@ -13,7 +13,7 @@ import (
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
 
-	deviced_pb "github.com/nayotta/metathings/pkg/proto/deviced"
+	deviced_pb "github.com/nayotta/metathings/proto/deviced"
 	dssdk "github.com/nayotta/metathings/sdk/data_storage"
 	dsdk "github.com/nayotta/metathings/sdk/deviced"
 	esdk "github.com/nayotta/metathings/sdk/evaluatord"

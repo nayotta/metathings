@@ -7,7 +7,7 @@ import (
 
 	"google.golang.org/grpc/metadata"
 
-	identityd2_pb "github.com/nayotta/metathings/pkg/proto/identityd2"
+	identityd2_pb "github.com/nayotta/metathings/proto/identityd2"
 )
 
 func WithToken(ctx context.Context, token string) context.Context {

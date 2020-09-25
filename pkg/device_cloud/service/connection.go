@@ -20,8 +20,8 @@ import (
 	component "github.com/nayotta/metathings/pkg/component"
 	storage "github.com/nayotta/metathings/pkg/device_cloud/storage"
 	mosquitto_service "github.com/nayotta/metathings/pkg/plugin/mosquitto/service"
-	state_pb "github.com/nayotta/metathings/pkg/proto/constant/state"
-	pb "github.com/nayotta/metathings/pkg/proto/deviced"
+	state_pb "github.com/nayotta/metathings/proto/constant/state"
+	pb "github.com/nayotta/metathings/proto/deviced"
 )
 
 func (s *MetathingsDeviceCloudService) get_device_by_module_id(ctx context.Context, mdl_id string) (*pb.Device, error) {

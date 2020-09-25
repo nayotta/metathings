@@ -1,7 +1,7 @@
 package state_helper
 
 import (
-	state "github.com/nayotta/metathings/pkg/proto/common/state"
+	state "github.com/nayotta/metathings/proto/common/state"
 )
 
 type CoreStateParser struct {

@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package ai.metathings.service.device;
+option go_package = "device";
+
+import "validate/validate.proto";
+
+import "github.com/nayotta/metathings/proto/deviced/model.proto";
+
+message GetObjectContentRequest {
+	ai.metathings.service.deviced.OpObject object = 1 [(validate.rules).message.required = true];
+}
+
+message GetObjectContentResponse {
+	bytes content = 1;
+}

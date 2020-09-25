@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package ai.metathings.service.evaluatord;
+
+option go_package = "evaluatord";
+
+import "google/protobuf/timestamp.proto";
+
+import "validate/validate.proto";
+
+import "model.proto";
+
+message ListTasksBySourceRequest {
+	OpResource source = 1 [(validate.rules).message.required = true];
+	google.protobuf.Timestamp range_from = 2;
+	google.protobuf.Timestamp range_to = 3;
+}
+
+message ListTasksBySourceResponse {
+	repeated Task tasks = 1;
+}

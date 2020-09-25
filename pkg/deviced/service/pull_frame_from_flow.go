@@ -3,12 +3,12 @@ package metathings_deviced_service
 import (
 	"time"
 
+	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
 	flow "github.com/nayotta/metathings/pkg/deviced/flow"
-	pb "github.com/nayotta/metathings/pkg/proto/deviced"
-	log "github.com/sirupsen/logrus"
+	pb "github.com/nayotta/metathings/proto/deviced"
 )
 
 func (self *MetathingsDevicedService) PullFrameFromFlow(req *pb.PullFrameFromFlowRequest, stm pb.DevicedService_PullFrameFromFlowServer) error {

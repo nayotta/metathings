@@ -7,7 +7,7 @@ import (
 	"google.golang.org/grpc"
 
 	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
-	component_pb "github.com/nayotta/metathings/pkg/proto/component"
+	component_pb "github.com/nayotta/metathings/proto/component"
 )
 
 type GrpcModuleServer struct {

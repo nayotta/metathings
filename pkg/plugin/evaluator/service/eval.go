@@ -20,8 +20,8 @@ import (
 	evltr_helper "github.com/nayotta/metathings/pkg/evaluatord/helper"
 	evltr_stor "github.com/nayotta/metathings/pkg/evaluatord/storage"
 	evltr_plg "github.com/nayotta/metathings/pkg/plugin/evaluator"
-	state_pb "github.com/nayotta/metathings/pkg/proto/constant/state"
-	evltr_pb "github.com/nayotta/metathings/pkg/proto/evaluatord"
+	state_pb "github.com/nayotta/metathings/proto/constant/state"
+	evltr_pb "github.com/nayotta/metathings/proto/evaluatord"
 	esdk "github.com/nayotta/metathings/sdk/evaluatord"
 )
 

@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package ai.metathings.service.evaluatord;
+option go_package = "evaluatord";
+
+import "validate/validate.proto";
+
+import "model.proto";
+
+message PatchTimerRequest {
+	OpTimer timer = 1 [(validate.rules).message.required = true];
+}
+
+message PatchTimerResponse {
+	Timer timer = 1;
+}

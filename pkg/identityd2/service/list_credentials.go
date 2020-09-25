@@ -7,7 +7,7 @@ import (
 	"google.golang.org/grpc/status"
 
 	storage "github.com/nayotta/metathings/pkg/identityd2/storage"
-	pb "github.com/nayotta/metathings/pkg/proto/identityd2"
+	pb "github.com/nayotta/metathings/proto/identityd2"
 )
 
 func (self *MetathingsIdentitydService) ListCredentials(ctx context.Context, req *pb.ListCredentialsRequest) (*pb.ListCredentialsResponse, error) {

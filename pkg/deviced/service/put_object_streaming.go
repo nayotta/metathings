@@ -9,7 +9,7 @@ import (
 	file_helper "github.com/nayotta/metathings/pkg/common/file"
 	id_helper "github.com/nayotta/metathings/pkg/common/id"
 	ss "github.com/nayotta/metathings/pkg/deviced/simple_storage"
-	pb "github.com/nayotta/metathings/pkg/proto/deviced"
+	pb "github.com/nayotta/metathings/proto/deviced"
 )
 
 func (self *MetathingsDevicedService) new_put_object_streaming_chunks_response(offsets []int64) *pb.PutObjectStreamingResponse {

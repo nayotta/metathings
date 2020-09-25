@@ -9,7 +9,7 @@ import (
 
 	id_helper "github.com/nayotta/metathings/pkg/common/id"
 	session_helper "github.com/nayotta/metathings/pkg/common/session"
-	pb "github.com/nayotta/metathings/pkg/proto/deviced"
+	pb "github.com/nayotta/metathings/proto/deviced"
 )
 
 func parse_bridge_id(device string, session int64) string {

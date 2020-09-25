@@ -13,7 +13,7 @@ import (
 	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
 	id_helper "github.com/nayotta/metathings/pkg/common/id"
 	component "github.com/nayotta/metathings/pkg/component"
-	pb "github.com/nayotta/metathings/pkg/proto/deviced"
+	pb "github.com/nayotta/metathings/proto/deviced"
 )
 
 var (

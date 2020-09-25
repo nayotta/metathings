@@ -14,8 +14,8 @@ import (
 	evaluatord_helper "github.com/nayotta/metathings/pkg/evaluatord/helper"
 	storage "github.com/nayotta/metathings/pkg/evaluatord/storage"
 	evaluator_plugin "github.com/nayotta/metathings/pkg/plugin/evaluator"
-	deviced_pb "github.com/nayotta/metathings/pkg/proto/deviced"
-	pb "github.com/nayotta/metathings/pkg/proto/evaluatord"
+	deviced_pb "github.com/nayotta/metathings/proto/deviced"
+	pb "github.com/nayotta/metathings/proto/evaluatord"
 )
 
 type evaluator_getter interface {

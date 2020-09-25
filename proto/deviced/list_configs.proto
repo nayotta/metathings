@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package ai.metathings.service.deviced;
+
+import "validate/validate.proto";
+
+import "model.proto";
+
+message ListConfigsRequest {
+	OpConfig config = 1 [(validate.rules).message.required = true];
+}
+
+message ListConfigsResponse {
+	repeated Config configs = 1;
+}

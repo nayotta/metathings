@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package ai.metathings.service.deviced;
+option go_package = "deviced";
+
+import "google/protobuf/wrappers.proto";
+
+import "validate/validate.proto";
+
+import "model.proto";
+
+message ListObjectsRequest {
+	OpObject object = 1 [(validate.rules).message.required = true];
+	google.protobuf.BoolValue recursive = 2;
+	google.protobuf.Int32Value depth = 3;
+}
+
+message ListObjectsResponse {
+	repeated Object objects = 1;
+}

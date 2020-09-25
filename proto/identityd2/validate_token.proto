@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package ai.metathings.service.identityd2;
+
+import "validate/validate.proto";
+
+import "model.proto";
+
+message ValidateTokenRequest {
+	OpToken token = 1 [(validate.rules).message.required = true];
+}
+
+message ValidateTokenResponse {
+	Token token = 1;
+}

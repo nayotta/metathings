@@ -12,8 +12,8 @@ import (
 	config_helper "github.com/nayotta/metathings/pkg/common/config"
 	id_helper "github.com/nayotta/metathings/pkg/common/id"
 	mosquitto_service "github.com/nayotta/metathings/pkg/plugin/mosquitto/service"
-	device_pb "github.com/nayotta/metathings/pkg/proto/device"
-	deviced_pb "github.com/nayotta/metathings/pkg/proto/deviced"
+	device_pb "github.com/nayotta/metathings/proto/device"
+	deviced_pb "github.com/nayotta/metathings/proto/deviced"
 )
 
 func (s *MetathingsDeviceCloudService) start_push_frame_loop(dev_id string, req *device_pb.PushFrameToFlowRequest, sess string) error {

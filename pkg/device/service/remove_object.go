@@ -7,8 +7,8 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	pb "github.com/nayotta/metathings/pkg/proto/device"
-	deviced_pb "github.com/nayotta/metathings/pkg/proto/deviced"
+	pb "github.com/nayotta/metathings/proto/device"
+	deviced_pb "github.com/nayotta/metathings/proto/deviced"
 )
 
 func (self *MetathingsDeviceServiceImpl) RemoveObject(ctx context.Context, req *pb.RemoveObjectRequest) (*empty.Empty, error) {

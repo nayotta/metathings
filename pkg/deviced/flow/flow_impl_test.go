@@ -14,7 +14,7 @@ import (
 
 	log_helper "github.com/nayotta/metathings/pkg/common/log"
 	test_helper "github.com/nayotta/metathings/pkg/common/test"
-	pb "github.com/nayotta/metathings/pkg/proto/deviced"
+	pb "github.com/nayotta/metathings/proto/deviced"
 )
 
 const (

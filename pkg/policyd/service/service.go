@@ -7,7 +7,7 @@ import (
 	casbin_pb "github.com/casbin/casbin-server/proto"
 	"github.com/casbin/casbin-server/server"
 
-	pb "github.com/nayotta/metathings/pkg/proto/policyd"
+	pb "github.com/nayotta/metathings/proto/policyd"
 )
 
 type Policy struct {

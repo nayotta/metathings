@@ -10,7 +10,7 @@ import (
 	id_helper "github.com/nayotta/metathings/pkg/common/id"
 	pb_helper "github.com/nayotta/metathings/pkg/common/protobuf"
 	storage "github.com/nayotta/metathings/pkg/identityd2/storage"
-	pb "github.com/nayotta/metathings/pkg/proto/identityd2"
+	pb "github.com/nayotta/metathings/proto/identityd2"
 )
 
 const (

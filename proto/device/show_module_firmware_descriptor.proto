@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package ai.metathings.service.device;
+option go_package = "device";
+
+import "github.com/nayotta/metathings/proto/deviced/model.proto";
+
+message ShowModuleFirmwareDescriptorResponse {
+  ai.metathings.service.deviced.FirmwareDescriptor firmware_descriptor = 1;
+}

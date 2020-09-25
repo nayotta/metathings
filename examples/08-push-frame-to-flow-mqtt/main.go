@@ -29,8 +29,8 @@ import (
 	id_helper "github.com/nayotta/metathings/pkg/common/id"
 	passwd_helper "github.com/nayotta/metathings/pkg/common/passwd"
 	mosquitto_service "github.com/nayotta/metathings/pkg/plugin/mosquitto/service"
-	device_pb "github.com/nayotta/metathings/pkg/proto/device"
-	deviced_pb "github.com/nayotta/metathings/pkg/proto/deviced"
+	device_pb "github.com/nayotta/metathings/proto/device"
+	deviced_pb "github.com/nayotta/metathings/proto/deviced"
 )
 
 var (

@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package ai.metathings.service.tagd;
+
+import "google/protobuf/wrappers.proto";
+
+import "validate/validate.proto";
+
+message QueryRequest {
+	repeated google.protobuf.StringValue tags = 1;
+	google.protobuf.StringValue namespace = 2 [(validate.rules).message.required = true];
+}
+
+message QueryResponse {
+	repeated string tags = 1;
+	repeated string ids = 2;
+}

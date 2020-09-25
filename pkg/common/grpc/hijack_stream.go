@@ -4,7 +4,7 @@ import (
 	"errors"
 	"sync"
 
-	deviced_pb "github.com/nayotta/metathings/pkg/proto/deviced"
+	deviced_pb "github.com/nayotta/metathings/proto/deviced"
 )
 
 var (
@@ -56,9 +56,9 @@ func (self *HijackStream) start() {
 func NewHijackStream(stm deviced_pb.DevicedService_ConnectClient, on_recv func(*HijackStream, *deviced_pb.ConnectRequest) error) *HijackStream {
 	hjstm := &HijackStream{
 		DevicedService_ConnectClient: stm,
-		on_recv:       on_recv,
-		recv_chan:     make(chan *deviced_pb.ConnectRequest, 128),
-		recv_err_once: new(sync.Once),
+		on_recv:                      on_recv,
+		recv_chan:                    make(chan *deviced_pb.ConnectRequest, 128),
+		recv_err_once:                new(sync.Once),
 	}
 
 	hjstm.start()

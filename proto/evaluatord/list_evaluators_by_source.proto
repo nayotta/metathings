@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package ai.metathings.service.evaluatord;
+
+option go_package = "evaluatord";
+
+import "validate/validate.proto";
+
+import "model.proto";
+
+message ListEvaluatorsBySourceRequest {
+	OpResource source = 1 [(validate.rules).message.required = true];
+}
+
+message ListEvaluatorsBySourceResponse {
+	repeated Evaluator evaluators = 1;
+}

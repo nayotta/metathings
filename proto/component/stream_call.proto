@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package ai.metathings.component;
+option go_package = "component";
+
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/any.proto";
+
+import "validate/validate.proto";
+
+message StreamCallRequest {
+	oneof request {
+		StreamCallConfigRequest config = 1;
+		StreamCallDataRequest data = 21;
+	}
+}
+
+message StreamCallConfigRequest {
+	google.protobuf.StringValue method = 1 [(validate.rules).message.required = true];
+}
+
+message StreamCallDataRequest {
+	google.protobuf.Any value = 1 [(validate.rules).any.required = true];
+}
+
+message StreamCallResponse {
+	oneof response {
+		StreamCallConfigResponse config = 1;
+		StreamCallDataResponse data = 21;
+	}
+}
+
+message StreamCallConfigResponse {
+	string method = 1;
+}
+
+message StreamCallDataResponse {
+	google.protobuf.Any value = 1;
+}

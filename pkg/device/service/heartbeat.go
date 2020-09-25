@@ -11,9 +11,9 @@ import (
 	"google.golang.org/grpc/status"
 
 	protobuf_helper "github.com/nayotta/metathings/pkg/common/protobuf"
-	state_pb "github.com/nayotta/metathings/pkg/proto/constant/state"
-	pb "github.com/nayotta/metathings/pkg/proto/device"
-	deviced_pb "github.com/nayotta/metathings/pkg/proto/deviced"
+	state_pb "github.com/nayotta/metathings/proto/constant/state"
+	pb "github.com/nayotta/metathings/proto/device"
+	deviced_pb "github.com/nayotta/metathings/proto/deviced"
 )
 
 func (self *MetathingsDeviceServiceImpl) Heartbeat(ctx context.Context, req *pb.HeartbeatRequest) (*empty.Empty, error) {

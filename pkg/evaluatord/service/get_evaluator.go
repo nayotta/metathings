@@ -9,7 +9,7 @@ import (
 	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
 	storage "github.com/nayotta/metathings/pkg/evaluatord/storage"
 	identityd_validator "github.com/nayotta/metathings/pkg/identityd2/validator"
-	pb "github.com/nayotta/metathings/pkg/proto/evaluatord"
+	pb "github.com/nayotta/metathings/proto/evaluatord"
 )
 
 func (srv *MetathingsEvaluatordService) ValidateGetEvaluator(ctx context.Context, in interface{}) error {

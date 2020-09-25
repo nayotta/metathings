@@ -14,7 +14,7 @@ import (
 	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
 	flow "github.com/nayotta/metathings/pkg/deviced/flow"
 	identityd_validator "github.com/nayotta/metathings/pkg/identityd2/validator"
-	pb "github.com/nayotta/metathings/pkg/proto/deviced"
+	pb "github.com/nayotta/metathings/proto/deviced"
 	evaluatord_sdk "github.com/nayotta/metathings/sdk/evaluatord"
 )
 

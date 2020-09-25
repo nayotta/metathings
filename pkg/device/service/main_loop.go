@@ -7,7 +7,7 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	session_helper "github.com/nayotta/metathings/pkg/common/session"
-	deviced_pb "github.com/nayotta/metathings/pkg/proto/deviced"
+	deviced_pb "github.com/nayotta/metathings/proto/deviced"
 )
 
 func (self *MetathingsDeviceServiceImpl) main_loop() {

@@ -2,7 +2,7 @@ package metathings_evaluatord_helper
 
 import (
 	pb_helper "github.com/nayotta/metathings/pkg/common/protobuf"
-	pb_state "github.com/nayotta/metathings/pkg/proto/constant/state"
+	pb_state "github.com/nayotta/metathings/proto/constant/state"
 )
 
 type TaskStateEnumer struct {

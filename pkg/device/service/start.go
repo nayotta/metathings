@@ -4,7 +4,7 @@ import (
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/golang/protobuf/ptypes/wrappers"
 
-	deviced_pb "github.com/nayotta/metathings/pkg/proto/deviced"
+	deviced_pb "github.com/nayotta/metathings/proto/deviced"
 )
 
 func (self *MetathingsDeviceServiceImpl) set_device_version_to_simple_storage(cli deviced_pb.DevicedServiceClient) error {

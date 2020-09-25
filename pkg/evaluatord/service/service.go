@@ -14,7 +14,7 @@ import (
 	timer_backend "github.com/nayotta/metathings/pkg/evaluatord/timer"
 	identityd_authorizer "github.com/nayotta/metathings/pkg/identityd2/authorizer"
 	identityd_validator "github.com/nayotta/metathings/pkg/identityd2/validator"
-	pb "github.com/nayotta/metathings/pkg/proto/evaluatord"
+	pb "github.com/nayotta/metathings/proto/evaluatord"
 	dssdk "github.com/nayotta/metathings/sdk/data_storage"
 )
 

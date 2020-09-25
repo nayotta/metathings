@@ -3,7 +3,7 @@ package metathings_device_cloud_service
 import (
 	"net/http"
 
-	device_pb "github.com/nayotta/metathings/pkg/proto/device"
+	device_pb "github.com/nayotta/metathings/proto/device"
 )
 
 func (s *MetathingsDeviceCloudService) ShowModule(w http.ResponseWriter, r *http.Request) {

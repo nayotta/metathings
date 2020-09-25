@@ -17,7 +17,7 @@ import (
 	id_helper "github.com/nayotta/metathings/pkg/common/id"
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 	session_helper "github.com/nayotta/metathings/pkg/common/session"
-	pb "github.com/nayotta/metathings/pkg/proto/component"
+	pb "github.com/nayotta/metathings/proto/component"
 )
 
 var (
