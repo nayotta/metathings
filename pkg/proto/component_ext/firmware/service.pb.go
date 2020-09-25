@@ -9,8 +9,6 @@ import (
 	proto "github.com/golang/protobuf/proto"
 	empty "github.com/golang/protobuf/ptypes/empty"
 	grpc "google.golang.org/grpc"
-	codes "google.golang.org/grpc/codes"
-	status "google.golang.org/grpc/status"
 	math "math"
 )
 
@@ -77,14 +75,6 @@ func (c *moduleFirmwareServiceClient) SyncFirmware(ctx context.Context, in *empt
 // ModuleFirmwareServiceServer is the server API for ModuleFirmwareService service.
 type ModuleFirmwareServiceServer interface {
 	SyncFirmware(context.Context, *empty.Empty) (*empty.Empty, error)
-}
-
-// UnimplementedModuleFirmwareServiceServer can be embedded to have forward compatible implementations.
-type UnimplementedModuleFirmwareServiceServer struct {
-}
-
-func (*UnimplementedModuleFirmwareServiceServer) SyncFirmware(ctx context.Context, req *empty.Empty) (*empty.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SyncFirmware not implemented")
 }
 
 func RegisterModuleFirmwareServiceServer(s *grpc.Server, srv ModuleFirmwareServiceServer) {

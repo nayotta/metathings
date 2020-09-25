@@ -9,8 +9,6 @@ import (
 	proto "github.com/golang/protobuf/proto"
 	empty "github.com/golang/protobuf/ptypes/empty"
 	grpc "google.golang.org/grpc"
-	codes "google.golang.org/grpc/codes"
-	status "google.golang.org/grpc/status"
 	math "math"
 )
 
@@ -301,65 +299,6 @@ type EvaluatordServiceServer interface {
 	ListTimers(context.Context, *ListTimersRequest) (*ListTimersResponse, error)
 	AddConfigsToTimer(context.Context, *AddConfigsToTimerRequest) (*empty.Empty, error)
 	RemoveConfigsFromTimer(context.Context, *RemoveConfigsFromTimerRequest) (*empty.Empty, error)
-}
-
-// UnimplementedEvaluatordServiceServer can be embedded to have forward compatible implementations.
-type UnimplementedEvaluatordServiceServer struct {
-}
-
-func (*UnimplementedEvaluatordServiceServer) CreateEvaluator(ctx context.Context, req *CreateEvaluatorRequest) (*CreateEvaluatorResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateEvaluator not implemented")
-}
-func (*UnimplementedEvaluatordServiceServer) DeleteEvaluator(ctx context.Context, req *DeleteEvaluatorRequest) (*empty.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteEvaluator not implemented")
-}
-func (*UnimplementedEvaluatordServiceServer) PatchEvaluator(ctx context.Context, req *PatchEvaluatorRequest) (*PatchEvaluatorResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method PatchEvaluator not implemented")
-}
-func (*UnimplementedEvaluatordServiceServer) GetEvaluator(ctx context.Context, req *GetEvaluatorRequest) (*GetEvaluatorResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetEvaluator not implemented")
-}
-func (*UnimplementedEvaluatordServiceServer) ListEvaluators(ctx context.Context, req *ListEvaluatorsRequest) (*ListEvaluatorsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListEvaluators not implemented")
-}
-func (*UnimplementedEvaluatordServiceServer) AddSourcesToEvaluator(ctx context.Context, req *AddSourcesToEvaluatorRequest) (*empty.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method AddSourcesToEvaluator not implemented")
-}
-func (*UnimplementedEvaluatordServiceServer) RemoveSourcesFromEvaluator(ctx context.Context, req *RemoveSourcesFromEvaluatorRequest) (*empty.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method RemoveSourcesFromEvaluator not implemented")
-}
-func (*UnimplementedEvaluatordServiceServer) ListEvaluatorsBySource(ctx context.Context, req *ListEvaluatorsBySourceRequest) (*ListEvaluatorsBySourceResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListEvaluatorsBySource not implemented")
-}
-func (*UnimplementedEvaluatordServiceServer) ListTasksBySource(ctx context.Context, req *ListTasksBySourceRequest) (*ListTasksBySourceResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListTasksBySource not implemented")
-}
-func (*UnimplementedEvaluatordServiceServer) GetTask(ctx context.Context, req *GetTaskRequest) (*GetTaskResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetTask not implemented")
-}
-func (*UnimplementedEvaluatordServiceServer) QueryStorageByDevice(ctx context.Context, req *QueryStorageByDeviceRequest) (*QueryStorageByDeviceResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method QueryStorageByDevice not implemented")
-}
-func (*UnimplementedEvaluatordServiceServer) CreateTimer(ctx context.Context, req *CreateTimerRequest) (*CreateTimerResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateTimer not implemented")
-}
-func (*UnimplementedEvaluatordServiceServer) DeleteTimer(ctx context.Context, req *DeleteTimerRequest) (*empty.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteTimer not implemented")
-}
-func (*UnimplementedEvaluatordServiceServer) PatchTimer(ctx context.Context, req *PatchTimerRequest) (*PatchTimerResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method PatchTimer not implemented")
-}
-func (*UnimplementedEvaluatordServiceServer) GetTimer(ctx context.Context, req *GetTimerRequest) (*GetTimerResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetTimer not implemented")
-}
-func (*UnimplementedEvaluatordServiceServer) ListTimers(ctx context.Context, req *ListTimersRequest) (*ListTimersResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListTimers not implemented")
-}
-func (*UnimplementedEvaluatordServiceServer) AddConfigsToTimer(ctx context.Context, req *AddConfigsToTimerRequest) (*empty.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method AddConfigsToTimer not implemented")
-}
-func (*UnimplementedEvaluatordServiceServer) RemoveConfigsFromTimer(ctx context.Context, req *RemoveConfigsFromTimerRequest) (*empty.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method RemoveConfigsFromTimer not implemented")
 }
 
 func RegisterEvaluatordServiceServer(s *grpc.Server, srv EvaluatordServiceServer) {
