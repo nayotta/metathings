@@ -12,8 +12,8 @@ import (
 	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
 	storage "github.com/nayotta/metathings/pkg/deviced/storage"
 	identityd_validator "github.com/nayotta/metathings/pkg/identityd2/validator"
-	pb "github.com/nayotta/metathings/pkg/proto/deviced"
-	identityd_pb "github.com/nayotta/metathings/pkg/proto/identityd2"
+	pb "github.com/nayotta/metathings/proto/deviced"
+	identityd_pb "github.com/nayotta/metathings/proto/identityd2"
 )
 
 func (self *MetathingsDevicedService) ValidateDeleteDevice(ctx context.Context, in interface{}) error {

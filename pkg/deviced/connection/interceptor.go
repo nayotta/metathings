@@ -3,7 +3,7 @@ package metathings_deviced_connection
 import (
 	"errors"
 
-	pb "github.com/nayotta/metathings/pkg/proto/deviced"
+	pb "github.com/nayotta/metathings/proto/deviced"
 )
 
 var (

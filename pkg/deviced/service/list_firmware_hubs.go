@@ -4,7 +4,7 @@ import (
 	"context"
 
 	storage "github.com/nayotta/metathings/pkg/deviced/storage"
-	pb "github.com/nayotta/metathings/pkg/proto/deviced"
+	pb "github.com/nayotta/metathings/proto/deviced"
 )
 
 func (self *MetathingsDevicedService) AuthorizeListFirmwareHubs(ctx context.Context, in interface{}) error {

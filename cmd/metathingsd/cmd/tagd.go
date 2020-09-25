@@ -11,9 +11,9 @@ import (
 	cmd_helper "github.com/nayotta/metathings/pkg/common/cmd"
 	token_helper "github.com/nayotta/metathings/pkg/common/token"
 	authorizer "github.com/nayotta/metathings/pkg/identityd2/authorizer"
-	pb "github.com/nayotta/metathings/pkg/proto/tagd"
 	service "github.com/nayotta/metathings/pkg/tagd/service"
 	storage "github.com/nayotta/metathings/pkg/tagd/storage"
+	pb "github.com/nayotta/metathings/proto/tagd"
 )
 
 type TagdOption struct {

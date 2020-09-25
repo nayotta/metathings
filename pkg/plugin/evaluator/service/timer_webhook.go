@@ -19,8 +19,8 @@ import (
 
 	context_helper "github.com/nayotta/metathings/pkg/common/context"
 	hst "github.com/nayotta/metathings/pkg/common/http/status"
-	dvd_pb "github.com/nayotta/metathings/pkg/proto/deviced"
-	evltr_pb "github.com/nayotta/metathings/pkg/proto/evaluatord"
+	dvd_pb "github.com/nayotta/metathings/proto/deviced"
+	evltr_pb "github.com/nayotta/metathings/proto/evaluatord"
 	esdk "github.com/nayotta/metathings/sdk/evaluatord"
 )
 

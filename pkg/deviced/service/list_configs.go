@@ -7,7 +7,7 @@ import (
 	"google.golang.org/grpc/status"
 
 	storage "github.com/nayotta/metathings/pkg/deviced/storage"
-	pb "github.com/nayotta/metathings/pkg/proto/deviced"
+	pb "github.com/nayotta/metathings/proto/deviced"
 )
 
 func (self *MetathingsDevicedService) ListConfigs(ctx context.Context, req *pb.ListConfigsRequest) (*pb.ListConfigsResponse, error) {

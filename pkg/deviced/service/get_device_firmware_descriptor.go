@@ -11,7 +11,7 @@ import (
 
 	simple_storage "github.com/nayotta/metathings/pkg/deviced/simple_storage"
 	storage "github.com/nayotta/metathings/pkg/deviced/storage"
-	pb "github.com/nayotta/metathings/pkg/proto/deviced"
+	pb "github.com/nayotta/metathings/proto/deviced"
 )
 
 func (self *MetathingsDevicedService) get_device_firmware_descriptor(ctx context.Context, dev_id_str string) (fd_s *storage.FirmwareDescriptor, error error) {

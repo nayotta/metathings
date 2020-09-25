@@ -8,7 +8,7 @@ import (
 	"google.golang.org/grpc/status"
 
 	flow "github.com/nayotta/metathings/pkg/deviced/flow"
-	pb "github.com/nayotta/metathings/pkg/proto/deviced"
+	pb "github.com/nayotta/metathings/proto/deviced"
 )
 
 func (self *MetathingsDevicedService) PullFrameFromFlowSet(req *pb.PullFrameFromFlowSetRequest, stm pb.DevicedService_PullFrameFromFlowSetServer) error {

@@ -14,8 +14,8 @@ import (
 
 	context_helper "github.com/nayotta/metathings/pkg/common/context"
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
-	deviced_pb "github.com/nayotta/metathings/pkg/proto/deviced"
-	pb "github.com/nayotta/metathings/pkg/proto/deviced"
+	deviced_pb "github.com/nayotta/metathings/proto/deviced"
+	pb "github.com/nayotta/metathings/proto/deviced"
 	dssdk "github.com/nayotta/metathings/sdk/data_storage"
 	dsdk "github.com/nayotta/metathings/sdk/deviced"
 	esdk "github.com/nayotta/metathings/sdk/evaluatord"

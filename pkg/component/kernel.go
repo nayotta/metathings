@@ -24,9 +24,9 @@ import (
 	id_helper "github.com/nayotta/metathings/pkg/common/id"
 	log_helper "github.com/nayotta/metathings/pkg/common/log"
 	identityd2_contrib "github.com/nayotta/metathings/pkg/identityd2/contrib"
-	pb "github.com/nayotta/metathings/pkg/proto/device"
-	deviced_pb "github.com/nayotta/metathings/pkg/proto/deviced"
-	identityd2_pb "github.com/nayotta/metathings/pkg/proto/identityd2"
+	pb "github.com/nayotta/metathings/proto/device"
+	deviced_pb "github.com/nayotta/metathings/proto/deviced"
+	identityd2_pb "github.com/nayotta/metathings/proto/identityd2"
 )
 
 type KernelConfig struct {

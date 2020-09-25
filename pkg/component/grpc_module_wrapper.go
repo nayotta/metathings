@@ -10,7 +10,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	pb "github.com/nayotta/metathings/pkg/proto/component"
+	pb "github.com/nayotta/metathings/proto/component"
 )
 
 var (

@@ -9,7 +9,7 @@ import (
 
 	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
 	identityd_validator "github.com/nayotta/metathings/pkg/identityd2/validator"
-	pb "github.com/nayotta/metathings/pkg/proto/evaluatord"
+	pb "github.com/nayotta/metathings/proto/evaluatord"
 )
 
 func (srv *MetathingsEvaluatordService) ValidateRemoveConfigsFromTimer(ctx context.Context, in interface{}) error {

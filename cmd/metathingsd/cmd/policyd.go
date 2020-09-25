@@ -14,7 +14,7 @@ import (
 	cmd_contrib "github.com/nayotta/metathings/cmd/contrib"
 	cmd_helper "github.com/nayotta/metathings/pkg/common/cmd"
 	service "github.com/nayotta/metathings/pkg/policyd/service"
-	pb "github.com/nayotta/metathings/pkg/proto/policyd"
+	pb "github.com/nayotta/metathings/proto/policyd"
 )
 
 type PolicydOption struct {

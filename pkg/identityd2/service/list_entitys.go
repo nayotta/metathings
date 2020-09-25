@@ -3,10 +3,11 @@ package metathings_identityd2_service
 import (
 	"context"
 
-	storage "github.com/nayotta/metathings/pkg/identityd2/storage"
-	pb "github.com/nayotta/metathings/pkg/proto/identityd2"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+
+	storage "github.com/nayotta/metathings/pkg/identityd2/storage"
+	pb "github.com/nayotta/metathings/proto/identityd2"
 )
 
 func (self *MetathingsIdentitydService) ListEntities(ctx context.Context, req *pb.ListEntitiesRequest) (*pb.ListEntitiesResponse, error) {

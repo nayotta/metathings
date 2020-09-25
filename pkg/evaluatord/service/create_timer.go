@@ -11,7 +11,7 @@ import (
 	storage "github.com/nayotta/metathings/pkg/evaluatord/storage"
 	timer "github.com/nayotta/metathings/pkg/evaluatord/timer"
 	identityd_validator "github.com/nayotta/metathings/pkg/identityd2/validator"
-	pb "github.com/nayotta/metathings/pkg/proto/evaluatord"
+	pb "github.com/nayotta/metathings/proto/evaluatord"
 )
 
 func (srv *MetathingsEvaluatordService) ValidateCreateTimer(ctx context.Context, in interface{}) error {

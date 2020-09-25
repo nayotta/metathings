@@ -9,7 +9,7 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	component "github.com/nayotta/metathings/pkg/component"
-	deviced_pb "github.com/nayotta/metathings/pkg/proto/deviced"
+	deviced_pb "github.com/nayotta/metathings/proto/deviced"
 )
 
 var (

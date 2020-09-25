@@ -16,7 +16,7 @@ import (
 	context_helper "github.com/nayotta/metathings/pkg/common/context"
 	hst "github.com/nayotta/metathings/pkg/common/http/status"
 	opentracing_helper "github.com/nayotta/metathings/pkg/common/opentracing"
-	evltr_pb "github.com/nayotta/metathings/pkg/proto/evaluatord"
+	evltr_pb "github.com/nayotta/metathings/proto/evaluatord"
 	esdk "github.com/nayotta/metathings/sdk/evaluatord"
 )
 

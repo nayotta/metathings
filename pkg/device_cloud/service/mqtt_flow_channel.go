@@ -12,8 +12,8 @@ import (
 
 	id_helper "github.com/nayotta/metathings/pkg/common/id"
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
-	device_pb "github.com/nayotta/metathings/pkg/proto/device"
-	pb "github.com/nayotta/metathings/pkg/proto/deviced"
+	device_pb "github.com/nayotta/metathings/proto/device"
+	pb "github.com/nayotta/metathings/proto/deviced"
 )
 
 type MQTTPushFrameToFlowChannelOption struct {

@@ -3,11 +3,12 @@ package metathings_identityd2_service
 import (
 	"context"
 
-	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
-	identityd_validator "github.com/nayotta/metathings/pkg/identityd2/validator"
-	pb "github.com/nayotta/metathings/pkg/proto/identityd2"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+
+	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
+	identityd_validator "github.com/nayotta/metathings/pkg/identityd2/validator"
+	pb "github.com/nayotta/metathings/proto/identityd2"
 )
 
 func (self *MetathingsIdentitydService) ValidateListGroupsForObject(ctx context.Context, in interface{}) error {

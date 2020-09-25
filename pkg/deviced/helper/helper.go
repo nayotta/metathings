@@ -2,8 +2,8 @@ package metathings_deviced_helper
 
 import (
 	pb_helper "github.com/nayotta/metathings/pkg/common/protobuf"
-	pb_kind "github.com/nayotta/metathings/pkg/proto/constant/kind"
-	pb_state "github.com/nayotta/metathings/pkg/proto/constant/state"
+	pb_kind "github.com/nayotta/metathings/proto/constant/kind"
+	pb_state "github.com/nayotta/metathings/proto/constant/state"
 )
 
 type DeviceStateEnumer struct {

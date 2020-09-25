@@ -4,13 +4,13 @@ import (
 	"context"
 	"time"
 
+	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
 	pb_helper "github.com/nayotta/metathings/pkg/common/protobuf"
 	flow "github.com/nayotta/metathings/pkg/deviced/flow"
-	pb "github.com/nayotta/metathings/pkg/proto/deviced"
-	log "github.com/sirupsen/logrus"
+	pb "github.com/nayotta/metathings/proto/deviced"
 )
 
 func (self *MetathingsDevicedService) QueryFramesFromFlow(ctx context.Context, req *pb.QueryFramesFromFlowRequest) (*pb.QueryFramesFromFlowResponse, error) {

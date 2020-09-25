@@ -23,7 +23,7 @@ import (
 	pool_helper "github.com/nayotta/metathings/pkg/common/pool"
 	pb_helper "github.com/nayotta/metathings/pkg/common/protobuf"
 	rand_helper "github.com/nayotta/metathings/pkg/common/rand"
-	pb "github.com/nayotta/metathings/pkg/proto/deviced"
+	pb "github.com/nayotta/metathings/proto/deviced"
 )
 
 var (

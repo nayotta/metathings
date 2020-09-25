@@ -7,7 +7,7 @@ import (
 	"google.golang.org/grpc/status"
 
 	storage "github.com/nayotta/metathings/pkg/evaluatord/storage"
-	pb "github.com/nayotta/metathings/pkg/proto/evaluatord"
+	pb "github.com/nayotta/metathings/proto/evaluatord"
 )
 
 func (srv *MetathingsEvaluatordService) ListTimers(ctx context.Context, req *pb.ListTimersRequest) (*pb.ListTimersResponse, error) {

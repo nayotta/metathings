@@ -14,7 +14,7 @@ import (
 	context_helper "github.com/nayotta/metathings/pkg/common/context"
 	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
 	cpt "github.com/nayotta/metathings/pkg/component"
-	pb "github.com/nayotta/metathings/pkg/proto/deviced"
+	pb "github.com/nayotta/metathings/proto/deviced"
 )
 
 func (dc *DeviceConnection) handle(req *pb.ConnectRequest) error {

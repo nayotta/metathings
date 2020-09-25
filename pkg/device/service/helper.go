@@ -7,7 +7,7 @@ import (
 
 	context_helper "github.com/nayotta/metathings/pkg/common/context"
 	session_helper "github.com/nayotta/metathings/pkg/common/session"
-	deviced_pb "github.com/nayotta/metathings/pkg/proto/deviced"
+	deviced_pb "github.com/nayotta/metathings/proto/deviced"
 )
 
 func (self *MetathingsDeviceServiceImpl) generator_major_session() int64 {

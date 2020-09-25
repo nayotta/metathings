@@ -4,13 +4,13 @@ import (
 	"context"
 	"errors"
 
+	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
 	policy "github.com/nayotta/metathings/pkg/identityd2/policy"
 	storage "github.com/nayotta/metathings/pkg/identityd2/storage"
-	pb "github.com/nayotta/metathings/pkg/proto/identityd2"
-	log "github.com/sirupsen/logrus"
+	pb "github.com/nayotta/metathings/proto/identityd2"
 )
 
 func (self *MetathingsIdentitydService) IssueTokenByToken(ctx context.Context, req *pb.IssueTokenByTokenRequest) (*pb.IssueTokenByTokenResponse, error) {

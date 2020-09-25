@@ -2,14 +2,14 @@ package metathings_deviced_service
 
 import (
 	"github.com/golang/protobuf/jsonpb"
+	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
 	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
 	flow "github.com/nayotta/metathings/pkg/deviced/flow"
-	pb "github.com/nayotta/metathings/pkg/proto/deviced"
+	pb "github.com/nayotta/metathings/proto/deviced"
 	evaluatord_sdk "github.com/nayotta/metathings/sdk/evaluatord"
-	log "github.com/sirupsen/logrus"
 )
 
 // TODO(Peer): merge PushFrameToFlow and PushFrameToFlowOnce to one function

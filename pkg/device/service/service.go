@@ -17,8 +17,8 @@ import (
 	session_helper "github.com/nayotta/metathings/pkg/common/session"
 	token_helper "github.com/nayotta/metathings/pkg/common/token"
 	version_helper "github.com/nayotta/metathings/pkg/common/version"
-	pb "github.com/nayotta/metathings/pkg/proto/device"
-	deviced_pb "github.com/nayotta/metathings/pkg/proto/deviced"
+	pb "github.com/nayotta/metathings/proto/device"
+	deviced_pb "github.com/nayotta/metathings/proto/deviced"
 )
 
 type MetathingsDeviceService interface {
