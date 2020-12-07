@@ -26,6 +26,7 @@ func (dc *DeviceConnection) do_sync_modules_firmware() error {
 			loop_logger.WithError(err).Warningf("failed to get module proxy")
 			continue
 		}
+		defer mdl_prx.Close()
 
 		sf_req := &empty.Empty{}
 		any_req, err := ptypes.MarshalAny(sf_req)
