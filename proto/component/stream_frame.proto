@@ -1,0 +1,90 @@
+syntax = "proto3";
+
+package ai.metathings.component;
+option go_package = "component";
+
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/any.proto";
+
+import "validate/validate.proto";
+
+enum StreamFrameKind {
+	STREAM_FRAME_KIND_UNKNOWN = 0;
+	STREAM_FRAME_KIND_SYSTEM = 1;
+	STREAM_FRAME_KIND_USER = 2;
+}
+
+message OpStreamCallConfig {
+	google.protobuf.Int64Value session = 1;
+	google.protobuf.StringValue method = 2;
+	google.protobuf.Int64Value ack = 3;
+}
+
+message StreamCallConfig {
+	int64 session = 1;
+	string method = 2;
+	int64 ack = 3;
+}
+
+message OpStreamCallAck {
+	google.protobuf.Int64Value value = 1;
+}
+
+message StreamCallAck {
+	int64 value = 1;
+}
+
+message OpStreamCallExit {}
+message StreamCallExit {}
+
+message OpUnaryCallValue {
+	google.protobuf.Int64Value session = 1 [(validate.rules).message.required = true];
+	google.protobuf.StringValue method = 2 [(validate.rules).message.required = true];
+	google.protobuf.Any value = 3 [(validate.rules).any.required = true];
+}
+
+message UnaryCallValue {
+	int64 session = 1;
+	string method = 2;
+	google.protobuf.Any value = 3;
+}
+
+message OpStreamCallValue {
+	oneof union {
+		google.protobuf.Any value = 1;
+		OpStreamCallConfig config = 2;
+		OpStreamCallAck ack = 3;
+		OpStreamCallExit exit = 4;
+	}
+}
+
+message StreamCallValue {
+	oneof union {
+		google.protobuf.Any value = 1;
+		StreamCallConfig config = 2;
+		StreamCallAck ack = 3;
+		StreamCallExit exit = 4;
+	}
+}
+
+message ErrorValue {
+	int64 code = 1;
+	string message = 2;
+}
+
+message UpStreamFrame {
+	StreamFrameKind kind = 1;
+	oneof union {
+		UnaryCallValue unary_call = 2;
+		StreamCallValue stream_call = 3;
+		ErrorValue error = 9;
+	}
+}
+
+message DownStreamFrame {
+	StreamFrameKind kind = 1 [(validate.rules).enum.defined_only = true];
+	oneof union {
+		OpUnaryCallValue unary_call = 2;
+		OpStreamCallValue stream_call = 3;
+	}
+}

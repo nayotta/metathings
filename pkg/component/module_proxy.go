@@ -7,7 +7,7 @@ import (
 	"github.com/golang/protobuf/ptypes/any"
 	"google.golang.org/grpc"
 
-	deviced_pb "github.com/nayotta/metathings/pkg/proto/deviced"
+	deviced_pb "github.com/nayotta/metathings/proto/deviced"
 )
 
 var (
@@ -58,7 +58,7 @@ func (self *moduleProxyStream) Recv() (*any.Any, error) {
 func NewModuleProxyStream(stm deviced_pb.DevicedService_ConnectClient, session int64) ModuleProxyStream {
 	return &moduleProxyStream{
 		DevicedService_ConnectClient: stm,
-		session: session,
+		session:                      session,
 	}
 }
 

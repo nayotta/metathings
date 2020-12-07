@@ -14,7 +14,7 @@ import (
 	context_helper "github.com/nayotta/metathings/pkg/common/context"
 	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
 	cpt "github.com/nayotta/metathings/pkg/component"
-	pb "github.com/nayotta/metathings/pkg/proto/deviced"
+	pb "github.com/nayotta/metathings/proto/deviced"
 )
 
 func (dc *DeviceConnection) handle(req *pb.ConnectRequest) error {
@@ -245,6 +245,7 @@ func (dc *DeviceConnection) handle_user_stream_request(req *pb.ConnectRequest) e
 		logger.WithError(err).Debugf("failed to stream call")
 		return err
 	}
+	defer mdl_prx.Close()
 
 	stm = grpc_helper.NewHijackStream(stm, func(stm_ *grpc_helper.HijackStream, req *pb.ConnectRequest) error {
 		switch req.GetStreamCall().Union.(type) {

@@ -19,7 +19,7 @@ import (
 	policy "github.com/nayotta/metathings/pkg/identityd2/policy"
 	service "github.com/nayotta/metathings/pkg/identityd2/service"
 	storage "github.com/nayotta/metathings/pkg/identityd2/storage"
-	pb "github.com/nayotta/metathings/pkg/proto/identityd2"
+	pb "github.com/nayotta/metathings/proto/identityd2"
 )
 
 type Identityd2Option struct {

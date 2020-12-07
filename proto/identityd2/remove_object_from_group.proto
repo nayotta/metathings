@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package ai.metathings.service.identityd2;
+
+import "validate/validate.proto";
+
+import "model.proto";
+
+message RemoveObjectFromGroupRequest {
+	OpGroup group = 1 [(validate.rules).message.required = true];
+	OpEntity object = 2 [(validate.rules).message.required = true];
+}

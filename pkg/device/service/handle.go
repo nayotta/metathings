@@ -13,7 +13,7 @@ import (
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
 	context_helper "github.com/nayotta/metathings/pkg/common/context"
 	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
-	deviced_pb "github.com/nayotta/metathings/pkg/proto/deviced"
+	deviced_pb "github.com/nayotta/metathings/proto/deviced"
 )
 
 func parse_error_to_connect_error_response(name, service, method string, err error) *deviced_pb.ConnectResponse_Err {

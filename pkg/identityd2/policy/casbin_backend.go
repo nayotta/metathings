@@ -9,7 +9,7 @@ import (
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 	storage "github.com/nayotta/metathings/pkg/identityd2/storage"
-	pb "github.com/nayotta/metathings/pkg/proto/policyd"
+	pb "github.com/nayotta/metathings/proto/policyd"
 )
 
 const (

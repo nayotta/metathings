@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package ai.metathings.service.deviced;
+option go_package = "deviced";
+
+import "validate/validate.proto";
+
+import "model.proto";
+
+message CreateDeviceRequest {
+	OpDevice device = 1 [(validate.rules).message.required = true];
+}
+
+message CreateDeviceResponse {
+	Device device = 1;
+}

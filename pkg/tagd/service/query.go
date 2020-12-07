@@ -6,7 +6,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	pb "github.com/nayotta/metathings/pkg/proto/tagd"
+	pb "github.com/nayotta/metathings/proto/tagd"
 )
 
 func (ts *MetathingsTagdService) Query(ctx context.Context, req *pb.QueryRequest) (*pb.QueryResponse, error) {

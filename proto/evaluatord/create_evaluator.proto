@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package ai.metathings.service.evaluatord;
+
+option go_package = "evaluatord";
+
+import "validate/validate.proto";
+
+import "model.proto";
+
+message CreateEvaluatorRequest {
+	OpEvaluator evaluator = 1 [(validate.rules).message.required = true];
+}
+
+message CreateEvaluatorResponse {
+	Evaluator evaluator = 1;
+}

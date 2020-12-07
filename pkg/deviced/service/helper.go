@@ -14,8 +14,8 @@ import (
 	deviced_helper "github.com/nayotta/metathings/pkg/deviced/helper"
 	simple_storage "github.com/nayotta/metathings/pkg/deviced/simple_storage"
 	storage "github.com/nayotta/metathings/pkg/deviced/storage"
-	state_pb "github.com/nayotta/metathings/pkg/proto/constant/state"
-	pb "github.com/nayotta/metathings/pkg/proto/deviced"
+	state_pb "github.com/nayotta/metathings/proto/constant/state"
+	pb "github.com/nayotta/metathings/proto/deviced"
 )
 
 func parse_object(x *pb.OpObject) *simple_storage.Object {

@@ -10,8 +10,8 @@ import (
 	token_helper "github.com/nayotta/metathings/pkg/common/token"
 	identityd_authorizer "github.com/nayotta/metathings/pkg/identityd2/authorizer"
 	identityd_validator "github.com/nayotta/metathings/pkg/identityd2/validator"
-	pb "github.com/nayotta/metathings/pkg/proto/tagd"
 	storage "github.com/nayotta/metathings/pkg/tagd/storage"
+	pb "github.com/nayotta/metathings/proto/tagd"
 )
 
 type MetathingsTagdService struct {

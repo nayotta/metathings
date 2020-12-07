@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/mock"
 
 	pb_helper "github.com/nayotta/metathings/pkg/common/protobuf"
-	pb "github.com/nayotta/metathings/pkg/proto/deviced"
+	pb "github.com/nayotta/metathings/proto/deviced"
 )
 
 type MockSimpleStorage struct {

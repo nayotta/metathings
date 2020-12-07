@@ -18,7 +18,7 @@ import (
 	cmd_contrib "github.com/nayotta/metathings/cmd/contrib"
 	context_helper "github.com/nayotta/metathings/pkg/common/context"
 	deviced_helper "github.com/nayotta/metathings/pkg/deviced/helper"
-	pb "github.com/nayotta/metathings/pkg/proto/deviced"
+	pb "github.com/nayotta/metathings/proto/deviced"
 	dsdk "github.com/nayotta/metathings/sdk/deviced"
 )
 

@@ -20,7 +20,7 @@ import (
 	"google.golang.org/grpc/credentials"
 
 	context_helper "github.com/nayotta/metathings/pkg/common/context"
-	pb "github.com/nayotta/metathings/pkg/proto/deviced"
+	pb "github.com/nayotta/metathings/proto/deviced"
 )
 
 var (

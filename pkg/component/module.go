@@ -18,7 +18,7 @@ import (
 
 	log_helper "github.com/nayotta/metathings/pkg/common/log"
 	version_helper "github.com/nayotta/metathings/pkg/common/version"
-	deviced_pb "github.com/nayotta/metathings/pkg/proto/deviced"
+	deviced_pb "github.com/nayotta/metathings/proto/deviced"
 )
 
 type ModuleServiceLookuper interface {

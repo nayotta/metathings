@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package ai.metathings.service.device;
+option go_package = "device";
+
+import "google/protobuf/wrappers.proto";
+
+import "github.com/nayotta/metathings/proto/deviced/model.proto";
+
+message PutObjectStreamingRequest {
+	message Metadata {
+		ai.metathings.service.deviced.OpObject object = 1;
+		google.protobuf.StringValue sha1 = 2;
+	}
+
+	google.protobuf.StringValue id = 1;
+	oneof request {
+		Metadata metadata = 2;
+		ai.metathings.service.deviced.OpObjectChunks chunks = 3;
+	}
+}
+
+message PutObjectStreamingResponse {
+	string id = 1;
+	oneof response {
+		ai.metathings.service.deviced.ObjectChunks chunks = 2;
+	}
+}

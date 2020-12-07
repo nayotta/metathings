@@ -7,7 +7,7 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	device_service "github.com/nayotta/metathings/pkg/device/service"
-	device_pb "github.com/nayotta/metathings/pkg/proto/device"
+	device_pb "github.com/nayotta/metathings/proto/device"
 )
 
 func (s *MetathingsDeviceCloudService) IssueModuleToken(w http.ResponseWriter, r *http.Request) {

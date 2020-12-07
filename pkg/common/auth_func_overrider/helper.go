@@ -8,7 +8,7 @@ import (
 
 	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
 	token_helper "github.com/nayotta/metathings/pkg/common/token"
-	identityd_pb "github.com/nayotta/metathings/pkg/proto/identityd2"
+	identityd_pb "github.com/nayotta/metathings/proto/identityd2"
 )
 
 type IgnoreMethoder interface {

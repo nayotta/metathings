@@ -3,7 +3,7 @@ package metathings_device_service
 import (
 	"time"
 
-	deviced_pb "github.com/nayotta/metathings/pkg/proto/deviced"
+	deviced_pb "github.com/nayotta/metathings/proto/deviced"
 )
 
 func (self *MetathingsDeviceServiceImpl) ping_loop() {

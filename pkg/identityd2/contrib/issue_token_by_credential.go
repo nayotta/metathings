@@ -8,7 +8,7 @@ import (
 
 	passwd_helper "github.com/nayotta/metathings/pkg/common/passwd"
 	pb_helper "github.com/nayotta/metathings/pkg/common/protobuf"
-	pb "github.com/nayotta/metathings/pkg/proto/identityd2"
+	pb "github.com/nayotta/metathings/proto/identityd2"
 )
 
 func NewIssueTokenByCredentialRequest(domain, id, secret string) *pb.IssueTokenByCredentialRequest {

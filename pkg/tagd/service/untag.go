@@ -10,7 +10,7 @@ import (
 
 	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
 	identityd_validator "github.com/nayotta/metathings/pkg/identityd2/validator"
-	pb "github.com/nayotta/metathings/pkg/proto/tagd"
+	pb "github.com/nayotta/metathings/proto/tagd"
 )
 
 func (ts *MetathingsTagdService) AuthorizeUntag(ctx context.Context, in interface{}) error {

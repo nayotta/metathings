@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package ai.metathings.service.device;
+option go_package = "device";
+
+import "validate/validate.proto";
+
+import "github.com/nayotta/metathings/proto/deviced/model.proto";
+
+message HeartbeatRequest {
+	ai.metathings.service.deviced.OpModule module = 1 [(validate.rules).message.required = true];
+}

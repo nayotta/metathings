@@ -21,9 +21,9 @@ import (
 	storage "github.com/nayotta/metathings/pkg/deviced/storage"
 	identityd_authorizer "github.com/nayotta/metathings/pkg/identityd2/authorizer"
 	identityd_validator "github.com/nayotta/metathings/pkg/identityd2/validator"
-	state_pb "github.com/nayotta/metathings/pkg/proto/constant/state"
-	pb "github.com/nayotta/metathings/pkg/proto/deviced"
-	identityd_pb "github.com/nayotta/metathings/pkg/proto/identityd2"
+	state_pb "github.com/nayotta/metathings/proto/constant/state"
+	pb "github.com/nayotta/metathings/proto/deviced"
+	identityd_pb "github.com/nayotta/metathings/proto/identityd2"
 	evaluatord_sdk "github.com/nayotta/metathings/sdk/evaluatord"
 )
 

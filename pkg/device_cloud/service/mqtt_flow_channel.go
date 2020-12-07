@@ -12,17 +12,18 @@ import (
 
 	id_helper "github.com/nayotta/metathings/pkg/common/id"
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
-	device_pb "github.com/nayotta/metathings/pkg/proto/device"
-	pb "github.com/nayotta/metathings/pkg/proto/deviced"
+	device_pb "github.com/nayotta/metathings/proto/device"
+	pb "github.com/nayotta/metathings/proto/deviced"
 )
 
 type MQTTPushFrameToFlowChannelOption struct {
 	MQTT struct {
-		Address  string
-		Username string
-		Password string
-		ClientId string
-		QoS      byte
+		Address           string
+		Username          string
+		Password          string
+		ClientId          string
+		QoS               byte
+		DisconnectTimeout time.Duration
 	}
 	Device struct {
 		Id string
@@ -207,6 +208,8 @@ func (fc *MQTTPushFrameToFlowChannel) Close() error {
 		logger.WithError(tkn.Error()).Debugf("failed to unsubscribe topic")
 	}
 
+	fc.cli.Disconnect(uint(fc.opt.MQTT.DisconnectTimeout / time.Millisecond))
+
 	fc.frm_ch_oplock.Lock()
 	defer fc.frm_ch_oplock.Unlock()
 	if fc.frm_ch != nil {
@@ -224,6 +227,7 @@ func (f *MQTTPushFrameToFlowChannelFactory) New(args ...interface{}) (PushFrameT
 	var opt MQTTPushFrameToFlowChannelOption
 	opt.MQTT.ClientId = id_helper.NewId()
 	opt.MQTT.QoS = byte(0)
+	opt.MQTT.DisconnectTimeout = 3 * time.Second
 	opt.Config.AliveInterval = 11 * time.Second
 	opt.Config.PingTimeout = 131 * time.Second
 	opt.Config.PushFrameTimeout = 100 * time.Millisecond

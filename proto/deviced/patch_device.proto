@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package ai.metathings.service.deviced;
+
+import "validate/validate.proto";
+
+import "model.proto";
+
+message PatchDeviceRequest {
+	OpDevice device = 1 [(validate.rules).message.required = true];
+}
+
+message PatchDeviceResponse {
+	Device device = 1;
+}

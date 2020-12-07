@@ -13,7 +13,7 @@ import (
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
 	id_helper "github.com/nayotta/metathings/pkg/common/id"
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
-	pb "github.com/nayotta/metathings/pkg/proto/deviced"
+	pb "github.com/nayotta/metathings/proto/deviced"
 )
 
 type DevicedFlow struct {

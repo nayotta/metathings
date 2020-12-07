@@ -9,8 +9,8 @@ import (
 	"google.golang.org/grpc/status"
 
 	protobuf_helper "github.com/nayotta/metathings/pkg/common/protobuf"
-	pb "github.com/nayotta/metathings/pkg/proto/device"
-	identityd2_pb "github.com/nayotta/metathings/pkg/proto/identityd2"
+	pb "github.com/nayotta/metathings/proto/device"
+	identityd2_pb "github.com/nayotta/metathings/proto/identityd2"
 )
 
 func (self *MetathingsDeviceServiceImpl) IssueModuleToken(ctx context.Context, req *pb.IssueModuleTokenRequest) (*pb.IssueModuleTokenResponse, error) {

@@ -8,7 +8,7 @@ import (
 
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
 	context_helper "github.com/nayotta/metathings/pkg/common/context"
-	identityd2_pb "github.com/nayotta/metathings/pkg/proto/identityd2"
+	identityd2_pb "github.com/nayotta/metathings/proto/identityd2"
 )
 
 type TokenValidator interface {

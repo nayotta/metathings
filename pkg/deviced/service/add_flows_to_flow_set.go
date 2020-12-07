@@ -8,7 +8,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	pb "github.com/nayotta/metathings/pkg/proto/deviced"
+	pb "github.com/nayotta/metathings/proto/deviced"
 )
 
 func (self *MetathingsDevicedService) AuthorizeAddFlowsToFlowSet(ctx context.Context, in interface{}) error {

@@ -10,8 +10,8 @@ import (
 
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
-	pb "github.com/nayotta/metathings/pkg/proto/component"
-	deviced_pb "github.com/nayotta/metathings/pkg/proto/deviced"
+	pb "github.com/nayotta/metathings/proto/component"
+	deviced_pb "github.com/nayotta/metathings/proto/deviced"
 )
 
 type GrpcModuleServiceClientFactory interface {

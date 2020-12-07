@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package ai.metathings.service.identityd2;
+
+import "validate/validate.proto";
+
+import "model.proto";
+
+message CreateRoleRequest {
+	OpRole role = 1 [(validate.rules).message.required = true];
+}
+
+message CreateRoleResponse {
+	Role role = 1;
+}

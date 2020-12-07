@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package ai.metathings.service.identityd2;
+
+import "validate/validate.proto";
+
+import "model.proto";
+
+message PatchGroupRequest {
+	OpGroup group = 1 [(validate.rules).message.required = true];
+}
+
+message PatchGroupResponse {
+	Group group = 1;
+}

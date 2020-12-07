@@ -8,7 +8,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	pb "github.com/nayotta/metathings/pkg/proto/identityd2"
+	pb "github.com/nayotta/metathings/proto/identityd2"
 )
 
 func (self *MetathingsIdentitydService) AuthorizeAddActionToRole(ctx context.Context, in interface{}) error {

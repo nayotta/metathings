@@ -5,7 +5,7 @@ import (
 
 	"github.com/golang/protobuf/ptypes/empty"
 
-	pb "github.com/nayotta/metathings/pkg/proto/deviced"
+	pb "github.com/nayotta/metathings/proto/deviced"
 )
 
 func (self *MetathingsDevicedService) ShowDeviceFirmwareDescriptor(ctx context.Context, _ *empty.Empty) (*pb.ShowDeviceFirmwareDescriptorResponse, error) {

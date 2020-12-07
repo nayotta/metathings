@@ -17,7 +17,7 @@ import (
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 	deviced_helper "github.com/nayotta/metathings/pkg/deviced/helper"
-	pb "github.com/nayotta/metathings/pkg/proto/deviced"
+	pb "github.com/nayotta/metathings/proto/deviced"
 )
 
 type DevicedCaller struct {

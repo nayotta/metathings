@@ -7,7 +7,7 @@ import (
 	"google.golang.org/grpc/status"
 
 	storage "github.com/nayotta/metathings/pkg/deviced/storage"
-	pb "github.com/nayotta/metathings/pkg/proto/deviced"
+	pb "github.com/nayotta/metathings/proto/deviced"
 )
 
 func (self *MetathingsDevicedService) ListFlowSets(ctx context.Context, req *pb.ListFlowSetsRequest) (*pb.ListFlowSetsResponse, error) {

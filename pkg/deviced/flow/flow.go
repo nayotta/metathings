@@ -4,7 +4,7 @@ import (
 	"sync"
 	"time"
 
-	pb "github.com/nayotta/metathings/pkg/proto/deviced"
+	pb "github.com/nayotta/metathings/proto/deviced"
 )
 
 type FlowFilter struct {

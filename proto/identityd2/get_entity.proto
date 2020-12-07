@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package ai.metathings.service.identityd2;
+
+import "validate/validate.proto";
+
+import "model.proto";
+
+message GetEntityRequest {
+	OpEntity entity = 1 [(validate.rules).message.required = true];
+}
+
+message GetEntityResponse {
+	Entity entity = 1;
+}

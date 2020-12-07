@@ -15,7 +15,7 @@ import (
 	token_helper "github.com/nayotta/metathings/pkg/common/token"
 	version_helper "github.com/nayotta/metathings/pkg/common/version"
 	service "github.com/nayotta/metathings/pkg/device/service"
-	pb "github.com/nayotta/metathings/pkg/proto/device"
+	pb "github.com/nayotta/metathings/proto/device"
 )
 
 type RunDeviceOption struct {

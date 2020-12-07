@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package ai.metathings.service.deviced;
+
+import "google/protobuf/wrappers.proto";
+
+import "validate/validate.proto";
+
+import "model.proto";
+
+message PullFrameFromFlowRequest {
+	message Config {
+		OpDevice device = 1;
+		google.protobuf.BoolValue config_ack = 2;
+	}
+
+	google.protobuf.StringValue id = 1 [(validate.rules).message.required = true];
+	oneof request {
+		Config config = 2;
+	}
+}
+
+message PullFrameFromFlowResponse {
+	message Ack {}
+	message Pack {
+		Flow flow = 1;
+		repeated Frame frames = 2;
+	}
+
+	// stream alive check when id is ffffffffffffffffffffffffffffffff,
+	// drop it in receive side.
+	string id = 1;
+	oneof response {
+		Ack ack = 2;
+		Pack pack = 3;
+	}
+}

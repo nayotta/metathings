@@ -13,7 +13,7 @@ import (
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
 	cmd_helper "github.com/nayotta/metathings/pkg/common/cmd"
 	context_helper "github.com/nayotta/metathings/pkg/common/context"
-	pb "github.com/nayotta/metathings/pkg/proto/identityd2"
+	pb "github.com/nayotta/metathings/proto/identityd2"
 )
 
 type CreateCredentialOption struct {

@@ -20,7 +20,7 @@ import (
 	simple_storage "github.com/nayotta/metathings/pkg/deviced/simple_storage"
 	storage "github.com/nayotta/metathings/pkg/deviced/storage"
 	authorizer "github.com/nayotta/metathings/pkg/identityd2/authorizer"
-	pb "github.com/nayotta/metathings/pkg/proto/deviced"
+	pb "github.com/nayotta/metathings/proto/deviced"
 	evaluatord_sdk "github.com/nayotta/metathings/sdk/evaluatord"
 )
 

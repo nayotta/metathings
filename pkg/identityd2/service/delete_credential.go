@@ -11,7 +11,7 @@ import (
 	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
 	storage "github.com/nayotta/metathings/pkg/identityd2/storage"
 	identityd_validator "github.com/nayotta/metathings/pkg/identityd2/validator"
-	pb "github.com/nayotta/metathings/pkg/proto/identityd2"
+	pb "github.com/nayotta/metathings/proto/identityd2"
 )
 
 func (self *MetathingsIdentitydService) ValidateDeleteCredential(ctx context.Context, in interface{}) error {
