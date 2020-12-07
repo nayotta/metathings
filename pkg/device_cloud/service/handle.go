@@ -239,6 +239,7 @@ func (dc *DeviceConnection) handle_user_stream_request(req *pb.ConnectRequest) e
 		logger.WithError(err).Debugf("failed to stream call")
 		return err
 	}
+	defer mdl_prx.Close()
 
 	stm = grpc_helper.NewHijackStream(stm, func(stm_ *grpc_helper.HijackStream, req *pb.ConnectRequest) error {
 		switch req.GetStreamCall().Union.(type) {
