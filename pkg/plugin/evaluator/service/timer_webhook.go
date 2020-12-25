@@ -9,7 +9,6 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/golang/protobuf/jsonpb"
 	"github.com/golang/protobuf/ptypes/wrappers"
 	"github.com/opentracing-contrib/go-stdlib/nethttp"
 	opentracing "github.com/opentracing/opentracing-go"
@@ -18,6 +17,7 @@ import (
 	"github.com/stretchr/objx"
 
 	context_helper "github.com/nayotta/metathings/pkg/common/context"
+	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
 	hst "github.com/nayotta/metathings/pkg/common/http/status"
 	dvd_pb "github.com/nayotta/metathings/proto/deviced"
 	evltr_pb "github.com/nayotta/metathings/proto/evaluatord"
@@ -152,7 +152,7 @@ func (srv *EvaluatorPluginService) TimerWebhook(w http.ResponseWriter, r *http.R
 		return
 	}
 
-	cfg_str, err := new(jsonpb.Marshaler).MarshalToString(cfg)
+	cfg_str, err := grpc_helper.JSONPBMarshaler.MarshalToString(cfg)
 	if err != nil {
 		log_msg = "failed to marshal config to json string"
 		hs = hst.WrapErrorHttpStatus(http.StatusInternalServerError, err)

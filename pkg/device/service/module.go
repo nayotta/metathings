@@ -125,6 +125,10 @@ func (self *ModuleImpl) new_module_proxy_by_endpoint(endpoint string) (component
 		return component.NewModuleProxy(proxy_driver,
 			"logger", self.logger,
 			"client_factory", component.NewGrpcModuleServiceClientFactory(ep.Host))
+	case "soda":
+		return component.NewModuleProxy(proxy_driver,
+			"logger", self.logger,
+			"client_factory", component.NewGrpcModuleServiceClientFactory(ep.Host))
 	}
 
 	return nil, ErrInvalidModuleProxyDriver

@@ -7,11 +7,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/golang/protobuf/jsonpb"
 	struct_ "github.com/golang/protobuf/ptypes/struct"
 	"github.com/stretchr/testify/suite"
 	"go.mongodb.org/mongo-driver/mongo"
 
+	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
 	log_helper "github.com/nayotta/metathings/pkg/common/log"
 	test_helper "github.com/nayotta/metathings/pkg/common/test"
 	pb "github.com/nayotta/metathings/proto/deviced"
@@ -28,8 +28,6 @@ type FlowImplTestSuite struct {
 	opt      *FlowOption
 	flow     *flow
 	flow_fty *flowFactory
-	enc      *jsonpb.Marshaler
-	dec      *jsonpb.Unmarshaler
 	push_at  time.Time
 	suite.Suite
 }
@@ -68,15 +66,15 @@ func (s *FlowImplTestSuite) SetupTest() {
 	// insert prepared data
 	s.push_at = time.Now()
 	var dat struct_.Struct
-	s.Nil(s.dec.Unmarshal(strings.NewReader(frm0_dat), &dat))
+	s.Nil(grpc_helper.JSONPBUnmarshaler.Unmarshal(strings.NewReader(frm0_dat), &dat))
 	s.Nil(s.flow.PushFrame(&pb.Frame{Data: &dat}))
 
 	time.Sleep(100 * time.Millisecond)
-	s.Nil(s.dec.Unmarshal(strings.NewReader(frm1_dat), &dat))
+	s.Nil(grpc_helper.JSONPBUnmarshaler.Unmarshal(strings.NewReader(frm1_dat), &dat))
 	s.Nil(s.flow.PushFrame(&pb.Frame{Data: &dat}))
 
 	time.Sleep(100 * time.Millisecond)
-	s.Nil(s.dec.Unmarshal(strings.NewReader(frm2_dat), &dat))
+	s.Nil(grpc_helper.JSONPBUnmarshaler.Unmarshal(strings.NewReader(frm2_dat), &dat))
 	s.Nil(s.flow.PushFrame(&pb.Frame{Data: &dat}))
 }
 
@@ -84,7 +82,7 @@ func (s *FlowImplTestSuite) TestPushFrame() {
 	wg := new(sync.WaitGroup)
 	push_at := time.Now()
 	var dat struct_.Struct
-	s.Nil(s.dec.Unmarshal(strings.NewReader(`{"v": 4}`), &dat))
+	s.Nil(grpc_helper.JSONPBUnmarshaler.Unmarshal(strings.NewReader(`{"v": 4}`), &dat))
 
 	wg.Add(1)
 	go func() {

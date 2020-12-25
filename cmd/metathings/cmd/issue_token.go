@@ -78,9 +78,7 @@ func issue_token_by_password(opt *IssueTokenOption, cli pb.IdentitydServiceClien
 			Name:     &wrappers.StringValue{Value: opt.Username},
 			Password: &wrappers.StringValue{Value: opt.Password},
 			Domains: []*pb.OpDomain{
-				&pb.OpDomain{
-					Id: &wrappers.StringValue{Value: opt.DomainId},
-				},
+				{Id: &wrappers.StringValue{Value: opt.DomainId}},
 			},
 		},
 	}

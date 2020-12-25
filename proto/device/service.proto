@@ -9,6 +9,7 @@ import "issue_module_token.proto";
 import "show_module.proto";
 import "heartbeat.proto";
 import "push_frame_to_flow.proto";
+import "push_frame_to_flow_once.proto";
 import "put_object.proto";
 import "put_object_streaming.proto";
 import "remove_object.proto";
@@ -24,6 +25,7 @@ service DeviceService {
 	rpc ShowModule(google.protobuf.Empty) returns (ShowModuleResponse) {}
 	rpc Heartbeat(HeartbeatRequest) returns (google.protobuf.Empty) {}
 	rpc PushFrameToFlow(stream PushFrameToFlowRequest) returns (stream PushFrameToFlowResponse) {}
+  rpc PushFrameToFlowOnce(PushFrameToFlowOnceRequest) returns (google.protobuf.Empty) {}
 	rpc PutObject(PutObjectRequest) returns (google.protobuf.Empty) {}
 	rpc PutObjectStreaming(stream PutObjectStreamingRequest) returns (stream PutObjectStreamingResponse) {}
 	rpc RemoveObject(RemoveObjectRequest) returns (google.protobuf.Empty) {}

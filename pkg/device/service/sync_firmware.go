@@ -8,12 +8,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/golang/protobuf/jsonpb"
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/golang/protobuf/ptypes/wrappers"
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/objx"
 
+	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
 	deviced_pb "github.com/nayotta/metathings/proto/deviced"
 )
 
@@ -112,7 +112,7 @@ func (self *MetathingsDeviceServiceImpl) sync_firmware() (err error) {
 		return err
 	}
 
-	desc_str, err := new(jsonpb.Marshaler).MarshalToString(desc.GetDescriptor_())
+	desc_str, err := grpc_helper.JSONPBMarshaler.MarshalToString(desc.GetDescriptor_())
 	if err != nil {
 		logger.WithError(err).Errorf("failed to marshal descriptor to json string")
 		return err

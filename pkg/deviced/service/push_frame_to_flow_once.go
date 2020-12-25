@@ -3,7 +3,6 @@ package metathings_deviced_service
 import (
 	"context"
 
-	"github.com/golang/protobuf/jsonpb"
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc/codes"
@@ -102,7 +101,7 @@ match_flow_loop:
 	req_frm := req.GetFrame()
 	req_dat := req_frm.GetData()
 	frm := &pb.Frame{Data: req_dat}
-	req_dat_str, err := new(jsonpb.Marshaler).MarshalToString(req_dat)
+	req_dat_str, err := grpc_helper.JSONPBMarshaler.MarshalToString(req_dat)
 	if err != nil {
 		logger.WithError(err).Errorf("failed to marshal data to json string")
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())

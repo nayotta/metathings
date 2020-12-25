@@ -1,17 +1,18 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"crypto/tls"
 	"fmt"
 	"io/ioutil"
 	"os"
 
-	"github.com/golang/protobuf/jsonpb"
 	"github.com/golang/protobuf/proto"
 	dpb "github.com/golang/protobuf/protoc-gen-go/descriptor"
 	"github.com/golang/protobuf/ptypes"
 	"github.com/golang/protobuf/ptypes/any"
+	stpb "github.com/golang/protobuf/ptypes/struct"
 	"github.com/golang/protobuf/ptypes/wrappers"
 	"github.com/jhump/protoreflect/desc"
 	"github.com/jhump/protoreflect/dynamic"
@@ -20,6 +21,7 @@ import (
 	"google.golang.org/grpc/credentials"
 
 	context_helper "github.com/nayotta/metathings/pkg/common/context"
+	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
 	pb "github.com/nayotta/metathings/proto/deviced"
 )
 
@@ -35,6 +37,7 @@ var (
 	plaintext    bool
 	certfile     string
 	keyfile      string
+	soda         bool
 )
 
 func main() {
@@ -48,6 +51,7 @@ func main() {
 	pflag.BoolVar(&plaintext, "plaintext", false, "Plaintext")
 	pflag.StringVar(&certfile, "certfile", "", "CertFile")
 	pflag.StringVar(&keyfile, "keyfile", "", "KeyFile")
+	pflag.BoolVar(&soda, "soda", false, "Enable soda mode")
 
 	pflag.Parse()
 
@@ -55,52 +59,65 @@ func main() {
 
 	fmt.Printf("token=%v\naddr=%v\ndevice=%v\nmodule=%v\nprotobufset=%v\nmethod=%v\nrequest=%v\n", token, deviced_addr, device_id, module, protobufset, method, request)
 
+	var err error
+	var req_buf []byte
 	var any_req *any.Any
-
-	var fds dpb.FileDescriptorSet
-
-	buf, err := ioutil.ReadFile(protobufset)
-	if err != nil {
-		panic(err)
-	}
-
-	if err = proto.Unmarshal(buf, &fds); err != nil {
-		panic(err)
-	}
-
-	fd, err := desc.CreateFileDescriptorFromSet(&fds)
-	if err != nil {
-		panic(err)
-	}
-
-	srvs := fd.GetServices()
-	if len(srvs) == 0 {
-		panic("unexpected protobufset")
-	}
-
-	md := srvs[0].FindMethodByName(method)
-	msg_req := dynamic.NewMessage(md.GetInputType())
+	var md *desc.MethodDescriptor
 
 	if request != "-" {
-		buf, err = ioutil.ReadFile(request)
+		req_buf, err = ioutil.ReadFile(request)
 		if err != nil {
 			panic(err)
 		}
 	} else {
-		buf, err = ioutil.ReadAll(os.Stdin)
+		req_buf, err = ioutil.ReadAll(os.Stdin)
 		if err != nil {
 			panic(err)
 		}
 	}
 
-	err = msg_req.UnmarshalJSON(buf)
-	if err != nil {
-		panic(err)
-	}
+	if soda {
+		var st stpb.Struct
 
-	any_req, err = ptypes.MarshalAny(msg_req)
-	if err != nil {
-		panic(err)
+		if err := grpc_helper.JSONPBUnmarshaler.Unmarshal(bytes.NewReader(req_buf), &st); err != nil {
+			panic(err)
+		}
+
+		if any_req, err = ptypes.MarshalAny(&st); err != nil {
+			panic(err)
+		}
+	} else {
+		var fds dpb.FileDescriptorSet
+
+		buf, err := ioutil.ReadFile(protobufset)
+		if err != nil {
+			panic(err)
+		}
+
+		if err = proto.Unmarshal(buf, &fds); err != nil {
+			panic(err)
+		}
+
+		fd, err := desc.CreateFileDescriptorFromSet(&fds)
+		if err != nil {
+			panic(err)
+		}
+
+		srvs := fd.GetServices()
+		if len(srvs) == 0 {
+			panic("unexpected protobufset")
+		}
+
+		md = srvs[0].FindMethodByName(method)
+		msg_req := dynamic.NewMessage(md.GetInputType())
+
+		if err = msg_req.UnmarshalJSON(req_buf); err != nil {
+			panic(err)
+		}
+
+		if any_req, err = ptypes.MarshalAny(msg_req); err != nil {
+			panic(err)
+		}
 	}
 
 	req := &pb.UnaryCallRequest{
@@ -145,13 +162,20 @@ func main() {
 		panic(err)
 	}
 
-	msg_res := dynamic.NewMessage(md.GetOutputType())
+	var msg_res proto.Message
+
+	if soda {
+		msg_res = new(stpb.Struct)
+	} else {
+		msg_res = dynamic.NewMessage(md.GetOutputType())
+	}
+
 	err = ptypes.UnmarshalAny(res.Value.Value, msg_res)
 	if err != nil {
 		panic(err)
 	}
 
-	out, err := new(jsonpb.Marshaler).MarshalToString(msg_res)
+	out, err := grpc_helper.JSONPBMarshaler.MarshalToString(msg_res)
 	if err != nil {
 		panic(err)
 	}

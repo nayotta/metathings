@@ -44,12 +44,15 @@ type Module struct {
 	name_once *sync.Once
 	name      string
 
+	tgt interface{}
+
 	krn    *Kernel
-	tgt    interface{}
 	srv    ModuleServer
 	opt    *ModuleOption
+	args   []string
 	flags  *pflag.FlagSet
 	logger log.FieldLogger
+	closed chan struct{}
 }
 
 func (m *Module) init_flags() error {
@@ -61,7 +64,7 @@ func (m *Module) init_flags() error {
 	m.flags.StringVar(&m.opt.TransportCredential.KeyFile, "key-file", "", "Transport credential key")
 	m.flags.StringVar(&m.opt.TransportCredential.CertFile, "cert-file", "", "Transport credential cert")
 
-	err := m.flags.Parse(os.Args[1:])
+	err := m.flags.Parse(m.args)
 	if err != nil {
 		return err
 	}
@@ -283,7 +286,7 @@ func (m *Module) Init() error {
 }
 
 func (m *Module) HeartbeatLoop() {
-	for {
+	for m.IsRunning() {
 		err := m.Kernel().Heartbeat()
 		if err != nil {
 			m.logger.WithError(err).Warningf("failed to heartbeat")
@@ -293,12 +296,41 @@ func (m *Module) HeartbeatLoop() {
 }
 
 func (m *Module) Serve() error {
-	go m.HeartbeatLoop()
+	logger := m.Logger()
+	cfg := m.Kernel().Config()
+
+	hbs := cfg.GetString("heartbeat.strategy")
+	if hbs == "" {
+		hbs = "auto"
+	}
+	logger.WithFields(log.Fields{
+		"heartbeat_strategy": hbs,
+	}).Info("module serve")
+
+	switch hbs {
+	case "auto":
+		go m.HeartbeatLoop()
+	default:
+	}
+
 	return m.srv.Serve()
 }
 
 func (m *Module) Stop() {
 	m.srv.Stop()
+
+	if m.IsRunning() {
+		close(m.closed)
+	}
+}
+
+func (m *Module) IsRunning() bool {
+	select {
+	case _, alive := <-m.closed:
+		return alive
+	default:
+		return true
+	}
 }
 
 func (m *Module) Launch() error {
@@ -321,11 +353,11 @@ func (m *Module) Launch() error {
 func NewDefaultModuleOption() objx.Map {
 	return objx.New(map[string]interface{}{
 		"version": "unknown",
+		"args":    os.Args[1:],
 	})
-
 }
 
-func NewModule(name string, target interface{}, opts ...NewModuleOption) (*Module, error) {
+func NewModule(opts ...NewModuleOption) (*Module, error) {
 	o := NewDefaultModuleOption()
 
 	for _, opt := range opts {
@@ -335,8 +367,10 @@ func NewModule(name string, target interface{}, opts ...NewModuleOption) (*Modul
 	return &Module{
 		Versioner: version_helper.NewVersioner(o.Get("version").String())(),
 		name_once: new(sync.Once),
-		tgt:       target,
+		tgt:       o.Get("target").Inter(),
 		opt:       &ModuleOption{},
-		flags:     pflag.NewFlagSet(name, pflag.ExitOnError),
+		args:      o.Get("args").StringSlice(),
+		flags:     pflag.NewFlagSet("module", pflag.ExitOnError),
+		closed:    make(chan struct{}),
 	}, nil
 }

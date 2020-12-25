@@ -21,7 +21,9 @@ func (self *MetathingsDeviceServiceImpl) GetObjectContent(ctx context.Context, r
 	obj := req.GetObject()
 	obj.Device = self.pb_device()
 
-	creq := &deviced_pb.GetObjectContentRequest{}
+	creq := &deviced_pb.GetObjectContentRequest{
+		Object: obj,
+	}
 	cres, err := cli.GetObjectContent(self.context(), creq)
 	if err != nil {
 		self.logger.WithError(err).Errorf("failed to get object content from deviced service")

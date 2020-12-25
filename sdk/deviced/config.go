@@ -2,12 +2,13 @@ package metathings_deviced_sdk
 
 import (
 	"encoding/json"
+	"strings"
 
-	"github.com/golang/protobuf/jsonpb"
 	stpb "github.com/golang/protobuf/ptypes/struct"
 	"github.com/golang/protobuf/ptypes/wrappers"
 	"github.com/stretchr/objx"
 
+	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
 	pb "github.com/nayotta/metathings/proto/deviced"
 )
 
@@ -25,7 +26,7 @@ func (c *Config) Set(selector string, value interface{}) {
 }
 
 func FromConfig(x *pb.Config) (*Config, error) {
-	js_str, err := new(jsonpb.Marshaler).MarshalToString(x.GetBody())
+	js_str, err := grpc_helper.JSONPBMarshaler.MarshalToString(x.GetBody())
 	if err != nil {
 		return nil, err
 	}
@@ -51,7 +52,7 @@ func ToProtobuf(x *Config) (*pb.OpConfig, error) {
 	}
 
 	var body stpb.Struct
-	err = jsonpb.UnmarshalString(js_str, &body)
+	err = grpc_helper.JSONPBUnmarshaler.Unmarshal(strings.NewReader(js_str), &body)
 	if err != nil {
 		return nil, err
 	}

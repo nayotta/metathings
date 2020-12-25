@@ -6,16 +6,12 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/golang/protobuf/jsonpb"
 	"github.com/golang/protobuf/proto"
+	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
 )
 
 var (
 	ErrUnexpectedContentType = errors.New("unexpected content type")
-)
-
-var (
-	pb_codec jsonpb.Marshaler
 )
 
 func ParseHttpRequestBody(r *http.Request, v proto.Message) error {
@@ -23,7 +19,7 @@ func ParseHttpRequestBody(r *http.Request, v proto.Message) error {
 		return ErrUnexpectedContentType
 	}
 
-	if err := jsonpb.Unmarshal(r.Body, v); err != nil {
+	if err := grpc_helper.JSONPBUnmarshaler.Unmarshal(r.Body, v); err != nil {
 		return err
 	}
 
@@ -31,7 +27,7 @@ func ParseHttpRequestBody(r *http.Request, v proto.Message) error {
 }
 
 func ParseHttpResponseBody(v proto.Message) ([]byte, error) {
-	s, err := pb_codec.MarshalToString(v)
+	s, err := grpc_helper.JSONPBMarshaler.MarshalToString(v)
 	if err != nil {
 		return nil, err
 	}

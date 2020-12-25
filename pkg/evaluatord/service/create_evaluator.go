@@ -3,10 +3,10 @@ package metathings_evaluatord_service
 import (
 	"context"
 
-	"github.com/golang/protobuf/jsonpb"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
+	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
 	id_helper "github.com/nayotta/metathings/pkg/common/id"
 	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
 	storage "github.com/nayotta/metathings/pkg/evaluatord/storage"
@@ -108,7 +108,7 @@ func (srv *MetathingsEvaluatordService) CreateEvaluator(ctx context.Context, req
 
 	evltr_config_str := "{}"
 	if evltr_config := evltr.GetConfig(); evltr_config != nil {
-		evltr_config_str, err = new(jsonpb.Marshaler).MarshalToString(evltr_config)
+		evltr_config_str, err = grpc_helper.JSONPBMarshaler.MarshalToString(evltr_config)
 		if err != nil {
 			evltr_config_str = "{}"
 			logger.WithError(err).Warningf("failed to marshal evaluator config to string")

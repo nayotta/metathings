@@ -1,14 +1,15 @@
 package metathings_component
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
 	"io"
 	"io/ioutil"
 	"strings"
+	"time"
 
-	"github.com/golang/protobuf/jsonpb"
 	"github.com/golang/protobuf/proto"
 	"github.com/golang/protobuf/ptypes"
 	"github.com/golang/protobuf/ptypes/empty"
@@ -21,6 +22,7 @@ import (
 	const_helper "github.com/nayotta/metathings/pkg/common/constant"
 	constant_helper "github.com/nayotta/metathings/pkg/common/constant"
 	context_helper "github.com/nayotta/metathings/pkg/common/context"
+	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
 	id_helper "github.com/nayotta/metathings/pkg/common/id"
 	log_helper "github.com/nayotta/metathings/pkg/common/log"
 	identityd2_contrib "github.com/nayotta/metathings/pkg/identityd2/contrib"
@@ -65,6 +67,23 @@ func NewKernelConfigFromText(text string) (*KernelConfig, error) {
 	}
 
 	return &KernelConfig{v}, nil
+}
+
+type KernelInterface interface {
+	Context() context.Context
+	Show() (*deviced_pb.Module, error)
+	ShowFirmwareDescriptor() (*deviced_pb.FirmwareDescriptor, error)
+	PutObject(name string, content io.Reader) error
+	PutObjectStreaming(name string, content io.ReadSeeker, opt *PutObjectStreamingOption) error
+	PutObjectStreamingWithCancel(name string, content io.ReadSeeker, opt *PutObjectStreamingOption) (context.CancelFunc, chan error, error)
+	PutObjects(objects map[string]io.Reader) error
+	GetObject(name string) (*deviced_pb.Object, error)
+	GetObjectContent(name string) ([]byte, error)
+	RemoveObjct(name string) error
+	RemoveObjets(names []string) error
+	RenameObject(src, dst string) error
+	PushFrameToFlowOnce(name string, data interface{}, opt *PushFrameToFlowOnceOption) error
+	Heartbeat() error
 }
 
 type Kernel struct {
@@ -274,6 +293,60 @@ func (k *Kernel) RenameObject(src, dst string) error {
 	return nil
 }
 
+type ListObjectsOption struct {
+	Recursive bool
+	Depth     int32
+}
+
+func (k *Kernel) ListObjects(name string, opt *ListObjectsOption) ([]*deviced_pb.Object, error) {
+	cli, cfn, err := k.cli_fty.NewDeviceServiceClient()
+	if err != nil {
+		return nil, err
+	}
+	defer cfn()
+
+	objs, err := _list_objects(cli, k.Context(), name, opt.Recursive, opt.Depth)
+	if err != nil {
+		return nil, err
+	}
+
+	return objs, nil
+}
+
+type PushFrameToFlowOnceOption struct {
+	Id *string
+	Ts *time.Time
+}
+
+func (k *Kernel) PushFrameToFlowOnce(name string, data interface{}, opt *PushFrameToFlowOnceOption) error {
+	cli, cfn, err := k.cli_fty.NewDeviceServiceClient()
+	if err != nil {
+		return err
+	}
+	defer cfn()
+
+	id := id_helper.NewId()
+	ts := time.Now()
+
+	if opt == nil {
+		opt = &PushFrameToFlowOnceOption{}
+	}
+
+	if opt.Id != nil {
+		id = *opt.Id
+	}
+
+	if opt.Ts != nil {
+		ts = *opt.Ts
+	}
+
+	if err = _push_frame_to_flow_once(cli, k.Context(), id, name, ts, data); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (k *Kernel) Heartbeat() error {
 	cli, cfn, err := k.cli_fty.NewDeviceServiceClient()
 	if err != nil {
@@ -332,7 +405,7 @@ func (fs *FrameStream) Push(dat interface{}) error {
 
 	switch msg := dat.(type) {
 	case proto.Message:
-		dat_js, err = new(jsonpb.Marshaler).MarshalToString(msg)
+		dat_js, err = grpc_helper.JSONPBMarshaler.MarshalToString(msg)
 		if err != nil {
 			return err
 		}
@@ -345,7 +418,7 @@ func (fs *FrameStream) Push(dat interface{}) error {
 	}
 
 	var st stpb.Struct
-	err = jsonpb.UnmarshalString(dat_js, &st)
+	err = grpc_helper.JSONPBUnmarshaler.Unmarshal(strings.NewReader(dat_js), &st)
 	if err != nil {
 		return err
 	}
@@ -667,6 +740,59 @@ func _rename_object(cli pb.DeviceServiceClient, ctx context.Context, src, dst st
 	}
 
 	_, err := cli.RenameObject(ctx, req)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func _list_objects(cli pb.DeviceServiceClient, ctx context.Context, name string, recursive bool, depth int32) ([]*deviced_pb.Object, error) {
+	req := &pb.ListObjectsRequest{
+		Object: &deviced_pb.OpObject{
+			Name: &wrappers.StringValue{Value: name},
+		},
+		Recursive: &wrappers.BoolValue{Value: recursive},
+		Depth:     &wrappers.Int32Value{Value: depth},
+	}
+
+	res, err := cli.ListObjects(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	return res.Objects, nil
+}
+
+func _push_frame_to_flow_once(cli pb.DeviceServiceClient, ctx context.Context, id string, name string, ts time.Time, data interface{}) error {
+	pbts, err := ptypes.TimestampProto(ts)
+	if err != nil {
+		return err
+	}
+
+	buf, err := json.Marshal(data)
+	if err != nil {
+		return err
+	}
+
+	var pbst stpb.Struct
+	err = grpc_helper.JSONPBUnmarshaler.Unmarshal(bytes.NewReader(buf), &pbst)
+	if err != nil {
+		return err
+	}
+
+	req := &pb.PushFrameToFlowOnceRequest{
+		Id: &wrappers.StringValue{Value: id},
+		Flow: &deviced_pb.OpFlow{
+			Name: &wrappers.StringValue{Value: name},
+		},
+		Frame: &deviced_pb.OpFrame{
+			Ts:   pbts,
+			Data: &pbst,
+		},
+	}
+
+	_, err = cli.PushFrameToFlowOnce(ctx, req)
 	if err != nil {
 		return err
 	}

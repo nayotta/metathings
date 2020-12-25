@@ -3,10 +3,10 @@ package metathings_deviced_service
 import (
 	"context"
 
-	"github.com/golang/protobuf/jsonpb"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
+	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
 	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
 	storage "github.com/nayotta/metathings/pkg/deviced/storage"
 	identityd_validator "github.com/nayotta/metathings/pkg/identityd2/validator"
@@ -44,7 +44,7 @@ func (self *MetathingsDevicedService) PatchConfig(ctx context.Context, req *pb.P
 	}
 
 	if body := cfg.GetBody(); body != nil {
-		body_str, err := new(jsonpb.Marshaler).MarshalToString(body)
+		body_str, err := grpc_helper.JSONPBMarshaler.MarshalToString(body)
 		if err != nil {
 			logger.WithError(err).Errorf("invalid body")
 			return nil, status.Errorf(codes.InvalidArgument, err.Error())

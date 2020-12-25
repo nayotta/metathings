@@ -3,12 +3,12 @@ package metathings_deviced_service
 import (
 	"context"
 
-	"github.com/golang/protobuf/jsonpb"
 	"github.com/golang/protobuf/ptypes/empty"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
+	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
 	id_helper "github.com/nayotta/metathings/pkg/common/id"
 	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
 	storage "github.com/nayotta/metathings/pkg/deviced/storage"
@@ -76,7 +76,7 @@ func (self *MetathingsDevicedService) AddFirmwareDescriptorToFirmwareHub(ctx con
 	})
 
 	desc_desc := desc.GetDescriptor_()
-	desc_desc_str, err := new(jsonpb.Marshaler).MarshalToString(desc_desc)
+	desc_desc_str, err := grpc_helper.JSONPBMarshaler.MarshalToString(desc_desc)
 	if err != nil {
 		logger.WithError(err).Errorf("failed to marshal descriptor to json string")
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())
