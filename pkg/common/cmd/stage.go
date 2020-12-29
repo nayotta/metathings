@@ -13,7 +13,7 @@ func GetStageFromEnv(vs ...*viper.Viper) string {
 
 	stage := v.GetString("stage")
 	if stage == "" {
-		stage = "dev"
+		stage = "prod"
 	}
 	return stage
 }
