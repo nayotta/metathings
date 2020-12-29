@@ -66,13 +66,13 @@ TBD
 
 #### 4.1.1. 目的
 
-实现一个南向设备, 能够接收 `Metathings` 平台的北向请求, 并且作出回应.
+实现一个南向设备, 能够接收 `Metathings` 平台的北向`Hello`请求, 并且作出回应.
 
 #### 4.1.2.  流程预览
 
 在`Metathings` 平台创建相关的设备, 用于接收北向命令和转发消息到南向设备.
 
-使用 `Python` 构建一个简单的 `HTTP Server`, 实现一个 `Hello` 服务.
+使用 `Python` 构建一个简单的, 基于`HTTP Server` 的`Soda Module Plugin` 程序, 实现一个 `Hello` 服务, 服务包含 `hello` 方法.
 
 启动该服务程序, 然后再启动`Device` 和`Soda Module` 程序.
 
@@ -80,7 +80,7 @@ TBD
 
 #### 4.1.3. 详细流程
 
-1. 创建一个工作目录
+#### 4.1.3.1. 创建一个工作目录
 
 ```bash
 $ mkdir 01hello
@@ -88,7 +88,7 @@ $ export WORKDIR=`pwd`/01hello
 $ cd $WORKDIR
 ```
 
-2. 下载 Metathings 客户端
+#### 4.1.3.2. 下载 Metathings 客户端
 
 进入 `https://github.com/nayotta/metathings/releases/latest`
 
@@ -101,7 +101,15 @@ $ tar zxvf metathings_<version>_linux_amd64.tar.gz
 ```
 
 
-3. 实现 `HTTP Server`
+#### 4.1.3.3. 实现 `Hello`服务
+
+这里 采用 `Python` 的 `Flask` Web框架实现 `Hello` 服务.
+
+暴露的接口为 `/hello`,  `HTTP`请求方法为 `POST`(`Soda Module Plugin`规定),
+
+接收的参数为`json` 格式.
+
+这里暴露的接口后续会与`Module` 的配置有关联.
 
 ```python
 import flask
@@ -112,7 +120,9 @@ app = flask.Flask("hello")
 
 @app.route("/hello", methods=["POST"])
 def hello():
-    return flask.make_response({"message": "Hello, {0}".format(request.json["name"])})
+    name = request.json["name"]
+    hello_str = "Hello, {0}".format(name)
+    return flask.make_response({"message": hello_str})
 
 
 if __name__ == '__main__':
@@ -121,16 +131,16 @@ if __name__ == '__main__':
 
 保存为 `hello.py`
 
-4.  运行 `HTTP Server`
+#### 4.1.3.4.  运行 `Soda Module Plugin`
 
 ```bash
 $ python3 hello.py &
 ```
 
-5. 配置 `Device`
+#### 4.1.3.5. 配置 `Device`
 
 ```yaml
-debug:  # 与MT_STAGE环境变量一致
+prod:  # 与MT_STAGE环境变量一致, 默认为 prod
   listen: 0.0.0.0:5002  # Device的与Module的通讯地址, 默认即可
   verbose: true  # 显示详细信息
   log:
@@ -148,16 +158,16 @@ debug:  # 与MT_STAGE环境变量一致
 
  保存为 `device.yaml`
 
-6. 运行 `Device`
+#### 4.1.3.6. 运行 `Device`
 
 ```bash
-$ MT_STAGE=debug ./metathings device run -c device.yaml &
+$ ./metathings device run -c device.yaml &
 ```
 
-7. 配置 `Module`
+#### 4.1.3.7. 配置 `Module`
 
 ```yaml
-debug:  # 与MTC_STAGE环境变量一致
+prod:  # 与MTC_STAGE环境变量一致, 默认为 prod
   name: hello  # Module 的名字, 在 Metathings平台创建时定义
   service:
     scheme: mtp+soda  # Soda Module的协议, 在 Metathings平台创建时定义
@@ -183,31 +193,167 @@ debug:  # 与MTC_STAGE环境变量一致
     target:
       url: http://127.0.0.1:8000  # 指向 Python 的 HTTP Server
     downstreams:
-      hello:  # 暴露 Python HTTP Server 的服务, 名字叫 hello
+      my_hello:  # 暴露 Python HTTP Server 的服务, 名字叫 my_hello
         path: /hello  # 指向 Python HTTP Server 的路径
 ```
 
 保存为 `module.yaml`
 
-8. 运行 `Module`
+#### 4.1.3.8. 运行 `Module`
 
 ```bash
-$ MTC_STAGE=debug ./metathings module run -c module.yaml &
+$ ./metathings module run -c module.yaml &
 ```
 
-9. 测试
+#### 4.1.3.9. 测试
 
-调用 `metathings`的测试命令, 可以发送消息到 `Python HTTP Server`, 可获得 `Python HTTP Server` 的返回值.
+调用 `metathings`的测试命令, 可以发送消息到 `Soda Module Plugin`, 可获得对应的返回值.
+
+*注意:* `--method`的参数与上面 `Module`的配置项 `backend.downstreams`的key值匹配.
 
 ```bash
-$ ./metathings device unary-call --soda --device <device-id> --module <module-name> --method hello --data '{"name": "World"}'
+$ ./metathings device unary-call --soda --device <device-id> --module <module-name> --method my_hello --data '{"name": "World"}'
 
 {"message":"Hello, World"}
 ```
 
 ### 4.2. 点亮二极管
 
-TBD
+#### 4.2.1. 目的
+
+实现一个南向设备, 能够接收 `Metathings`平台的北向控制请求, 控制与树莓派连接的LED灯的.
+
+#### 4.2.2. 流程预览
+
+在`Metathings` 平台创建相关的设备, 用于接收北向命令和转发消息到南向设备.
+
+使用 `Python` 构建一个简单的, 基于`HTTTP Server`的 `Soda Module Plugin` 程序, 实现一个 `LED` 服务, 服务包含 `on` 和 `off` 两个方法.
+
+启动该服务程序, 然后再启动 `Device` 和 `Soda Module` 程序.
+
+然后通过测试程序测试请求是否正常工作.
+
+#### 4.2.3. 详细流程
+
+#### 4.2.3.1.  创建工作目录
+
+```bash
+$ mkdir 02led
+$ export WORKDIR=`pwd`/02led
+$ cd $WORKDIR
+```
+
+#### 4.2.3.2. 下载 Metathings 客户端
+
+参考 `4.1.3.2.` 章节.
+
+#### 4.2.3.3. 实现 `LED` 服务
+
+这里采用 `Python` 的`Flask` Web 框架实现 `LED` 服务.
+
+暴露的接口有两个:
+
+1. `/on`
+2. `/off`
+
+两个接口的 `HTTP` 请求方法为`POST`.
+
+接收参数为`json` 格式.
+
+这里暴露的接口后续会与`Module` 的配置有关联.
+
+```python
+#! /usr/bin/env python3
+
+import flask
+import gpiozero
+
+app = flask.Flask("led")
+_LED = None
+
+
+def get_led():
+    global _LED
+
+    if _LED is None:
+        _LED = gpiozero.LED(4)  # 采用 GPIO4 为 LED正极连接针脚, LED负极连接树莓派的GPIO GND针脚即可
+
+    return _LED
+
+
+@app.route("/on")
+def on():
+    led = get_led()
+
+    led.on()
+
+    return flask.make_response({"status": "on"})
+
+
+@app.route("/off")
+def off():
+    led = get_led()
+
+    led.off()
+
+    return flask.make_response({"status": "off"})
+
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=8000, debug=True)
+```
+
+保存为 `led.py`
+
+#### 4.2.3.4. 运行 `Soda Module Plugin`
+
+```bash
+$ python3 led.py &
+```
+
+#### 4.2.3.5. 配置 `Device`
+
+参考 `4.1.3.5.`章节.
+
+#### 4.2.3.6. 运行 `Device`
+
+```bash
+$ ./metathings device run -c device.yaml &
+```
+
+#### 4.2.3.7. 配置 `Module`
+
+```yaml
+prod:
+  ...
+  backend:
+    ...
+    downstreams:
+      on:
+        path: /on
+      off:
+        path: /off
+    ...
+  ...
+```
+
+未细讲部分参考 `3.1.3.7.`章节.
+
+ 保存为 `module.yaml`
+
+#### 4.2.3.8. 运行 `Module`
+
+```bash
+$ ./metathings module run -c module.yaml &
+```
+
+#### 4.2.3.9. 测试
+
+在所有的配置正确的情况下(包括软件和硬件的), 通过 `metathings` 工具发送 `on` 请求时, LED灯就会被点亮, 发送`off` 请求时, LED灯就会被熄灭.
+
+```bash
+$ ./metathings device unary-call --soda --device <device-id> --module <module-name> --method on  # or off
+```
 
 ### 4.3. 采集传感器数据
 
