@@ -177,6 +177,7 @@ prod:  # 与MTC_STAGE环境变量一致, 默认为 prod
     level: debug
   heartbeat:
     interval: 15  # Module 与 Device 的心跳间隔时间
+    strategy: auto  #  心跳策略, 暂时采用 auto.
   credential:
     id: <credential-id>  # Module 的 Credential ID, 在 Metathings 平台生成
     secret: <credential-secret>  # Module 的 Credential Secret, 在 Metathings 平台生成
@@ -190,6 +191,8 @@ prod:  # 与MTC_STAGE环境变量一致, 默认为 prod
     name: http  # Soda Module 的 Backend 驱动, 暂时只支持 http
     host: 0.0.0.0  # http 服务的监听地址
     port: 8001  # http 服务的监听端口
+    auth:
+      name: dummy  # 认证机制驱动, 暂时不启用, 所以采用 dummy 驱动.
     target:
       url: http://127.0.0.1:8000  # 指向 Python 的 HTTP Server
     downstreams:
@@ -212,6 +215,7 @@ $ ./metathings module run -c module.yaml &
 *注意:* `--method`的参数与上面 `Module`的配置项 `backend.downstreams`的key值匹配.
 
 ```bash
+$ eval $(./metathings token issue --domain-id default --username <username> --password <password> --env)
 $ ./metathings device unary-call --soda --device <device-id> --module <module-name> --method my_hello --data '{"name": "World"}'
 
 {"message":"Hello, World"}
@@ -221,7 +225,7 @@ $ ./metathings device unary-call --soda --device <device-id> --module <module-na
 
 #### 4.2.1. 目的
 
-实现一个南向设备, 能够接收 `Metathings`平台的北向控制请求, 控制与树莓派连接的LED灯的.
+实现一个南向设备, 能够接收 `Metathings`平台的北向控制请求, 控制与树莓派连接的LED灯.
 
 #### 4.2.2. 流程预览
 
@@ -323,6 +327,8 @@ $ ./metathings device run -c device.yaml &
 
 #### 4.2.3.7. 配置 `Module`
 
+这里通过配置文件, 暴露了两个方法, 分别是 `on` 和 `off`, 指向了 `Soda Module Pulgin` 的`/on` 和`/off` 接口.
+
 ```yaml
 prod:
   ...
@@ -337,7 +343,7 @@ prod:
   ...
 ```
 
-未细讲部分参考 `3.1.3.7.`章节.
+未细讲部分参考 `4.1.3.7.`章节.
 
  保存为 `module.yaml`
 
@@ -352,12 +358,129 @@ $ ./metathings module run -c module.yaml &
 在所有的配置正确的情况下(包括软件和硬件的), 通过 `metathings` 工具发送 `on` 请求时, LED灯就会被点亮, 发送`off` 请求时, LED灯就会被熄灭.
 
 ```bash
+$ eval $(./metathings token issue --domain-id default --username <username> --password <password> --env)
 $ ./metathings device unary-call --soda --device <device-id> --module <module-name> --method on  # or off
 ```
 
 ### 4.3. 采集传感器数据
 
-TBD
+#### 4.3.1. 目的
+
+从传感器读取数据, 并且上传数据到设备所属的`Flow`.
+
+#### 4.3.2. 流程预览
+
+在`Metathings` 平台创建相关的设备, 用于接收北向命令和转发消息到南向设备.
+
+启动`Device` 和`Soda Module` 程序.
+
+程序从传感器读取数据后, 通过 `Soda Module API` 接口发送数据到`Flow`.
+
+#### 4.3.3. 详细流程
+
+#### 4.3.3.1. 创建工作目录
+
+```bash
+$ mkdir 03upload_data
+$ export WORKDIR=`pwd`/03upload_data
+$ cd $WORKDIR
+```
+
+#### 4.3.3.2. 下载 Metathings 客户端
+
+参考`4.1.3.2.` 章节
+
+#### 4.3.3.3. 实现采集程序
+
+这里先构建一个模拟的温度传感器接口, 然后读取到数据之后, 采用`Soda Module API` 接口发送数据.
+
+发送数据采用的接口是 `5.1.2.` 章节的接口 `/v1/actions/push_frame_to_flow_once`,
+
+该接口的详细用法请参考该章节.
+
+```python
+#! /usr/bin/env python3
+
+from urllib.parse import urljoin
+import random
+
+import requests
+
+SODA_MODULE_API_HOST = "localhost"  # 指定 Soda Module API 的地址
+SODA_MODULE_API_PORT = 8001  # 指定 Soda Module API 的端口
+SODA_MODULE_API_ADDR = "http://{0}:{1}".format(SODA_MODULE_API_HOST, SODA_MODULE_API_PORT)
+PUSH_FRAME_TO_FLOW_ONCE = "/v1/actions/push_frame_to_flow_once"
+
+
+def get_temperature():
+    return 30 + 3 * random.random()
+
+
+def upload_data():
+    url = urljoin(SODA_MODULE_ADDR, PUSH_FRAME_TO_FLOW_ONCE)
+    data = {"temperature": get_temperature()}
+    # 具体的请求数据内容参考接口文档
+    req = {
+        "flow": {
+            "name": "temperature"  # 指定数据往名字为`temperature` 的`Flow` 推送.
+        },
+        "frame": {
+            "data": data
+        }
+    }
+    res = requests.post(url, json=req)
+    assert res.status_code == 204
+
+if __name__ == "__main__":
+    upload_data()
+```
+
+ 保存为 `upload.py`
+
+#### 4.3.3.4. 配置 `Device`
+
+参考 `4.1.3.5.`章节
+
+#### 4.3.3.5. 运行 `Device`
+
+参考 `4.1.3.6.`章节
+
+#### 4.3.3.6. 配置 `Module`
+
+```yaml
+prod:
+  ...
+  backend:
+    ...
+    name: http
+    host: 0.0.0.0  # Soda Module API 的监听地址
+    port: 8001  # Soda Module API 的监听端口
+    ...
+  ...
+```
+
+未细讲部分参考 `4.1.3.7.`章节
+
+#### 4.3.3.7. 运行 `Module`
+
+参考 `4.1.3.8.`章节
+
+#### 4.3.3.8. 测试
+
+调用 `metathings`的`pull-flow`命令, 监听`Flow` 的数据, 然后再通过上面的程序发送数据到`Flow`, 可以观察到数据成功发送.
+
+```bash
+$ eval $(./metathings token issue --domain-id default --username <username> --password <password> --env)
+$ ./metathings device pull-flow --device <device-id> --flow <flow-name>
+```
+
+打开另外一个终端, 运行发送数据的程序.
+
+```bash
+$ python3 upload.py
+```
+
+可以观察到上一个终端会数据对应的数据即可.
 
 ### 4.4. 设备上线与下线
 

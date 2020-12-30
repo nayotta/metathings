@@ -3,7 +3,6 @@ package cmd
 import (
 	"bytes"
 	"context"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -125,10 +124,8 @@ func _unary_call_device(opt *UnaryCallDeviceOption, cli pb.DevicedServiceClient)
 
 	if opt.Data == "" {
 		if opt.File == "" {
-			return errors.New("require data or data file")
-		}
-
-		if opt.File == "-" {
+			buf = []byte("{}")
+		} else if opt.File == "-" {
 			buf, err = ioutil.ReadAll(os.Stdin)
 			if err != nil {
 				return err
