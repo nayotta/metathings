@@ -192,7 +192,7 @@ prod:  # 与MTC_STAGE环境变量一致, 默认为 prod
     host: 0.0.0.0  # http 服务的监听地址
     port: 8001  # http 服务的监听端口
     auth:
-      name: dummy  # 认证机制驱动, 暂时不启用, 所以采用 dummy 驱动.
+      name: dummy  # 认证机制驱动, 暂时不启用, 即相信 Soda Module Plugin是安全可信的, 所以采用 dummy 驱动.
     target:
       url: http://127.0.0.1:8000  # 指向 Python 的 HTTP Server
     downstreams:
@@ -552,7 +552,37 @@ prod:
 
 ### 4.5. 认证机制
 
-TBD
+#### 4.5.1. 目的
+
+`Metathings` 平台与 `Device`, `Device` 与 `Module` 之间的通信是采用认证机制, 所以之间的通讯是经过认证的.
+
+而以上的场景都是默认`Soda Module` 与`Soda Module Plugin` 处于受信环境下的通信.
+
+可能存在第三方攻击的情况, 所以加入了`Soda Module` 对`Soda Module Plugin` 的认证机制.
+
+暂时的认证机制是`Soda Module Plugin` 与`Soda Module` 之间采用 `secret` 机制(即双方在运行前保存相同的 `secret`, 供通讯时使用).
+
+将来会提供更加丰富的认证机制.
+
+#### 4.5.2. `Module` 配置
+
+```yaml
+prod:
+  ...
+  backend:
+    auth:
+      name: secret
+      secret: <secret>  # 这里配置预设的 `secret`, 等下通信时需要带上.
+  ...
+```
+
+#### 4.5.3. `Soda Module Plugin` 开发更改
+
+需要在调用 `Soda Module API` 时, 需要在`HTTP Request Header`上设置 `Authorization` 字段.
+
+格式如下:
+
+HTTP Header: `Authorization: Bearer <secret>`
 
 ## 5. `API`详解
 
