@@ -186,7 +186,7 @@ prod:  # 与MTC_STAGE环境变量一致, 默认为 prod
       address: 127.0.0.1:5002  # Device 的通讯地址, 参考上面 Device 的配置
       plain_text: true  # Device 与 Module 是内部通讯, 所以采用 PlainText模式即可
     default:
-      address:  api.metathings.nayotta.com:443  # Metathings的地址, 默认即可
+      address:  api.metathings.nayotta.com:443  # Metathings的地址.
   backend:
     name: http  # Soda Module 的 Backend 驱动, 暂时只支持 http
     host: 0.0.0.0  # http 服务的监听地址
@@ -280,7 +280,7 @@ def get_led():
     global _LED
 
     if _LED is None:
-        _LED = gpiozero.LED(4)  # 采用 GPIO4 为 LED正极连接针脚, LED负极连接树莓派的GPIO GND针脚即可
+        _LED = gpiozero.LED(4)  # 采用 GPIO4 为 LED正极连接针脚, LED负极连接树莓派的GPIO GND针脚.
 
     return _LED
 
@@ -480,11 +480,75 @@ $ ./metathings device pull-flow --device <device-id> --flow <flow-name>
 $ python3 upload.py
 ```
 
-可以观察到上一个终端会数据对应的数据即可.
+可以观察到上一个终端打印出对应的数据.
 
-### 4.4. 设备上线与下线
+### 4.4. 设备在线状态管理
 
-TBD
+#### 4.4.1. 目的
+
+管理设备的在线状态, 介绍各种心跳策略`Heartbeat Strategy`的区别.
+
+#### 4.4.2. `Auto Strategy`
+
+默认的心跳策略, 由 `Soda Module`程序自行管理.
+
+当`Soda Module` 运行并且能够与`Device` 进行`Heartbeat` 的话, 就可以上线.
+
+这种模式的好处是 `Soda Module Plugin` 的开发者不需要关心相关的内容, 可以尽快地进行`Soda Module Plugin` 的开发.
+
+但是这样带来的问题就是, `Soda Module Plugin`开发者无法主动控制设备的在线状态, 可能会导致一些应用无法根据状态进行正确的逻辑判断.
+
+配置方式:
+
+```yaml
+prod:
+  ...
+  heartbeat:
+    strategy: auto  # 默认为 auto, 可选.
+  ...
+```
+
+#### 4.4.3. `Manual Strategy`
+
+心跳的行为交由`Soda Module Plugin`开发者控制, 只需调用 `/v1/actions/heartbeat`.
+
+接口详细说明参考 `5.1.9.`章节.
+
+这种模式的好处是可以由`Soda Module Plugin`开发者管理心跳的频率, 并且可以最大的自由度控制设备的在线情况.
+
+例如定义传感器无法获取数据后, `Soda Module` 就离线的话, 就可以采用这种方式.
+
+这种模式带来的问题是, 开发者需要自行管理该接口的调用, 对开发者造成一定的不便.
+
+配置方式:
+
+```yaml
+prod:
+  ...
+  heartbeat:
+    strategy: manual
+  ...
+```
+
+#### 4.4.4. `Reverse Strategy`
+
+心跳的检测逻辑交由`Soda Module Plugin`开发者实现, 但是心跳的发起由`Soda Module`实现.
+
+心跳的检测逻辑实现接口可以阅读 `5.2.1.`章节了解更多.
+
+与`manual strategy` 相比, `reverse strategy`对开发者的心智负担更加轻, 开发者只需要关心实现检测逻辑即可.
+
+而什么时候, 怎么通知其他组件的工作, 交由了已经实现的`Soda Module` 完成.
+
+配置方法:
+
+```yaml
+prod:
+  ...
+  heartbeat:
+    strategy: reverse
+  ...
+```
 
 ### 4.5. 认证机制
 
@@ -745,6 +809,18 @@ response body:
 ```
 
 response code: `200`
+
+#### 5.1.9. Heartbeat
+
+`Soda Module`的`heartbeat strategy`配置为`manual` 时, 会暴露的接口.
+
+本接口提供主动的心跳接口, 供`Soda Module Plugin`主动心跳使用.
+
+uri: `/v1/actions/heartbeat`
+
+method: `POST`
+
+response code: `204`
 
 ### 5.2. Soda Module Plugin API
 
