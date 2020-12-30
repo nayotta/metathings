@@ -81,7 +81,7 @@ type SodaModuleHttpBackend struct {
 	httpd *http.Server
 }
 
-func (b *SodaModuleHttpBackend) authorize_middlware() mux.MiddlewareFunc {
+func (b *SodaModuleHttpBackend) authorize_middleware() mux.MiddlewareFunc {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			cfg := b.m.Kernel().Config()
@@ -532,7 +532,7 @@ func (b *SodaModuleHttpBackend) Start() error {
 	sr.HandleFunc("/remove_object", b.handle_remove_object).Methods("POST")
 	sr.HandleFunc("/rename_object", b.handle_rename_object).Methods("POST")
 	sr.HandleFunc("/list_objects", b.handle_list_objects).Methods("POST")
-	router.Use(b.authorize_middlware())
+	router.Use(b.authorize_middleware())
 
 	b.httpd = &http.Server{
 		Handler: router,
