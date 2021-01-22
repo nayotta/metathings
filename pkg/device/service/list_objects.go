@@ -11,9 +11,11 @@ import (
 )
 
 func (self *MetathingsDeviceServiceImpl) ListObjects(ctx context.Context, req *pb.ListObjectsRequest) (*pb.ListObjectsResponse, error) {
+	logger := self.get_logger().WithField("method", "ListObjects")
+
 	cli, cfn, err := self.cli_fty.NewDevicedServiceClient()
 	if err != nil {
-		self.logger.WithError(err).Warningf("failed to connect to deviced service")
+		logger.WithError(err).Warningf("failed to connect to deviced service")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 	defer cfn()
@@ -21,10 +23,14 @@ func (self *MetathingsDeviceServiceImpl) ListObjects(ctx context.Context, req *p
 	obj := req.GetObject()
 	obj.Device = self.pb_device()
 
-	creq := &deviced_pb.ListObjectsRequest{Object: obj}
+	creq := &deviced_pb.ListObjectsRequest{
+		Object:    obj,
+		Recursive: req.GetRecursive(),
+		Depth:     req.GetDepth(),
+	}
 	cres, err := cli.ListObjects(self.context(), creq)
 	if err != nil {
-		self.logger.WithError(err).Errorf("failed to list objects from deviced service")
+		logger.WithError(err).Errorf("failed to list objects from deviced service")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 

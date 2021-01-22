@@ -11,16 +11,18 @@ import (
 )
 
 func (self *MetathingsDeviceServiceImpl) PushFrameToFlow(stm pb.DeviceService_PushFrameToFlowServer) error {
+	logger := self.get_logger().WithField("method", "PushFrameToFlow")
+
 	cli, cfn, err := self.cli_fty.NewDevicedServiceClient()
 	if err != nil {
-		self.logger.WithError(err).Errorf("failed to connect deviced service")
+		logger.WithError(err).Errorf("failed to connect deviced service")
 		return status.Errorf(codes.Internal, err.Error())
 	}
 	defer cfn()
 
 	upstm, err := cli.PushFrameToFlow(self.context())
 	if err != nil {
-		self.logger.WithError(err).Errorf("failed to push frame to flow from deviced service")
+		logger.WithError(err).Errorf("failed to push frame to flow from deviced service")
 		return status.Errorf(codes.Internal, err.Error())
 	}
 
@@ -32,7 +34,7 @@ func (self *MetathingsDeviceServiceImpl) PushFrameToFlow(stm pb.DeviceService_Pu
 		for {
 			cres, err := upstm.Recv()
 			if err != nil {
-				self.logger.WithError(err).Warningf("failed to receive push frame to flow response from deviced service")
+				logger.WithError(err).Warningf("failed to receive push frame to flow response from deviced service")
 				return
 			}
 
@@ -43,7 +45,7 @@ func (self *MetathingsDeviceServiceImpl) PushFrameToFlow(stm pb.DeviceService_Pu
 
 			err = stm.Send(res)
 			if err != nil {
-				self.logger.WithError(err).Warningf("failed to send push frame to flow response to module")
+				logger.WithError(err).Warningf("failed to send push frame to flow response to module")
 				return
 			}
 		}
@@ -54,7 +56,7 @@ func (self *MetathingsDeviceServiceImpl) PushFrameToFlow(stm pb.DeviceService_Pu
 		for {
 			req, err := stm.Recv()
 			if err != nil {
-				self.logger.WithError(err).Warningf("failed to receive push frame to flow request from module")
+				logger.WithError(err).Warningf("failed to receive push frame to flow request from module")
 				return
 			}
 
@@ -83,7 +85,7 @@ func (self *MetathingsDeviceServiceImpl) PushFrameToFlow(stm pb.DeviceService_Pu
 
 			err = upstm.Send(creq)
 			if err != nil {
-				self.logger.WithError(err).Warningf("failed to send push frame to flow request to deviced service")
+				logger.WithError(err).Warningf("failed to send push frame to flow request to deviced service")
 				return
 			}
 		}

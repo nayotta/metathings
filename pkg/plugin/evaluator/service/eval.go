@@ -8,13 +8,13 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/golang/protobuf/jsonpb"
 	"github.com/golang/protobuf/ptypes/wrappers"
 	opentracing "github.com/opentracing/opentracing-go"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cast"
 
 	context_helper "github.com/nayotta/metathings/pkg/common/context"
+	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
 	hst "github.com/nayotta/metathings/pkg/common/http/status"
 	id_helper "github.com/nayotta/metathings/pkg/common/id"
 	evltr_helper "github.com/nayotta/metathings/pkg/evaluatord/helper"
@@ -126,9 +126,7 @@ func (srv *EvaluatorPluginService) operator_string_map_from_evaluator(info *evlt
 	var opt map[string]interface{}
 	op := info.GetOperator()
 
-	marshaler := new(jsonpb.Marshaler)
-
-	buf, err := marshaler.MarshalToString(op)
+	buf, err := grpc_helper.JSONPBMarshaler.MarshalToString(op)
 	if err != nil {
 		return nil, err
 	}
@@ -143,7 +141,7 @@ func (srv *EvaluatorPluginService) operator_string_map_from_evaluator(info *evlt
 	case "lua":
 		fallthrough
 	case "default":
-		buf, err := marshaler.MarshalToString(op.GetLua())
+		buf, err := grpc_helper.JSONPBMarshaler.MarshalToString(op.GetLua())
 		if err != nil {
 			return nil, err
 		}
@@ -167,7 +165,7 @@ func (srv *EvaluatorPluginService) evaluator_info_string_map_from_evaluator(info
 
 func (srv *EvaluatorPluginService) evaluator_config_string_map_from_evaluator(info *evltr_pb.Evaluator) (map[string]interface{}, error) {
 	var cfg map[string]interface{}
-	buf, err := new(jsonpb.Marshaler).MarshalToString(info.GetConfig())
+	buf, err := grpc_helper.JSONPBMarshaler.MarshalToString(info.GetConfig())
 	if err != nil {
 		return nil, err
 	}

@@ -6,11 +6,11 @@ import (
 	"encoding/json"
 	"time"
 
-	"github.com/golang/protobuf/jsonpb"
 	"github.com/golang/protobuf/ptypes"
 	structpb "github.com/golang/protobuf/ptypes/struct"
 	log "github.com/sirupsen/logrus"
 
+	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
 	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
 	identityd_validator "github.com/nayotta/metathings/pkg/identityd2/validator"
 	"github.com/nayotta/metathings/proto/common/option/pagination"
@@ -125,7 +125,7 @@ func (srv *MetathingsEvaluatordService) QueryStorageByDevice(ctx context.Context
 			continue
 		}
 		var dat_st structpb.Struct
-		err = new(jsonpb.Unmarshaler).Unmarshal(bytes.NewReader(dat_buf), &dat_st)
+		err = grpc_helper.JSONPBUnmarshaler.Unmarshal(bytes.NewReader(dat_buf), &dat_st)
 		if err != nil {
 			logger.WithError(err).Warningf("failed to parse record.data json string to protobuf struct")
 			continue

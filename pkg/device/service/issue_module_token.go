@@ -14,9 +14,11 @@ import (
 )
 
 func (self *MetathingsDeviceServiceImpl) IssueModuleToken(ctx context.Context, req *pb.IssueModuleTokenRequest) (*pb.IssueModuleTokenResponse, error) {
+	logger := self.get_logger().WithField("method", "IssueModuleToken")
+
 	cli, cfn, err := self.cli_fty.NewIdentityd2ServiceClient()
 	if err != nil {
-		self.logger.WithError(err).Errorf("failed to connect identityd2 service")
+		logger.WithError(err).Errorf("failed to connect identityd2 service")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 	defer cfn()
@@ -30,7 +32,7 @@ func (self *MetathingsDeviceServiceImpl) IssueModuleToken(ctx context.Context, r
 	)
 
 	if err != nil {
-		self.logger.WithError(err).Errorf("failed to issue token in identityd2 service")
+		logger.WithError(err).Errorf("failed to issue token in identityd2 service")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
@@ -38,7 +40,7 @@ func (self *MetathingsDeviceServiceImpl) IssueModuleToken(ctx context.Context, r
 		Token: tkn,
 	}
 
-	self.logger.Debugf("issue module token")
+	logger.Debugf("issue module token")
 
 	return res, nil
 }

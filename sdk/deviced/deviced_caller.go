@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/golang/protobuf/jsonpb"
 	"github.com/golang/protobuf/proto"
 	dpb "github.com/golang/protobuf/protoc-gen-go/descriptor"
 	"github.com/golang/protobuf/ptypes"
@@ -15,6 +14,7 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
+	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 	deviced_helper "github.com/nayotta/metathings/pkg/deviced/helper"
 	pb "github.com/nayotta/metathings/proto/deviced"
@@ -155,7 +155,7 @@ func (c *DevicedCaller) UnaryCall(ctx context.Context, device, module, method st
 		return nil, err
 	}
 
-	res_buf, err := new(jsonpb.Marshaler).MarshalToString(res_msg)
+	res_buf, err := grpc_helper.JSONPBMarshaler.MarshalToString(res_msg)
 	if err != nil {
 		logger.WithError(err).Debugf("failed to marshal output message to json string")
 		return nil, err

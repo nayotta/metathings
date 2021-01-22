@@ -7,10 +7,10 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/golang/protobuf/jsonpb"
 	"github.com/golang/protobuf/ptypes"
 	stpb "github.com/golang/protobuf/ptypes/struct"
 
+	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
 	evaluatord_helper "github.com/nayotta/metathings/pkg/evaluatord/helper"
 	storage "github.com/nayotta/metathings/pkg/evaluatord/storage"
 	evaluator_plugin "github.com/nayotta/metathings/pkg/plugin/evaluator"
@@ -90,7 +90,7 @@ func copy_evaluator(x *storage.Evaluator) *pb.Evaluator {
 	var cfg stpb.Struct
 
 	// TODO(Peer): catch error
-	new(jsonpb.Unmarshaler).Unmarshal(strings.NewReader(*x.Config), &cfg)
+	grpc_helper.JSONPBUnmarshaler.Unmarshal(strings.NewReader(*x.Config), &cfg)
 
 	y := &pb.Evaluator{
 		Id:          *x.Id,
@@ -119,7 +119,9 @@ func copy_task_state(x *storage.TaskState) *pb.TaskState {
 
 	at, _ := ptypes.TimestampProto(*x.At)
 	tags_buf, _ := json.Marshal(x.Tags)
-	jsonpb.Unmarshal(bytes.NewReader(tags_buf), &tags)
+
+	// TODO(Peer): catch error
+	grpc_helper.JSONPBUnmarshaler.Unmarshal(bytes.NewReader(tags_buf), &tags)
 
 	y := &pb.TaskState{
 		At:    at,

@@ -28,13 +28,15 @@ func (self *MetathingsDeviceServiceImpl) _refresh_startup_session() {
 }
 
 func (self *MetathingsDeviceServiceImpl) internal_main_loop() error {
+	logger := self.get_logger().WithField("method", "internal_main_loop")
+
 	var err error
 	var req *deviced_pb.ConnectRequest
 
 	// build connection
 	cli, cfn, err := self.cli_fty.NewDevicedServiceClient()
 	if err != nil {
-		self.logger.WithError(err).Errorf("failed to connect to deviced service")
+		logger.WithError(err).Errorf("failed to connect to deviced service")
 		return err
 	}
 	defer cfn()
@@ -47,7 +49,7 @@ func (self *MetathingsDeviceServiceImpl) internal_main_loop() error {
 	self.conn_stm, err = cli.Connect(ctx)
 	self.conn_stm_rwmtx.Unlock()
 	if err != nil {
-		self.logger.WithError(err).Errorf("failed to build connection to deviced")
+		logger.WithError(err).Errorf("failed to build connection to deviced")
 		return err
 	}
 	self.conn_stm_wg_once.Do(func() {
@@ -61,11 +63,11 @@ func (self *MetathingsDeviceServiceImpl) internal_main_loop() error {
 		conn := self.connection_stream()
 		self.conn_stm_rwmtx.RUnlock()
 		if req, err = conn.Recv(); err != nil {
-			self.logger.WithError(err).Errorf("failed to recv message from connection stream")
+			logger.WithError(err).Errorf("failed to recv message from connection stream")
 			return nil
 		}
 
-		self.logger.WithFields(log.Fields{
+		logger.WithFields(log.Fields{
 			"session": req.GetSessionId().GetValue(),
 			"kind":    req.GetKind(),
 		}).Debugf("recv msg")

@@ -1,16 +1,17 @@
 package metathings_deviced_sdk
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 
-	"github.com/golang/protobuf/jsonpb"
 	"github.com/golang/protobuf/ptypes"
 	stpb "github.com/golang/protobuf/ptypes/struct"
 	"github.com/golang/protobuf/ptypes/wrappers"
 	"github.com/sirupsen/logrus"
 
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
+	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
 	id_helper "github.com/nayotta/metathings/pkg/common/id"
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 	pb "github.com/nayotta/metathings/proto/deviced"
@@ -41,7 +42,7 @@ func (f *DevicedFlow) PushFrame(ctx context.Context, device, flow string, data i
 		return err
 	}
 
-	err = jsonpb.UnmarshalString(string(buf), &payload)
+	err = grpc_helper.JSONPBUnmarshaler.Unmarshal(bytes.NewReader(buf), &payload)
 	if err != nil {
 		logger.WithError(err).Debugf("failed to unmarshal string to payload")
 		return err

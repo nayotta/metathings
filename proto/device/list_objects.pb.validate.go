@@ -61,6 +61,26 @@ func (m *ListObjectsRequest) Validate() error {
 		}
 	}
 
+	if v, ok := interface{}(m.GetRecursive()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return ListObjectsRequestValidationError{
+				field:  "Recursive",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if v, ok := interface{}(m.GetDepth()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return ListObjectsRequestValidationError{
+				field:  "Depth",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
 	return nil
 }
 

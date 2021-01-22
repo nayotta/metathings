@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"github.com/go-redis/redis/v8"
-	"github.com/golang/protobuf/jsonpb"
 	stpb "github.com/golang/protobuf/ptypes/struct"
 	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
@@ -17,6 +16,7 @@ import (
 
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
 	cfg_helper "github.com/nayotta/metathings/pkg/common/config"
+	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
 	mongo_helper "github.com/nayotta/metathings/pkg/common/mongo"
 	nonce_helper "github.com/nayotta/metathings/pkg/common/nonce"
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
@@ -24,11 +24,6 @@ import (
 	pb_helper "github.com/nayotta/metathings/pkg/common/protobuf"
 	rand_helper "github.com/nayotta/metathings/pkg/common/rand"
 	pb "github.com/nayotta/metathings/proto/deviced"
-)
-
-var (
-	json_encoder = jsonpb.Marshaler{}
-	json_decoder = jsonpb.Unmarshaler{}
 )
 
 type flowOption struct {
@@ -131,7 +126,7 @@ func (f *flow) PushFrame(frm *pb.Frame) error {
 func (f *flow) push_frame_to_redis_stream(frm *pb.Frame) error {
 	ctx := f.context()
 
-	frm_txt, err := json_encoder.MarshalToString(frm)
+	frm_txt, err := grpc_helper.JSONPBMarshaler.MarshalToString(frm)
 	if err != nil {
 		return err
 	}
@@ -160,7 +155,7 @@ func (f *flow) push_frame_to_redis_stream(frm *pb.Frame) error {
 
 func (f *flow) push_frame_to_mgo(frm *pb.Frame) error {
 	frm_dat := frm.GetData()
-	frm_dat_txt, err := json_encoder.MarshalToString(frm_dat)
+	frm_dat_txt, err := grpc_helper.JSONPBMarshaler.MarshalToString(frm_dat)
 	if err != nil {
 		return err
 	}
@@ -236,7 +231,7 @@ func (f *flow) pull_frame_from_redis_stream_loop(frm_ch chan<- *pb.Frame) {
 			for _, msg := range val.Messages {
 				if buf, ok := msg.Values["frame"]; ok {
 					var frm pb.Frame
-					if err = json_decoder.Unmarshal(strings.NewReader(buf.(string)), &frm); err != nil {
+					if err = grpc_helper.JSONPBUnmarshaler.Unmarshal(strings.NewReader(buf.(string)), &frm); err != nil {
 						f.logger.WithError(err).Warningf("failed to unmarshal message to frame")
 						return
 					}
@@ -285,7 +280,6 @@ func (f *flow) query_frame(coll *mongo.Collection, flr *FlowFilter) ([]*pb.Frame
 		return nil, err
 	}
 
-	dec := jsonpb.Unmarshaler{}
 	var frms []*pb.Frame
 	for cur.Next(f.context()) {
 		var res_buf bson.M
@@ -311,7 +305,7 @@ func (f *flow) query_frame(coll *mongo.Collection, flr *FlowFilter) ([]*pb.Frame
 		}
 
 		var frm_dat stpb.Struct
-		err = dec.Unmarshal(bytes.NewReader(frm_dat_txt), &frm_dat)
+		err = grpc_helper.JSONPBUnmarshaler.Unmarshal(bytes.NewReader(frm_dat_txt), &frm_dat)
 		if err != nil {
 			return nil, err
 		}

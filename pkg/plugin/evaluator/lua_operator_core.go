@@ -6,13 +6,13 @@ import (
 	"strconv"
 	"sync"
 
-	"github.com/golang/protobuf/jsonpb"
 	"github.com/golang/protobuf/proto"
 	"github.com/spf13/cast"
 	"github.com/stretchr/objx"
 	lua "github.com/yuin/gopher-lua"
 
 	context_helper "github.com/nayotta/metathings/pkg/common/context"
+	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 	deviced_pb "github.com/nayotta/metathings/proto/deviced"
 	pb "github.com/nayotta/metathings/proto/deviced"
@@ -455,7 +455,7 @@ func parse_ltable_to_string_slice(x *lua.LTable) []string {
 }
 
 func parse_pb_message_to_ltable(L *lua.LState, x proto.Message) (y *lua.LTable) {
-	s, _ := new(jsonpb.Marshaler).MarshalToString(x)
+	s, _ := grpc_helper.JSONPBMarshaler.MarshalToString(x)
 	m := map[string]interface{}{}
 
 	json.Unmarshal([]byte(s), &m)
@@ -466,12 +466,10 @@ func parse_pb_message_to_ltable(L *lua.LState, x proto.Message) (y *lua.LTable) 
 }
 
 func parse_pb_messages_to_ltable(L *lua.LState, xs []proto.Message) (ys *lua.LTable) {
-	marshaler := new(jsonpb.Marshaler)
-
 	var is []interface{}
 
 	for _, x := range xs {
-		s, _ := marshaler.MarshalToString(x)
+		s, _ := grpc_helper.JSONPBMarshaler.MarshalToString(x)
 		m := map[string]interface{}{}
 		json.Unmarshal([]byte(s), &m)
 		is = append(is, m)

@@ -4,10 +4,10 @@ import (
 	"context"
 	"errors"
 
-	"github.com/golang/protobuf/jsonpb"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
+	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
 	id_helper "github.com/nayotta/metathings/pkg/common/id"
 	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
 	storage "github.com/nayotta/metathings/pkg/deviced/storage"
@@ -55,7 +55,7 @@ func (self *MetathingsDevicedService) CreateConfig(ctx context.Context, req *pb.
 
 	logger := self.get_logger().WithField("config", cfg_id_str)
 
-	cfg_body_str, err := new(jsonpb.Marshaler).MarshalToString(cfg_body)
+	cfg_body_str, err := grpc_helper.JSONPBMarshaler.MarshalToString(cfg_body)
 	if err != nil {
 		logger.WithError(err).Errorf("failed to marshal config body to string")
 		return nil, status.Errorf(codes.InvalidArgument, err.Error())

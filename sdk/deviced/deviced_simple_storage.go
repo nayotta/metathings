@@ -6,12 +6,12 @@ import (
 	"io/ioutil"
 	"strings"
 
-	"github.com/golang/protobuf/jsonpb"
 	"github.com/golang/protobuf/ptypes/wrappers"
 	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/objx"
 
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
+	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 	pb "github.com/nayotta/metathings/proto/deviced"
 )
@@ -27,8 +27,8 @@ func (s *DevicedSimpleStorage) get_logger() log.FieldLogger {
 
 func (s *DevicedSimpleStorage) toOpobject(x *pb.Object) *pb.OpObject {
 	var y pb.OpObject
-	buf, _ := new(jsonpb.Marshaler).MarshalToString(x)
-	_ = new(jsonpb.Unmarshaler).Unmarshal(strings.NewReader(buf), &y)
+	buf, _ := grpc_helper.JSONPBMarshaler.MarshalToString(x)
+	_ = grpc_helper.JSONPBUnmarshaler.Unmarshal(strings.NewReader(buf), &y)
 	return &y
 }
 

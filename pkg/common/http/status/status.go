@@ -19,7 +19,7 @@ type httpStatusError HttpStatus
 
 func (hse *httpStatusError) Error() string {
 	hs := (*HttpStatus)(hse)
-	return fmt.Sprintf("status error: code = %s desc = %s",
+	return fmt.Sprintf("status error: code = %d desc = %s",
 		hs.Code(),
 		hs.Message(),
 	)

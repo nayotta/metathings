@@ -51,7 +51,7 @@ func (self *MetathingsDeviceServiceImpl) parse_put_object_streaming_request(x *p
 }
 
 func (self *MetathingsDeviceServiceImpl) PutObjectStreaming(stm pb.DeviceService_PutObjectStreamingServer) error {
-	logger := self.logger.WithField("#method", "PutObjectStreaming")
+	logger := self.get_logger().WithField("method", "PutObjectStreaming")
 
 	cli, cfn, err := self.cli_fty.NewDevicedServiceClient()
 	if err != nil {

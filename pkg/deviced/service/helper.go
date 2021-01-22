@@ -5,11 +5,11 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/golang/protobuf/jsonpb"
 	"github.com/golang/protobuf/ptypes"
 	stpb "github.com/golang/protobuf/ptypes/struct"
 	tspb "github.com/golang/protobuf/ptypes/timestamp"
 
+	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
 	pb_helper "github.com/nayotta/metathings/pkg/common/protobuf"
 	deviced_helper "github.com/nayotta/metathings/pkg/deviced/helper"
 	simple_storage "github.com/nayotta/metathings/pkg/deviced/simple_storage"
@@ -153,7 +153,7 @@ func copy_config(x *storage.Config) *pb.Config {
 func copy_config_error(x *storage.Config) (*pb.Config, error) {
 	var body stpb.Struct
 
-	if err := jsonpb.UnmarshalString(*x.Body, &body); err != nil {
+	if err := grpc_helper.JSONPBUnmarshaler.Unmarshal(strings.NewReader(*x.Body), &body); err != nil {
 		return nil, err
 	}
 
@@ -205,7 +205,9 @@ func copy_firmware_descriptor(x *storage.FirmwareDescriptor) *pb.FirmwareDescrip
 	created_at, _ := ptypes.TimestampProto(x.CreatedAt)
 
 	var desc stpb.Struct
-	jsonpb.Unmarshal(strings.NewReader(*x.Descriptor), &desc)
+
+	// TODO(Peer): catch error
+	grpc_helper.JSONPBUnmarshaler.Unmarshal(strings.NewReader(*x.Descriptor), &desc)
 
 	y := &pb.FirmwareDescriptor{
 		Id:          *x.Id,

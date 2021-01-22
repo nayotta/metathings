@@ -31,25 +31,29 @@ func parse_error_to_connect_error_response(name, service, method string, err err
 }
 
 func (self *MetathingsDeviceServiceImpl) handle(req *deviced_pb.ConnectRequest) error {
+	logger := self.get_logger().WithField("method", "handle")
+
 	switch req.Kind {
 	case deviced_pb.ConnectMessageKind_CONNECT_MESSAGE_KIND_SYSTEM:
 		return self.handle_system_request(req)
 	case deviced_pb.ConnectMessageKind_CONNECT_MESSAGE_KIND_USER:
 		return self.handle_user_request(req)
 	default:
-		self.logger.Warningf("unexpected request data")
+		logger.Warningf("unexpected request data")
 		return nil
 	}
 }
 
 func (self *MetathingsDeviceServiceImpl) handle_system_request(req *deviced_pb.ConnectRequest) error {
+	logger := self.get_logger().WithField("method", "handle_system_request")
+
 	switch req.Union.(type) {
 	case *deviced_pb.ConnectRequest_UnaryCall:
 		return self.handle_system_unary_request(req)
 	case *deviced_pb.ConnectRequest_StreamCall:
 		return self.handle_system_stream_request(req)
 	default:
-		self.logger.WithField("union", req.Union).Debugf("unsupported union type")
+		logger.WithField("union", req.Union).Debugf("unsupported union type")
 		return nil
 	}
 }
@@ -61,7 +65,7 @@ func (self *MetathingsDeviceServiceImpl) handle_system_unary_request(req *device
 	name := req_val.GetName().GetValue()
 	method := req_val.GetMethod().GetValue()
 
-	logger := self.logger.WithFields(log.Fields{
+	logger := self.get_logger().WithFields(log.Fields{
 		"#session":   sess,
 		"#component": component,
 		"#name":      name,
@@ -77,7 +81,7 @@ func (self *MetathingsDeviceServiceImpl) handle_system_unary_request(req *device
 	case "system$system$sync_firmware":
 		return self.handle_system_unary_request_sync_firmware(req)
 	default:
-		self.logger.WithField("sign", req_sign).Warningf("unsupported request sign")
+		logger.WithField("sign", req_sign).Warningf("unsupported request sign")
 		return nil
 	}
 }
@@ -91,13 +95,15 @@ func (self *MetathingsDeviceServiceImpl) handle_system_stream_request(req *devic
 }
 
 func (self *MetathingsDeviceServiceImpl) handle_user_request(req *deviced_pb.ConnectRequest) error {
+	logger := self.get_logger().WithField("method", "handle_user_request")
+
 	switch req.Union.(type) {
 	case *deviced_pb.ConnectRequest_UnaryCall:
 		return self.handle_user_unary_request(req)
 	case *deviced_pb.ConnectRequest_StreamCall:
 		return self.handle_user_stream_request(req)
 	default:
-		self.logger.WithField("union", req.Union).Debugf("unsupported union type")
+		logger.WithField("union", req.Union).Debugf("unsupported union type")
 		return nil
 	}
 }
@@ -110,7 +116,7 @@ func (self *MetathingsDeviceServiceImpl) handle_user_unary_request(req *deviced_
 	name := req_val.GetName().GetValue()
 	method := req_val.GetMethod().GetValue()
 
-	logger := self.logger.WithFields(log.Fields{
+	logger := self.get_logger().WithFields(log.Fields{
 		"#session":   sess,
 		"#component": component,
 		"#name":      name,
@@ -170,7 +176,7 @@ func (self *MetathingsDeviceServiceImpl) handle_user_stream_request(req *deviced
 	component := cfg.GetComponent().GetValue()
 	method := cfg.GetMethod().GetValue()
 
-	logger := self.logger.WithFields(log.Fields{
+	logger := self.get_logger().WithFields(log.Fields{
 		"#session":   sess,
 		"#component": component,
 		"#name":      name,

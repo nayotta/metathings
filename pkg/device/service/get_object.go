@@ -11,9 +11,11 @@ import (
 )
 
 func (self *MetathingsDeviceServiceImpl) GetObject(ctx context.Context, req *pb.GetObjectRequest) (*pb.GetObjectResponse, error) {
+	logger := self.get_logger().WithField("method", "GetObject")
+
 	cli, cfn, err := self.cli_fty.NewDevicedServiceClient()
 	if err != nil {
-		self.logger.WithError(err).Warningf("failed to connect to deviced service")
+		logger.WithError(err).Warningf("failed to connect to deviced service")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 	defer cfn()
@@ -24,7 +26,7 @@ func (self *MetathingsDeviceServiceImpl) GetObject(ctx context.Context, req *pb.
 	creq := &deviced_pb.GetObjectRequest{Object: obj}
 	cres, err := cli.GetObject(self.context(), creq)
 	if err != nil {
-		self.logger.WithError(err).Errorf("failed to get object from deviced service")
+		logger.WithError(err).Errorf("failed to get object from deviced service")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 

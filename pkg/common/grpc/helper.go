@@ -9,12 +9,18 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/golang/protobuf/jsonpb"
 	"github.com/grpc-ecosystem/go-grpc-middleware/util/metautils"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/status"
+)
+
+var (
+	JSONPBMarshaler   = new(jsonpb.Marshaler)
+	JSONPBUnmarshaler = new(jsonpb.Unmarshaler)
 )
 
 var (

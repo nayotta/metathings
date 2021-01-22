@@ -12,7 +12,7 @@ import (
 func (self *MetathingsDeviceServiceImpl) ShowModuleFirmwareDescriptor(ctx context.Context, _ *empty.Empty) (*pb.ShowModuleFirmwareDescriptorResponse, error) {
 	tkn := context_helper.ExtractToken(ctx)
 	mdl_id := tkn.GetEntity().GetId()
-	logger := self.logger.WithField("module", mdl_id)
+	logger := self.get_logger().WithField("module", mdl_id)
 
 	mdl, err := self.get_module_info(mdl_id)
 	if err != nil {

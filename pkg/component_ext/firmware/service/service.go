@@ -9,7 +9,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/golang/protobuf/jsonpb"
 	"github.com/golang/protobuf/ptypes"
 	"github.com/golang/protobuf/ptypes/any"
 	"github.com/golang/protobuf/ptypes/empty"
@@ -21,6 +20,7 @@ import (
 
 	"github.com/nayotta/metathings/pkg/common/binary_synchronizer"
 	cfg_helper "github.com/nayotta/metathings/pkg/common/config"
+	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
 	component "github.com/nayotta/metathings/pkg/component"
 )
 
@@ -62,7 +62,7 @@ func (svc *ComponentExtFirmwareService) SyncFirmware(ctx context.Context, _ *emp
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
-	desc_str, err := new(jsonpb.Marshaler).MarshalToString(desc.GetDescriptor_())
+	desc_str, err := grpc_helper.JSONPBMarshaler.MarshalToString(desc.GetDescriptor_())
 	if err != nil {
 		logger.WithError(err).Errorf("failed to marshal descriptor to json string")
 		return nil, status.Errorf(codes.Internal, err.Error())
