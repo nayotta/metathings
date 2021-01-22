@@ -12,9 +12,11 @@ import (
 )
 
 func (self *MetathingsDeviceServiceImpl) PushFrameToFlowOnce(ctx context.Context, req *pb.PushFrameToFlowOnceRequest) (*empty.Empty, error) {
+	logger := self.get_logger().WithField("method", "PushFrameToFlowOnce")
+
 	cli, cfn, err := self.cli_fty.NewDevicedServiceClient()
 	if err != nil {
-		self.logger.WithError(err).Errorf("failed to connect to deviced service")
+		logger.WithError(err).Errorf("failed to connect to deviced service")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 	defer cfn()
@@ -32,7 +34,7 @@ func (self *MetathingsDeviceServiceImpl) PushFrameToFlowOnce(ctx context.Context
 
 	_, err = cli.PushFrameToFlowOnce(self.context(), creq)
 	if err != nil {
-		self.logger.WithError(err).Errorf("failed to push frame to flow once to deviced service")
+		logger.WithError(err).Errorf("failed to push frame to flow once to deviced service")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 

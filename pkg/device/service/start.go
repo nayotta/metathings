@@ -59,14 +59,16 @@ func (self *MetathingsDeviceServiceImpl) start() error {
 }
 
 func (self *MetathingsDeviceServiceImpl) Start() error {
+	logger := self.get_logger().WithField("method", "Start")
+
 	var err error
 
 	if err = self.start(); err != nil {
-		self.logger.WithError(err).Errorf("failed to start device")
+		logger.WithError(err).Errorf("failed to start device")
 		return err
 	}
 
-	self.logger.Infof("device start")
+	logger.Infof("device start")
 
 	return nil
 }

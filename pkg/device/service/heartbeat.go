@@ -20,17 +20,19 @@ func (self *MetathingsDeviceServiceImpl) Heartbeat(ctx context.Context, req *pb.
 	op_mdl := req.GetModule()
 	name := op_mdl.GetName().GetValue()
 
+	logger := self.get_logger().WithFields(log.Fields{
+		"name": name,
+	})
+
 	mdl, err := self.mdl_db.Lookup(name)
 	if err != nil {
-		self.logger.WithError(err).Errorf("failed to lookup module")
+		logger.WithError(err).Errorf("failed to lookup module")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
 	mdl.Heartbeat()
 
-	self.logger.WithFields(log.Fields{
-		"name": name,
-	}).Debugf("module heartbeat")
+	logger.Debugf("module heartbeat")
 
 	return &empty.Empty{}, nil
 }
@@ -44,9 +46,11 @@ func (self *MetathingsDeviceServiceImpl) heartbeat_loop() {
 }
 
 func (self *MetathingsDeviceServiceImpl) heartbeat_once() {
+	logger := self.get_logger().WithField("method", "heartbeat_once")
+
 	cli, cfn, err := self.cli_fty.NewDevicedServiceClient()
 	if err != nil {
-		self.logger.WithError(err).Warningf("failed to connect to deviced service")
+		logger.WithError(err).Warningf("failed to connect to deviced service")
 		return
 	}
 	defer cfn()
@@ -86,7 +90,7 @@ func (self *MetathingsDeviceServiceImpl) heartbeat_once() {
 	_, err = cli.Heartbeat(self.context(), req)
 	if err != nil {
 		self.stats_heartbeat_fails += 1
-		self.logger.WithError(err).Warningf("failed to heartbeat")
+		logger.WithError(err).Warningf("failed to heartbeat")
 
 		if self.stats_heartbeat_fails >= self.opt.HeartbeatMaxRetry {
 			// TODO(Peer): reconncect streaming, not restart device
@@ -96,7 +100,7 @@ func (self *MetathingsDeviceServiceImpl) heartbeat_once() {
 		}
 	} else {
 		self.stats_heartbeat_fails = 0
-		self.logger.WithFields(log.Fields{
+		logger.WithFields(log.Fields{
 			"heartbeat_at": now,
 		}).Debugf("heartbeat")
 	}

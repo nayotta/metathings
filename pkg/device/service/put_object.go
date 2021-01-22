@@ -12,9 +12,11 @@ import (
 )
 
 func (self *MetathingsDeviceServiceImpl) PutObject(ctx context.Context, req *pb.PutObjectRequest) (*empty.Empty, error) {
+	logger := self.get_logger().WithField("method", "PutObject")
+
 	cli, cfn, err := self.cli_fty.NewDevicedServiceClient()
 	if err != nil {
-		self.logger.WithError(err).Errorf("failed to connect to deviced service")
+		logger.WithError(err).Errorf("failed to connect to deviced service")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 	defer cfn()
@@ -28,7 +30,7 @@ func (self *MetathingsDeviceServiceImpl) PutObject(ctx context.Context, req *pb.
 	}
 	_, err = cli.PutObject(self.context(), creq)
 	if err != nil {
-		self.logger.WithError(err).Errorf("failed to put object from deviced service")
+		logger.WithError(err).Errorf("failed to put object from deviced service")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 

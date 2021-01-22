@@ -117,33 +117,33 @@ func unary_call_device() error {
 }
 
 func _unary_call_device(opt *UnaryCallDeviceOption, cli pb.DevicedServiceClient) error {
-	var buf []byte
+	var req_buf []byte
 	var err error
 	var any_req *any.Any
 	var md *desc.MethodDescriptor
 
 	if opt.Data == "" {
 		if opt.File == "" {
-			buf = []byte("{}")
+			req_buf = []byte("{}")
 		} else if opt.File == "-" {
-			buf, err = ioutil.ReadAll(os.Stdin)
+			req_buf, err = ioutil.ReadAll(os.Stdin)
 			if err != nil {
 				return err
 			}
 		} else {
-			buf, err = ioutil.ReadFile(opt.File)
+			req_buf, err = ioutil.ReadFile(opt.File)
 			if err != nil {
 				return err
 			}
 		}
 	} else {
-		buf = []byte(opt.Data)
+		req_buf = []byte(opt.Data)
 	}
 
 	if opt.Soda {
 		var st stpb.Struct
 
-		if err = grpc_helper.JSONPBUnmarshaler.Unmarshal(bytes.NewReader(buf), &st); err != nil {
+		if err = grpc_helper.JSONPBUnmarshaler.Unmarshal(bytes.NewReader(req_buf), &st); err != nil {
 			return err
 		}
 
@@ -153,12 +153,12 @@ func _unary_call_device(opt *UnaryCallDeviceOption, cli pb.DevicedServiceClient)
 	} else {
 		var fds dpb.FileDescriptorSet
 
-		req_buf, err := ioutil.ReadFile(opt.Protobufset)
+		buf, err := ioutil.ReadFile(opt.Protobufset)
 		if err != nil {
 			panic(err)
 		}
 
-		if err = proto.Unmarshal(req_buf, &fds); err != nil {
+		if err = proto.Unmarshal(buf, &fds); err != nil {
 			panic(err)
 		}
 

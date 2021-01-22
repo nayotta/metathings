@@ -12,7 +12,7 @@ import (
 func (self *MetathingsDeviceServiceImpl) ShowModule(ctx context.Context, req *empty.Empty) (*pb.ShowModuleResponse, error) {
 	tkn := context_helper.ExtractToken(ctx)
 	mdl_id := tkn.GetEntity().GetId()
-	logger := self.logger.WithField("module", mdl_id)
+	logger := self.get_logger().WithField("module", mdl_id)
 
 	mdl, err := self.get_module_info(mdl_id)
 	if err != nil {

@@ -98,6 +98,10 @@ func (self *MetathingsDeviceServiceImpl) get_module_info(id string) (*deviced_pb
 	return nil, ErrModuleNotFound
 }
 
+func (self *MetathingsDeviceServiceImpl) get_logger() log.FieldLogger {
+	return self.logger
+}
+
 func NewMetathingsDeviceService(
 	ver version_helper.Versioner,
 	tknr token_helper.Tokener,

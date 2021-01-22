@@ -18,7 +18,7 @@ import (
 )
 
 func (self *MetathingsDeviceServiceImpl) do_sync_firmware(uri, sha256sum string) error {
-	logger := self.logger.WithFields(logrus.Fields{
+	logger := self.get_logger().WithFields(logrus.Fields{
 		"uri":       uri,
 		"sha256sum": sha256sum,
 	})
@@ -60,7 +60,7 @@ func (self *MetathingsDeviceServiceImpl) do_sync_firmware(uri, sha256sum string)
 }
 
 func (self *MetathingsDeviceServiceImpl) do_sync_modules_firmware() {
-	logger := self.logger.WithField("#method", "do_sync_modules_firmware")
+	logger := self.get_logger().WithField("method", "do_sync_modules_firmware")
 
 	for _, m := range self.info.Modules {
 		loop_logger := logger.WithField("module", m.Name)
@@ -97,7 +97,7 @@ func (self *MetathingsDeviceServiceImpl) is_synchronizing_firmware_state() bool 
 }
 
 func (self *MetathingsDeviceServiceImpl) sync_firmware() (err error) {
-	logger := self.logger.WithField("#method", "sync_firmware")
+	logger := self.get_logger().WithField("method", "sync_firmware")
 
 	cli, cfn, err := self.cli_fty.NewDevicedServiceClient()
 	if err != nil {

@@ -15,6 +15,8 @@ func (self *MetathingsDeviceServiceImpl) ping_loop() {
 }
 
 func (self *MetathingsDeviceServiceImpl) ping_once() {
+	logger := self.get_logger().WithField("method", "ping_once")
+
 	self.conn_stm_rwmtx.Lock()
 	stm := self.connection_stream()
 	self.conn_stm_rwmtx.Unlock()
@@ -37,9 +39,9 @@ func (self *MetathingsDeviceServiceImpl) ping_once() {
 		// TODO(Peer): reconnect streaming, not stop device and restart
 		defer self.Stop()
 
-		self.logger.WithError(err).Warningf("failed to send ping request")
+		logger.WithError(err).Warningf("failed to send ping request")
 		return
 	}
 
-	self.logger.Debugf("sending ping request")
+	logger.Debugf("sending ping request")
 }

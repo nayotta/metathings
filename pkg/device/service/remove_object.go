@@ -12,9 +12,11 @@ import (
 )
 
 func (self *MetathingsDeviceServiceImpl) RemoveObject(ctx context.Context, req *pb.RemoveObjectRequest) (*empty.Empty, error) {
+	logger := self.get_logger().WithField("method", "RemoveObject")
+
 	cli, cfn, err := self.cli_fty.NewDevicedServiceClient()
 	if err != nil {
-		self.logger.WithError(err).Warningf("failed to connect to deviced service")
+		logger.WithError(err).Warningf("failed to connect to deviced service")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 	defer cfn()
@@ -25,7 +27,7 @@ func (self *MetathingsDeviceServiceImpl) RemoveObject(ctx context.Context, req *
 	creq := &deviced_pb.RemoveObjectRequest{Object: obj}
 	_, err = cli.RemoveObject(self.context(), creq)
 	if err != nil {
-		self.logger.WithError(err).Errorf("failed to remove object from deviced service")
+		logger.WithError(err).Errorf("failed to remove object from deviced service")
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
