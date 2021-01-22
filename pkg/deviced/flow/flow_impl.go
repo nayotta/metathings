@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/go-redis/redis/v8"
+	"github.com/golang/protobuf/jsonpb"
 	stpb "github.com/golang/protobuf/ptypes/struct"
 	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
@@ -24,6 +25,11 @@ import (
 	pb_helper "github.com/nayotta/metathings/pkg/common/protobuf"
 	rand_helper "github.com/nayotta/metathings/pkg/common/rand"
 	pb "github.com/nayotta/metathings/proto/deviced"
+)
+
+var (
+	json_encoder = jsonpb.Marshaler{}
+	json_decoder = jsonpb.Unmarshaler{}
 )
 
 type flowOption struct {
