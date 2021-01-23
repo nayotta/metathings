@@ -10,6 +10,7 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
+	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
 	nonce_helper "github.com/nayotta/metathings/pkg/common/nonce"
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 	pool_helper "github.com/nayotta/metathings/pkg/common/pool"
@@ -92,12 +93,12 @@ func (rsfs *RedisStreamFlowSet) PushFrame(flwst_frm *FlowSetFrame) error {
 	ts := pb_helper.Now()
 	flwst_frm.Frame.Ts = &ts
 
-	dev_txt, err := json_encoder.MarshalToString(flwst_frm.Device)
+	dev_txt, err := grpc_helper.JSONPBMarshaler.MarshalToString(flwst_frm.Device)
 	if err != nil {
 		return err
 	}
 
-	frm_txt, err := json_encoder.MarshalToString(flwst_frm.Frame)
+	frm_txt, err := grpc_helper.JSONPBMarshaler.MarshalToString(flwst_frm.Frame)
 	if err != nil {
 		return err
 	}
@@ -183,14 +184,14 @@ func (rsfs *RedisStreamFlowSet) pull_frame_from_redis_stream_loop(frm_ch chan<- 
 				var dev pb.Device
 
 				if buf, ok := msg.Values["frame"]; ok {
-					if err = json_decoder.Unmarshal(strings.NewReader(buf.(string)), &frm); err != nil {
+					if err = grpc_helper.JSONPBUnmarshaler.Unmarshal(strings.NewReader(buf.(string)), &frm); err != nil {
 						logger.WithError(err).Warningf("failed to unmarshal message to frame")
 						return
 					}
 				}
 
 				if buf, ok := msg.Values["device"]; ok {
-					if err = json_decoder.Unmarshal(strings.NewReader(buf.(string)), &dev); err != nil {
+					if err = grpc_helper.JSONPBUnmarshaler.Unmarshal(strings.NewReader(buf.(string)), &dev); err != nil {
 						logger.WithError(err).Warningf("failed to unmarshal message to device")
 					}
 				}

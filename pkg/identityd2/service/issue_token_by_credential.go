@@ -61,7 +61,7 @@ func (self *MetathingsIdentitydService) IssueTokenByCredential(ctx context.Conte
 	cred_id := cred.GetId()
 	cred_id_str := cred_id.GetValue()
 
-	timestamp := pb_helper.ToTime(*req.GetTimestamp())
+	timestamp := pb_helper.ToTime(req.GetTimestamp())
 	nonce := req.GetNonce().GetValue()
 	hmac := req.GetHmac().GetValue()
 

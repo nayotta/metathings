@@ -23,7 +23,7 @@ func FromTime(t time.Time) timestamp.Timestamp {
 	}
 }
 
-func ToTime(t timestamp.Timestamp) time.Time {
+func ToTime(t *timestamp.Timestamp) time.Time {
 	return time.Unix(t.Seconds, int64(t.Nanos))
 }
 
