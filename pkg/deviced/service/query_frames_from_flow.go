@@ -23,10 +23,10 @@ func (self *MetathingsDevicedService) QueryFramesFromFlow(ctx context.Context, r
 	begin_at_r := now.Add(-24 * time.Hour)
 	end_at_r := now
 	if req.GetFrom() != nil {
-		begin_at_r = pb_helper.ToTime(*req.GetFrom())
+		begin_at_r = pb_helper.ToTime(req.GetFrom())
 	}
 	if req.GetTo() != nil {
-		end_at_r = pb_helper.ToTime(*req.GetTo())
+		end_at_r = pb_helper.ToTime(req.GetTo())
 	}
 
 	logger := self.get_logger().WithFields(log.Fields{

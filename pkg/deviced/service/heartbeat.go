@@ -86,7 +86,7 @@ func (self *MetathingsDevicedService) Heartbeat(ctx context.Context, req *pb.Hea
 			if mdl_from_dev.GetId().GetValue() == *mdl_from_stor.Id {
 				mdl_id_str := *mdl_from_stor.Id
 
-				heartbeat_at := pb_helper.ToTime(*mdl_from_dev.GetHeartbeatAt())
+				heartbeat_at := pb_helper.ToTime(mdl_from_dev.GetHeartbeatAt())
 				patch_mdl_s = &storage.Module{
 					HeartbeatAt: &heartbeat_at,
 				}
@@ -116,7 +116,7 @@ func (self *MetathingsDevicedService) Heartbeat(ctx context.Context, req *pb.Hea
 		storage.SkipInternalQueryOption(true),
 		storage.SelectFieldsOption("device", "state"),
 	)
-	heartbeat_at := pb_helper.ToTime(*dev.GetHeartbeatAt())
+	heartbeat_at := pb_helper.ToTime(dev.GetHeartbeatAt())
 	patch_dev_s = &storage.Device{
 		HeartbeatAt: &heartbeat_at,
 	}

@@ -165,7 +165,7 @@ func (f *flow) push_frame_to_mgo(frm *pb.Frame) error {
 	if err != nil {
 		return err
 	}
-	frm_dat_buf["#ts"] = pb_helper.ToTime(*frm.GetTs()).UnixNano()
+	frm_dat_buf["#ts"] = pb_helper.ToTime(frm.GetTs()).UnixNano()
 
 	coll := f.mongo_collection()
 	_, err = coll.InsertOne(f.context(), frm_dat_buf)

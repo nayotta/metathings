@@ -26,7 +26,7 @@ func (self *MetathingsDeviceServiceImpl) IssueModuleToken(ctx context.Context, r
 	tkn, err := IssueModuleTokenWithClient(
 		cli, context.TODO(),
 		req.GetCredential().GetId().GetValue(),
-		protobuf_helper.ToTime(*req.GetTimestamp()),
+		protobuf_helper.ToTime(req.GetTimestamp()),
 		req.GetNonce().GetValue(),
 		req.GetHmac().GetValue(),
 	)
