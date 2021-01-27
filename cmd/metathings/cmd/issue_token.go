@@ -109,6 +109,9 @@ func issue_token_by_credential(opt *IssueTokenOption, cli pb.IdentitydServiceCli
 	req := &pb.IssueTokenByCredentialRequest{
 		Credential: &pb.OpCredential{
 			Id: &wrappers.StringValue{Value: opt.CredentialId},
+			Domain: &pb.OpDomain{
+				Id: &wrappers.StringValue{Value: opt.DomainId},
+			},
 		},
 		Timestamp: &pb_ts,
 		Nonce:     &wrappers.Int64Value{Value: opt.Nonce},
