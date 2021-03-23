@@ -4,12 +4,15 @@ import (
 	"crypto/tls"
 	"fmt"
 	"strings"
+	"sync"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/connectivity"
 	"google.golang.org/grpc/credentials"
 
 	constant_helper "github.com/nayotta/metathings/pkg/common/constant"
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
+	pool_helper "github.com/nayotta/metathings/pkg/common/pool"
 	component_pb "github.com/nayotta/metathings/proto/component"
 	device_pb "github.com/nayotta/metathings/proto/device"
 	deviced_pb "github.com/nayotta/metathings/proto/deviced"
@@ -55,7 +58,7 @@ func parseAddress(addr string) string {
 	return addr
 }
 
-type CloseFn func() error
+type DoneFn func() error
 
 type ServiceConfigs map[ClientType]ServiceConfig
 
@@ -69,8 +72,11 @@ type ServiceConfig struct {
 }
 
 type ClientFactory struct {
+	opts              *newClientFactoryOption
 	defaultDialOption []grpc.DialOption
 	configs           ServiceConfigs
+	pools_mtx         sync.Mutex
+	pools             map[ClientType]pool_helper.Pool
 }
 
 func (f *ClientFactory) NewConnection(cfg_val ClientType, opts ...grpc.DialOption) (*grpc.ClientConn, error) {
@@ -95,68 +101,135 @@ func (f *ClientFactory) NewConnection(cfg_val ClientType, opts ...grpc.DialOptio
 	return conn, nil
 }
 
-func (f *ClientFactory) NewPolicydServiceClient(opts ...grpc.DialOption) (policyd_pb.PolicydServiceClient, CloseFn, error) {
-	conn, err := f.NewConnection(POLICYD_CONFIG, opts...)
+func (f *ClientFactory) GetConnection(cfg_val ClientType, opts ...grpc.DialOption) (*grpc.ClientConn, DoneFn, error) {
+	var err error
+
+	if f.opts.DialPoolSize <= 0 || len(opts) != 0 {
+		conn, err := f.NewConnection(cfg_val, opts...)
+		if err != nil {
+			return nil, nil, err
+		}
+
+		return conn, conn.Close, nil
+	}
+
+	f.pools_mtx.Lock()
+	p, ok := f.pools[cfg_val]
+	if !ok {
+		if p, err = pool_helper.NewPool(1, int(f.opts.DialPoolSize), func() (pool_helper.Client, error) {
+			return f.NewConnection(cfg_val)
+		}); err != nil {
+			return nil, nil, err
+		}
+		f.pools[cfg_val] = p
+	}
+	f.pools_mtx.Unlock()
+
+	conn, err := p.Get()
+	if err != nil {
+		return nil, nil, err
+	}
+	grpcConn := conn.(*grpc.ClientConn)
+	for grpcConn.GetState() == connectivity.TransientFailure ||
+		grpcConn.GetState() == connectivity.Shutdown {
+		conn, err = p.Get()
+		if err != nil {
+			return nil, nil, err
+		}
+		grpcConn = conn.(*grpc.ClientConn)
+	}
+
+	return grpcConn, func() error { return p.Put(conn) }, nil
+}
+
+func (f *ClientFactory) NewPolicydServiceClient(opts ...grpc.DialOption) (policyd_pb.PolicydServiceClient, DoneFn, error) {
+	conn, done, err := f.GetConnection(POLICYD_CONFIG, opts...)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	return policyd_pb.NewPolicydServiceClient(conn), conn.Close, nil
+	return policyd_pb.NewPolicydServiceClient(conn), done, nil
 }
 
-func (f *ClientFactory) NewIdentityd2ServiceClient(opts ...grpc.DialOption) (identityd2_pb.IdentitydServiceClient, CloseFn, error) {
-	conn, err := f.NewConnection(IDENTITYD2_CONFIG, opts...)
+func (f *ClientFactory) NewIdentityd2ServiceClient(opts ...grpc.DialOption) (identityd2_pb.IdentitydServiceClient, DoneFn, error) {
+	conn, done, err := f.GetConnection(IDENTITYD2_CONFIG, opts...)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	return identityd2_pb.NewIdentitydServiceClient(conn), conn.Close, nil
+	return identityd2_pb.NewIdentitydServiceClient(conn), done, nil
 }
 
-func (f *ClientFactory) NewDevicedServiceClient(opts ...grpc.DialOption) (deviced_pb.DevicedServiceClient, CloseFn, error) {
-	conn, err := f.NewConnection(DEVICED_CONFIG, opts...)
+func (f *ClientFactory) NewDevicedServiceClient(opts ...grpc.DialOption) (deviced_pb.DevicedServiceClient, DoneFn, error) {
+	conn, done, err := f.GetConnection(DEVICED_CONFIG, opts...)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	return deviced_pb.NewDevicedServiceClient(conn), conn.Close, nil
+	return deviced_pb.NewDevicedServiceClient(conn), done, nil
 }
 
-func (f *ClientFactory) NewEvaluatordServiceClient(opts ...grpc.DialOption) (evaluatord_pb.EvaluatordServiceClient, CloseFn, error) {
-	conn, err := f.NewConnection(EVALUATORD_CONFIG, opts...)
+func (f *ClientFactory) NewEvaluatordServiceClient(opts ...grpc.DialOption) (evaluatord_pb.EvaluatordServiceClient, DoneFn, error) {
+	conn, done, err := f.GetConnection(EVALUATORD_CONFIG, opts...)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	return evaluatord_pb.NewEvaluatordServiceClient(conn), conn.Close, nil
+	return evaluatord_pb.NewEvaluatordServiceClient(conn), done, nil
 }
 
-func (f *ClientFactory) NewDeviceServiceClient(opts ...grpc.DialOption) (device_pb.DeviceServiceClient, CloseFn, error) {
-	conn, err := f.NewConnection(DEVICE_CONFIG, opts...)
+func (f *ClientFactory) NewDeviceServiceClient(opts ...grpc.DialOption) (device_pb.DeviceServiceClient, DoneFn, error) {
+	conn, done, err := f.GetConnection(DEVICE_CONFIG, opts...)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	return device_pb.NewDeviceServiceClient(conn), conn.Close, nil
+	return device_pb.NewDeviceServiceClient(conn), done, nil
 }
 
-func (f *ClientFactory) NewModuleServiceClient(opts ...grpc.DialOption) (component_pb.ModuleServiceClient, CloseFn, error) {
-	conn, err := f.NewConnection(MODULE_CONFIG, opts...)
+func (f *ClientFactory) NewModuleServiceClient(opts ...grpc.DialOption) (component_pb.ModuleServiceClient, DoneFn, error) {
+	conn, done, err := f.GetConnection(MODULE_CONFIG, opts...)
 	if err != nil {
 		return nil, nil, err
 	}
 
-	return component_pb.NewModuleServiceClient(conn), conn.Close, nil
+	return component_pb.NewModuleServiceClient(conn), done, nil
 }
 
-func NewClientFactory(configs ServiceConfigs, opts []grpc.DialOption) (*ClientFactory, error) {
+type newClientFactoryOption struct {
+	DialPoolSize int32
+}
+
+func newNewClientFactoryOption() *newClientFactoryOption {
+	return &newClientFactoryOption{
+		DialPoolSize: 0,
+	}
+}
+
+type NewClientFactoryOption func(*newClientFactoryOption)
+
+func SetDialPoolSize(siz int32) NewClientFactoryOption {
+	return func(o *newClientFactoryOption) {
+		o.DialPoolSize = siz
+	}
+}
+
+func NewClientFactory(configs ServiceConfigs, dial_opts []grpc.DialOption, opts ...NewClientFactoryOption) (*ClientFactory, error) {
+	o := newNewClientFactoryOption()
+
+	for _, opt := range opts {
+		opt(o)
+	}
+
 	if _, ok := configs[DEFAULT_CONFIG]; !ok {
 		return nil, ErrMissingDefaultConfig
 	}
 
 	return &ClientFactory{
+		opts:              o,
 		configs:           configs,
-		defaultDialOption: opts,
+		defaultDialOption: dial_opts,
+		pools:             make(map[ClientType]pool_helper.Pool),
 	}, nil
 }
 

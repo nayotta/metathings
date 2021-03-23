@@ -54,7 +54,7 @@ type MetathingsDeviceServiceImpl struct {
 	conn_stm_rwmtx   sync.RWMutex
 	conn_stm_wg      sync.WaitGroup
 	conn_stm_wg_once sync.Once
-	conn_cfn         client_helper.CloseFn
+	conn_cfn         client_helper.DoneFn
 
 	startup_session int32
 

@@ -158,7 +158,7 @@ func (dc *DeviceConnection) handle_user_unary_request(req *pb.ConnectRequest) er
 
 func (dc *DeviceConnection) handle_user_stream_request(req *pb.ConnectRequest) error {
 	var cli pb.DevicedServiceClient
-	var cfn client_helper.CloseFn
+	var cfn client_helper.DoneFn
 	var stm pb.DevicedService_ConnectClient
 	var err error
 

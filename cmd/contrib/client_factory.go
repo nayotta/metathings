@@ -69,5 +69,5 @@ func NewClientFactory(p NewClientFactoryParams) (*client_helper.ClientFactory, e
 			grpc.WithStreamInterceptor(grpc_opentracing.StreamClientInterceptor()))
 	}
 
-	return client_helper.NewClientFactory(cfgs, opts)
+	return client_helper.NewClientFactory(cfgs, opts, client_helper.SetDialPoolSize(3))
 }

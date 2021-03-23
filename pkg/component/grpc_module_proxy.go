@@ -15,14 +15,14 @@ import (
 )
 
 type GrpcModuleServiceClientFactory interface {
-	NewModuleServiceClient(opts ...grpc.DialOption) (pb.ModuleServiceClient, client_helper.CloseFn, error)
+	NewModuleServiceClient(opts ...grpc.DialOption) (pb.ModuleServiceClient, client_helper.DoneFn, error)
 }
 
 type GrpcModuleServiceClientFactoryImpl struct {
 	Address string
 }
 
-func (self *GrpcModuleServiceClientFactoryImpl) NewModuleServiceClient(opts ...grpc.DialOption) (pb.ModuleServiceClient, client_helper.CloseFn, error) {
+func (self *GrpcModuleServiceClientFactoryImpl) NewModuleServiceClient(opts ...grpc.DialOption) (pb.ModuleServiceClient, client_helper.DoneFn, error) {
 	opts = append([]grpc.DialOption{grpc.WithInsecure()}, opts...)
 	conn, err := grpc.Dial(self.Address, opts...)
 	if err != nil {

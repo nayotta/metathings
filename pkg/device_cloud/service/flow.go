@@ -124,7 +124,7 @@ func (s *MetathingsDeviceCloudService) start_push_frame_loop(dev_id string, req 
 	return nil
 }
 
-func (s *MetathingsDeviceCloudService) push_frame_loop(stm deviced_pb.DevicedService_PushFrameToFlowClient, pffch PushFrameToFlowChannel, cfn client_helper.CloseFn, push_ack bool, logger log.FieldLogger) {
+func (s *MetathingsDeviceCloudService) push_frame_loop(stm deviced_pb.DevicedService_PushFrameToFlowClient, pffch PushFrameToFlowChannel, cfn client_helper.DoneFn, push_ack bool, logger log.FieldLogger) {
 	defer func() {
 		cfn()
 		pffch.Close()
