@@ -12,6 +12,7 @@ import (
 	"github.com/golang/protobuf/ptypes"
 	anypb "github.com/golang/protobuf/ptypes/any"
 	stpb "github.com/golang/protobuf/ptypes/struct"
+	"github.com/stretchr/objx"
 
 	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
 	pb "github.com/nayotta/metathings/proto/component"
@@ -79,8 +80,23 @@ func marshal_json_string_to_any(buf string) (*anypb.Any, error) {
 	return m, nil
 }
 
+func WrapHttpAuthContext(r *http.Request, ctx *SodaModuleAuthContext) error {
+	scheme := ctx.Get("scheme").String()
+	credential := ctx.Get("credential").String()
+
+	if scheme == "" || credential == "" {
+		return nil
+	}
+
+	r.Header.Set("Authorization", scheme+" "+credential)
+
+	return nil
+}
+
 type SodaModuleHttpWrapper struct {
 	m *Module
+
+	req_auth SodaModuleAuthorizer
 }
 
 func (w *SodaModuleHttpWrapper) http_client() *http.Client {
@@ -117,6 +133,18 @@ func (w *SodaModuleHttpWrapper) UnaryCall(ctx context.Context, req *pb.UnaryCall
 	http_req.Header.Set("Content-Type", "application/json")
 	http_req.Header.Set("User-Agent", METATHINGS_SODA_MODULE_CLIENT_USERAGENT)
 
+	// TODO(Peer): pass request body to sign
+	signature, err := w.req_auth.Sign(
+		&SodaModuleAuthContext{objx.New(map[string]interface{}{})},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	if err = WrapHttpAuthContext(http_req, signature); err != nil {
+		return nil, err
+	}
+
 	http_res, err := w.http_client().Do(http_req)
 	if err != nil {
 		return nil, err
@@ -149,7 +177,21 @@ func (w *SodaModuleHttpWrapper) StreamCall(pb.ModuleService_StreamCallServer) er
 type SodaModuleHttpWrapperFactory struct{}
 
 func (f *SodaModuleHttpWrapperFactory) NewModuleWrapper(m *Module) (SodaModuleWrapper, error) {
-	return &SodaModuleHttpWrapper{m: m}, nil
+	cfg := m.Kernel().Config()
+
+	req_auth_name := cfg.GetString("backend.request_auth.name")
+	if req_auth_name == "" {
+		req_auth_name = "dummy"
+	}
+	req_auth, err := NewSodaModuleAuthorizer(req_auth_name, m)
+	if err != nil {
+		return nil, err
+	}
+
+	return &SodaModuleHttpWrapper{
+		m:        m,
+		req_auth: req_auth,
+	}, nil
 }
 
 func init() {

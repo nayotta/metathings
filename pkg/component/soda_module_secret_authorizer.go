@@ -1,12 +1,23 @@
 package metathings_component
 
+import "github.com/stretchr/objx"
+
 type SodaModuleSecretAuthorizer struct {
 	m *Module
 
 	secret string
 }
 
-func (a *SodaModuleSecretAuthorizer) Authorize(ctx *SodaModuleAuthContext) error {
+func (a *SodaModuleSecretAuthorizer) Sign(ctx *SodaModuleAuthContext) (*SodaModuleAuthContext, error) {
+	return &SodaModuleAuthContext{
+		objx.New(map[string]interface{}{
+			"scheme":     "Bearer",
+			"credential": a.secret,
+		}),
+	}, nil
+}
+
+func (a *SodaModuleSecretAuthorizer) Verify(ctx *SodaModuleAuthContext) error {
 	scheme := ctx.Get("scheme").String()
 	credential := ctx.Get("credential").String()
 
@@ -22,7 +33,7 @@ func NewSodaModuleSecretAuthorizer(m *Module) (SodaModuleAuthorizer, error) {
 
 	secret := cfg.GetString("backend.auth.secret")
 	if secret == "" {
-		return nil, ErrRequireSodaModuleAuthorizeSecret
+		return nil, ErrRequireSodaModuleAuthorizerSecret
 	}
 
 	return &SodaModuleSecretAuthorizer{

@@ -165,7 +165,7 @@ func (self *MetathingsDeviceServiceImpl) handle_user_unary_request(req *deviced_
 
 func (self *MetathingsDeviceServiceImpl) handle_user_stream_request(req *deviced_pb.ConnectRequest) error {
 	var cli deviced_pb.DevicedServiceClient
-	var cfn client_helper.CloseFn
+	var cfn client_helper.DoneFn
 	var stm deviced_pb.DevicedService_ConnectClient
 	var err error
 

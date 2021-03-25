@@ -165,7 +165,7 @@ type DeviceConnection struct {
 	logger  log.FieldLogger
 	tknr    token_helper.Tokener
 	stm     pb.DevicedService_ConnectClient
-	close   client_helper.CloseFn
+	close   client_helper.DoneFn
 
 	closed         bool
 	stm_wg         sync.WaitGroup
