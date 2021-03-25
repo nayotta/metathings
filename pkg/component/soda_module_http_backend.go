@@ -99,7 +99,7 @@ func (b *SodaModuleHttpBackend) authorize_middleware() mux.MiddlewareFunc {
 				return
 			}
 
-			err = b.auth.Authorize(ctx)
+			err = b.auth.Verify(ctx)
 			if err != nil {
 				logger.WithError(err).Errorf("failed to authorize with auth context")
 				jw.WriteHeader(http.StatusUnauthorized)

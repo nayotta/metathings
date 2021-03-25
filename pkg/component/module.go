@@ -317,9 +317,8 @@ func (m *Module) Serve() error {
 }
 
 func (m *Module) Stop() {
-	m.srv.Stop()
-
 	if m.IsRunning() {
+		m.srv.Stop()
 		close(m.closed)
 	}
 }

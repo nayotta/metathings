@@ -47,6 +47,7 @@ func run_module() error {
 	var err error
 	var app *fx.App
 
+	quit := make(chan struct{})
 	app = fx.New(
 		fx.NopLogger,
 		fx.Provide(
@@ -62,7 +63,8 @@ func run_module() error {
 						}
 
 						go func() {
-							mdl.Serve()
+							defer close(quit)
+							mdl.Logger().WithError(mdl.Serve()).Errorf("module down")
 						}()
 
 						return nil
@@ -83,9 +85,12 @@ func run_module() error {
 		return err
 	}
 
-	<-app.Done()
-	if err = app.Err(); err != nil {
-		return err
+	select {
+	case <-app.Done():
+		if err = app.Err(); err != nil {
+			return err
+		}
+	case <-quit:
 	}
 
 	return nil

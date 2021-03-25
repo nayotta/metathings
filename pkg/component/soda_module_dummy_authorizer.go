@@ -1,10 +1,20 @@
 package metathings_component
 
-import "net/http"
+import (
+	"net/http"
+
+	"github.com/stretchr/objx"
+)
 
 type SodaModuleDummyAuthorizer struct{}
 
-func (a *SodaModuleDummyAuthorizer) Authorize(ctx *SodaModuleAuthContext) error {
+func (*SodaModuleDummyAuthorizer) Sign(*SodaModuleAuthContext) (*SodaModuleAuthContext, error) {
+	return &SodaModuleAuthContext{
+		objx.New(map[string]interface{}{}),
+	}, nil
+}
+
+func (*SodaModuleDummyAuthorizer) Verify(*SodaModuleAuthContext) error {
 	return nil
 }
 

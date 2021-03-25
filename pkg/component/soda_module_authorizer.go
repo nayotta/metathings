@@ -11,7 +11,8 @@ type SodaModuleAuthContext struct {
 }
 
 type SodaModuleAuthorizer interface {
-	Authorize(*SodaModuleAuthContext) error
+	Sign(*SodaModuleAuthContext) (*SodaModuleAuthContext, error)
+	Verify(*SodaModuleAuthContext) error
 }
 
 type SodaModuleAuthorizerFactory func(*Module) (SodaModuleAuthorizer, error)
