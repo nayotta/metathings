@@ -45,9 +45,9 @@ jobs:
           goarch: arm64
     steps:
     - uses: actions/checkout@master
-    - uses: actions/setup-go@v1
+    - uses: actions/setup-go@v2
       with:
-        go-version: "1.14"
+        go-version: "1.16"
     - name: Compile Metathings Binary
       env:
         GOOS: ${{ matrix.goos }}
@@ -68,9 +68,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
-    - uses: actions/setup-go@v1
+    - uses: actions/setup-go@v2
       with:
-        go-version: "1.14"
+        go-version: "1.16"
     - name: Install Zip
       run: |
         sudo apt install -y zip
