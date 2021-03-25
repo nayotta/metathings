@@ -556,7 +556,9 @@ prod:
 
 `Metathings` 平台与 `Device`, `Device` 与 `Module` 之间的通信是采用认证机制, 所以之间的通讯是经过认证的.
 
-而以上的场景都是默认`Soda Module` 与`Soda Module Plugin` 处于受信环境下的通信.
+而以上的场景都是默认`Soda Module`与`Soda Module Plugin` 处于受信环境下的通信.
+
+不受信情况下参考`4.5.4.`节内容进行配置.
 
 可能存在第三方攻击的情况, 所以加入了`Soda Module` 对`Soda Module Plugin` 的认证机制.
 
@@ -583,6 +585,39 @@ prod:
 格式如下:
 
 HTTP Header: `Authorization: Bearer <secret>`
+
+#### 4.5.4. `Soda Module Plugin`认证配置
+
+本章节主要解决的问题是`Soda Module`向`Soda Module Plugin`请求未认证的情况.
+
+采用的办法是`Soda Module Plugin`实现认证功能, 然后`Soda Module`发起的请求带上认证消息(暂时为`http header的Authorization字段`).
+
+支持的认证包含如下几种:
+
+* `dummy`: 不做认证(默认模式).
+* `secret`: 与上面的secret认证模式相同.
+* `basic`: RFC7617 Basic认证模式, [参考](https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication#basic_authentication_scheme).
+
+配置方法如下:
+
+```yaml
+prod:
+  ...
+  backend:
+    request_auth:
+      name: basic
+      username: <username>
+      password: <password>
+  ...
+```
+
+`Soda Module Plugin`会收到相应的认证请求信息, 例如基于http的backend会收到在Http Request Header中携带的Authorization字段.
+
+例如:
+
+`username`, `password`分别为 `aladdin`, `opensesame`.
+
+那么, 在`Soda Module Plugin`收到的请求时, `HTTP Request Header`就会携带`Authorization: YWxhZGRpbjpvcGVuc2VzYW1l`.
 
 ## 5. `API`详解
 

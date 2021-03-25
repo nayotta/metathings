@@ -1,13 +1,12 @@
 module github.com/nayotta/metathings
 
-go 1.14
+go 1.16
 
 require (
 	github.com/HdrHistogram/hdrhistogram-go v0.9.0 // indirect
 	github.com/avast/retry-go v2.6.0+incompatible
 	github.com/casbin/casbin-server v0.0.0-20200811160901-bfdd286caec7
 	github.com/cavaliercoder/grab v2.0.0+incompatible
-	github.com/codahale/hdrhistogram v0.9.0 // indirect
 	github.com/eclipse/paho.mqtt.golang v1.2.0
 	github.com/envoyproxy/protoc-gen-validate v0.1.0
 	github.com/go-redis/redis/v8 v8.0.0-beta.8
@@ -29,7 +28,6 @@ require (
 	github.com/spf13/cobra v1.0.0
 	github.com/spf13/pflag v1.0.5
 	github.com/spf13/viper v1.7.1
-	github.com/stianeikeland/go-rpio v4.2.0+incompatible
 	github.com/stretchr/objx v0.3.0
 	github.com/stretchr/testify v1.6.1
 	github.com/uber/jaeger-client-go v2.25.0+incompatible
