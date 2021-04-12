@@ -112,8 +112,14 @@ $ tar zxvf metathings_<version>_linux_amd64.tar.gz
 这里暴露的接口后续会与`Module` 的配置有关联.
 
 ```python
+import random
+from urllib.parse import urljoin
+
 import flask
+import requests
 from flask import request
+
+import gpiozero
 
 app = flask.Flask("hello")
 
@@ -196,7 +202,7 @@ prod:  # 与MTC_STAGE环境变量一致, 默认为 prod
     target:
       url: http://127.0.0.1:8000  # 指向 Python 的 HTTP Server
     downstreams:
-      my_hello:  # 暴露 Python HTTP Server 的服务, 名字叫 my_hello
+      "my_hello":  # 暴露 Python HTTP Server 的服务, 名字叫 my_hello
         path: /hello  # 指向 Python HTTP Server 的路径
 ```
 
@@ -269,8 +275,6 @@ $ cd $WORKDIR
 ```python
 #! /usr/bin/env python3
 
-import flask
-import gpiozero
 
 app = flask.Flask("led")
 _LED = None
@@ -285,7 +289,7 @@ def get_led():
     return _LED
 
 
-@app.route("/on")
+@app.route("/on", methods=["POST"])
 def on():
     led = get_led()
 
@@ -294,7 +298,7 @@ def on():
     return flask.make_response({"status": "on"})
 
 
-@app.route("/off")
+@app.route("/off", methods=["POST"])
 def off():
     led = get_led()
 
@@ -335,9 +339,9 @@ prod:
   backend:
     ...
     downstreams:
-      on:
+      "on":
         path: /on
-      off:
+      "off":
         path: /off
     ...
   ...
@@ -401,10 +405,7 @@ $ cd $WORKDIR
 ```python
 #! /usr/bin/env python3
 
-from urllib.parse import urljoin
-import random
 
-import requests
 
 SODA_MODULE_API_HOST = "localhost"  # 指定 Soda Module API 的地址
 SODA_MODULE_API_PORT = 8001  # 指定 Soda Module API 的端口
