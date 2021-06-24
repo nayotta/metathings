@@ -1,11 +1,7 @@
 name: build
 on:
-  push:
-    branchs:
-    - master
-    tags:
-    - '*'
-  pull_request:
+  release:
+    types: [created]
 
 jobs:
   compile-metathingsd-and-upload-asset:
