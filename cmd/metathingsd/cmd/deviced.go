@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"context"
+	"os"
 
 	"github.com/opentracing/opentracing-go"
 	log "github.com/sirupsen/logrus"
@@ -23,6 +24,19 @@ import (
 	pb "github.com/nayotta/metathings/proto/deviced"
 	evaluatord_sdk "github.com/nayotta/metathings/sdk/evaluatord"
 )
+
+type Hostnamer func() string
+
+func (h Hostnamer) Hostname() string {
+	return h()
+}
+
+func GetHostnamer() service.Hostnamer {
+	return Hostnamer(func() (hn string) {
+		hn, _ = os.Hostname()
+		return
+	})
+}
 
 type DevicedOption struct {
 	cmd_contrib.ServiceBaseOption `mapstructure:",squash"`
@@ -144,6 +158,7 @@ func NewDevicedStorage(p NewDevicedStorageParams) (storage.Storage, error) {
 type NewConnectionCenterParams struct {
 	fx.In
 
+	Hostnamer      service.Hostnamer
 	Option         *DevicedOption
 	SessionStorage session_storage.SessionStorage
 	Logger         log.FieldLogger
@@ -178,6 +193,7 @@ func NewConnectionCenter(p NewConnectionCenterParams) (connection.ConnectionCent
 		"bridge_factory", conn_brfty,
 		"storage", conn_stor,
 		"session_storage", p.SessionStorage,
+		"hostnamer", p.Hostnamer,
 		"logger", p.Logger,
 		"tracer", p.Tracer,
 	); err != nil {
@@ -280,6 +296,9 @@ func NewMetathingsDevicedServiceOption(opt *DevicedOption) *service.MetathingsDe
 }
 
 func runDeviced() error {
+	quit_chan := make(chan struct{})
+	getQuitChannel := func() chan struct{} { return quit_chan }
+
 	app := fx.New(
 		fx.NopLogger,
 		fx.Provide(
@@ -291,6 +310,8 @@ func runDeviced() error {
 			cmd_contrib.NewGrpcServer,
 			cmd_contrib.NewClientFactory,
 			cmd_contrib.NewNoExpireTokener,
+			getQuitChannel,
+			GetHostnamer,
 			NewDevicedDataLauncher,
 			token_helper.NewTokenValidator,
 			NewSessionStorage,
@@ -315,7 +336,7 @@ func runDeviced() error {
 	}
 	defer app.Stop(context.Background())
 
-	<-app.Done()
+	<-quit_chan
 	if err := app.Err(); err != nil {
 		return err
 	}

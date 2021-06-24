@@ -33,7 +33,7 @@ func parse_error_to_connect_error_response(name, service, method string, err err
 func (self *MetathingsDeviceServiceImpl) handle(req *deviced_pb.ConnectRequest) error {
 	logger := self.get_logger().WithField("method", "handle")
 
-	switch req.Kind {
+	switch req.GetKind() {
 	case deviced_pb.ConnectMessageKind_CONNECT_MESSAGE_KIND_SYSTEM:
 		return self.handle_system_request(req)
 	case deviced_pb.ConnectMessageKind_CONNECT_MESSAGE_KIND_USER:
@@ -81,7 +81,11 @@ func (self *MetathingsDeviceServiceImpl) handle_system_unary_request(req *device
 	case "system$system$sync_firmware":
 		return self.handle_system_unary_request_sync_firmware(req)
 	default:
-		logger.WithField("sign", req_sign).Warningf("unsupported request sign")
+		logger.WithFields(log.Fields{
+			"component": component,
+			"name":      name,
+			"method":    method,
+		}).Warningf("unsupported system request")
 		return nil
 	}
 }
@@ -151,9 +155,17 @@ func (self *MetathingsDeviceServiceImpl) handle_user_unary_request(req *deviced_
 		}
 	}
 
-	self.conn_stm_rwmtx.RLock()
-	defer self.conn_stm_rwmtx.RUnlock()
-	err = self.connection_stream().Send(res)
+	stm := self.get_alive_connection()
+	if stm == nil {
+		logger.Warningf("no connection")
+		return ErrNoConnection
+	}
+
+	if err = stm.Send(res); err != nil {
+		logger.WithError(err).Errorf("failed to send response to connection")
+		return err
+	}
+
 	if err != nil {
 		logger.Debugf("failed to send msg")
 		return err

@@ -6,7 +6,6 @@ type SodaModuleBackend interface {
 	Start() error
 	Stop() error
 	Done() <-chan struct{}
-	Health() error
 }
 
 type SodaModuleBackendFactory func(*Module) (SodaModuleBackend, error)

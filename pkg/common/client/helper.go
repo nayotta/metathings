@@ -58,7 +58,7 @@ func parseAddress(addr string) string {
 	return addr
 }
 
-type DoneFn func() error
+type DoneFn = func() error
 
 type ServiceConfigs map[ClientType]ServiceConfig
 

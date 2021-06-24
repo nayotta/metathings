@@ -38,9 +38,10 @@ func (self *MetathingsDeviceServiceImpl) Heartbeat(ctx context.Context, req *pb.
 }
 
 func (self *MetathingsDeviceServiceImpl) heartbeat_loop() {
-	self.conn_stm_wg.Wait()
 	for {
-		go self.heartbeat_once()
+		if len(self.list_connection_sessions()) > 0 {
+			go self.heartbeat_once()
+		}
 		time.Sleep(self.opt.HeartbeatInterval)
 	}
 }

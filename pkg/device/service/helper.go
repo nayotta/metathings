@@ -22,13 +22,12 @@ func (self *MetathingsDeviceServiceImpl) context() context.Context {
 	return context_helper.WithToken(context.TODO(), self.tknr.GetToken())
 }
 
-func (self *MetathingsDeviceServiceImpl) context_with_sesion() context.Context {
+func (self *MetathingsDeviceServiceImpl) context_with_sesion(ctx context.Context, sess int64) context.Context {
 	return context_helper.NewOutgoingContext(
-		context.TODO(),
+		ctx,
 		context_helper.WithTokenOp(self.tknr.GetToken()),
-		context_helper.WithSessionOp(self.generator_major_session()),
+		context_helper.WithSessionOp(sess),
 	)
-
 }
 
 func (self *MetathingsDeviceServiceImpl) pb_device() *deviced_pb.OpDevice {

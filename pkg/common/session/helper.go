@@ -7,7 +7,7 @@ import (
 )
 
 var (
-	STARTUP_SESSION_EXPIRE = 120 * time.Second
+	STARTUP_SESSION_EXPIRE = 121 * time.Second
 )
 
 // session protocol:
@@ -15,7 +15,7 @@ var (
 // startup session is device start up and pick a random number to become startup session.
 // connection session is when create connection to pick a random number to become connection session.
 // connection session dive into two type session: major session and minor session.
-// first byte is flag byte and rest three bytes is session data bytes.
+// first byte is flag byte and rest three bytes are session data bytes.
 // 0x[ flags 1 byte ] [ data 3 bytes ]
 // session flags:
 // [ 0 reserverd ] [ 1 session code ] [ x major/minor ] [ y temp ] [ 0000 reserverd ]

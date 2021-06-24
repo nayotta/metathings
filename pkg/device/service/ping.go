@@ -7,21 +7,14 @@ import (
 )
 
 func (self *MetathingsDeviceServiceImpl) ping_loop() {
-	self.conn_stm_wg.Wait()
 	for {
 		go self.ping_once()
 		time.Sleep(self.opt.PingInterval)
 	}
 }
 
-func (self *MetathingsDeviceServiceImpl) ping_once() {
-	logger := self.get_logger().WithField("method", "ping_once")
-
-	self.conn_stm_rwmtx.Lock()
-	stm := self.connection_stream()
-	self.conn_stm_rwmtx.Unlock()
-
-	ping_pkt := &deviced_pb.ConnectResponse{
+var (
+	PING_PKT = &deviced_pb.ConnectResponse{
 		SessionId: 0,
 		Kind:      deviced_pb.ConnectMessageKind_CONNECT_MESSAGE_KIND_SYSTEM,
 		Union: &deviced_pb.ConnectResponse_UnaryCall{
@@ -33,15 +26,22 @@ func (self *MetathingsDeviceServiceImpl) ping_once() {
 			},
 		},
 	}
+)
 
-	err := stm.Send(ping_pkt)
-	if err != nil {
-		// TODO(Peer): reconnect streaming, not stop device and restart
-		defer self.Stop()
+func (self *MetathingsDeviceServiceImpl) ping_once() {
+	logger := self.get_logger().WithField("method", "ping_once")
 
-		logger.WithError(err).Warningf("failed to send ping request")
-		return
+	sessions := self.list_connection_sessions()
+	for _, sess := range sessions {
+		stm := self.get_connection(sess)
+		if stm == nil {
+			continue
+		}
+
+		if err := stm.Send(PING_PKT); err != nil {
+			logger.WithError(err).Warningf("failed to send ping request")
+			go self.try_close_connection(sess)
+		}
+		logger.WithField("session", sess).Debugf("ping")
 	}
-
-	logger.Debugf("sending ping request")
 }

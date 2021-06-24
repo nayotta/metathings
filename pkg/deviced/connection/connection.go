@@ -2,10 +2,13 @@ package metathings_deviced_connection
 
 import (
 	"context"
+	"fmt"
+	"math/rand"
 	"sync"
 	"time"
 
 	"github.com/golang/protobuf/proto"
+	"github.com/golang/protobuf/ptypes"
 	"github.com/golang/protobuf/ptypes/wrappers"
 	"github.com/opentracing/opentracing-go"
 	log "github.com/sirupsen/logrus"
@@ -25,9 +28,11 @@ type Connection interface {
 	Wait() chan bool
 	Done()
 	Cleanup()
+	String() string
 }
 
 type connection struct {
+	session    int64
 	err        error
 	c          chan bool
 	done_once  *sync.Once
@@ -59,8 +64,14 @@ func (self *connection) Done() {
 	self.done_once.Do(func() { close(self.c) })
 }
 
-func NewConnection(cleanup_cb func()) Connection {
+func (self *connection) String() string {
+	return fmt.Sprintf("%d", self.session)
+
+}
+
+func NewConnection(session int64, cleanup_cb func()) Connection {
 	return &connection{
+		session:    session,
 		c:          make(chan bool),
 		done_once:  new(sync.Once),
 		err_once:   new(sync.Once),
@@ -81,6 +92,8 @@ type ConnectionCenter interface {
 	UnaryCall(context.Context, *storage.Device, *pb.OpUnaryCallValue) (*pb.UnaryCallValue, error)
 	StreamCall(context.Context, *storage.Device, *pb.OpStreamCallConfig, pb.DevicedService_StreamCallServer) error
 	SyncFirmware(context.Context, *storage.Device) error
+	CountConnections(context.Context, *storage.Device) (int, error)
+	Shutdown() error
 }
 
 type connectionCenterOption struct {
@@ -94,7 +107,20 @@ type connectionCenter struct {
 	brfty           BridgeFactory
 	storage         Storage
 	session_storage session_storage.SessionStorage
+	conn_map        sync.Map
+	conn_wg         sync.WaitGroup
+	hostnamer       Hostnamer
 	is_traced       bool
+}
+
+func (self *connectionCenter) register_connection(conn Connection) {
+	self.conn_map.Store(conn, nil)
+	self.conn_wg.Add(1)
+}
+
+func (self *connectionCenter) unregister_connection(conn Connection) {
+	self.conn_map.Delete(conn)
+	self.conn_wg.Done()
 }
 
 func (self *connectionCenter) connection_loop(dev *storage.Device, conn Connection, br Bridge, stm pb.DevicedService_ConnectServer) {
@@ -194,7 +220,34 @@ func (self *connectionCenter) south_to_bridge(
 				}
 
 				return InterceptorStop
-			}))
+			}),
+			NewConnectResponseUnaryCallMatcher(pb.ConnectMessageKind_CONNECT_MESSAGE_KIND_SYSTEM, "system", "system", "nodename"), ConnectResponseInterceptor(func(req *pb.ConnectResponse) error {
+				hostname := self.hostnamer.Hostname()
+				val, err := ptypes.MarshalAny(&wrappers.StringValue{Value: hostname})
+				if err != nil {
+					return err
+				}
+
+				pkt := &pb.ConnectRequest{
+					SessionId: &wrappers.Int64Value{Value: 0},
+					Kind:      pb.ConnectMessageKind_CONNECT_MESSAGE_KIND_SYSTEM,
+					Union: &pb.ConnectRequest_UnaryCall{
+						UnaryCall: &pb.OpUnaryCallValue{
+							Name:      &wrappers.StringValue{Value: "system"},
+							Component: &wrappers.StringValue{Value: "system"},
+							Method:    &wrappers.StringValue{Value: "nodename"},
+							Value:     val,
+						},
+					},
+				}
+
+				if err = south.Send(pkt); err != nil {
+					return err
+				}
+
+				return InterceptorStop
+			}),
+		)
 
 		for epoch := uint64(0); ; epoch++ {
 			logger = logger.WithField("epoch", epoch)
@@ -353,25 +406,29 @@ func (self *connectionCenter) BuildConnection(ctx context.Context, dev *storage.
 	br_id := br.Id()
 	logger = logger.WithField("bridge", br_id)
 
+	var conn Connection
 	if session_helper.IsMajorSession(sess) {
+		startup_sess := session_helper.GetStartupSession(sess)
+
 		cur_sess, err := self.session_storage.GetStartupSession(dev_id)
 		if err != nil {
 			logger.WithError(err).Debugf("failed to get startup session")
 			return nil, err
 		}
 
-		if cur_sess != 0 {
+		if cur_sess != 0 && cur_sess != startup_sess {
 			err = ErrDuplicatedDeviceInstance
 			logger.WithField("startup_session", cur_sess).WithError(err).Debugf("duplicated major connection for device")
 			return nil, err
 		}
 
-		startup_sess := session_helper.GetStartupSession(sess)
-		if err = self.session_storage.SetStartupSessionIfNotExists(dev_id, startup_sess, session_helper.STARTUP_SESSION_EXPIRE); err != nil {
-			logger.WithError(err).Debugf("failed to set startup session")
-			return nil, err
+		if cur_sess == 0 {
+			if err = self.session_storage.SetStartupSessionIfNotExists(dev_id, startup_sess, session_helper.STARTUP_SESSION_EXPIRE); err != nil {
+				logger.WithError(err).Debugf("failed to set startup session")
+				return nil, err
+			}
+			logger = logger.WithField("startup_session", startup_sess)
 		}
-		logger = logger.WithField("startup_session", startup_sess)
 
 		err = self.storage.AddBridgeToDevice(dev_id, startup_sess, br_id)
 		if err != nil {
@@ -386,13 +443,22 @@ func (self *connectionCenter) BuildConnection(ctx context.Context, dev *storage.
 				logger.WithError(err).Warningf("failed to remove bridge from device")
 			}
 
-			if err = self.session_storage.UnsetStartupSession(dev_id); err != nil {
-				logger.WithError(err).Warningf("failed to unset startup session")
+			brs, err := self.storage.ListBridgesFromDevice(dev_id, startup_sess)
+			if err != nil {
+				logger.WithError(err).Warningf("failed to list bridges from device")
+			} else {
+				if len(brs) == 0 {
+					if err = self.session_storage.UnsetStartupSession(dev_id); err != nil {
+						logger.WithError(err).Warningf("failed to unset startup session")
+					}
+				}
 			}
 
 			if err = br.Close(); err != nil {
 				logger.WithError(err).Warningf("failed to close bridge")
 			}
+
+			self.unregister_connection(conn)
 
 			logger.Debugf("connection cleanup")
 		}
@@ -409,10 +475,59 @@ func (self *connectionCenter) BuildConnection(ctx context.Context, dev *storage.
 		}
 	}
 
-	conn := NewConnection(cleanup_cb)
+	conn = NewConnection(sess, cleanup_cb)
+	if session_helper.IsMajorSession(sess) {
+		self.register_connection(conn)
+	}
+
 	go self.connection_loop(dev, conn, br, stm)
 
 	return conn, nil
+}
+
+func (self *connectionCenter) CountConnections(ctx context.Context, dev *storage.Device) (int, error) {
+	dev_id := *dev.Id
+	logger := self.logger.WithFields(log.Fields{
+		"method": "CountConnections",
+		"device": dev_id,
+	})
+
+	startup_sess, err := self.session_storage.GetStartupSession(dev_id)
+	if err != nil {
+		return 0, err
+	}
+
+	logger = logger.WithField("startup_session", startup_sess)
+
+	brs, err := self.storage.ListBridgesFromDevice(dev_id, startup_sess)
+	if err != nil {
+		return 0, err
+	}
+
+	return len(brs), nil
+}
+
+func (self *connectionCenter) Shutdown() error {
+	if err := self.shutdownConnections(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (self *connectionCenter) shutdownConnections() error {
+	logger := self.logger.WithField("method", "shutdownConnections")
+
+	self.conn_map.Range(func(key, _ interface{}) bool {
+		conn := key.(Connection)
+		conn.Done()
+		logger.WithField("connection", conn.String()).Debugf("connection closed")
+		return true
+	})
+
+	self.conn_wg.Wait()
+
+	return nil
 }
 
 // TODO(Peer): replace hard code tracing to callback tracing
@@ -466,7 +581,8 @@ func (self *connectionCenter) UnaryCall(ctx context.Context, dev *storage.Device
 		logger.WithError(err).Debugf("device bridges is empty")
 		return nil, err
 	}
-	br_id = br_ids[0]
+
+	br_id = br_ids[rand.Intn(len(br_ids))]
 	if self.is_traced && sp != nil {
 		sp.SetTag("major_bridge", br_id)
 	}
@@ -530,6 +646,11 @@ func (self *connectionCenter) UnaryCall(ctx context.Context, dev *storage.Device
 		logger.WithError(err).Debugf("failed to send connect request to major bridge")
 		return nil, err
 	case <-time.After(self.opt.ReceiveTimeout):
+		// bridge maybe broken, remove from storage
+		if err = self.storage.RemoveBridgeFromDevice(*dev.Id, startup_sess, br_id); err != nil {
+			logger.WithError(err).Warningf("failed to remove bridge from device")
+		}
+
 		err = ErrReceiveTimeout
 		logger.WithError(err).Debugf("receive response message from session bridge timeout")
 		return nil, err
@@ -968,6 +1089,7 @@ func NewConnectionCenter(args ...interface{}) (ConnectionCenter, error) {
 	var brfty BridgeFactory
 	var stor Storage
 	var sess_stor session_storage.SessionStorage
+	var hostnamer Hostnamer
 	var logger log.FieldLogger
 	var is_traced bool
 	var err error
@@ -983,6 +1105,7 @@ func NewConnectionCenter(args ...interface{}) (ConnectionCenter, error) {
 		"storage":         ToStorage(&stor),
 		"session_storage": session_storage.ToSessionStorage(&sess_stor),
 		"tracer":          opt_helper.ToIsTraced(&is_traced),
+		"hostnamer":       ToHostnamer(&hostnamer),
 	})(args...); err != nil {
 		return nil, err
 	}
@@ -993,6 +1116,7 @@ func NewConnectionCenter(args ...interface{}) (ConnectionCenter, error) {
 		brfty:           brfty,
 		storage:         stor,
 		session_storage: sess_stor,
+		hostnamer:       hostnamer,
 		is_traced:       is_traced,
 	}, nil
 }

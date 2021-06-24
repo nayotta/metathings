@@ -2,6 +2,7 @@ package metathings_device_service
 
 import (
 	"context"
+	"math/rand"
 	"sync"
 	"time"
 
@@ -29,12 +30,18 @@ type MetathingsDeviceService interface {
 }
 
 type MetathingsDeviceServiceOption struct {
-	ModuleAliveTimeout   time.Duration
-	HeartbeatInterval    time.Duration
-	HeartbeatMaxRetry    int
-	MaxReconnectInterval time.Duration
-	MinReconnectInterval time.Duration
-	PingInterval         time.Duration
+	InitConnectionTimeout  time.Duration
+	NodenameRequestPeriod  time.Duration
+	ModuleAliveTimeout     time.Duration
+	HeartbeatInterval      time.Duration
+	HeartbeatMaxRetry      int
+	MaxReconnectInterval   time.Duration
+	MinReconnectInterval   time.Duration
+	PingInterval           time.Duration
+	ExpectedConnections    int
+	NewConnectionThreshold time.Duration
+	NewConnectionPeriod    time.Duration
+	ConnectToSameNode      bool
 }
 
 type MetathingsDeviceServiceImpl struct {
@@ -48,13 +55,14 @@ type MetathingsDeviceServiceImpl struct {
 	app_getter *fx_helper.FxAppGetter
 	bs         bin_sync.BinarySynchronizer
 
-	info             *deviced_pb.Device
-	mdl_db           ModuleDatabase
-	conn_stm         deviced_pb.DevicedService_ConnectClient
-	conn_stm_rwmtx   sync.RWMutex
-	conn_stm_wg      sync.WaitGroup
-	conn_stm_wg_once sync.Once
-	conn_cfn         client_helper.DoneFn
+	info   *deviced_pb.Device
+	mdl_db ModuleDatabase
+
+	conns_mtx   sync.Mutex
+	conns       map[int64]deviced_pb.DevicedService_ConnectClient
+	nodes       map[int64]string
+	close_fns   map[int64]func() error
+	new_conn_ch chan struct{}
 
 	startup_session int32
 
@@ -84,8 +92,13 @@ func (self *MetathingsDeviceServiceImpl) Stop() error {
 	return self.app_getter.Get().Stop(context.TODO())
 }
 
-func (self *MetathingsDeviceServiceImpl) connection_stream() deviced_pb.DevicedService_ConnectClient {
-	return self.conn_stm
+func (self *MetathingsDeviceServiceImpl) get_alive_connection() deviced_pb.DevicedService_ConnectClient {
+	sessions := self.list_connection_sessions()
+	if len(sessions) == 0 {
+		return nil
+	}
+
+	return self.get_connection(sessions[rand.Intn(len(sessions))])
 }
 
 func (self *MetathingsDeviceServiceImpl) get_module_info(id string) (*deviced_pb.Module, error) {
@@ -122,6 +135,10 @@ func NewMetathingsDeviceService(
 		opt:             opt,
 		startup_session: session_helper.GenerateStartupSession(),
 		app_getter:      app_getter,
+		conns:           make(map[int64]deviced_pb.DevicedService_ConnectClient),
+		nodes:           make(map[int64]string),
+		close_fns:       make(map[int64]func() error),
+		new_conn_ch:     make(chan struct{}),
 
 		stats_synchronizing_firmware: false,
 	}

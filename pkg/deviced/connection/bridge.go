@@ -73,3 +73,14 @@ func ToBridgeFactory(y *BridgeFactory) func(string, interface{}) error {
 		return nil
 	}
 }
+
+func ToHostnamer(h *Hostnamer) func(string, interface{}) error {
+	return func(k string, v interface{}) error {
+		var ok bool
+		if *h, ok = v.(Hostnamer); !ok {
+			return opt_helper.InvalidArgument(k)
+		}
+
+		return nil
+	}
+}

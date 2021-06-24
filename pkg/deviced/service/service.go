@@ -6,6 +6,7 @@ import (
 	grpc_auth "github.com/grpc-ecosystem/go-grpc-middleware/auth"
 	"github.com/grpc-ecosystem/go-grpc-middleware/util/metautils"
 	log "github.com/sirupsen/logrus"
+	"go.uber.org/fx"
 
 	afo_helper "github.com/nayotta/metathings/pkg/common/auth_func_overrider"
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
@@ -64,6 +65,7 @@ type MetathingsDevicedService struct {
 	flw_fty         flow.FlowFactory
 	flwst_fty       flow.FlowSetFactory
 	data_launcher   evaluatord_sdk.DataLauncher
+	quit_chan       chan struct{}
 }
 
 func (self *MetathingsDevicedService) get_logger() log.FieldLogger {
@@ -194,42 +196,51 @@ func (self *MetathingsDevicedService) IsIgnoreMethod(md *grpc_helper.MethodDescr
 	return false
 }
 
+type NewMetathingsDevicedServiceParams struct {
+	fx.In
+
+	Option           *MetathingsDevicedServiceOption
+	Logger           log.FieldLogger
+	Storage          storage.Storage
+	SessionStorage   session_storage.SessionStorage
+	SimpleStorage    simple_storage.SimpleStorage
+	DescStorage      descriptor_storage.DescriptorStorage
+	Authorizer       identityd_authorizer.Authorizer
+	Validator        identityd_validator.Validator
+	TokenValidator   token_helper.TokenValidator
+	ConnectionCenter connection.ConnectionCenter
+	Tokner           token_helper.Tokener
+	ClientFactory    *client_helper.ClientFactory
+	FlowFactory      flow.FlowFactory
+	FlowSetFactory   flow.FlowSetFactory
+	DataLauncher     evaluatord_sdk.DataLauncher
+	QuitChan         chan struct{}
+}
+
 func NewMetathingsDevicedService(
-	opt *MetathingsDevicedServiceOption,
-	logger log.FieldLogger,
-	storage storage.Storage,
-	session_storage session_storage.SessionStorage,
-	simple_storage simple_storage.SimpleStorage,
-	desc_storage descriptor_storage.DescriptorStorage,
-	authorizer identityd_authorizer.Authorizer,
-	validator identityd_validator.Validator,
-	tkvdr token_helper.TokenValidator,
-	cc connection.ConnectionCenter,
-	tknr token_helper.Tokener,
-	cli_fty *client_helper.ClientFactory,
-	flw_fty flow.FlowFactory,
-	flwst_fty flow.FlowSetFactory,
-	data_launcher evaluatord_sdk.DataLauncher,
+	p NewMetathingsDevicedServiceParams,
 ) (pb.DevicedServiceServer, error) {
 	srv := &MetathingsDevicedService{
 		ErrorParser:     grpc_helper.NewErrorParser(em),
-		opt:             opt,
-		logger:          logger,
-		storage:         storage,
-		session_storage: session_storage,
-		simple_storage:  simple_storage,
-		desc_storage:    desc_storage,
-		authorizer:      authorizer,
-		validator:       validator,
-		tkvdr:           tkvdr,
-		cc:              cc,
-		tknr:            tknr,
-		cli_fty:         cli_fty,
-		flw_fty:         flw_fty,
-		flwst_fty:       flwst_fty,
-		data_launcher:   data_launcher,
+		opt:             p.Option,
+		logger:          p.Logger,
+		storage:         p.Storage,
+		session_storage: p.SessionStorage,
+		simple_storage:  p.SimpleStorage,
+		desc_storage:    p.DescStorage,
+		authorizer:      p.Authorizer,
+		validator:       p.Validator,
+		tkvdr:           p.TokenValidator,
+		cc:              p.ConnectionCenter,
+		tknr:            p.Tokner,
+		cli_fty:         p.ClientFactory,
+		flw_fty:         p.FlowFactory,
+		flwst_fty:       p.FlowSetFactory,
+		data_launcher:   p.DataLauncher,
+		quit_chan:       p.QuitChan,
 	}
-	srv.ServiceAuthFuncOverride = afo_helper.NewAuthFuncOverrider(tkvdr, srv, logger)
+	srv.ServiceAuthFuncOverride = afo_helper.NewAuthFuncOverrider(p.TokenValidator, srv, p.Logger)
+	go srv.HandleSignal()
 
 	return srv, nil
 }

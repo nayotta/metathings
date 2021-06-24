@@ -9,7 +9,11 @@ import (
 )
 
 var (
-	ErrModuleNotFound = errors.New("module not found")
+	ErrModuleNotFound              = errors.New("module not found")
+	ErrInitializeConnectionTimeout = errors.New("initialize connection timeout")
+	ErrConnectToSameNode           = errors.New("connect to same node")
+	ErrExistedConnection           = errors.New("existed connection")
+	ErrNoConnection                = errors.New("no connection")
 )
 
 var em = grpc_helper.ErrorMapping{

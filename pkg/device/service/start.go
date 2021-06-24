@@ -50,7 +50,6 @@ func (self *MetathingsDeviceServiceImpl) start() error {
 		return err
 	}
 
-	self.conn_stm_wg.Add(1)
 	go self.main_loop()
 	go self.heartbeat_loop()
 	go self.ping_loop()

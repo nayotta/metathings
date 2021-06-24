@@ -568,10 +568,6 @@ func (b *SodaModuleHttpBackend) Done() <-chan struct{} {
 	return b.done
 }
 
-func (b *SodaModuleHttpBackend) Health() error {
-	return nil
-}
-
 func NewSodaModuleHttpBackend(m *Module) (SodaModuleBackend, error) {
 	cfg := m.Kernel().Config()
 

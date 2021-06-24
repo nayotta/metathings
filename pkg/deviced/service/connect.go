@@ -17,7 +17,9 @@ func (self *MetathingsDevicedService) Connect(stream pb.DevicedService_ConnectSe
 	var conn connection.Connection
 	var err error
 
-	logger := self.get_logger()
+	logger := self.get_logger().WithFields(log.Fields{
+		"method": "Connect",
+	})
 
 	ctx := stream.Context()
 	if dev_s, err = self.get_device_by_context(ctx); err != nil {
@@ -27,7 +29,11 @@ func (self *MetathingsDevicedService) Connect(stream pb.DevicedService_ConnectSe
 
 	sess := grpc_helper.GetSessionFromContext(ctx)
 	defer func() {
-		if session_helper.IsMajorSession(sess) {
+		cnt, err := self.cc.CountConnections(stream.Context(), dev_s)
+		if err != nil {
+			logger.WithError(err).Warningf("failed to count connections")
+		}
+		if session_helper.IsMajorSession(sess) && cnt == 0 {
 			self.offline_device(ctx, *dev_s.Id)
 		}
 	}()
@@ -36,9 +42,9 @@ func (self *MetathingsDevicedService) Connect(stream pb.DevicedService_ConnectSe
 		"session": sess,
 		"device":  *dev_s.Id,
 		"kind":    *dev_s.Kind,
-		"name":    *dev_s.Name,
 	})
 
+	// TODO: limit max connections
 	if conn, err = self.cc.BuildConnection(stream.Context(), dev_s, stream); err != nil {
 		logger.WithError(err).Errorf("failed to build connection")
 		return status.Errorf(codes.Internal, err.Error())
