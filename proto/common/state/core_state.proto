@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 package ai.metathings.state;
+option go_package = "github.com/nayotta/metathings/proto/common/state";
 
 enum CoreState {
 	CORE_STATE_UNKNOWN = 0;

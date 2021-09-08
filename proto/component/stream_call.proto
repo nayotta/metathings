@@ -1,12 +1,10 @@
 syntax = "proto3";
 
 package ai.metathings.component;
-option go_package = "component";
+option go_package = "github.com/nayotta/metathings/proto/component";
 
 import "google/protobuf/wrappers.proto";
 import "google/protobuf/any.proto";
-
-import "validate/validate.proto";
 
 message StreamCallRequest {
 	oneof request {
@@ -16,11 +14,11 @@ message StreamCallRequest {
 }
 
 message StreamCallConfigRequest {
-	google.protobuf.StringValue method = 1 [(validate.rules).message.required = true];
+	google.protobuf.StringValue method = 1;
 }
 
 message StreamCallDataRequest {
-	google.protobuf.Any value = 1 [(validate.rules).any.required = true];
+	google.protobuf.Any value = 1;
 }
 
 message StreamCallResponse {

@@ -1,11 +1,10 @@
 syntax = "proto3";
 
 package ai.metathings.service.deviced;
-
-import "validate/validate.proto";
+option go_package = "github.com/nayotta/metathings/proto/deviced";
 
 import "model.proto";
 
 message SyncDeviceFirmwareDescriptorRequest {
-	OpDevice device = 1 [(validate.rules).message.required = true];
+	OpDevice device = 1;
 }

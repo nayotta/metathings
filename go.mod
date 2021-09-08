@@ -5,12 +5,14 @@ go 1.16
 require (
 	github.com/HdrHistogram/hdrhistogram-go v0.9.0 // indirect
 	github.com/avast/retry-go v2.6.0+incompatible
-	github.com/casbin/casbin-server v0.0.0-20200811160901-bfdd286caec7
+	github.com/casbin/casbin-server v0.0.0-20210722132617-2a171abd63ff
+	github.com/casbin/casbin/v2 v2.36.2 // indirect
+	github.com/casbin/gorm-adapter/v2 v2.1.0 // indirect
 	github.com/cavaliercoder/grab v2.0.0+incompatible
 	github.com/eclipse/paho.mqtt.golang v1.2.0
 	github.com/envoyproxy/protoc-gen-validate v0.1.0
 	github.com/go-redis/redis/v8 v8.0.0-beta.8
-	github.com/golang/protobuf v1.4.2
+	github.com/golang/protobuf v1.5.2
 	github.com/gorilla/mux v1.8.0
 	github.com/grpc-ecosystem/go-grpc-middleware v1.2.1
 	github.com/influxdata/influxdb-client-go/v2 v2.0.2-0.20200821070846-324827c077b3
@@ -18,6 +20,7 @@ require (
 	github.com/jhump/protoreflect v1.7.0
 	github.com/jinzhu/gorm v1.9.16
 	github.com/levigross/grequests v0.0.0-20190908174114-253788527a1a
+	github.com/lib/pq v1.10.3 // indirect
 	github.com/opentracing-contrib/go-gorilla v0.0.0-20190110000444-ced666783644
 	github.com/opentracing-contrib/go-stdlib v1.0.0
 	github.com/opentracing/opentracing-go v1.2.0
@@ -37,7 +40,11 @@ require (
 	go.uber.org/dig v1.10.0
 	go.uber.org/fx v1.13.1
 	golang.org/x/crypto v0.0.0-20200820211705-5c72a883971a
-	google.golang.org/grpc v1.31.1
+	golang.org/x/net v0.0.0-20210907225631-ff17edfbf26d // indirect
+	golang.org/x/sys v0.0.0-20210906170528-6f6e22806c34 // indirect
+	golang.org/x/text v0.3.7 // indirect
+	google.golang.org/genproto v0.0.0-20210903162649-d08c68adba83 // indirect
+	google.golang.org/grpc v1.40.0
 	google.golang.org/grpc/examples v0.0.0-20200924182952-21f897eab8af // indirect
 	gopkg.in/yaml.v2 v2.3.0
 )

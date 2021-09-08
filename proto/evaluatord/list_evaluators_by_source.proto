@@ -1,15 +1,12 @@
 syntax = "proto3";
 
 package ai.metathings.service.evaluatord;
+option go_package = "github.com/nayotta/metathings/proto/evaluatord";
 
-option go_package = "evaluatord";
-
-import "validate/validate.proto";
-
-import "model.proto";
+mport "model.proto";
 
 message ListEvaluatorsBySourceRequest {
-	OpResource source = 1 [(validate.rules).message.required = true];
+	OpResource source = 1;
 }
 
 message ListEvaluatorsBySourceResponse {

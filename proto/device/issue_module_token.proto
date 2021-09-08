@@ -1,19 +1,18 @@
 syntax = "proto3";
 
 package ai.metathings.service.device;
+option go_package = "github.com/nayotta/metathings/proto/device";
 
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/wrappers.proto";
 
-import "validate/validate.proto";
-
 import "github.com/nayotta/metathings/proto/identityd2/model.proto";
 
 message IssueModuleTokenRequest {
-	ai.metathings.service.identityd2.OpCredential credential = 1 [(validate.rules).message.required = true];
-	google.protobuf.Timestamp timestamp = 2 [(validate.rules).timestamp.required = true];
-	google.protobuf.Int64Value nonce = 3 [(validate.rules).message.required = true];
-	google.protobuf.StringValue hmac = 4 [(validate.rules).message.required = true];
+	ai.metathings.service.identityd2.OpCredential credential = 1;
+	google.protobuf.Timestamp timestamp = 2;
+	google.protobuf.Int64Value nonce = 3;
+	google.protobuf.StringValue hmac = 4;
 }
 
 message IssueModuleTokenResponse {

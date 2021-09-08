@@ -1,13 +1,12 @@
 syntax = "proto3";
 
 package ai.metathings.service.identityd2;
-
-import "validate/validate.proto";
+option go_package = "github.com/nayotta/metathings/proto/identityd2";
 
 import "model.proto";
 
 message PatchGroupRequest {
-	OpGroup group = 1 [(validate.rules).message.required = true];
+	OpGroup group = 1;
 }
 
 message PatchGroupResponse {
