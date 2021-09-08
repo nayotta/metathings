@@ -8,7 +8,6 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
 	storage "github.com/nayotta/metathings/pkg/evaluatord/storage"
 	identityd_validator "github.com/nayotta/metathings/pkg/identityd2/validator"
 	pb "github.com/nayotta/metathings/proto/evaluatord"
@@ -17,9 +16,9 @@ import (
 func (srv *MetathingsEvaluatordService) ValidateListTasksBySource(ctx context.Context, in interface{}) error {
 	return srv.validator.Validate(
 		identityd_validator.Providers{
-			func() (policy_helper.Validator, source_getter) {
+			func() source_getter {
 				req := in.(*pb.ListTasksBySourceRequest)
-				return req, req
+				return req
 			},
 		},
 		identityd_validator.Invokers{

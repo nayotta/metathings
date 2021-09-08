@@ -6,7 +6,6 @@ import (
 	"github.com/golang/protobuf/ptypes/empty"
 	log "github.com/sirupsen/logrus"
 
-	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
 	identityd_validator "github.com/nayotta/metathings/pkg/identityd2/validator"
 	pb "github.com/nayotta/metathings/proto/deviced"
 )
@@ -18,9 +17,9 @@ func (self *MetathingsDevicedService) AuthorizeSetDeviceFirmwareDescriptor(ctx c
 func (self *MetathingsDevicedService) ValidateSetDeviceFirmwareDescriptor(ctx context.Context, in interface{}) error {
 	return self.validator.Validate(
 		identityd_validator.Providers{
-			func() (policy_helper.Validator, device_getter, firmware_descriptor_getter) {
+			func() (device_getter, firmware_descriptor_getter) {
 				req := in.(*pb.SetDeviceFirmwareDescriptorRequest)
-				return req, req, req
+				return req, req
 			},
 		},
 		identityd_validator.Invokers{

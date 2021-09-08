@@ -1,14 +1,13 @@
 syntax = "proto3";
 
 package ai.metathings.service.evaluatord;
-option go_package = "evaluatord";
+option go_package = "github.com/nayotta/metathings/proto/evaluatord";
 
-import "validate/validate.proto";
 import "github.com/nayotta/metathings/proto/deviced/model.proto";
 
 import "model.proto";
 
 message AddConfigsToTimerRequest {
-	OpTimer timer = 1 [(validate.rules).message.required = true];
+	OpTimer timer = 1;
 	repeated ai.metathings.service.deviced.OpConfig configs = 2;
 }

@@ -11,7 +11,6 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
-	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
 	identityd_validator "github.com/nayotta/metathings/pkg/identityd2/validator"
 	"github.com/nayotta/metathings/proto/common/option/pagination"
 	deviced_pb "github.com/nayotta/metathings/proto/deviced"
@@ -22,9 +21,9 @@ import (
 func (srv *MetathingsEvaluatordService) ValidateQueryStorageByDevice(ctx context.Context, in interface{}) error {
 	return srv.validator.Validate(
 		identityd_validator.Providers{
-			func() (policy_helper.Validator, device_getter) {
+			func() device_getter {
 				req := in.(*pb.QueryStorageByDeviceRequest)
-				return req, req
+				return req
 			},
 		},
 		identityd_validator.Invokers{},

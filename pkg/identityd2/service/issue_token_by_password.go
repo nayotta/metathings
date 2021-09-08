@@ -18,11 +18,6 @@ func (self *MetathingsIdentitydService) IssueTokenByPassword(ctx context.Context
 	var ent_s *storage.Entity
 	var err error
 
-	if err = req.Validate(); err != nil {
-		self.logger.WithError(err).Warningf("failed to validate request data")
-		return nil, status.Errorf(codes.InvalidArgument, err.Error())
-	}
-
 	ent := req.GetEntity()
 
 	doms := ent.GetDomains()

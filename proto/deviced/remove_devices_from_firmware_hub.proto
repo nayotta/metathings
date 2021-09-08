@@ -1,12 +1,11 @@
 syntax = "proto3";
 
 package ai.metathings.service.deviced;
-
-import "validate/validate.proto";
+option go_package = "github.com/nayotta/metathings/proto/deviced";
 
 import "model.proto";
 
 message RemoveDevicesFromFirmwareHubRequest {
-	OpFirmwareHub firmware_hub = 1 [(validate.rules).message.required = true];
-	repeated OpDevice devices = 2 [(validate.rules).repeated = {min_items: 1}];
+	OpFirmwareHub firmware_hub = 1;
+	repeated OpDevice devices = 2;
 }

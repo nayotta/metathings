@@ -22,7 +22,7 @@ jobs:
         GOARCH: ${{ matrix.goarch }}
         CGO_ENABLED: 0
       run: |
-        go build -ldflags "-X=main.Version=${GIT_TAG_NAME}" -o metathingsd cmd/metathingsd/main.go
+        go build -ldflags "-X=main.Version=${GIT_TAG_NAME} -X=google.golang.org/protobuf/reflect/protoregistry.conflictPolicy=ignore" -o metathingsd cmd/metathingsd/main.go
         tar zcvf metathingsd.tar.gz metathingsd
     - name: Upload Metathingsd Asset
       uses: PeerXu/upload-asset@v1
@@ -54,7 +54,7 @@ jobs:
         GOARCH: ${{ matrix.goarch }}
         CGO_ENABLED: 0
       run: |
-        go build -ldflags "-X=main.Version=${GIT_TAG_NAME}" -o metathings cmd/metathings/main.go
+        go build -ldflags "-X=main.Version=${GIT_TAG_NAME} -X=google.golang.org/protobuf/reflect/protoregistry.conflictPolicy=ignore" -o metathings cmd/metathings/main.go
         tar zcvf metathings.tar.gz metathings
     - name: Upload Metathings Asset
       uses: PeerXu/upload-asset@v1

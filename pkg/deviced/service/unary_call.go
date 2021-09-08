@@ -5,7 +5,6 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
 	storage "github.com/nayotta/metathings/pkg/deviced/storage"
 	identityd_validator "github.com/nayotta/metathings/pkg/identityd2/validator"
 	pb "github.com/nayotta/metathings/proto/deviced"
@@ -14,9 +13,9 @@ import (
 func (self *MetathingsDevicedService) ValidateUnaryCall(ctx context.Context, in interface{}) error {
 	return self.validator.Validate(
 		identityd_validator.Providers{
-			func() (policy_helper.Validator, device_getter) {
+			func() device_getter {
 				req := in.(*pb.UnaryCallRequest)
-				return req, req
+				return req
 			},
 		},
 		identityd_validator.Invokers{

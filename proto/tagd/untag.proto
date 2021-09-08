@@ -1,13 +1,12 @@
 syntax = "proto3";
 
 package ai.metathings.service.tagd;
+option go_package = "github.com/nayotta/metathings/proto/tagd";
 
 import "google/protobuf/wrappers.proto";
 
-import "validate/validate.proto";
-
 message UntagRequest {
-	google.protobuf.StringValue id = 1 [(validate.rules).message.required = true];
+	google.protobuf.StringValue id = 1;
 	repeated google.protobuf.StringValue tags = 2;
-	google.protobuf.StringValue namespace = 3 [(validate.rules).message.required = true];
+	google.protobuf.StringValue namespace = 3;
 }

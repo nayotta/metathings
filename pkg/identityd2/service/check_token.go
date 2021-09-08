@@ -19,11 +19,6 @@ func (self *MetathingsIdentitydService) CheckToken(ctx context.Context, req *pb.
 	var tkn_s *storage.Token
 	var err error
 
-	if err = req.Validate(); err != nil {
-		self.logger.WithError(err).Warningf("failed to validate request data")
-		return nil, status.Errorf(codes.InvalidArgument, err.Error())
-	}
-
 	tkn := req.GetToken()
 	if dom_id_str = tkn.GetDomain().GetId().GetValue(); dom_id_str == "" {
 		err = errors.New("token.domain.id is empty")

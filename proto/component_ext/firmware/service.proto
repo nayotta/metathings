@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 package ai.metathings.component.ext.firmware;
-option go_package = "component_ext_firmware";
+option go_package = "github.com/nayotta/metathings/proto/component_ext/firmware";
 
 import "google/protobuf/empty.proto";
 

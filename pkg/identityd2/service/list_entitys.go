@@ -13,11 +13,6 @@ import (
 func (self *MetathingsIdentitydService) ListEntities(ctx context.Context, req *pb.ListEntitiesRequest) (*pb.ListEntitiesResponse, error) {
 	var err error
 
-	if err = req.Validate(); err != nil {
-		self.logger.WithError(err).Warningf("failed to validate request data")
-		return nil, status.Errorf(codes.InvalidArgument, err.Error())
-	}
-
 	ent_req := req.GetEntity()
 	ent := &storage.Entity{}
 

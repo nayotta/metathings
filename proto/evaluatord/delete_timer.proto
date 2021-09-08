@@ -1,13 +1,10 @@
 syntax = "proto3";
 
 package ai.metathings.service.evaluatord;
-
-option go_package = "evaluatord";
-
-import "validate/validate.proto";
+option go_package = "github.com/nayotta/metathings/proto/evaluatord";
 
 import "model.proto";
 
 message DeleteTimerRequest {
-	OpTimer timer = 1 [(validate.rules).message.required = true];
+	OpTimer timer = 1;
 }

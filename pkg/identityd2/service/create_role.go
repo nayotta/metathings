@@ -8,7 +8,6 @@ import (
 	"google.golang.org/grpc/status"
 
 	id_helper "github.com/nayotta/metathings/pkg/common/id"
-	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
 	pb_helper "github.com/nayotta/metathings/pkg/common/protobuf"
 	storage "github.com/nayotta/metathings/pkg/identityd2/storage"
 	identityd_validator "github.com/nayotta/metathings/pkg/identityd2/validator"
@@ -18,9 +17,9 @@ import (
 func (self *MetathingsIdentitydService) ValidateCreateRole(ctx context.Context, in interface{}) error {
 	return self.validator.Validate(
 		identityd_validator.Providers{
-			func() (policy_helper.Validator, role_getter) {
+			func() role_getter {
 				req := in.(*pb.CreateRoleRequest)
-				return req, req
+				return req
 			},
 		},
 		identityd_validator.Invokers{

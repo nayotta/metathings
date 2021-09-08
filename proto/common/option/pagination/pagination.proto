@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 package ai.metathings.common.option.pagination;
-option go_package = "pagination";
+option go_package = "github.com/nayotta/metathings/proto/common/option/pagination";
 
 import "google/protobuf/wrappers.proto";
 

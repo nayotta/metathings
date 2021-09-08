@@ -6,7 +6,6 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
 	storage "github.com/nayotta/metathings/pkg/deviced/storage"
 	identityd_validator "github.com/nayotta/metathings/pkg/identityd2/validator"
 	pb "github.com/nayotta/metathings/proto/deviced"
@@ -15,9 +14,9 @@ import (
 func (self *MetathingsDevicedService) ValidateListConfigsByDevice(ctx context.Context, in interface{}) error {
 	return self.validator.Validate(
 		identityd_validator.Providers{
-			func() (policy_helper.Validator, device_getter) {
+			func() device_getter {
 				req := in.(*pb.ListConfigsByDeviceRequest)
-				return req, req
+				return req
 			},
 		},
 		identityd_validator.Invokers{

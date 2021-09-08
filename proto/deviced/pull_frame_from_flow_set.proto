@@ -1,10 +1,9 @@
 syntax = "proto3";
 
 package ai.metathings.service.deviced;
+option go_package = "github.com/nayotta/metathings/proto/deviced";
 
 import "google/protobuf/wrappers.proto";
-
-import "validate/validate.proto";
 
 import "model.proto";
 
@@ -14,7 +13,7 @@ message PullFrameFromFlowSetRequest {
 		google.protobuf.BoolValue config_ack = 2;
 	}
 
-	google.protobuf.StringValue id = 1 [(validate.rules).message.required = true];
+	google.protobuf.StringValue id = 1;
 	oneof request {
 		Config config = 2;
 	}

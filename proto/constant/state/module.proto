@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 package ai.metathings.constant.state;
-option go_package = "constant";
+option go_package = "github.com/nayotta/metathings/proto/constant/state";
 
 enum ModuleState {
 	MODULE_STATE_UNKNOWN = 0;
