@@ -8,7 +8,6 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
 	identityd_validator "github.com/nayotta/metathings/pkg/identityd2/validator"
 	pb "github.com/nayotta/metathings/proto/identityd2"
 )
@@ -16,9 +15,9 @@ import (
 func (self *MetathingsIdentitydService) ValidateAddRoleToGroup(ctx context.Context, in interface{}) error {
 	return self.validator.Validate(
 		identityd_validator.Providers{
-			func() (policy_helper.Validator, group_getter, role_getter) {
+			func() (group_getter, role_getter) {
 				req := in.(*pb.AddRoleToGroupRequest)
-				return req, req, req
+				return req, req
 			},
 		},
 		identityd_validator.Invokers{

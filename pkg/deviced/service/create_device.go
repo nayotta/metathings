@@ -10,7 +10,6 @@ import (
 
 	context_helper "github.com/nayotta/metathings/pkg/common/context"
 	id_helper "github.com/nayotta/metathings/pkg/common/id"
-	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
 	pb_helper "github.com/nayotta/metathings/pkg/common/protobuf"
 	deviced_helper "github.com/nayotta/metathings/pkg/deviced/helper"
 	storage "github.com/nayotta/metathings/pkg/deviced/storage"
@@ -24,9 +23,9 @@ import (
 func (self *MetathingsDevicedService) ValidateCreateDevice(ctx context.Context, in interface{}) error {
 	return self.validator.Validate(
 		identityd_validator.Providers{
-			func() (policy_helper.Validator, device_getter) {
+			func() device_getter {
 				req := in.(*pb.CreateDeviceRequest)
-				return req, req
+				return req
 			},
 		},
 		identityd_validator.Invokers{

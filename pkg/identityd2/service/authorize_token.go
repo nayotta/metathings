@@ -9,7 +9,6 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
 	policy "github.com/nayotta/metathings/pkg/identityd2/policy"
 	storage "github.com/nayotta/metathings/pkg/identityd2/storage"
 	identityd_validator "github.com/nayotta/metathings/pkg/identityd2/validator"
@@ -19,9 +18,9 @@ import (
 func (self *MetathingsIdentitydService) ValidateAuthorizeToken(ctx context.Context, in interface{}) error {
 	return self.validator.Validate(
 		identityd_validator.Providers{
-			func() (policy_helper.Validator, object_getter, action_getter) {
+			func() (object_getter, action_getter) {
 				req := in.(*pb.AuthorizeTokenRequest)
-				return req, req, req
+				return req, req
 			},
 		},
 		identityd_validator.Invokers{

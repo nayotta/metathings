@@ -7,7 +7,6 @@ import (
 	"google.golang.org/grpc/status"
 
 	passwd_helper "github.com/nayotta/metathings/pkg/common/passwd"
-	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
 	pb_helper "github.com/nayotta/metathings/pkg/common/protobuf"
 	storage "github.com/nayotta/metathings/pkg/identityd2/storage"
 	identityd_validator "github.com/nayotta/metathings/pkg/identityd2/validator"
@@ -17,9 +16,9 @@ import (
 func (self *MetathingsIdentitydService) ValidatePatchEntity(ctx context.Context, in interface{}) error {
 	return self.validator.Validate(
 		identityd_validator.Providers{
-			func() (policy_helper.Validator, entity_getter) {
+			func() entity_getter {
 				req := in.(*pb.PatchEntityRequest)
-				return req, req
+				return req
 			},
 		},
 		identityd_validator.Invokers{

@@ -13,11 +13,6 @@ import (
 func (self *MetathingsIdentitydService) ListCredentials(ctx context.Context, req *pb.ListCredentialsRequest) (*pb.ListCredentialsResponse, error) {
 	var err error
 
-	if err = req.Validate(); err != nil {
-		self.logger.WithError(err).Warningf("failed to validate request data")
-		return nil, status.Errorf(codes.InvalidArgument, err.Error())
-	}
-
 	cred_req := req.GetCredential()
 	cred := &storage.Credential{}
 

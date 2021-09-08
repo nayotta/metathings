@@ -17,11 +17,6 @@ func (self *MetathingsIdentitydService) IssueTokenByToken(ctx context.Context, r
 	var tkn_s *storage.Token
 	var err error
 
-	if err = req.Validate(); err != nil {
-		self.logger.WithError(err).Warningf("failed to validate request data")
-		return nil, status.Errorf(codes.InvalidArgument, err.Error())
-	}
-
 	tkn_req := req.GetToken()
 	dom := tkn_req.GetDomain()
 	if dom == nil || dom.GetId() == nil {

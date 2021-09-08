@@ -50,11 +50,6 @@ func (self *MetathingsIdentitydService) ValidateToken(ctx context.Context, req *
 	var tkn_s *storage.Token
 	var err error
 
-	if err = req.Validate(); err != nil {
-		self.logger.WithError(err).Warningf("failed to validate request data")
-		return nil, status.Errorf(codes.InvalidArgument, err.Error())
-	}
-
 	tkn := req.GetToken()
 	if tkn_s, err = self.validate_token(ctx, tkn); err != nil {
 		return nil, err
