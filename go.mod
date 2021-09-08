@@ -10,7 +10,6 @@ require (
 	github.com/casbin/gorm-adapter/v2 v2.1.0 // indirect
 	github.com/cavaliercoder/grab v2.0.0+incompatible
 	github.com/eclipse/paho.mqtt.golang v1.2.0
-	github.com/envoyproxy/protoc-gen-validate v0.1.0
 	github.com/go-redis/redis/v8 v8.0.0-beta.8
 	github.com/golang/protobuf v1.5.2
 	github.com/gorilla/mux v1.8.0
@@ -46,5 +45,6 @@ require (
 	google.golang.org/genproto v0.0.0-20210903162649-d08c68adba83 // indirect
 	google.golang.org/grpc v1.40.0
 	google.golang.org/grpc/examples v0.0.0-20200924182952-21f897eab8af // indirect
+	google.golang.org/protobuf v1.27.1
 	gopkg.in/yaml.v2 v2.3.0
 )
