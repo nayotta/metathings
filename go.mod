@@ -5,9 +5,7 @@ go 1.16
 require (
 	github.com/HdrHistogram/hdrhistogram-go v0.9.0 // indirect
 	github.com/avast/retry-go v2.6.0+incompatible
-	github.com/casbin/casbin-server v0.0.0-20210722132617-2a171abd63ff
-	github.com/casbin/casbin/v2 v2.36.2 // indirect
-	github.com/casbin/gorm-adapter/v2 v2.1.0 // indirect
+	github.com/casbin/casbin-server v0.0.0-20200811160901-bfdd286caec7
 	github.com/cavaliercoder/grab v2.0.0+incompatible
 	github.com/eclipse/paho.mqtt.golang v1.2.0
 	github.com/go-redis/redis/v8 v8.0.0-beta.8
