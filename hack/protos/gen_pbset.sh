@@ -1,5 +1,6 @@
 #! /bin/bash
 
+export GOPATH=/go
 cd ${GOPATH}/src/github.com/nayotta/metathings
 
 for src in $(find proto -name "*.proto" -exec bash -c 'dirname {}' \; | sort | uniq); do
@@ -11,9 +12,8 @@ for src in $(find proto -name "*.proto" -exec bash -c 'dirname {}' \; | sort | u
 
     protoc \
         -I${src} \
-        -I${GOPATH}/src/github.com/nayotta/metathings/vendor \
-        -I${GOPATH}/src/github.com/envoyproxy/protoc-gen-validate \
         -I${GOPATH}/src \
+        -I${GOPATH}/src/github.com/nayotta/metathings/vendor \
         --include_imports \
         --descriptor_set_out=${dst}/service.pbset \
         $(ls ${src}/*.proto)
