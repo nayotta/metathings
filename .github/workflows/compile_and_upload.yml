@@ -40,7 +40,7 @@ jobs:
         goarch: ["amd64", "arm", "arm64"]
         exclude:
         - goos: darwin
-          goarch: arm64
+          goarch: arm
     steps:
     - uses: actions/checkout@master
     - uses: actions/setup-go@v2
