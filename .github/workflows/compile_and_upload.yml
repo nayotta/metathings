@@ -26,7 +26,7 @@ jobs:
         CGO_ENABLED: 0
       run: |
         go build -ldflags "-X=main.Version=${GIT_TAG_NAME} -X=google.golang.org/protobuf/reflect/protoregistry.conflictPolicy=ignore" -o metathingsd cmd/metathingsd/main.go
-        NAME="metathingsd_${GIT_TAG_NAME}_${GOARCH}_${GOOS}.tar.gz"
+        NAME="metathingsd_${GIT_TAG_NAME}_${GOOS}_${GOARCH}.tar.gz"
         tar zcvf ${NAME} metathingsd
         sha1sum ${NAME} > ${NAME}.sha1
     - name: Upload Metathingsd Asset
@@ -60,7 +60,7 @@ jobs:
         CGO_ENABLED: 0
       run: |
         go build -ldflags "-X=main.Version=${GIT_TAG_NAME} -X=google.golang.org/protobuf/reflect/protoregistry.conflictPolicy=ignore" -o metathings cmd/metathings/main.go
-        NAME="metathings_${GIT_TAG_NAME}_${GOARCH}_${GOOS}.tar.gz"
+        NAME="metathings_${GIT_TAG_NAME}_${GOOS}_${GOARCH}.tar.gz"
         tar zcvf ${NAME} metathings
         sha1sum ${NAME} > ${NAME}.sha1
     - name: Upload Metathings Asset
