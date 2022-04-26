@@ -30,7 +30,7 @@ require (
 	github.com/stretchr/testify v1.6.1
 	github.com/uber/jaeger-client-go v2.25.0+incompatible
 	github.com/yuin/gopher-lua v0.0.0-20200816102855-ee81675732da
-	go.mongodb.org/mongo-driver v1.4.0
+	go.mongodb.org/mongo-driver v1.5.1
 	go.uber.org/dig v1.10.0
 	go.uber.org/fx v1.13.1
 	golang.org/x/crypto v0.0.0-20200820211705-5c72a883971a
@@ -43,7 +43,7 @@ require (
 	github.com/BurntSushi/toml v0.3.1 // indirect
 	github.com/HdrHistogram/hdrhistogram-go v0.9.0 // indirect
 	github.com/Knetic/govaluate v3.0.1-0.20171022003610-9aa49832a739+incompatible // indirect
-	github.com/aws/aws-sdk-go v1.29.15 // indirect
+	github.com/aws/aws-sdk-go v1.34.28 // indirect
 	github.com/casbin/casbin/v2 v2.36.2 // indirect
 	github.com/casbin/gorm-adapter/v2 v2.1.0 // indirect
 	github.com/cespare/xxhash/v2 v2.1.1 // indirect
@@ -58,7 +58,7 @@ require (
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/influxdata/line-protocol v0.0.0-20200327222509-2487e7298839 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
-	github.com/jmespath/go-jmespath v0.0.0-20180206201540-c2b33e8439af // indirect
+	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/klauspost/compress v1.9.5 // indirect
 	github.com/konsorten/go-windows-terminal-sequences v1.0.3 // indirect
 	github.com/labstack/echo/v4 v4.1.11 // indirect
@@ -69,7 +69,7 @@ require (
 	github.com/mattn/go-isatty v0.0.10 // indirect
 	github.com/mattn/go-sqlite3 v2.0.1+incompatible // indirect
 	github.com/mitchellh/mapstructure v1.1.2 // indirect
-	github.com/pelletier/go-toml v1.4.0 // indirect
+	github.com/pelletier/go-toml v1.7.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/spf13/afero v1.1.2 // indirect
@@ -78,8 +78,10 @@ require (
 	github.com/uber/jaeger-lib v2.3.0+incompatible // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.1.0 // indirect
-	github.com/xdg/scram v0.0.0-20180814205039-7eeb5667e42c // indirect
-	github.com/xdg/stringprep v0.0.0-20180714160509-73f8eece6fdc // indirect
+	github.com/xdg-go/pbkdf2 v1.0.0 // indirect
+	github.com/xdg-go/scram v1.0.2 // indirect
+	github.com/xdg-go/stringprep v1.0.2 // indirect
+	github.com/youmark/pkcs8 v0.0.0-20181117223130-1be2e3e5546d // indirect
 	go.opentelemetry.io/otel v0.10.0 // indirect
 	go.uber.org/atomic v1.5.0 // indirect
 	go.uber.org/multierr v1.4.0 // indirect
