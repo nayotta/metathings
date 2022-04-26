@@ -10,7 +10,6 @@ import (
 	"google.golang.org/grpc/status"
 
 	passwd_helper "github.com/nayotta/metathings/pkg/common/passwd"
-	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
 	pb_helper "github.com/nayotta/metathings/pkg/common/protobuf"
 	policy "github.com/nayotta/metathings/pkg/identityd2/policy"
 	storage "github.com/nayotta/metathings/pkg/identityd2/storage"
@@ -21,9 +20,9 @@ import (
 func (self *MetathingsIdentitydService) ValidateIssueTokenByCredential(ctx context.Context, in interface{}) error {
 	return self.validator.Validate(
 		identityd_validator.Providers{
-			func() (policy_helper.Validator, credential_getter, *pb.IssueTokenByCredentialRequest) {
+			func() (credential_getter, *pb.IssueTokenByCredentialRequest) {
 				req := in.(*pb.IssueTokenByCredentialRequest)
-				return req, req, req
+				return req, req
 			},
 		},
 		identityd_validator.Invokers{

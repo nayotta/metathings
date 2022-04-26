@@ -1,10 +1,9 @@
 syntax = "proto3";
 
 package ai.metathings.service.deviced;
+option go_package = "github.com/nayotta/metathings/proto/deviced";
 
 import "google/protobuf/wrappers.proto";
-
-import "validate/validate.proto";
 
 import "model.proto";
 
@@ -25,8 +24,8 @@ message ConnectResponse {
 }
 
 message ConnectRequest {
-	google.protobuf.Int64Value session_id = 1 [(validate.rules).message.required = true];
-	ConnectMessageKind kind = 2 [(validate.rules).enum.defined_only = true];
+	google.protobuf.Int64Value session_id = 1;
+	ConnectMessageKind kind = 2;
 	oneof union {
 		OpUnaryCallValue unary_call = 3;
 		OpStreamCallValue stream_call = 4;

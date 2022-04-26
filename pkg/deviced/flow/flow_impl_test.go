@@ -60,9 +60,6 @@ func (s *FlowImplTestSuite) SetupTest() {
 	s.Nil(err)
 	s.flow = flw.(*flow)
 
-	// clean up database
-	s.Nil(s.flow.mgo_db.Drop(s.flow.context()))
-
 	// insert prepared data
 	s.push_at = time.Now()
 	var dat struct_.Struct

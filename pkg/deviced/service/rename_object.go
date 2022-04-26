@@ -8,7 +8,6 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
 	identityd_validator "github.com/nayotta/metathings/pkg/identityd2/validator"
 	pb "github.com/nayotta/metathings/proto/deviced"
 )
@@ -27,9 +26,9 @@ func (self *MetathingsDevicedService) ValidateRenameObject(ctx context.Context, 
 
 	return self.validator.Validate(
 		identityd_validator.Providers{
-			func() (policy_helper.Validator, source_getter, destination_getter) {
+			func() (source_getter, destination_getter) {
 				req := in.(*pb.RenameObjectRequest)
-				return req, req, req
+				return req, req
 			},
 		},
 		identityd_validator.Invokers{

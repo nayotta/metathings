@@ -1,25 +1,23 @@
 syntax = "proto3";
 
 package ai.metathings.service.evaluatord;
-
-option go_package = "evaluatord";
+option go_package = "github.com/nayotta/metathings/proto/evaluatord";
 
 import "google/protobuf/wrappers.proto";
 import "google/protobuf/timestamp.proto";
 
-import "validate/validate.proto";
 import "github.com/nayotta/metathings/proto/deviced/model.proto";
 import "github.com/nayotta/metathings/proto/common/option/pagination/pagination.proto";
 
 import "model.proto";
 
 message QueryStorageByDeviceRequest {
-  ai.metathings.service.deviced.OpDevice device = 1 [(validate.rules).message.required = true];
-  OpResource source = 2 [(validate.rules).message.required = true];
-  google.protobuf.StringValue measurement = 3 [(validate.rules).message.required = true];
+  ai.metathings.service.deviced.OpDevice device = 1;
+  OpResource source = 2;
+  google.protobuf.StringValue measurement = 3;
   google.protobuf.Timestamp range_from = 4;
   google.protobuf.Timestamp range_to = 5;
-  google.protobuf.StringValue query_string = 6 [(validate.rules).message.required = true];
+  google.protobuf.StringValue query_string = 6;
   
   ai.metathings.common.option.pagination.OpPaginationOption pagination = 33;
 }

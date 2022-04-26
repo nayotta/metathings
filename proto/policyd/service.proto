@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 package ai.metathings.service.policyd;
-option go_package = "policyd";
+option go_package = "github.com/nayotta/metathings/proto/policyd";
 
 import "github.com/casbin/casbin-server/proto/casbin.proto";
 

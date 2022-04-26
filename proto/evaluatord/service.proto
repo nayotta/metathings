@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 package ai.metathings.service.evaluatord;
-option go_package = "evaluatord";
+option go_package = "github.com/nayotta/metathings/proto/evaluatord";
 
 import "google/protobuf/empty.proto";
 

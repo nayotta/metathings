@@ -10,7 +10,6 @@ import (
 
 	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
 	id_helper "github.com/nayotta/metathings/pkg/common/id"
-	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
 	flow "github.com/nayotta/metathings/pkg/deviced/flow"
 	identityd_validator "github.com/nayotta/metathings/pkg/identityd2/validator"
 	pb "github.com/nayotta/metathings/proto/deviced"
@@ -20,9 +19,9 @@ import (
 func (self *MetathingsDevicedService) ValidatePushFrameToFlowOnce(ctx context.Context, in interface{}) error {
 	return self.validator.Validate(
 		identityd_validator.Providers{
-			func() (policy_helper.Validator, device_getter) {
+			func() device_getter {
 				req := in.(*pb.PushFrameToFlowOnceRequest)
-				return req, req
+				return req
 			},
 		},
 		identityd_validator.Invokers{ensure_get_device_id},

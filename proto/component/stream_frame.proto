@@ -1,12 +1,10 @@
 syntax = "proto3";
 
 package ai.metathings.component;
-option go_package = "component";
+option go_package = "github.com/nayotta/metathings/proto/component";
 
 import "google/protobuf/wrappers.proto";
 import "google/protobuf/any.proto";
-
-import "validate/validate.proto";
 
 enum StreamFrameKind {
 	STREAM_FRAME_KIND_UNKNOWN = 0;
@@ -38,9 +36,9 @@ message OpStreamCallExit {}
 message StreamCallExit {}
 
 message OpUnaryCallValue {
-	google.protobuf.Int64Value session = 1 [(validate.rules).message.required = true];
-	google.protobuf.StringValue method = 2 [(validate.rules).message.required = true];
-	google.protobuf.Any value = 3 [(validate.rules).any.required = true];
+	google.protobuf.Int64Value session = 1;
+	google.protobuf.StringValue method = 2;
+	google.protobuf.Any value = 3;
 }
 
 message UnaryCallValue {
@@ -82,7 +80,7 @@ message UpStreamFrame {
 }
 
 message DownStreamFrame {
-	StreamFrameKind kind = 1 [(validate.rules).enum.defined_only = true];
+	StreamFrameKind kind = 1;
 	oneof union {
 		OpUnaryCallValue unary_call = 2;
 		OpStreamCallValue stream_call = 3;

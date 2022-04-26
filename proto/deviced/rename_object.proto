@@ -1,13 +1,11 @@
 syntax = "proto3";
 
 package ai.metathings.service.deviced;
-option go_package = "deviced";
-
-import "validate/validate.proto";
+option go_package = "github.com/nayotta/metathings/proto/deviced";
 
 import "model.proto";
 
 message RenameObjectRequest {
-	OpObject source = 1 [(validate.rules).message.required = true];
-	OpObject destination = 2 [(validate.rules).message.required = true];
+	OpObject source = 1;
+	OpObject destination = 2;
 }

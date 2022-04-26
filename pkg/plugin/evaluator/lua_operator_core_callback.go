@@ -54,7 +54,7 @@ func (cb *luaMetathingsCoreCallback) luaEmit(L *lua.LState) int {
 	dat := parse_ltable_to_string_map(dat_tb)
 
 	if err := c.Emit(dat, cb.opt.Tags); err != nil {
-		L.RaiseError("failed to emit callback data")
+		L.RaiseError("failed to emit callback data: %v", err)
 		return 0
 	}
 

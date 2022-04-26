@@ -1,12 +1,11 @@
 syntax = "proto3";
 
 package ai.metathings.service.identityd2;
-
-import "validate/validate.proto";
+option go_package = "github.com/nayotta/metathings/proto/identityd2";
 
 import "model.proto";
 
 message AddActionToRoleRequest {
-	OpAction action = 1 [(validate.rules).message.required = true];
-	OpRole role = 2 [(validate.rules).message.required = true];
+	OpAction action = 1;
+	OpRole role = 2;
 }

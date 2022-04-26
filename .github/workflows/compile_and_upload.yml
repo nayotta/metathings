@@ -5,35 +5,38 @@ on:
 
 jobs:
   compile-metathingsd-and-upload-asset:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     strategy:
       matrix:
         goos: ["linux", "darwin"]
-        goarch: ["amd64"]
+        goarch: ["amd64", "arm64"]
     steps:
     - uses: actions/checkout@master
     - uses: actions/setup-go@v2
       with:
-        go-version: "1.16"
+        go-version: "1.18"
     - uses: little-core-labs/get-git-tag@v3.0.1
+      id: tagName
+      with:
+        tagRegex: "v(.*)"
     - name: Compile Metathingsd Binary
       env:
         GOOS: ${{ matrix.goos }}
         GOARCH: ${{ matrix.goarch }}
         CGO_ENABLED: 0
       run: |
-        go build -ldflags "-X=main.Version=${GIT_TAG_NAME}" -o metathingsd cmd/metathingsd/main.go
-        tar zcvf metathingsd.tar.gz metathingsd
+        go build -ldflags "-X=main.Version=${GIT_TAG_NAME} -X=google.golang.org/protobuf/reflect/protoregistry.conflictPolicy=ignore" -o metathingsd cmd/metathingsd/main.go
+        NAME="metathingsd_${GIT_TAG_NAME}_${GOOS}_${GOARCH}.tar.gz"
+        tar zcvf ${NAME} metathingsd
+        sha1sum ${NAME} > ${NAME}.sha1
     - name: Upload Metathingsd Asset
-      uses: PeerXu/upload-asset@v1
+      uses: softprops/action-gh-release@v1
       with:
-        file: metathingsd.tar.gz
-        os: ${{ matrix.goos }}
-        arch: ${{ matrix.goarch }}
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        files: |
+          *.tar.gz
+          *.sha1
   compile-metathings-and-upload-asset:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     strategy:
       matrix:
         goos: ["linux", "darwin"]
@@ -41,36 +44,42 @@ jobs:
         exclude:
         - goos: darwin
           goarch: arm
-        - goos: darwin
-          goarch: arm64
     steps:
     - uses: actions/checkout@master
     - uses: actions/setup-go@v2
       with:
-        go-version: "1.16"
+        go-version: "1.18"
+    - uses: little-core-labs/get-git-tag@v3.0.1
+      id: tagName
+      with:
+        tagRegex: "v(.*)"
     - name: Compile Metathings Binary
       env:
         GOOS: ${{ matrix.goos }}
         GOARCH: ${{ matrix.goarch }}
         CGO_ENABLED: 0
       run: |
-        go build -ldflags "-X=main.Version=${GIT_TAG_NAME}" -o metathings cmd/metathings/main.go
-        tar zcvf metathings.tar.gz metathings
+        go build -ldflags "-X=main.Version=${GIT_TAG_NAME} -X=google.golang.org/protobuf/reflect/protoregistry.conflictPolicy=ignore" -o metathings cmd/metathings/main.go
+        NAME="metathings_${GIT_TAG_NAME}_${GOOS}_${GOARCH}.tar.gz"
+        tar zcvf ${NAME} metathings
+        sha1sum ${NAME} > ${NAME}.sha1
     - name: Upload Metathings Asset
-      uses: PeerXu/upload-asset@v1
+      uses: softprops/action-gh-release@v1
       with:
-        file: metathings.tar.gz
-        os: ${{ matrix.goos }}
-        arch: ${{ matrix.goarch }}
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        files: |
+          *.tar.gz
+          *.sha1
   pack-evaluator-plugin-and-upload-asset:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
     - uses: actions/checkout@master
     - uses: actions/setup-go@v2
       with:
-        go-version: "1.16"
+        go-version: "1.18"
+    - uses: little-core-labs/get-git-tag@v3.0.1
+      id: tagName
+      with:
+        tagRegex: "v(.*)"
     - name: Install Zip
       run: |
         sudo apt install -y zip
@@ -79,10 +88,12 @@ jobs:
         GO111MODULE: "on"
       run: |
         contrib/evaluator_plugin/pack_fission_package.sh
+        NAME="evaluator_plugin_${GIT_TAG_NAME}.zip"
+        mv evaluator_plugin.zip ${NAME}
+        sha1sum ${NAME} > ${NAME}.sha1
     - name: Upload Evaluator Plugin Package Asset
-      uses: PeerXu/upload-asset@v1
+      uses: softprops/action-gh-release@v1
       with:
-        file: evaluator_plugin.zip
-        suffix: ".zip"
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        files: |
+          *.zip
+          *.sha1

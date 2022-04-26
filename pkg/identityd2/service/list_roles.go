@@ -13,11 +13,6 @@ import (
 func (self *MetathingsIdentitydService) ListRoles(ctx context.Context, req *pb.ListRolesRequest) (*pb.ListRolesResponse, error) {
 	var err error
 
-	if err = req.Validate(); err != nil {
-		self.logger.WithError(err).Warningf("failed to validate request data")
-		return nil, status.Errorf(codes.InvalidArgument, err.Error())
-	}
-
 	role_req := req.GetRole()
 	rol := &storage.Role{}
 

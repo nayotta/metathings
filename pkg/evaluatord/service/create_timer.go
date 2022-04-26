@@ -7,7 +7,6 @@ import (
 	"google.golang.org/grpc/status"
 
 	id_helper "github.com/nayotta/metathings/pkg/common/id"
-	policy_helper "github.com/nayotta/metathings/pkg/common/policy"
 	storage "github.com/nayotta/metathings/pkg/evaluatord/storage"
 	timer "github.com/nayotta/metathings/pkg/evaluatord/timer"
 	identityd_validator "github.com/nayotta/metathings/pkg/identityd2/validator"
@@ -17,9 +16,9 @@ import (
 func (srv *MetathingsEvaluatordService) ValidateCreateTimer(ctx context.Context, in interface{}) error {
 	return srv.validator.Validate(
 		identityd_validator.Providers{
-			func() (policy_helper.Validator, timer_getter) {
+			func() timer_getter {
 				req := in.(*pb.CreateTimerRequest)
-				return req, req
+				return req
 			},
 		},
 		identityd_validator.Invokers{

@@ -1,3 +1,4 @@
 syntax = "proto3";
 
 package ai.metathings.service.identityd2;
+option go_package = "github.com/nayotta/metathings/proto/identityd2";

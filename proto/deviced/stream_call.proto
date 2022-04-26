@@ -1,15 +1,13 @@
 syntax = "proto3";
 
 package ai.metathings.service.deviced;
-option go_package = "deviced";
-
-import "validate/validate.proto";
+option go_package = "github.com/nayotta/metathings/proto/deviced";
 
 import "model.proto";
 
 message StreamCallRequest {
-	OpDevice device = 1 [(validate.rules).message.required = true];
-	OpStreamCallValue value = 2 [(validate.rules).message.required = true];
+	OpDevice device = 1;
+	OpStreamCallValue value = 2;
 }
 
 message StreamCallResponse {
