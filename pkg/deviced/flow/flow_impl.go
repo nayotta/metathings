@@ -49,8 +49,8 @@ type flow struct {
 	opt    *flowOption
 	logger log.FieldLogger
 
-	mongo_database string
-	mgo_pool       pool_helper.Pool
+	mgo_pool     pool_helper.Pool
+	mgo_database string
 
 	rs_pool   pool_helper.Pool
 	rs_getter func() (client_helper.RedisClient, error)
@@ -69,7 +69,7 @@ func (f *flow) mongo_collection() (*mongo.Collection, func() error, error) {
 	}
 
 	mgo_cli := cli.(*mongo_helper.MongoClientWrapper)
-	mgo_db := mgo_cli.Database(f.mongo_database)
+	mgo_db := mgo_cli.Database(f.mgo_database)
 
 	return mgo_db.Collection("mtflw." + f.Id()), func() error { return f.mgo_pool.Put(cli) }, nil
 }
@@ -411,11 +411,12 @@ func (ff *flowFactory) New(opt *FlowOption) (Flow, error) {
 	}
 
 	return &flow{
-		opt:       newFlowOption(opt),
-		mgo_pool:  ff.mongo_pool,
-		rs_pool:   ff.redis_stream_pool,
-		rs_getter: ff.get_alive_redis_stream_client,
-		logger:    ff.logger,
+		opt:          newFlowOption(opt),
+		mgo_database: ff.opt.MongoDatabase,
+		mgo_pool:     ff.mongo_pool,
+		rs_pool:      ff.redis_stream_pool,
+		rs_getter:    ff.get_alive_redis_stream_client,
+		logger:       ff.logger,
 		close_cbs: []func() error{
 			func() error {
 				return ff.redis_stream_pool.Put(rs_cli)
