@@ -22,7 +22,7 @@ fi
 
 cd ${srcDir}
 
-LDFLAGS="-X main.FissionConfigName=evaluator-plugin-config/evaluator-plugin.yaml"
+LDFLAGS="-X main.FissionConfigName=evaluator-plugin-config/evaluator-plugin.yaml -X=google.golang.org/protobuf/reflect/protoregistry.conflictPolicy=ignore"
 
 # use vendor mode if the vendor dir exists when go version is greater
 # than 1.12 (the version that fission started to support go module).

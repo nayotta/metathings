@@ -49,8 +49,11 @@ type flow struct {
 	opt    *flowOption
 	logger log.FieldLogger
 
-	mgo_db *mongo.Database
-	rs_cli client_helper.RedisClient
+	mongo_database string
+	mgo_pool       pool_helper.Pool
+
+	rs_pool   pool_helper.Pool
+	rs_getter func() (client_helper.RedisClient, error)
 
 	close_cbs  []func() error
 	close_once sync.Once
@@ -59,8 +62,16 @@ type flow struct {
 	err error
 }
 
-func (f *flow) mongo_collection() *mongo.Collection {
-	return f.mgo_db.Collection("mtflw." + f.Id())
+func (f *flow) mongo_collection() (*mongo.Collection, func() error, error) {
+	cli, err := f.mgo_pool.Get()
+	if err != nil {
+		return nil, nil, err
+	}
+
+	mgo_cli := cli.(*mongo_helper.MongoClientWrapper)
+	mgo_db := mgo_cli.Database(f.mongo_database)
+
+	return mgo_db.Collection("mtflw." + f.Id()), func() error { return f.mgo_pool.Put(cli) }, nil
 }
 
 func (f *flow) redis_stream_key() string {
@@ -125,13 +136,18 @@ func (f *flow) PushFrame(frm *pb.Frame) error {
 
 func (f *flow) push_frame_to_redis_stream(frm *pb.Frame) error {
 	ctx := f.context()
+	rs_cli, err := f.rs_getter()
+	if err != nil {
+		return err
+	}
+	defer f.rs_pool.Put(rs_cli)
 
 	frm_txt, err := grpc_helper.JSONPBMarshaler.MarshalToString(frm)
 	if err != nil {
 		return err
 	}
 
-	if err := f.rs_cli.XAdd(ctx, &redis.XAddArgs{
+	if err := rs_cli.XAdd(ctx, &redis.XAddArgs{
 		Stream: f.redis_stream_key(),
 		Values: map[string]interface{}{
 			"frame": frm_txt,
@@ -140,12 +156,12 @@ func (f *flow) push_frame_to_redis_stream(frm *pb.Frame) error {
 		return err
 	}
 
-	if err = f.rs_cli.Expire(ctx, f.redis_stream_key(), f.opt.StreamExpireTime).Err(); err != nil {
+	if err = rs_cli.Expire(ctx, f.redis_stream_key(), f.opt.StreamExpireTime).Err(); err != nil {
 		f.logger.WithError(err).Debugf("failed to expire stream")
 	}
 
 	if rand_helper.Float32() < f.opt.StreamTrimProb {
-		if err = f.rs_cli.XTrimApprox(ctx, f.redis_stream_key(), f.opt.StreamTrimLimit).Err(); err != nil {
+		if err = rs_cli.XTrimApprox(ctx, f.redis_stream_key(), f.opt.StreamTrimLimit).Err(); err != nil {
 			f.logger.WithError(err).Debugf("failed to trim stream")
 		}
 	}
@@ -167,7 +183,12 @@ func (f *flow) push_frame_to_mgo(frm *pb.Frame) error {
 	}
 	frm_dat_buf["#ts"] = pb_helper.ToTime(frm.GetTs()).UnixNano()
 
-	coll := f.mongo_collection()
+	coll, releaser, err := f.mongo_collection()
+	if err != nil {
+		return err
+	}
+	defer releaser()
+
 	_, err = coll.InsertOne(f.context(), frm_dat_buf)
 	if err != nil {
 		return err
@@ -188,12 +209,20 @@ func (f *flow) pull_frame_from_redis_stream_loop(frm_ch chan<- *pb.Frame) {
 	defer close(frm_ch)
 
 	var err error
-	cli := f.rs_cli
+	cli, err := f.rs_getter()
+	if err != nil {
+		f.err = err
+		f.logger.WithError(err).Debugf("failed to get redis client")
+		return
+	}
+	defer f.rs_pool.Put(cli)
+
 	key := f.redis_stream_key()
 	ctx := f.context()
 
 	nonce := nonce_helper.GenerateNonce()
 	if err = cli.XGroupCreateMkStream(ctx, key, nonce, "$").Err(); err != nil {
+		f.err = err
 		f.logger.WithError(err).Debugf("failed to create redis stream group")
 		return
 	}
@@ -201,7 +230,6 @@ func (f *flow) pull_frame_from_redis_stream_loop(frm_ch chan<- *pb.Frame) {
 		if err = cli.XGroupDestroy(ctx, key, nonce).Err(); err != nil {
 			f.logger.WithError(err).Debugf("failed to destory redis stream group")
 		}
-
 	}()
 
 	for !f.closed {
@@ -232,6 +260,7 @@ func (f *flow) pull_frame_from_redis_stream_loop(frm_ch chan<- *pb.Frame) {
 				if buf, ok := msg.Values["frame"]; ok {
 					var frm pb.Frame
 					if err = grpc_helper.JSONPBUnmarshaler.Unmarshal(strings.NewReader(buf.(string)), &frm); err != nil {
+						f.err = err
 						f.logger.WithError(err).Warningf("failed to unmarshal message to frame")
 						return
 					}
@@ -251,7 +280,11 @@ func (f *flow) PullFrame() <-chan *pb.Frame {
 func (f *flow) QueryFrame(flrs ...*FlowFilter) ([]*pb.Frame, error) {
 	var ret []*pb.Frame
 
-	coll := f.mongo_collection()
+	coll, releaser, err := f.mongo_collection()
+	if err != nil {
+		return nil, err
+	}
+	defer releaser()
 
 	for _, flr := range flrs {
 		frms, err := f.query_frame(coll, flr)
@@ -371,15 +404,6 @@ func (ff *flowFactory) get_alive_redis_stream_client() (client_helper.RedisClien
 }
 
 func (ff *flowFactory) New(opt *FlowOption) (Flow, error) {
-	cli, err := ff.mongo_pool.Get()
-	if err != nil {
-		ff.logger.WithError(err).Debugf("failed to get mongo client in pool")
-		return nil, err
-	}
-
-	mgo_cli := cli.(*mongo_helper.MongoClientWrapper)
-	mgo_db := mgo_cli.Database(ff.opt.MongoDatabase)
-
 	rs_cli, err := ff.get_alive_redis_stream_client()
 	if err != nil {
 		ff.logger.WithError(err).Debugf("failed to get alive redis client")
@@ -387,14 +411,12 @@ func (ff *flowFactory) New(opt *FlowOption) (Flow, error) {
 	}
 
 	return &flow{
-		opt:    newFlowOption(opt),
-		mgo_db: mgo_db,
-		rs_cli: rs_cli,
-		logger: ff.logger,
+		opt:       newFlowOption(opt),
+		mgo_pool:  ff.mongo_pool,
+		rs_pool:   ff.redis_stream_pool,
+		rs_getter: ff.get_alive_redis_stream_client,
+		logger:    ff.logger,
 		close_cbs: []func() error{
-			func() error {
-				return ff.mongo_pool.Put(mgo_cli)
-			},
 			func() error {
 				return ff.redis_stream_pool.Put(rs_cli)
 			},
