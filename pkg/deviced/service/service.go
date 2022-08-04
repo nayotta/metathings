@@ -63,7 +63,7 @@ type MetathingsDevicedService struct {
 	cc              connection.ConnectionCenter
 	flw_fty         flow.FlowFactory
 	flwst_fty       flow.FlowSetFactory
-	data_launcher   evaluatord_sdk.DataLauncher
+	data_launchers  []evaluatord_sdk.DataLauncher
 }
 
 func (self *MetathingsDevicedService) get_logger() log.FieldLogger {
@@ -209,7 +209,7 @@ func NewMetathingsDevicedService(
 	cli_fty *client_helper.ClientFactory,
 	flw_fty flow.FlowFactory,
 	flwst_fty flow.FlowSetFactory,
-	data_launcher evaluatord_sdk.DataLauncher,
+	data_launchers []evaluatord_sdk.DataLauncher,
 ) (pb.DevicedServiceServer, error) {
 	srv := &MetathingsDevicedService{
 		ErrorParser:     grpc_helper.NewErrorParser(em),
@@ -227,7 +227,7 @@ func NewMetathingsDevicedService(
 		cli_fty:         cli_fty,
 		flw_fty:         flw_fty,
 		flwst_fty:       flwst_fty,
-		data_launcher:   data_launcher,
+		data_launchers:  data_launchers,
 	}
 	srv.ServiceAuthFuncOverride = afo_helper.NewAuthFuncOverrider(tkvdr, srv, logger)
 
