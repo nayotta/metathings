@@ -64,6 +64,7 @@ var (
 
 			init_service_cmd_option(opt_t, deviced_opt)
 
+			dls := map[string]any{}
 			cmd_helper.InitManyStringMapFromConfigWithStage([]cmd_helper.InitManyOption{
 				{Dst: &opt_t.SessionStorage, Key: "session_storage"},
 				{Dst: &opt_t.SimpleStorage, Key: "simple_storage"},
@@ -72,8 +73,9 @@ var (
 				{Dst: &opt_t.ConnectionCenter.Bridge, Key: "connection_center.bridge"},
 				{Dst: &opt_t.Flow, Key: "flow"},
 				{Dst: &opt_t.FlowSet, Key: "flow_set"},
-				{Dst: &opt_t.DataLaunchers, Key: "data_launcher"},
+				{Dst: &dls, Key: "data_launchers"},
 			})
+			opt_t.DataLaunchers = cmd_contrib.ParseDepth1StringMap(dls)
 
 			deviced_opt = opt_t
 			deviced_opt.SetServiceName("deviced")
@@ -122,11 +124,13 @@ func NewDevicedDataLaunchers(p NewDevicedDataLaunchersParams) ([]evaluatord_sdk.
 	for _, v := range p.Option.DataLaunchers {
 		dlOpt := cast.ToStringMap(v)
 		if name, args, err = cfg_helper.ParseConfigOption("name", dlOpt, "logger", p.Logger); err != nil {
-			return nil, err
-		}
+			if err != cfg_helper.ErrExpectedKeyNotFound {
+				return nil, err
+			}
 
-		name = "dummy"
-		args = []interface{}{"logger", p.Logger}
+			name = "dummy"
+			args = []interface{}{"logger", p.Logger}
+		}
 
 		dl, err := evaluatord_sdk.NewDataLauncher(name, args...)
 		if err != nil {
