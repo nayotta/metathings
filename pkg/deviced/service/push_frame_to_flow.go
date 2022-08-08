@@ -156,12 +156,15 @@ match_flow_loop:
 
 		nctx := evaluatord_sdk.WithToken(ctx, tkn_txt)
 		nctx = evaluatord_sdk.WithDevice(nctx, dev_id)
-		err = self.data_launcher.Launch(
-			nctx,
-			evaluatord_sdk.NewResource(f.Id(), RESOURCE_TYPE_FLOW),
-			evltrsdk_dat)
-		if err != nil {
-			logger.WithError(err).Warningf("failed to launch data")
+
+		for _, dl := range self.data_launchers {
+			err = dl.Launch(
+				nctx,
+				evaluatord_sdk.NewResource(f.Id(), RESOURCE_TYPE_FLOW),
+				evltrsdk_dat)
+			if err != nil {
+				logger.WithError(err).Warningf("failed to launch data")
+			}
 		}
 
 		for _, fs := range fss {
@@ -173,11 +176,13 @@ match_flow_loop:
 				return status.Errorf(codes.Internal, err.Error())
 			}
 
-			if err = self.data_launcher.Launch(
-				nctx,
-				evaluatord_sdk.NewResource(fs.Id(), RESOURCE_TYPE_FLOWSET),
-				evltrsdk_dat); err != nil {
-				logger.WithError(err).Warningf("failed to launch data")
+			for _, dl := range self.data_launchers {
+				if err = dl.Launch(
+					nctx,
+					evaluatord_sdk.NewResource(fs.Id(), RESOURCE_TYPE_FLOWSET),
+					evltrsdk_dat); err != nil {
+					logger.WithError(err).Warningf("failed to launch data")
+				}
 			}
 		}
 

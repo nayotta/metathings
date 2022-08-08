@@ -5,6 +5,7 @@ import (
 
 	"github.com/opentracing/opentracing-go"
 	log "github.com/sirupsen/logrus"
+	"github.com/spf13/cast"
 	"github.com/spf13/cobra"
 	"go.uber.org/fx"
 
@@ -33,9 +34,9 @@ type DevicedOption struct {
 		Storage map[string]interface{}
 		Bridge  map[string]interface{}
 	}
-	Flow         map[string]interface{}
-	FlowSet      map[string]interface{}
-	DataLauncher map[string]interface{}
+	Flow          map[string]interface{}
+	FlowSet       map[string]interface{}
+	DataLaunchers map[string]interface{}
 }
 
 func NewDevicedOption() *DevicedOption {
@@ -63,6 +64,7 @@ var (
 
 			init_service_cmd_option(opt_t, deviced_opt)
 
+			dls := map[string]any{}
 			cmd_helper.InitManyStringMapFromConfigWithStage([]cmd_helper.InitManyOption{
 				{Dst: &opt_t.SessionStorage, Key: "session_storage"},
 				{Dst: &opt_t.SimpleStorage, Key: "simple_storage"},
@@ -71,8 +73,9 @@ var (
 				{Dst: &opt_t.ConnectionCenter.Bridge, Key: "connection_center.bridge"},
 				{Dst: &opt_t.Flow, Key: "flow"},
 				{Dst: &opt_t.FlowSet, Key: "flow_set"},
-				{Dst: &opt_t.DataLauncher, Key: "data_launcher"},
+				{Dst: &dls, Key: "data_launchers"},
 			})
+			opt_t.DataLaunchers = cmd_contrib.ParseDepth1StringMap(dls)
 
 			deviced_opt = opt_t
 			deviced_opt.SetServiceName("deviced")
@@ -104,7 +107,7 @@ func GetDevicedOptions() (
 		deviced_opt
 }
 
-type NewDevicedDataLauncherParams struct {
+type NewDevicedDataLaunchersParams struct {
 	fx.In
 
 	Option *DevicedOption
@@ -112,21 +115,32 @@ type NewDevicedDataLauncherParams struct {
 	Tracer opentracing.Tracer `name:"opentracing_tracer" optional:"true"`
 }
 
-func NewDevicedDataLauncher(p NewDevicedDataLauncherParams) (evaluatord_sdk.DataLauncher, error) {
+func NewDevicedDataLaunchers(p NewDevicedDataLaunchersParams) ([]evaluatord_sdk.DataLauncher, error) {
 	var name string
 	var args []interface{}
 	var err error
 
-	if name, args, err = cfg_helper.ParseConfigOption("name", p.Option.DataLauncher, "logger", p.Logger); err != nil {
-		if err != cfg_helper.ErrExpectedKeyNotFound {
+	var dls []evaluatord_sdk.DataLauncher
+	for _, v := range p.Option.DataLaunchers {
+		dlOpt := cast.ToStringMap(v)
+		if name, args, err = cfg_helper.ParseConfigOption("name", dlOpt, "logger", p.Logger); err != nil {
+			if err != cfg_helper.ErrExpectedKeyNotFound {
+				return nil, err
+			}
+
+			name = "dummy"
+			args = []interface{}{"logger", p.Logger}
+		}
+
+		dl, err := evaluatord_sdk.NewDataLauncher(name, args...)
+		if err != nil {
 			return nil, err
 		}
 
-		name = "dummy"
-		args = []interface{}{"logger", p.Logger}
+		dls = append(dls, dl)
 	}
 
-	return evaluatord_sdk.NewDataLauncher(name, args...)
+	return dls, nil
 }
 
 type NewDevicedStorageParams struct {
@@ -291,7 +305,7 @@ func runDeviced() error {
 			cmd_contrib.NewGrpcServer,
 			cmd_contrib.NewClientFactory,
 			cmd_contrib.NewNoExpireTokener,
-			NewDevicedDataLauncher,
+			NewDevicedDataLaunchers,
 			token_helper.NewTokenValidator,
 			NewSessionStorage,
 			NewSimpleStorage,

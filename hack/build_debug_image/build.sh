@@ -1,11 +1,25 @@
 #! /bin/bash
 
-tag=${tag:-"nayotta/metathingsd:v0.0.0-debug"}
+set -x
 
-GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -gcflags "all=-N -l" -ldflags "-X google.golang.org/protobuf/reflect/protoregistry.conflictPolicy=ignore" -o hack/build_debug_image/metathingsd cmd/metathingsd/main.go
+registry=${registry:-"debug.registry.local:5000"}
+tag=${tag:-"${registry}/metathingsd:v0.0.0-debug"}
+goos=${goos:-"linux"}
+goarch=${goarch:-"amd64"}
 
-if [ ! -f "hack/build_debug_image/dlv" ]; then
-    GO111MODULE=off GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o hack/build_debug_image/dlv $GOPATH/src/github.com/go-delve/delve/cmd/dlv
+GOOS=${goos} GOARCH=${goarch} CGO_ENABLED=0 go build -gcflags "all=-N -l" -ldflags "-X google.golang.org/protobuf/reflect/protoregistry.conflictPolicy=ignore" -o hack/build_debug_image/metathingsd cmd/metathingsd/main.go
+
+if [ ! -f hack/build_debug_image/dlv ]; then
+    (cd hack/build_debug_image; \
+     git clone https://github.com/go-delve/delve.git; \
+     cd delve; \
+     go mod tidy --compat=1.18; \
+     go mod vendor; \
+     docker run --rm -it -w /opt/delve -v `pwd`:/opt/delve golang:1.18-alpine sh -c "GOOS=${goos} GOARCH=${goarch} CGO_ENABLED=0 go build -o dlv ./cmd/dlv"; \
+     mv dlv ..; \
+     cd ..; \
+     rm -rf delve; \
+     )
 fi
 
 docker build --network host -t "${tag}" -f hack/build_debug_image/Dockerfile hack/build_debug_image

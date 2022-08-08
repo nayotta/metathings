@@ -31,8 +31,9 @@ func (ts *MetathingsTagdService) Get(ctx context.Context, req *pb.GetRequest) (*
 	}).Debugf("get tags")
 
 	res := &pb.GetResponse{
-		Id:   id,
-		Tags: tags,
+		Id:        id,
+		Tags:      tags,
+		Namespace: ns,
 	}
 
 	return res, nil

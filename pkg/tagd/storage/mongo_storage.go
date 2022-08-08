@@ -91,7 +91,7 @@ func (self *MongoStorage) get_tags_by_id(ns string, id string) ([]string, error)
 			return nil, err
 		}
 
-		for tag, _ := range res {
+		for tag := range res {
 			tags = append(tags, tag)
 		}
 	}
