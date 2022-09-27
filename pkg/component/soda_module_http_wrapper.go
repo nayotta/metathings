@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"io/ioutil"
+	"math/rand"
 	"net/http"
 	"net/url"
 	"strings"
@@ -12,7 +13,11 @@ import (
 	"github.com/golang/protobuf/ptypes"
 	anypb "github.com/golang/protobuf/ptypes/any"
 	stpb "github.com/golang/protobuf/ptypes/struct"
+	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/objx"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
+	"nhooyr.io/websocket"
 
 	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
 	pb "github.com/nayotta/metathings/proto/component"
@@ -170,8 +175,146 @@ func (w *SodaModuleHttpWrapper) UnaryCall(ctx context.Context, req *pb.UnaryCall
 	return res, nil
 }
 
-func (w *SodaModuleHttpWrapper) StreamCall(pb.ModuleService_StreamCallServer) error {
-	return ErrHandleUnimplemented
+func (w *SodaModuleHttpWrapper) StreamCall(upstm pb.ModuleService_StreamCallServer) error {
+	var req *pb.StreamCallRequest
+	var err error
+	sess := rand.Int63()
+
+	logger := w.Logger().WithFields(log.Fields{
+		"#method": "StreamCall",
+		"session": sess,
+	})
+
+	if req, err = upstm.Recv(); err != nil {
+		logger.WithError(err).Errorf("failed to receive config message")
+		return status.Errorf(codes.Internal, err.Error())
+	}
+
+	cfg := req.GetConfig()
+	if cfg == nil {
+		err = ErrInvalidArguments
+		logger.WithError(err).Errorf("failed to get config from message")
+		return status.Errorf(codes.FailedPrecondition, err.Error())
+	}
+
+	meth := cfg.GetMethod().GetValue()
+	full_url, err := resolve_http_url(w.m, meth)
+	switch err {
+	case ErrDownstreamNotFound:
+		logger.WithError(err).Errorf("down stream not found")
+		return status.Errorf(codes.NotFound, err.Error())
+	case nil:
+		break
+	default:
+		logger.WithError(err).Errorf("failed to resolve method")
+		return status.Errorf(codes.Internal, err.Error())
+	}
+	logger = logger.WithFields(log.Fields{
+		"method": meth,
+		"url":    full_url,
+	})
+
+	wsConn, _, err := websocket.Dial(context.Background(), full_url, nil)
+	if err != nil {
+		logger.WithError(err).Errorf("failed to dial websocket")
+		return status.Errorf(codes.Internal, err.Error())
+	}
+
+	cctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	up2down_wait := make(chan struct{})
+	down2up_wait := make(chan struct{})
+	go w.stm_up2down(upstm, wsConn, sess, up2down_wait)
+	go w.stm_down2up(upstm, cctx, wsConn, sess, down2up_wait)
+
+	logger.Debugf("stream call started")
+	select {
+	case <-up2down_wait:
+	case <-down2up_wait:
+	}
+
+	logger.Debugf("stream call done")
+
+	return nil
+}
+
+func (w *SodaModuleHttpWrapper) Logger() *log.Entry {
+	return w.m.Logger().WithField("#instance", "SodaModuleHttpWrapper")
+}
+
+func (w *SodaModuleHttpWrapper) stm_up2down(upstm pb.ModuleService_StreamCallServer, downstm *websocket.Conn, sess int64, wait chan struct{}) {
+	logger := w.Logger().WithFields(log.Fields{
+		"dir":     "up->down",
+		"session": sess,
+	})
+
+	defer close(wait)
+	for epoch := uint64(0); ; epoch++ {
+		logger := logger.WithFields(log.Fields{
+			"epoch": epoch,
+		})
+
+		req, err := upstm.Recv()
+		if err != nil {
+			logger.WithError(err).Debugf("failed to recv msg from upstm")
+			return
+		}
+		logger.Tracef("recv msg from upstm")
+
+		jsbuf, err := unmarshal_any_to_json_string(req.GetData().GetValue())
+		if err != nil {
+			logger.WithError(err).Debugf("failed to unmarshal any to json string")
+			return
+		}
+
+		if err = downstm.Write(context.Background(), websocket.MessageBinary, []byte(jsbuf)); err != nil {
+			logger.WithError(err).Debugf("failed to write json buffer to downstm")
+			return
+		}
+		logger.Tracef("send json buffer to downstm")
+	}
+}
+
+func (w *SodaModuleHttpWrapper) stm_down2up(upstm pb.ModuleService_StreamCallServer, dsCtx context.Context, downstm *websocket.Conn, sess int64, wait chan struct{}) {
+	logger := w.Logger().WithFields(log.Fields{
+		"dir":     "down->up",
+		"session": sess,
+	})
+
+	defer close(wait)
+	for epoch := uint64(0); ; epoch++ {
+		logger := logger.WithFields(log.Fields{
+			"epoch": epoch,
+		})
+
+		_, jsbuf, err := downstm.Read(dsCtx)
+		if err != nil {
+			logger.WithError(err).Debugf("failed to recv msg from downstm")
+			return
+		}
+		logger.Tracef("recv msg from downstm")
+
+		anyVal, err := marshal_json_string_to_any(string(jsbuf))
+		if err != nil {
+			logger.WithError(err).Debugf("failed to marshal json string to any")
+			return
+		}
+
+		res := &pb.StreamCallResponse{
+			Response: &pb.StreamCallResponse_Data{
+				Data: &pb.StreamCallDataResponse{
+					Value: anyVal,
+				},
+			},
+		}
+
+		if err = upstm.Send(res); err != nil {
+			logger.WithError(err).Debugf("failed to send msg to upstm")
+			return
+		}
+		logger.Tracef("send msg to upstm")
+	}
 }
 
 type SodaModuleHttpWrapperFactory struct{}

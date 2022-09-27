@@ -250,8 +250,8 @@ func (m *Module) Target() interface{} {
 	return m.tgt
 }
 
-func (m *Module) Logger() log.FieldLogger {
-	return m.logger
+func (m *Module) Logger() *log.Entry {
+	return m.logger.WithField("#instance", "Module")
 }
 
 func (m *Module) Init() error {
