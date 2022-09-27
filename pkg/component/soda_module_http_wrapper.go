@@ -13,6 +13,7 @@ import (
 	"github.com/golang/protobuf/ptypes"
 	anypb "github.com/golang/protobuf/ptypes/any"
 	stpb "github.com/golang/protobuf/ptypes/struct"
+	"github.com/golang/protobuf/ptypes/wrappers"
 	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/objx"
 	"google.golang.org/grpc/codes"
@@ -82,6 +83,23 @@ func marshal_json_string_to_any(buf string) (*anypb.Any, error) {
 		return nil, err
 	}
 
+	return m, nil
+}
+
+func unmarshal_any_to_bytes(m *anypb.Any) ([]byte, error) {
+	var bs wrappers.BytesValue
+	if err := ptypes.UnmarshalAny(m, &bs); err != nil {
+		return nil, err
+	}
+	return bs.GetValue(), nil
+}
+
+func marshal_bytes_to_any(buf []byte) (*anypb.Any, error) {
+	bs := &wrappers.BytesValue{Value: buf}
+	m, err := ptypes.MarshalAny(bs)
+	if err != nil {
+		return nil, err
+	}
 	return m, nil
 }
 
@@ -262,13 +280,13 @@ func (w *SodaModuleHttpWrapper) stm_up2down(upstm pb.ModuleService_StreamCallSer
 		}
 		logger.Tracef("recv msg from upstm")
 
-		jsbuf, err := unmarshal_any_to_json_string(req.GetData().GetValue())
+		buf, err := unmarshal_any_to_bytes(req.GetData().GetValue())
 		if err != nil {
 			logger.WithError(err).Debugf("failed to unmarshal any to json string")
 			return
 		}
 
-		if err = downstm.Write(context.Background(), websocket.MessageBinary, []byte(jsbuf)); err != nil {
+		if err = downstm.Write(context.Background(), websocket.MessageBinary, buf); err != nil {
 			logger.WithError(err).Debugf("failed to write json buffer to downstm")
 			return
 		}
@@ -288,14 +306,14 @@ func (w *SodaModuleHttpWrapper) stm_down2up(upstm pb.ModuleService_StreamCallSer
 			"epoch": epoch,
 		})
 
-		_, jsbuf, err := downstm.Read(dsCtx)
+		_, buf, err := downstm.Read(dsCtx)
 		if err != nil {
 			logger.WithError(err).Debugf("failed to recv msg from downstm")
 			return
 		}
 		logger.Tracef("recv msg from downstm")
 
-		anyVal, err := marshal_json_string_to_any(string(jsbuf))
+		anyVal, err := marshal_bytes_to_any(buf)
 		if err != nil {
 			logger.WithError(err).Debugf("failed to marshal json string to any")
 			return

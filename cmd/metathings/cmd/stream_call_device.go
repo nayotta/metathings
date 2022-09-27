@@ -1,20 +1,16 @@
 package cmd
 
 import (
-	"bytes"
+	"bufio"
 	"context"
 	"fmt"
 	"io/ioutil"
 	"os"
+	"strings"
 
-	"github.com/golang/protobuf/proto"
-	dpb "github.com/golang/protobuf/protoc-gen-go/descriptor"
 	"github.com/golang/protobuf/ptypes"
 	"github.com/golang/protobuf/ptypes/any"
-	stpb "github.com/golang/protobuf/ptypes/struct"
 	"github.com/golang/protobuf/ptypes/wrappers"
-	"github.com/jhump/protoreflect/desc"
-	"github.com/jhump/protoreflect/dynamic"
 	"github.com/spf13/cobra"
 	"go.uber.org/fx"
 
@@ -22,7 +18,6 @@ import (
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
 	cmd_helper "github.com/nayotta/metathings/pkg/common/cmd"
 	context_helper "github.com/nayotta/metathings/pkg/common/context"
-	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
 	pb "github.com/nayotta/metathings/proto/deviced"
 )
 
@@ -118,68 +113,35 @@ func _stream_call_device(opt *StreamCallDeviceOption, cli pb.DevicedServiceClien
 	var req_buf []byte
 	var err error
 	var any_req *any.Any
-	var md *desc.MethodDescriptor
 
+	var rd *bufio.Reader
 	if opt.Data == "" {
 		if opt.File == "" {
-			req_buf = []byte("{}")
-		} else if opt.File == "-" {
-			req_buf, err = ioutil.ReadAll(os.Stdin)
-			if err != nil {
-				return err
-			}
+			opt.File = "-"
+		}
+
+		if opt.File == "-" {
+			rd = bufio.NewReader(os.Stdin)
 		} else {
-			req_buf, err = ioutil.ReadFile(opt.File)
+			buf, err := ioutil.ReadFile(opt.File)
 			if err != nil {
 				return err
 			}
+			rd = bufio.NewReader(strings.NewReader(string(buf)))
 		}
 	} else {
-		req_buf = []byte(opt.Data)
+		rd = bufio.NewReader(strings.NewReader(opt.Data))
 	}
 
 	if opt.Soda {
-		var st stpb.Struct
+		var bs wrappers.BytesValue
+		bs.Value = req_buf
 
-		if err = grpc_helper.JSONPBUnmarshaler.Unmarshal(bytes.NewReader(req_buf), &st); err != nil {
-			return err
-		}
-
-		if any_req, err = ptypes.MarshalAny(&st); err != nil {
+		if any_req, err = ptypes.MarshalAny(&bs); err != nil {
 			return err
 		}
 	} else {
-		var fds dpb.FileDescriptorSet
-
-		buf, err := ioutil.ReadFile(opt.Protobufset)
-		if err != nil {
-			panic(err)
-		}
-
-		if err = proto.Unmarshal(buf, &fds); err != nil {
-			panic(err)
-		}
-
-		fd, err := desc.CreateFileDescriptorFromSet(&fds)
-		if err != nil {
-			panic(err)
-		}
-
-		srvs := fd.GetServices()
-		if len(srvs) == 0 {
-			panic("unexpected protobufset")
-		}
-
-		md = srvs[0].FindMethodByName(opt.Method)
-		msg_req := dynamic.NewMessage(md.GetInputType())
-
-		if err = msg_req.UnmarshalJSON(req_buf); err != nil {
-			return err
-		}
-
-		if any_req, err = ptypes.MarshalAny(msg_req); err != nil {
-			return err
-		}
+		panic("not support non-soda")
 	}
 
 	ctx := context_helper.WithToken(context.TODO(), opt.GetToken())
@@ -216,17 +178,33 @@ func _stream_call_device(opt *StreamCallDeviceOption, cli pb.DevicedServiceClien
 		panic("expect config ack")
 	}
 
-	dat_req := &pb.StreamCallRequest{
-		Value: &pb.OpStreamCallValue{
-			Union: &pb.OpStreamCallValue_Value{
-				Value: any_req,
-			},
-		},
-	}
+	go func() {
+		for {
+			buf, err := rd.ReadString('\n')
+			if err != nil {
+				panic(err)
+			}
+			buf = strings.ReplaceAll(buf, "\n", "")
 
-	if err = stm.Send(dat_req); err != nil {
-		return err
-	}
+			bs := &wrappers.BytesValue{Value: []byte(buf)}
+			any_req, err = ptypes.MarshalAny(bs)
+			if err != nil {
+				panic(err)
+			}
+
+			dat_req := &pb.StreamCallRequest{
+				Value: &pb.OpStreamCallValue{
+					Union: &pb.OpStreamCallValue_Value{
+						Value: any_req,
+					},
+				},
+			}
+
+			if err = stm.Send(dat_req); err != nil {
+				panic(err)
+			}
+		}
+	}()
 
 	for {
 		dat_res, err := stm.Recv()
@@ -234,21 +212,12 @@ func _stream_call_device(opt *StreamCallDeviceOption, cli pb.DevicedServiceClien
 			return err
 		}
 
-		var msg_res proto.Message
-		if opt.Soda {
-			msg_res = new(stpb.Struct)
-		} else {
-			msg_res = dynamic.NewMessage(md.GetOutputType())
-		}
-
-		if err = ptypes.UnmarshalAny(dat_res.GetValue().GetValue(), msg_res); err != nil {
+		var msg_res wrappers.BytesValue
+		if err = ptypes.UnmarshalAny(dat_res.GetValue().GetValue(), &msg_res); err != nil {
 			return err
 		}
 
-		out, err := grpc_helper.JSONPBMarshaler.MarshalToString(msg_res)
-		if err != nil {
-			return err
-		}
+		out := string(msg_res.GetValue())
 
 		fmt.Println(out)
 	}
