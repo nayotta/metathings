@@ -186,7 +186,7 @@ func _stream_call_device(opt *StreamCallDeviceOption, cli pb.DevicedServiceClien
 			}
 			buf = strings.ReplaceAll(buf, "\n", "")
 
-			bs := &wrappers.BytesValue{Value: []byte(buf)}
+			bs := &wrappers.StringValue{Value: buf}
 			any_req, err = ptypes.MarshalAny(bs)
 			if err != nil {
 				panic(err)

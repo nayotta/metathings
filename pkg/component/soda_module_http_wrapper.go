@@ -29,12 +29,18 @@ const (
 )
 
 func resolve_http_url(m *Module, meth string, defaults ...string) (string, error) {
+	var base_url *url.URL
+	var err error
+
 	cfg := m.Kernel().Config()
 
-	base := cfg.GetString("backend.target.url")
-	base_url, err := url.Parse(base)
-	if err != nil {
-		return "", err
+	base := cfg.GetString(fmt.Sprintf("backend.downstreams.%v.url", meth))
+	if base == "" {
+		base = cfg.GetString("backend.target.url")
+		base_url, err = url.Parse(base)
+		if err != nil {
+			return "", err
+		}
 	}
 
 	path := cfg.GetString(fmt.Sprintf("backend.downstreams.%v.path", meth))
@@ -86,16 +92,16 @@ func marshal_json_string_to_any(buf string) (*anypb.Any, error) {
 	return m, nil
 }
 
-func unmarshal_any_to_bytes(m *anypb.Any) ([]byte, error) {
-	var bs wrappers.BytesValue
+func unmarshal_any_to_string(m *anypb.Any) (string, error) {
+	var bs wrappers.StringValue
 	if err := ptypes.UnmarshalAny(m, &bs); err != nil {
-		return nil, err
+		return "", err
 	}
 	return bs.GetValue(), nil
 }
 
-func marshal_bytes_to_any(buf []byte) (*anypb.Any, error) {
-	bs := &wrappers.BytesValue{Value: buf}
+func marshal_bytes_to_string(buf string) (*anypb.Any, error) {
+	bs := &wrappers.StringValue{Value: buf}
 	m, err := ptypes.MarshalAny(bs)
 	if err != nil {
 		return nil, err
@@ -280,13 +286,13 @@ func (w *SodaModuleHttpWrapper) stm_up2down(upstm pb.ModuleService_StreamCallSer
 		}
 		logger.Tracef("recv msg from upstm")
 
-		buf, err := unmarshal_any_to_bytes(req.GetData().GetValue())
+		buf, err := unmarshal_any_to_string(req.GetData().GetValue())
 		if err != nil {
 			logger.WithError(err).Debugf("failed to unmarshal any to json string")
 			return
 		}
 
-		if err = downstm.Write(context.Background(), websocket.MessageBinary, buf); err != nil {
+		if err = downstm.Write(context.Background(), websocket.MessageBinary, []byte(buf)); err != nil {
 			logger.WithError(err).Debugf("failed to write json buffer to downstm")
 			return
 		}
@@ -313,7 +319,7 @@ func (w *SodaModuleHttpWrapper) stm_down2up(upstm pb.ModuleService_StreamCallSer
 		}
 		logger.Tracef("recv msg from downstm")
 
-		anyVal, err := marshal_bytes_to_any(buf)
+		anyVal, err := marshal_bytes_to_string(string(buf))
 		if err != nil {
 			logger.WithError(err).Debugf("failed to marshal json string to any")
 			return

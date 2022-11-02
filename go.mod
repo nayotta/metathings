@@ -10,7 +10,6 @@ require (
 	github.com/go-redis/redis/v8 v8.0.0-beta.8
 	github.com/golang/protobuf v1.5.2
 	github.com/gorilla/mux v1.8.0
-	github.com/gorilla/websocket v1.4.2
 	github.com/grpc-ecosystem/go-grpc-middleware v1.2.1
 	github.com/influxdata/influxdb-client-go/v2 v2.0.2-0.20200821070846-324827c077b3
 	github.com/jeremywohl/flatten v1.0.1
