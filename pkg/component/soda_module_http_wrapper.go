@@ -37,10 +37,10 @@ func resolve_http_url(m *Module, meth string, defaults ...string) (string, error
 	base := cfg.GetString(fmt.Sprintf("backend.downstreams.%v.url", meth))
 	if base == "" {
 		base = cfg.GetString("backend.target.url")
-		base_url, err = url.Parse(base)
-		if err != nil {
-			return "", err
-		}
+	}
+	base_url, err = url.Parse(base)
+	if err != nil {
+		return "", err
 	}
 
 	path := cfg.GetString(fmt.Sprintf("backend.downstreams.%v.path", meth))
@@ -243,6 +243,7 @@ func (w *SodaModuleHttpWrapper) StreamCall(upstm pb.ModuleService_StreamCallServ
 		logger.WithError(err).Errorf("failed to dial websocket")
 		return status.Errorf(codes.Internal, err.Error())
 	}
+	defer wsConn.Close(websocket.StatusInternalError, "websocket client closed")
 
 	cctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
