@@ -194,6 +194,7 @@ func (dc *DeviceConnection) handle_user_stream_request(req *pb.ConnectRequest) e
 		return err
 	}
 	logger.Debugf("create deviced stream")
+	defer stm.CloseSend()
 
 	acked := make(chan struct{})
 	acked_once := new(sync.Once)

@@ -200,6 +200,7 @@ func (self *MetathingsDeviceServiceImpl) handle_user_stream_request(req *deviced
 		return err
 	}
 	logger.Debugf("create deviced stream")
+	defer stm.CloseSend()
 
 	acked := make(chan struct{})
 	acked_once := new(sync.Once)

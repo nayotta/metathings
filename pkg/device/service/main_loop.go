@@ -52,6 +52,7 @@ func (self *MetathingsDeviceServiceImpl) internal_main_loop() error {
 		logger.WithError(err).Errorf("failed to build connection to deviced")
 		return err
 	}
+	defer self.conn_stm.CloseSend()
 	self.conn_stm_wg_once.Do(func() {
 		time.Sleep(200 * time.Millisecond)
 		self.conn_stm_wg.Done()

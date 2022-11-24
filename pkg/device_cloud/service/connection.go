@@ -372,6 +372,7 @@ func (dc *DeviceConnection) internal_main_loop() error {
 	if err != nil {
 		return err
 	}
+	defer dc.stm.CloseSend()
 	dc.stm_wg_once.Do(dc.stm_wg.Done)
 	logger.Debugf("internal main loop started")
 
