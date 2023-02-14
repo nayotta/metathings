@@ -43,7 +43,7 @@ require (
 	github.com/BurntSushi/toml v0.3.1 // indirect
 	github.com/HdrHistogram/hdrhistogram-go v0.9.0 // indirect
 	github.com/Knetic/govaluate v3.0.1-0.20171022003610-9aa49832a739+incompatible // indirect
-	github.com/aws/aws-sdk-go v1.29.15 // indirect
+	github.com/aws/aws-sdk-go v1.34.0 // indirect
 	github.com/casbin/casbin/v2 v2.36.2 // indirect
 	github.com/casbin/gorm-adapter/v2 v2.1.0 // indirect
 	github.com/cespare/xxhash/v2 v2.1.1 // indirect
@@ -58,7 +58,7 @@ require (
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/influxdata/line-protocol v0.0.0-20200327222509-2487e7298839 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
-	github.com/jmespath/go-jmespath v0.0.0-20180206201540-c2b33e8439af // indirect
+	github.com/jmespath/go-jmespath v0.3.0 // indirect
 	github.com/klauspost/compress v1.9.5 // indirect
 	github.com/konsorten/go-windows-terminal-sequences v1.0.3 // indirect
 	github.com/labstack/echo/v4 v4.1.11 // indirect
