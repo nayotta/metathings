@@ -67,7 +67,9 @@ func (s *SequenceFileSyncerTestSuite) runCase1(bufferSize int64, chunkSize int64
 	data1 := bb.Bytes()
 	h1 := sha1.New()
 	h1.Write(data1)
-	s.Equal(sha1Str, fmt.Sprintf("%x", h1.Sum(nil)))
+	sha1Str2 := fmt.Sprintf("%x", h1.Sum(nil))
+	s.Equal(sha1Str, sha1Str2)
+	s.T().Logf("bufSz=%v,chkSz=%v,sha1(data)=%v,sha1(dataFromReader)=%v", bufferSize, chunkSize, sha1Str, sha1Str2)
 }
 
 func (s *SequenceFileSyncerTestSuite) TestCase1() {
