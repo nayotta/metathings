@@ -13,57 +13,7 @@ import (
 	log_helper "github.com/nayotta/metathings/pkg/common/log"
 )
 
-const (
-	DEFAULT_CHUNK_SIZE int64 = 512 * 1024
-)
-
-type SetFileSyncerOption func(*FileSyncerOption)
-
-type FileSyncerOption struct {
-	path       string
-	size       int64
-	cache_path string
-	sha1_hash  string
-	chunk_size int64
-}
-
-func SetPath(path string) SetFileSyncerOption {
-	return func(o *FileSyncerOption) {
-		o.path = path
-	}
-}
-
-func SetSize(size int64) SetFileSyncerOption {
-	return func(o *FileSyncerOption) {
-		o.size = size
-	}
-}
-
-func SetCachePath(path string) SetFileSyncerOption {
-	return func(o *FileSyncerOption) {
-		o.cache_path = path
-	}
-}
-
-func SetSha1Hash(hash string) SetFileSyncerOption {
-	return func(o *FileSyncerOption) {
-		o.sha1_hash = hash
-	}
-}
-
-func SetChunkSize(size int64) SetFileSyncerOption {
-	return func(o *FileSyncerOption) {
-		o.chunk_size = size
-	}
-}
-
-func NewFileSyncerOption() *FileSyncerOption {
-	o := &FileSyncerOption{}
-	o.chunk_size = DEFAULT_CHUNK_SIZE
-	return o
-}
-
-type FileSyncer struct {
+type RandomFileSyncer struct {
 	opt *FileSyncerOption
 	// TODO(Peer): save db into disk for resume from break point.
 	db sync.Map
@@ -74,7 +24,7 @@ type FileSyncer struct {
 	}
 }
 
-func (fs *FileSyncer) init_db() error {
+func (fs *RandomFileSyncer) init_db() error {
 	var i int64
 	for i = 0; i*fs.opt.chunk_size < fs.opt.size; i++ {
 		fs.db.Store(i*fs.opt.chunk_size, "")
@@ -85,7 +35,7 @@ func (fs *FileSyncer) init_db() error {
 	return nil
 }
 
-func (fs *FileSyncer) Close() (err error) {
+func (fs *RandomFileSyncer) Close() (err error) {
 	if _, err = os.Stat(fs.opt.cache_path); err == nil {
 		return os.Remove(fs.opt.cache_path)
 	}
@@ -93,7 +43,7 @@ func (fs *FileSyncer) Close() (err error) {
 	return nil
 }
 
-func (fs *FileSyncer) is_done() bool {
+func (fs *RandomFileSyncer) is_done() bool {
 	done := true
 	fs.db.Range(func(key, val interface{}) bool {
 		done = false
@@ -102,7 +52,7 @@ func (fs *FileSyncer) is_done() bool {
 	return done
 }
 
-func (fs *FileSyncer) debug() {
+func (fs *RandomFileSyncer) debug() {
 	logger := log_helper.GetDebugLogger()
 	var wtchks int64
 	var rests []int64
@@ -119,7 +69,7 @@ func (fs *FileSyncer) debug() {
 	}).Debugf("chunk state")
 }
 
-func (fs *FileSyncer) Next(batch int) (offsets []int64, err error) {
+func (fs *RandomFileSyncer) Next(batch int) (offsets []int64, err error) {
 	if batch < 0 {
 		return nil, ErrInvalidArgument
 	}
@@ -140,14 +90,14 @@ func (fs *FileSyncer) Next(batch int) (offsets []int64, err error) {
 	return offsets, nil
 }
 
-func (fs *FileSyncer) Sync(offset int64, data []byte, size int) (err error) {
+func (fs *RandomFileSyncer) Sync(offset int64, data []byte, size int) (err error) {
 	if fs.fp == nil {
 		if fs.fp, err = os.OpenFile(fs.opt.cache_path, os.O_WRONLY, 0); err != nil {
 			return err
 		}
 	}
 
-	if _, err = fs.fp.Seek(offset, 0); err != nil {
+	if _, err = fs.fp.Seek(offset, io.SeekStart); err != nil {
 		return err
 	}
 
@@ -169,7 +119,7 @@ func (fs *FileSyncer) Sync(offset int64, data []byte, size int) (err error) {
 	return nil
 }
 
-func (fs *FileSyncer) post_sync() (err error) {
+func (fs *RandomFileSyncer) post_sync() (err error) {
 	if err = fs.validate(fs.opt.cache_path); err != nil {
 		return err
 	}
@@ -181,7 +131,7 @@ func (fs *FileSyncer) post_sync() (err error) {
 	return nil
 }
 
-func (fs *FileSyncer) validate(path string) error {
+func (fs *RandomFileSyncer) validate(path string) error {
 	fp, err := os.Open(path)
 	if err != nil {
 		if os.IsNotExist(err) {
@@ -204,11 +154,7 @@ func (fs *FileSyncer) validate(path string) error {
 	return nil
 }
 
-func (fs *FileSyncer) Validate() error {
-	return fs.validate(fs.opt.path)
-}
-
-func (fs *FileSyncer) create_empty_cache_file() error {
+func (fs *RandomFileSyncer) create_empty_cache_file() error {
 	f, err := os.Create(fs.opt.cache_path)
 	if err != nil {
 		return err
@@ -224,7 +170,7 @@ func (fs *FileSyncer) create_empty_cache_file() error {
 	return nil
 }
 
-func (fs *FileSyncer) Initialize() error {
+func (fs *RandomFileSyncer) initialize() error {
 	if fs.opt.cache_path == "" {
 		fs.opt.cache_path = path.Join(path.Dir(fs.opt.path), "."+path.Base(fs.opt.path))
 	}
@@ -246,19 +192,19 @@ func (fs *FileSyncer) Initialize() error {
 	return nil
 }
 
-func NewFileSyncer(opts ...SetFileSyncerOption) (*FileSyncer, error) {
+func NewRandomFileSyncer(opts ...SetFileSyncerOption) (*RandomFileSyncer, error) {
 	o := NewFileSyncerOption()
 	for _, opt := range opts {
 		opt(o)
 	}
 
-	fs := &FileSyncer{opt: o}
-	if err := fs.Validate(); err != nil {
+	fs := &RandomFileSyncer{opt: o}
+	if err := fs.validate(fs.opt.path); err != nil {
 		if err != ErrHashNotMatch {
 			return nil, err
 		}
 
-		if err = fs.Initialize(); err != nil {
+		if err = fs.initialize(); err != nil {
 			return nil, err
 		}
 	}

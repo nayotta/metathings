@@ -12,15 +12,15 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-type FileSyncerTestSuite struct {
-	fs       *FileSyncer
+type RandomFileSyncerTestSuite struct {
+	fs       *RandomFileSyncer
 	src      string
 	src_sha1 string
 	dst      string
 	suite.Suite
 }
 
-func (s *FileSyncerTestSuite) sha1_hash(path string) string {
+func (s *RandomFileSyncerTestSuite) sha1_hash(path string) string {
 	fp, err := os.Open(path)
 	if err != nil {
 		s.Failf("failed to sha1 data: %v", path)
@@ -35,7 +35,7 @@ func (s *FileSyncerTestSuite) sha1_hash(path string) string {
 	return fmt.Sprintf("%x", hp.Sum(nil))
 }
 
-func (s *FileSyncerTestSuite) SetupTest() {
+func (s *RandomFileSyncerTestSuite) SetupTest() {
 	var data_size int64 = 64*1024*1024 + 13
 	data := make([]byte, data_size)
 	rand.Read(data)
@@ -61,7 +61,7 @@ func (s *FileSyncerTestSuite) SetupTest() {
 	s.dst = dst.Name()
 	defer dst.Close()
 
-	s.fs, err = NewFileSyncer(
+	s.fs, err = NewRandomFileSyncer(
 		SetPath(s.dst),
 		SetSize(data_size),
 		SetSha1Hash(s.src_sha1),
@@ -71,7 +71,7 @@ func (s *FileSyncerTestSuite) SetupTest() {
 	}
 }
 
-func (s *FileSyncerTestSuite) AfterTest(suiteName, testName string) {
+func (s *RandomFileSyncerTestSuite) AfterTest(suiteName, testName string) {
 	err := os.Remove(s.src)
 	if err != nil {
 		s.Fail("failed to remove src data")
@@ -88,7 +88,7 @@ func (s *FileSyncerTestSuite) AfterTest(suiteName, testName string) {
 	}
 }
 
-func (s *FileSyncerTestSuite) TestSync() {
+func (s *RandomFileSyncerTestSuite) TestSync() {
 	fp, err := os.Open(s.src)
 	s.Nil(err)
 	defer fp.Close()
@@ -109,6 +109,6 @@ _outer_loop:
 	}
 }
 
-func TestFileSyncerTestSuite(t *testing.T) {
-	suite.Run(t, new(FileSyncerTestSuite))
+func TestRandomFileSyncerTestSuite(t *testing.T) {
+	suite.Run(t, new(RandomFileSyncerTestSuite))
 }
