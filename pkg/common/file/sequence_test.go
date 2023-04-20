@@ -79,6 +79,9 @@ func (s *SequenceFileSyncerTestSuite) TestCase1() {
 	}{
 		{1024 * 1024 * 1024, 4 * 1024 * 1024},
 		{16*1024*1024 + 3, 16},
+		{512, 1024},
+		{16, 4 * 1024 * 1024},
+		{3, 4 * 1024 * 1024},
 	} {
 		s.runCase1(st.bufferSize, st.chunkSize)
 	}
