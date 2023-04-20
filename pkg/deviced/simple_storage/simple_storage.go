@@ -55,7 +55,7 @@ type ListObjectsOption struct {
 
 type SimpleStorage interface {
 	PutObject(obj *Object, reader io.Reader) error
-	PutObjectAsync(obj *Object, opt *PutObjectAsyncOption) (*file_helper.FileSyncer, error)
+	PutObjectAsync(obj *Object, opt *PutObjectAsyncOption) (file_helper.FileSyncer, error)
 	RemoveObject(obj *Object) error
 	RenameObject(src, dst *Object) error
 	GetObject(obj *Object) (*Object, error)

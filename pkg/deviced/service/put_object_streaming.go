@@ -30,7 +30,7 @@ func (self *MetathingsDevicedService) new_put_object_streaming_chunks_response(o
 func (self *MetathingsDevicedService) put_object_streaming_send_pull_request_loop(
 	quit chan struct{},
 	stm pb.DevicedService_PutObjectStreamingServer,
-	fs *file_helper.FileSyncer,
+	fs file_helper.FileSyncer,
 	sem chan struct{},
 	errs chan error,
 ) {
@@ -85,7 +85,7 @@ func (self *MetathingsDevicedService) put_object_streaming_send_pull_request_loo
 func (self *MetathingsDevicedService) put_object_streaming_recv_push_response_loop(
 	quit chan struct{},
 	stm pb.DevicedService_PutObjectStreamingServer,
-	fs *file_helper.FileSyncer,
+	fs file_helper.FileSyncer,
 	sem chan struct{},
 	errs chan error,
 ) {

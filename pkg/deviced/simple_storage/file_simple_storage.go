@@ -1,6 +1,7 @@
 package metathings_deviced_simple_storage
 
 import (
+	"bytes"
 	"crypto/sha1"
 	"encoding/base64"
 	"fmt"
@@ -9,7 +10,6 @@ import (
 	"os"
 	"path"
 	"strconv"
-	"strings"
 	"sync"
 	"time"
 
@@ -129,7 +129,7 @@ func (fss *FileSimpleStorage) PutObject(obj *Object, reader io.Reader) error {
 	return nil
 }
 
-func (fss *FileSimpleStorage) PutObjectAsync(obj *Object, opt *PutObjectAsyncOption) (*file_helper.FileSyncer, error) {
+func (fss *FileSimpleStorage) PutObjectAsync(obj *Object, opt *PutObjectAsyncOption) (file_helper.FileSyncer, error) {
 	p := fss.join_path(obj)
 	err := os.MkdirAll(path.Dir(p), os.ModePerm)
 	if err != nil {
@@ -142,7 +142,7 @@ func (fss *FileSimpleStorage) PutObjectAsync(obj *Object, opt *PutObjectAsyncOpt
 		return nil, err
 	}
 
-	fs, err := file_helper.NewFileSyncer(
+	fs, err := file_helper.NewRandomFileSyncer(
 		file_helper.SetPath(p),
 		file_helper.SetSize(obj.Length),
 		file_helper.SetSha1Hash(opt.SHA1),
@@ -252,25 +252,21 @@ func (fss *FileSimpleStorage) GetObjectContent(obj *Object) (chan []byte, error)
 }
 
 func (fss *FileSimpleStorage) GetObjectContentSync(obj *Object) ([]byte, error) {
-	var sb strings.Builder
+	var bb bytes.Buffer
 	ch, err := fss.GetObjectContent(obj)
 	if err != nil {
 		return nil, err
 	}
 
-	for {
-		select {
-		case buf, ok := <-ch:
-			if !ok {
-				return []byte(sb.String()), nil
-			}
-			sb.Write(buf)
-		}
+	for buf := range ch {
+		bb.Write(buf)
 	}
+
+	return bb.Bytes(), nil
 }
 
 func (fss *FileSimpleStorage) list_objects(obj *Object, recursive bool, depth int) ([]*Object, error) {
-	if recursive && depth == 0 {
+	if recursive && depth <= 0 {
 		return nil, nil
 	}
 
