@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	minio "github.com/minio/minio-go/v7"
+	"github.com/minio/minio-go/v7/pkg/credentials"
 	logging "github.com/sirupsen/logrus"
 
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
@@ -17,7 +18,13 @@ import (
 )
 
 type MinioSimpleStorageOption struct {
-	Bucket          string
+	MinioEndpoint string
+	MinioID       string
+	MinioSecret   string
+	MinioToken    string
+	MinioSecure   bool
+	MinioBucket   string
+
 	ReadBufferSize  int
 	WriteBufferSize int
 }
@@ -41,7 +48,12 @@ func new_minio_simple_storage(args ...any) (SimpleStorage, error) {
 	opt := NewMinioSimpleStorageOption()
 
 	err := opt_helper.Setopt(map[string]func(string, any) error{
-		"bucket":            opt_helper.ToString(&opt.Bucket),
+		"minio_endpoint":    opt_helper.ToString(&opt.MinioEndpoint),
+		"minio_id":          opt_helper.ToString(&opt.MinioID),
+		"minio_secret":      opt_helper.ToString(&opt.MinioSecret),
+		"minio_token":       opt_helper.ToString(&opt.MinioToken),
+		"minio_secure":      opt_helper.ToBool(&opt.MinioSecure),
+		"minio_bucket":      opt_helper.ToString(&opt.MinioBucket),
 		"read_buffer_size":  opt_helper.ToInt(&opt.ReadBufferSize),
 		"write_buffer_size": opt_helper.ToInt(&opt.WriteBufferSize),
 		"minio_client":      client_helper.ToMinioClient(&minioClient),
@@ -49,6 +61,16 @@ func new_minio_simple_storage(args ...any) (SimpleStorage, error) {
 	}, opt_helper.SetSkip(true))(args...)
 	if err != nil {
 		return nil, err
+	}
+
+	if minioClient == nil {
+		minioClient, err = minio.New(opt.MinioEndpoint, &minio.Options{
+			Creds:  credentials.NewStaticV4(opt.MinioID, opt.MinioSecret, opt.MinioToken),
+			Secure: opt.MinioSecure,
+		})
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return &MinioSimpleStorage{
@@ -213,7 +235,7 @@ func (mss *MinioSimpleStorage) ListObjects(obj *Object, opt *ListObjectsOption) 
 func (mss *MinioSimpleStorage) GetLogger() logging.FieldLogger {
 	return mss.logger.WithFields(logging.Fields{
 		"#instance": "MinioSimpleStorage",
-		"bucket":    mss.opt.Bucket,
+		"bucket":    mss.opt.MinioBucket,
 	})
 }
 
@@ -231,7 +253,7 @@ func (mss *MinioSimpleStorage) GetLoggerWithObject(obj *Object) logging.FieldLog
 }
 
 func (mss *MinioSimpleStorage) minioBucket() string {
-	return mss.opt.Bucket
+	return mss.opt.MinioBucket
 }
 
 func (mss *MinioSimpleStorage) join_path(obj *Object) string {

@@ -108,11 +108,11 @@ func (ts *minioSimpleStorageTestSuite) SetupSuite() {
 	secret := test_helper.GetTestMinioSecret()
 	token := test_helper.GetTestMinioToken()
 	secure := test_helper.GetTestMinioSecure()
-	bucket := test_helper.GetTestMinioBucket()
+	minioBucket := test_helper.GetTestMinioBucket()
 	rdBufSz := test_helper.GetTestMinioReadBufferSize()
 	wrBufSz := test_helper.GetTestMinioWriteBufferSize()
 
-	ts.bucket = bucket
+	ts.bucket = minioBucket
 
 	client, err := minio.New(endpoint, &minio.Options{
 		Creds:  credentials.NewStaticV4(id, secret, token),
@@ -125,11 +125,17 @@ func (ts *minioSimpleStorageTestSuite) SetupSuite() {
 	logger.SetLevel(logging.TraceLevel)
 
 	mss, err := new_minio_simple_storage(
-		"logger", logging.NewEntry(logger),
-		"minio_client", ts.mc,
-		"bucket", bucket,
+		"minio_endpoint", endpoint,
+		"minio_id", id,
+		"minio_secret", secret,
+		"minio_token", token,
+		"minio_secure", secure,
+		"minio_bucket", minioBucket,
+
 		"read_buffer_size", rdBufSz,
 		"write_buffer_size", wrBufSz,
+
+		"logger", logging.NewEntry(logger),
 	)
 	ts.Require().Nil(err)
 	ts.mss = mss.(*MinioSimpleStorage)
