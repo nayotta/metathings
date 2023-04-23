@@ -29,8 +29,8 @@ type FileSimpleStorageOption struct {
 func NewFileSimpleStorageOption() *FileSimpleStorageOption {
 	opt := &FileSimpleStorageOption{}
 
-	opt.ReadBufferSize = 64 * 1024
-	opt.WriteBufferSize = 64 * 1024
+	opt.ReadBufferSize = 4 * 1024 * 1024
+	opt.WriteBufferSize = 4 * 1024 * 1024
 
 	return opt
 }

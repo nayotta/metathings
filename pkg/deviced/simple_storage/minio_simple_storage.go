@@ -6,11 +6,14 @@ import (
 	"io"
 	"path"
 	"path/filepath"
+	"strings"
 
 	minio "github.com/minio/minio-go/v7"
 	logging "github.com/sirupsen/logrus"
 
+	client_helper "github.com/nayotta/metathings/pkg/common/client"
 	file_helper "github.com/nayotta/metathings/pkg/common/file"
+	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 )
 
 type MinioSimpleStorageOption struct {
@@ -19,10 +22,40 @@ type MinioSimpleStorageOption struct {
 	WriteBufferSize int
 }
 
+func NewMinioSimpleStorageOption() *MinioSimpleStorageOption {
+	return &MinioSimpleStorageOption{
+		ReadBufferSize:  4 * 1024 * 1024,
+		WriteBufferSize: 4 * 1024 * 1024,
+	}
+}
+
 type MinioSimpleStorage struct {
 	minioClient *minio.Client
 	opt         *MinioSimpleStorageOption
 	logger      logging.FieldLogger
+}
+
+func new_minio_simple_storage(args ...any) (SimpleStorage, error) {
+	var logger logging.FieldLogger
+	var minioClient *minio.Client
+	opt := NewMinioSimpleStorageOption()
+
+	err := opt_helper.Setopt(map[string]func(string, any) error{
+		"bucket":            opt_helper.ToString(&opt.Bucket),
+		"read_buffer_size":  opt_helper.ToInt(&opt.ReadBufferSize),
+		"write_buffer_size": opt_helper.ToInt(&opt.WriteBufferSize),
+		"minio_client":      client_helper.ToMinioClient(&minioClient),
+		"logger":            opt_helper.ToLogger(&logger),
+	}, opt_helper.SetSkip(true))(args...)
+	if err != nil {
+		return nil, err
+	}
+
+	return &MinioSimpleStorage{
+		opt:         opt,
+		minioClient: minioClient,
+		logger:      logger,
+	}, nil
 }
 
 func (mss *MinioSimpleStorage) PutObject(obj *Object, rd io.Reader) error {
@@ -118,7 +151,11 @@ func (mss *MinioSimpleStorage) GetObject(x *Object) (y *Object, err error) {
 		return nil, err
 	}
 
-	y = mss.new_object_from_minio_object_info(x, info)
+	y, err = mss.new_object_from_minio_object_info(info)
+	if err != nil {
+		logger.WithError(err).Debugf("failed to new object from minio object stat")
+		return nil, err
+	}
 
 	logger.Tracef("get object")
 
@@ -160,7 +197,12 @@ func (mss *MinioSimpleStorage) ListObjects(obj *Object, opt *ListObjectsOption) 
 
 	var objs []*Object
 	for oi := range ois {
-		objs = append(objs, mss.new_object_from_minio_object_info(obj, oi))
+		obj, err := mss.new_object_from_minio_object_info(oi)
+		if err != nil {
+			logger.WithError(err).Debugf("failed to new object from minio object info")
+			return nil, err
+		}
+		objs = append(objs, obj)
 	}
 
 	logger.Tracef("list objects")
@@ -193,18 +235,24 @@ func (mss *MinioSimpleStorage) minioBucket() string {
 }
 
 func (mss *MinioSimpleStorage) join_path(obj *Object) string {
-	return path.Join("/", obj.Device, obj.FullName())
+	return path.Join(obj.Device, obj.FullName())
 }
 
 func (mss *MinioSimpleStorage) context() context.Context {
 	return context.Background()
 }
 
-func (mss *MinioSimpleStorage) new_object_from_minio_object_info(x *Object, oi minio.ObjectInfo) (y *Object) {
-	fp := filepath.Join("/", oi.Key)
-	prefix := filepath.Dir(fp)
-	base := filepath.Base(fp)
-	return new_object(x.Device, prefix, base, oi.Size, oi.ETag, oi.LastModified)
+func (mss *MinioSimpleStorage) new_object_from_minio_object_info(oi minio.ObjectInfo) (*Object, error) {
+	ss := strings.SplitN(oi.Key, "/", 2)
+	if len(ss) != 2 {
+		return nil, ErrObjectNotFound
+	}
+
+	device := ss[0]
+	prefix := path.Dir(ss[1])
+	base := path.Base(ss[1])
+
+	return new_object(device, prefix, base, oi.Size, oi.ETag, oi.LastModified), nil
 }
 
 func (mss *MinioSimpleStorage) get_object_content(obj *Object) (chan []byte, error) {
@@ -219,24 +267,23 @@ func (mss *MinioSimpleStorage) get_object_content(obj *Object) (chan []byte, err
 
 	ch := make(chan []byte)
 	go func() {
+		defer close(ch)
 		for {
 			slice := make([]byte, mss.opt.ReadBufferSize)
 			n, err := minioObject.Read(slice)
+			if n > 0 {
+				ch <- slice[:n]
+			}
+
 			if err != nil || n == 0 {
 				break
 			}
-			ch <- slice[:n]
 		}
-		defer close(ch)
 	}()
 
 	logger.Tracef("get object content")
 
 	return ch, nil
-}
-
-func new_minio_simple_storage(args ...any) (SimpleStorage, error) {
-	panic("unimplemented")
 }
 
 func init() {

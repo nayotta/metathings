@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	_TEST_LARGE_OBJECT_CONTENT_SIZE = 513
+	_TEST_LARGE_OBJECT_CONTENT_SIZE = 1024*1024 + 3
 	_TEST_LARGE_OBJECT_CONTENT_MASK = 42
 )
 
@@ -31,12 +31,14 @@ var (
 		Device: test_device_id,
 		Prefix: test_object_prefix,
 		Name:   test_object_name,
+		Length: int64(len(test_object_content)),
 	}
 
 	test_large_object = &Object{
 		Device: test_device_id,
 		Prefix: test_large_object_prefix,
 		Name:   test_large_object_name,
+		Length: int64(len(test_large_object_content)),
 	}
 )
 

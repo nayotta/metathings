@@ -3,6 +3,8 @@ package test_helper
 import (
 	"os"
 	"strings"
+
+	"github.com/spf13/cast"
 )
 
 func GetenvWithDefault(k, d string) string {
@@ -76,4 +78,36 @@ func GetTestInfluxdb2Org() string {
 
 func GetTestInfluxdb2Bucket() string {
 	return GetenvWithDefault("MTT_INFLUXDB2_BUCKET", "")
+}
+
+func GetTestMinioEndpoint() string {
+	return GetenvWithDefault("MTT_MINIO_ENDPOINT", "127.0.0.1:9000")
+}
+
+func GetTestMinioID() string {
+	return GetenvWithDefault("MTT_MINIO_ID", "minioadmin")
+}
+
+func GetTestMinioSecret() string {
+	return GetenvWithDefault("MTT_MINIO_SECRET", "minioadmin")
+}
+
+func GetTestMinioToken() string {
+	return GetenvWithDefault("MTT_MINIO_TOKEN", "")
+}
+
+func GetTestMinioSecure() bool {
+	return cast.ToBool(GetenvWithDefault("MTT_MINIO_SECURE", "false"))
+}
+
+func GetTestMinioBucket() string {
+	return GetenvWithDefault("MTT_MINIO_BUCKET", "test")
+}
+
+func GetTestMinioReadBufferSize() int {
+	return cast.ToInt(GetenvWithDefault("MTT_MINIO_READ_BUFFER_SIZE", "4194304")) // 4MiB
+}
+
+func GetTestMinioWriteBufferSize() int {
+	return cast.ToInt(GetenvWithDefault("MTT_MINIO_WRITE_BUFFER_SIZE", "4194304")) // 4MiB
 }
