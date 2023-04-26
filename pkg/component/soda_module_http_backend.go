@@ -16,6 +16,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cast"
 	"github.com/stretchr/objx"
+	"google.golang.org/protobuf/types/known/timestamppb"
 
 	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
 	http_helper "github.com/nayotta/metathings/pkg/common/http"
@@ -419,6 +420,11 @@ func (b *SodaModuleHttpBackend) handle_list_objects(w http.ResponseWriter, r *ht
 	var os []interface{}
 
 	for _, obj := range objs {
+		// HACK: rewrite error LastModified
+		if obj.LastModified.Seconds < 0 || obj.LastModified.Nanos < 0 {
+			obj.LastModified = &timestamppb.Timestamp{}
+		}
+
 		o, err := convert_protobuf_message_to_interface(obj)
 		if err != nil {
 			logger.WithError(err).Errorf("failed to convert object to string map")
