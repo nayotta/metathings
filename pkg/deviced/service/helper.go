@@ -56,7 +56,7 @@ func copy_device(x *storage.Device) *pb.Device {
 }
 
 func copy_devices(xs []*storage.Device) []*pb.Device {
-	var ys []*pb.Device
+	ys := []*pb.Device{}
 
 	for _, x := range xs {
 		ys = append(ys, copy_device(x))
@@ -80,7 +80,7 @@ func copy_module(x *storage.Module) *pb.Module {
 }
 
 func copy_modules(xs []*storage.Module) []*pb.Module {
-	var ys []*pb.Module
+	ys := []*pb.Module{}
 
 	for _, x := range xs {
 		ys = append(ys, copy_module(x))
@@ -105,7 +105,7 @@ func copy_flow_view(x *storage.Flow) *pb.Flow {
 }
 
 func copy_flows(xs []*storage.Flow) []*pb.Flow {
-	var ys []*pb.Flow
+	ys := []*pb.Flow{}
 
 	for _, x := range xs {
 		ys = append(ys, copy_flow(x))
@@ -115,7 +115,7 @@ func copy_flows(xs []*storage.Flow) []*pb.Flow {
 }
 
 func copy_flows_view(xs []*storage.Flow) []*pb.Flow {
-	var ys []*pb.Flow
+	ys := []*pb.Flow{}
 
 	for _, x := range xs {
 		ys = append(ys, copy_flow_view(x))
@@ -136,7 +136,7 @@ func copy_flow_set(x *storage.FlowSet) *pb.FlowSet {
 }
 
 func copy_flow_sets(xs []*storage.FlowSet) []*pb.FlowSet {
-	var ys []*pb.FlowSet
+	ys := []*pb.FlowSet{}
 
 	for _, x := range xs {
 		ys = append(ys, copy_flow_set(x))
@@ -167,7 +167,7 @@ func copy_config_error(x *storage.Config) (*pb.Config, error) {
 }
 
 func copy_configs(xs []*storage.Config) []*pb.Config {
-	var ys []*pb.Config
+	ys := []*pb.Config{}
 
 	for _, x := range xs {
 		ys = append(ys, copy_config(x))
@@ -192,7 +192,7 @@ func copy_object(x *simple_storage.Object) *pb.Object {
 }
 
 func copy_objects(xs []*simple_storage.Object) []*pb.Object {
-	var ys []*pb.Object
+	ys := []*pb.Object{}
 
 	for _, x := range xs {
 		ys = append(ys, copy_object(x))
@@ -220,7 +220,7 @@ func copy_firmware_descriptor(x *storage.FirmwareDescriptor) *pb.FirmwareDescrip
 }
 
 func copy_firmware_descriptors(xs []*storage.FirmwareDescriptor) []*pb.FirmwareDescriptor {
-	var ys []*pb.FirmwareDescriptor
+	ys := []*pb.FirmwareDescriptor{}
 
 	for _, x := range xs {
 		ys = append(ys, copy_firmware_descriptor(x))
@@ -230,7 +230,7 @@ func copy_firmware_descriptors(xs []*storage.FirmwareDescriptor) []*pb.FirmwareD
 }
 
 func copy_firmware_hub(x *storage.FirmwareHub) *pb.FirmwareHub {
-	var devices []*pb.Device
+	devices := []*pb.Device{}
 
 	for _, dev_s := range x.Devices {
 		devices = append(devices, &pb.Device{
@@ -250,7 +250,7 @@ func copy_firmware_hub(x *storage.FirmwareHub) *pb.FirmwareHub {
 }
 
 func copy_firmware_hubs(xs []*storage.FirmwareHub) []*pb.FirmwareHub {
-	var ys []*pb.FirmwareHub
+	ys := []*pb.FirmwareHub{}
 
 	for _, x := range xs {
 		ys = append(ys, copy_firmware_hub(x))

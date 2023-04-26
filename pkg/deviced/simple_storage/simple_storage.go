@@ -23,7 +23,14 @@ func (o *Object) FullName() string {
 
 func NewObject(device, prefix, name string) *Object {
 	prefix = path.Join(prefix, path.Dir(name))
+	if prefix == "." {
+		prefix = ""
+	}
+
 	name = path.Clean(path.Base(name))
+	if name == "." {
+		name = ""
+	}
 
 	return &Object{
 		Device: device,

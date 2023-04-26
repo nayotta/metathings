@@ -17,6 +17,7 @@ import (
 	"github.com/golang/protobuf/ptypes/wrappers"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
+	"google.golang.org/protobuf/types/known/wrapperspb"
 
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
 	const_helper "github.com/nayotta/metathings/pkg/common/constant"
@@ -588,7 +589,8 @@ func _put_object(cli pb.DeviceServiceClient, ctx context.Context, name string, c
 
 	req := &pb.PutObjectRequest{
 		Object: &deviced_pb.OpObject{
-			Name: &wrappers.StringValue{Value: name},
+			Name:   &wrappers.StringValue{Value: name},
+			Length: &wrapperspb.Int64Value{Value: int64(len(buf))},
 		},
 		Content: &wrappers.BytesValue{Value: buf},
 	}

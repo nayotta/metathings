@@ -203,33 +203,26 @@ func (mss *MinioSimpleStorage) GetObjectContentSync(obj *Object) ([]byte, error)
 	return bb.Bytes(), nil
 }
 
-// ignore option:depth in minio backend
-// dont list directory in minio backend
-func (mss *MinioSimpleStorage) ListObjects(obj *Object, opt *ListObjectsOption) ([]*Object, error) {
-	logger := mss.GetLoggerWithObject(obj).WithFields(logging.Fields{
+func (mss *MinioSimpleStorage) ListObjects(x *Object, opt *ListObjectsOption) (ys []*Object, err error) {
+	logger := mss.GetLoggerWithObject(x).WithFields(logging.Fields{
 		"#method":   "ListObjects",
 		"recursive": opt.Recursive,
-	})
-	ctx := mss.context()
-
-	ois := mss.minioClient.ListObjects(ctx, mss.minioBucket(), minio.ListObjectsOptions{
-		Prefix:    obj.Prefix,
-		Recursive: opt.Recursive,
+		"depth":     opt.Depth,
 	})
 
-	var objs []*Object
-	for oi := range ois {
-		obj, err := mss.new_object_from_minio_object_info(oi)
-		if err != nil {
-			logger.WithError(err).Debugf("failed to new object from minio object info")
-			return nil, err
-		}
-		objs = append(objs, obj)
+	depth := opt.Depth
+	if !opt.Recursive {
+		depth = 1
+	}
+
+	ys, err = mss.list_objects(mss.context(), mss.minioClient, mss.minioBucket(), x, depth)
+	if err != nil {
+		logger.WithError(err).Debugf("failed to list objects")
+		return nil, err
 	}
 
 	logger.Tracef("list objects")
-
-	return objs, nil
+	return ys, nil
 }
 
 func (mss *MinioSimpleStorage) GetLogger() logging.FieldLogger {
@@ -272,7 +265,13 @@ func (mss *MinioSimpleStorage) new_object_from_minio_object_info(oi minio.Object
 
 	device := ss[0]
 	prefix := path.Dir(ss[1])
-	base := path.Base(ss[1])
+	if prefix == "." {
+		prefix = ""
+	}
+	base := ""
+	if len(ss[1]) != 0 && ss[1][len(ss[1])-1] != '/' {
+		base = path.Base(ss[1])
+	}
 
 	return new_object(device, prefix, base, oi.Size, oi.ETag, oi.LastModified), nil
 }
@@ -306,6 +305,45 @@ func (mss *MinioSimpleStorage) get_object_content(obj *Object) (chan []byte, err
 	logger.Tracef("get object content")
 
 	return ch, nil
+}
+
+func (mss *MinioSimpleStorage) list_objects(ctx context.Context, mc *minio.Client, bkt string, x *Object, d int) (ys []*Object, err error) {
+	ys = []*Object{}
+
+	if d <= 0 {
+		return
+	}
+
+	ois := mc.ListObjects(ctx, bkt, minio.ListObjectsOptions{
+		Prefix:    mss.join_path(x) + "/",
+		Recursive: false,
+	})
+	for oi := range ois {
+		y, err := mss.new_object_from_minio_object_info(oi)
+		if err != nil {
+			return nil, err
+		}
+
+		if y.Name == "." {
+			continue
+		}
+
+		ys = append(ys, y)
+
+		if mss.is_directory(y) {
+			zs, err := mss.list_objects(ctx, mc, bkt, y, d-1)
+			if err != nil {
+				return nil, err
+			}
+			ys = append(ys, zs...)
+		}
+	}
+
+	return ys, nil
+}
+
+func (mss *MinioSimpleStorage) is_directory(obj *Object) bool {
+	return obj.Etag == ""
 }
 
 func init() {

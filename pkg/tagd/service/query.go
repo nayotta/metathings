@@ -10,7 +10,7 @@ import (
 )
 
 func (ts *MetathingsTagdService) Query(ctx context.Context, req *pb.QueryRequest) (*pb.QueryResponse, error) {
-	var tags []string
+	tags := []string{}
 	logger := ts.GetLogger()
 
 	ns := req.GetNamespace().GetValue()
