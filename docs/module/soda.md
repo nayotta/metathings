@@ -696,7 +696,7 @@ request body:
 ```json
 {
     "object": {
-        "name": <name>,  # Name: 文件的名字, 包含路径.
+        "name": <name>,  # Name: 文件名字, 包含路径.
         "content": <content>  # Content: 文件的内容.
     }
 }
@@ -704,7 +704,156 @@ request body:
 
 response code: `200`
 
-#### 5.1.4. GetObject
+#### 5.1.4. PutObject(Streaming)
+
+流式传输文件到`SimpleStorage`
+
+#### 5.1.4.1. PutObjectStreaming
+
+uri: `/v1/actions/put_object_streaming`
+
+method: `POST`
+
+request headers:
+
+`Content-Type: application/json`
+
+request body:
+
+```json
+{
+    "object": {
+        "name": <name>,  # Name: 文件名字, 包含路径.
+        "length": <size>,  # Length: 文件大小, unit: byte, type: int.
+        "sha1sum": <sha1>,  # Sha1sum: 文件校验和, optional, 当deviced的simple storage backend是minio时可用.
+    }
+}
+```
+
+response headers:
+
+```
+Metathings-Soda-Object-Next-Chunk-Offset: <offset>
+Metathings-Soda-Object-Next-Chunk-Length: <length>
+```
+
+response body:
+
+```json
+{
+    "object_streaming": {
+        "id": <id>,  # Id: Object Streaming ID
+    }
+}
+```
+
+response code: `200`
+
+#### 5.1.4.2. WriteObjectChunk
+
+uri: `/v1/object_streamings/{object_streaming}/actions/write_chunk`
+
+method: `POST`
+
+request headers:
+
+```
+Content-Type: application/octet-stream
+Metathings-Soda-Object-Chunk-Offset: <offset>  # required
+Metathings-Soda-Object-Chunk-Length: <length>  # required
+Metathings-Soda-Object-Chunk-Sha1sum: <sha1sum>  # required
+```
+
+request body:
+
+**Binary Data**
+
+response headers:
+
+```
+Metathings-Soda-Object-Next-Chunk-Offset: <offset>
+Metathings-Soda-Object-Next-Chunk-Length: <length>
+```
+
+response code: `204`
+
+#### 5.1.4.3. NextObjectChunk
+
+uri: `/v1/object_streamings/{object_streaming}/actions/next_chunk`
+
+method: `POST`
+
+request headers:
+
+`Content-Type: application/json`
+
+request body:
+
+```json
+{}
+```
+
+response headers:
+
+```
+Metathings-Soda-Object-Next-Chunk-Offset: <offset>
+Metathings-Soda-Object-Next-Chunk-Length: <length>
+```
+
+response code: `204`
+
+#### 5.1.4.4. CancelObjectStreaming
+
+uri: `/v1/object_streamings/{object_streaming}/actions/cancel`
+
+method: `POST`
+
+request headers:
+
+```
+Content-Type: application/json
+```
+
+request body:
+
+```json
+{}
+```
+
+response code: `204`
+
+#### 5.1.4.5. ShowObjectStreaming
+
+uri: `/v1/object_streamings/{object_streaming}/actions/show`
+
+method: `POST`
+
+request headers:
+
+```
+Content-Type: application/json
+```
+
+request body:
+
+```json
+{}
+```
+
+request headers:
+
+```
+Metathings-Soda-Object-Name: <name>
+Metathings-Soda-Object-Sha1sum: <sha1sum>
+Metathings-Soda-Object-Length: <length>
+Metathings-Soda-Object-Uploaded-Length: <length>
+Metathings-Soda-Object-Chunk-Offset: <offset>
+Metathings-Soda-Object-Chunk-Length: <length>
+```
+
+response code: `204`
+
+#### 5.1.5. GetObject
 
 获取`SimpleStorage`上的文件的元信息.
 
@@ -745,7 +894,7 @@ response body:
 
 response code: `200`
 
-#### 5.1.5. GetObjectContent
+#### 5.1.6. GetObjectContent
 
 获取`SimpleStorage`上的文件的内容.
 
@@ -777,7 +926,7 @@ response body:
 
 response code: `200`
 
-#### 5.1.6. RemoveObject
+#### 5.1.7. RemoveObject
 
 删除`SimpleStorage`上的文件.
 
@@ -803,7 +952,7 @@ request body:
 
 response code: `204`
 
-#### 5.1.7. RenameObject
+#### 5.1.8. RenameObject
 
 重命名`SimpleStorage`上的文件.
 
@@ -830,7 +979,7 @@ request body:
 
 response code: `204`
 
-#### 5.1.8. ListObjects
+#### 5.1.9. ListObjects
 
 列出所属设备的`SimpleStorage`下的文件.
 
@@ -876,7 +1025,7 @@ response body:
 
 response code: `200`
 
-#### 5.1.9. Heartbeat
+#### 5.1.10. Heartbeat
 
 `Soda Module`的`heartbeat strategy`配置为`manual` 时, 会暴露的接口.
 
