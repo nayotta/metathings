@@ -241,6 +241,10 @@ func (b *SodaModuleHttpBackend) handle_put_object(w http.ResponseWriter, r *http
 	logger.Debugf("put object")
 }
 
+func (b *SodaModuleHttpBackend) handle_put_object_streaming(w http.ResponseWriter, r *http.Request) {
+	panic("unimplemented")
+}
+
 func (b *SodaModuleHttpBackend) handle_get_object(w http.ResponseWriter, r *http.Request) {
 	logger := b.m.Logger().WithField("action", "get_object")
 
@@ -444,6 +448,22 @@ func (b *SodaModuleHttpBackend) handle_list_objects(w http.ResponseWriter, r *ht
 	logger.Debugf("list objects")
 }
 
+func (b *SodaModuleHttpBackend) handle_object_stream_write_chunk(w http.ResponseWriter, r *http.Request) {
+	panic("unimplemented")
+}
+
+func (b *SodaModuleHttpBackend) handle_object_stream_next_chunk(w http.ResponseWriter, r *http.Request) {
+	panic("unimplemented")
+}
+
+func (b *SodaModuleHttpBackend) handle_object_stream_show(w http.ResponseWriter, r *http.Request) {
+	panic("unimplemented")
+}
+
+func (b *SodaModuleHttpBackend) handle_object_stream_cancel(w http.ResponseWriter, r *http.Request) {
+	panic("unimplemented")
+}
+
 func (b *SodaModuleHttpBackend) health_http_client() *http.Client {
 	cfg := b.m.Kernel().Config()
 	timeout := cfg.GetDuration("heartbeat.timeout")
@@ -533,12 +553,20 @@ func (b *SodaModuleHttpBackend) Start() error {
 	sr.HandleFunc("/show", b.handle_show).Methods("POST")
 	sr.HandleFunc("/push_frame_to_flow_once", b.handle_push_frame_to_flow_once).Methods("POST")
 	sr.HandleFunc("/put_object", b.handle_put_object).Methods("POST")
+	sr.HandleFunc("/put_object_streaming", b.handle_put_object_streaming).Methods("POST")
 	sr.HandleFunc("/get_object", b.handle_get_object).Methods("POST")
 	sr.HandleFunc("/get_object_content", b.handle_get_object_content).Methods("POST")
 	sr.HandleFunc("/remove_object", b.handle_remove_object).Methods("POST")
 	sr.HandleFunc("/rename_object", b.handle_rename_object).Methods("POST")
 	sr.HandleFunc("/list_objects", b.handle_list_objects).Methods("POST")
 	router.Use(b.authorize_middleware())
+
+	// object stream
+	ossr := router.PathPrefix("/v1/object_streams/{object_stream}/actions").Subrouter()
+	ossr.HandleFunc("/write_chunk", b.handle_object_stream_write_chunk).Methods("POST")
+	ossr.HandleFunc("/next_chunk", b.handle_object_stream_next_chunk).Methods("POST")
+	ossr.HandleFunc("/show", b.handle_object_stream_show).Methods("POST")
+	ossr.HandleFunc("/cancel", b.handle_object_stream_cancel).Methods("POST")
 
 	b.httpd = &http.Server{
 		Handler: router,

@@ -733,25 +733,18 @@ request body:
 response headers:
 
 ```
-Metathings-Soda-Object-Next-Chunk-Offset: <offset>
-Metathings-Soda-Object-Next-Chunk-Length: <length>
+Metathings-Soda-Object-Stream-Name: <name>
+Metathings-Soda-Object-Stream-Max-Age: <max-age>  # type: duration
+Metathings-Soda-Object-Stream-Remained: <remained>  # type: duration
+Metathings-Soda-Object-Stream-Next-Chunk-Offset: <offset>
+Metathings-Soda-Object-Stream-Next-Chunk-Length: <length>
 ```
 
-response body:
-
-```json
-{
-    "object_streaming": {
-        "id": <id>,  # Id: Object Streaming ID
-    }
-}
-```
-
-response code: `200`
+response code: `204`
 
 #### 5.1.4.2. WriteObjectChunk
 
-uri: `/v1/object_streamings/{object_streaming}/actions/write_chunk`
+uri: `/v1/object_streams/{object_stream}/actions/write_chunk`
 
 method: `POST`
 
@@ -759,9 +752,9 @@ request headers:
 
 ```
 Content-Type: application/octet-stream
-Metathings-Soda-Object-Chunk-Offset: <offset>  # required
-Metathings-Soda-Object-Chunk-Length: <length>  # required
-Metathings-Soda-Object-Chunk-Sha1sum: <sha1sum>  # required
+Metathings-Soda-Object-Stream-Chunk-Offset: <offset>  # required
+Metathings-Soda-Object-Stream-Chunk-Length: <length>  # required
+Metathings-Soda-Object-Stream-Chunk-Sha1sum: <sha1sum>  # required
 ```
 
 request body:
@@ -771,15 +764,16 @@ request body:
 response headers:
 
 ```
-Metathings-Soda-Object-Next-Chunk-Offset: <offset>
-Metathings-Soda-Object-Next-Chunk-Length: <length>
+Metathings-Soda-Object-Stream-Remained: <remianed>
+Metathings-Soda-Object-Stream-Next-Chunk-Offset: <offset>
+Metathings-Soda-Object-Stream-Next-Chunk-Length: <length>
 ```
 
 response code: `204`
 
 #### 5.1.4.3. NextObjectChunk
 
-uri: `/v1/object_streamings/{object_streaming}/actions/next_chunk`
+uri: `/v1/object_streams/{object_stream}/actions/next_chunk`
 
 method: `POST`
 
@@ -796,15 +790,16 @@ request body:
 response headers:
 
 ```
-Metathings-Soda-Object-Next-Chunk-Offset: <offset>
-Metathings-Soda-Object-Next-Chunk-Length: <length>
+Metathings-Soda-Object-Stream-Remained: <remained>
+Metathings-Soda-Object-Stream-Next-Chunk-Offset: <offset>
+Metathings-Soda-Object-Stream-Next-Chunk-Length: <length>
 ```
 
 response code: `204`
 
 #### 5.1.4.4. CancelObjectStreaming
 
-uri: `/v1/object_streamings/{object_streaming}/actions/cancel`
+uri: `/v1/object_streams/{object_stream}/actions/cancel`
 
 method: `POST`
 
@@ -824,7 +819,7 @@ response code: `204`
 
 #### 5.1.4.5. ShowObjectStreaming
 
-uri: `/v1/object_streamings/{object_streaming}/actions/show`
+uri: `/v1/object_streams/{object_stream}/actions/show`
 
 method: `POST`
 
@@ -843,12 +838,15 @@ request body:
 request headers:
 
 ```
+Metathings-Soda-Object-Stream-Name: <name>
 Metathings-Soda-Object-Name: <name>
 Metathings-Soda-Object-Sha1sum: <sha1sum>
 Metathings-Soda-Object-Length: <length>
 Metathings-Soda-Object-Uploaded-Length: <length>
-Metathings-Soda-Object-Chunk-Offset: <offset>
-Metathings-Soda-Object-Chunk-Length: <length>
+Metathings-Soda-Object-Stream-Max-Age: <max-age>
+Metathings-Soda-Object-Stream-Remained: <remained>
+Metathings-Soda-Object-Stream-Next-Chunk-Offset: <offset>
+Metathings-Soda-Object-Stream-Next-Chunk-Length: <length>
 ```
 
 response code: `204`
