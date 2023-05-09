@@ -1,8 +1,9 @@
 module github.com/nayotta/metathings
 
-go 1.18
+go 1.20
 
 require (
+	github.com/PeerXu/option-go v1.0.0
 	github.com/avast/retry-go v2.6.0+incompatible
 	github.com/casbin/casbin-server v0.0.0-20210722132617-2a171abd63ff
 	github.com/cavaliercoder/grab v2.0.0+incompatible
@@ -27,8 +28,8 @@ require (
 	github.com/spf13/cobra v1.0.0
 	github.com/spf13/pflag v1.0.5
 	github.com/spf13/viper v1.7.1
-	github.com/stretchr/objx v0.3.0
-	github.com/stretchr/testify v1.7.0
+	github.com/stretchr/objx v0.5.0
+	github.com/stretchr/testify v1.8.0
 	github.com/uber/jaeger-client-go v2.25.0+incompatible
 	github.com/yuin/gopher-lua v0.0.0-20200816102855-ee81675732da
 	go.mongodb.org/mongo-driver v1.4.0
@@ -45,6 +46,7 @@ require (
 	github.com/BurntSushi/toml v0.3.1 // indirect
 	github.com/HdrHistogram/hdrhistogram-go v0.9.0 // indirect
 	github.com/Knetic/govaluate v3.0.1-0.20171022003610-9aa49832a739+incompatible // indirect
+	github.com/PeerXu/errors-go v1.0.0 // indirect
 	github.com/aws/aws-sdk-go v1.29.15 // indirect
 	github.com/casbin/casbin/v2 v2.36.2 // indirect
 	github.com/casbin/gorm-adapter/v2 v2.1.0 // indirect
@@ -105,6 +107,6 @@ require (
 	google.golang.org/genproto v0.0.0-20210903162649-d08c68adba83 // indirect
 	google.golang.org/grpc/examples v0.0.0-20200924182952-21f897eab8af // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
-	gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c // indirect
+	gopkg.in/yaml.v3 v3.0.1 // indirect
 	honnef.co/go/tools v0.0.1-2020.1.4 // indirect
 )

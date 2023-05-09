@@ -32,6 +32,7 @@ var (
 	ErrInvalidBuffer                           = errors.New("invalid buffer")
 	ErrClosed                                  = errors.New("closed")
 	ErrWaitTimeout                             = errors.New("wait timeout")
+	ErrUploadTimeout                           = errors.New("upload timeout")
 	ErrSendOnClosedChannel                     = errors.New("send on closed channel")
 )
 

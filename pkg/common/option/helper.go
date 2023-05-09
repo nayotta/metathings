@@ -64,7 +64,7 @@ func (o option) Get(k string) interface{} {
 
 func (o option) Keys() []string {
 	ks := make([]string, 0, len(o))
-	for k, _ := range o {
+	for k := range o {
 		ks = append(ks, k)
 	}
 	return ks
