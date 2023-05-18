@@ -19,9 +19,13 @@ type ObjectStreamTestSuite struct {
 
 func (ts *ObjectStreamTestSuite) TestReadOffset() {
 	os := ts.newObjectStream()
-	offset, err := os.Seek(0, io.SeekCurrent)
+	offset, err := os.Seek(1, io.SeekStart)
 	ts.Require().Nil(err)
-	ts.Equal(int64(0), offset)
+	ts.Require().Equal(int64(1), offset)
+
+	offset, err = os.Seek(0, io.SeekCurrent)
+	ts.Nil(err)
+	ts.Equal(int64(1), offset)
 }
 
 func (ts *ObjectStreamTestSuite) TestSeek() {
@@ -88,7 +92,7 @@ func (ts *ObjectStreamTestSuite) TestAllInOne() {
 
 		dstHash := sha1.New()
 
-		os := ts.newObjectStream(WithLength(st.length), WithBufferLength(int(st.chunkLength)))
+		os := ts.newObjectStream(WithLength(st.length), WithBufferLength(st.chunkLength))
 		defer os.Close()
 
 		for i := int64(0); i < st.length; i += st.chunkLength {
@@ -104,6 +108,10 @@ func (ts *ObjectStreamTestSuite) TestAllInOne() {
 
 			srcRd.Seek(i, io.SeekStart)
 			srcRd.Read(srcBuf)
+
+			n, err = os.Seek(0, io.SeekCurrent)
+			ts.Nil(err)
+			ts.Equal(i, n)
 
 			srcBufHash := sha1.New()
 			srcBufHash.Write(srcBuf)
@@ -148,6 +156,7 @@ func (ts *ObjectStreamTestSuite) newObjectStream(opts ...NewObjectStreamOption) 
 		WithSha1sum(""),
 		WithMaxAge(1 * time.Hour),
 		WithLength(1024 * 1024 * 1024),
+		WithWaitTimeout(1 * time.Second),
 	}
 	os, err := NewObjectStream(append(d, opts...)...)
 	ts.Require().Nil(err)

@@ -3,6 +3,7 @@ package metathings_component
 import (
 	"errors"
 	"io"
+	"math/rand"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -21,7 +22,7 @@ const (
 
 func NewDefaultObjectStreamOption() option.Option {
 	return option.NewOption(map[string]any{
-		OPTION_BUFFER_LENGTH: 4 * 1024 * 1024, // 4MiB
+		OPTION_BUFFER_LENGTH: int64(4 * 1024 * 1024), // 4MiB
 		OPTION_WAIT_TIMEOUT:  31 * time.Second,
 	})
 }
@@ -32,7 +33,9 @@ type ObjectStream interface {
 	MaxAge() time.Duration
 	Remained() time.Duration
 	Length() int64
+	BufferLength() int64
 	Uploaded() int64
+	Wait(string) error
 	io.Writer
 	io.Reader
 	io.Seeker
@@ -93,14 +96,13 @@ func NewObjectStream(opts ...NewObjectStreamOption) (ObjectStream, error) {
 		logger:      logger,
 		opMtx:       &sync.Mutex{},
 		state:       STATE_SEEKABLE,
-		seekCh:      make(chan struct{}, 1),
-		readCh:      make(chan struct{}, 1),
-		writeCh:     make(chan struct{}, 1),
 		closed:      make(chan struct{}),
 		waitTimeout: waitTimeout,
 	}
 
-	os.seekCh <- struct{}{}
+	os.registerState(STATE_SEEKABLE)
+	os.registerState(STATE_READABLE)
+	os.registerState(STATE_WRITABLE)
 
 	return os, nil
 }
@@ -114,16 +116,15 @@ type objectStream struct {
 	uploaded  int64
 	createdAt time.Time
 
-	bufferLength int
+	bufferLength int64
 	bufferSize   int
 	buffer       []byte
+
+	waits sync.Map
 
 	logger      *logging.Entry
 	opMtx       sync.Locker
 	state       string
-	seekCh      chan struct{}
-	readCh      chan struct{}
-	writeCh     chan struct{}
 	closed      chan struct{}
 	closeOnce   sync.Once
 	waitTimeout time.Duration
@@ -133,6 +134,7 @@ func (os *objectStream) Name() string          { return os.name }
 func (os *objectStream) Sha1sum() string       { return os.sha1sum }
 func (os *objectStream) MaxAge() time.Duration { return os.maxAge }
 func (os *objectStream) Length() int64         { return os.length }
+func (os *objectStream) BufferLength() int64   { return os.bufferLength }
 func (os *objectStream) Uploaded() int64       { return os.uploaded }
 
 func (os *objectStream) Remained() time.Duration {
@@ -150,16 +152,17 @@ func (os *objectStream) Write(b []byte) (int, error) {
 		"#method": "Write",
 	})
 
-	if err = os.wait(os.writable); err != nil {
+	if err = os.wait(STATE_WRITABLE); err != nil {
 		return 0, err
 	}
+
 	os.opMtx.Lock()
 	defer os.opMtx.Unlock()
 
 	os.bufferSize = copy(os.buffer, b)
 	atomic.AddInt64(&os.uploaded, int64(os.bufferSize))
 
-	if err = os.notify(STATE_READABLE, os.readable); err != nil {
+	if err = os.notify(STATE_READABLE); err != nil {
 		logger.WithError(err).Debugf("failed to notify")
 		return 0, err
 	}
@@ -174,7 +177,7 @@ func (os *objectStream) Read(b []byte) (n int, err error) {
 		"#method": "Read",
 	})
 
-	if err = os.wait(os.readable); err != nil {
+	if err = os.wait(STATE_READABLE); err != nil {
 		return 0, err
 	}
 	os.opMtx.Lock()
@@ -187,7 +190,7 @@ func (os *objectStream) Read(b []byte) (n int, err error) {
 		return 0, err
 	}
 
-	if err = os.notify(STATE_SEEKABLE, os.seekable); err != nil {
+	if err = os.notify(STATE_SEEKABLE); err != nil {
 		logger.WithError(err).Debugf("failed to notify")
 		return 0, err
 	}
@@ -205,6 +208,11 @@ func (os *objectStream) Seek(offset int64, whence int) (n int64, err error) {
 	})
 
 	if offset == 0 && whence == io.SeekCurrent {
+		if err = os.wait(STATE_WRITABLE); err != nil {
+			logger.WithError(err).Debugf("failed to wait writable")
+			return 0, err
+		}
+
 		return os.offset, nil
 	}
 
@@ -214,7 +222,7 @@ func (os *objectStream) Seek(offset int64, whence int) (n int64, err error) {
 		return 0, err
 	}
 
-	if err = os.wait(os.seekable); err != nil {
+	if err = os.wait(STATE_SEEKABLE); err != nil {
 		logger.WithError(err).Debugf("failed to wait seekable")
 		return 0, err
 	}
@@ -223,7 +231,7 @@ func (os *objectStream) Seek(offset int64, whence int) (n int64, err error) {
 
 	atomic.StoreInt64(&os.offset, offset)
 
-	if err = os.notify(STATE_WRITABLE, os.writable); err != nil {
+	if err = os.notify(STATE_WRITABLE); err != nil {
 		logger.WithError(err).Debugf("failed to notify")
 		return 0, err
 	}
@@ -234,6 +242,10 @@ func (os *objectStream) Seek(offset int64, whence int) (n int64, err error) {
 }
 
 func (os *objectStream) Close() error { return os.close() }
+
+func (os *objectStream) Wait(state string) error {
+	return os.wait(state)
+}
 
 func (os *objectStream) Logger() *logging.Entry {
 	return os.logger.WithFields(logging.Fields{
@@ -256,9 +268,13 @@ func (os *objectStream) close() error {
 			"#method": "close",
 		})
 
-		close(os.seekCh)
-		close(os.readCh)
-		close(os.writeCh)
+		os.waits.Range(func(k, v any) bool {
+			v.(*sync.Map).Range(func(k1, v1 any) bool {
+				close(v1.(chan struct{}))
+				return true
+			})
+			return true
+		})
 
 		close(os.closed)
 
@@ -267,36 +283,56 @@ func (os *objectStream) close() error {
 	return nil
 }
 
-func (os *objectStream) wait(opable func() chan struct{}) error {
+func (os *objectStream) wait(state string) error {
 	if os.Remained() <= 0 {
 		return ErrUploadTimeout
 	}
+
+	if os.state == state {
+		return nil
+	}
+
+	opable, cancel, err := os.lowWait(state)
+	if err != nil {
+		return err
+	}
+	defer cancel()
 
 	select {
 	case <-os.closed:
 		return ErrClosed
 	case <-time.After(os.waitTimeout):
 		return ErrWaitTimeout
-	case <-opable():
+	case _, closed := <-opable:
+		if closed {
+			return ErrClosed
+		}
 		return nil
 	}
 }
 
-func (os *objectStream) notify(state string, opable func() chan struct{}) (err error) {
-	defer func() {
-		if recovered := recover(); recovered != nil {
-			err = recovered.(error)
-			if errors.Is(err, ErrSendOnClosedChannel) {
-				err = ErrClosed
-			}
-		}
-	}()
-
+func (os *objectStream) notify(state string) error {
 	if os.isClosed() {
 		return ErrClosed
 	}
 
-	opable() <- struct{}{}
+	v, ok := os.waits.Load(state)
+	if !ok {
+		return ErrUnregisteredState
+	}
+	v.(*sync.Map).Range(func(k1, v1 any) bool {
+		defer func() {
+			if r := recover(); r != nil {
+				err := r.(error)
+				if !errors.Is(err, ErrSendOnClosedChannel) {
+					panic(err)
+				}
+			}
+		}()
+		v1.(chan struct{}) <- struct{}{}
+		return true
+	})
+
 	os.state = state
 
 	return nil
@@ -311,6 +347,32 @@ func (os *objectStream) isClosed() bool {
 	}
 }
 
-func (os *objectStream) seekable() chan struct{} { return os.seekCh }
-func (os *objectStream) readable() chan struct{} { return os.readCh }
-func (os *objectStream) writable() chan struct{} { return os.writeCh }
+func (os *objectStream) registerState(s string) {
+	os.waits.Store(s, &sync.Map{})
+}
+
+func (os *objectStream) lowWait(state string) (chan struct{}, func(), error) {
+	v, ok := os.waits.Load(state)
+	if !ok {
+		return nil, nil, ErrUnregisteredState
+	}
+
+	m := v.(*sync.Map)
+	var once sync.Once
+	t := rand.Int63()
+	ch := make(chan struct{})
+	c := func() {
+		once.Do(func() {
+			m.Delete(t)
+			close(ch)
+		})
+	}
+
+	m.Store(t, ch)
+
+	if os.state == state {
+		go func() { ch <- struct{}{} }()
+	}
+
+	return ch, c, nil
+}

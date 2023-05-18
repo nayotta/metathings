@@ -49,6 +49,6 @@ var (
 	WithMaxAge, GetMaxAge             = option.New[time.Duration](OPTION_MAX_AGE)
 	WithOffset, GetOffset             = option.New[int64](OPTION_OFFSET)
 	WithLength, GetLength             = option.New[int64](OPTION_LENGTH)
-	WithBufferLength, GetBufferLength = option.New[int](OPTION_BUFFER_LENGTH)
+	WithBufferLength, GetBufferLength = option.New[int64](OPTION_BUFFER_LENGTH)
 	WithWaitTimeout, GetWaitTimeout   = option.New[time.Duration](OPTION_WAIT_TIMEOUT)
 )

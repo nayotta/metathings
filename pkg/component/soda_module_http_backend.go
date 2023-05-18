@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net"
 	"net/http"
@@ -14,6 +15,7 @@ import (
 	"github.com/golang/protobuf/proto"
 	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
+	logging "github.com/sirupsen/logrus"
 	"github.com/spf13/cast"
 	"github.com/stretchr/objx"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -21,6 +23,18 @@ import (
 	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
 	http_helper "github.com/nayotta/metathings/pkg/common/http"
 	id_helper "github.com/nayotta/metathings/pkg/common/id"
+)
+
+const (
+	HTTP_SODA_OBJECT_STREAM_NAME          = "Metathings-Soda-Object-Stream-Name"
+	HTTP_SODA_OBJECT_SHA1SUM              = "Metathings-Soda-Object-Sha1sum"
+	HTTP_SODA_OBJECT_LENGTH               = "Metathings-Soda-Object-Length"
+	HTTP_SODA_OBJECT_UPLOADED_LENGTH      = "Metathings-Soda-Object-Uploaded-Length"
+	HTTP_SODA_OBJECT_STREAM_MAX_AGE       = "Metathings-Soda-Object-Stream-Max-Age"
+	HTTP_SODA_OBJECT_STREAM_REMAINED      = "Metathings-Soda-Object-Stream-Remained"
+	HTTP_SODA_OBJECT_STREAM_CHUNK_OFFSET  = "Metathings-Soda-Object-Stream-Chunk-Offset"
+	HTTP_SODA_OBJECT_STREAM_CHUNK_LENGTH  = "Metathings-Soda-Object-Stream-Chunk-Length"
+	HTTP_SODA_OBJECT_STREAM_CHUNK_SHA1SUM = "Metathings-Soda-Object-Stream-Chunk-Sha1sum"
 )
 
 type HttpAuthContextParser func(*http.Request) (*SodaModuleAuthContext, error)
@@ -78,6 +92,7 @@ type SodaModuleHttpBackend struct {
 
 	done chan struct{}
 
+	oss   sync.Map
 	auth  SodaModuleAuthorizer
 	httpd *http.Server
 }
@@ -453,11 +468,84 @@ func (b *SodaModuleHttpBackend) handle_object_stream_write_chunk(w http.Response
 }
 
 func (b *SodaModuleHttpBackend) handle_object_stream_next_chunk(w http.ResponseWriter, r *http.Request) {
-	panic("unimplemented")
+	vars := mux.Vars(r)
+	name := vars["object_stream"]
+
+	logger := b.m.Logger().WithFields(logging.Fields{
+		"action":        "next_object_stream",
+		"object_stream": name,
+	})
+
+	jw := http_helper.WrapJSONResponseWriter(w)
+
+	os, err := b.get_object_stream(name)
+	if err != nil {
+		logger.WithError(err).Debugf("failed to get object stream")
+		jw.WriteHeader(http.StatusNotFound)
+		jw.WriteJSON(http_helper.ConvertError(err))
+		return
+	}
+
+	offset, err := os.Seek(0, io.SeekCurrent)
+	if err != nil {
+		logger.WithError(err).Debugf("failed to seek")
+		jw.WriteHeader(http.StatusInternalServerError)
+		jw.WriteJSON(http_helper.ConvertError(err))
+		return
+	}
+
+	h := jw.Header()
+	h.Add(HTTP_SODA_OBJECT_STREAM_REMAINED, cast.ToString(os.Remained()))
+	h.Add(HTTP_SODA_OBJECT_STREAM_CHUNK_OFFSET, cast.ToString(offset))
+	h.Add(HTTP_SODA_OBJECT_STREAM_CHUNK_LENGTH, cast.ToString(os.BufferLength()))
+	jw.WriteHeader(http.StatusNoContent)
+
+	logger.Tracef("show object stream")
+
+	return
 }
 
 func (b *SodaModuleHttpBackend) handle_object_stream_show(w http.ResponseWriter, r *http.Request) {
-	panic("unimplemented")
+	vars := mux.Vars(r)
+	name := vars["object_stream"]
+
+	logger := b.m.Logger().WithFields(logging.Fields{
+		"action":        "show_object_stream",
+		"object_stream": name,
+	})
+
+	jw := http_helper.WrapJSONResponseWriter(w)
+
+	os, err := b.get_object_stream(name)
+	if err != nil {
+		logger.WithError(err).Debugf("failed to get object stream")
+		jw.WriteHeader(http.StatusNotFound)
+		jw.WriteJSON(http_helper.ConvertError(err))
+		return
+	}
+
+	offset, err := os.Seek(0, io.SeekCurrent)
+	if err != nil {
+		logger.WithError(err).Debugf("failed to seek")
+		jw.WriteHeader(http.StatusInternalServerError)
+		jw.WriteJSON(http_helper.ConvertError(err))
+		return
+	}
+
+	h := jw.Header()
+	h.Add(HTTP_SODA_OBJECT_STREAM_NAME, os.Name())
+	h.Add(HTTP_SODA_OBJECT_SHA1SUM, os.Sha1sum())
+	h.Add(HTTP_SODA_OBJECT_LENGTH, cast.ToString(os.Length()))
+	h.Add(HTTP_SODA_OBJECT_UPLOADED_LENGTH, cast.ToString(os.Uploaded()))
+	h.Add(HTTP_SODA_OBJECT_STREAM_MAX_AGE, cast.ToString(os.MaxAge()))
+	h.Add(HTTP_SODA_OBJECT_STREAM_REMAINED, cast.ToString(os.Remained()))
+	h.Add(HTTP_SODA_OBJECT_STREAM_CHUNK_OFFSET, cast.ToString(offset))
+	h.Add(HTTP_SODA_OBJECT_STREAM_CHUNK_LENGTH, cast.ToString(os.BufferLength()))
+	jw.WriteHeader(http.StatusNoContent)
+
+	logger.Tracef("show object stream")
+
+	return
 }
 
 func (b *SodaModuleHttpBackend) handle_object_stream_cancel(w http.ResponseWriter, r *http.Request) {
@@ -532,6 +620,10 @@ func (b *SodaModuleHttpBackend) is_running() bool {
 	default:
 		return true
 	}
+}
+
+func (b *SodaModuleHttpBackend) get_object_stream(name string) (ObjectStream, error) {
+	panic("unimplemented")
 }
 
 func (b *SodaModuleHttpBackend) Start() error {

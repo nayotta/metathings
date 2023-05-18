@@ -34,6 +34,7 @@ var (
 	ErrWaitTimeout                             = errors.New("wait timeout")
 	ErrUploadTimeout                           = errors.New("upload timeout")
 	ErrSendOnClosedChannel                     = errors.New("send on closed channel")
+	ErrUnregisteredState                       = errors.New("unregistered state")
 )
 
 var sodaModuleErrorMapping = grpc_helper.ErrorMapping{}
