@@ -736,8 +736,6 @@ response headers:
 Metathings-Soda-Object-Stream-Name: <name>
 Metathings-Soda-Object-Stream-Max-Age: <max-age>  # type: duration
 Metathings-Soda-Object-Stream-Remained: <remained>  # type: duration
-Metathings-Soda-Object-Stream-Next-Chunk-Offset: <offset>
-Metathings-Soda-Object-Stream-Next-Chunk-Length: <length>
 ```
 
 response code: `204`
@@ -765,8 +763,6 @@ response headers:
 
 ```
 Metathings-Soda-Object-Stream-Remained: <remianed>
-Metathings-Soda-Object-Stream-Next-Chunk-Offset: <offset>
-Metathings-Soda-Object-Stream-Next-Chunk-Length: <length>
 ```
 
 response code: `204`
@@ -791,8 +787,8 @@ response headers:
 
 ```
 Metathings-Soda-Object-Stream-Remained: <remained>
-Metathings-Soda-Object-Stream-Next-Chunk-Offset: <offset>
-Metathings-Soda-Object-Stream-Next-Chunk-Length: <length>
+Metathings-Soda-Object-Stream-Chunk-Offset: <offset>
+Metathings-Soda-Object-Stream-Chunk-Length: <length>
 ```
 
 response code: `204`
@@ -839,14 +835,13 @@ request headers:
 
 ```
 Metathings-Soda-Object-Stream-Name: <name>
-Metathings-Soda-Object-Name: <name>
 Metathings-Soda-Object-Sha1sum: <sha1sum>
 Metathings-Soda-Object-Length: <length>
 Metathings-Soda-Object-Uploaded-Length: <length>
 Metathings-Soda-Object-Stream-Max-Age: <max-age>
 Metathings-Soda-Object-Stream-Remained: <remained>
-Metathings-Soda-Object-Stream-Next-Chunk-Offset: <offset>
-Metathings-Soda-Object-Stream-Next-Chunk-Length: <length>
+Metathings-Soda-Object-Stream-Chunk-Offset: <offset>
+Metathings-Soda-Object-Stream-Chunk-Length: <length>
 ```
 
 response code: `204`
