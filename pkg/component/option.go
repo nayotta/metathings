@@ -52,3 +52,9 @@ var (
 	WithBufferLength, GetBufferLength = option.New[int64](OPTION_BUFFER_LENGTH)
 	WithWaitTimeout, GetWaitTimeout   = option.New[time.Duration](OPTION_WAIT_TIMEOUT)
 )
+
+type WriteObjectChunkOptions struct {
+	Offset  int64
+	Length  int64
+	Sha1sum string
+}

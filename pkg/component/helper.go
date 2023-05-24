@@ -90,3 +90,9 @@ func NewPutObjectStreamingOptionFromPath(path string) (*PutObjectStreamingOption
 
 	return opt, nil
 }
+
+func chunkSha1sum(p []byte) []byte {
+	h := sha1.New()
+	h.Write(p)
+	return h.Sum(nil)
+}

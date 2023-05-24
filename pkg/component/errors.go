@@ -35,6 +35,7 @@ var (
 	ErrUploadTimeout                           = errors.New("upload timeout")
 	ErrSendOnClosedChannel                     = errors.New("send on closed channel")
 	ErrUnregisteredState                       = errors.New("unregistered state")
+	ErrUnmatchedChunkSha1sum                   = errors.New("unmatched chunk sha1sum")
 )
 
 var sodaModuleErrorMapping = grpc_helper.ErrorMapping{}

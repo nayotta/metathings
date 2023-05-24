@@ -36,6 +36,7 @@ type ObjectStream interface {
 	BufferLength() int64
 	Uploaded() int64
 	Wait(string) error
+	Offset() int64
 	io.Writer
 	io.Reader
 	io.Seeker
@@ -245,6 +246,10 @@ func (os *objectStream) Close() error { return os.close() }
 
 func (os *objectStream) Wait(state string) error {
 	return os.wait(state)
+}
+
+func (os *objectStream) Offset() int64 {
+	return os.offset
 }
 
 func (os *objectStream) Logger() *logging.Entry {

@@ -1,7 +1,9 @@
 package metathings_component
 
 import (
+	"bytes"
 	"context"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -439,7 +441,7 @@ func (b *SodaModuleHttpBackend) handle_list_objects(w http.ResponseWriter, r *ht
 	var os []interface{}
 
 	for _, obj := range objs {
-		// HACK: rewrite error LastModified
+		// HACK: rewrite not-unmarshalable fields
 		if obj.LastModified.Seconds < 0 || obj.LastModified.Nanos < 0 {
 			obj.LastModified = &timestamppb.Timestamp{}
 		}
@@ -464,7 +466,76 @@ func (b *SodaModuleHttpBackend) handle_list_objects(w http.ResponseWriter, r *ht
 }
 
 func (b *SodaModuleHttpBackend) handle_object_stream_write_chunk(w http.ResponseWriter, r *http.Request) {
-	panic("unimplemented")
+	vars := mux.Vars(r)
+	name := vars["object_stream"]
+
+	logger := b.m.Logger().WithFields(logging.Fields{
+		"action":        "write_object_chunk",
+		"object_stream": name,
+	})
+	jw := http_helper.WrapJSONResponseWriter(w)
+
+	os, err := b.get_object_stream(name)
+	if err != nil {
+		logger.WithError(err).Debugf("failed to get object stream")
+		jw.WriteHeader(http.StatusNotFound)
+		jw.WriteJSON(http_helper.ConvertError(err))
+		return
+	}
+
+	opts, err := b.parse_write_object_chunk_options(r)
+	if err != nil {
+		logger.WithError(err).Debugf("failed to parse write object chunk options")
+		jw.WriteHeader(http.StatusBadRequest)
+		jw.WriteJSON(http_helper.ConvertError(err))
+		return
+	}
+
+	logger = logger.WithFields(logging.Fields{
+		"offset":  opts.Offset,
+		"length":  opts.Length,
+		"sha1sum": opts.Sha1sum,
+	})
+
+	chunk := make([]byte, opts.Length)
+	_, err = r.Body.Read(chunk)
+	if err != nil {
+		logger.WithError(err).Debugf("failed to read object chunk")
+		jw.WriteHeader(http.StatusBadRequest)
+		jw.WriteJSON(http_helper.ConvertError(err))
+		return
+	}
+	defer r.Body.Close()
+
+	expSha1sum, err := hex.DecodeString(opts.Sha1sum)
+	if err != nil {
+		logger.WithError(err).Debugf("invalid object chunk sha1sum")
+		jw.WriteHeader(http.StatusBadRequest)
+		jw.WriteJSON(http_helper.ConvertError(err))
+		return
+	}
+	chkSha1sum := chunkSha1sum(chunk)
+
+	if !bytes.Equal(expSha1sum, chkSha1sum) {
+		err = ErrUnmatchedChunkSha1sum
+		logger.WithError(err).Debugf("invalid object chunk")
+		jw.WriteHeader(http.StatusBadRequest)
+		jw.WriteJSON(http_helper.ConvertError(err))
+		return
+	}
+
+	if _, err = os.Write(chunk); err != nil {
+		logger.WithError(err).Debugf("failed to write object chunk")
+		jw.WriteHeader(http.StatusInternalServerError)
+		jw.WriteJSON(http_helper.ConvertError(err))
+		return
+	}
+
+	jw.WriteHeader(http.StatusNoContent)
+
+	logger.Tracef("write object chunk")
+
+	return
 }
 
 func (b *SodaModuleHttpBackend) handle_object_stream_next_chunk(w http.ResponseWriter, r *http.Request) {
@@ -524,14 +595,6 @@ func (b *SodaModuleHttpBackend) handle_object_stream_show(w http.ResponseWriter,
 		return
 	}
 
-	offset, err := os.Seek(0, io.SeekCurrent)
-	if err != nil {
-		logger.WithError(err).Debugf("failed to seek")
-		jw.WriteHeader(http.StatusInternalServerError)
-		jw.WriteJSON(http_helper.ConvertError(err))
-		return
-	}
-
 	h := jw.Header()
 	h.Add(HTTP_SODA_OBJECT_STREAM_NAME, os.Name())
 	h.Add(HTTP_SODA_OBJECT_SHA1SUM, os.Sha1sum())
@@ -539,7 +602,7 @@ func (b *SodaModuleHttpBackend) handle_object_stream_show(w http.ResponseWriter,
 	h.Add(HTTP_SODA_OBJECT_UPLOADED_LENGTH, cast.ToString(os.Uploaded()))
 	h.Add(HTTP_SODA_OBJECT_STREAM_MAX_AGE, cast.ToString(os.MaxAge()))
 	h.Add(HTTP_SODA_OBJECT_STREAM_REMAINED, cast.ToString(os.Remained()))
-	h.Add(HTTP_SODA_OBJECT_STREAM_CHUNK_OFFSET, cast.ToString(offset))
+	h.Add(HTTP_SODA_OBJECT_STREAM_CHUNK_OFFSET, cast.ToString(os.Offset()))
 	h.Add(HTTP_SODA_OBJECT_STREAM_CHUNK_LENGTH, cast.ToString(os.BufferLength()))
 	jw.WriteHeader(http.StatusNoContent)
 
@@ -549,7 +612,34 @@ func (b *SodaModuleHttpBackend) handle_object_stream_show(w http.ResponseWriter,
 }
 
 func (b *SodaModuleHttpBackend) handle_object_stream_cancel(w http.ResponseWriter, r *http.Request) {
-	panic("unimplemented")
+	vars := mux.Vars(r)
+	name := vars["object_stream"]
+
+	logger := b.m.Logger().WithFields(logging.Fields{
+		"action":        "cancel",
+		"object_stream": name,
+	})
+
+	jw := http_helper.WrapJSONResponseWriter(w)
+
+	os, err := b.get_object_stream(name)
+	if err != nil {
+		logger.WithError(err).Debugf("failed to get object stream")
+		jw.WriteHeader(http.StatusNotFound)
+		jw.WriteJSON(http_helper.ConvertError(err))
+		return
+	}
+
+	if err = os.Close(); err != nil {
+		logger.WithError(err).Debugf("failed to cancel object stream")
+		jw.WriteHeader(http.StatusInternalServerError)
+		jw.WriteJSON(http_helper.ConvertError(err))
+		return
+	}
+
+	logger.Tracef("cancel object stream")
+
+	return
 }
 
 func (b *SodaModuleHttpBackend) health_http_client() *http.Client {
@@ -623,6 +713,10 @@ func (b *SodaModuleHttpBackend) is_running() bool {
 }
 
 func (b *SodaModuleHttpBackend) get_object_stream(name string) (ObjectStream, error) {
+	panic("unimplemented")
+}
+
+func (b *SodaModuleHttpBackend) parse_write_object_chunk_options(r *http.Request) (WriteObjectChunkOptions, error) {
 	panic("unimplemented")
 }
 
