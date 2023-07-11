@@ -3,6 +3,7 @@ package metathings_component
 import (
 	"bytes"
 	"context"
+	"crypto/sha1"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
@@ -97,6 +98,8 @@ type SodaModuleHttpBackend struct {
 	oss   sync.Map
 	auth  SodaModuleAuthorizer
 	httpd *http.Server
+
+	objectStreams sync.Map
 }
 
 func (b *SodaModuleHttpBackend) authorize_middleware() mux.MiddlewareFunc {
@@ -235,7 +238,7 @@ func (b *SodaModuleHttpBackend) handle_put_object(w http.ResponseWriter, r *http
 
 	bodyx, err := jr.JSON()
 	if err != nil {
-		logger.WithError(err).Errorf("failed parse request body")
+		logger.WithError(err).Errorf("failed to parse request body")
 		jw.WriteHeader(http.StatusBadRequest)
 		jw.WriteJSON(http_helper.ConvertError(err))
 		return
@@ -259,7 +262,72 @@ func (b *SodaModuleHttpBackend) handle_put_object(w http.ResponseWriter, r *http
 }
 
 func (b *SodaModuleHttpBackend) handle_put_object_streaming(w http.ResponseWriter, r *http.Request) {
-	panic("unimplemented")
+	logger := b.m.Logger().WithField("action", "put_object_streaming")
+
+	jr := http_helper.WrapJSONRequest(r)
+	jw := http_helper.WrapJSONResponseWriter(w)
+
+	bodyx, err := jr.JSON()
+	if err != nil {
+		logger.WithError(err).Errorf("failed to parse request body")
+		jw.WriteHeader(http.StatusBadRequest)
+		jw.WriteJSON(http_helper.ConvertError(err))
+		return
+	}
+
+	name := bodyx.Get("object.name").String()
+	length := bodyx.Get("object.length").Int()
+	sha1sum := bodyx.Get("object.sha1sum").String()
+
+	logger = logger.WithFields(logging.Fields{
+		"name":    name,
+		"length":  length,
+		"sha1sum": sha1sum,
+	})
+
+	osName := b.parse_object_stream_name(name, sha1sum)
+	os, err := b.get_object_stream(osName)
+	if err != nil {
+		os, err = NewObjectStream(
+			WithLogger(b.m.RawLogger()),
+			WithName(osName),
+			WithSha1sum(sha1sum),
+			WithLength(int64(length)),
+		)
+		if err != nil {
+			logger.WithError(err).Debugf("failed to new object stream")
+			jw.WriteHeader(http.StatusInternalServerError)
+			jw.WriteJSON(http_helper.ConvertError(err))
+			return
+		}
+
+		if err = b.add_object_stream(osName, os); err != nil {
+			logger.WithError(err).Debugf("failed to add object stream")
+			jw.WriteHeader(http.StatusInternalServerError)
+			jw.WriteJSON(http_helper.ConvertError(err))
+			return
+		}
+
+		go func() {
+			defer b.remove_object_stream(osName)
+
+			if err = b.m.Kernel().PutObjectStreaming(name, os, &PutObjectStreamingOption{
+				Sha1:   sha1sum,
+				Length: int64(length),
+			}); err != nil {
+				logger.WithError(err).Errorf("failed to put object streaming")
+			}
+		}()
+	} else {
+		logger.Warningf("put object streaming is in progressing")
+	}
+
+	jw.Header().Add(HTTP_SODA_OBJECT_STREAM_NAME, osName)
+	jw.Header().Add(HTTP_SODA_OBJECT_STREAM_MAX_AGE, cast.ToString(os.MaxAge()))
+	jw.Header().Add(HTTP_SODA_OBJECT_STREAM_REMAINED, cast.ToString(os.Remained()))
+	jw.WriteHeader(http.StatusNoContent)
+
+	return
 }
 
 func (b *SodaModuleHttpBackend) handle_get_object(w http.ResponseWriter, r *http.Request) {
@@ -712,12 +780,41 @@ func (b *SodaModuleHttpBackend) is_running() bool {
 	}
 }
 
+func (b *SodaModuleHttpBackend) add_object_stream(name string, os ObjectStream) error {
+	_, loaded := b.objectStreams.LoadOrStore(name, os)
+	if loaded {
+		return ErrObjectStreamFound
+	}
+
+	return nil
+}
+
+func (b *SodaModuleHttpBackend) remove_object_stream(name string) error {
+	b.objectStreams.Delete(name)
+	return nil
+}
+
 func (b *SodaModuleHttpBackend) get_object_stream(name string) (ObjectStream, error) {
-	panic("unimplemented")
+	v, ok := b.objectStreams.Load(name)
+	if !ok {
+		return nil, ErrObjectStreamNotFound
+	}
+
+	return v.(ObjectStream), nil
 }
 
 func (b *SodaModuleHttpBackend) parse_write_object_chunk_options(r *http.Request) (WriteObjectChunkOptions, error) {
-	panic("unimplemented")
+	var o WriteObjectChunkOptions
+	o.Offset = cast.ToInt64(r.Header.Get(HTTP_SODA_OBJECT_STREAM_CHUNK_OFFSET))
+	o.Length = cast.ToInt64(r.Header.Get(HTTP_SODA_OBJECT_STREAM_CHUNK_LENGTH))
+	o.Sha1sum = r.Header.Get(HTTP_SODA_OBJECT_STREAM_CHUNK_SHA1SUM)
+	return o, nil
+}
+
+func (b *SodaModuleHttpBackend) parse_object_stream_name(name, sha1sum string) string {
+	h := sha1.New()
+	h.Write([]byte(fmt.Sprintf("%s$%s", name, sha1sum)))
+	return hex.EncodeToString(h.Sum(nil))
 }
 
 func (b *SodaModuleHttpBackend) Start() error {
@@ -732,27 +829,27 @@ func (b *SodaModuleHttpBackend) Start() error {
 
 	heartbeat_strategy := cfg.GetString("heartbeat.strategy")
 	if heartbeat_strategy == "manual" {
-		router.HandleFunc("/v1/actions/heartbeat", b.handle_heartbeat).Methods("POST")
+		router.HandleFunc("/v1/actions/heartbeat", b.handle_heartbeat).Methods(http.MethodPost)
 	}
 
 	sr := router.PathPrefix("/v1/actions").Subrouter()
-	sr.HandleFunc("/show", b.handle_show).Methods("POST")
-	sr.HandleFunc("/push_frame_to_flow_once", b.handle_push_frame_to_flow_once).Methods("POST")
-	sr.HandleFunc("/put_object", b.handle_put_object).Methods("POST")
-	sr.HandleFunc("/put_object_streaming", b.handle_put_object_streaming).Methods("POST")
-	sr.HandleFunc("/get_object", b.handle_get_object).Methods("POST")
-	sr.HandleFunc("/get_object_content", b.handle_get_object_content).Methods("POST")
-	sr.HandleFunc("/remove_object", b.handle_remove_object).Methods("POST")
-	sr.HandleFunc("/rename_object", b.handle_rename_object).Methods("POST")
-	sr.HandleFunc("/list_objects", b.handle_list_objects).Methods("POST")
+	sr.HandleFunc("/show", b.handle_show).Methods(http.MethodPost)
+	sr.HandleFunc("/push_frame_to_flow_once", b.handle_push_frame_to_flow_once).Methods(http.MethodPost)
+	sr.HandleFunc("/put_object", b.handle_put_object).Methods(http.MethodPost)
+	sr.HandleFunc("/put_object_streaming", b.handle_put_object_streaming).Methods(http.MethodPost)
+	sr.HandleFunc("/get_object", b.handle_get_object).Methods(http.MethodPost)
+	sr.HandleFunc("/get_object_content", b.handle_get_object_content).Methods(http.MethodPost)
+	sr.HandleFunc("/remove_object", b.handle_remove_object).Methods(http.MethodPost)
+	sr.HandleFunc("/rename_object", b.handle_rename_object).Methods(http.MethodPost)
+	sr.HandleFunc("/list_objects", b.handle_list_objects).Methods(http.MethodPost)
 	router.Use(b.authorize_middleware())
 
 	// object stream
 	ossr := router.PathPrefix("/v1/object_streams/{object_stream}/actions").Subrouter()
-	ossr.HandleFunc("/write_chunk", b.handle_object_stream_write_chunk).Methods("POST")
-	ossr.HandleFunc("/next_chunk", b.handle_object_stream_next_chunk).Methods("POST")
-	ossr.HandleFunc("/show", b.handle_object_stream_show).Methods("POST")
-	ossr.HandleFunc("/cancel", b.handle_object_stream_cancel).Methods("POST")
+	ossr.HandleFunc("/write_chunk", b.handle_object_stream_write_chunk).Methods(http.MethodPost)
+	ossr.HandleFunc("/next_chunk", b.handle_object_stream_next_chunk).Methods(http.MethodPost)
+	ossr.HandleFunc("/show", b.handle_object_stream_show).Methods(http.MethodPost)
+	ossr.HandleFunc("/cancel", b.handle_object_stream_cancel).Methods(http.MethodPost)
 
 	b.httpd = &http.Server{
 		Handler: router,

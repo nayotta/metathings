@@ -22,6 +22,7 @@ const (
 
 func NewDefaultObjectStreamOption() option.Option {
 	return option.NewOption(map[string]any{
+		OPTION_MAX_AGE:       301 * time.Second,
 		OPTION_BUFFER_LENGTH: int64(4 * 1024 * 1024), // 4MiB
 		OPTION_WAIT_TIMEOUT:  31 * time.Second,
 	})

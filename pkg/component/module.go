@@ -254,6 +254,10 @@ func (m *Module) Logger() *log.Entry {
 	return m.logger.WithField("#instance", "Module")
 }
 
+func (m *Module) RawLogger() *log.Entry {
+	return m.logger.WithFields(log.Fields{})
+}
+
 func (m *Module) Init() error {
 	var err error
 

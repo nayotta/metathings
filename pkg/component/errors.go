@@ -36,6 +36,9 @@ var (
 	ErrSendOnClosedChannel                     = errors.New("send on closed channel")
 	ErrUnregisteredState                       = errors.New("unregistered state")
 	ErrUnmatchedChunkSha1sum                   = errors.New("unmatched chunk sha1sum")
+	ErrPutObjectInProgressing                  = errors.New("put object in progressing")
+	ErrObjectStreamFound                       = errors.New("object stream found")
+	ErrObjectStreamNotFound                    = errors.New("object stream not found")
 )
 
 var sodaModuleErrorMapping = grpc_helper.ErrorMapping{}
