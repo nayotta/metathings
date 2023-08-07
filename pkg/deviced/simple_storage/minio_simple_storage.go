@@ -25,14 +25,12 @@ type MinioSimpleStorageOption struct {
 	MinioSecure   bool
 	MinioBucket   string
 
-	ReadBufferSize  int
-	WriteBufferSize int
+	ReadBufferSize int
 }
 
 func NewMinioSimpleStorageOption() *MinioSimpleStorageOption {
 	return &MinioSimpleStorageOption{
-		ReadBufferSize:  4 * 1024 * 1024,
-		WriteBufferSize: 4 * 1024 * 1024,
+		ReadBufferSize: 1 * 1024 * 1024,
 	}
 }
 
@@ -48,16 +46,15 @@ func new_minio_simple_storage(args ...any) (SimpleStorage, error) {
 	opt := NewMinioSimpleStorageOption()
 
 	err := opt_helper.Setopt(map[string]func(string, any) error{
-		"minio_endpoint":    opt_helper.ToString(&opt.MinioEndpoint),
-		"minio_id":          opt_helper.ToString(&opt.MinioID),
-		"minio_secret":      opt_helper.ToString(&opt.MinioSecret),
-		"minio_token":       opt_helper.ToString(&opt.MinioToken),
-		"minio_secure":      opt_helper.ToBool(&opt.MinioSecure),
-		"minio_bucket":      opt_helper.ToString(&opt.MinioBucket),
-		"read_buffer_size":  opt_helper.ToInt(&opt.ReadBufferSize),
-		"write_buffer_size": opt_helper.ToInt(&opt.WriteBufferSize),
-		"minio_client":      client_helper.ToMinioClient(&minioClient),
-		"logger":            opt_helper.ToLogger(&logger),
+		"minio_endpoint":   opt_helper.ToString(&opt.MinioEndpoint),
+		"minio_id":         opt_helper.ToString(&opt.MinioID),
+		"minio_secret":     opt_helper.ToString(&opt.MinioSecret),
+		"minio_token":      opt_helper.ToString(&opt.MinioToken),
+		"minio_secure":     opt_helper.ToBool(&opt.MinioSecure),
+		"minio_bucket":     opt_helper.ToString(&opt.MinioBucket),
+		"read_buffer_size": opt_helper.ToInt(&opt.ReadBufferSize),
+		"minio_client":     client_helper.ToMinioClient(&minioClient),
+		"logger":           opt_helper.ToLogger(&logger),
 	}, opt_helper.SetSkip(true))(args...)
 	if err != nil {
 		return nil, err
@@ -100,14 +97,9 @@ func (mss *MinioSimpleStorage) PutObjectAsync(obj *Object, opt *PutObjectAsyncOp
 	logger := mss.GetLoggerWithObject(obj).WithField("#method", "PutObjectAsync")
 	ctx := mss.context()
 
-	rd, wr := io.Pipe()
-
-	fs := file_helper.NewSequenceFileSyncer(wr, obj.Length, opt.SHA1, int64(mss.opt.WriteBufferSize))
-	_, err := mss.minioClient.PutObject(ctx, mss.minioBucket(), mss.join_path(obj), rd, obj.Length, minio.PutObjectOptions{})
-	if err != nil {
-		logger.WithError(err).Debugf("failed to put object async to minio")
-		return nil, err
-	}
+	rd, wr := WrapedPipe(mss.logger)
+	fs := file_helper.NewSequenceFileSyncer(wr, obj.Length, opt.SHA1, opt.ChunkSize)
+	go mss.minioClient.PutObject(ctx, mss.minioBucket(), mss.join_path(obj), rd, obj.Length, minio.PutObjectOptions{})
 
 	logger.Tracef("put object async")
 

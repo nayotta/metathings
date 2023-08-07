@@ -7,14 +7,14 @@ import (
 	"io"
 )
 
-type SequenceFileSyncerOption struct {
+type sequenceFileSyncerOption struct {
 	size       int64
 	sha1_hash  string
 	chunk_size int64
 }
 
 type SequenceFileSyncer struct {
-	opt           *SequenceFileSyncerOption
+	opt           *sequenceFileSyncerOption
 	writeCloser   io.WriteCloser
 	sha1Hash      hash.Hash
 	currentOffset int64
@@ -22,7 +22,7 @@ type SequenceFileSyncer struct {
 
 func NewSequenceFileSyncer(writeCloser io.WriteCloser, size int64, sha1_hash string, chunk_size int64) *SequenceFileSyncer {
 	return &SequenceFileSyncer{
-		opt: &SequenceFileSyncerOption{
+		opt: &sequenceFileSyncerOption{
 			size:       size,
 			sha1_hash:  sha1_hash,
 			chunk_size: chunk_size,

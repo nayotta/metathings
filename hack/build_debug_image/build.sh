@@ -13,9 +13,9 @@ if [ ! -f hack/build_debug_image/dlv ]; then
     (cd hack/build_debug_image; \
      git clone https://github.com/go-delve/delve.git; \
      cd delve; \
-     go mod tidy --compat=1.18; \
+     go mod tidy; \
      go mod vendor; \
-     docker run --rm -it -w /opt/delve -v `pwd`:/opt/delve golang:1.18-alpine sh -c "GOOS=${goos} GOARCH=${goarch} CGO_ENABLED=0 go build -o dlv ./cmd/dlv"; \
+     docker run --rm -it -w /opt/delve -v `pwd`:/opt/delve golang:1.20-alpine sh -c "GOOS=${goos} GOARCH=${goarch} CGO_ENABLED=0 go build -o dlv ./cmd/dlv"; \
      mv dlv ..; \
      cd ..; \
      rm -rf delve; \

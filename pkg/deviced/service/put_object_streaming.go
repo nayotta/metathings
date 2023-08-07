@@ -99,7 +99,7 @@ func (self *MetathingsDevicedService) put_object_streaming_recv_push_response_lo
 	for {
 		res, err := stm.Recv()
 		if err != nil {
-			logger.WithError(err).Errorf("failed to rcev push chunks response")
+			logger.WithError(err).Errorf("failed to recv push chunks response")
 			errs <- err
 			return
 		}
@@ -130,7 +130,7 @@ func (self *MetathingsDevicedService) put_object_streaming_recv_push_response_lo
 }
 
 func (self *MetathingsDevicedService) PutObjectStreaming(stm pb.DevicedService_PutObjectStreamingServer) error {
-	logger := self.get_logger()
+	logger := self.get_logger().WithField("#method", "PutObjectStreaming")
 
 	req, err := stm.Recv()
 	if err != nil {

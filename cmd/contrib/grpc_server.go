@@ -8,12 +8,17 @@ import (
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	grpc_opentracing "github.com/grpc-ecosystem/go-grpc-middleware/tracing/opentracing"
 	"github.com/opentracing/opentracing-go"
+	log "github.com/sirupsen/logrus"
 	"go.uber.org/fx"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 
 	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
-	log "github.com/sirupsen/logrus"
+)
+
+const (
+	GRPC_MAX_RECV_MSG_SIZE = grpc_helper.GRPC_MAX_RECV_MSG_SIZE
+	GRPC_MAX_SEND_MSG_SIZE = grpc_helper.GRPC_MAX_SEND_MSG_SIZE
 )
 
 type NewGrpcServerParams struct {
@@ -44,6 +49,8 @@ func NewGrpcServer(params NewGrpcServerParams, lc fx.Lifecycle) *grpc.Server {
 	opts := []grpc.ServerOption{
 		grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(unary_server_interceptors...)),
 		grpc.StreamInterceptor(grpc_middleware.ChainStreamServer(stream_server_interceptors...)),
+		grpc.MaxRecvMsgSize(GRPC_MAX_RECV_MSG_SIZE),
+		grpc.MaxSendMsgSize(GRPC_MAX_SEND_MSG_SIZE),
 	}
 
 	if params.Creds != nil {

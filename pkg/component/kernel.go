@@ -628,62 +628,63 @@ func _put_object_streaming(cli pb.DeviceServiceClient, ctx context.Context, name
 
 	errs := make(chan error)
 	defer close(errs)
-	go func() {
-		for {
-			res, err := stm.Recv()
-			if err != nil {
-				errs <- err
-				return
-			}
-
-			chunks := res.GetChunks()
-			if chunks == nil {
-				continue
-			}
-
-			req = &pb.PutObjectStreamingRequest{
-				Id: &wrappers.StringValue{Value: res.GetId()},
-			}
-			req_chks := []*deviced_pb.OpObjectChunk{}
-			for _, chk := range chunks.GetChunks() {
-				offset := chk.GetOffset()
-				length := chk.GetLength()
-				buf := make([]byte, length)
-
-				if _, err = content.Seek(offset, 0); err != nil {
-					errs <- err
-					return
-				}
-
-				n, err := content.Read(buf)
-				if err != nil {
-					errs <- err
-					return
-				}
-				req_chks = append(req_chks, &deviced_pb.OpObjectChunk{
-					Offset: &wrappers.Int64Value{Value: offset},
-					Data:   &wrappers.BytesValue{Value: buf[:n]},
-					Length: &wrappers.Int64Value{Value: int64(n)},
-				})
-			}
-			req.Request = &pb.PutObjectStreamingRequest_Chunks{
-				Chunks: &deviced_pb.OpObjectChunks{
-					Chunks: req_chks,
-				},
-			}
-
-			if err = stm.Send(req); err != nil {
-				errs <- err
-				return
-			}
-		}
-	}()
-
+	go _put_object_streaming_loop(stm, content, errs)
 	if err = <-errs; err != nil {
 		return err
 	}
 
 	return nil
+}
+
+func _put_object_streaming_loop(stm pb.DeviceService_PutObjectStreamingClient, content io.ReadSeeker, errs chan error) {
+	for {
+		res, err := stm.Recv()
+		if err != nil {
+			errs <- err
+			return
+		}
+
+		chunks := res.GetChunks()
+		if chunks == nil {
+			continue
+		}
+
+		req := &pb.PutObjectStreamingRequest{
+			Id: &wrappers.StringValue{Value: res.GetId()},
+		}
+		req_chks := []*deviced_pb.OpObjectChunk{}
+		for _, chk := range chunks.GetChunks() {
+			offset := chk.GetOffset()
+			length := chk.GetLength()
+			buf := make([]byte, length)
+
+			if _, err = content.Seek(offset, 0); err != nil {
+				errs <- err
+				return
+			}
+
+			n, err := content.Read(buf)
+			if err != nil {
+				errs <- err
+				return
+			}
+			req_chks = append(req_chks, &deviced_pb.OpObjectChunk{
+				Offset: &wrappers.Int64Value{Value: offset},
+				Data:   &wrappers.BytesValue{Value: buf[:n]},
+				Length: &wrappers.Int64Value{Value: int64(n)},
+			})
+		}
+		req.Request = &pb.PutObjectStreamingRequest_Chunks{
+			Chunks: &deviced_pb.OpObjectChunks{
+				Chunks: req_chks,
+			},
+		}
+
+		if err = stm.Send(req); err != nil {
+			errs <- err
+			return
+		}
+	}
 }
 
 func _get_object(cli pb.DeviceServiceClient, ctx context.Context, name string) (*deviced_pb.Object, error) {

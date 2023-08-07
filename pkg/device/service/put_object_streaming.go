@@ -4,6 +4,7 @@ import (
 	"io"
 
 	log "github.com/sirupsen/logrus"
+	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
@@ -60,7 +61,11 @@ func (self *MetathingsDeviceServiceImpl) PutObjectStreaming(stm pb.DeviceService
 	}
 	defer cfn()
 
-	upstm, err := cli.PutObjectStreaming(self.context())
+	upstm, err := cli.PutObjectStreaming(
+		self.context(),
+		grpc.MaxCallRecvMsgSize(grpc_helper.GRPC_CALL_MAX_RECV_MSG_SIZE),
+		grpc.MaxCallSendMsgSize(grpc_helper.GRPC_CALL_MAX_SEND_MSG_SIZE),
+	)
 	if err != nil {
 		logger.WithError(err).Errorf("failed to put object streaming from deviced service")
 		return status.Errorf(codes.Internal, err.Error())

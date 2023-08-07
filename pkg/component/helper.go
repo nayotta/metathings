@@ -2,6 +2,7 @@ package metathings_component
 
 import (
 	"crypto/sha1"
+	"encoding/hex"
 	"fmt"
 	"io"
 	"net/url"
@@ -91,8 +92,8 @@ func NewPutObjectStreamingOptionFromPath(path string) (*PutObjectStreamingOption
 	return opt, nil
 }
 
-func chunkSha1sum(p []byte) []byte {
+func sha1sum(p []byte) string {
 	h := sha1.New()
 	h.Write(p)
-	return h.Sum(nil)
+	return hex.EncodeToString(h.Sum(nil))
 }

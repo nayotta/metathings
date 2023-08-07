@@ -536,7 +536,6 @@ func (b *SodaModuleHttpBackend) handle_list_objects(w http.ResponseWriter, r *ht
 func (b *SodaModuleHttpBackend) handle_object_stream_write_chunk(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	name := vars["object_stream"]
-
 	logger := b.m.Logger().WithFields(logging.Fields{
 		"action":        "write_object_chunk",
 		"object_stream": name,
@@ -546,61 +545,63 @@ func (b *SodaModuleHttpBackend) handle_object_stream_write_chunk(w http.Response
 	os, err := b.get_object_stream(name)
 	if err != nil {
 		logger.WithError(err).Debugf("failed to get object stream")
-		jw.WriteHeader(http.StatusNotFound)
-		jw.WriteJSON(http_helper.ConvertError(err))
+		jw.WriteJSONError(http.StatusNotFound, err)
 		return
 	}
+
+	file, _, err := r.FormFile("file")
+	if err != nil {
+		logger.WithError(err).Debugf("failed to get upload file")
+		jw.WriteJSONError(http.StatusBadRequest, err)
+		return
+	}
+	defer file.Close()
 
 	opts, err := b.parse_write_object_chunk_options(r)
 	if err != nil {
 		logger.WithError(err).Debugf("failed to parse write object chunk options")
-		jw.WriteHeader(http.StatusBadRequest)
-		jw.WriteJSON(http_helper.ConvertError(err))
+		jw.WriteJSONError(http.StatusBadRequest, err)
 		return
 	}
-
 	logger = logger.WithFields(logging.Fields{
-		"offset":  opts.Offset,
-		"length":  opts.Length,
-		"sha1sum": opts.Sha1sum,
+		"chunk-length":  opts.Length,
+		"chunk-offset":  opts.Offset,
+		"chunk-sha1sum": opts.Sha1sum,
 	})
 
-	chunk := make([]byte, opts.Length)
-	_, err = r.Body.Read(chunk)
+	var buf bytes.Buffer
+
+	n, err := io.CopyN(&buf, file, opts.Length)
 	if err != nil {
-		logger.WithError(err).Debugf("failed to read object chunk")
-		jw.WriteHeader(http.StatusBadRequest)
-		jw.WriteJSON(http_helper.ConvertError(err))
-		return
-	}
-	defer r.Body.Close()
-
-	expSha1sum, err := hex.DecodeString(opts.Sha1sum)
-	if err != nil {
-		logger.WithError(err).Debugf("invalid object chunk sha1sum")
-		jw.WriteHeader(http.StatusBadRequest)
-		jw.WriteJSON(http_helper.ConvertError(err))
-		return
-	}
-	chkSha1sum := chunkSha1sum(chunk)
-
-	if !bytes.Equal(expSha1sum, chkSha1sum) {
-		err = ErrUnmatchedChunkSha1sum
-		logger.WithError(err).Debugf("invalid object chunk")
-		jw.WriteHeader(http.StatusBadRequest)
-		jw.WriteJSON(http_helper.ConvertError(err))
+		logger.WithError(err).Debugf("failed to read data from upload file")
+		jw.WriteJSONError(http.StatusInternalServerError, err)
 		return
 	}
 
-	if _, err = os.Write(chunk); err != nil {
-		logger.WithError(err).Debugf("failed to write object chunk")
-		jw.WriteHeader(http.StatusInternalServerError)
-		jw.WriteJSON(http_helper.ConvertError(err))
+	// check length
+	if opts.Length != n {
+		err = fmt.Errorf("invalid length")
+		logger.WithError(err).WithField("acutal-length", n).Debugf("unmatched upload file length")
+		jw.WriteJSONError(http.StatusBadRequest, err)
+		return
+	}
+
+	// check sha1sum
+	actualSha1sum := sha1sum(buf.Bytes())
+	if opts.Sha1sum != actualSha1sum {
+		err = fmt.Errorf("invalid sha1sum")
+		logger.WithError(err).WithField("actual-sha1sum", actualSha1sum).Debugf("unmatched upload file sha1sum")
+		jw.WriteJSONError(http.StatusBadRequest, err)
+		return
+	}
+
+	if _, err = os.Write(buf.Bytes()); err != nil {
+		logger.WithError(err).Debugf("failed to write buffer to object stream")
+		jw.WriteJSONError(http.StatusInternalServerError, err)
 		return
 	}
 
 	jw.WriteHeader(http.StatusNoContent)
-
 	logger.Tracef("write object chunk")
 
 	return
@@ -803,12 +804,11 @@ func (b *SodaModuleHttpBackend) get_object_stream(name string) (ObjectStream, er
 	return v.(ObjectStream), nil
 }
 
-func (b *SodaModuleHttpBackend) parse_write_object_chunk_options(r *http.Request) (WriteObjectChunkOptions, error) {
-	var o WriteObjectChunkOptions
-	o.Offset = cast.ToInt64(r.Header.Get(HTTP_SODA_OBJECT_STREAM_CHUNK_OFFSET))
-	o.Length = cast.ToInt64(r.Header.Get(HTTP_SODA_OBJECT_STREAM_CHUNK_LENGTH))
-	o.Sha1sum = r.Header.Get(HTTP_SODA_OBJECT_STREAM_CHUNK_SHA1SUM)
-	return o, nil
+func (b *SodaModuleHttpBackend) parse_write_object_chunk_options(r *http.Request) (opts WriteObjectChunkOptions, err error) {
+	opts.Sha1sum = r.Form.Get(HTTP_SODA_OBJECT_STREAM_CHUNK_SHA1SUM)
+	opts.Length = cast.ToInt64(r.Form.Get(HTTP_SODA_OBJECT_STREAM_CHUNK_LENGTH))
+	opts.Offset = cast.ToInt64(r.Form.Get(HTTP_SODA_OBJECT_STREAM_CHUNK_OFFSET))
+	return
 }
 
 func (b *SodaModuleHttpBackend) parse_object_stream_name(name, sha1sum string) string {

@@ -18,12 +18,17 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-var (
-	JSONPBMarshaler   = new(jsonpb.Marshaler)
-	JSONPBUnmarshaler = new(jsonpb.Unmarshaler)
+const (
+	GRPC_MAX_RECV_MSG_SIZE      = 4 * 1024 * 1024 * 1024
+	GRPC_MAX_SEND_MSG_SIZE      = 4 * 1024 * 1024 * 1024
+	GRPC_CALL_MAX_RECV_MSG_SIZE = 4 * 1024 * 1024 * 1024
+	GRPC_CALL_MAX_SEND_MSG_SIZE = 4 * 1024 * 1024 * 1024
 )
 
 var (
+	JSONPBMarshaler   = new(jsonpb.Marshaler)
+	JSONPBUnmarshaler = new(jsonpb.Unmarshaler)
+
 	InvalidFullMethodName = errors.New("invalid full method name")
 )
 

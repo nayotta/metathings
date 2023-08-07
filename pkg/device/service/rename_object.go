@@ -25,6 +25,7 @@ func (self *MetathingsDeviceServiceImpl) RenameObject(ctx context.Context, req *
 	dst := req.GetDestination()
 
 	src.Device = self.pb_device()
+	dst.Device = self.pb_device()
 
 	creq := &deviced_pb.RenameObjectRequest{
 		Source:      src,

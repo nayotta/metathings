@@ -8,10 +8,10 @@ import (
 
 func (cli *sodaClient) PutObjectStreaming(name string, src io.ReadSeekCloser, length int64, opts PutObjectStreamingOption) error {
 	logger := cli.GetLogger().WithFields(logrus.Fields{
-		"#method": "PutObjectStreaming",
-		"name":    name,
-		"length":  length,
-		"sha1sum": opts.Sha1sum,
+		"#method":  "PutObjectStreaming",
+		"fileName": name,
+		"length":   length,
+		"sha1sum":  opts.Sha1sum,
 	})
 
 	osName, err := cli.LLPutObjectStreaming(name, length, opts.Sha1sum)
@@ -19,6 +19,7 @@ func (cli *sodaClient) PutObjectStreaming(name string, src io.ReadSeekCloser, le
 		logger.WithError(err).Debugf("failed to put object streaming")
 		return err
 	}
+	logger = logger.WithField("name", osName)
 
 	currentOffset := int64(0)
 	src.Seek(currentOffset, io.SeekStart)
@@ -51,7 +52,7 @@ func (cli *sodaClient) PutObjectStreaming(name string, src io.ReadSeekCloser, le
 		}
 		currentOffset += int64(n)
 
-		err = cli.LLObjectStreamWriteChunk(osName, offset, int64(n), buf)
+		err = cli.LLObjectStreamWriteChunk(osName, offset, int64(n), buf[:n])
 		if err != nil {
 			logger.WithError(err).Debugf("failed to write chunk to object stream")
 			return err

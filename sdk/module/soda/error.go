@@ -19,7 +19,7 @@ func (cli *sodaClient) parseResponseError(res *http.Response) (error, error) {
 
 	resBody := make(map[string]string)
 	if err = json.Unmarshal(buf, &resBody); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("%w: %s", err, string(buf))
 	}
 
 	errStr := resBody["error"]

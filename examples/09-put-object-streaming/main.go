@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"io"
 	"os"
 
 	"github.com/golang/protobuf/ptypes/wrappers"
@@ -59,7 +60,10 @@ func main() {
 	defer conn.Close()
 
 	cli := pb.NewDevicedServiceClient(conn)
-	stm, err := cli.PutObjectStreaming(ctx)
+	stm, err := cli.PutObjectStreaming(ctx,
+		grpc.MaxCallRecvMsgSize(grpc_helper.GRPC_CALL_MAX_RECV_MSG_SIZE),
+		grpc.MaxCallSendMsgSize(grpc_helper.GRPC_CALL_MAX_SEND_MSG_SIZE),
+	)
 	if err != nil {
 		panic(err)
 	}
@@ -93,61 +97,63 @@ func main() {
 	errs := make(chan error)
 	defer close(errs)
 
-	go func() {
-		for {
-			res, err := stm.Recv()
-			if err != nil {
-				errs <- err
-				return
-			}
-
-			chunks := res.GetChunks()
-			if chunks == nil {
-				continue
-			}
-
-			chk_req := &pb.PutObjectStreamingRequest{
-				Id: &wrappers.StringValue{Value: res.GetId()},
-			}
-			req_chks := []*pb.OpObjectChunk{}
-			for _, chk := range chunks.GetChunks() {
-				offset := chk.GetOffset()
-				length := chk.GetLength()
-				buf := make([]byte, length)
-
-				_, err = fp.Seek(offset, 0)
-				if err != nil {
-					errs <- err
-					return
-				}
-
-				n, err := fp.Read(buf)
-				if err != nil {
-					errs <- err
-					return
-				}
-				req_chks = append(req_chks, &pb.OpObjectChunk{
-					Offset: &wrappers.Int64Value{Value: offset},
-					Data:   &wrappers.BytesValue{Value: buf},
-					Length: &wrappers.Int64Value{Value: int64(n)},
-				})
-			}
-			chk_req.Request = &pb.PutObjectStreamingRequest_Chunks{
-				Chunks: &pb.OpObjectChunks{
-					Chunks: req_chks,
-				},
-			}
-
-			err = stm.Send(chk_req)
-			if err != nil {
-				errs <- err
-				return
-			}
-		}
-	}()
+	go loop(stm, fp, errs)
 
 	err = <-errs
 	if err != nil {
 		panic(err)
+	}
+}
+
+func loop(stm pb.DevicedService_PutObjectStreamingClient, fp *os.File, errs chan error) {
+	for {
+		res, err := stm.Recv()
+		if err != nil {
+			errs <- err
+			return
+		}
+
+		chunks := res.GetChunks()
+		if chunks == nil {
+			continue
+		}
+
+		chk_req := &pb.PutObjectStreamingRequest{
+			Id: &wrappers.StringValue{Value: res.GetId()},
+		}
+		req_chks := []*pb.OpObjectChunk{}
+		for _, chk := range chunks.GetChunks() {
+			offset := chk.GetOffset()
+			length := chk.GetLength()
+			buf := make([]byte, length)
+
+			_, err = fp.Seek(offset, io.SeekStart)
+			if err != nil {
+				errs <- err
+				return
+			}
+
+			n, err := fp.Read(buf)
+			if err != nil {
+				errs <- err
+				return
+			}
+			req_chks = append(req_chks, &pb.OpObjectChunk{
+				Offset: &wrappers.Int64Value{Value: offset},
+				Data:   &wrappers.BytesValue{Value: buf[:n]},
+				Length: &wrappers.Int64Value{Value: int64(n)},
+			})
+		}
+		chk_req.Request = &pb.PutObjectStreamingRequest_Chunks{
+			Chunks: &pb.OpObjectChunks{
+				Chunks: req_chks,
+			},
+		}
+
+		err = stm.Send(chk_req)
+		if err != nil {
+			errs <- err
+			return
+		}
 	}
 }
