@@ -1,18 +1,26 @@
 package metathings_module_soda_sdk
 
 import (
+	"errors"
 	"io"
 
 	"github.com/sirupsen/logrus"
 )
 
-func (cli *sodaClient) PutObjectStreaming(name string, src io.ReadSeeker, length int64, opts PutObjectStreamingOption) error {
+func (cli *sodaClient) PutObjectStreaming(name string, src io.ReadSeeker, length int64, opts PutObjectStreamingOption) (err error) {
 	logger := cli.GetLogger().WithFields(logrus.Fields{
 		"#method":  "PutObjectStreaming",
 		"fileName": name,
 		"length":   length,
 		"sha1sum":  opts.Sha1sum,
 	})
+
+	defer func() {
+		if errors.Is(err, io.EOF) {
+			err = nil
+			logger.Tracef("put object streaming completed")
+		}
+	}()
 
 	osName, err := cli.LLPutObjectStreaming(name, length, opts.Sha1sum)
 	if err != nil {

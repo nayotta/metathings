@@ -23,7 +23,13 @@ func (cli *sodaClient) parseResponseError(res *http.Response) (error, error) {
 	}
 
 	errStr := resBody["error"]
-	return fmt.Errorf(errStr), nil
+	switch errStr {
+	case "EOF":
+		return io.EOF, nil
+	default:
+		return fmt.Errorf(errStr), nil
+	}
+
 }
 
 func (cli *sodaClient) assertResponse(res *http.Response, expectCode int) (bool, error) {

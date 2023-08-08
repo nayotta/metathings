@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"crypto/sha1"
 	"encoding/hex"
-	"errors"
 	"flag"
 	"io"
 	"os"
@@ -54,7 +53,7 @@ func main() {
 	f.Seek(0, io.SeekStart)
 
 	err = cli.PutObjectStreaming(destination, f, fs.Size(), metathings_module_soda_sdk.PutObjectStreamingOption{Sha1sum: sha1sum})
-	if err != nil && errors.Is(err, io.EOF) {
+	if err != nil {
 		panic(err)
 	}
 }
