@@ -12,7 +12,6 @@ const (
 
 type PutObjectStreamingOption struct {
 	Sha1sum string
-	Force   bool
 }
 
 type NewSodaClientOption = option.ApplyOption
