@@ -14,7 +14,7 @@ jobs:
     - uses: actions/checkout@master
     - uses: actions/setup-go@v2
       with:
-        go-version: "1.18"
+        go-version: "1.20"
     - uses: little-core-labs/get-git-tag@v3.0.1
       id: tagName
       with:
@@ -48,7 +48,7 @@ jobs:
     - uses: actions/checkout@master
     - uses: actions/setup-go@v2
       with:
-        go-version: "1.18"
+        go-version: "1.20"
     - uses: little-core-labs/get-git-tag@v3.0.1
       id: tagName
       with:
@@ -68,32 +68,4 @@ jobs:
       with:
         files: |
           *.tar.gz
-          *.sha1
-  pack-evaluator-plugin-and-upload-asset:
-    runs-on: ubuntu-20.04
-    steps:
-    - uses: actions/checkout@master
-    - uses: actions/setup-go@v2
-      with:
-        go-version: "1.18"
-    - uses: little-core-labs/get-git-tag@v3.0.1
-      id: tagName
-      with:
-        tagRegex: "v(.*)"
-    - name: Install Zip
-      run: |
-        sudo apt install -y zip
-    - name: Pack Evaluator Plugin Package
-      env:
-        GO111MODULE: "on"
-      run: |
-        contrib/evaluator_plugin/pack_fission_package.sh
-        NAME="evaluator_plugin_${GIT_TAG_NAME}.zip"
-        mv evaluator_plugin.zip ${NAME}
-        sha1sum ${NAME} > ${NAME}.sha1
-    - name: Upload Evaluator Plugin Package Asset
-      uses: softprops/action-gh-release@v1
-      with:
-        files: |
-          *.zip
           *.sha1
