@@ -19,7 +19,7 @@ func NewDefaultSodaClientOption() option.Option {
 }
 
 type SodaClient interface {
-	PutObjectStreaming(name string, src io.ReadSeekCloser, len int64, opts PutObjectStreamingOption) error
+	PutObjectStreaming(name string, src io.ReadSeeker, len int64, opts PutObjectStreamingOption) error
 }
 
 func NewSodaClient(opts ...NewSodaClientOption) (SodaClient, error) {
