@@ -23,7 +23,7 @@ func (ts *ObjectStreamTestSuite) TestReadOffset() {
 	ts.Require().Nil(err)
 	ts.Require().Equal(int64(1), offset)
 
-	offset, err = os.Seek(0, io.SeekCurrent)
+	offset = os.Offset()
 	ts.Nil(err)
 	ts.Equal(int64(1), offset)
 }
@@ -34,7 +34,7 @@ func (ts *ObjectStreamTestSuite) TestSeek() {
 	n, err := os.Seek(100, io.SeekStart)
 	ts.Nil(err)
 	ts.Equal(int64(100), n)
-	n, err = os.Seek(0, io.SeekCurrent)
+	n = os.Offset()
 	ts.Nil(err)
 	ts.Equal(int64(100), n)
 	ts.Equal(STATE_WRITABLE, os.state)
@@ -109,8 +109,7 @@ func (ts *ObjectStreamTestSuite) TestAllInOne() {
 			srcRd.Seek(i, io.SeekStart)
 			srcRd.Read(srcBuf)
 
-			n, err = os.Seek(0, io.SeekCurrent)
-			ts.Nil(err)
+			n = os.Offset()
 			ts.Equal(i, n)
 
 			srcBufHash := sha1.New()

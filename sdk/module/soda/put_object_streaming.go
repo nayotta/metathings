@@ -6,7 +6,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func (cli *sodaClient) PutObjectStreaming(name string, src io.ReadSeekCloser, length int64, opts PutObjectStreamingOption) error {
+func (cli *sodaClient) PutObjectStreaming(name string, src io.ReadSeeker, length int64, opts PutObjectStreamingOption) error {
 	logger := cli.GetLogger().WithFields(logrus.Fields{
 		"#method":  "PutObjectStreaming",
 		"fileName": name,
@@ -21,27 +21,17 @@ func (cli *sodaClient) PutObjectStreaming(name string, src io.ReadSeekCloser, le
 	}
 	logger = logger.WithField("name", osName)
 
-	currentOffset := int64(0)
-	src.Seek(currentOffset, io.SeekStart)
+	remained, offset, length, err := cli.LLObjectStreamNextChunk(osName)
+	if err != nil {
+		logger.WithError(err).Debugf("failed to get object stream next chunk")
+		return err
+	}
+	src.Seek(offset, io.SeekStart)
 	for {
-		remained, offset, length, err := cli.LLObjectStreamNextChunk(osName)
-		if err != nil {
-			logger.WithError(err).Debugf("failed to get object stream next chunk")
-			return err
-		}
-
 		if remained < 0 {
 			err = ErrPutObjectTimeout
 			logger.WithError(err).Debugf("put object streaming timeout")
 			return err
-		}
-
-		if currentOffset != offset {
-			currentOffset, err = src.Seek(offset, io.SeekStart)
-			if err != nil {
-				logger.WithError(err).Debugf("failed to seek source")
-				return err
-			}
 		}
 
 		buf := make([]byte, length)
@@ -50,12 +40,25 @@ func (cli *sodaClient) PutObjectStreaming(name string, src io.ReadSeekCloser, le
 			logger.WithError(err).Debugf("failed to read from source")
 			return err
 		}
-		currentOffset += int64(n)
 
 		err = cli.LLObjectStreamWriteChunk(osName, offset, int64(n), buf[:n])
 		if err != nil {
 			logger.WithError(err).Debugf("failed to write chunk to object stream")
 			return err
+		}
+
+		remained, offset, length, err = cli.LLObjectStreamNextChunk(osName)
+		if err != nil {
+			logger.WithError(err).Debugf("failed to get object stream next chunk")
+			return err
+		}
+
+		if offset != offset {
+			offset, err = src.Seek(offset, io.SeekStart)
+			if err != nil {
+				logger.WithError(err).Debugf("failed to seek source")
+				return err
+			}
 		}
 	}
 }

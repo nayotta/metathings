@@ -42,6 +42,7 @@ type ObjectStream interface {
 	io.Reader
 	io.Seeker
 	io.Closer
+	CloseWithError(error) error
 }
 
 func NewObjectStream(opts ...NewObjectStreamOption) (ObjectStream, error) {
@@ -129,6 +130,7 @@ type objectStream struct {
 	state       string
 	closed      chan struct{}
 	closeOnce   sync.Once
+	err         error
 	waitTimeout time.Duration
 }
 
@@ -209,18 +211,9 @@ func (os *objectStream) Seek(offset int64, whence int) (n int64, err error) {
 		"whence":  whence,
 	})
 
-	if offset == 0 && whence == io.SeekCurrent {
-		if err = os.wait(STATE_WRITABLE); err != nil {
-			logger.WithError(err).Debugf("failed to wait writable")
-			return 0, err
-		}
-
-		return os.offset, nil
-	}
-
 	if whence != io.SeekStart {
-		err = ErrOnlySupportSeekStartWhenOffsetNotEqual0
-		logger.WithError(err).Debugf("invalid argument")
+		err = ErrUnsupportedWhenceFn(whence)
+		logger.WithError(err).Debugf("failed to seek")
 		return 0, err
 	}
 
@@ -243,7 +236,11 @@ func (os *objectStream) Seek(offset int64, whence int) (n int64, err error) {
 	return offset, nil
 }
 
-func (os *objectStream) Close() error { return os.close() }
+func (os *objectStream) Close() error { return os.close(nil) }
+
+func (os *objectStream) CloseWithError(err error) error {
+	return os.close(err)
+}
 
 func (os *objectStream) Wait(state string) error {
 	return os.wait(state)
@@ -268,7 +265,7 @@ func (os *objectStream) Logger() *logging.Entry {
 	})
 }
 
-func (os *objectStream) close() error {
+func (os *objectStream) close(err error) error {
 	os.closeOnce.Do(func() {
 		logger := os.Logger().WithFields(logging.Fields{
 			"#method": "close",
@@ -276,6 +273,7 @@ func (os *objectStream) close() error {
 
 		os.waits.Range(func(k, v any) bool {
 			v.(*sync.Map).Range(func(k1, v1 any) bool {
+				defer func() { recover() }()
 				close(v1.(chan struct{}))
 				return true
 			})
@@ -283,6 +281,7 @@ func (os *objectStream) close() error {
 		})
 
 		close(os.closed)
+		os.err = err
 
 		logger.Tracef("closed")
 	})
@@ -290,8 +289,25 @@ func (os *objectStream) close() error {
 }
 
 func (os *objectStream) wait(state string) error {
+	logger := os.Logger().WithFields(logging.Fields{
+		"#method": "wait",
+		"expect":  state,
+		"current": os.state,
+	})
+
+	if os.isClosed() {
+		logger.WithError(os.err).Debugf("closed")
+
+		if os.err != nil {
+			return os.err
+		}
+		return ErrClosed
+	}
+
 	if os.Remained() <= 0 {
-		return ErrUploadTimeout
+		err := ErrUploadTimeout
+		logger.WithError(err).Debugf("upload timeout")
+		return err
 	}
 
 	if os.state == state {
@@ -300,25 +316,47 @@ func (os *objectStream) wait(state string) error {
 
 	opable, cancel, err := os.lowWait(state)
 	if err != nil {
+		logger.WithError(err).Debugf("failed to low wait")
 		return err
 	}
 	defer cancel()
 
 	select {
 	case <-os.closed:
+		logger.Tracef("closed")
+
+		if os.err != nil {
+			return os.err
+		}
 		return ErrClosed
 	case <-time.After(os.waitTimeout):
+		logger.Tracef("wait timeout")
 		return ErrWaitTimeout
-	case _, closed := <-opable:
-		if closed {
+	case _, ok := <-opable:
+		if !ok {
+			logger.Tracef("closed when waiting")
+			if os.err != nil {
+				return os.err
+			}
 			return ErrClosed
 		}
+		logger.Tracef("opable")
 		return nil
 	}
 }
 
 func (os *objectStream) notify(state string) error {
+	logger := os.Logger().WithFields(logging.Fields{
+		"#method": "notify",
+		"state":   state,
+	})
+
 	if os.isClosed() {
+		logger.WithError(os.err).Debugf("closed")
+
+		if os.err != nil {
+			return os.err
+		}
 		return ErrClosed
 	}
 
@@ -340,6 +378,7 @@ func (os *objectStream) notify(state string) error {
 	})
 
 	os.state = state
+	logger.Tracef("notify")
 
 	return nil
 }
@@ -364,14 +403,12 @@ func (os *objectStream) lowWait(state string) (chan struct{}, func(), error) {
 	}
 
 	m := v.(*sync.Map)
-	var once sync.Once
 	t := rand.Int63()
 	ch := make(chan struct{})
 	c := func() {
-		once.Do(func() {
-			m.Delete(t)
-			close(ch)
-		})
+		defer func() { recover() }()
+		m.Delete(t)
+		close(ch)
 	}
 
 	m.Store(t, ch)

@@ -658,7 +658,7 @@ func _put_object_streaming_loop(stm pb.DeviceService_PutObjectStreamingClient, c
 			length := chk.GetLength()
 			buf := make([]byte, length)
 
-			if _, err = content.Seek(offset, 0); err != nil {
+			if _, err = content.Seek(offset, io.SeekStart); err != nil {
 				errs <- err
 				return
 			}

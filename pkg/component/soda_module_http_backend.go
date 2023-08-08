@@ -6,6 +6,7 @@ import (
 	"crypto/sha1"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -311,12 +312,20 @@ func (b *SodaModuleHttpBackend) handle_put_object_streaming(w http.ResponseWrite
 		go func() {
 			defer b.remove_object_stream(osName)
 
-			if err = b.m.Kernel().PutObjectStreaming(name, os, &PutObjectStreamingOption{
+			if er := b.m.Kernel().PutObjectStreaming(name, os, &PutObjectStreamingOption{
 				Sha1:   sha1sum,
 				Length: int64(length),
-			}); err != nil {
-				logger.WithError(err).Errorf("failed to put object streaming")
+			}); er != nil {
+				if errors.Is(er, io.EOF) {
+					logger.Tracef("put object streaming completed")
+				} else {
+					logger.WithError(er).Errorf("failed to put object streaming")
+				}
+				os.CloseWithError(er)
+			} else {
+				os.Close()
 			}
+			logger.Tracef("object stream closed")
 		}()
 	} else {
 		logger.Warningf("put object streaming is in progressing")
@@ -326,6 +335,8 @@ func (b *SodaModuleHttpBackend) handle_put_object_streaming(w http.ResponseWrite
 	jw.Header().Add(HTTP_SODA_OBJECT_STREAM_MAX_AGE, cast.ToString(os.MaxAge()))
 	jw.Header().Add(HTTP_SODA_OBJECT_STREAM_REMAINED, cast.ToString(os.Remained()))
 	jw.WriteHeader(http.StatusNoContent)
+
+	logger.Tracef("put object streaming")
 
 	return
 }
@@ -602,6 +613,7 @@ func (b *SodaModuleHttpBackend) handle_object_stream_write_chunk(w http.Response
 	}
 
 	jw.WriteHeader(http.StatusNoContent)
+
 	logger.Tracef("write object chunk")
 
 	return
@@ -626,21 +638,30 @@ func (b *SodaModuleHttpBackend) handle_object_stream_next_chunk(w http.ResponseW
 		return
 	}
 
-	offset, err := os.Seek(0, io.SeekCurrent)
-	if err != nil {
-		logger.WithError(err).Debugf("failed to seek")
+	if err = os.Wait(STATE_WRITABLE); err != nil {
+		logger.WithError(err).Debugf("failed to wait writable")
 		jw.WriteHeader(http.StatusInternalServerError)
 		jw.WriteJSON(http_helper.ConvertError(err))
 		return
 	}
 
+	offset := os.Offset()
+	remained := os.Remained()
+	bufferLength := os.BufferLength()
+
+	logger = logger.WithFields(logging.Fields{
+		"offset":   offset,
+		"remained": remained,
+		"length":   bufferLength,
+	})
+
 	h := jw.Header()
-	h.Add(HTTP_SODA_OBJECT_STREAM_REMAINED, cast.ToString(os.Remained()))
+	h.Add(HTTP_SODA_OBJECT_STREAM_REMAINED, cast.ToString(remained))
 	h.Add(HTTP_SODA_OBJECT_STREAM_CHUNK_OFFSET, cast.ToString(offset))
-	h.Add(HTTP_SODA_OBJECT_STREAM_CHUNK_LENGTH, cast.ToString(os.BufferLength()))
+	h.Add(HTTP_SODA_OBJECT_STREAM_CHUNK_LENGTH, cast.ToString(bufferLength))
 	jw.WriteHeader(http.StatusNoContent)
 
-	logger.Tracef("show object stream")
+	logger.Tracef("next object chunk")
 
 	return
 }
