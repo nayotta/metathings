@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"math/rand"
 	"strings"
 	"time"
 
@@ -175,7 +176,7 @@ func (k *Kernel) PutObjectStreaming(name string, content io.ReadSeeker, opt *Put
 	}
 	defer cfn()
 
-	err = _put_object_streaming(cli, k.Context(), name, content, opt.Sha1, opt.Length)
+	err = _put_object_streaming(cli, k.Context(), name, content, opt.Sha1, opt.Length, k.logger)
 	if err != nil {
 		return err
 	}
@@ -196,7 +197,7 @@ func (k *Kernel) PutObjectStreamingWithCancel(name string, content io.ReadSeeker
 	errs = make(chan error, 1)
 	go func() {
 		defer close(errs)
-		errs <- _put_object_streaming(cli, ctx, name, content, opt.Sha1, opt.Length)
+		errs <- _put_object_streaming(cli, ctx, name, content, opt.Sha1, opt.Length, k.logger)
 	}()
 
 	return cancel, errs, nil
@@ -603,7 +604,7 @@ func _put_object(cli pb.DeviceServiceClient, ctx context.Context, name string, c
 	return nil
 }
 
-func _put_object_streaming(cli pb.DeviceServiceClient, ctx context.Context, name string, content io.ReadSeeker, sha1 string, length int64) error {
+func _put_object_streaming(cli pb.DeviceServiceClient, ctx context.Context, name string, content io.ReadSeeker, sha1 string, length int64, logger log.FieldLogger) error {
 	stm, err := cli.PutObjectStreaming(ctx)
 	if err != nil {
 		return err
@@ -628,7 +629,7 @@ func _put_object_streaming(cli pb.DeviceServiceClient, ctx context.Context, name
 
 	errs := make(chan error)
 	defer close(errs)
-	go _put_object_streaming_loop(stm, content, errs)
+	go _put_object_streaming_loop(stm, content, errs, logger)
 	if err = <-errs; err != nil {
 		return err
 	}
@@ -636,16 +637,24 @@ func _put_object_streaming(cli pb.DeviceServiceClient, ctx context.Context, name
 	return nil
 }
 
-func _put_object_streaming_loop(stm pb.DeviceService_PutObjectStreamingClient, content io.ReadSeeker, errs chan error) {
-	for {
+func _put_object_streaming_loop(stm pb.DeviceService_PutObjectStreamingClient, content io.ReadSeeker, errs chan error, rawLogger log.FieldLogger) {
+	logger := rawLogger.WithFields(log.Fields{
+		"#method": "_put_object_streaming_loop",
+		"session": rand.Int(),
+	})
+	for step := 0; ; step++ {
+		logger := logger.WithField("step", step)
 		res, err := stm.Recv()
 		if err != nil {
+			logger.WithError(err).Debugf("failed to recv pull request")
 			errs <- err
 			return
 		}
+		logger.Tracef("recv pull request")
 
 		chunks := res.GetChunks()
 		if chunks == nil {
+			logger.Tracef("empty pull request")
 			continue
 		}
 
@@ -653,21 +662,33 @@ func _put_object_streaming_loop(stm pb.DeviceService_PutObjectStreamingClient, c
 			Id: &wrappers.StringValue{Value: res.GetId()},
 		}
 		req_chks := []*deviced_pb.OpObjectChunk{}
-		for _, chk := range chunks.GetChunks() {
+		for i, chk := range chunks.GetChunks() {
 			offset := chk.GetOffset()
 			length := chk.GetLength()
+
+			logger := logger.WithFields(log.Fields{
+				"index":  i,
+				"offset": offset,
+				"length": length,
+			})
+
 			buf := make([]byte, length)
 
 			if _, err = content.Seek(offset, io.SeekStart); err != nil {
+				logger.WithError(err).Debugf("failed to content seek")
 				errs <- err
 				return
 			}
+			logger.Tracef("content seek")
 
 			n, err := content.Read(buf)
 			if err != nil {
+				logger.WithError(err).Debugf("failed to content read")
 				errs <- err
 				return
 			}
+			logger.WithField("n", n).Tracef("content read")
+
 			req_chks = append(req_chks, &deviced_pb.OpObjectChunk{
 				Offset: &wrappers.Int64Value{Value: offset},
 				Data:   &wrappers.BytesValue{Value: buf[:n]},
@@ -684,6 +705,7 @@ func _put_object_streaming_loop(stm pb.DeviceService_PutObjectStreamingClient, c
 			errs <- err
 			return
 		}
+		logger.WithField("chunks", len(req_chks)).Tracef("send push response")
 	}
 }
 
@@ -928,6 +950,9 @@ func NewKernel(opt *NewKernelOption) (*Kernel, error) {
 
 	if cli_fty == nil {
 		cli_fty, err = new_client_factory_from_kernel_config(kc)
+		if err != nil {
+			return nil, err
+		}
 	}
 	krn.cli_fty = cli_fty
 
