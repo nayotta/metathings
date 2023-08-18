@@ -37,6 +37,9 @@ func (self *MetathingsDevicedService) PutObject(ctx context.Context, req *pb.Put
 	content := req.GetContent().GetValue()
 	reader := bytes.NewReader(content)
 	obj_s := parse_object(obj)
+	if sz := len(content); sz > 0 && obj_s.Length == 0 {
+		obj_s.Length = int64(sz)
+	}
 
 	logger := self.get_logger()
 
