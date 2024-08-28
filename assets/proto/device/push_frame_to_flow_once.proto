@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package ai.metathings.service.device;
+option go_package = "github.com/nayotta/metathings/proto/device";
+
+import "google/protobuf/wrappers.proto";
+
+import "assets/proto/deviced/model.proto";
+
+message PushFrameToFlowOnceRequest {
+	google.protobuf.StringValue id = 1;
+	ai.metathings.service.deviced.OpFlow flow = 2;
+	ai.metathings.service.deviced.OpFrame frame = 3;
+}

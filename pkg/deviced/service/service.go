@@ -47,6 +47,8 @@ type MetathingsDevicedServiceOption struct {
 }
 
 type MetathingsDevicedService struct {
+	pb.UnimplementedDevicedServiceServer
+
 	grpc_auth.ServiceAuthFuncOverride
 	*grpc_helper.ErrorParser
 	tknr            token_helper.Tokener

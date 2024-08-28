@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/cavaliercoder/grab"
+	"github.com/cavaliergopher/grab/v3"
 	"github.com/sirupsen/logrus"
 
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"

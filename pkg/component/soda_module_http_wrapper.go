@@ -123,6 +123,8 @@ func WrapHttpAuthContext(r *http.Request, ctx *SodaModuleAuthContext) error {
 }
 
 type SodaModuleHttpWrapper struct {
+	pb.UnimplementedModuleServiceServer
+
 	m *Module
 
 	req_auth SodaModuleAuthorizer

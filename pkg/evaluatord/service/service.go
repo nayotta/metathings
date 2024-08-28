@@ -28,6 +28,8 @@ type MetathingsEvaluatordServiceOption struct {
 }
 
 type MetathingsEvaluatordService struct {
+	pb.UnimplementedEvaluatordServiceServer
+
 	grpc_auth.ServiceAuthFuncOverride
 	*grpc_helper.ErrorParser
 	tknr          token_helper.Tokener

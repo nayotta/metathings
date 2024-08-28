@@ -24,6 +24,8 @@ type MetathingsPolicydServiceOption struct {
 }
 
 type MetathingsPolicydService struct {
+	pb.UnimplementedPolicydServiceServer
+
 	*server.Server
 
 	opt *MetathingsPolicydServiceOption

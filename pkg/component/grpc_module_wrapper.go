@@ -18,6 +18,8 @@ var (
 )
 
 type GrpcModuleWrapper struct {
+	pb.UnimplementedModuleServiceServer
+
 	logger              log.FieldLogger
 	target              interface{}
 	unary_method_cache  map[string]func(context.Context, *any.Any) (*any.Any, error)

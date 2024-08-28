@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package ai.metathings.service.device;
+option go_package = "github.com/nayotta/metathings/proto/device";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+
+import "assets/proto/identityd2/model.proto";
+
+message IssueModuleTokenRequest {
+	ai.metathings.service.identityd2.OpCredential credential = 1;
+	google.protobuf.Timestamp timestamp = 2;
+	google.protobuf.Int64Value nonce = 3;
+	google.protobuf.StringValue hmac = 4;
+}
+
+message IssueModuleTokenResponse {
+	ai.metathings.service.identityd2.Token token = 1;
+}

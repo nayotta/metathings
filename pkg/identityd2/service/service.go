@@ -23,6 +23,8 @@ type MetathingsIdentitydServiceOption struct {
 }
 
 type MetathingsIdentitydService struct {
+	pb.UnimplementedIdentitydServiceServer
+
 	opt       *MetathingsIdentitydServiceOption
 	logger    log.FieldLogger
 	storage   storage.Storage

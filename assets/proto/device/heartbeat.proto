@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package ai.metathings.service.device;
+option go_package = "github.com/nayotta/metathings/proto/device";
+
+import "assets/proto/deviced/model.proto";
+
+message HeartbeatRequest {
+	ai.metathings.service.deviced.OpModule module = 1;
+}

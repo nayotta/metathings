@@ -15,6 +15,8 @@ import (
 )
 
 type MetathingsTagdService struct {
+	pb.UnimplementedTagdServiceServer
+
 	grpc_auth.ServiceAuthFuncOverride
 	*log_helper.GetLoggerer
 	authorizer identityd_authorizer.Authorizer
