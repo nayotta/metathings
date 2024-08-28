@@ -44,8 +44,8 @@ github.com/Knetic/govaluate v3.0.1-0.20171022003610-9aa49832a739+incompatible/go
 github.com/OneOfOne/xxhash v1.2.2/go.mod h1:HSdplMjZKSmBqAxg5vPj2TmRDmfkzw+cTzAElWljhcU=
 github.com/PeerXu/errors-go v1.0.0 h1:PIrQEyeulheSdwharNg/LcY+kWHRBXXZzdAh6kRSdPo=
 github.com/PeerXu/errors-go v1.0.0/go.mod h1:F0YqJVZI5654GDZf77MCwzC3gKKjENCtUPGjqGE4CuE=
-github.com/PeerXu/option-go v1.0.0 h1:uvbyWZhMjk5fe00xIG7mDmZZf8MDR0wacFelMqvbE7Y=
-github.com/PeerXu/option-go v1.0.0/go.mod h1:IgtAa8V9geOe9nLpVe0XfCuwCsCpCVcs29KQX+BJU/s=
+github.com/PeerXu/option-go v1.1.1 h1:QjMDDKqRqoo0JuScYhnzrOGwNjlBix4ceYq1ZpaJDEk=
+github.com/PeerXu/option-go v1.1.1/go.mod h1:LKnZOF8V4m2Y+z7FZ0UZLqqbjaqGsn7GsYC+5w00q5k=
 github.com/PuerkitoBio/goquery v1.5.1/go.mod h1:GsLWisAFVj4WgDibEWF4pvYnkVQBpKBKeU+7zCJoLcc=
 github.com/RaveNoX/go-jsoncommentstrip v1.0.0/go.mod h1:78ihd09MekBnJnxpICcwzCMzGrKSKYe4AqU6PDYYpjk=
 github.com/Shopify/sarama v1.19.0/go.mod h1:FVkBWblsNy7DGZRfXLU0O9RCGt5g3g3yEuWXgklEdEo=
@@ -325,6 +325,8 @@ github.com/jeremywohl/flatten v1.0.1 h1:LrsxmB3hfwJuE+ptGOijix1PIfOoKLJ3Uee/mzbg
 github.com/jeremywohl/flatten v1.0.1/go.mod h1:4AmD/VxjWcI5SRB0n6szE2A6s2fsNHDLO0nAlMHgfLQ=
 github.com/jhump/protoreflect v1.7.0 h1:qJ7piXPrjP3mDrfHf5ATkxfLix8ANs226vpo0aACOn0=
 github.com/jhump/protoreflect v1.7.0/go.mod h1:RZkzh7Hi9J7qT/sPlWnJ/UwZqCJvciFxKDA0UCeltSM=
+github.com/jinzhu/copier v0.4.0 h1:w3ciUoD19shMCRargcpm0cm91ytaBhDvuRpz1ODO/U8=
+github.com/jinzhu/copier v0.4.0/go.mod h1:DfbEm0FYsaqBcKcFuvmOZb218JkPGtvSHsKg8S8hyyg=
 github.com/jinzhu/gorm v1.9.10/go.mod h1:Kh6hTsSGffh4ui079FHrR5Gg+5D0hgihqDcsDN2BBJY=
 github.com/jinzhu/gorm v1.9.12/go.mod h1:vhTjlKSJUTWNtcbQtrMBFCxy7eXTzeCAzfL5fBZT/Qs=
 github.com/jinzhu/gorm v1.9.16 h1:+IyIjPEABKRpsu/F8OvDPy9fyQlgsg2luMV2ZIH5i5o=
