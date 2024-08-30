@@ -1,26 +1,16 @@
 package metathings_mosquitto_plugin_service
 
 import (
-	"io/ioutil"
+	"io"
 	"net/http"
-	"time"
 
 	log "github.com/sirupsen/logrus"
 
+	mqtt_helper "github.com/nayotta/metathings/pkg/common/mqtt"
 	passwd_helper "github.com/nayotta/metathings/pkg/common/passwd"
 	webhook_helper "github.com/nayotta/metathings/pkg/common/webhook"
 	storage "github.com/nayotta/metathings/pkg/plugin/mosquitto/storage"
 )
-
-var (
-	WEBHOOK_HMAC_TIMESTAMP, _    = time.Parse(time.RFC3339, "2019-01-01T00:00:00Z")
-	WEBHOOK_HMAC_TIMESTAMP_INT64 = int64(1546300800000000000) // WEBHOOK_HMAC_TIMESTAMP.UnixNano()
-	WEBHOOK_HMAC_NONCE           = int64(1024)
-)
-
-func ParseMosquittoPluginPassword(id, secret string) string {
-	return passwd_helper.MustParseHmac(secret, id, WEBHOOK_HMAC_TIMESTAMP, WEBHOOK_HMAC_NONCE)
-}
 
 type MosquittoPluginServiceOption struct {
 	Webhook struct {
@@ -44,11 +34,12 @@ func (s *MosquittoPluginService) WebhookHandler(w http.ResponseWriter, r *http.R
 		return
 	}
 
-	buf, err := ioutil.ReadAll(r.Body)
+	buf, err := io.ReadAll(r.Body)
 	if err != nil {
 		s.get_logger().WithError(err).Debugf("failed to read request body")
 		return
 	}
+	defer r.Body.Close()
 
 	evt, err := webhook_helper.UnmarshalEvent(buf)
 	if err != nil {
@@ -91,7 +82,7 @@ func (s *MosquittoPluginService) handle_create_credential_event(evt *webhook_hel
 	}
 
 	logger := s.get_logger().WithField("username", id)
-	hmac := ParseMosquittoPluginPassword(id, secret)
+	hmac := mqtt_helper.ParseMqttPassword(id, secret)
 	passwd := passwd_helper.MustParsePbkdf2(hmac)
 
 	topic := "mt/#"

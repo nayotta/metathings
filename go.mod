@@ -1,10 +1,11 @@
 module github.com/nayotta/metathings
 
-go 1.23.0
+go 1.23
 
 require (
 	github.com/PeerXu/errors-go v1.0.0
 	github.com/PeerXu/option-go v1.1.1
+	github.com/PeerXu/registerer-go v0.0.0-20240524135612-34179cf4348b
 	github.com/avast/retry-go v3.0.0+incompatible
 	github.com/casbin/casbin-server v1.12.1
 	github.com/cavaliergopher/grab/v3 v3.0.1

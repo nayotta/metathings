@@ -11,7 +11,7 @@ import (
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
 	config_helper "github.com/nayotta/metathings/pkg/common/config"
 	id_helper "github.com/nayotta/metathings/pkg/common/id"
-	mosquitto_service "github.com/nayotta/metathings/pkg/plugin/mosquitto/service"
+	mqtt_helper "github.com/nayotta/metathings/pkg/common/mqtt"
 	device_pb "github.com/nayotta/metathings/proto/device"
 	deviced_pb "github.com/nayotta/metathings/proto/deviced"
 )
@@ -99,7 +99,7 @@ func (s *MetathingsDeviceCloudService) start_push_frame_loop(dev_id string, req 
 		args = append(
 			args,
 			"mqtt_username", s.opt.Credential.Id,
-			"mqtt_password", mosquitto_service.ParseMosquittoPluginPassword(s.opt.Credential.Id, s.opt.Credential.Secret),
+			"mqtt_password", mqtt_helper.ParseMqttPassword(s.opt.Credential.Id, s.opt.Credential.Secret),
 			"device_id", dev_id,
 			"channel_session", sess,
 			"push_ack", psh_ack,

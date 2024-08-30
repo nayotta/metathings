@@ -1,0 +1,16 @@
+debug:
+  listen: 0.0.0.0:21884
+  verbose: true
+  webhook:
+    secret: s3cr3t
+  log:
+    level: debug
+  opentracing:
+    tracer: jaeger
+  vernemq_storage:
+    driver: redis
+    host: "127.0.0.1"
+    port: 6379
+    username: ""
+    password: "p4sswd"
+    db: 0

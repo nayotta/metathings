@@ -69,7 +69,7 @@ func (dc *DeviceConnection) handle_system_unary_request(req *pb.ConnectRequest) 
 	}
 }
 
-func (dc *DeviceConnection) handle_system_unary_request_sync_firmware(req *pb.ConnectRequest) error {
+func (dc *DeviceConnection) handle_system_unary_request_sync_firmware(_ *pb.ConnectRequest) error {
 	return dc.sync_firmware()
 }
 
