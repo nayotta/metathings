@@ -1,0 +1,9 @@
+package passwd_helper
+
+import "time"
+
+var (
+	DEFAULT_HMAC_TIMESTAMP, _    = time.Parse(time.RFC3339, "2019-01-01T00:00:00Z")
+	DEFAULT_HMAC_TIMESTAMP_INT64 = int64(1546300800000000000) // WEBHOOK_HMAC_TIMESTAMP.UnixNano()
+	DEFAULT_HMAC_NONCE           = int64(1024)
+)

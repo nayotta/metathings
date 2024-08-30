@@ -5,7 +5,7 @@ import (
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"math/rand"
 	"net/http"
 	"net/url"
@@ -27,8 +27,8 @@ import (
 
 	cmd_contrib "github.com/nayotta/metathings/cmd/contrib"
 	id_helper "github.com/nayotta/metathings/pkg/common/id"
+	mqtt_helper "github.com/nayotta/metathings/pkg/common/mqtt"
 	passwd_helper "github.com/nayotta/metathings/pkg/common/passwd"
-	mosquitto_service "github.com/nayotta/metathings/pkg/plugin/mosquitto/service"
 	device_pb "github.com/nayotta/metathings/proto/device"
 	deviced_pb "github.com/nayotta/metathings/proto/deviced"
 )
@@ -111,7 +111,7 @@ func main() {
 		panic(err)
 	}
 
-	bbuf, err := ioutil.ReadAll(res.Body)
+	bbuf, err := io.ReadAll(res.Body)
 	if err != nil {
 		panic(err)
 	}
@@ -125,7 +125,7 @@ func main() {
 	device_id := sm_res.GetModule().GetDeviceId()
 	hostname, _ := os.Hostname()
 	mqtt_username := cred_id
-	mqtt_password := mosquitto_service.ParseMosquittoPluginPassword(cred_id, cred_srt)
+	mqtt_password := mqtt_helper.ParseMqttPassword(cred_id, cred_srt)
 	mqtt_clientid := hostname + strconv.Itoa(time.Now().Second())
 
 	fmt.Printf(`token=%v
@@ -175,7 +175,7 @@ interval=%v
 		panic(err)
 	}
 
-	bbuf, err = ioutil.ReadAll(res.Body)
+	bbuf, err = io.ReadAll(res.Body)
 	if err != nil {
 		panic(err)
 	}
@@ -261,7 +261,7 @@ func send_data_loop(c mqtt.Client, pub_tpc string) {
 }
 
 func send_data_once(c mqtt.Client, pub_tpc string) {
-	dat_js, err := ioutil.ReadFile(request_file)
+	dat_js, err := os.ReadFile(request_file)
 	if err != nil {
 		panic(err)
 	}
@@ -357,7 +357,7 @@ func issue_module_token(cli *http.Client) string {
 		panic(err)
 	}
 
-	buf, err = ioutil.ReadAll(res.Body)
+	buf, err = io.ReadAll(res.Body)
 	if err != nil {
 		panic(err)
 	}

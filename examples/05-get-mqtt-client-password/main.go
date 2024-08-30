@@ -5,7 +5,7 @@ import (
 
 	"github.com/spf13/pflag"
 
-	mosquitto_service "github.com/nayotta/metathings/pkg/plugin/mosquitto/service"
+	mqtt_helper "github.com/nayotta/metathings/pkg/common/mqtt"
 )
 
 var (
@@ -19,7 +19,7 @@ func main() {
 
 	pflag.Parse()
 
-	passwd := mosquitto_service.ParseMosquittoPluginPassword(credential_id, credential_secret)
+	passwd := mqtt_helper.ParseMqttPassword(credential_id, credential_secret)
 	fmt.Printf(`Mosquitto Client Username: %v
 Mosquitto Client Password: %v
 

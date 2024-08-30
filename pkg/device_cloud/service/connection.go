@@ -13,13 +13,13 @@ import (
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
 	config_helper "github.com/nayotta/metathings/pkg/common/config"
 	context_helper "github.com/nayotta/metathings/pkg/common/context"
+	mqtt_helper "github.com/nayotta/metathings/pkg/common/mqtt"
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 	protobuf_helper "github.com/nayotta/metathings/pkg/common/protobuf"
 	session_helper "github.com/nayotta/metathings/pkg/common/session"
 	token_helper "github.com/nayotta/metathings/pkg/common/token"
 	component "github.com/nayotta/metathings/pkg/component"
 	storage "github.com/nayotta/metathings/pkg/device_cloud/storage"
-	mosquitto_service "github.com/nayotta/metathings/pkg/plugin/mosquitto/service"
 	state_pb "github.com/nayotta/metathings/proto/constant/state"
 	pb "github.com/nayotta/metathings/proto/deviced"
 )
@@ -96,7 +96,7 @@ func (s *MetathingsDeviceCloudService) build_device_connection(dev *pb.Device) e
 			"logger", s.logger,
 			"tokener", s.tknr,
 			"mqtt_username", s.opt.Credential.Id,
-			"mqtt_password", mosquitto_service.ParseMosquittoPluginPassword(s.opt.Credential.Id, s.opt.Credential.Secret),
+			"mqtt_password", mqtt_helper.ParseMqttPassword(s.opt.Credential.Id, s.opt.Credential.Secret),
 			"device_cloud_session", s.opt.Session.Id,
 		)
 
