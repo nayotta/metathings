@@ -3,7 +3,7 @@ package client_helper
 import (
 	"time"
 
-	"github.com/go-redis/redis/v8"
+	"github.com/redis/go-redis/v9"
 
 	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 )

@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/go-redis/redis/v8"
+	"github.com/redis/go-redis/v9"
 	log "github.com/sirupsen/logrus"
 
 	client_helper "github.com/nayotta/metathings/pkg/common/client"

@@ -5,7 +5,7 @@ import (
 	"encoding/base64"
 	"fmt"
 
-	"github.com/go-redis/redis/v8"
+	"github.com/redis/go-redis/v9"
 
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
 )

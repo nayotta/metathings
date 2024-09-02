@@ -75,9 +75,9 @@ func (fc *MQTTPushFrameToFlowChannel) init_client() error {
 
 	opts := mqtt.NewClientOptions().
 		AddBroker(fc.opt.MQTT.Address).
+		SetClientID(fc.opt.MQTT.ClientId).
 		SetUsername(fc.opt.MQTT.Username).
 		SetPassword(fc.opt.MQTT.Password).
-		SetClientID(fc.opt.MQTT.ClientId).
 		SetCleanSession(true).
 		SetTLSConfig(&tls.Config{InsecureSkipVerify: true, ClientAuth: tls.NoClientCert}).
 		SetOnConnectHandler(func(c mqtt.Client) {
@@ -222,7 +222,7 @@ func (fc *MQTTPushFrameToFlowChannel) Close() error {
 
 type MQTTPushFrameToFlowChannelFactory struct{}
 
-func (f *MQTTPushFrameToFlowChannelFactory) New(args ...interface{}) (PushFrameToFlowChannel, error) {
+func (f *MQTTPushFrameToFlowChannelFactory) New(args ...any) (PushFrameToFlowChannel, error) {
 	var logger log.FieldLogger
 	var opt MQTTPushFrameToFlowChannelOption
 	opt.MQTT.ClientId = id_helper.NewId()

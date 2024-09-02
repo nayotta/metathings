@@ -4,12 +4,13 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"strings"
 	"sync"
 	"time"
 
-	"github.com/go-redis/redis/v8"
 	stpb "github.com/golang/protobuf/ptypes/struct"
+	"github.com/redis/go-redis/v9"
 	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -31,7 +32,7 @@ type flowOption struct {
 
 	ReadStreamGroupBlockTime time.Duration
 	StreamExpireTime         time.Duration
-	StreamTrimLimit          int64
+	StreamTrimRangeDuration  time.Duration
 	StreamTrimProb           float32
 }
 
@@ -40,7 +41,7 @@ func newFlowOption(o *FlowOption) *flowOption {
 		FlowOption:               o,
 		ReadStreamGroupBlockTime: 3 * time.Second,
 		StreamExpireTime:         30 * time.Minute,
-		StreamTrimLimit:          15,
+		StreamTrimRangeDuration:  24 * time.Hour,
 		StreamTrimProb:           0.001,
 	}
 }
@@ -146,24 +147,23 @@ func (f *flow) push_frame_to_redis_stream(frm *pb.Frame) error {
 	if err != nil {
 		return err
 	}
+	pipe := rs_cli.Pipeline()
 
-	if err := rs_cli.XAdd(ctx, &redis.XAddArgs{
+	pipe.XAdd(ctx, &redis.XAddArgs{
 		Stream: f.redis_stream_key(),
 		Values: map[string]interface{}{
 			"frame": frm_txt,
 		},
-	}).Err(); err != nil {
-		return err
-	}
-
-	if err = rs_cli.Expire(ctx, f.redis_stream_key(), f.opt.StreamExpireTime).Err(); err != nil {
-		f.logger.WithError(err).Debugf("failed to expire stream")
-	}
-
+	})
+	pipe.Expire(ctx, f.redis_stream_key(), f.opt.StreamExpireTime)
 	if rand_helper.Float32() < f.opt.StreamTrimProb {
-		if err = rs_cli.XTrimApprox(ctx, f.redis_stream_key(), f.opt.StreamTrimLimit).Err(); err != nil {
-			f.logger.WithError(err).Debugf("failed to trim stream")
-		}
+		trimFrom := time.Now().Add(-f.opt.StreamTrimRangeDuration).UnixMilli()
+		minId := fmt.Sprintf("%v-0", trimFrom)
+		pipe.XTrimMinID(ctx, f.redis_stream_key(), minId)
+	}
+	if _, err = pipe.Exec(ctx); err != nil {
+		f.logger.WithError(err).Debugf("failed to push frame to redis stream")
+		return err
 	}
 
 	return nil

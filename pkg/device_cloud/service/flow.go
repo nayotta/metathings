@@ -98,6 +98,7 @@ func (s *MetathingsDeviceCloudService) start_push_frame_loop(dev_id string, req 
 	case "mqtt":
 		args = append(
 			args,
+			"mqtt_clientid", s.opt.Credential.Id,
 			"mqtt_username", s.opt.Credential.Id,
 			"mqtt_password", mqtt_helper.ParseMqttPassword(s.opt.Credential.Id, s.opt.Credential.Secret),
 			"device_id", dev_id,

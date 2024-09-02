@@ -2,11 +2,12 @@ package metathings_deviced_flow
 
 import (
 	"context"
+	"fmt"
 	"strings"
 	"sync"
 	"time"
 
-	"github.com/go-redis/redis/v8"
+	"github.com/redis/go-redis/v9"
 	log "github.com/sirupsen/logrus"
 
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
@@ -25,6 +26,7 @@ type RedisStreamFlowSetOption struct {
 	ReadStreamGroupBlockTime time.Duration
 	StreamExpireTime         time.Duration
 	StreamTrimLimit          int64
+	StreamTrimRangeDuration  time.Duration
 	StreamTrimProb           float32
 }
 
@@ -33,8 +35,8 @@ func NewRedisStreamFlowSetOption(id string) *RedisStreamFlowSetOption {
 		Id:                       id,
 		ReadStreamGroupBlockTime: 3 * time.Second,
 		StreamExpireTime:         30 * time.Minute,
-		StreamTrimLimit:          15,
-		StreamTrimProb:           0.001,
+		StreamTrimRangeDuration:  24 * time.Hour,
+		StreamTrimProb:           0.01,
 	}
 }
 
@@ -103,24 +105,24 @@ func (rsfs *RedisStreamFlowSet) PushFrame(flwst_frm *FlowSetFrame) error {
 		return err
 	}
 
-	if err = rsfs.rs_cli.XAdd(ctx, &redis.XAddArgs{
+	pipe := rsfs.rs_cli.Pipeline()
+	pipe.XAdd(ctx, &redis.XAddArgs{
 		Stream: rsfs.redis_stream_key(),
 		Values: map[string]interface{}{
 			"device": dev_txt,
 			"frame":  frm_txt,
 		},
-	}).Err(); err != nil {
-		return err
-	}
-
-	if err = rsfs.rs_cli.Expire(ctx, rsfs.redis_stream_key(), rsfs.opt.StreamExpireTime).Err(); err != nil {
-		rsfs.logger.WithError(err).Debugf("failed to expire stream")
-	}
-
+	})
+	pipe.Expire(ctx, rsfs.redis_stream_key(), rsfs.opt.StreamExpireTime)
 	if rand_helper.Float32() < rsfs.opt.StreamTrimProb {
-		if err = rsfs.rs_cli.XTrimApprox(ctx, rsfs.redis_stream_key(), rsfs.opt.StreamTrimLimit).Err(); err != nil {
-			rsfs.logger.WithError(err).Debugf("failed to trim stream")
-		}
+		trimFrom := time.Now().Add(-rsfs.opt.StreamTrimRangeDuration).UnixMilli()
+		minId := fmt.Sprintf("%v-0", trimFrom)
+		pipe.XTrimMinID(ctx, rsfs.redis_stream_key(), minId)
+	}
+	_, err = pipe.Exec(ctx)
+	if err != nil {
+		rsfs.get_logger().WithError(err).Debugf("failed to push frame to redis")
+		return err
 	}
 
 	return nil

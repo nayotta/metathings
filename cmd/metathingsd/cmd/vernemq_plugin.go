@@ -8,9 +8,9 @@ import (
 	"syscall"
 
 	"github.com/PeerXu/option-go"
-	"github.com/go-redis/redis/v8"
 	"github.com/gorilla/mux"
 	"github.com/opentracing/opentracing-go"
+	"github.com/redis/go-redis/v9"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cast"
 	"github.com/spf13/cobra"

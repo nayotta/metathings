@@ -10,7 +10,6 @@ require (
 	github.com/casbin/casbin-server v1.12.1
 	github.com/cavaliergopher/grab/v3 v3.0.1
 	github.com/eclipse/paho.mqtt.golang v1.5.0
-	github.com/go-redis/redis/v8 v8.11.5
 	github.com/golang/protobuf v1.5.4
 	github.com/gorilla/mux v1.8.1
 	github.com/grpc-ecosystem/go-grpc-middleware v1.4.0
@@ -23,6 +22,7 @@ require (
 	github.com/opentracing-contrib/go-gorilla v0.0.0-20190110000444-ced666783644
 	github.com/opentracing-contrib/go-stdlib v1.0.0
 	github.com/opentracing/opentracing-go v1.2.0
+	github.com/redis/go-redis/v9 v9.6.1
 	github.com/satori/go.uuid v1.2.0
 	github.com/sirupsen/logrus v1.9.3
 	github.com/smacker/opentracing-gorm v0.0.0-20181207094635-cd4974441042
