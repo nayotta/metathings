@@ -82,10 +82,10 @@ func (p *MqttModuleProxy) new_client() (mqtt.Client, error) {
 	topic := p.mqtt_topic(p.opt.Module.Id, "+", MQTT_UPSTREAM)
 	errs := make(chan error, 1)
 	opts := mqtt.NewClientOptions().
+		SetClientID(p.opt.MQTT.ClientId).
 		SetUsername(p.opt.MQTT.Username).
 		SetPassword(p.opt.MQTT.Password).
 		AddBroker(p.opt.MQTT.Address).
-		SetClientID(p.opt.MQTT.ClientId).
 		SetCleanSession(true).
 		SetTLSConfig(&tls.Config{InsecureSkipVerify: true, ClientAuth: tls.NoClientCert}).
 		SetOnConnectHandler(func(c mqtt.Client) {

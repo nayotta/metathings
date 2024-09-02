@@ -95,6 +95,7 @@ func (s *MetathingsDeviceCloudService) build_device_connection(dev *pb.Device) e
 			"client_factory", s.cli_fty,
 			"logger", s.logger,
 			"tokener", s.tknr,
+			"mqtt_clientid", s.opt.Credential.Id,
 			"mqtt_username", s.opt.Credential.Id,
 			"mqtt_password", mqtt_helper.ParseMqttPassword(s.opt.Credential.Id, s.opt.Credential.Secret),
 			"device_cloud_session", s.opt.Session.Id,
@@ -124,6 +125,7 @@ type DeviceConnectionOption struct {
 		Connection struct {
 			MQTT struct {
 				Address  string
+				ClientId string
 				Username string
 				Password string
 			}
@@ -554,6 +556,7 @@ func (dc *DeviceConnection) build_mqtt_module_proxy(mdl *pb.Module) (component.M
 		"module_id", mdl_id,
 		"session_id", mdl_sess,
 		"mqtt_address", dc.opt.DeviceCloud.Connection.MQTT.Address,
+		"mqtt_clientid", dc.opt.DeviceCloud.Connection.MQTT.ClientId,
 		"mqtt_username", dc.opt.DeviceCloud.Connection.MQTT.Username,
 		"mqtt_password", dc.opt.DeviceCloud.Connection.MQTT.Password,
 	)
@@ -653,6 +656,7 @@ func NewDeviceConnection(args ...interface{}) (*DeviceConnection, error) {
 			return nil
 		},
 		"mqtt_address":         opt_helper.ToString(&dc.opt.DeviceCloud.Connection.MQTT.Address),
+		"mqtt_clientid":        opt_helper.ToString(&dc.opt.DeviceCloud.Connection.MQTT.ClientId),
 		"mqtt_username":        opt_helper.ToString(&dc.opt.DeviceCloud.Connection.MQTT.Username),
 		"mqtt_password":        opt_helper.ToString(&dc.opt.DeviceCloud.Connection.MQTT.Password),
 		"device_cloud_session": opt_helper.ToString(&dc.opt.DeviceCloud.Session.Id),
