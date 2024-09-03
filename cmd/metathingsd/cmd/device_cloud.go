@@ -7,24 +7,31 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/PeerXu/option-go"
 	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"go.uber.org/fx"
 
 	cmd_contrib "github.com/nayotta/metathings/cmd/contrib"
+	client_helper "github.com/nayotta/metathings/pkg/common/client"
 	cmd_helper "github.com/nayotta/metathings/pkg/common/cmd"
 	cfg_helper "github.com/nayotta/metathings/pkg/common/config"
 	id_helper "github.com/nayotta/metathings/pkg/common/id"
+	log_helper "github.com/nayotta/metathings/pkg/common/log"
+	redis_helper "github.com/nayotta/metathings/pkg/common/redis"
 	token_helper "github.com/nayotta/metathings/pkg/common/token"
+	profile_storage_core "github.com/nayotta/metathings/pkg/device_cloud/profile_storage/core"
+	profile_storage_interface "github.com/nayotta/metathings/pkg/device_cloud/profile_storage/interface"
 	service "github.com/nayotta/metathings/pkg/device_cloud/service"
 	storage "github.com/nayotta/metathings/pkg/device_cloud/storage"
 )
 
 type DeviceCloudOption struct {
 	cmd_contrib.ServiceBaseOption `mapstructure:",squash"`
-	Storage                       map[string]interface{}
-	Connection                    map[string]interface{}
+	Storage                       map[string]any
+	ProfileStorage                map[string]any
+	Connection                    map[string]any
 }
 
 func NewDeviceCloudOption() *DeviceCloudOption {
@@ -53,6 +60,22 @@ func init_device_cloud_storage(opt *DeviceCloudOption) {
 	opt.Storage = ms
 }
 
+func init_device_cloud_profile_storage(opt *DeviceCloudOption) {
+	mps := map[string]any{}
+	vps := cmd_helper.GetFromStage().Sub("profile_storage")
+	for _, key := range vps.AllKeys() {
+		switch key {
+		case "driver":
+			mps[key] = vps.GetString(key)
+		case "db":
+			mps[key] = vps.GetInt(key)
+		default:
+			mps[key] = vps.Get(key)
+		}
+	}
+	opt.ProfileStorage = mps
+}
+
 var (
 	deviceCloudCmd = &cobra.Command{
 		Use:   "device_cloud",
@@ -67,6 +90,7 @@ var (
 			base_opt = &opt_t.BaseOption
 
 			init_device_cloud_storage(opt_t)
+			init_device_cloud_profile_storage(opt_t)
 
 			device_cloud_opt = opt_t
 			device_cloud_opt.SetServiceName("device_cloud")
@@ -106,6 +130,27 @@ func NewDeviceCloudStorage(opt *DeviceCloudOption, logger log.FieldLogger) (stor
 	}
 
 	return storage.NewStorage(drv, args...)
+}
+
+func NewDeviceCloudProfileStorage(opt *DeviceCloudOption, logger log.FieldLogger) (profile_storage_interface.ProfileStorage, error) {
+	drv, args, err := cfg_helper.ParseConfigOption("driver", opt.ProfileStorage, "logger", logger)
+	if err != nil {
+		return nil, err
+	}
+
+	var opts []option.ApplyOption
+	switch drv {
+	case "redis":
+		client, err := client_helper.NewRedisClient(args...)
+		if err != nil {
+			return nil, err
+		}
+		opts = append(opts, redis_helper.WithRedisClient(client), log_helper.WithLogger(logger))
+	default:
+		return nil, ErrUnsupportedProfileStorageDriverFn(drv)
+	}
+
+	return profile_storage_core.New(drv, opts...)
 }
 
 func NewMetathingsDeviceCloudServiceOption(opt *DeviceCloudOption) *service.MetathingsDeviceCloudServiceOption {
@@ -153,6 +198,7 @@ func runDeviceCloud() error {
 			cmd_contrib.NewNoExpireTokener,
 			token_helper.NewTokenValidator,
 			NewDeviceCloudStorage,
+			NewDeviceCloudProfileStorage,
 			NewMetathingsDeviceCloudServiceOption,
 			service.NewMetathingsDeviceCloudService,
 		),

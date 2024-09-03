@@ -12,6 +12,7 @@ import (
 	config_helper "github.com/nayotta/metathings/pkg/common/config"
 	id_helper "github.com/nayotta/metathings/pkg/common/id"
 	mqtt_helper "github.com/nayotta/metathings/pkg/common/mqtt"
+	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 	device_pb "github.com/nayotta/metathings/proto/device"
 	deviced_pb "github.com/nayotta/metathings/proto/deviced"
 )
@@ -96,6 +97,20 @@ func (s *MetathingsDeviceCloudService) start_push_frame_loop(dev_id string, req 
 
 	switch drv {
 	case "mqtt":
+		var enableDynamicBroker bool
+		if err := opt_helper.Setopt(map[string]func(string, any) error{
+			"mqtt_dynamic_broker": opt_helper.ToBool(&enableDynamicBroker),
+		}, opt_helper.SetSkip(true))(args...); err != nil {
+			return err
+		}
+		if enableDynamicBroker {
+			mqtt_address, err := s.get_mqtt_broker_address_by_device_id(dev_id)
+			if err != nil {
+				return err
+			}
+			args = append(args, "mqtt_address", mqtt_address)
+		}
+
 		args = append(
 			args,
 			"mqtt_clientid", s.opt.Credential.Id,

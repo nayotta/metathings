@@ -6,18 +6,18 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func (ps *RedisProfileStorage) BindDevice(ctx context.Context, deviceNames []string, profileName string) error {
+func (ps *RedisProfileStorage) BindDevices(ctx context.Context, deviceIds []string, profileName string) error {
 	logger := ps.GetLogger().WithFields(logrus.Fields{
 		"#method":      "BindDevice",
-		"devices.name": deviceNames,
+		"devices.id":   deviceIds,
 		"profile.name": profileName,
 	})
 
 	var keys []string
-	for _, deviceName := range deviceNames {
-		key, err := ps.deviceNameToBindingProfileRedisKey(deviceName)
+	for _, deviceId := range deviceIds {
+		key, err := ps.deviceIdToBindingProfileRedisKey(deviceId)
 		if err != nil {
-			logger.WithError(err).Debugf("failed to parse device name to redis key")
+			logger.WithError(err).Debugf("failed to parse device id to redis key")
 			return err
 		}
 		keys = append(keys, key)

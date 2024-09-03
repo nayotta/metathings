@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package ai.metathings.service.device;
+option go_package = "github.com/nayotta/metathings/proto/device";
+
+import "google/protobuf/wrappers.proto";
+
+message Profile {
+  string name = 1;
+  string driver = 2;
+  string address = 3;
+  string port = 4;
+}
+
+message OpProfile {
+  google.protobuf.StringValue name = 1;
+  google.protobuf.StringValue driver = 2;
+  google.protobuf.StringValue address = 3;
+  google.protobuf.StringValue port = 4;
+}

@@ -9,8 +9,8 @@ debug:
     tracer: jaeger
   vernemq_storage:
     driver: redis
-    host: "127.0.0.1"
-    port: 6379
+    addr: "127.0.0.1:6379"
     username: ""
     password: "p4sswd"
     db: 0
+

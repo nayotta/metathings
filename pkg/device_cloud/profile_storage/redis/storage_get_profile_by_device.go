@@ -12,18 +12,18 @@ import (
 	intf "github.com/nayotta/metathings/pkg/device_cloud/profile_storage/interface"
 )
 
-func (ps *RedisProfileStorage) GetProfileByDevice(ctx context.Context, deviceName string, opts ...option.ApplyOption) (p intf.Profile, err error) {
+func (ps *RedisProfileStorage) GetProfileByDevice(ctx context.Context, deviceId string, opts ...option.ApplyOption) (p intf.Profile, err error) {
 	logger := ps.GetLogger().WithFields(logrus.Fields{
-		"#method":     "GetProfileByDevice",
-		"device.name": deviceName,
+		"#method":   "GetProfileByDevice",
+		"device.id": deviceId,
 	})
 
 	o := option.ApplyWithDefault(core.DefaultGetProfileByDeviceOptions(), opts...)
 	disableDefaultProfile, _ := core.GetDisableDefaultProfile(o)
 
-	key, err := ps.deviceNameToBindingProfileRedisKey(deviceName)
+	key, err := ps.deviceIdToBindingProfileRedisKey(deviceId)
 	if err != nil {
-		logger.WithError(err).Debugf("failed to parse device name to redis key")
+		logger.WithError(err).Debugf("failed to parse device id to redis key")
 		return
 	}
 
@@ -35,7 +35,7 @@ func (ps *RedisProfileStorage) GetProfileByDevice(ctx context.Context, deviceNam
 		}
 
 		if disableDefaultProfile {
-			err = core.ErrDeviceNotFoundFn(deviceName)
+			err = core.ErrDeviceNotFoundFn(deviceId)
 			logger.WithError(err).Debugf("device not bind for any profile")
 			return
 		}

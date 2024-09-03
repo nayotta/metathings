@@ -4,9 +4,10 @@ import (
 	"context"
 	"net/http"
 
+	log "github.com/sirupsen/logrus"
+
 	id_helper "github.com/nayotta/metathings/pkg/common/id"
 	device_pb "github.com/nayotta/metathings/proto/device"
-	log "github.com/sirupsen/logrus"
 )
 
 func (s *MetathingsDeviceCloudService) PushFrameToFlow(w http.ResponseWriter, r *http.Request) {

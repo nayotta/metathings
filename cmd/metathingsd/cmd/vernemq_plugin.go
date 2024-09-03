@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"context"
-	"net"
 	"os"
 	"os/signal"
 	"syscall"
@@ -10,17 +9,15 @@ import (
 	"github.com/PeerXu/option-go"
 	"github.com/gorilla/mux"
 	"github.com/opentracing/opentracing-go"
-	"github.com/redis/go-redis/v9"
 	"github.com/sirupsen/logrus"
-	"github.com/spf13/cast"
 	"github.com/spf13/cobra"
 	"go.uber.org/fx"
 
 	cmd_contrib "github.com/nayotta/metathings/cmd/contrib"
+	client_helper "github.com/nayotta/metathings/pkg/common/client"
 	cmd_helper "github.com/nayotta/metathings/pkg/common/cmd"
 	cfg_helper "github.com/nayotta/metathings/pkg/common/config"
 	log_helper "github.com/nayotta/metathings/pkg/common/log"
-	opt_helper "github.com/nayotta/metathings/pkg/common/option"
 	redis_helper "github.com/nayotta/metathings/pkg/common/redis"
 	service "github.com/nayotta/metathings/pkg/plugin/vernemq/service"
 	storage "github.com/nayotta/metathings/pkg/plugin/vernemq/storage"
@@ -100,24 +97,10 @@ func NewVernemqPluginStorage(opt *VernemqPluginOption, logger logrus.FieldLogger
 	var opts []option.ApplyOption
 	switch drv {
 	case "redis":
-		var host, username, password string
-		var port, db int
-		if err = opt_helper.Setopt(map[string]func(string, any) error{
-			"host":     opt_helper.ToString(&host),
-			"port":     opt_helper.ToInt(&port),
-			"username": opt_helper.ToString(&username),
-			"password": opt_helper.ToString(&password),
-			"db":       opt_helper.ToInt(&db),
-		})(args...); err != nil {
+		client, err := client_helper.NewRedisClient(args...)
+		if err != nil {
 			return nil, err
 		}
-		addr := net.JoinHostPort(host, cast.ToString(port))
-		client := redis.NewUniversalClient(&redis.UniversalOptions{
-			Addrs:    []string{addr},
-			Username: username,
-			Password: password,
-			DB:       db,
-		})
 		opts = append(opts, redis_helper.WithRedisClient(client), log_helper.WithLogger(logger))
 	default:
 		return nil, ErrUnsupportedStorageDriverFn(drv)

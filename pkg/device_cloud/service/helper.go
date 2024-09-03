@@ -7,7 +7,10 @@ import (
 	"strings"
 
 	"github.com/golang/protobuf/proto"
+
 	grpc_helper "github.com/nayotta/metathings/pkg/common/grpc"
+	metathings_device_cloud_profile_storage_interface "github.com/nayotta/metathings/pkg/device_cloud/profile_storage/interface"
+	pb "github.com/nayotta/metathings/proto/device"
 )
 
 var (
@@ -41,4 +44,13 @@ func GetTokenFromHeader(r *http.Request) string {
 func GetSessionFromHeader(r *http.Request) int64 {
 	sess, _ := strconv.ParseInt(r.Header.Get("MT-Module-Session"), 10, 64)
 	return sess
+}
+
+func ProfileToPb(p metathings_device_cloud_profile_storage_interface.Profile) pb.Profile {
+	return pb.Profile{
+		Name:    p.Name,
+		Driver:  p.Driver,
+		Address: p.Address,
+		Port:    p.Port,
+	}
 }

@@ -9,6 +9,7 @@ import (
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
 	context_helper "github.com/nayotta/metathings/pkg/common/context"
 	token_helper "github.com/nayotta/metathings/pkg/common/token"
+	profile_storage_interface "github.com/nayotta/metathings/pkg/device_cloud/profile_storage/interface"
 	storage "github.com/nayotta/metathings/pkg/device_cloud/storage"
 )
 
@@ -30,16 +31,21 @@ type MetathingsDeviceCloudServiceOption struct {
 }
 
 type MetathingsDeviceCloudService struct {
-	opt     *MetathingsDeviceCloudServiceOption
-	logger  log.FieldLogger
-	storage storage.Storage
-	cli_fty *client_helper.ClientFactory
-	tknr    token_helper.Tokener
-	tkvdr   token_helper.TokenValidator
+	opt             *MetathingsDeviceCloudServiceOption
+	logger          log.FieldLogger
+	storage         storage.Storage
+	profile_storage profile_storage_interface.ProfileStorage
+	cli_fty         *client_helper.ClientFactory
+	tknr            token_helper.Tokener
+	tkvdr           token_helper.TokenValidator
 }
 
 func (s *MetathingsDeviceCloudService) get_logger() log.FieldLogger {
-	return s.logger
+	return s.logger.WithField("#instance", "MetathingsDeviceCloudService")
+}
+
+func (s *MetathingsDeviceCloudService) context() context.Context {
+	return context.Background()
 }
 
 func (s *MetathingsDeviceCloudService) context_with_token(ctx context.Context) context.Context {
@@ -62,16 +68,18 @@ func NewMetathingsDeviceCloudService(
 	opt *MetathingsDeviceCloudServiceOption,
 	logger log.FieldLogger,
 	storage storage.Storage,
+	profile_storage profile_storage_interface.ProfileStorage,
 	cli_fty *client_helper.ClientFactory,
 	tknr token_helper.Tokener,
 	tkvdr token_helper.TokenValidator,
 ) (*MetathingsDeviceCloudService, error) {
 	return &MetathingsDeviceCloudService{
-		opt:     opt,
-		logger:  logger,
-		storage: storage,
-		cli_fty: cli_fty,
-		tknr:    tknr,
-		tkvdr:   tkvdr,
+		opt:             opt,
+		logger:          logger,
+		storage:         storage,
+		profile_storage: profile_storage,
+		cli_fty:         cli_fty,
+		tknr:            tknr,
+		tkvdr:           tkvdr,
 	}, nil
 }

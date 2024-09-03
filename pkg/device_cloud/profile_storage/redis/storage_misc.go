@@ -26,6 +26,6 @@ func (ps *RedisProfileStorage) redisValToProfile(s string) (intf.Profile, error)
 	return p, err
 }
 
-func (ps *RedisProfileStorage) deviceNameToBindingProfileRedisKey(name string) (string, error) {
+func (ps *RedisProfileStorage) deviceIdToBindingProfileRedisKey(name string) (string, error) {
 	return fmt.Sprintf("ps:devices:%s:profile", name), nil
 }

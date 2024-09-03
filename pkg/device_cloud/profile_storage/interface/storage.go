@@ -17,7 +17,7 @@ type ProfileStorage interface {
 	CreateOrUpdateProfile(ctx context.Context, profile Profile) error
 	DeleteProfile(ctx context.Context, profileName string) error
 	GetProfile(ctx context.Context, profileName string) (Profile, error)
-	GetProfileByDevice(ctx context.Context, device string, opts ...option.ApplyOption) (Profile, error)
-	BindDevice(ctx context.Context, devices []string, profileName string) error
-	UnbindDevice(ctx context.Context, devices []string) error
+	GetProfileByDevice(ctx context.Context, deviceId string, opts ...option.ApplyOption) (Profile, error)
+	BindDevices(ctx context.Context, deviceIds []string, profileName string) error
+	UnbindDevices(ctx context.Context, deviceIds []string) error
 }

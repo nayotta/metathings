@@ -3,6 +3,7 @@ package metathings_device_cloud_service
 import (
 	"context"
 	"math"
+	"net"
 	"sync"
 	"time"
 
@@ -81,6 +82,16 @@ func (s *MetathingsDeviceCloudService) try_to_build_device_connection(dev *pb.De
 	}
 }
 
+func (s *MetathingsDeviceCloudService) get_mqtt_broker_address_by_device_id(devId string) (string, error) {
+	ctx := context.Background()
+	p, err := s.profile_storage.GetProfileByDevice(ctx, devId)
+	if err != nil {
+		return "", err
+	}
+
+	return net.JoinHostPort(p.Address, p.Port), nil
+}
+
 func (s *MetathingsDeviceCloudService) build_device_connection(dev *pb.Device) error {
 	drv, args, err := config_helper.ParseConfigOption("driver", s.opt.Connection)
 	if err != nil {
@@ -89,6 +100,20 @@ func (s *MetathingsDeviceCloudService) build_device_connection(dev *pb.Device) e
 
 	switch drv {
 	case "mqtt":
+		var enableDynamicBroker bool
+		if err := opt_helper.Setopt(map[string]func(string, any) error{
+			"mqtt_dynamic_broker": opt_helper.ToBool(&enableDynamicBroker),
+		}, opt_helper.SetSkip(true))(args...); err != nil {
+			return err
+		}
+		if enableDynamicBroker {
+			mqtt_address, err := s.get_mqtt_broker_address_by_device_id(dev.Id)
+			if err != nil {
+				return err
+			}
+			args = append(args, "mqtt_address", mqtt_address)
+		}
+
 		args = append(args,
 			"device", dev,
 			"storage", s.storage,

@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package ai.metathings.service.device;
+option go_package = "github.com/nayotta/metathings/proto/device";
+
+import "model.proto";
+
+message DeleteProfileRequest {
+  ai.metathings.service.device.OpProfile profile = 1;
+}

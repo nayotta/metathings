@@ -23,6 +23,7 @@ require (
 	github.com/opentracing-contrib/go-stdlib v1.0.0
 	github.com/opentracing/opentracing-go v1.2.0
 	github.com/redis/go-redis/v9 v9.6.1
+	github.com/samber/lo v1.47.0
 	github.com/satori/go.uuid v1.2.0
 	github.com/sirupsen/logrus v1.9.3
 	github.com/smacker/opentracing-gorm v0.0.0-20181207094635-cd4974441042

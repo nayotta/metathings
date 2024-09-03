@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package ai.metathings.service.device;
+option go_package = "github.com/nayotta/metathings/proto/device";
+
+import "assets/proto/deviced/model.proto";
+import "model.proto";
+
+message BindDevicesRequest {
+  repeated ai.metathings.service.deviced.OpDevice devices = 1;
+  ai.metathings.service.device.OpProfile profile = 2;
+}
