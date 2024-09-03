@@ -180,6 +180,12 @@ func NewDeviceCloudRouting(p NewDeviceCloudRoutingParams) error {
 	sr.HandleFunc("/actions/show_module", p.Service.ShowModule).Methods("POST")
 	sr.HandleFunc("/actions/push_frame_to_flow", p.Service.PushFrameToFlow).Methods("POST")
 	sr.HandleFunc("/actions/show_module_firmware_descriptor", p.Service.ShowModuleFirmwareDescriptor).Methods("POST")
+	sr.HandleFunc("/actions/create_or_update_profile", p.Service.CreateOrUpdateProfile).Methods("POST")
+	sr.HandleFunc("/actions/delete_profile", p.Service.DeleteProfile).Methods("POST")
+	sr.HandleFunc("/actions/get_profile", p.Service.GetProfile).Methods("POST")
+	sr.HandleFunc("/actions/get_profile_by_device", p.Service.GetProfileByDevice).Methods("POST")
+	sr.HandleFunc("/actions/profile_bind_devices", p.Service.BindDevices).Methods("POST")
+	sr.HandleFunc("/actions/profile_unbind_devices", p.Service.UnbindDevices).Methods("POST")
 
 	return nil
 }
