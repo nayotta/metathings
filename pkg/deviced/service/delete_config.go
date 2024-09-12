@@ -24,7 +24,7 @@ func (self *MetathingsDevicedService) ValidateDeleteConfig(ctx context.Context, 
 }
 
 func (self *MetathingsDevicedService) AuthorizeDeleteConfig(ctx context.Context, in interface{}) error {
-	return self.authorizer.Authorize(ctx, in.(*pb.DeleteConfigRequest).GetConfig().GetId().GetValue(), "deviced:delete_config")
+	return self.authorizer.Authorize(ctx, in.(*pb.DeleteConfigRequest).GetConfig().GetId().GetValue(), DEVICED_DELETE_CONFIG)
 }
 
 func (self *MetathingsDevicedService) DeleteConfig(ctx context.Context, req *pb.DeleteConfigRequest) (*empty.Empty, error) {

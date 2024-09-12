@@ -23,7 +23,7 @@ func (self *MetathingsDevicedService) ValidateSyncDeviceFirmwareDescriptor(ctx c
 }
 
 func (self *MetathingsDevicedService) AuthorizeSyncDeviceFirmwareDescriptor(ctx context.Context, in interface{}) error {
-	return self.authorizer.Authorize(ctx, in.(*pb.SyncDeviceFirmwareDescriptorRequest).GetDevice().GetId().GetValue(), "deviced:sync_device_firmware_descriptor")
+	return self.authorizer.Authorize(ctx, in.(*pb.SyncDeviceFirmwareDescriptorRequest).GetDevice().GetId().GetValue(), DEVICED_SYNC_DEVICE_FIRMWARE_DESCRIPTOR)
 }
 
 func (self *MetathingsDevicedService) SyncDeviceFirmwareDescriptor(ctx context.Context, req *pb.SyncDeviceFirmwareDescriptorRequest) (*empty.Empty, error) {

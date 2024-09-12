@@ -26,7 +26,7 @@ func (self *MetathingsDevicedService) ValidateListConfigsByDevice(ctx context.Co
 }
 
 func (self *MetathingsDevicedService) AuthorizeListConfigsByDevice(ctx context.Context, in interface{}) error {
-	return self.authorizer.Authorize(ctx, in.(*pb.ListConfigsByDeviceRequest).GetDevice().GetId().GetValue(), "deviced:list_configs_by_device")
+	return self.authorizer.Authorize(ctx, in.(*pb.ListConfigsByDeviceRequest).GetDevice().GetId().GetValue(), DEVICED_LIST_CONFIGS_BY_DEVICE)
 }
 
 func (self *MetathingsDevicedService) ListConfigsByDevice(ctx context.Context, req *pb.ListConfigsByDeviceRequest) (*pb.ListConfigsByDeviceResponse, error) {

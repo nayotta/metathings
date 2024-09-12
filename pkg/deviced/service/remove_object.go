@@ -28,7 +28,7 @@ func (self *MetathingsDevicedService) ValidateRemoveObject(ctx context.Context, 
 }
 
 func (self *MetathingsDevicedService) AuthorizeRemoveObject(ctx context.Context, in interface{}) error {
-	return self.authorizer.Authorize(ctx, in.(*pb.RemoveObjectRequest).GetObject().GetDevice().GetId().GetValue(), "deviced:remove_object")
+	return self.authorizer.Authorize(ctx, in.(*pb.RemoveObjectRequest).GetObject().GetDevice().GetId().GetValue(), DEVICED_REMOVE_OBJECT)
 }
 
 func (self *MetathingsDevicedService) RemoveObject(ctx context.Context, req *pb.RemoveObjectRequest) (*empty.Empty, error) {

@@ -12,7 +12,7 @@ import (
 )
 
 func (self *MetathingsDevicedService) AuthorizeAddConfigsToDevice(ctx context.Context, in interface{}) error {
-	return self.authorizer.Authorize(ctx, in.(*pb.AddConfigsToDeviceRequest).GetDevice().GetId().GetValue(), "deviced:add_configs_to_device")
+	return self.authorizer.Authorize(ctx, in.(*pb.AddConfigsToDeviceRequest).GetDevice().GetId().GetValue(), DEVICED_ADD_CONFIGS_TO_DEVICE)
 }
 
 func (self *MetathingsDevicedService) AddConfigsToDevice(ctx context.Context, req *pb.AddConfigsToDeviceRequest) (*empty.Empty, error) {

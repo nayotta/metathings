@@ -11,7 +11,7 @@ import (
 )
 
 func (self *MetathingsDevicedService) AuthorizeSetDeviceFirmwareDescriptor(ctx context.Context, in interface{}) error {
-	return self.authorizer.Authorize(ctx, in.(*pb.SetDeviceFirmwareDescriptorRequest).GetDevice().GetId().GetValue(), "deviced:set_device_firmware_descriptor")
+	return self.authorizer.Authorize(ctx, in.(*pb.SetDeviceFirmwareDescriptorRequest).GetDevice().GetId().GetValue(), DEVICED_SET_DEVICE_FIRMWARE_DESCRIPTOR)
 }
 
 func (self *MetathingsDevicedService) ValidateSetDeviceFirmwareDescriptor(ctx context.Context, in interface{}) error {

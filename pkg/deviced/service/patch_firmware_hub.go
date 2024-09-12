@@ -21,7 +21,7 @@ func (self *MetathingsDevicedService) ValidatePatchFirmwareHub(ctx context.Conte
 }
 
 func (self *MetathingsDevicedService) AuthorizePatchFirmwareHub(ctx context.Context, in interface{}) error {
-	return self.authorizer.Authorize(ctx, in.(*pb.PatchFirmwareHubRequest).GetFirmwareHub().GetId().GetValue(), "deviced:patch_firmware_hub")
+	return self.authorizer.Authorize(ctx, in.(*pb.PatchFirmwareHubRequest).GetFirmwareHub().GetId().GetValue(), DEVICED_PATCH_FIRMWARE_HUB)
 }
 
 func (self *MetathingsDevicedService) PatchFirmwareHub(ctx context.Context, req *pb.PatchFirmwareHubRequest) (*pb.PatchFirmwareHubResponse, error) {

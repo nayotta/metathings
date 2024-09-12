@@ -23,7 +23,7 @@ func (self *MetathingsDevicedService) ValidateCreateFirmwareHub(ctx context.Cont
 }
 
 func (self *MetathingsDevicedService) AuthorizeCreateFirmwareHub(ctx context.Context, in interface{}) error {
-	return self.authorizer.Authorize(ctx, self.opt.Domain, "deviced:create_firmware_hub")
+	return self.authorizer.Authorize(ctx, self.opt.Domain, DEVICED_CREATE_FIRMWARE_HUB)
 }
 
 func (self *MetathingsDevicedService) CreateFirmwareHub(ctx context.Context, req *pb.CreateFirmwareHubRequest) (*pb.CreateFirmwareHubResponse, error) {

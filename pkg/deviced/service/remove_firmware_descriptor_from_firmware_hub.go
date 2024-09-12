@@ -26,7 +26,7 @@ func (self *MetathingsDevicedService) ValidateRemoveFirmwareDescriptorFromFirmwa
 }
 
 func (self *MetathingsDevicedService) AuthorizeRemoveFirmwareDescriptorFromFirmwareHub(ctx context.Context, in interface{}) error {
-	return self.authorizer.Authorize(ctx, in.(*pb.RemoveFirmwareDescriptorFromFirmwareHubRequest).GetFirmwareHub().GetId().GetValue(), "deviced:remove_firmware_descriptor_from_firmware_hub")
+	return self.authorizer.Authorize(ctx, in.(*pb.RemoveFirmwareDescriptorFromFirmwareHubRequest).GetFirmwareHub().GetId().GetValue(), DEVICED_REMOVE_FIRMWARE_DESCRIPTOR_FROM_FIRMWARE_HUB)
 }
 
 func (self *MetathingsDevicedService) RemoveFirmwareDescriptorFromFirmwareHub(ctx context.Context, req *pb.RemoveFirmwareDescriptorFromFirmwareHubRequest) (*empty.Empty, error) {

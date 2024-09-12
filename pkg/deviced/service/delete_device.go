@@ -28,7 +28,7 @@ func (self *MetathingsDevicedService) ValidateDeleteDevice(ctx context.Context, 
 }
 
 func (self *MetathingsDevicedService) AuthorizeDeleteDevice(ctx context.Context, in interface{}) error {
-	return self.authorizer.Authorize(ctx, in.(*pb.DeleteDeviceRequest).GetDevice().GetId().GetValue(), "deviced:delete_device")
+	return self.authorizer.Authorize(ctx, in.(*pb.DeleteDeviceRequest).GetDevice().GetId().GetValue(), DEVICED_DELETE_DEVICE)
 }
 
 func (self *MetathingsDevicedService) delete_entity(cli identityd_pb.IdentitydServiceClient, ctx context.Context, ent_id string) error {

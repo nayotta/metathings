@@ -25,7 +25,7 @@ func (self *MetathingsDevicedService) ValidateDeleteFlowSet(ctx context.Context,
 }
 
 func (self *MetathingsDevicedService) AuthorizeDeleteFlowSet(ctx context.Context, in interface{}) error {
-	return self.authorizer.Authorize(ctx, in.(*pb.DeleteFlowSetRequest).GetFlowSet().GetId().GetValue(), "deviced:delete_flow_set")
+	return self.authorizer.Authorize(ctx, in.(*pb.DeleteFlowSetRequest).GetFlowSet().GetId().GetValue(), DEVICED_DELETE_FLOW_SET)
 }
 
 func (self *MetathingsDevicedService) DeleteFlowSet(ctx context.Context, req *pb.DeleteFlowSetRequest) (*empty.Empty, error) {

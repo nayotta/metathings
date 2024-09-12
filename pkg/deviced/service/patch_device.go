@@ -25,7 +25,7 @@ func (self *MetathingsDevicedService) ValidatePatchDevice(ctx context.Context, i
 }
 
 func (self *MetathingsDevicedService) AuthorizePatchDevice(ctx context.Context, in interface{}) error {
-	return self.authorizer.Authorize(ctx, in.(*pb.PatchDeviceRequest).GetDevice().GetId().GetValue(), "deviced:patch_device")
+	return self.authorizer.Authorize(ctx, in.(*pb.PatchDeviceRequest).GetDevice().GetId().GetValue(), DEVICED_PATCH_DEVICE)
 }
 
 func (self *MetathingsDevicedService) PatchDevice(ctx context.Context, req *pb.PatchDeviceRequest) (*pb.PatchDeviceResponse, error) {

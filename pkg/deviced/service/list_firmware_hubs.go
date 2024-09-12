@@ -8,7 +8,7 @@ import (
 )
 
 func (self *MetathingsDevicedService) AuthorizeListFirmwareHubs(ctx context.Context, in interface{}) error {
-	return self.authorizer.Authorize(ctx, self.opt.Domain, "deviced:list_firmware_hubs")
+	return self.authorizer.Authorize(ctx, self.opt.Domain, DEVICED_LIST_FIRMWARE_HUBS)
 }
 
 func (self *MetathingsDevicedService) ListFirmwareHubs(ctx context.Context, req *pb.ListFirmwareHubsRequest) (*pb.ListFirmwareHubsResponse, error) {

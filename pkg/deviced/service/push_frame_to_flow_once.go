@@ -29,7 +29,7 @@ func (self *MetathingsDevicedService) ValidatePushFrameToFlowOnce(ctx context.Co
 }
 
 func (self *MetathingsDevicedService) AuthorizePushFrameToFlowOnce(ctx context.Context, in interface{}) error {
-	return self.authorizer.Authorize(ctx, in.(*pb.PushFrameToFlowOnceRequest).GetDevice().GetId().GetValue(), "deviced:push_frame_to_flow_once")
+	return self.authorizer.Authorize(ctx, in.(*pb.PushFrameToFlowOnceRequest).GetDevice().GetId().GetValue(), DEVICED_PUSH_FRAME_TO_FLOW_ONCE)
 }
 
 func (self *MetathingsDevicedService) PushFrameToFlowOnce(ctx context.Context, req *pb.PushFrameToFlowOnceRequest) (*empty.Empty, error) {

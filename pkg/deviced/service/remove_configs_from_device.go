@@ -11,7 +11,7 @@ import (
 )
 
 func (self *MetathingsDevicedService) AuthorizeRemoveConfigsFromDevice(ctx context.Context, in interface{}) error {
-	return self.authorizer.Authorize(ctx, in.(*pb.RemoveConfigsFromDeviceRequest).GetDevice().GetId().GetValue(), "deviced:remove_configs_from_device")
+	return self.authorizer.Authorize(ctx, in.(*pb.RemoveConfigsFromDeviceRequest).GetDevice().GetId().GetValue(), DEVICED_REMOVE_CONFIGS_FROM_DEVICE)
 }
 
 func (self *MetathingsDevicedService) RemoveConfigsFromDevice(ctx context.Context, req *pb.RemoveConfigsFromDeviceRequest) (*empty.Empty, error) {

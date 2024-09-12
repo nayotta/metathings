@@ -11,7 +11,7 @@ import (
 )
 
 func (self *MetathingsDevicedService) AuthorizeRemoveFlowsFromFlowSet(ctx context.Context, in interface{}) error {
-	return self.authorizer.Authorize(ctx, in.(*pb.RemoveFlowsFromFlowSetRequest).GetFlowSet().GetId().GetValue(), "deviced:remove_flows_from_flow_set")
+	return self.authorizer.Authorize(ctx, in.(*pb.RemoveFlowsFromFlowSetRequest).GetFlowSet().GetId().GetValue(), DEVICED_REMOVE_FLOWS_FROM_FLOW_SET)
 }
 
 func (self *MetathingsDevicedService) RemoveFlowsFromFlowSet(ctx context.Context, req *pb.RemoveFlowsFromFlowSetRequest) (*empty.Empty, error) {

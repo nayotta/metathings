@@ -27,7 +27,7 @@ func (self *MetathingsDevicedService) ValidateGetConfig(ctx context.Context, in 
 }
 
 func (self *MetathingsDevicedService) AuthorizeGetConfig(ctx context.Context, in interface{}) error {
-	return self.authorizer.Authorize(ctx, in.(*pb.GetConfigRequest).GetConfig().GetId().GetValue(), "deviced:get_config")
+	return self.authorizer.Authorize(ctx, in.(*pb.GetConfigRequest).GetConfig().GetId().GetValue(), DEVICED_GET_CONFIG)
 }
 
 func (self *MetathingsDevicedService) GetConfig(ctx context.Context, req *pb.GetConfigRequest) (*pb.GetConfigResponse, error) {

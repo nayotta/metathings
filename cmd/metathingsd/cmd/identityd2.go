@@ -211,7 +211,12 @@ func initIdentityd2(debug bool) error {
 							return err
 						}
 
-						admin_id_str := id_helper.NewId()
+						var admin_id_str string
+						if debug {
+							admin_id_str = "28e8e4868d2d497892a9c68c6c8565b6"
+						} else {
+							admin_id_str = id_helper.NewId()
+						}
 						admin_name_str := "admin"
 						admin_alias_str := "admin"
 						admin_passwd_str := passwd_helper.MustParsePassword("admin")
@@ -233,6 +238,19 @@ func initIdentityd2(debug bool) error {
 
 						if err = stor.AddRoleToEntity(ctx, *admin.Id, *sysadmin.Id); err != nil {
 							return err
+						}
+
+						for _, ai := range actionIds {
+							actionId := ai[0]
+							actionName := ai[1]
+							act := storage.Action{
+								Id:    &actionId,
+								Name:  &actionName,
+								Alias: &actionName,
+							}
+							if _, err = stor.CreateAction(ctx, &act); err != nil {
+								return err
+							}
 						}
 
 						if err = bck.AddRoleToEntity(ctx, admin, sysadmin); err != nil {

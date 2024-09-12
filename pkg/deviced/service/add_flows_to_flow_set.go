@@ -12,7 +12,7 @@ import (
 )
 
 func (self *MetathingsDevicedService) AuthorizeAddFlowsToFlowSet(ctx context.Context, in interface{}) error {
-	return self.authorizer.Authorize(ctx, in.(*pb.AddFlowsToFlowSetRequest).GetFlowSet().GetId().GetValue(), "deviced:add_flows_to_flow_set")
+	return self.authorizer.Authorize(ctx, in.(*pb.AddFlowsToFlowSetRequest).GetFlowSet().GetId().GetValue(), DEVICED_ADD_FLOWS_TO_FLOW_SET)
 }
 
 func (self *MetathingsDevicedService) AddFlowsToFlowSet(ctx context.Context, req *pb.AddFlowsToFlowSetRequest) (*empty.Empty, error) {

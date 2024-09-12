@@ -24,7 +24,7 @@ func (self *MetathingsDevicedService) ValidateFlowSet(ctx context.Context, in in
 }
 
 func (self *MetathingsDevicedService) AuthorizeGetFlowSet(ctx context.Context, in interface{}) error {
-	return self.authorizer.Authorize(ctx, in.(*pb.GetFlowSetRequest).GetFlowSet().GetId().GetValue(), "deviced:get_flow_set")
+	return self.authorizer.Authorize(ctx, in.(*pb.GetFlowSetRequest).GetFlowSet().GetId().GetValue(), DEVICED_GET_FLOW_SET)
 }
 
 func (self *MetathingsDevicedService) GetFlowSet(ctx context.Context, req *pb.GetFlowSetRequest) (*pb.GetFlowSetResponse, error) {

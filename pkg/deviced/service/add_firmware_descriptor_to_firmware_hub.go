@@ -28,7 +28,7 @@ func (self *MetathingsDevicedService) ValidateAddFirmwareDescriptorToFirmwareHub
 }
 
 func (self *MetathingsDevicedService) AuthorizeAddFirmwareDescriptorToFirmwareHub(ctx context.Context, in interface{}) error {
-	return self.authorizer.Authorize(ctx, in.(*pb.AddFirmwareDescriptorToFirmwareHubRequest).GetFirmwareHub().GetId().GetValue(), "deviced:add_firmware_descriptor_to_firmware_hub")
+	return self.authorizer.Authorize(ctx, in.(*pb.AddFirmwareDescriptorToFirmwareHubRequest).GetFirmwareHub().GetId().GetValue(), DEVICED_ADD_FIRMWARE_DESCRIPTOR_TO_FIRMWARE_HUB)
 }
 
 /*

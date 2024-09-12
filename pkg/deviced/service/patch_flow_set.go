@@ -24,7 +24,7 @@ func (self *MetathingsDevicedService) ValidatePatchFlowSet(ctx context.Context, 
 }
 
 func (self *MetathingsDevicedService) AuthorizePatchFlowSet(ctx context.Context, in interface{}) error {
-	return self.authorizer.Authorize(ctx, in.(*pb.PatchFlowSetRequest).GetFlowSet().GetId().GetValue(), "deviced:patch_flow_set")
+	return self.authorizer.Authorize(ctx, in.(*pb.PatchFlowSetRequest).GetFlowSet().GetId().GetValue(), DEVICED_PATCH_FLOW_SET)
 }
 
 func (self *MetathingsDevicedService) PatchFlowSet(ctx context.Context, req *pb.PatchFlowSetRequest) (*pb.PatchFlowSetResponse, error) {
