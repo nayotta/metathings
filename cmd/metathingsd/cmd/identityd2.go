@@ -26,6 +26,7 @@ type Identityd2Option struct {
 	// expose detail for viper to unmarshal config file.
 	cmd_contrib.ServiceBaseOption `mapstructure:",squash"`
 	Init                          int
+	Debug                         int
 }
 
 func NewIdentityd2Option() *Identityd2Option {
@@ -53,6 +54,7 @@ var (
 
 			init_service_cmd_option(opt_t, identityd2_opt)
 			opt_t.Init = identityd2_opt.Init
+			opt_t.Debug = identityd2_opt.Debug
 
 			identityd2_opt = opt_t
 			identityd2_opt.SetServiceName("identityd2")
@@ -62,7 +64,7 @@ var (
 			var err error
 
 			if identityd2_opt.Init > 0 {
-				if err = initIdentityd2(); err != nil {
+				if err = initIdentityd2(identityd2_opt.Debug > 0); err != nil {
 					log.WithError(err).Fatalf("failed to init identityd2 service")
 				}
 			} else {
@@ -155,7 +157,7 @@ func NewIdentityd2Backend(cli_fty *client_helper.ClientFactory, logger log.Field
 	return cache_backend, nil
 }
 
-func initIdentityd2() error {
+func initIdentityd2(debug bool) error {
 	app := fx.New(
 		fx.NopLogger,
 		fx.Provide(
@@ -304,6 +306,7 @@ func init() {
 	flags.StringVar(identityd2_opt.GetKeyFileP(), "key-file", "certs/server.key", "Metathings Identity2 Service Key File")
 
 	flags.CountVar(&identityd2_opt.Init, "init", "Initial Metathings Identity2 Service")
+	flags.CountVar(&identityd2_opt.Debug, "debug", "With debug mode")
 
 	RootCmd.AddCommand(identityd2Cmd)
 }

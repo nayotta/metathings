@@ -18,6 +18,7 @@ import (
 
 type CreateCredentialOption struct {
 	cmd_contrib.ClientBaseOption `mapstructure:",squash"`
+	Id                           string
 	Name                         string
 	Secret                       string
 	SecretSize                   int32
@@ -115,6 +116,9 @@ func create_credential() error {
 						if create_credential_opt.Secret != "" {
 							create_credential_req.Credential.Secret = &wrappers.StringValue{Value: create_credential_opt.Secret}
 						}
+						if create_credential_opt.Id != "" {
+							create_credential_req.Credential.Id = &wrappers.StringValue{Value: create_credential_opt.Id}
+						}
 
 						create_credential_res, err := cli.CreateCredential(ctx, create_credential_req)
 						if err != nil {
@@ -157,6 +161,7 @@ func init() {
 
 	flags := createCredentialCmd.Flags()
 
+	flags.StringVar(&create_credential_opt.Id, "id", "", "Credential ID")
 	flags.StringVar(&create_credential_opt.Name, "name", "", "Credential Name")
 	flags.StringVar(&create_credential_opt.Secret, "secret", "", "Credential Secret")
 	flags.Int32Var(&create_credential_opt.SecretSize, "secret-size", 32, "Credential Secret Size")
