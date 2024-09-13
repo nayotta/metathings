@@ -2,14 +2,12 @@ package cmd
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/opentracing/opentracing-go"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"go.uber.org/fx"
-	"google.golang.org/protobuf/types/known/emptypb"
 
 	cmd_contrib "github.com/nayotta/metathings/cmd/contrib"
 	client_helper "github.com/nayotta/metathings/pkg/common/client"
@@ -28,8 +26,7 @@ type Identityd2Option struct {
 	// expose detail for viper to unmarshal config file.
 	cmd_contrib.ServiceBaseOption `mapstructure:",squash"`
 	Init                          int
-	Debug                         int
-	Status                        int
+	AdminId                       string
 }
 
 func NewIdentityd2Option() *Identityd2Option {
@@ -57,7 +54,7 @@ var (
 
 			init_service_cmd_option(opt_t, identityd2_opt)
 			opt_t.Init = identityd2_opt.Init
-			opt_t.Debug = identityd2_opt.Debug
+			opt_t.AdminId = identityd2_opt.AdminId
 
 			identityd2_opt = opt_t
 			identityd2_opt.SetServiceName("identityd2")
@@ -67,12 +64,8 @@ var (
 			var err error
 
 			if identityd2_opt.Init > 0 {
-				if err = initIdentityd2(identityd2_opt.Debug > 0); err != nil {
+				if err = initIdentityd2(); err != nil {
 					log.WithError(err).Fatalf("failed to init identityd2 service")
-				}
-			} else if identityd2_opt.Status > 0 {
-				if err = statusIdentityd2(); err != nil {
-					log.WithError(err).Fatalf("failed to get identityd2 status")
 				}
 			} else {
 				if err = runIdentityd2(); err != nil {
@@ -164,7 +157,7 @@ func NewIdentityd2Backend(cli_fty *client_helper.ClientFactory, logger log.Field
 	return cache_backend, nil
 }
 
-func initIdentityd2(debug bool) error {
+func initIdentityd2() error {
 	app := fx.New(
 		fx.NopLogger,
 		fx.Provide(
@@ -219,8 +212,8 @@ func initIdentityd2(debug bool) error {
 						}
 
 						var admin_id_str string
-						if debug {
-							admin_id_str = "28e8e4868d2d497892a9c68c6c8565b6"
+						if identityd2_opt.AdminId != "" {
+							admin_id_str = identityd2_opt.AdminId
 						} else {
 							admin_id_str = id_helper.NewId()
 						}
@@ -283,43 +276,6 @@ func initIdentityd2(debug bool) error {
 	return nil
 }
 
-func statusIdentityd2() error {
-	app := fx.New(
-		fx.NopLogger,
-		fx.Provide(
-			GetIdentityd2Options,
-			cmd_contrib.NewServerTransportCredentials,
-			cmd_contrib.NewLogger("identityd2"),
-			cmd_contrib.NewClientFactory,
-		),
-		fx.Invoke(func(lc fx.Lifecycle, cli_fty *client_helper.ClientFactory, logger log.FieldLogger) {
-			lc.Append(fx.Hook{
-				OnStart: func(ctx context.Context) error {
-					cli, cfn, err := cli_fty.NewIdentityd2ServiceClient()
-					if err != nil {
-						return err
-					}
-					defer cfn()
-
-					out, err := cli.Healthz(ctx, &emptypb.Empty{})
-					if err != nil {
-						return err
-					}
-
-					fmt.Println(out.Value)
-
-					return nil
-				},
-			})
-		}),
-	)
-	ctx := context.Background()
-	if err := app.Start(ctx); err != nil {
-		return err
-	}
-	return nil
-}
-
 func runIdentityd2() error {
 	app := fx.New(
 		fx.NopLogger,
@@ -368,9 +324,7 @@ func init() {
 	flags.StringVar(identityd2_opt.GetKeyFileP(), "key-file", "certs/server.key", "Metathings Identity2 Service Key File")
 
 	flags.CountVar(&identityd2_opt.Init, "init", "Initial Metathings Identity2 Service")
-	flags.CountVar(&identityd2_opt.Debug, "debug", "With debug mode")
-
-	flags.CountVar(&identityd2_opt.Status, "status", "Identityd2 service status")
+	flags.StringVar(&identityd2_opt.AdminId, "admin-id", "", "Initial Identityd2 with admin id")
 
 	RootCmd.AddCommand(identityd2Cmd)
 }
