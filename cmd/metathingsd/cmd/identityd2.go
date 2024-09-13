@@ -329,7 +329,7 @@ func runIdentityd2() error {
 			cmd_contrib.NewLogger("identityd2"),
 			cmd_contrib.NewListener,
 			cmd_contrib.NewOpentracing,
-			cmd_contrib.NewGrpcServiceRegister,
+			cmd_contrib.NewGrpcServiceRegistrar,
 			cmd_contrib.NewClientFactory,
 			cmd_contrib.NewValidator,
 			cmd_contrib.NewWebhookService,
