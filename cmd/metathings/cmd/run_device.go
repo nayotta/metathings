@@ -109,7 +109,7 @@ func run_device() error {
 				return x
 			},
 			cmd_contrib.NewListener,
-			cmd_contrib.NewGrpcServer,
+			cmd_contrib.NewGrpcServiceRegistrar,
 		),
 		fx.Invoke(
 			func(lc fx.Lifecycle, srv service.MetathingsDeviceService, logger log.FieldLogger) error {

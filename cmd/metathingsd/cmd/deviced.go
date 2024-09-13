@@ -302,7 +302,7 @@ func runDeviced() error {
 			cmd_contrib.NewLogger("deviced"),
 			cmd_contrib.NewListener,
 			cmd_contrib.NewOpentracing,
-			cmd_contrib.NewGrpcServer,
+			cmd_contrib.NewGrpcServiceRegistrar,
 			cmd_contrib.NewClientFactory,
 			cmd_contrib.NewNoExpireTokener,
 			NewDevicedDataLaunchers,

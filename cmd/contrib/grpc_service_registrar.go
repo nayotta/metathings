@@ -21,7 +21,7 @@ const (
 	GRPC_MAX_SEND_MSG_SIZE = grpc_helper.GRPC_MAX_SEND_MSG_SIZE
 )
 
-type NewGrpcServerParams struct {
+type NewGrpcServiceRegistrarParams struct {
 	fx.In
 
 	Lis    net.Listener
@@ -31,7 +31,7 @@ type NewGrpcServerParams struct {
 	Closer io.Closer          `name:"opentracing_closer" optional:"true"`
 }
 
-func NewGrpcServer(params NewGrpcServerParams, lc fx.Lifecycle) *grpc.Server {
+func NewGrpcServiceRegistrar(params NewGrpcServiceRegistrarParams, lc fx.Lifecycle) grpc.ServiceRegistrar {
 	var unary_server_interceptors []grpc.UnaryServerInterceptor
 	var stream_server_interceptors []grpc.StreamServerInterceptor
 

@@ -138,7 +138,7 @@ func runPolicyd() error {
 			cmd_contrib.NewLogger("policyd"),
 			cmd_contrib.NewListener,
 			cmd_contrib.NewOpentracing,
-			cmd_contrib.NewGrpcServer,
+			cmd_contrib.NewGrpcServiceRegistrar,
 			NewMetathingsPolicydServiceOption,
 			service.NewMetathingsPolicydService,
 		),

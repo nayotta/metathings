@@ -194,7 +194,7 @@ func runEvaluatord() error {
 			cmd_contrib.NewLogger("evaluatord"),
 			cmd_contrib.NewListener,
 			cmd_contrib.NewOpentracing,
-			cmd_contrib.NewGrpcServer,
+			cmd_contrib.NewGrpcServiceRegistrar,
 			cmd_contrib.NewClientFactory,
 			cmd_contrib.NewNoExpireTokener,
 			token_helper.NewTokenValidator,
