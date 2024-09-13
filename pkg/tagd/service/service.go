@@ -26,7 +26,12 @@ type MetathingsTagdService struct {
 }
 
 func (ts *MetathingsTagdService) IsIgnoreMethod(md *grpc_helper.MethodDescription) bool {
-	return false
+	switch md.Method {
+	case "Healthz":
+		return true
+	default:
+		return false
+	}
 }
 
 func NewMetathingsTagdService(

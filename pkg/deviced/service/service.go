@@ -193,7 +193,12 @@ func (self *MetathingsDevicedService) offline_device(ctx context.Context, dev_id
 }
 
 func (self *MetathingsDevicedService) IsIgnoreMethod(md *grpc_helper.MethodDescription) bool {
-	return false
+	switch md.Method {
+	case "Healthz":
+		return true
+	default:
+		return false
+	}
 }
 
 func NewMetathingsDevicedService(

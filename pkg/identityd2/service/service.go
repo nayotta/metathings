@@ -40,6 +40,7 @@ var (
 		"IssueTokenByCredential",
 		"ValidateToken",
 		"CheckToken",
+		"Healthz",
 	}
 )
 
