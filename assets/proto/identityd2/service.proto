@@ -3,6 +3,7 @@ syntax = "proto3";
 package ai.metathings.service.identityd2;
 option go_package = "github.com/nayotta/metathings/proto/identityd2";
 
+import "google/protobuf/wrappers.proto";
 import "google/protobuf/empty.proto";
 
 import "create_domain.proto";
@@ -1010,4 +1011,6 @@ service IdentitydService {
 	 * @err Internal
 	 */
 	rpc AuthorizeToken(AuthorizeTokenRequest) returns (google.protobuf.Empty) {}
+
+  rpc Healthz(google.protobuf.Empty) returns (google.protobuf.StringValue) {}
 }

@@ -6,6 +6,8 @@ import (
 
 	casbin_pb "github.com/casbin/casbin-server/proto"
 	"github.com/casbin/casbin-server/server"
+	"google.golang.org/protobuf/types/known/emptypb"
+	"google.golang.org/protobuf/types/known/wrapperspb"
 
 	pb "github.com/nayotta/metathings/proto/policyd"
 )
@@ -275,6 +277,10 @@ func (self *MetathingsPolicydService) Initialize(ctx context.Context, in *casbin
 	}
 
 	return &casbin_pb.EmptyReply{}, nil
+}
+
+func (self *MetathingsPolicydService) Healthz(ctx context.Context, in *emptypb.Empty) (*wrapperspb.StringValue, error) {
+	return &wrapperspb.StringValue{Value: "OK"}, nil
 }
 
 func NewMetathingsPolicydService(

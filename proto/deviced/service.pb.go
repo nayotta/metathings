@@ -10,6 +10,7 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
+	wrapperspb "google.golang.org/protobuf/types/known/wrapperspb"
 	reflect "reflect"
 )
 
@@ -25,7 +26,9 @@ var File_service_proto protoreflect.FileDescriptor
 var file_service_proto_rawDesc = []byte{
 	0x0a, 0x0d, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12,
 	0x1d, 0x61, 0x69, 0x2e, 0x6d, 0x65, 0x74, 0x61, 0x74, 0x68, 0x69, 0x6e, 0x67, 0x73, 0x2e, 0x73,
-	0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x64, 0x65, 0x76, 0x69, 0x63, 0x65, 0x64, 0x1a, 0x1b,
+	0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x64, 0x65, 0x76, 0x69, 0x63, 0x65, 0x64, 0x1a, 0x1e,
+	0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2f,
+	0x77, 0x72, 0x61, 0x70, 0x70, 0x65, 0x72, 0x73, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x1b,
 	0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2f,
 	0x65, 0x6d, 0x70, 0x74, 0x79, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x13, 0x63, 0x72, 0x65,
 	0x61, 0x74, 0x65, 0x5f, 0x64, 0x65, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f,
@@ -116,7 +119,7 @@ var file_service_proto_rawDesc = []byte{
 	0x66, 0x69, 0x72, 0x6d, 0x77, 0x61, 0x72, 0x65, 0x5f, 0x64, 0x65, 0x73, 0x63, 0x72, 0x69, 0x70,
 	0x74, 0x6f, 0x72, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x0d, 0x63, 0x6f, 0x6e, 0x6e, 0x65,
 	0x63, 0x74, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x0f, 0x68, 0x65, 0x61, 0x72, 0x74, 0x62,
-	0x65, 0x61, 0x74, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x32, 0xd5, 0x33, 0x0a, 0x0e, 0x44, 0x65,
+	0x65, 0x61, 0x74, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x32, 0x98, 0x34, 0x0a, 0x0e, 0x44, 0x65,
 	0x76, 0x69, 0x63, 0x65, 0x64, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x79, 0x0a, 0x0c,
 	0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x44, 0x65, 0x76, 0x69, 0x63, 0x65, 0x12, 0x32, 0x2e, 0x61,
 	0x69, 0x2e, 0x6d, 0x65, 0x74, 0x61, 0x74, 0x68, 0x69, 0x6e, 0x67, 0x73, 0x2e, 0x73, 0x65, 0x72,
@@ -530,10 +533,14 @@ var file_service_proto_rawDesc = []byte{
 	0x65, 0x76, 0x69, 0x63, 0x65, 0x64, 0x2e, 0x48, 0x65, 0x61, 0x72, 0x74, 0x62, 0x65, 0x61, 0x74,
 	0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x16, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65,
 	0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x22,
-	0x00, 0x42, 0x2d, 0x5a, 0x2b, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f,
-	0x6e, 0x61, 0x79, 0x6f, 0x74, 0x74, 0x61, 0x2f, 0x6d, 0x65, 0x74, 0x61, 0x74, 0x68, 0x69, 0x6e,
-	0x67, 0x73, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2f, 0x64, 0x65, 0x76, 0x69, 0x63, 0x65, 0x64,
-	0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x00, 0x12, 0x41, 0x0a, 0x07, 0x48, 0x65, 0x61, 0x6c, 0x74, 0x68, 0x7a, 0x12, 0x16, 0x2e, 0x67,
+	0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x45,
+	0x6d, 0x70, 0x74, 0x79, 0x1a, 0x1c, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72,
+	0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x53, 0x74, 0x72, 0x69, 0x6e, 0x67, 0x56, 0x61, 0x6c,
+	0x75, 0x65, 0x22, 0x00, 0x42, 0x2d, 0x5a, 0x2b, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63,
+	0x6f, 0x6d, 0x2f, 0x6e, 0x61, 0x79, 0x6f, 0x74, 0x74, 0x61, 0x2f, 0x6d, 0x65, 0x74, 0x61, 0x74,
+	0x68, 0x69, 0x6e, 0x67, 0x73, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2f, 0x64, 0x65, 0x76, 0x69,
+	0x63, 0x65, 0x64, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var file_service_proto_goTypes = []any{
@@ -625,6 +632,7 @@ var file_service_proto_goTypes = []any{
 	(*ShowDeviceResponse)(nil),                             // 85: ai.metathings.service.deviced.ShowDeviceResponse
 	(*ShowDeviceFirmwareDescriptorResponse)(nil),           // 86: ai.metathings.service.deviced.ShowDeviceFirmwareDescriptorResponse
 	(*ConnectRequest)(nil),                                 // 87: ai.metathings.service.deviced.ConnectRequest
+	(*wrapperspb.StringValue)(nil),                         // 88: google.protobuf.StringValue
 }
 var file_service_proto_depIdxs = []int32{
 	0,  // 0: ai.metathings.service.deviced.DevicedService.CreateDevice:input_type -> ai.metathings.service.deviced.CreateDeviceRequest
@@ -681,62 +689,64 @@ var file_service_proto_depIdxs = []int32{
 	50, // 51: ai.metathings.service.deviced.DevicedService.ShowDeviceFirmwareDescriptor:input_type -> google.protobuf.Empty
 	51, // 52: ai.metathings.service.deviced.DevicedService.Connect:input_type -> ai.metathings.service.deviced.ConnectResponse
 	52, // 53: ai.metathings.service.deviced.DevicedService.Heartbeat:input_type -> ai.metathings.service.deviced.HeartbeatRequest
-	53, // 54: ai.metathings.service.deviced.DevicedService.CreateDevice:output_type -> ai.metathings.service.deviced.CreateDeviceResponse
-	50, // 55: ai.metathings.service.deviced.DevicedService.DeleteDevice:output_type -> google.protobuf.Empty
-	54, // 56: ai.metathings.service.deviced.DevicedService.PatchDevice:output_type -> ai.metathings.service.deviced.PatchDeviceResponse
-	55, // 57: ai.metathings.service.deviced.DevicedService.GetDevice:output_type -> ai.metathings.service.deviced.GetDeviceResponse
-	56, // 58: ai.metathings.service.deviced.DevicedService.ListDevices:output_type -> ai.metathings.service.deviced.ListDevicesResponse
-	57, // 59: ai.metathings.service.deviced.DevicedService.GetDeviceByModule:output_type -> ai.metathings.service.deviced.GetDeviceByModuleResponse
-	58, // 60: ai.metathings.service.deviced.DevicedService.CreateConfig:output_type -> ai.metathings.service.deviced.CreateConfigResponse
-	50, // 61: ai.metathings.service.deviced.DevicedService.DeleteConfig:output_type -> google.protobuf.Empty
-	59, // 62: ai.metathings.service.deviced.DevicedService.PatchConfig:output_type -> ai.metathings.service.deviced.PatchConfigResponse
-	60, // 63: ai.metathings.service.deviced.DevicedService.GetConfig:output_type -> ai.metathings.service.deviced.GetConfigResponse
-	61, // 64: ai.metathings.service.deviced.DevicedService.ListConfigs:output_type -> ai.metathings.service.deviced.ListConfigsResponse
-	50, // 65: ai.metathings.service.deviced.DevicedService.AddConfigsToDevice:output_type -> google.protobuf.Empty
-	50, // 66: ai.metathings.service.deviced.DevicedService.RemoveConfigsFromDevice:output_type -> google.protobuf.Empty
-	62, // 67: ai.metathings.service.deviced.DevicedService.ListConfigsByDevice:output_type -> ai.metathings.service.deviced.ListConfigsByDeviceResponse
-	63, // 68: ai.metathings.service.deviced.DevicedService.UploadDescriptor:output_type -> ai.metathings.service.deviced.UploadDescriptorResponse
-	64, // 69: ai.metathings.service.deviced.DevicedService.GetDescriptor:output_type -> ai.metathings.service.deviced.GetDescriptorResponse
-	65, // 70: ai.metathings.service.deviced.DevicedService.UnaryCall:output_type -> ai.metathings.service.deviced.UnaryCallResponse
-	66, // 71: ai.metathings.service.deviced.DevicedService.StreamCall:output_type -> ai.metathings.service.deviced.StreamCallResponse
-	67, // 72: ai.metathings.service.deviced.DevicedService.PullFrameFromFlow:output_type -> ai.metathings.service.deviced.PullFrameFromFlowResponse
-	68, // 73: ai.metathings.service.deviced.DevicedService.PushFrameToFlow:output_type -> ai.metathings.service.deviced.PushFrameToFlowResponse
-	50, // 74: ai.metathings.service.deviced.DevicedService.PushFrameToFlowOnce:output_type -> google.protobuf.Empty
-	69, // 75: ai.metathings.service.deviced.DevicedService.QueryFramesFromFlow:output_type -> ai.metathings.service.deviced.QueryFramesFromFlowResponse
-	70, // 76: ai.metathings.service.deviced.DevicedService.CreateFlowSet:output_type -> ai.metathings.service.deviced.CreateFlowSetResponse
-	50, // 77: ai.metathings.service.deviced.DevicedService.DeleteFlowSet:output_type -> google.protobuf.Empty
-	71, // 78: ai.metathings.service.deviced.DevicedService.PatchFlowSet:output_type -> ai.metathings.service.deviced.PatchFlowSetResponse
-	72, // 79: ai.metathings.service.deviced.DevicedService.GetFlowSet:output_type -> ai.metathings.service.deviced.GetFlowSetResponse
-	73, // 80: ai.metathings.service.deviced.DevicedService.ListFlowSets:output_type -> ai.metathings.service.deviced.ListFlowSetsResponse
-	50, // 81: ai.metathings.service.deviced.DevicedService.AddFlowsToFlowSet:output_type -> google.protobuf.Empty
-	50, // 82: ai.metathings.service.deviced.DevicedService.RemoveFlowsFromFlowSet:output_type -> google.protobuf.Empty
-	74, // 83: ai.metathings.service.deviced.DevicedService.PullFrameFromFlowSet:output_type -> ai.metathings.service.deviced.PullFrameFromFlowSetResponse
-	50, // 84: ai.metathings.service.deviced.DevicedService.PutObject:output_type -> google.protobuf.Empty
-	75, // 85: ai.metathings.service.deviced.DevicedService.PutObjectStreaming:output_type -> ai.metathings.service.deviced.PutObjectStreamingResponse
-	50, // 86: ai.metathings.service.deviced.DevicedService.RemoveObject:output_type -> google.protobuf.Empty
-	50, // 87: ai.metathings.service.deviced.DevicedService.RenameObject:output_type -> google.protobuf.Empty
-	76, // 88: ai.metathings.service.deviced.DevicedService.GetObject:output_type -> ai.metathings.service.deviced.GetObjectResponse
-	77, // 89: ai.metathings.service.deviced.DevicedService.GetObjectContent:output_type -> ai.metathings.service.deviced.GetObjectContentResponse
-	78, // 90: ai.metathings.service.deviced.DevicedService.GetObjectStreamingContent:output_type -> ai.metathings.service.deviced.GetObjectStreamingContentResponse
-	79, // 91: ai.metathings.service.deviced.DevicedService.ListObjects:output_type -> ai.metathings.service.deviced.ListObjectsResponse
-	80, // 92: ai.metathings.service.deviced.DevicedService.CreateFirmwareHub:output_type -> ai.metathings.service.deviced.CreateFirmwareHubResponse
-	50, // 93: ai.metathings.service.deviced.DevicedService.DeleteFirmwareHub:output_type -> google.protobuf.Empty
-	81, // 94: ai.metathings.service.deviced.DevicedService.PatchFirmwareHub:output_type -> ai.metathings.service.deviced.PatchFirmwareHubResponse
-	82, // 95: ai.metathings.service.deviced.DevicedService.GetFirmwareHub:output_type -> ai.metathings.service.deviced.GetFirmwareHubResponse
-	83, // 96: ai.metathings.service.deviced.DevicedService.ListFirmwareHubs:output_type -> ai.metathings.service.deviced.ListFirmwareHubsResponse
-	50, // 97: ai.metathings.service.deviced.DevicedService.AddDevicesToFirmwareHub:output_type -> google.protobuf.Empty
-	50, // 98: ai.metathings.service.deviced.DevicedService.RemoveDevicesFromFirmwareHub:output_type -> google.protobuf.Empty
-	50, // 99: ai.metathings.service.deviced.DevicedService.AddFirmwareDescriptorToFirmwareHub:output_type -> google.protobuf.Empty
-	50, // 100: ai.metathings.service.deviced.DevicedService.RemoveFirmwareDescriptorFromFirmwareHub:output_type -> google.protobuf.Empty
-	84, // 101: ai.metathings.service.deviced.DevicedService.GetDeviceFirmwareDescriptor:output_type -> ai.metathings.service.deviced.GetDeviceFirmwareDescriptorResponse
-	50, // 102: ai.metathings.service.deviced.DevicedService.SetDeviceFirmwareDescriptor:output_type -> google.protobuf.Empty
-	50, // 103: ai.metathings.service.deviced.DevicedService.SyncDeviceFirmwareDescriptor:output_type -> google.protobuf.Empty
-	85, // 104: ai.metathings.service.deviced.DevicedService.ShowDevice:output_type -> ai.metathings.service.deviced.ShowDeviceResponse
-	86, // 105: ai.metathings.service.deviced.DevicedService.ShowDeviceFirmwareDescriptor:output_type -> ai.metathings.service.deviced.ShowDeviceFirmwareDescriptorResponse
-	87, // 106: ai.metathings.service.deviced.DevicedService.Connect:output_type -> ai.metathings.service.deviced.ConnectRequest
-	50, // 107: ai.metathings.service.deviced.DevicedService.Heartbeat:output_type -> google.protobuf.Empty
-	54, // [54:108] is the sub-list for method output_type
-	0,  // [0:54] is the sub-list for method input_type
+	50, // 54: ai.metathings.service.deviced.DevicedService.Healthz:input_type -> google.protobuf.Empty
+	53, // 55: ai.metathings.service.deviced.DevicedService.CreateDevice:output_type -> ai.metathings.service.deviced.CreateDeviceResponse
+	50, // 56: ai.metathings.service.deviced.DevicedService.DeleteDevice:output_type -> google.protobuf.Empty
+	54, // 57: ai.metathings.service.deviced.DevicedService.PatchDevice:output_type -> ai.metathings.service.deviced.PatchDeviceResponse
+	55, // 58: ai.metathings.service.deviced.DevicedService.GetDevice:output_type -> ai.metathings.service.deviced.GetDeviceResponse
+	56, // 59: ai.metathings.service.deviced.DevicedService.ListDevices:output_type -> ai.metathings.service.deviced.ListDevicesResponse
+	57, // 60: ai.metathings.service.deviced.DevicedService.GetDeviceByModule:output_type -> ai.metathings.service.deviced.GetDeviceByModuleResponse
+	58, // 61: ai.metathings.service.deviced.DevicedService.CreateConfig:output_type -> ai.metathings.service.deviced.CreateConfigResponse
+	50, // 62: ai.metathings.service.deviced.DevicedService.DeleteConfig:output_type -> google.protobuf.Empty
+	59, // 63: ai.metathings.service.deviced.DevicedService.PatchConfig:output_type -> ai.metathings.service.deviced.PatchConfigResponse
+	60, // 64: ai.metathings.service.deviced.DevicedService.GetConfig:output_type -> ai.metathings.service.deviced.GetConfigResponse
+	61, // 65: ai.metathings.service.deviced.DevicedService.ListConfigs:output_type -> ai.metathings.service.deviced.ListConfigsResponse
+	50, // 66: ai.metathings.service.deviced.DevicedService.AddConfigsToDevice:output_type -> google.protobuf.Empty
+	50, // 67: ai.metathings.service.deviced.DevicedService.RemoveConfigsFromDevice:output_type -> google.protobuf.Empty
+	62, // 68: ai.metathings.service.deviced.DevicedService.ListConfigsByDevice:output_type -> ai.metathings.service.deviced.ListConfigsByDeviceResponse
+	63, // 69: ai.metathings.service.deviced.DevicedService.UploadDescriptor:output_type -> ai.metathings.service.deviced.UploadDescriptorResponse
+	64, // 70: ai.metathings.service.deviced.DevicedService.GetDescriptor:output_type -> ai.metathings.service.deviced.GetDescriptorResponse
+	65, // 71: ai.metathings.service.deviced.DevicedService.UnaryCall:output_type -> ai.metathings.service.deviced.UnaryCallResponse
+	66, // 72: ai.metathings.service.deviced.DevicedService.StreamCall:output_type -> ai.metathings.service.deviced.StreamCallResponse
+	67, // 73: ai.metathings.service.deviced.DevicedService.PullFrameFromFlow:output_type -> ai.metathings.service.deviced.PullFrameFromFlowResponse
+	68, // 74: ai.metathings.service.deviced.DevicedService.PushFrameToFlow:output_type -> ai.metathings.service.deviced.PushFrameToFlowResponse
+	50, // 75: ai.metathings.service.deviced.DevicedService.PushFrameToFlowOnce:output_type -> google.protobuf.Empty
+	69, // 76: ai.metathings.service.deviced.DevicedService.QueryFramesFromFlow:output_type -> ai.metathings.service.deviced.QueryFramesFromFlowResponse
+	70, // 77: ai.metathings.service.deviced.DevicedService.CreateFlowSet:output_type -> ai.metathings.service.deviced.CreateFlowSetResponse
+	50, // 78: ai.metathings.service.deviced.DevicedService.DeleteFlowSet:output_type -> google.protobuf.Empty
+	71, // 79: ai.metathings.service.deviced.DevicedService.PatchFlowSet:output_type -> ai.metathings.service.deviced.PatchFlowSetResponse
+	72, // 80: ai.metathings.service.deviced.DevicedService.GetFlowSet:output_type -> ai.metathings.service.deviced.GetFlowSetResponse
+	73, // 81: ai.metathings.service.deviced.DevicedService.ListFlowSets:output_type -> ai.metathings.service.deviced.ListFlowSetsResponse
+	50, // 82: ai.metathings.service.deviced.DevicedService.AddFlowsToFlowSet:output_type -> google.protobuf.Empty
+	50, // 83: ai.metathings.service.deviced.DevicedService.RemoveFlowsFromFlowSet:output_type -> google.protobuf.Empty
+	74, // 84: ai.metathings.service.deviced.DevicedService.PullFrameFromFlowSet:output_type -> ai.metathings.service.deviced.PullFrameFromFlowSetResponse
+	50, // 85: ai.metathings.service.deviced.DevicedService.PutObject:output_type -> google.protobuf.Empty
+	75, // 86: ai.metathings.service.deviced.DevicedService.PutObjectStreaming:output_type -> ai.metathings.service.deviced.PutObjectStreamingResponse
+	50, // 87: ai.metathings.service.deviced.DevicedService.RemoveObject:output_type -> google.protobuf.Empty
+	50, // 88: ai.metathings.service.deviced.DevicedService.RenameObject:output_type -> google.protobuf.Empty
+	76, // 89: ai.metathings.service.deviced.DevicedService.GetObject:output_type -> ai.metathings.service.deviced.GetObjectResponse
+	77, // 90: ai.metathings.service.deviced.DevicedService.GetObjectContent:output_type -> ai.metathings.service.deviced.GetObjectContentResponse
+	78, // 91: ai.metathings.service.deviced.DevicedService.GetObjectStreamingContent:output_type -> ai.metathings.service.deviced.GetObjectStreamingContentResponse
+	79, // 92: ai.metathings.service.deviced.DevicedService.ListObjects:output_type -> ai.metathings.service.deviced.ListObjectsResponse
+	80, // 93: ai.metathings.service.deviced.DevicedService.CreateFirmwareHub:output_type -> ai.metathings.service.deviced.CreateFirmwareHubResponse
+	50, // 94: ai.metathings.service.deviced.DevicedService.DeleteFirmwareHub:output_type -> google.protobuf.Empty
+	81, // 95: ai.metathings.service.deviced.DevicedService.PatchFirmwareHub:output_type -> ai.metathings.service.deviced.PatchFirmwareHubResponse
+	82, // 96: ai.metathings.service.deviced.DevicedService.GetFirmwareHub:output_type -> ai.metathings.service.deviced.GetFirmwareHubResponse
+	83, // 97: ai.metathings.service.deviced.DevicedService.ListFirmwareHubs:output_type -> ai.metathings.service.deviced.ListFirmwareHubsResponse
+	50, // 98: ai.metathings.service.deviced.DevicedService.AddDevicesToFirmwareHub:output_type -> google.protobuf.Empty
+	50, // 99: ai.metathings.service.deviced.DevicedService.RemoveDevicesFromFirmwareHub:output_type -> google.protobuf.Empty
+	50, // 100: ai.metathings.service.deviced.DevicedService.AddFirmwareDescriptorToFirmwareHub:output_type -> google.protobuf.Empty
+	50, // 101: ai.metathings.service.deviced.DevicedService.RemoveFirmwareDescriptorFromFirmwareHub:output_type -> google.protobuf.Empty
+	84, // 102: ai.metathings.service.deviced.DevicedService.GetDeviceFirmwareDescriptor:output_type -> ai.metathings.service.deviced.GetDeviceFirmwareDescriptorResponse
+	50, // 103: ai.metathings.service.deviced.DevicedService.SetDeviceFirmwareDescriptor:output_type -> google.protobuf.Empty
+	50, // 104: ai.metathings.service.deviced.DevicedService.SyncDeviceFirmwareDescriptor:output_type -> google.protobuf.Empty
+	85, // 105: ai.metathings.service.deviced.DevicedService.ShowDevice:output_type -> ai.metathings.service.deviced.ShowDeviceResponse
+	86, // 106: ai.metathings.service.deviced.DevicedService.ShowDeviceFirmwareDescriptor:output_type -> ai.metathings.service.deviced.ShowDeviceFirmwareDescriptorResponse
+	87, // 107: ai.metathings.service.deviced.DevicedService.Connect:output_type -> ai.metathings.service.deviced.ConnectRequest
+	50, // 108: ai.metathings.service.deviced.DevicedService.Heartbeat:output_type -> google.protobuf.Empty
+	88, // 109: ai.metathings.service.deviced.DevicedService.Healthz:output_type -> google.protobuf.StringValue
+	55, // [55:110] is the sub-list for method output_type
+	0,  // [0:55] is the sub-list for method input_type
 	0,  // [0:0] is the sub-list for extension type_name
 	0,  // [0:0] is the sub-list for extension extendee
 	0,  // [0:0] is the sub-list for field type_name

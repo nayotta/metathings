@@ -12,6 +12,7 @@ import (
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
+	wrapperspb "google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -20,11 +21,12 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	TagdService_Tag_FullMethodName    = "/ai.metathings.service.tagd.TagdService/Tag"
-	TagdService_Untag_FullMethodName  = "/ai.metathings.service.tagd.TagdService/Untag"
-	TagdService_Remove_FullMethodName = "/ai.metathings.service.tagd.TagdService/Remove"
-	TagdService_Get_FullMethodName    = "/ai.metathings.service.tagd.TagdService/Get"
-	TagdService_Query_FullMethodName  = "/ai.metathings.service.tagd.TagdService/Query"
+	TagdService_Tag_FullMethodName     = "/ai.metathings.service.tagd.TagdService/Tag"
+	TagdService_Untag_FullMethodName   = "/ai.metathings.service.tagd.TagdService/Untag"
+	TagdService_Remove_FullMethodName  = "/ai.metathings.service.tagd.TagdService/Remove"
+	TagdService_Get_FullMethodName     = "/ai.metathings.service.tagd.TagdService/Get"
+	TagdService_Query_FullMethodName   = "/ai.metathings.service.tagd.TagdService/Query"
+	TagdService_Healthz_FullMethodName = "/ai.metathings.service.tagd.TagdService/Healthz"
 )
 
 // TagdServiceClient is the client API for TagdService service.
@@ -36,6 +38,7 @@ type TagdServiceClient interface {
 	Remove(ctx context.Context, in *RemoveRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	Get(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*GetResponse, error)
 	Query(ctx context.Context, in *QueryRequest, opts ...grpc.CallOption) (*QueryResponse, error)
+	Healthz(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*wrapperspb.StringValue, error)
 }
 
 type tagdServiceClient struct {
@@ -96,6 +99,16 @@ func (c *tagdServiceClient) Query(ctx context.Context, in *QueryRequest, opts ..
 	return out, nil
 }
 
+func (c *tagdServiceClient) Healthz(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*wrapperspb.StringValue, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(wrapperspb.StringValue)
+	err := c.cc.Invoke(ctx, TagdService_Healthz_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // TagdServiceServer is the server API for TagdService service.
 // All implementations must embed UnimplementedTagdServiceServer
 // for forward compatibility.
@@ -105,6 +118,7 @@ type TagdServiceServer interface {
 	Remove(context.Context, *RemoveRequest) (*emptypb.Empty, error)
 	Get(context.Context, *GetRequest) (*GetResponse, error)
 	Query(context.Context, *QueryRequest) (*QueryResponse, error)
+	Healthz(context.Context, *emptypb.Empty) (*wrapperspb.StringValue, error)
 	mustEmbedUnimplementedTagdServiceServer()
 }
 
@@ -129,6 +143,9 @@ func (UnimplementedTagdServiceServer) Get(context.Context, *GetRequest) (*GetRes
 }
 func (UnimplementedTagdServiceServer) Query(context.Context, *QueryRequest) (*QueryResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Query not implemented")
+}
+func (UnimplementedTagdServiceServer) Healthz(context.Context, *emptypb.Empty) (*wrapperspb.StringValue, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Healthz not implemented")
 }
 func (UnimplementedTagdServiceServer) mustEmbedUnimplementedTagdServiceServer() {}
 func (UnimplementedTagdServiceServer) testEmbeddedByValue()                     {}
@@ -241,6 +258,24 @@ func _TagdService_Query_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
+func _TagdService_Healthz_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TagdServiceServer).Healthz(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TagdService_Healthz_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TagdServiceServer).Healthz(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // TagdService_ServiceDesc is the grpc.ServiceDesc for TagdService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -267,6 +302,10 @@ var TagdService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Query",
 			Handler:    _TagdService_Query_Handler,
+		},
+		{
+			MethodName: "Healthz",
+			Handler:    _TagdService_Healthz_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

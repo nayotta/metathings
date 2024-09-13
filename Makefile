@@ -21,7 +21,7 @@ precompile_replace_casbin_server_proto:
 precompile: precompile_go_mod_vendor precompile_replace_casbin_server_proto precompile_ensure_outdir
 
 compile_metathings: precompile
-  go build -ldflags "-X google.golang.org/protobuf/reflect/protoregistry.conflictPolicy=ignore" -o ./bin/metathings ./cmd/metathings/main.go
+	go build -ldflags "-X google.golang.org/protobuf/reflect/protoregistry.conflictPolicy=ignore" -o ./bin/metathings ./cmd/metathings/main.go
 
 compile_metathingsd: precompile
 	go build -ldflags "-X google.golang.org/protobuf/reflect/protoregistry.conflictPolicy=ignore" -o ./bin/metathingsd ./cmd/metathingsd/main.go

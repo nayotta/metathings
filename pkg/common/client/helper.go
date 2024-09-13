@@ -19,6 +19,7 @@ import (
 	evaluatord_pb "github.com/nayotta/metathings/proto/evaluatord"
 	identityd2_pb "github.com/nayotta/metathings/proto/identityd2"
 	policyd_pb "github.com/nayotta/metathings/proto/policyd"
+	tagd_pb "github.com/nayotta/metathings/proto/tagd"
 )
 
 type ClientType int32
@@ -28,6 +29,7 @@ const (
 	POLICYD_CONFIG
 	IDENTITYD2_CONFIG
 	DEVICED_CONFIG
+	TAGD_CONFIG
 	EVALUATORD_CONFIG
 	DEVICE_CONFIG
 	MODULE_CONFIG
@@ -40,6 +42,7 @@ var (
 		"policyd",
 		"identityd2",
 		"deviced",
+		"tagd",
 		"evaluatord",
 		"device",
 		"module",
@@ -167,6 +170,14 @@ func (f *ClientFactory) NewDevicedServiceClient(opts ...grpc.DialOption) (device
 	}
 
 	return deviced_pb.NewDevicedServiceClient(conn), done, nil
+}
+
+func (f *ClientFactory) NewTagdServiceClient(opts ...grpc.DialOption) (tagd_pb.TagdServiceClient, DoneFn, error) {
+	conn, done, err := f.GetConnection(TAGD_CONFIG, opts...)
+	if err != nil {
+		return nil, nil, err
+	}
+	return tagd_pb.NewTagdServiceClient(conn), done, nil
 }
 
 func (f *ClientFactory) NewEvaluatordServiceClient(opts ...grpc.DialOption) (evaluatord_pb.EvaluatordServiceClient, DoneFn, error) {

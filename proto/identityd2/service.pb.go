@@ -10,6 +10,7 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
+	wrapperspb "google.golang.org/protobuf/types/known/wrapperspb"
 	reflect "reflect"
 )
 
@@ -26,7 +27,9 @@ var file_service_proto_rawDesc = []byte{
 	0x0a, 0x0d, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12,
 	0x20, 0x61, 0x69, 0x2e, 0x6d, 0x65, 0x74, 0x61, 0x74, 0x68, 0x69, 0x6e, 0x67, 0x73, 0x2e, 0x73,
 	0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x2e, 0x69, 0x64, 0x65, 0x6e, 0x74, 0x69, 0x74, 0x79, 0x64,
-	0x32, 0x1a, 0x1b, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62,
+	0x32, 0x1a, 0x1e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62,
+	0x75, 0x66, 0x2f, 0x77, 0x72, 0x61, 0x70, 0x70, 0x65, 0x72, 0x73, 0x2e, 0x70, 0x72, 0x6f, 0x74,
+	0x6f, 0x1a, 0x1b, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62,
 	0x75, 0x66, 0x2f, 0x65, 0x6d, 0x70, 0x74, 0x79, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x13,
 	0x63, 0x72, 0x65, 0x61, 0x74, 0x65, 0x5f, 0x64, 0x6f, 0x6d, 0x61, 0x69, 0x6e, 0x2e, 0x70, 0x72,
 	0x6f, 0x74, 0x6f, 0x1a, 0x13, 0x64, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x5f, 0x64, 0x6f, 0x6d, 0x61,
@@ -108,7 +111,7 @@ var file_service_proto_rawDesc = []byte{
 	0x61, 0x6c, 0x69, 0x64, 0x61, 0x74, 0x65, 0x5f, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x2e, 0x70, 0x72,
 	0x6f, 0x74, 0x6f, 0x1a, 0x11, 0x63, 0x68, 0x65, 0x63, 0x6b, 0x5f, 0x74, 0x6f, 0x6b, 0x65, 0x6e,
 	0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x15, 0x61, 0x75, 0x74, 0x68, 0x6f, 0x72, 0x69, 0x7a,
-	0x65, 0x5f, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x32, 0xe3, 0x33,
+	0x65, 0x5f, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x32, 0xa6, 0x34,
 	0x0a, 0x10, 0x49, 0x64, 0x65, 0x6e, 0x74, 0x69, 0x74, 0x79, 0x64, 0x53, 0x65, 0x72, 0x76, 0x69,
 	0x63, 0x65, 0x12, 0x7f, 0x0a, 0x0c, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x44, 0x6f, 0x6d, 0x61,
 	0x69, 0x6e, 0x12, 0x35, 0x2e, 0x61, 0x69, 0x2e, 0x6d, 0x65, 0x74, 0x61, 0x74, 0x68, 0x69, 0x6e,
@@ -523,10 +526,14 @@ var file_service_proto_rawDesc = []byte{
 	0x79, 0x64, 0x32, 0x2e, 0x41, 0x75, 0x74, 0x68, 0x6f, 0x72, 0x69, 0x7a, 0x65, 0x54, 0x6f, 0x6b,
 	0x65, 0x6e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x16, 0x2e, 0x67, 0x6f, 0x6f, 0x67,
 	0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x45, 0x6d, 0x70, 0x74,
-	0x79, 0x22, 0x00, 0x42, 0x30, 0x5a, 0x2e, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f,
-	0x6d, 0x2f, 0x6e, 0x61, 0x79, 0x6f, 0x74, 0x74, 0x61, 0x2f, 0x6d, 0x65, 0x74, 0x61, 0x74, 0x68,
-	0x69, 0x6e, 0x67, 0x73, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2f, 0x69, 0x64, 0x65, 0x6e, 0x74,
-	0x69, 0x74, 0x79, 0x64, 0x32, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x79, 0x22, 0x00, 0x12, 0x41, 0x0a, 0x07, 0x48, 0x65, 0x61, 0x6c, 0x74, 0x68, 0x7a, 0x12, 0x16,
+	0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66,
+	0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x1a, 0x1c, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e,
+	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x53, 0x74, 0x72, 0x69, 0x6e, 0x67, 0x56,
+	0x61, 0x6c, 0x75, 0x65, 0x22, 0x00, 0x42, 0x30, 0x5a, 0x2e, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62,
+	0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x6e, 0x61, 0x79, 0x6f, 0x74, 0x74, 0x61, 0x2f, 0x6d, 0x65, 0x74,
+	0x61, 0x74, 0x68, 0x69, 0x6e, 0x67, 0x73, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2f, 0x69, 0x64,
+	0x65, 0x6e, 0x74, 0x69, 0x74, 0x79, 0x64, 0x32, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var file_service_proto_goTypes = []any{
@@ -618,6 +625,7 @@ var file_service_proto_goTypes = []any{
 	(*IssueTokenByPasswordResponse)(nil),     // 85: ai.metathings.service.identityd2.IssueTokenByPasswordResponse
 	(*IssueTokenByTokenResponse)(nil),        // 86: ai.metathings.service.identityd2.IssueTokenByTokenResponse
 	(*ValidateTokenResponse)(nil),            // 87: ai.metathings.service.identityd2.ValidateTokenResponse
+	(*wrapperspb.StringValue)(nil),           // 88: google.protobuf.StringValue
 }
 var file_service_proto_depIdxs = []int32{
 	0,  // 0: ai.metathings.service.identityd2.IdentitydService.CreateDomain:input_type -> ai.metathings.service.identityd2.CreateDomainRequest
@@ -675,63 +683,65 @@ var file_service_proto_depIdxs = []int32{
 	51, // 52: ai.metathings.service.identityd2.IdentitydService.ValidateToken:input_type -> ai.metathings.service.identityd2.ValidateTokenRequest
 	52, // 53: ai.metathings.service.identityd2.IdentitydService.CheckToken:input_type -> ai.metathings.service.identityd2.CheckTokenRequest
 	53, // 54: ai.metathings.service.identityd2.IdentitydService.AuthorizeToken:input_type -> ai.metathings.service.identityd2.AuthorizeTokenRequest
-	54, // 55: ai.metathings.service.identityd2.IdentitydService.CreateDomain:output_type -> ai.metathings.service.identityd2.CreateDomainResponse
-	23, // 56: ai.metathings.service.identityd2.IdentitydService.DeleteDomain:output_type -> google.protobuf.Empty
-	55, // 57: ai.metathings.service.identityd2.IdentitydService.PatchDomain:output_type -> ai.metathings.service.identityd2.PatchDomainResponse
-	56, // 58: ai.metathings.service.identityd2.IdentitydService.GetDomain:output_type -> ai.metathings.service.identityd2.GetDomainResponse
-	57, // 59: ai.metathings.service.identityd2.IdentitydService.ListDomains:output_type -> ai.metathings.service.identityd2.ListDomainsResponse
-	58, // 60: ai.metathings.service.identityd2.IdentitydService.CreateAction:output_type -> ai.metathings.service.identityd2.CreateActionResponse
-	23, // 61: ai.metathings.service.identityd2.IdentitydService.DeleteAction:output_type -> google.protobuf.Empty
-	59, // 62: ai.metathings.service.identityd2.IdentitydService.PatchAction:output_type -> ai.metathings.service.identityd2.PatchActionResponse
-	60, // 63: ai.metathings.service.identityd2.IdentitydService.GetAction:output_type -> ai.metathings.service.identityd2.GetActionResponse
-	61, // 64: ai.metathings.service.identityd2.IdentitydService.ListActions:output_type -> ai.metathings.service.identityd2.ListActionsResponse
-	62, // 65: ai.metathings.service.identityd2.IdentitydService.CreateRole:output_type -> ai.metathings.service.identityd2.CreateRoleResponse
-	23, // 66: ai.metathings.service.identityd2.IdentitydService.DeleteRole:output_type -> google.protobuf.Empty
-	63, // 67: ai.metathings.service.identityd2.IdentitydService.PatchRole:output_type -> ai.metathings.service.identityd2.PatchRoleResponse
-	64, // 68: ai.metathings.service.identityd2.IdentitydService.GetRole:output_type -> ai.metathings.service.identityd2.GetRoleResponse
-	65, // 69: ai.metathings.service.identityd2.IdentitydService.ListRoles:output_type -> ai.metathings.service.identityd2.ListRolesResponse
-	66, // 70: ai.metathings.service.identityd2.IdentitydService.ListRolesForEntity:output_type -> ai.metathings.service.identityd2.ListRolesForEntityResponse
-	23, // 71: ai.metathings.service.identityd2.IdentitydService.AddActionToRole:output_type -> google.protobuf.Empty
-	23, // 72: ai.metathings.service.identityd2.IdentitydService.RemoveActionFromRole:output_type -> google.protobuf.Empty
-	67, // 73: ai.metathings.service.identityd2.IdentitydService.CreateEntity:output_type -> ai.metathings.service.identityd2.CreateEntityResponse
-	23, // 74: ai.metathings.service.identityd2.IdentitydService.DeleteEntity:output_type -> google.protobuf.Empty
-	68, // 75: ai.metathings.service.identityd2.IdentitydService.PatchEntity:output_type -> ai.metathings.service.identityd2.PatchEntityResponse
-	69, // 76: ai.metathings.service.identityd2.IdentitydService.GetEntity:output_type -> ai.metathings.service.identityd2.GetEntityResponse
-	70, // 77: ai.metathings.service.identityd2.IdentitydService.ListEntities:output_type -> ai.metathings.service.identityd2.ListEntitiesResponse
-	71, // 78: ai.metathings.service.identityd2.IdentitydService.ShowEntity:output_type -> ai.metathings.service.identityd2.ShowEntityResponse
-	23, // 79: ai.metathings.service.identityd2.IdentitydService.AddRoleToEntity:output_type -> google.protobuf.Empty
-	23, // 80: ai.metathings.service.identityd2.IdentitydService.RemoveRoleFromEntity:output_type -> google.protobuf.Empty
-	23, // 81: ai.metathings.service.identityd2.IdentitydService.AddEntityToDomain:output_type -> google.protobuf.Empty
-	23, // 82: ai.metathings.service.identityd2.IdentitydService.RemoveEntityFromDomain:output_type -> google.protobuf.Empty
-	72, // 83: ai.metathings.service.identityd2.IdentitydService.CreateGroup:output_type -> ai.metathings.service.identityd2.CreateGroupResponse
-	23, // 84: ai.metathings.service.identityd2.IdentitydService.DeleteGroup:output_type -> google.protobuf.Empty
-	73, // 85: ai.metathings.service.identityd2.IdentitydService.PatchGroup:output_type -> ai.metathings.service.identityd2.PatchGroupResponse
-	74, // 86: ai.metathings.service.identityd2.IdentitydService.GetGroup:output_type -> ai.metathings.service.identityd2.GetGroupResponse
-	75, // 87: ai.metathings.service.identityd2.IdentitydService.ListGroups:output_type -> ai.metathings.service.identityd2.ListGroupsResponse
-	76, // 88: ai.metathings.service.identityd2.IdentitydService.ListGroupsForSubject:output_type -> ai.metathings.service.identityd2.ListGroupsForSubjectResponse
-	77, // 89: ai.metathings.service.identityd2.IdentitydService.ListGroupsForObject:output_type -> ai.metathings.service.identityd2.ListGroupsForObjectResponse
-	78, // 90: ai.metathings.service.identityd2.IdentitydService.ShowGroups:output_type -> ai.metathings.service.identityd2.ShowGroupsResponse
-	23, // 91: ai.metathings.service.identityd2.IdentitydService.AddRoleToGroup:output_type -> google.protobuf.Empty
-	23, // 92: ai.metathings.service.identityd2.IdentitydService.RemoveRoleFromGroup:output_type -> google.protobuf.Empty
-	23, // 93: ai.metathings.service.identityd2.IdentitydService.AddSubjectToGroup:output_type -> google.protobuf.Empty
-	23, // 94: ai.metathings.service.identityd2.IdentitydService.RemoveSubjectFromGroup:output_type -> google.protobuf.Empty
-	23, // 95: ai.metathings.service.identityd2.IdentitydService.AddObjectToGroup:output_type -> google.protobuf.Empty
-	23, // 96: ai.metathings.service.identityd2.IdentitydService.RemoveObjectFromGroup:output_type -> google.protobuf.Empty
-	79, // 97: ai.metathings.service.identityd2.IdentitydService.CreateCredential:output_type -> ai.metathings.service.identityd2.CreateCredentialResponse
-	23, // 98: ai.metathings.service.identityd2.IdentitydService.DeleteCredential:output_type -> google.protobuf.Empty
-	80, // 99: ai.metathings.service.identityd2.IdentitydService.PatchCredential:output_type -> ai.metathings.service.identityd2.PatchCredentialResponse
-	81, // 100: ai.metathings.service.identityd2.IdentitydService.GetCredential:output_type -> ai.metathings.service.identityd2.GetCredentialResponse
-	82, // 101: ai.metathings.service.identityd2.IdentitydService.ListCredentials:output_type -> ai.metathings.service.identityd2.ListCredentialsResponse
-	83, // 102: ai.metathings.service.identityd2.IdentitydService.ListCredentialsForEntity:output_type -> ai.metathings.service.identityd2.ListCredentialsForEntityResponse
-	84, // 103: ai.metathings.service.identityd2.IdentitydService.IssueTokenByCredential:output_type -> ai.metathings.service.identityd2.IssueTokenByCredentialResponse
-	85, // 104: ai.metathings.service.identityd2.IdentitydService.IssueTokenByPassword:output_type -> ai.metathings.service.identityd2.IssueTokenByPasswordResponse
-	86, // 105: ai.metathings.service.identityd2.IdentitydService.IssueTokenByToken:output_type -> ai.metathings.service.identityd2.IssueTokenByTokenResponse
-	23, // 106: ai.metathings.service.identityd2.IdentitydService.RevokeToken:output_type -> google.protobuf.Empty
-	87, // 107: ai.metathings.service.identityd2.IdentitydService.ValidateToken:output_type -> ai.metathings.service.identityd2.ValidateTokenResponse
-	23, // 108: ai.metathings.service.identityd2.IdentitydService.CheckToken:output_type -> google.protobuf.Empty
-	23, // 109: ai.metathings.service.identityd2.IdentitydService.AuthorizeToken:output_type -> google.protobuf.Empty
-	55, // [55:110] is the sub-list for method output_type
-	0,  // [0:55] is the sub-list for method input_type
+	23, // 55: ai.metathings.service.identityd2.IdentitydService.Healthz:input_type -> google.protobuf.Empty
+	54, // 56: ai.metathings.service.identityd2.IdentitydService.CreateDomain:output_type -> ai.metathings.service.identityd2.CreateDomainResponse
+	23, // 57: ai.metathings.service.identityd2.IdentitydService.DeleteDomain:output_type -> google.protobuf.Empty
+	55, // 58: ai.metathings.service.identityd2.IdentitydService.PatchDomain:output_type -> ai.metathings.service.identityd2.PatchDomainResponse
+	56, // 59: ai.metathings.service.identityd2.IdentitydService.GetDomain:output_type -> ai.metathings.service.identityd2.GetDomainResponse
+	57, // 60: ai.metathings.service.identityd2.IdentitydService.ListDomains:output_type -> ai.metathings.service.identityd2.ListDomainsResponse
+	58, // 61: ai.metathings.service.identityd2.IdentitydService.CreateAction:output_type -> ai.metathings.service.identityd2.CreateActionResponse
+	23, // 62: ai.metathings.service.identityd2.IdentitydService.DeleteAction:output_type -> google.protobuf.Empty
+	59, // 63: ai.metathings.service.identityd2.IdentitydService.PatchAction:output_type -> ai.metathings.service.identityd2.PatchActionResponse
+	60, // 64: ai.metathings.service.identityd2.IdentitydService.GetAction:output_type -> ai.metathings.service.identityd2.GetActionResponse
+	61, // 65: ai.metathings.service.identityd2.IdentitydService.ListActions:output_type -> ai.metathings.service.identityd2.ListActionsResponse
+	62, // 66: ai.metathings.service.identityd2.IdentitydService.CreateRole:output_type -> ai.metathings.service.identityd2.CreateRoleResponse
+	23, // 67: ai.metathings.service.identityd2.IdentitydService.DeleteRole:output_type -> google.protobuf.Empty
+	63, // 68: ai.metathings.service.identityd2.IdentitydService.PatchRole:output_type -> ai.metathings.service.identityd2.PatchRoleResponse
+	64, // 69: ai.metathings.service.identityd2.IdentitydService.GetRole:output_type -> ai.metathings.service.identityd2.GetRoleResponse
+	65, // 70: ai.metathings.service.identityd2.IdentitydService.ListRoles:output_type -> ai.metathings.service.identityd2.ListRolesResponse
+	66, // 71: ai.metathings.service.identityd2.IdentitydService.ListRolesForEntity:output_type -> ai.metathings.service.identityd2.ListRolesForEntityResponse
+	23, // 72: ai.metathings.service.identityd2.IdentitydService.AddActionToRole:output_type -> google.protobuf.Empty
+	23, // 73: ai.metathings.service.identityd2.IdentitydService.RemoveActionFromRole:output_type -> google.protobuf.Empty
+	67, // 74: ai.metathings.service.identityd2.IdentitydService.CreateEntity:output_type -> ai.metathings.service.identityd2.CreateEntityResponse
+	23, // 75: ai.metathings.service.identityd2.IdentitydService.DeleteEntity:output_type -> google.protobuf.Empty
+	68, // 76: ai.metathings.service.identityd2.IdentitydService.PatchEntity:output_type -> ai.metathings.service.identityd2.PatchEntityResponse
+	69, // 77: ai.metathings.service.identityd2.IdentitydService.GetEntity:output_type -> ai.metathings.service.identityd2.GetEntityResponse
+	70, // 78: ai.metathings.service.identityd2.IdentitydService.ListEntities:output_type -> ai.metathings.service.identityd2.ListEntitiesResponse
+	71, // 79: ai.metathings.service.identityd2.IdentitydService.ShowEntity:output_type -> ai.metathings.service.identityd2.ShowEntityResponse
+	23, // 80: ai.metathings.service.identityd2.IdentitydService.AddRoleToEntity:output_type -> google.protobuf.Empty
+	23, // 81: ai.metathings.service.identityd2.IdentitydService.RemoveRoleFromEntity:output_type -> google.protobuf.Empty
+	23, // 82: ai.metathings.service.identityd2.IdentitydService.AddEntityToDomain:output_type -> google.protobuf.Empty
+	23, // 83: ai.metathings.service.identityd2.IdentitydService.RemoveEntityFromDomain:output_type -> google.protobuf.Empty
+	72, // 84: ai.metathings.service.identityd2.IdentitydService.CreateGroup:output_type -> ai.metathings.service.identityd2.CreateGroupResponse
+	23, // 85: ai.metathings.service.identityd2.IdentitydService.DeleteGroup:output_type -> google.protobuf.Empty
+	73, // 86: ai.metathings.service.identityd2.IdentitydService.PatchGroup:output_type -> ai.metathings.service.identityd2.PatchGroupResponse
+	74, // 87: ai.metathings.service.identityd2.IdentitydService.GetGroup:output_type -> ai.metathings.service.identityd2.GetGroupResponse
+	75, // 88: ai.metathings.service.identityd2.IdentitydService.ListGroups:output_type -> ai.metathings.service.identityd2.ListGroupsResponse
+	76, // 89: ai.metathings.service.identityd2.IdentitydService.ListGroupsForSubject:output_type -> ai.metathings.service.identityd2.ListGroupsForSubjectResponse
+	77, // 90: ai.metathings.service.identityd2.IdentitydService.ListGroupsForObject:output_type -> ai.metathings.service.identityd2.ListGroupsForObjectResponse
+	78, // 91: ai.metathings.service.identityd2.IdentitydService.ShowGroups:output_type -> ai.metathings.service.identityd2.ShowGroupsResponse
+	23, // 92: ai.metathings.service.identityd2.IdentitydService.AddRoleToGroup:output_type -> google.protobuf.Empty
+	23, // 93: ai.metathings.service.identityd2.IdentitydService.RemoveRoleFromGroup:output_type -> google.protobuf.Empty
+	23, // 94: ai.metathings.service.identityd2.IdentitydService.AddSubjectToGroup:output_type -> google.protobuf.Empty
+	23, // 95: ai.metathings.service.identityd2.IdentitydService.RemoveSubjectFromGroup:output_type -> google.protobuf.Empty
+	23, // 96: ai.metathings.service.identityd2.IdentitydService.AddObjectToGroup:output_type -> google.protobuf.Empty
+	23, // 97: ai.metathings.service.identityd2.IdentitydService.RemoveObjectFromGroup:output_type -> google.protobuf.Empty
+	79, // 98: ai.metathings.service.identityd2.IdentitydService.CreateCredential:output_type -> ai.metathings.service.identityd2.CreateCredentialResponse
+	23, // 99: ai.metathings.service.identityd2.IdentitydService.DeleteCredential:output_type -> google.protobuf.Empty
+	80, // 100: ai.metathings.service.identityd2.IdentitydService.PatchCredential:output_type -> ai.metathings.service.identityd2.PatchCredentialResponse
+	81, // 101: ai.metathings.service.identityd2.IdentitydService.GetCredential:output_type -> ai.metathings.service.identityd2.GetCredentialResponse
+	82, // 102: ai.metathings.service.identityd2.IdentitydService.ListCredentials:output_type -> ai.metathings.service.identityd2.ListCredentialsResponse
+	83, // 103: ai.metathings.service.identityd2.IdentitydService.ListCredentialsForEntity:output_type -> ai.metathings.service.identityd2.ListCredentialsForEntityResponse
+	84, // 104: ai.metathings.service.identityd2.IdentitydService.IssueTokenByCredential:output_type -> ai.metathings.service.identityd2.IssueTokenByCredentialResponse
+	85, // 105: ai.metathings.service.identityd2.IdentitydService.IssueTokenByPassword:output_type -> ai.metathings.service.identityd2.IssueTokenByPasswordResponse
+	86, // 106: ai.metathings.service.identityd2.IdentitydService.IssueTokenByToken:output_type -> ai.metathings.service.identityd2.IssueTokenByTokenResponse
+	23, // 107: ai.metathings.service.identityd2.IdentitydService.RevokeToken:output_type -> google.protobuf.Empty
+	87, // 108: ai.metathings.service.identityd2.IdentitydService.ValidateToken:output_type -> ai.metathings.service.identityd2.ValidateTokenResponse
+	23, // 109: ai.metathings.service.identityd2.IdentitydService.CheckToken:output_type -> google.protobuf.Empty
+	23, // 110: ai.metathings.service.identityd2.IdentitydService.AuthorizeToken:output_type -> google.protobuf.Empty
+	88, // 111: ai.metathings.service.identityd2.IdentitydService.Healthz:output_type -> google.protobuf.StringValue
+	56, // [56:112] is the sub-list for method output_type
+	0,  // [0:56] is the sub-list for method input_type
 	0,  // [0:0] is the sub-list for extension type_name
 	0,  // [0:0] is the sub-list for extension extendee
 	0,  // [0:0] is the sub-list for field type_name

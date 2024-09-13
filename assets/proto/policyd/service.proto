@@ -3,6 +3,8 @@ syntax = "proto3";
 package ai.metathings.service.policyd;
 option go_package = "github.com/nayotta/metathings/proto/policyd";
 
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/empty.proto";
 import "github.com/casbin/casbin-server/proto/casbin.proto";
 
 service PolicydService {
@@ -56,6 +58,8 @@ service PolicydService {
   rpc AddPresetPolicy(proto.PolicyRequest) returns (proto.BoolReply) {}
   rpc RemovePresetPolicy(proto.PolicyRequest) returns (proto.BoolReply) {}
   rpc Initialize(proto.EmptyRequest) returns (proto.EmptyReply) {}
+
+  rpc Healthz(google.protobuf.Empty) returns (google.protobuf.StringValue) {}
 }
 
 message EnforceBucketRequest {

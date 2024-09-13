@@ -12,6 +12,7 @@ import (
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
+	wrapperspb "google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -75,6 +76,7 @@ const (
 	IdentitydService_ValidateToken_FullMethodName            = "/ai.metathings.service.identityd2.IdentitydService/ValidateToken"
 	IdentitydService_CheckToken_FullMethodName               = "/ai.metathings.service.identityd2.IdentitydService/CheckToken"
 	IdentitydService_AuthorizeToken_FullMethodName           = "/ai.metathings.service.identityd2.IdentitydService/AuthorizeToken"
+	IdentitydService_Healthz_FullMethodName                  = "/ai.metathings.service.identityd2.IdentitydService/Healthz"
 )
 
 // IdentitydServiceClient is the client API for IdentitydService service.
@@ -1107,6 +1109,7 @@ type IdentitydServiceClient interface {
 	// @err PermissionDenied
 	// @err Internal
 	AuthorizeToken(ctx context.Context, in *AuthorizeTokenRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	Healthz(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*wrapperspb.StringValue, error)
 }
 
 type identitydServiceClient struct {
@@ -1661,6 +1664,16 @@ func (c *identitydServiceClient) AuthorizeToken(ctx context.Context, in *Authori
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, IdentitydService_AuthorizeToken_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *identitydServiceClient) Healthz(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*wrapperspb.StringValue, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(wrapperspb.StringValue)
+	err := c.cc.Invoke(ctx, IdentitydService_Healthz_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2697,6 +2710,7 @@ type IdentitydServiceServer interface {
 	// @err PermissionDenied
 	// @err Internal
 	AuthorizeToken(context.Context, *AuthorizeTokenRequest) (*emptypb.Empty, error)
+	Healthz(context.Context, *emptypb.Empty) (*wrapperspb.StringValue, error)
 	mustEmbedUnimplementedIdentitydServiceServer()
 }
 
@@ -2871,6 +2885,9 @@ func (UnimplementedIdentitydServiceServer) CheckToken(context.Context, *CheckTok
 }
 func (UnimplementedIdentitydServiceServer) AuthorizeToken(context.Context, *AuthorizeTokenRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AuthorizeToken not implemented")
+}
+func (UnimplementedIdentitydServiceServer) Healthz(context.Context, *emptypb.Empty) (*wrapperspb.StringValue, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Healthz not implemented")
 }
 func (UnimplementedIdentitydServiceServer) mustEmbedUnimplementedIdentitydServiceServer() {}
 func (UnimplementedIdentitydServiceServer) testEmbeddedByValue()                          {}
@@ -3883,6 +3900,24 @@ func _IdentitydService_AuthorizeToken_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _IdentitydService_Healthz_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IdentitydServiceServer).Healthz(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: IdentitydService_Healthz_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IdentitydServiceServer).Healthz(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // IdentitydService_ServiceDesc is the grpc.ServiceDesc for IdentitydService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -4109,6 +4144,10 @@ var IdentitydService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "AuthorizeToken",
 			Handler:    _IdentitydService_AuthorizeToken_Handler,
+		},
+		{
+			MethodName: "Healthz",
+			Handler:    _IdentitydService_Healthz_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

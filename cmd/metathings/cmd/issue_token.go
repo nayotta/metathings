@@ -58,7 +58,7 @@ var (
 
 			issue_token_opt.SetStage(cmd_helper.GetStageFromEnv())
 		}),
-		Run: cmd_helper.Run("issue token", issue_token),
+		Run: cmd_helper.Run("issue token", run_issue_token),
 	}
 )
 
@@ -141,7 +141,7 @@ func issue_token_by_token(opt *IssueTokenOption, cli pb.IdentitydServiceClient) 
 	return res.Token, err
 }
 
-func issue_token() error {
+func run_issue_token() error {
 	app := fx.New(
 		fx.NopLogger,
 		fx.Provide(

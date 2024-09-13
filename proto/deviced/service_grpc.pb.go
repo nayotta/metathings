@@ -12,6 +12,7 @@ import (
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
+	wrapperspb "google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -74,6 +75,7 @@ const (
 	DevicedService_ShowDeviceFirmwareDescriptor_FullMethodName            = "/ai.metathings.service.deviced.DevicedService/ShowDeviceFirmwareDescriptor"
 	DevicedService_Connect_FullMethodName                                 = "/ai.metathings.service.deviced.DevicedService/Connect"
 	DevicedService_Heartbeat_FullMethodName                               = "/ai.metathings.service.deviced.DevicedService/Heartbeat"
+	DevicedService_Healthz_FullMethodName                                 = "/ai.metathings.service.deviced.DevicedService/Healthz"
 )
 
 // DevicedServiceClient is the client API for DevicedService service.
@@ -142,6 +144,7 @@ type DevicedServiceClient interface {
 	ShowDeviceFirmwareDescriptor(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ShowDeviceFirmwareDescriptorResponse, error)
 	Connect(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[ConnectResponse, ConnectRequest], error)
 	Heartbeat(ctx context.Context, in *HeartbeatRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	Healthz(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*wrapperspb.StringValue, error)
 }
 
 type devicedServiceClient struct {
@@ -731,6 +734,16 @@ func (c *devicedServiceClient) Heartbeat(ctx context.Context, in *HeartbeatReque
 	return out, nil
 }
 
+func (c *devicedServiceClient) Healthz(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*wrapperspb.StringValue, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(wrapperspb.StringValue)
+	err := c.cc.Invoke(ctx, DevicedService_Healthz_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // DevicedServiceServer is the server API for DevicedService service.
 // All implementations must embed UnimplementedDevicedServiceServer
 // for forward compatibility.
@@ -797,6 +810,7 @@ type DevicedServiceServer interface {
 	ShowDeviceFirmwareDescriptor(context.Context, *emptypb.Empty) (*ShowDeviceFirmwareDescriptorResponse, error)
 	Connect(grpc.BidiStreamingServer[ConnectResponse, ConnectRequest]) error
 	Heartbeat(context.Context, *HeartbeatRequest) (*emptypb.Empty, error)
+	Healthz(context.Context, *emptypb.Empty) (*wrapperspb.StringValue, error)
 	mustEmbedUnimplementedDevicedServiceServer()
 }
 
@@ -968,6 +982,9 @@ func (UnimplementedDevicedServiceServer) Connect(grpc.BidiStreamingServer[Connec
 }
 func (UnimplementedDevicedServiceServer) Heartbeat(context.Context, *HeartbeatRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Heartbeat not implemented")
+}
+func (UnimplementedDevicedServiceServer) Healthz(context.Context, *emptypb.Empty) (*wrapperspb.StringValue, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Healthz not implemented")
 }
 func (UnimplementedDevicedServiceServer) mustEmbedUnimplementedDevicedServiceServer() {}
 func (UnimplementedDevicedServiceServer) testEmbeddedByValue()                        {}
@@ -1897,6 +1914,24 @@ func _DevicedService_Heartbeat_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _DevicedService_Healthz_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DevicedServiceServer).Healthz(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DevicedService_Healthz_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DevicedServiceServer).Healthz(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // DevicedService_ServiceDesc is the grpc.ServiceDesc for DevicedService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -2091,6 +2126,10 @@ var DevicedService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Heartbeat",
 			Handler:    _DevicedService_Heartbeat_Handler,
+		},
+		{
+			MethodName: "Healthz",
+			Handler:    _DevicedService_Healthz_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

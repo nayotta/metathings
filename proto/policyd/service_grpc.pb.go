@@ -12,6 +12,8 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
+	wrapperspb "google.golang.org/protobuf/types/known/wrapperspb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -61,6 +63,7 @@ const (
 	PolicydService_AddPresetPolicy_FullMethodName                   = "/ai.metathings.service.policyd.PolicydService/AddPresetPolicy"
 	PolicydService_RemovePresetPolicy_FullMethodName                = "/ai.metathings.service.policyd.PolicydService/RemovePresetPolicy"
 	PolicydService_Initialize_FullMethodName                        = "/ai.metathings.service.policyd.PolicydService/Initialize"
+	PolicydService_Healthz_FullMethodName                           = "/ai.metathings.service.policyd.PolicydService/Healthz"
 )
 
 // PolicydServiceClient is the client API for PolicydService service.
@@ -110,6 +113,7 @@ type PolicydServiceClient interface {
 	AddPresetPolicy(ctx context.Context, in *proto.PolicyRequest, opts ...grpc.CallOption) (*proto.BoolReply, error)
 	RemovePresetPolicy(ctx context.Context, in *proto.PolicyRequest, opts ...grpc.CallOption) (*proto.BoolReply, error)
 	Initialize(ctx context.Context, in *proto.EmptyRequest, opts ...grpc.CallOption) (*proto.EmptyReply, error)
+	Healthz(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*wrapperspb.StringValue, error)
 }
 
 type policydServiceClient struct {
@@ -530,6 +534,16 @@ func (c *policydServiceClient) Initialize(ctx context.Context, in *proto.EmptyRe
 	return out, nil
 }
 
+func (c *policydServiceClient) Healthz(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*wrapperspb.StringValue, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(wrapperspb.StringValue)
+	err := c.cc.Invoke(ctx, PolicydService_Healthz_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PolicydServiceServer is the server API for PolicydService service.
 // All implementations must embed UnimplementedPolicydServiceServer
 // for forward compatibility.
@@ -577,6 +591,7 @@ type PolicydServiceServer interface {
 	AddPresetPolicy(context.Context, *proto.PolicyRequest) (*proto.BoolReply, error)
 	RemovePresetPolicy(context.Context, *proto.PolicyRequest) (*proto.BoolReply, error)
 	Initialize(context.Context, *proto.EmptyRequest) (*proto.EmptyReply, error)
+	Healthz(context.Context, *emptypb.Empty) (*wrapperspb.StringValue, error)
 	mustEmbedUnimplementedPolicydServiceServer()
 }
 
@@ -709,6 +724,9 @@ func (UnimplementedPolicydServiceServer) RemovePresetPolicy(context.Context, *pr
 }
 func (UnimplementedPolicydServiceServer) Initialize(context.Context, *proto.EmptyRequest) (*proto.EmptyReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Initialize not implemented")
+}
+func (UnimplementedPolicydServiceServer) Healthz(context.Context, *emptypb.Empty) (*wrapperspb.StringValue, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Healthz not implemented")
 }
 func (UnimplementedPolicydServiceServer) mustEmbedUnimplementedPolicydServiceServer() {}
 func (UnimplementedPolicydServiceServer) testEmbeddedByValue()                        {}
@@ -1469,6 +1487,24 @@ func _PolicydService_Initialize_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PolicydService_Healthz_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PolicydServiceServer).Healthz(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PolicydService_Healthz_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PolicydServiceServer).Healthz(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // PolicydService_ServiceDesc is the grpc.ServiceDesc for PolicydService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1639,6 +1675,10 @@ var PolicydService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Initialize",
 			Handler:    _PolicydService_Initialize_Handler,
+		},
+		{
+			MethodName: "Healthz",
+			Handler:    _PolicydService_Healthz_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
