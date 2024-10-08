@@ -27,6 +27,8 @@ type Identityd2Option struct {
 	cmd_contrib.ServiceBaseOption `mapstructure:",squash"`
 	Init                          int
 	AdminId                       string
+	AdminUsername                 string
+	AdminPassword                 string
 }
 
 func NewIdentityd2Option() *Identityd2Option {
@@ -55,6 +57,8 @@ var (
 			init_service_cmd_option(opt_t, identityd2_opt)
 			opt_t.Init = identityd2_opt.Init
 			opt_t.AdminId = identityd2_opt.AdminId
+			opt_t.AdminUsername = identityd2_opt.AdminUsername
+			opt_t.AdminPassword = identityd2_opt.AdminPassword
 
 			identityd2_opt = opt_t
 			identityd2_opt.SetServiceName("identityd2")
@@ -218,14 +222,22 @@ func initIdentityd2() error {
 							admin_id_str = id_helper.NewId()
 						}
 						admin_name_str := "admin"
-						admin_alias_str := "admin"
-						admin_passwd_str := passwd_helper.MustParsePassword("admin")
+						if identityd2_opt.AdminUsername != "" {
+							admin_name_str = identityd2_opt.AdminUsername
+						}
+						admin_alias_str := admin_name_str
+
+						admin_passwd_str := "admin"
+						if identityd2_opt.AdminPassword != "" {
+							admin_passwd_str = identityd2_opt.AdminPassword
+						}
+						admin_passwd_ciphertext := passwd_helper.MustParsePassword(admin_passwd_str)
 
 						admin := &storage.Entity{
 							Id:       &admin_id_str,
 							Name:     &admin_name_str,
 							Alias:    &admin_alias_str,
-							Password: &admin_passwd_str,
+							Password: &admin_passwd_ciphertext,
 						}
 
 						if admin, err = stor.CreateEntity(ctx, admin); err != nil {
@@ -325,6 +337,8 @@ func init() {
 
 	flags.CountVar(&identityd2_opt.Init, "init", "Initial Metathings Identity2 Service")
 	flags.StringVar(&identityd2_opt.AdminId, "admin-id", "", "Initial Identityd2 with admin id")
+	flags.StringVar(&identityd2_opt.AdminUsername, "admin-username", "admin", "Initial Identityd2 with admin username")
+	flags.StringVar(&identityd2_opt.AdminPassword, "admin-password", "", "Initial Identityd2 with admin password")
 
 	RootCmd.AddCommand(identityd2Cmd)
 }
