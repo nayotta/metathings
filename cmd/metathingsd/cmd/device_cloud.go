@@ -23,6 +23,7 @@ import (
 	token_helper "github.com/nayotta/metathings/pkg/common/token"
 	profile_storage_core "github.com/nayotta/metathings/pkg/device_cloud/profile_storage/core"
 	profile_storage_interface "github.com/nayotta/metathings/pkg/device_cloud/profile_storage/interface"
+	_ "github.com/nayotta/metathings/pkg/device_cloud/profile_storage/redis"
 	service "github.com/nayotta/metathings/pkg/device_cloud/service"
 	storage "github.com/nayotta/metathings/pkg/device_cloud/storage"
 )
