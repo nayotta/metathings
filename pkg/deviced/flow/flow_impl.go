@@ -113,14 +113,16 @@ func (f *flow) Err() error {
 	return f.err
 }
 
-func (f *flow) PushFrame(frm *pb.Frame) error {
+func (f *flow) PushFrame(frm *pb.Frame) (err error) {
 	ts := pb_helper.Now()
 	frm.Ts = &ts
 
-	err := f.push_frame_to_mgo(frm)
-	if err != nil {
-		f.logger.WithError(err).Errorf("failed to push frame to mgo")
-		return err
+	if f.mgo_pool != nil {
+		err = f.push_frame_to_mgo(frm)
+		if err != nil {
+			f.logger.WithError(err).Errorf("failed to push frame to mgo")
+			return err
+		}
 	}
 
 	// TODO(Peer): dont push frame to redis stream when noone pull frame.
@@ -478,19 +480,22 @@ func new_default_flow_factory(args ...interface{}) (FlowFactory, error) {
 		return nil, err
 	}
 
-	mgopool, err := pool_helper.NewPool(opt.MongoPoolInitial, opt.MongoPoolMax, func() (pool_helper.Client, error) {
-		return mongo_helper.NewMongoClient(opt.MongoUri)
-	})
-	if err != nil {
-		logger.WithError(err).Debugf("failed to new mongo pool")
-		return nil, err
-	}
-
 	fty := &flowFactory{
 		opt:               opt,
 		logger:            logger,
 		redis_stream_pool: rspool,
-		mongo_pool:        mgopool,
+	}
+
+	if opt.MongoUri != "" {
+		mgopool, err := pool_helper.NewPool(opt.MongoPoolInitial, opt.MongoPoolMax, func() (pool_helper.Client, error) {
+			return mongo_helper.NewMongoClient(opt.MongoUri)
+		})
+		if err != nil {
+			logger.WithError(err).Debugf("failed to new mongo pool")
+			return nil, err
+		}
+		fty.mongo_pool = mgopool
+		logger.Debugf("enable mongodb frame storage")
 	}
 
 	return fty, nil
