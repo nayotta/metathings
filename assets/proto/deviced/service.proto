@@ -98,7 +98,7 @@ service DevicedService {
 	// Flow
 	rpc PullFrameFromFlow(PullFrameFromFlowRequest) returns (stream PullFrameFromFlowResponse) {}
 	rpc PushFrameToFlow(stream PushFrameToFlowRequest) returns (stream PushFrameToFlowResponse) {}
-  rpc PushFrameToFlowOnce(PushFrameToFlowOnceRequest) returns (google.protobuf.Empty) {}
+	rpc PushFrameToFlowOnce(PushFrameToFlowOnceRequest) returns (google.protobuf.Empty) {}
 	rpc QueryFramesFromFlow(QueryFramesFromFlowRequest) returns (QueryFramesFromFlowResponse) {}
 
 	// Flow Set
@@ -141,5 +141,5 @@ service DevicedService {
 	rpc Connect(stream ConnectResponse) returns (stream ConnectRequest) {}
 	rpc Heartbeat(HeartbeatRequest) returns (google.protobuf.Empty) {}
 
-  rpc Healthz(google.protobuf.Empty) returns (google.protobuf.StringValue) {}
+	rpc Healthz(google.protobuf.Empty) returns (google.protobuf.StringValue) {}
 }
