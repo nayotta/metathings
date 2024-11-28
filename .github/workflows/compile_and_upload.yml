@@ -39,10 +39,12 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        goos: ["linux", "darwin"]
+        goos: ["linux", "darwin", "windows"]
         goarch: ["amd64", "arm", "arm64"]
         exclude:
         - goos: darwin
+          goarch: arm
+        - goos: windows
           goarch: arm
     steps:
     - uses: actions/checkout@master
@@ -59,9 +61,14 @@ jobs:
         GOARCH: ${{ matrix.goarch }}
         CGO_ENABLED: 0
       run: |
-        go build -ldflags "-X=main.Version=${GIT_TAG_NAME} -X=google.golang.org/protobuf/reflect/protoregistry.conflictPolicy=ignore" -o metathings cmd/metathings/main.go
+        SUFFIX=""
+        if [ "x${GOOS}" == "xwindows" ]; then
+          SUFFIX=".exe"
+        fi
+        BINARY="metathings${SUFFIX}"
+        go build -ldflags "-X=main.Version=${GIT_TAG_NAME} -X=google.golang.org/protobuf/reflect/protoregistry.conflictPolicy=ignore" -o ${BINARY} cmd/metathings/main.go
         NAME="metathings_${GIT_TAG_NAME}_${GOOS}_${GOARCH}.tar.gz"
-        tar zcvf ${NAME} metathings
+        tar zcvf ${NAME} ${BINARY}
         sha1sum ${NAME} > ${NAME}.sha1
     - name: Upload Metathings Asset
       uses: softprops/action-gh-release@v1

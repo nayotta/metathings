@@ -514,7 +514,8 @@ func new_client_factory_from_new_kernel_option(opt *NewKernelOption) (*client_he
 		return nil, err
 	}
 
-	cli_fty, err = client_helper.NewClientFactory(srv_cfgs, client_helper.DefaultDialOption())
+	// HACK: Cannot release grpc.ClientConn as soon as, because close grpc.ClientConn will be block a long time in Windows os.
+	cli_fty, err = client_helper.NewClientFactory(srv_cfgs, client_helper.DefaultDialOption(), client_helper.SetDialPoolSize(3))
 	if err != nil {
 		return nil, err
 	}
