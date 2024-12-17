@@ -183,6 +183,8 @@ func (f *flow) push_frame_to_mgo(frm *pb.Frame) error {
 	if err != nil {
 		return err
 	}
+	dt := pb_helper.ToTime(frm.GetTs())
+	frm_dat_buf["#dt"] = dt
 	frm_dat_buf["#ts"] = pb_helper.ToTime(frm.GetTs()).UnixNano()
 
 	coll, releaser, err := f.mongo_collection()
@@ -326,6 +328,7 @@ func (f *flow) query_frame(coll *mongo.Collection, flr *FlowFilter) ([]*pb.Frame
 		if !ok {
 			ts = nil
 		}
+		delete(res_buf, "#dt")
 		delete(res_buf, "#ts")
 		delete(res_buf, "_id")
 
