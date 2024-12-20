@@ -1,0 +1,40 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: identityd2-cleanup-expired-tokens
+  namespace: metathings-storage
+spec:
+  concurrencyPolicy: Allow
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - command:
+            - psql
+            - host=$(POSTGRES_HOST) port=$(POSTGRES_PORT) dbname=$(POSTGRES_DB) user=$(POSTGRES_USER)
+              password=$(POSTGRES_PASSWORD)
+            - -c
+            - delete from tokens where expires_at < now();
+            env:
+            - name: POSTGRES_HOST
+              value: postgres-cluster-identityd2
+            - name: POSTGRES_PORT
+              value: "5432"
+            - name: POSTGRES_DB
+              value: postgres-identityd2-ng
+            - name: POSTGRES_USER
+              value: !!!REPLACEME!!!
+            - name: POSTGRES_PASSWORD
+              value: !!!REPLACEME!!!
+            image: registry.cn-hangzhou.aliyuncs.com/nayotta/postgres:15-alphine
+            imagePullPolicy: IfNotPresent
+            name: identityd2-cleanup-expired-tokens-cronjob
+            resources: {}
+            terminationMessagePath: /dev/termination-log
+            terminationMessagePolicy: File
+          restartPolicy: Never
+          terminationGracePeriodSeconds: 30
+  schedule: 42 3 * * *
+  successfulJobsHistoryLimit: 3
