@@ -1,0 +1,1 @@
+db.getCollectionNames().filter(coll => !db[coll].getIndexes().reduce((found, idx) => found ? found : idx.name == '#dt_ttl', false)).map(coll => [coll, db[coll].createIndex({ '#dt': 1 }, { name: '#dt_ttl', expireAfterSeconds: 7776000 })])

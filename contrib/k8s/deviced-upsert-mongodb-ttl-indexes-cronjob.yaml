@@ -1,0 +1,38 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: deviced-upsert-mongodb-ttl-indexes
+  namespace: metathings-storage
+spec:
+  concurrencyPolicy: Forbid
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: deviced-upsert-mongodb-ttl-indexes-cronjob
+            image: registry.cn-hangzhou.aliyuncs.com/nayotta/bitnami-mongodb:8.0.4-debian-12-r0
+            imagePullPolicy: IfNotPresent
+            command:
+            - mongosh
+            - $(MONGODB_URI)
+            - --file
+            - $(SCRIPT_PATH)
+            env:
+            - name: MONGODB_URI
+              value: "mongodb://mongodb-deviced-20241224-0.mongodb-deviced-20241224-headless.metathings-storage"
+            - name: SCRIPT_PATH
+              value: "/scripts/deviced-upsert-mongodb-ttl-indexes.js"
+            volumeMounts:
+            - mountPath: /scripts/deviced-upsert-mongodb-ttl-indexes.js
+              name: scripts
+              subPath: deviced-upsert-mongodb-ttl-indexes.js
+            resources: {}
+          volumes:
+          - name: scripts
+            configMap:
+              name: metathings-deviced-scripts
+          restartPolicy: Never
+  schedule: 31 4 * * *
+  successfulJobsHistoryLimit: 3
