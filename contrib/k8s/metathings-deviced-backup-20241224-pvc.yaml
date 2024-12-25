@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: metathings-deviced-backup-20241224
+  namespace: metathings-storage
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Ti
+  storageClassName: back-mt01-slow
+  volumeMode: Filesystem

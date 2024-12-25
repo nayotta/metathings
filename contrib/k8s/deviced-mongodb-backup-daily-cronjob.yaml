@@ -1,0 +1,51 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: deviced-mongodb-backup-daily
+  namespace: metathings-storage
+spec:
+  concurrencyPolicy: Forbid
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: deviced-mongodb-backup-daily-cronjob
+            image: registry.cn-hangzhou.aliyuncs.com/nayotta/bitnami-mongodb:8.0.4-debian-12-r0
+            imagePullPolicy: IfNotPresent
+            command:
+            - bash
+            - $(SCRIPT_PATH)
+            env:
+            - name: MONGODB_URI
+              value: "mongodb://mongodb-deviced-20241224-2.mongodb-deviced-20241224-headless.metathings-storage:27017/mt_devd_flw"
+            - name: SCRIPT_PATH
+              value: "/scripts/deviced-mongodb-backup-daily.sh"
+            volumeMounts:
+            - mountPath: /scripts/deviced-mongodb-backup-daily.sh
+              name: scripts
+              subPath: deviced-mongodb-backup-daily.sh
+            - mountPath: /mnt/backup
+              name: backup-dir
+            - mountPath: /tmp
+              name: empty-dir
+            resources:
+              requests:
+                cpu: 50m
+                memory: 64Mi
+              limits:
+                cpu: 2000m
+                memory: 4Gi
+          volumes:
+          - name: empty-dir
+            emptyDir: {}
+          - name: scripts
+            configMap:
+              name: metathings-deviced-scripts
+          - name: backup-dir
+            persistentVolumeClaim:
+              claimName: metathings-deviced-backup-20241224
+          restartPolicy: Never
+  schedule: 34 16 * * *
+  successfulJobsHistoryLimit: 3
