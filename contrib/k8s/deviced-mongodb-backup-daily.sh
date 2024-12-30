@@ -3,6 +3,8 @@
 set -x
 
 BACKUP_DIR="/mnt/backup"
+BACKUP_INPROG_LCK="${BACKUP_DIR}/backup_inprog.lck"
+touch ${BACKUP_INPROG_LCK}
 
 mongosh $MONGODB_URI --eval 'db.getCollectionNames().forEach(x=>console.log(x))' | tee /tmp/colls.txt
 BEGIN_AT=$(date -d '1 day ago' +%F)
@@ -14,7 +16,7 @@ BEGIN_AT_DAY=$(echo $BEGIN_AT|cut -d '-' -f 3)
 BACKUP_DIR_WITH_DATE="$BACKUP_DIR/$BEGIN_AT_YEAR/$BEGIN_AT_MONTH/$BEGIN_AT_DAY"
 mkdir -p ${BACKUP_DIR_WITH_DATE}
 
-echo "beginAt,flowId,path,sha256sum,collection,total,size(byte),compressedSize(byte),backupAt,elapsed(s),endAt" | tee /tmp/metadata_v1.csv
+echo "beginAt,flowId,path,sha256sum,collection,total,size(bytes),compressedSize(bytes),backupAt,elapsed(s),endAt" | tee /tmp/metadata_v1.csv
 
 for coll in $(cat /tmp/colls.txt); do
     flw=$(echo $coll|cut -d '.' -f2)
@@ -45,3 +47,5 @@ for coll in $(cat /tmp/colls.txt); do
 done
 
 mv /tmp/metadata_v1.csv ${BACKUP_DIR_WITH_DATE}
+echo -n "${BACKUP_DIR_WITH_DATE}/metadata_v1.csv" > ${BACKUP_DIR}/newest_metadata
+rm ${BACKUP_INPROG_LCK}

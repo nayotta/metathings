@@ -1,6 +1,7 @@
 #!/bin/bash
 
 kubectl run deviced-mongodb-backup-pod \
+  --namespace=metathings-storage \
   --image="registry.cn-hangzhou.aliyuncs.com/nayotta/bitnami-mongodb:8.0.4-debian-12-r0" \
   --overrides='{
     "apiVersion": "v1",
