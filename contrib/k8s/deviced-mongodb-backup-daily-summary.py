@@ -102,7 +102,7 @@ distributionsBlock += tabulate([(lambda name, data: [
 summaryBlock = '''Metathings Deviced Mongodb Backup Summary @{beginAt}
   Backup from: {beginAt} to: {endAt}
   Backup Job work from: {jobStartAt} to: {jobEndAt}, elapsed: {elapsedMinute:.2f} min
-  Flows: {flows}, Documents: {documents}, {documentsPerSecond:.2f} document/sec, AverageDocuments: {avgDocuments}
+  Flows: {flows}, Documents: {documents}, {documentsPerSecond:.2f} document/sec, AverageDocuments: {avgDocuments:.2f}
   Size: {sizeMegabytes:.2f} MB, Compressed Size: {compressedSizeMegabytes:.2f} MB, AverageDocumentSize: {avgDocumentSizeKilobytes:.2f} KB
 '''.format(**locals())
 
