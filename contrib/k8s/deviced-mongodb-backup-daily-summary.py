@@ -5,7 +5,7 @@ import time
 
 import requests
 import pandas as pd
-from tabulate import tabulate
+from tabulate import tabulate, SEPARATING_LINE
 
 envBackupInprogLck = os.environ["BACKUP_INPROG_LOCK"]
 envNewestMetadata = os.environ["NEWEST_METADATA"]
@@ -131,7 +131,8 @@ distributionsBlock = '''
 Distributions
 '''
 quantileFactors = [1, 0.99, 0.95, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1, 0.05, 0.01, 0]
-distributionsBlock += tabulate([(lambda name, total, mean, stddev, qs: [
+dists = []
+dists += [(lambda name, total, mean, stddev, qs: [
     name,  # name
     total,  # total
     mean,  # mean
@@ -156,7 +157,37 @@ distributionsBlock += tabulate([(lambda name, total, mean, stddev, qs: [
     ['size(MB)', len(df['size(megabytes)']), df['size(megabytes)'].mean(), df['size(megabytes)'].std(), df['size(megabytes)'].quantile(quantileFactors)],
     ['avgSize(KB/doc)', len(df['avgDocumentSize(KB/doc)']), df['avgDocumentSize(KB/doc)'].mean(), df['avgDocumentSize(KB/doc)'].std(), df['avgDocumentSize(KB/doc)'].quantile(quantileFactors)],
     ['compressionRatio', len(df['compressionRatio']), df['compressionRatio'].mean(), df['compressionRatio'].std(), df['compressionRatio'].quantile(quantileFactors)],
-]], headers=['', 'Total', 'Mean', 'Stddev', 'Max', '99%', '95%', '90%', '80%', '70%', '60%', 'Mid', '40%', '30%', '20%', '10%', '5%', '1%', 'Min'], numalign='right', floatfmt='.2f')
+]]
+dists += [SEPARATING_LINE]
+n0df = df[df['size(bytes)'] > 0]
+dists += [(lambda name, total, mean, stddev, qs: [
+    name,  # name
+    total,  # total
+    mean,  # mean
+    stddev,  # stddev
+    qs.iloc[0],  # Max
+    qs.iloc[1],  # 99%
+    qs.iloc[2],  # 95%
+    qs.iloc[3],  # 90%
+    qs.iloc[4],  # 80%
+    qs.iloc[5],  # 70%
+    qs.iloc[6],  # 60%
+    qs.iloc[7],  # Mid
+    qs.iloc[8],  # 40%
+    qs.iloc[9],  # 30%
+    qs.iloc[10],  # 20%
+    qs.iloc[11],  # 10%
+    qs.iloc[12],  # 5%
+    qs.iloc[13],  # 1%
+    qs.iloc[14],  # Min
+])(*x) for x in [
+    ['documents(N0)', len(n0df['total']), n0df['total'].mean(), n0df['total'].std(), n0df['total'].quantile(quantileFactors)],
+    ['size(MB, N0)', len(n0df['size(megabytes)']), n0df['size(megabytes)'].mean(), n0df['size(megabytes)'].std(), n0df['size(megabytes)'].quantile(quantileFactors)],
+    ['avgSize(KB/doc, N0)', len(n0df['avgDocumentSize(KB/doc)']), n0df['avgDocumentSize(KB/doc)'].mean(), n0df['avgDocumentSize(KB/doc)'].std(), n0df['avgDocumentSize(KB/doc)'].quantile(quantileFactors)],
+    ['compressionRatio(N0)', len(n0df['compressionRatio']), n0df['compressionRatio'].mean(), n0df['compressionRatio'].std(), n0df['compressionRatio'].quantile(quantileFactors)],
+]]
+
+distributionsBlock += tabulate(dists, headers=['', 'Total', 'Mean', 'Stddev', 'Max', '99%', '95%', '90%', '80%', '70%', '60%', 'Mid', '40%', '30%', '20%', '10%', '5%', '1%', 'Min'], numalign='right', floatfmt='.2f')
 
 summaryBlock = '''Metathings Deviced Mongodb Backup Summary @{beginAt}
   Backup from: {beginAt} to: {endAt}
